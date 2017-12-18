@@ -1,0 +1,6 @@
+msgid "region"
+msgstr "de"
+
+msgid "toc"
+msgstr "Inhaltsverzeichnis"
+

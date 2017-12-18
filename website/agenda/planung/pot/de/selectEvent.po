@@ -1,0 +1,34 @@
+msgid "region"
+msgstr "de"
+
+msgid "title"
+msgstr "Sendungen wählen"
+
+msgid "label_project"
+msgstr "Projekt"
+
+msgid "label_studio"
+msgstr "Studio"
+
+msgid "label_series"
+msgstr "Sendereihe"
+
+msgid "label_event"
+msgstr "Sendung"
+
+msgid "label_filter"
+msgstr "Filter"
+
+msgid "label_year"
+msgstr "Jahr"
+
+msgid "label_select"
+msgstr "bitte wählen..."
+
+msgid "label_all"
+msgstr "alle"
+
+msgid "button_cancel"
+msgstr "Abbrechen"
+
+

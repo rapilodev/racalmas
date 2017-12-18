@@ -1,0 +1,33 @@
+msgid "region"
+msgstr "en"
+
+msgid "title"
+msgstr "User Activities"
+
+msgid "label_user"
+msgstr "User"
+
+msgid "label_create_events"
+msgstr "created events"
+
+msgid "label_update_events"
+msgstr "edited events"
+
+msgid "label_delete_events"
+msgstr "deleted events"
+
+msgid "label_create_series"
+msgstr "created series"
+
+msgid "label_update_series"
+msgstr "edited series"
+
+msgid "label_delete_series"
+msgstr "deleted series"
+
+msgid "label_modified_at"
+msgstr "last modified at"
+
+msgid "label_score"
+msgstr "Score"
+

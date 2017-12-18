@@ -1,0 +1,319 @@
+msgid "region"
+msgstr "en"
+
+msgid "title"
+msgstr "Series"
+
+msgid "button_add_series"
+msgstr "add series"
+
+msgid "button_create"
+msgstr "create"
+
+msgid "button_edit"
+msgstr "edit"
+
+msgid "button_cancel"
+msgstr "cancel"
+
+msgid "button_old_series"
+msgstr "old series"
+
+msgid "button_show_changes"
+msgstr "changes"
+
+msgid "label_name"
+msgstr "name"
+
+msgid "label_title"
+msgstr "title"
+
+msgid "button_event_list"
+msgstr "show events"
+
+msgid "button_create_event"
+msgstr "create event"
+
+
+msgid "tab_template"
+msgstr "Template"
+
+msgid "button_save_template"
+msgstr "save"
+
+msgid "template_series"
+msgstr "series"
+
+msgid "template_title"
+msgstr "title"
+
+msgid "template_excerpt"
+msgstr "excerpt"
+
+msgid "template_topic"
+msgstr "current topics"
+
+msgid "template_content"
+msgstr "description"
+
+msgid "template_image"
+msgstr "image"
+
+msgid "template_duration"
+msgstr "duration"
+
+msgid "template_live"
+msgstr "live"
+
+msgid "template_count_episodes"
+msgstr "count episodes"
+
+msgid "template_comments"
+msgstr "internal comments"
+
+msgid "template_podcast_url"
+msgstr "Podcast URL"
+
+msgid "template_archive_url"
+msgstr "Archive URL"
+
+msgid "tab_schedule"
+msgstr "Schedule"
+
+msgid "button_save_schedule"
+msgstr "save"
+
+msgid "button_delete_schedule"
+msgstr "delete"
+
+msgid "button_add_schedule"
+msgstr "add"
+
+msgid "tab_current_events"
+msgstr "Current Events"
+
+msgid "schedule_start"
+msgstr "start"
+
+msgid "schedule_end"
+msgstr "end"
+
+msgid "duration"
+msgstr "duration"
+
+msgid "duration_in_minutes"
+msgstr "duration in minutes"
+
+msgid "frequency"
+msgstr "frequency"
+
+msgid "frequency_days"
+msgstr "every n days"
+
+msgid "exception"
+msgstr "exception"
+
+msgid "week_of_month"
+msgstr "week of month"
+
+msgid "weekday"
+msgstr "weekday"
+
+msgid "period_type"
+msgstr "recurrence"
+
+msgid "period_type_single"
+msgstr "no"
+
+msgid "period_type_days"
+msgstr "fix interval"
+
+msgid "period_type_week_of_month"
+msgstr "week of month"
+
+msgid "tab_members"
+msgstr "Members"
+
+msgid "button_edit_member"
+msgstr "edit"
+
+msgid "label_choose_member"
+msgstr "choose"
+
+msgid "button_add_member"
+msgstr "add user"
+
+msgid "button_remove_member"
+msgstr "remove user"
+
+msgid "nextDay"
+msgstr "Night"
+
+
+msgid "tab_import"
+msgstr "Import"
+
+msgid "label_import"
+msgstr "series name and title of all events to be assigned to this series"
+
+msgid "label_import_series"
+msgstr "series"
+
+msgid "label_import_title"
+msgstr "title"
+
+msgid "button_import_save"
+msgstr "save"
+
+msgid "label_import_scan"
+msgstr "Assign all events to this series that match to the series name and title."
+
+msgid "button_import_scan"
+msgstr "scan"
+
+
+
+msgid "tab_delete"
+msgstr "Delete"
+
+msgid "button_delete_series"
+msgstr "delete this series"
+
+msgid "label_delete_series"
+msgstr "This will delete the series, its template, its schedule and unassign all users from it.\nThe events assigned to the series are not deleted."
+
+msgid "event"
+msgstr "Sendung"
+
+msgid "series"
+msgstr "Sendereihe"
+
+msgid "schedule"
+msgstr "Sendeplan"
+
+msgid "minutes"
+msgstr "minutes"
+
+msgid "hour"
+msgstr "hour"
+
+msgid "hours"
+msgstr "hours"
+
+msgid "day"
+msgstr "day"
+
+msgid "days"
+msgstr "days"
+
+msgid "daily"
+msgstr "daily"
+
+msgid "week"
+msgstr "week"
+
+msgid "weeks"
+msgstr "weeks"
+
+msgid "weekly"
+msgstr "weekly"
+
+msgid "month"
+msgstr "month"
+
+msgid "months"
+msgstr "months"
+
+msgid "from"
+msgstr "from"
+
+msgid "till"
+msgstr "till"
+
+msgid "modified"
+msgstr "modified"
+
+msgid "added"
+msgstr "added"
+
+msgid "at"
+msgstr "at"
+
+msgid "by"
+msgstr "by"
+
+msgid "unit"
+msgstr "in"
+
+msgid "choose_free"
+msgstr "choose free"
+
+msgid "every"
+msgstr "every"
+
+msgid "every_month"
+msgstr "every nth time"
+
+msgid "every_time"
+msgstr "every time"
+
+msgid "every_2nd_time"
+msgstr "every 2nd time"
+
+msgid "every_3rd_time"
+msgstr "every 3rd time"
+
+msgid "every_4th_time"
+msgstr "every 4th time"
+
+msgid "week_1st"
+msgstr "1st"
+
+msgid "week_2nd"
+msgstr "2nd"
+
+msgid "week_3rd"
+msgstr "3rd"
+
+msgid "week_4th"
+msgstr "4th"
+
+msgid "week_5th"
+msgstr "5th"
+
+msgid "monday"
+msgstr "Monday"
+
+msgid "tuesday"
+msgstr "Tuesday"
+
+msgid "wednesday"
+msgstr "Wednesday"
+
+msgid "thursday"
+msgstr "Thursday"
+
+msgid "friday"
+msgstr "Friday"
+
+msgid "saturday"
+msgstr "Saturday"
+
+msgid "sunday"
+msgstr "Sunday"
+
+msgid "single_events"
+msgstr "Single Events"
+
+msgid "single_event"
+msgstr "Single Event"
+
+msgid "label_search"
+msgstr "Search"
+
+msgid "label_clear_search"
+msgstr "clear"
+
+msgid "label_excerpt_too_long"
+msgstr "excerpt is too long. for longer text please use the field «Current Topics»"
+

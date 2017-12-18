@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html> <head>
+<title>calcms</title> <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+<meta charset="utf-8"> <meta http-equiv="Cache-Control" content="no-cache">
+<link rel="stylesheet" href="/css/style.css"> <!--calcms start-->
+<link rel="alternate" type="application/atom+xml" title="Sendeplan Atom" href="/agenda/atom/" /> <link rel="alternate" type="application/rss+xml" title="Sendeplan RSS" href="/agenda/rss/" />
+<link rel="alternate" type="application/atom+xml" title="Sendekommentare" href="/agenda/feed_kommentare/" /> <link rel="stylesheet" type="text/css" media="screen" href="/agenda/css/calcms.css" />
+<script type="text/javascript" src="/agenda/js/jquery.min.js"></script> <script type="text/javascript" src="/agenda/js/calcms.js"></script>
+<script type="text/javascript" src="/agenda/js/calcms.cust.js"></script> <!--calcms end--></head> <body>
+<div id="container"> <header id="header">
+<h1><a href="/">calcms</a></h1> </header>
+<nav id="nav-main"> <ul>
+<li> <a href="/">home</a></li> <li>
+<a href="/agenda/programm.html">schedule</a> </li>
+<li> <a href="/agenda/planung/">editor</a></li> <li>
+<a href="/download.html">download</a> </li></ul> </nav>
+<div id="content"> <article ><!-- include daily schedule with excerpt --> <div id="calcms_list" class="content">
+
+
+
+
+
+
+
+
+<div id="empty_or_not">
+
+    <script>
+    jQuery( document ).ready(function() {
+        //load next shows into current playlist
+        if(jQuery('#coming_shows').length!=0) jQuery('#coming_shows').load('/agenda/playlistLong/');
+
+        //hide next shows
+        if(jQuery('#calcms_playlist').length!=0) jQuery('#calcms_playlist').parent().parent().hide();
+
+        //hide programm menu
+        if(jQuery('#calcms_menu').length!=0) jQuery('#calcms_menu').parent().parent().hide();
+    });
+    </script>
+
+    <!--
+	<div class="content" style="clear:both"> 
+		nichts gefunden...<br> 
+		<br>
+	</div>
+	-->
+
+	<h3 class="summary title">Kommende Sendungen</h3>
+
+    <div id="coming_shows"></div>
+
+</div>
+
+
+
+
+
+<div>
+
+</div>
+
+
+
+</div></article> <aside class="left">
+<center> <h2>Programm</h2>
+<div class="content"> <!-- include short list of schedules -->
+<div id="calcms_menu">
+
+
+
+
+
+
+
+</div> </div>
+<h2>Kommende Sendung</h2> <div class="content"><!-- show coming shows --> <div id="calcms_playlist">bitte warten…</div></div> </center></aside> <aside class="right">
+<center> <h2>Kalender</h2>
+<div class="content"> <!-- show calendar -->
+<div id="calcms_calendar">
+
+<div >
+
+
+<table>
+<thead>
+<tr>
+	<th class="first">
+		<a 	href="/programm/kalender/2017-11-01.html" 
+		>&laquo;</a>
+	</th>
+	<th colspan="5" align="center">
+		<a 	href="/programm/kalender/2017-12-01_2017-12-31.html" 
+		>Dez 2017</a>
+	</th>
+	<th class="last">
+		<a 	href="/programm/kalender/2018-01-01.html" 
+		>&raquo;</a>
+	</th>
+</tr>
+
+<tr>
+<!--<th>Wo</th>
+-->
+<th><a href="/agenda//sendungen/2017-12-01/2017-12-31/1/" onclick="calcms.selectWeekdayEventListener('2017-12-01','2017-12-31','1');return false;">Mo</a></th><th><a href="/agenda//sendungen/2017-12-01/2017-12-31/2/" onclick="calcms.selectWeekdayEventListener('2017-12-01','2017-12-31','2');return false;">Di</a></th><th><a href="/agenda//sendungen/2017-12-01/2017-12-31/3/" onclick="calcms.selectWeekdayEventListener('2017-12-01','2017-12-31','3');return false;">Mi</a></th><th><a href="/agenda//sendungen/2017-12-01/2017-12-31/4/" onclick="calcms.selectWeekdayEventListener('2017-12-01','2017-12-31','4');return false;">Do</a></th><th><a href="/agenda//sendungen/2017-12-01/2017-12-31/5/" onclick="calcms.selectWeekdayEventListener('2017-12-01','2017-12-31','5');return false;">Fr</a></th><th><a href="/agenda//sendungen/2017-12-01/2017-12-31/6/" onclick="calcms.selectWeekdayEventListener('2017-12-01','2017-12-31','6');return false;">Sa</a></th><th><a href="/agenda//sendungen/2017-12-01/2017-12-31/7/" onclick="calcms.selectWeekdayEventListener('2017-12-01','2017-12-31','7');return false;">So</a></th>
+</tr>
+
+</thead>
+<tbody>
+
+
+<tr>
+<!--
+<th class="week_1"><a href="/agenda//sendungen/2017-11-27/2017-12-03/" title="Woche anzeigen" onclick="calcms.selectDateRangeEventListener('2017-11-27','2017-12-03');return false;" >48</a></th>
+-->
+<td class="week_1 other_month"><a href="/programm/sendungen/2017-11-27.html" title="27.11. zeigen">27</a></td>
+<td class="week_1 other_month"><a href="/programm/sendungen/2017-11-28.html" title="28.11. zeigen">28</a></td>
+<td class="week_1 other_month"><a href="/programm/sendungen/2017-11-29.html" title="29.11. zeigen">29</a></td>
+<td class="week_1 other_month"><a href="/programm/sendungen/2017-11-30.html" title="30.11. zeigen">30</a></td>
+<td class="week_1"><a href="/programm/sendungen/2017-12-01.html" title="01.12. zeigen">01</a></td>
+<td class="week_1"><a href="/programm/sendungen/2017-12-02.html" title="02.12. zeigen">02</a></td>
+<td class="week_1"><a href="/programm/sendungen/2017-12-03.html" title="03.12. zeigen">03</a></td>
+</tr>
+<tr>
+<!--
+<th class="week_2"><a href="/agenda//sendungen/2017-12-04/2017-12-10/" title="Woche anzeigen" onclick="calcms.selectDateRangeEventListener('2017-12-04','2017-12-10');return false;" >49</a></th>
+-->
+<td class="week_2"><a href="/programm/sendungen/2017-12-04.html" title="04.12. zeigen">04</a></td>
+<td class="week_2"><a href="/programm/sendungen/2017-12-05.html" title="05.12. zeigen">05</a></td>
+<td class="week_2"><a href="/programm/sendungen/2017-12-06.html" title="06.12. zeigen">06</a></td>
+<td class="week_2"><a href="/programm/sendungen/2017-12-07.html" title="07.12. zeigen">07</a></td>
+<td class="week_2"><a href="/programm/sendungen/2017-12-08.html" title="08.12. zeigen">08</a></td>
+<td class="week_2"><a href="/programm/sendungen/2017-12-09.html" title="09.12. zeigen">09</a></td>
+<td class="week_2"><a href="/programm/sendungen/2017-12-10.html" title="10.12. zeigen">10</a></td>
+</tr>
+<tr>
+<!--
+<th class="week_3"><a href="/agenda//sendungen/2017-12-11/2017-12-17/" title="Woche anzeigen" onclick="calcms.selectDateRangeEventListener('2017-12-11','2017-12-17');return false;" >50</a></th>
+-->
+<td class="week_3"><a href="/programm/sendungen/2017-12-11.html" title="11.12. zeigen">11</a></td>
+<td class="week_3"><a href="/programm/sendungen/2017-12-12.html" title="12.12. zeigen">12</a></td>
+<td class="week_3"><a href="/programm/sendungen/2017-12-13.html" title="13.12. zeigen">13</a></td>
+<td class="week_3"><a href="/programm/sendungen/2017-12-14.html" title="14.12. zeigen">14</a></td>
+<td class="week_3"><a href="/programm/sendungen/2017-12-15.html" title="15.12. zeigen">15</a></td>
+<td class="week_3"><a href="/programm/sendungen/2017-12-16.html" title="16.12. zeigen">16</a></td>
+<td class="week_3"><a href="/programm/sendungen/2017-12-17.html" title="17.12. zeigen">17</a></td>
+</tr>
+<tr>
+<!--
+<th class="week_4"><a href="/agenda//sendungen/2017-12-18/2017-12-24/" title="Woche anzeigen" onclick="calcms.selectDateRangeEventListener('2017-12-18','2017-12-24');return false;" >51</a></th>
+-->
+<td class="calcms_today week_4"><a href="/programm/sendungen/2017-12-18.html" title="18.12. zeigen">18</a></td>
+<td class="week_4"><a href="/programm/sendungen/2017-12-19.html" title="19.12. zeigen">19</a></td>
+<td class="week_4"><a href="/programm/sendungen/2017-12-20.html" title="20.12. zeigen">20</a></td>
+<td class="week_4"><a href="/programm/sendungen/2017-12-21.html" title="21.12. zeigen">21</a></td>
+<td class="week_4"><a href="/programm/sendungen/2017-12-22.html" title="22.12. zeigen">22</a></td>
+<td class="week_4"><a href="/programm/sendungen/2017-12-23.html" title="23.12. zeigen">23</a></td>
+<td class="week_4"><a href="/programm/sendungen/2017-12-24.html" title="24.12. zeigen">24</a></td>
+</tr>
+<tr>
+<!--
+<th class="week_5"><a href="/agenda//sendungen/2017-12-25/2017-12-31/" title="Woche anzeigen" onclick="calcms.selectDateRangeEventListener('2017-12-25','2017-12-31');return false;" >52</a></th>
+-->
+<td class="week_5"><a href="/programm/sendungen/2017-12-25.html" title="25.12. zeigen">25</a></td>
+<td class="week_5"><a href="/programm/sendungen/2017-12-26.html" title="26.12. zeigen">26</a></td>
+<td class="week_5"><a href="/programm/sendungen/2017-12-27.html" title="27.12. zeigen">27</a></td>
+<td class="week_5"><a href="/programm/sendungen/2017-12-28.html" title="28.12. zeigen">28</a></td>
+<td class="week_5"><a href="/programm/sendungen/2017-12-29.html" title="29.12. zeigen">29</a></td>
+<td class="week_5"><a href="/programm/sendungen/2017-12-30.html" title="30.12. zeigen">30</a></td>
+<td class="week_5"><a href="/programm/sendungen/2017-12-31.html" title="31.12. zeigen">31</a></td>
+</tr>
+<tr>
+<!--
+<th class="week_6"><a href="/agenda//sendungen/2018-01-01/2018-01-07/" title="Woche anzeigen" onclick="calcms.selectDateRangeEventListener('2018-01-01','2018-01-07');return false;" >1</a></th>
+-->
+<td class="week_6 other_month"><a href="/programm/sendungen/2018-01-01.html" title="01.01. zeigen">01</a></td>
+<td class="week_6 other_month"><a href="/programm/sendungen/2018-01-02.html" title="02.01. zeigen">02</a></td>
+<td class="week_6 other_month"><a href="/programm/sendungen/2018-01-03.html" title="03.01. zeigen">03</a></td>
+<td class="week_6 other_month"><a href="/programm/sendungen/2018-01-04.html" title="04.01. zeigen">04</a></td>
+<td class="week_6 other_month"><a href="/programm/sendungen/2018-01-05.html" title="05.01. zeigen">05</a></td>
+<td class="week_6 other_month"><a href="/programm/sendungen/2018-01-06.html" title="06.01. zeigen">06</a></td>
+<td class="week_6 other_month"><a href="/programm/sendungen/2018-01-07.html" title="07.01. zeigen">07</a></td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div> </div>
+<h2>Suche</h2> <div class="content"><!-- calcms search start --><div id="calcms_search"><input id="calcms_search_field" name="search" value="" /><input value="suchen" onclick="calcms.selectSearchEventListener();return false;" type="button" /><a id="calcms_search_show_details" href="#" onclick="calcms.showAdvancedSearch('calcms_enhanced_search');return false;">erweitert</a><br /> <div id="calcms_enhanced_search" style="display: none;">Archiv <input type="checkbox" name="calcms_archive" id="calcms_archive" /><span id="calcms_categories"></span><span id="calcms_series_names"></span><span id="calcms_programs"></span></div> </div><!-- calcms search end --> </div></center> </aside></div> <footer>calcms 2010 - 2017 by <a href="http://radiopiloten.de">http://radiopiloten.de</a></footer> </div></body> </html>
+

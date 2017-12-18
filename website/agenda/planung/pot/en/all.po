@@ -1,0 +1,27 @@
+msgid "button_back"
+msgstr "back"
+
+msgid "button_cancel"
+msgstr "cancel"
+
+msgid "weekday_Mo"
+msgstr "Mo"
+
+msgid "weekday_Tu"
+msgstr "Tu"
+
+msgid "weekday_We"
+msgstr "We"
+
+msgid "weekday_Th"
+msgstr "Th"
+
+msgid "weekday_Fr"
+msgstr "Fr"
+
+msgid "weekday_Sa"
+msgstr "Sa"
+
+msgid "weekday_Su"
+msgstr "Su"
+

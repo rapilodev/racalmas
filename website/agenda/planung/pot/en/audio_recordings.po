@@ -1,0 +1,12 @@
+msgid "region"
+msgstr "en"
+
+msgid "title"
+msgstr "Audio Recordings"
+
+msgid "button_delete"
+msgstr "Delete"
+
+msgid "button_save"
+msgstr "Save"
+

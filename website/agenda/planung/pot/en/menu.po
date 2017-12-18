@@ -1,0 +1,48 @@
+msgid "region"
+msgstr "en"
+
+msgid "button_back"
+msgstr "Back"
+
+msgid "calendar"
+msgstr "Calendar"
+
+msgid "series"
+msgstr "Series"
+
+msgid "users"
+msgstr "Users"
+
+msgid "roles"
+msgstr "Roles"
+
+msgid "studios"
+msgstr "Studios"
+
+msgid "timeslots"
+msgstr "Timeslots"
+
+msgid "projects"
+msgstr "Projects"
+
+msgid "profile"
+msgstr "Settings"
+
+msgid "errors"
+msgstr "Errors"
+
+msgid "logout"
+msgstr "Logout"
+
+msgid "studio"
+msgstr "Studio"
+
+msgid "project"
+msgstr "Project"
+
+msgid "import"
+msgstr "Import"
+
+msgid "help"
+msgstr "Help"
+

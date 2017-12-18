@@ -1,0 +1,227 @@
+
+==== database setup ====
+
+=== create database ===
+
+  mysqladmin -u root -p create calcms_test
+
+=== create users ===
+
+  mysql -u root -p
+
+if using plesk, use
+
+  mysql -u admin mysql -p`cat /etc/psa/.psa.shadow`
+
+# calcms_admin
+
+CREATE USER 'calcms_admin'@'localhost' IDENTIFIED BY 'taes9Cho';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON *.* TO 'calcms_admin'@'localhost' IDENTIFIED BY 'taes9Cho';
+GRANT ALL PRIVILEGES ON `calcms_test`.* TO 'calcms_admin'@'localhost';
+
+# calcms_write / for users
+
+CREATE USER 'calcms_write'@'localhost' IDENTIFIED BY 'Toothok8';
+GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'calcms_write'@'localhost' IDENTIFIED BY 'Toothok8';
+GRANT ALL PRIVILEGES ON `calcms_test`.* TO 'calcms_write'@'localhost';
+
+# calcms_read / for all
+
+CREATE USER 'calcms_read'@'localhost' IDENTIFIED BY 'Ro2chiya';
+GRANT SELECT ON *.* TO 'calcms_read'@'localhost' IDENTIFIED BY 'Ro2chiya' ;
+GRANT ALL PRIVILEGES ON `calcms_test`.* TO 'calcms_read'@'localhost';
+
+=== deploy time zones ===
+
+  mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql -p
+
+if using plesk, use
+
+  mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u admin mysql -p`cat /etc/psa/.psa.shadow`
+
+=== create database content ===
+
+mysql -u calcms_admin -p calcms_test < ./install/create.sql 
+
+==== Apache HTTP Server Setup (at /etc/conf/apache2/ server settings or vhost settings) ====
+
+=== install mod_perl ===
+
+install 
+
+libapache2-mod-perl2
+libapache2-reload-perl
+libapache2-request-perl
+
+or via cpan
+
+Apache2::Reload
+Apache2::Request
+
+if mod_perl was installed already make sure it is enabled
+
+  ln -s /etc/apache2/mods-available/perl.load /etc/apache2/mods-enabled/perl.load
+
+=== enable mod_rewrite ===
+
+install
+
+libapache2-rewrite
+
+  ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load
+
+=== Apache Configuration ) ===
+
+This has to be put into your apache server or virtual host configuration
+
+### START OF FILE ###
+
+    # Possible values include: debug, info, notice, warn, error, crit, alert, emerg.
+    LogLevel debug
+
+    # init mod_perl (should be done at /etc/apache/mods-enabled/perl.load)
+    # LoadModule perl_module /usr/lib/apache2/modules/mod_perl.so
+
+    # redirect to inject calcms into website
+    LimitInternalRecursion 4
+
+    # enable this at HTTP configuration, but disable at HTTPS configuration (!)
+    Redirect permanent /agenda/planung https://calcms.medienstaatsvertrag.org/agenda/planung
+
+    # alias to inject calcms into website
+    Alias /agenda        /home/calcms/website/agenda
+    Alias /agenda_files  /home/calcms/website/agenda_files
+    Alias /programm      /home/calcms/website/agenda/cache/programm
+
+    <Directory /home/calcms/website/agenda>
+        AllowOverride All
+        Options -Indexes +FollowSymLinks +MultiViews +ExecCGI
+        Order allow,deny
+        Allow from all
+        Require all granted
+    </Directory>
+
+    <Directory /home/calcms/website/agenda/cache/programm>
+	    AllowOverride All
+	    Options -Indexes +FollowSymLinks +MultiViews +ExecCGI
+	    Order allow,deny
+	    Allow from all
+	    Require all granted
+    </Directory>
+
+    <Directory /home/calcms/website/agenda_files>
+	    AllowOverride All
+	    Options -Indexes -FollowSymLinks -MultiViews -ExecCGI
+	    Order allow,deny
+	    Allow from all
+	    Require all granted
+    </Directory>
+
+    #mod_perl
+    <IfModule mod_perl.c>
+        PerlSetEnv LC_ALL   en_US.UTF-8
+        PerlSetEnv LANGUAGE en_US.UTF-8
+
+        PerlWarn On
+        PerlModule ModPerl::RegistryPrefork
+
+        PerlModule Apache2::Reload
+        PerlInitHandler Apache2::Reload
+        #PerlSetVar ReloadAll Off
+
+        SetEnv TMPDIR /var/tmp/
+
+        # set base library path
+        PerlSetEnv PERL5LIB /home/calcms/lib/calcms/
+        PerlPostConfigRequire /home/calcms/lib/calcms/startup.pl
+    </IfModule>
+
+#### END_OF_FILE ####
+
+=== install required perl modules ===
+
+For debian/ubuntu there are packages for most required modules.
+If you cannot install packages you can use the CPAN perl package install.
+For Image::Magick::Square no deb package exists, you need to install it by "cpan Image::Magick::Square"
+
+apt-get install <deb-package>
+
+== Install by deb package ==
+
+libapreq2-3
+libapache-dbi-perl
+libauthen-passphrase-blowfish-perl
+libcalendar-simple-perl
+libcgi-pm-perl
+libcgi-session-perl
+libconfig-general-perl
+libdatetime-perl
+libdate-calc-perl
+libdate-manip-perl
+libdbi-perl
+libdbd-mysql-perl
+libencode-perl
+libjson-perl
+libhtml-formattext-withlinks-andtables-perl
+libhtml-parser-perl
+libhtml-template-perl
+libhtml-template-compiled-perl
+libmime-base64-urlsafe-perl
+libtext-wikicreole-perl
+liburi-escape-xs-perl
+perlmagick
+
+
+== Install by CPAN perl packages ==
+
+  cpan <perl-package>
+
+Apache2::Upload
+Apache::DBI
+Authen::Passphrase::BlowfishCrypt
+Calendar::Simple
+CGI
+CGI::Carp
+CGI::Cookie
+CGI::Session
+Config::General
+Data::Dumper
+DateTime
+Date::Calc
+Date::Manip
+DBD::mysql
+DBI
+Encode
+File::stat
+HTML::FormatText
+HTML::Parse
+HTML::Template
+HTML::Template::Compiled
+HTML::Template::Compiled::Plugin::XMLEscape
+JSON
+MIME::Base64
+MIME::Lite
+POSIX
+Text::WikiCreole
+Time::Local
+Time::localtime
+URI::Escape
+Image::Magick
+Image::Magick::Square
+
+==== Configure ====
+
+edit configuration at website/config/config.cgi
+
+==== inject calcms into any CMS ====
+
+to frequently update calcms integration create a cronjob to run tools/update_page.sh
+
+you may have to update the paths inside update_page.sh
+
+=== connect to Admin interface 
+
+https://localhost/agenda/planung/
+ccAdmin
+shug!3Lu
+

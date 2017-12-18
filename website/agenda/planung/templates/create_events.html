@@ -1,0 +1,65 @@
+<TMPL_IF .allow.scan_series_events>
+
+    <script type="text/javascript">
+        <TMPL_IF .getBack>
+            $(document).ready(
+                function(){
+                    getBack()
+                }
+            );
+        </TMPL_IF>
+
+        function assign_series(project_id, studio_id, series_id){
+            if (project_id=='')return false;
+            if (studio_id=='')return false;
+            if (series_id=='')return false;
+
+            $('#assignments_form input[name="series_id"]').val(series_id);
+            //console.log(project_id+" "+studio_id+" "+series_id);
+
+            var url="assign_series.cgi?project_id="+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&action=assign_series';
+            //console.log(url);
+            $('#assignments_form').submit();
+            return false;
+        }
+    </script>
+
+    <style>
+        #content{
+            height:100px;
+            overflow:none;
+        }
+    </style>
+
+    assign series to project <b><TMPL_VAR project_name></b> and studio <b><TMPL_VAR studio_name></b>
+
+    <!-- view series -->
+    <div id="view_<TMPL_VAR .series_id>" class="view" style="clear:both">
+	    <div class="buttons">
+
+            <div style="float:left">Series</div>
+            <select style="float:left;max-width:600px;" id="series_id">
+                <option value="">--select--</option>
+                <TMPL_LOOP series>
+                    <option value="<TMPL_VAR series_id>"><b><TMPL_VAR series_name> - <TMPL_VAR title></b> [<TMPL_VAR project_name> - <TMPL_VAR studio_name>]
+                </TMPL_LOOP>
+            </select>
+
+            <form action="assign_series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>" method="post" id="assignments_form">
+                <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+                <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+                <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">	
+                <input type="hidden" name="action" value="assign_series">
+                <button target="_blank"
+                    onclick="assign_series('<TMPL_VAR .project_id>', '<TMPL_VAR .studio_id>', $('#series_id').val());return false;"
+                    style="float:left"
+                >assign</button>
+            </form>
+        </div>
+    </div>
+
+      
+    </body>
+    </html>
+
+</TMPL_IF>

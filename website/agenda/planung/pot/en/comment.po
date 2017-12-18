@@ -1,0 +1,39 @@
+msgid "label_events"
+msgstr "Events"
+
+msgid "label_comments"
+msgstr "Comments"
+
+msgid "label_no_comments_found"
+msgstr "no comments found"
+
+msgid "label_depth"
+msgstr "depth"
+
+msgid "label_date"
+msgstr "date"
+
+msgid "label_time"
+msgstr "time"
+
+msgid "label_author"
+msgstr "author"
+
+msgid "label_content"
+msgstr "content"
+
+msgid "label_status_show"
+msgstr "show"
+
+msgid "label_status_hide"
+msgstr "hide"
+
+msgid "label_status_read"
+msgstr "mark as read"
+
+msgid "label_status_unread"
+msgstr "mark as unread"
+
+msgid "label_comments"
+msgstr "comments"
+

@@ -1,0 +1,48 @@
+msgid "region"
+msgstr "de"
+
+msgid "title"
+msgstr "Benutzer"
+
+msgid "button_cancel"
+msgstr "Abbrechen"
+
+msgid "button_add_user"
+msgstr "Nutzer hinzufügen"
+
+msgid "label_name"
+msgstr "Login"
+
+msgid "label_full_name"
+msgstr "Voller Name"
+
+msgid "label_email"
+msgstr "email"
+
+msgid "label_password"
+msgstr "Passwort"
+
+msgid "label_password2"
+msgstr "Passwort Bestätigung"
+
+msgid "button_create_user"
+msgstr "Anlegen"
+
+msgid "label_disabled"
+msgstr "gesperrt"
+
+msgid "button_edit_user"
+msgstr "Bearbeiten"
+
+msgid "button_edit_roles"
+msgstr "Rechte"
+
+msgid "button_delete_user"
+msgstr "Löschen"
+
+msgid "button_save_user"
+msgstr "Speichern"
+
+msgid "button_assign_role"
+msgstr "Zuweisen"
+

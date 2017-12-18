@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+    <script src="js/jquery.tablesorter.min.js"></script>
+    <script src="js/jquery.tablesorter.widgets.min.js"></script>
+    <script src="js/jquery.tablesorter.scroller.js"></script>
+
+    <script>
+        var region='<TMPL_VAR loc.region>';
+    </script>
+</head>
+<body>
+
+<TMPL_VAR .loc.label_show_schedule>
+<table id="schedule_table">
+    <thead>
+    <tr>
+        <th></th>
+        <th><TMPL_VAR .loc.label_from></th>
+        <th></th>
+        <th><TMPL_VAR .loc.label_till></th>
+        <th><TMPL_VAR .loc.label_studio></th>
+    </tr>
+    </thead>
+    <body>
+<TMPL_LOOP dates>
+    <tr class="<TMPL_IF exclude>exclude</TMPL_IF>">
+        <td><TMPL_VAR start_weekday></td>
+        <td><TMPL_VAR start></td>
+        <td><TMPL_VAR end_weekday></td>
+        <td><TMPL_VAR end></td>
+        <td><TMPL_VAR studio_name></td>
+    </tr>	
+</TMPL_LOOP>
+    </body>
+</table>
+
+</body>
+</html>
+

@@ -1,0 +1,54 @@
+msgid "region"
+msgstr "en"
+
+msgid "tab_select"
+msgstr "select"
+
+msgid "tab_edit"
+msgstr "edit"
+
+msgid "tab_upload"
+msgstr "upload"
+
+msgid "button_upload"
+msgstr "upload"
+
+msgid "button_search"
+msgstr "search"
+
+msgid "button_zoom_in"
+msgstr "zoom in"
+
+msgid "button_zoom_out"
+msgstr "zoom out"
+
+msgid "button_save"
+msgstr "save"
+
+msgid "button_delete"
+msgstr "delete"
+
+msgid "label_name"
+msgstr "name"
+
+msgid "label_description"
+msgstr "description"
+
+msgid "label_created_at"
+msgstr "created at"
+
+msgid "label_created_by"
+msgstr "by"
+
+msgid "label_modified_at"
+msgstr "modified at"
+
+msgid "label_modified_by"
+msgstr "by"
+
+msgid "label_link"
+msgstr "Editor-Link"
+
+msgid "label_search_hits"
+msgstr "hits"
+

@@ -1,0 +1,116 @@
+<IfModule mod_rewrite.c>
+RewriteBase /agenda
+
+RewriteEngine on
+RewriteCond  %{REQUEST_FILENAME} -f
+RewriteRule (.*) $1 [L]
+RewriteCond  %{REQUEST_FILENAME} -d
+RewriteRule (.*) $1 [L]
+
+RewriteRule ^kommentare/(\d+)/(\d{4}-\d{2}-\d{2}[T\+]\d{2}\:\d{2})(\:\d{2})?/(.*)$ comments.cgi?template=comments.html&event_id=$1&event_start=$2&sort_order=asc&$4 [L]
+RewriteRule ^neueste_kommentare/(.*)$ 				comments.cgi?template=comments_newest.html&limit=20&show_max=3&type=list&$1 [L]
+RewriteRule ^feed_kommentare/(.*)$ 					comments.cgi?template=comments.xml&limit=20&$1 [L]
+RewriteRule ^kommentar_neu/(.*)$ 					add_comment.cgi?$1 [L]
+
+RewriteRule ^sendung/(\d+)/[^&]*(&.*)?$ 	events.cgi?template=event_details.html&event_id=$1&$2 [L]
+RewriteRule ^sendung/(.*)$ 			events.cgi?$1 [L]
+
+RewriteRule ^sendungen/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(\d)/(.*)$ events.cgi?template=event_list.html&from_date=$1&till_date=$2&weekday=$3&$4 [L]
+RewriteRule ^sendungen/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(.*)$ 	events.cgi?template=event_list.html&from_date=$1&till_date=$2&$3 [L]
+RewriteRule ^sendungen/(\d{4}-\d{2}-\d{2})/(.*)$ 			events.cgi?template=event_list.html&date=$1&$2 [L]
+RewriteRule ^sendungen/heute/(.*)$ 					events.cgi?template=event_list.html&date=today&$1 [L]
+RewriteRule ^sendungen/(.*)$ 						events.cgi?$1 [L]
+
+RewriteRule ^menu/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(\d)/(.*)$	events.cgi?template=event_menu.html&from_date=$1&till_date=$2&weekday=$3&$4 [L]
+RewriteRule ^menu/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(.*)$ 	events.cgi?template=event_menu.html&from_date=$1&till_date=$2&$3 [L]
+RewriteRule ^menu/(\d{4}-\d{2}-\d{2})/(.*)$ 				events.cgi?template=event_menu.html&date=$1&$2 [L]
+RewriteRule ^menu/heute/(.*)$ 						events.cgi?template=event_menu.html&date=today&$1 [L]
+RewriteRule ^menu/(.*)$ 						events.cgi?$1 [L]
+
+RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})/$ 				cal.cgi?date=$1 [L]
+RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/$ 	cal.cgi?from_date=$1&till_date=$2 [L]
+RewriteRule ^kalender/(.*)$ 						cal.cgi?$1 [L]
+
+RewriteRule ^kategorien/(.*)$ 			category.cgi?$1 [L]
+RewriteRule ^sendereihen/(.*)$ 			series_names.cgi?$1 [L]
+
+RewriteRule ^playlist/(.*)$ 			events.cgi?template=event_playlist.html&time=future&limit=5&$1 [L]
+RewriteRule ^playlistLong/(.*)$ 		events.cgi?template=event_playlist_long.html&time=future&limit=20&$1 [L]
+RewriteRule ^playlistUtc/(.*)$          events.cgi?template=event_utc_time.json&limit=1
+
+RewriteRule ^running_event/(.*)$ 		events.cgi?template=event_running.html&time=now&limit=1&$1 [L]
+RewriteRule ^feed/(.*)$ 			events.cgi?template=event.atom.xml&time=future&limit=100&$1 [L]
+RewriteRule ^feed.xml[\?]?(.*)$                 events.cgi?template=event.atom.xml&time=future&limit=100&$1 [L]
+RewriteRule ^atom/(.*)$ 			events.cgi?template=event.atom.xml&time=future&limit=100&$1 [L]
+RewriteRule ^atom.xml[\?]?(.*)$                 events.cgi?template=event.atom.xml&time=future&limit=100&$1 [L]
+RewriteRule ^rss/(.*)$ 				events.cgi?template=event.rss.xml&time=future&limit=100&$1 [L]
+RewriteRule ^rss.xml[\?]?(.*)$                  events.cgi?template=event.rss.xml&time=future&limit=100&$1 [L]
+
+RewriteRule ^ical/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(\d)/(.*)$ 	events.cgi?template=event.ics&from_date=$1&till_date=$2&weekday=$3&$4 [L]
+RewriteRule ^ical/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(.*)$ 	events.cgi?template=event.ics&from_date=$1&till_date=$2&$3 [L]
+RewriteRule ^ical/(\d{4}-\d{2})/(.*?)$ 					events.cgi?template=event.ics&from_date=$1-01&till_date=$1-31&$2 [L]
+RewriteRule ^ical/(\d{4}-\d{2}-\d{2})/(.*)$ 				events.cgi?template=event.ics&date=$1&$2 [L]
+RewriteRule ^ical/(\d+)/(.*)?$ 						events.cgi?template=event.ics&event_id=$1&$2 [L]
+
+RewriteRule ^ical/(.*)$ 						events.cgi?template=event.ics&$1 [L]
+RewriteRule ^ical\.ics[\?]?(.*)$                                        events.cgi?template=event.ics&$1 [L]
+
+RewriteRule ^suche/(.*?)/(.*?)/kommende/(.*)$	events.cgi?template=event_list.html&project=$1&search=$2&archive=coming&$3 [L]
+RewriteRule ^suche/(.*?)/(.*?)/vergangene/(.*)$	events.cgi?template=event_list.html&project=$1&search=$2&archive=gone&$3 [L]
+RewriteRule ^suche/(.*?)/(.*?)/(.*)$		events.cgi?template=event_list.html&project=$1&search=$2&$3 [L]
+RewriteRule ^suche/(.*?)/(.*)$ 			events.cgi?template=event_list.html&search=$1&$2 [L]
+
+RewriteRule ^kategorie/(.*?)/(.*?)/kommende/(.*)$	events.cgi?template=event_list.html&project=$1&category=$2&archive=coming&$3 [L]
+RewriteRule ^kategorie/(.*?)/(.*?)/vergangene/(.*)$	events.cgi?template=event_list.html&project=$1&category=$2&archive=gone&$3 [L]
+RewriteRule ^kategorie/(.*?)/(.*?)/(.*)$		events.cgi?template=event_list.html&project=$1&category=$2&$3 [L]
+RewriteRule ^kategorie/(.*?)/(.*)$ 			events.cgi?template=event_list.html&category=$1&$2 [L]
+
+RewriteRule ^rds/(.*)$ 				events.cgi?template=event_playlist.txt&time=now&limit=1&$1 [L]
+RewriteRule ^playlist_show/(.*)$ 		events.cgi?template=event_playlist_show.html&time=future&limit=3&$1 [L]
+RewriteRule ^json/(.*)$ 			events.cgi?template=event.json&time=now&limit=15&$1 [L]
+
+RewriteRule ^sendereihe/(.*?)/(.*?)/kommende/(.*)$	events.cgi?template=event_list.html&project=$1&series_name=$2&archive=coming&$3 [L]
+RewriteRule ^sendereihe/(.*?)/(.*?)/vergangene/(.*)$	events.cgi?template=event_list.html&project=$1&series_name=$2&archive=gone&$3 [L]
+RewriteRule ^sendereihe/(.*?)/(.*?)/(.*)$		events.cgi?template=event_list.html&project=$1&series_name=$2&$3 [L]
+RewriteRule ^sendereihe/(.*?)/(.*)$ 			events.cgi?template=event_list.html&series_name=$1&$2 [L]
+
+RewriteRule ^freefm.xml$                events.cgi?template=event_freefm.xml&location=piradio&limit=40
+RewriteRule ^future$					events.cgi?template=event_list_image.html&limit=20
+RewriteRule ^dt64-festival.html$        events.cgi?location=dt64&template=event_dt64&archive=all
+RewriteRule ^frrapo-programm.html$      events.cgi?location=potsdam&template=event_frrapo
+RewriteRule ^upload_playout_piradio$    upload_playout.cgi?project_id=1&studio_id=1
+</IfModule>
+
+#  MOD_PERL
+Options -Indexes +FollowSymLinks +MultiViews +ExecCGI
+
+#PerlResponseHandler ModPerl::RegistryPrefork
+<IfModule mod_perl.c>
+    <FilesMatch "\.cgi$">   
+        SetHandler perl-script
+        PerlResponseHandler ModPerl::RegistryPrefork
+        PerlOptions +ParseHeaders
+        PerlSetVar PerlRunOnce On
+        Options +ExecCGI
+    </FilesMatch>
+</IfModule>
+
+<IfModule !mod_perl.c>
+    AddHandler cgi-script .cgi .pl
+</IfModule>
+
+#Order allow,deny
+#allow from all
+Require all granted
+
+## compress
+<IfModule mod_headers.c>
+#	SetOutputFilter DEFLATE
+#	SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|zip|mp3)$ no-gzip dont-vary
+#	Header append Vary User-Agent env=!dont-vary
+
+#    <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
+#        Header set Cache-Control "max-age=600, public"
+#    </FilesMatch>
+</IfModule>
+

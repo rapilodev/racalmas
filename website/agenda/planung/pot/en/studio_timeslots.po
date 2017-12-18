@@ -1,0 +1,64 @@
+msgid "region"
+msgstr "en"
+
+msgid "title"
+msgstr "Studio permissions to edit events"
+
+msgid "tab_schedule"
+msgstr "Schedule"
+
+msgid "tab_events"
+msgstr "Events"
+
+msgid "button_create"
+msgstr "add new"
+
+msgid "button_save"
+msgstr "save"
+
+msgid "button_delete"
+msgstr "delete"
+
+msgid "label_name"
+msgstr "name"
+
+msgid "label_start"
+msgstr "start of first event"
+
+msgid "label_end"
+msgstr "end of first event"
+
+msgid "label_frequency"
+msgstr "interval"
+
+msgid "label_update_until"
+msgstr "last date"
+
+msgid "label_studio"
+msgstr "studio"
+
+msgid "label_from"
+msgstr "from"
+
+msgid "label_till"
+msgstr "till"
+
+msgid "label_select_range"
+msgstr "select range"
+
+msgid "label_show_schedule"
+msgstr "resulting dates"
+
+msgid "daily"
+msgstr "daily"
+
+msgid "weekly"
+msgstr "weekly"
+
+msgid "every_two_weeks"
+msgstr "every two weeks"
+
+msgid "every_month"
+msgstr "every month"
+
+

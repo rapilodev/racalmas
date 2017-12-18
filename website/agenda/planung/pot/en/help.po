@@ -1,0 +1,6 @@
+msgid "region"
+msgstr "en"
+
+msgid "toc"
+msgstr "Table of Contents"
+

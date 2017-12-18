@@ -1,0 +1,114 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-size:1em;
+}
+
+body {
+    text-align: center;
+    font-family: Verdana,Arial,Helvetica,Geneva,sans-serif;
+    background:#333;
+}
+
+h1,h2{
+    font-size:0.9em;
+}
+
+a{
+    color:#006;
+    text-decoration:none;
+}
+
+
+li{
+    padding:0.5em;
+    list-style-type:none;
+}
+
+#wrapper {
+    max-width: 1110px;
+    width:100%;
+    min-height:320px;
+    margin: 0 auto;
+    text-align: left; 
+    word-spacing: -6px;
+}
+
+header, nav, aside, section, footer{
+    word-spacing: 0px;
+    text-align: left;
+    padding:1em;
+}
+
+header, footer, header a, footer a{
+    color:#fff;
+    background:#333;
+}
+
+header, footer{
+    display: block;
+}
+
+nav,aside,section{
+    min-width:7%;
+    min-height:20em;
+/*
+    display:inline-block;
+    vertical-align:top;
+*/
+}
+
+
+
+nav{
+    float:left;
+}
+aside{
+    float:right;
+}
+
+nav{
+    margin-right:1em
+}
+
+aside{
+    margin-left:1em
+}
+
+nav, aside{
+    max-width:20%;
+    min-height:320px;
+    background:#ccc;
+}
+
+section{
+    /*width: 600px;*/
+    background:#ffffff;
+
+    /*margin: 200px auto 200px;*/
+    position: relative;
+    z-index:-1;
+}
+
+
+header{
+    text-align: center;
+    font-size:3em;
+    padding:0.3em;
+}
+
+section{
+    background:#ffffff;
+}
+
+footer{
+    text-align: center;
+    clear: both;
+    max-height:1em;
+    margin-right:14px;
+}
+
+div.content{
+    padding:1em;
+}
+

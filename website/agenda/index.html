@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html> <head>
+<title>calcms</title> <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">
+<meta charset="utf-8"> <meta http-equiv="Cache-Control" content="no-cache">
+<link rel="stylesheet" href="/css/style.css"> <!--calcms start-->
+<link rel="alternate" type="application/atom+xml" title="Sendeplan Atom" href="/agenda/atom/" /> <link rel="alternate" type="application/rss+xml" title="Sendeplan RSS" href="/agenda/rss/" />
+<link rel="alternate" type="application/atom+xml" title="Sendekommentare" href="/agenda/feed_kommentare/" /> <link rel="stylesheet" type="text/css" media="screen" href="/agenda/css/calcms.css" />
+<script type="text/javascript" src="/agenda/js/jquery.min.js"></script> <script type="text/javascript" src="/agenda/js/calcms.js"></script>
+<script type="text/javascript" src="/agenda/js/calcms.cust.js"></script> <!--calcms end--></head> <body>
+<div id="container"> <header id="header">
+<h1><a href="/">calcms</a></h1> </header>
+<nav id="nav-main"> <ul>
+<li> <a href="/">home</a></li> <li>
+<a href="/agenda/programm.html">schedule</a> </li>
+<li> <a href="/agenda/planung/">editor</a></li> <li>
+<a href="/download.html">download</a> </li></ul> </nav>
+<div id="content"> <article ><!-- include daily schedule with excerpt --> <div id="calcms_list" class="content">bitte warten</div></article> <aside class="left">
+<center> <h2>Programm</h2>
+<div class="content"> <!-- include short list of schedules -->
+<div id="calcms_menu">bitte warten...</div> </div>
+<h2>Kommende Sendung</h2> <div class="content"><!-- show coming shows --> <div id="calcms_playlist">bitte warten…</div></div> </center></aside> <aside class="right">
+<center> <h2>Kalender</h2>
+<div class="content"> <!-- show calendar -->
+<div id="calcms_calendar">bitte warten...</div> </div>
+<h2>Suche</h2> <div class="content"><!-- calcms search start --><div id="calcms_search"><input id="calcms_search_field" name="search" value="" /><input value="suchen" onclick="calcms.selectSearchEventListener();return false;" type="button" /><a id="calcms_search_show_details" href="#" onclick="calcms.showAdvancedSearch('calcms_enhanced_search');return false;">erweitert</a><br /> <div id="calcms_enhanced_search" style="display: none;">Archiv <input type="checkbox" name="calcms_archive" id="calcms_archive" /><span id="calcms_categories"></span><span id="calcms_series_names"></span><span id="calcms_programs"></span></div> </div><!-- calcms search end --> </div></center> </aside></div> <footer>calcms 2010 - 2017 by <a href="http://radiopiloten.de">http://radiopiloten.de</a></footer> </div></body> </html>
+

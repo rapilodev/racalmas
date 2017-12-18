@@ -1,0 +1,20 @@
+
+<IfModule mod_perl.c>
+    <FilesMatch "\.cgi$">   
+        SetHandler perl-script
+		PerlResponseHandler ModPerl::PerlRunPrefork
+        PerlOptions +ParseHeaders
+        Options +ExecCGI
+        #PerlSetVar PerlRunOnce On
+        #SetInputFilter apreq2
+        #APREQ2_ReadLimit 200M
+    </FilesMatch>
+</IfModule>
+
+<IfModule !mod_perl.c>
+#	AddHandler cgi-script .cgi .pl
+</IfModule>
+
+LimitRequestBody 2000000000
+
+Require all granted

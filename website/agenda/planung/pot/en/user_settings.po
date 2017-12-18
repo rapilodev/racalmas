@@ -1,0 +1,74 @@
+msgid "region"
+msgstr "en"
+
+msgid  "title"
+msgstr "user settings"
+
+msgid  "label_language"
+msgstr "language"
+
+msgid  "label_color"
+msgstr "color"
+
+msgid  "button_colors_save"
+msgstr "save"
+
+msgid  "button_colors_reset"
+msgstr "reset"
+
+msgid  "color_event"
+msgstr "event"
+
+msgid  "color_schedule"
+msgstr "schedule"
+
+msgid  "color_no_series"
+msgstr "no series assigned to event"
+
+msgid  "color_published"
+msgstr "published events"
+
+msgid  "color_marked"
+msgstr "selected events"
+
+msgid  "color_event_error"
+msgstr "event error"
+
+msgid  "color_schedule_error"
+msgstr "schedule error"
+
+msgid  "color_work"
+msgstr "work time"
+
+msgid  "color_playout"
+msgstr "playout"
+
+msgid "label_period"
+msgstr "time range"
+
+msgid "label_period_7"
+msgstr "week"
+
+msgid "label_period_14"
+msgstr "2 weeks"
+
+msgid "label_period_28"
+msgstr "4 weeks"
+
+msgid "label_period_month"
+msgstr "month"
+
+msgid "label_change_password"
+msgstr "Change password"
+
+msgid "button_change_password"
+msgstr "Change password"
+
+msgid "label_password"
+msgstr "Password"
+
+msgid "label_password2"
+msgstr "Password (repeat)"
+
+msgid "password_hint"
+msgstr "at least 8 characters (small and big characters, numbers and special characters)"

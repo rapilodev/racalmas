@@ -1,0 +1,5 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
+</TMPL_IF>Content-type:text/plain; charset=utf-8;
+
+<TMPL_LOOP NAME=events><TMPL_VAR start_utc_epoch> <TMPL_VAR end_utc_epoch> <TMPL_VAR full_title>
+</TMPL_LOOP>

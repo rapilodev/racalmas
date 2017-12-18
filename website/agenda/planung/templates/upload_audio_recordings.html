@@ -1,0 +1,106 @@
+
+<TMPL_IF .allow.upload_audio_recordings>
+
+    <h2>
+        <TMPL_VAR event.weekday_short_name>, <TMPL_VAR event.start_date_name> <TMPL_VAR event.start_time_name><br>
+        <TMPL_VAR event.key><br>
+    </h2>
+
+    <div class="panel">
+        <img src="<TMPL_VAR event.icon>"><TMPL_VAR event.excerpt><br>
+    </div>
+
+    <hr/>
+
+    <TMPL_UNLESS isOver>
+        <div id="progress" style="display:none;vertical-align:middle;background:#aaa;text-align:center;margin:1em;padding:1em;font-size:1em;font-weight:bold;color:#fff" >
+            <div>Ich lade jetzt die Datei hoch... Pieps.</div>
+            <div><img src="/agenda/image/upload/bird9.gif" /></div>
+            <div>Ist das aufregend!</div>
+        </div>
+
+        <form name="audio_recordings_upload" id="audio_recordings_upload" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="project_id" value="<TMPL_VAR project_id>" />
+            <input type="hidden" name="studio_id"   value="<TMPL_VAR studio_id>" />
+            <input type="hidden" name="series_id"  value="<TMPL_VAR series_id>" />
+            <input type="hidden" name="event_id"   value="<TMPL_VAR event_id>" />
+            <table class="table">
+                <tr>    
+                    <td>Datei</td>
+
+                    <td><input type="file" name="upload" size="20"
+                     accept="audio/mp3" maxlength="2000000000" 
+                     /></td>
+
+                    <td colspan="2" style="text-align:right;padding-right:0.5em;" onclick="showProgress()">
+                        <input type="submit" name="action" value="upload" />
+                    </td>
+
+                    <td>
+                        <TMPL_IF filename>
+                            <TMPL_VAR filename escape=0>"
+                        </TMPL_IF>
+                    </td>
+
+                </tr>
+            </table>
+        </form>
+    </TMPL_UNLESS>
+</TMPL_IF>
+
+<table>
+    <tr>
+        <th>action</th>
+        <!--<th>id</th>-->
+        <th>name</th>
+        <th>size in bytes</th>
+        <th>uploaded by</th>
+        <th>uploaded at</th>
+    </tr>
+    <TMPL_LOOP audio_recordings>
+        <tr>
+            <td><button onclick="playAudio('<TMPL_VAR path>');return false">play</button></td>
+            <!--<td><TMPL_VAR id></td>-->
+            <td><TMPL_VAR path></td>
+            <td><TMPL_VAR size></td>
+            <td><TMPL_VAR created_by></td>
+            <td><TMPL_VAR created_at></td>
+            <TMPL_IF .allow.delete_audio_recordings>
+            <td>
+                <form method="post">
+                    <input type="hidden" name="project_id" value="<TMPL_VAR project_id>" />
+                    <input type="hidden" name="studio_id"  value="<TMPL_VAR studio_id>" />
+                    <input type="hidden" name="series_id"  value="<TMPL_VAR series_id>" />
+                    <input type="hidden" name="event_id"   value="<TMPL_VAR event_id>" />
+                    <input type="hidden" name="path"   value="<TMPL_VAR path>" />
+                    <button type="submit" name="action" value="delete"><TMPL_VAR .loc.button_delete></button>
+                </form>
+            </td>
+            </TMPL_IF>
+        </tr>
+    </TMPL_LOOP>
+</table>
+
+
+<!--
+
+    <pre>
+        name: <TMPL_VAR path>
+        size: <TMPL_VAR size>
+    </pre>
+    <TMPL_IF action>
+        <TMPL_IF error>
+            <div class="error" id="message"><TMPL_VAR error></div>
+        <TMPL_ELSE>
+            <div class="oky" id="message" style="display:none">
+                <TMPL_VAR action_result>
+                <TMPL_VAR filename>
+            </div>
+        </TMPL_IF>
+    </TMPL_IF>
+-->
+
+</div>
+</center>
+</body>
+</html>

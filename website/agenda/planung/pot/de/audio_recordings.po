@@ -1,0 +1,12 @@
+msgid "region"
+msgstr "de"
+
+msgid "title"
+msgstr "Audio Vorproduktionen"
+
+msgid "button_delete"
+msgstr "Löschen"
+
+msgid "button_save"
+msgstr "Speichern"
+

@@ -1,0 +1,650 @@
+
+/*
+include in your web page:
+<link rel="stylesheet" type="text/css" media="screen" href="http://piradio.de/agenda_files/css/calcms.css" />
+*/
+
+/* calcms - common */
+
+	body{
+		text-align:left;
+		font: 1em/1.2em Ubuntu,"Lucida Grande",Verdana,Helvetica,Arial,sans-serif;
+	}
+
+	a{
+		text-decoration:none;
+		color:black;
+	}
+
+	a:visited{
+		color:black;
+		
+	}
+	
+	@media only screen and (max-device-width: 480px) {
+		#content{
+			width:480px;
+		}
+	}
+	@media only screen and (max-device-width: 800px) {
+		#content{
+			width:800px;
+		}
+	}
+
+	#content{
+		width:460px;
+		padding:10px;
+	}
+	
+	pre{
+		text-align:left;
+		font-family:Courier;
+		padding:1em;
+		margin:1em;
+		border:1px solid black;
+	}
+
+	/* hide microformats */
+	 .dtstart{
+		display:none;
+		visibility:hidden;
+	}
+
+	 .dtend{
+		display:none;
+		visibility:hidden;
+	}
+
+/* end of common */
+
+
+/* menu */
+	#calcms_menu{
+		padding-top:3px;padding-right:5px;
+		margin-bottom:1px;
+		text-align:left;
+		clear:both;
+		line-height:120%;
+		/*padding:3px;*/
+		/*font-family:Verdana,Arial,sans-serif;*/
+		/*overflow:auto;*/
+	}
+
+	#calcms_menu li.leaf{
+		list-style-type:none;
+		list-style-image:url();
+		background:none;
+		padding:0;
+	}
+
+/*
+	#calcms_menu a{
+		text-decoration:none;
+	}
+*/
+	#calcms_menu a:hover,
+	#calcms_calendar a:hover{
+		text-decoration:underline;
+	}
+
+	#calcms_menu .date{
+		margin:0px;
+		font-weight:bold;
+		margin-top:1em;
+		margin-bottom:6px;
+		-moz-border-radius-topleft:12px;
+		-moz-border-radius-topright:12px;
+		-webkit-border-top-right-radius: 12px; 
+		-webkit-border-top-left-radius: 12px;
+	}
+
+	#calcms_menu .title{
+		padding:0px;
+		margin:0px;
+		text-align:left;
+	}
+
+/*
+	div:first-line #calcms_menu .title {
+		margin-left:0px;
+	}
+*/
+	#calcms_menu .excerpt{
+		padding:3px;
+		margin:0px;
+	}
+	#calcms_menu .content{
+		padding:3px;
+		margin:0px;
+		clear:left;
+		margin:0
+	}
+	#calcms_menu .content p{
+		margin-top:10px
+	}
+	#calcms_menu .content h1{
+		text-align:left;
+		font-size:1.5em;
+		clear:left;
+		margin-top:16px
+	}	
+	#calcms_menu .content h2{
+		text-align:left;
+		font-size:1.5em;
+		clear:left;
+		margin-top:16px
+	}
+	#calcms_menu .content h3{
+		text-align:left;
+		font-size:1.5em;
+		clear:left;
+		margin-top:16px
+	}
+	#calcms_menu .content h4{
+		text-align:left;
+		font-size:1.5em;
+		clear:left;
+		margin-top:16px
+	}
+
+	#calcms_menu li{
+		clear:left;
+		line-height:1.2em;
+	}
+
+	#calcms_menu .date{
+		margin-top:12px;
+		margin-left:3em;
+		clear:both;
+	}
+
+	#calcms_list .summary .title{
+		font-weight:bold;
+	}
+
+	#calcms_list .title{
+		margin-bottom:1em;
+	}
+
+	#calcms_list hr{
+		/*margin-bottom:2em;*/
+		background-color:#ddd;
+	}
+
+	#calcms_list .content img{
+		text-align:left;
+		font-size:1.5em;
+		margin-bottom:20px;
+		border:0;
+		/*
+		clear:both;
+		float:left;
+		margin-right:30px;
+		*/
+		float: right;
+		margin-left: 1em;
+	}
+
+	#calcms_list li{
+/*
+		list-style-type:none;
+		list-style-image:url();
+		background:none;
+		padding:0;
+*/
+	}
+
+
+	#calcms_playlist{
+		padding:1px;
+		margin:0px;
+		clear:both;
+		/*text-align:center;*/
+	}
+
+	#calcms_playlist div{
+		vertical-align:middle;
+		clear:both;
+	}
+
+	#calcms_playlist img{
+		width:2em;
+		height:2em;
+		margin:6px;
+		float:left;
+		opacity:0.9;
+	}
+
+	#calcms_playlist img:hover{
+		opacity:1.0;
+	}
+
+	#calcms_menu div{
+		vertical-align:middle;
+		clear:both;
+	}
+
+	#calcms_menu .event{
+		opacity:0.8;
+	}
+
+/*
+	#calcms_menu .event:hover{
+		opacity:1.0;
+	}
+*/
+	#calcms_menu img{
+		width:2em;
+		height:2em;
+		margin-right:6px;
+		margin-bottom:12px;
+		float:left;
+	}
+
+	#calcms_menu img:hover{
+	}
+
+	#calcms_playlist a{
+		clear:both;
+		float:none;
+	}
+
+	#calcms_menu .event{
+		padding:1px;
+		margin:0px;
+		clear:both;
+		text-align:left;
+	}
+
+	#calcms_menu .event.running{
+		font-weight:bold;
+	}
+
+/* end of menu */
+
+
+
+/* calcms_list */
+	div#calcms_list{
+	}
+
+	#content div a img,
+	#icon_bar a img,
+	{
+		margin:6px;
+	}
+
+	#calcms_list .date{
+		/*padding:6px;*/
+		/*margin:0px;*/
+		font-weight:bold;
+		margin-top:1em;
+		/*
+		-moz-border-radius-topleft:12px;
+		-moz-border-radius-topright:12px;
+		-webkit-border-top-right-radius: 12px; 
+		-webkit-border-top-left-radius: 12px;
+		*/
+	}
+
+	#calcms_list .excerpt{
+		margin-left:40px;
+		margin-top:6px;
+		/*margin-bottom:10px;*/
+		/* color:#eee; */
+	}
+
+	#calcms_list .event.running{
+		/*padding:6px;*/
+		/*background: white;*/
+		/*border:1px solid #bbb;*/
+		color:#000;
+	}
+
+	#calcms_list .submitted{
+		position:absolute;
+		right:0px;
+	}
+
+
+/* end of calcms_list */
+
+/* calcms comments */
+
+	#calcms_comments .author{
+		color:#666;
+		font-weight:bold;
+		float:left;
+	}
+
+	#calcms_comments .date{
+		color:#888;
+		font-weight:normal;
+		margin:0;
+		padding:0;
+	}
+
+	#calcms_comments .content{
+		/* color:#ccc; */
+		font-weight:normal;
+	}
+
+	#calcms_comments .comment{
+		margin:0;
+		padding:0;
+	}
+
+	#calcms_comments .level0{
+		padding-top:1.5em;
+		margin-left:00px;
+	}
+	#calcms_comments .level1{
+		margin-left:20px;
+	}
+	#calcms_comments .level2{
+		margin-left:40px;
+	}
+	#calcms_comments .level3{
+		margin-left:60px;
+	}
+	#calcms_comments .level4{
+		margin-left:80px;
+	}
+	#calcms_comments .level5{
+		margin-left:100px;
+	}
+	#calcms_comments .level6{
+		margin-left:120px;
+	}
+	#calcms_comments .level7{
+		margin-left:140px;
+	}
+	#calcms_comments .level8{
+		margin-left:160px;
+	}
+	#calcms_comments .level9{
+		margin-left:180px;
+	}
+	#calcms_comments .level10{
+		margin-left:200px;
+	}
+
+	#calcms_add_comment{
+		visibility:hidden;
+		display:none;
+	}
+
+	#calcms_newest_comments .author{
+		font-weight:bold;
+	}
+
+	#calcms_newest_comments li,
+	#calcms_newest_comments li.leaf{
+		list-style-type:none;
+		list-style-image:url();
+		background:none;
+	}
+
+	#calcms_newest_comments span.content{
+		text-overflow: ellipsis; 
+		-o-text-overflow: ellipsis; 
+		-icab-text-overflow: ellipsis; 
+		-khtml-text-overflow: ellipsis; 
+		-moz-text-overflow: ellipsis; 
+		-webkit-text-overflow: ellipsis;
+	}
+
+	#calcms_newest_comments li.leaf a,
+	#calcms_newest_comments li.leaf span{
+		line-height:1.2em;
+	}
+
+	#calcms_newest_comments li.leaf a:hover{
+		text-decoration:none;
+	}
+
+/* end of calcms comments*/
+
+/* calcms_search */
+	#calcms_search{
+		margin:0;
+		z-index:3;
+		text-align:left;
+		font-size:10px;
+		clear:both;
+	}
+
+	#calcms_search input{
+		width:80px;
+	}
+
+	table#calcms_search{
+		padding:0;
+		margin:0;
+		text-align:left;
+	}
+
+	table#calcms_search td a{	
+		padding:1px;
+	}
+
+	#calcms_search input#calcms_search_field,
+	#calcms_search select{
+		width:100px;
+	}
+
+	#calcms_search input#calcms_search_field{
+		float:left;
+	}
+
+	#calcms_search form{
+		float:left;
+	}
+/* end of calcms_search */
+
+
+/* calcms_calendar  */
+	#calcms_calendar{
+		overflow:auto;
+		text-align:center;
+		padding:0px;
+		margin:0px;
+		vertical-align:top;
+		clear:both;
+		width:100%;
+	}
+
+	#calcms_calendar .week_1, 
+	#calcms_calendar .week_2, 
+	#calcms_calendar .week_3,			
+	#calcms_calendar .week_4,			
+	#calcms_calendar .week_5{		
+	}
+
+	#calcms_calendar th{
+		margin:0px;
+		font-weight:normal;
+		margin-top:1em;
+	}
+
+	#calcms_calendar th a{
+		/* color:#AEB1B3; */
+	}
+
+	/* selected fields */
+	#calcms_calendar .selected, .night, .morning, .noon, .afternoon, .evening{
+		background:#eee;
+		font-size:bold;
+		font-weight:bold;
+	}
+
+	#calcms_calendar table{
+		text-align:center;
+		padding:0px;
+		margin:0px;
+	}
+
+	/* hover effects */
+
+	#calcms_calendar table td:hover{
+		background-color:#f0f0f0;
+	}
+
+	#calcms_calendar table td{
+		border-bottom:1px solid #D1C7CA;
+		opacity:0.8;
+		/*border-right:1px solid #D1C7CA;*/
+	}
+
+	#calcms_calendar table td.selected{
+		/*opacity:1.0;*/
+	}
+
+	#calcms_calendar  table td.selected:hover{
+		background-color:#f0f0f0;
+		border-top: 1px solid #D1C7CA;
+		border-bottom:1px solid #D1C7CA;
+	}
+
+	#calcms_calendar  table a{
+		text-decoration:none;
+		font-weight:normal;
+	}
+
+	#calcms_calendar  table td.selected a{
+		font-weight:bold;
+	}
+
+	#calcms_calendar td,
+	#calcms_calendar th{
+		padding:0px;
+		padding-left:1em;
+		padding-right:1em;
+		padding-bottom:1em;
+		margin:0;
+		text-align:center;
+	}
+
+	#calcms_calendar th.first,
+	#calcms_calendar th.last{
+		font-size:large;
+	}
+	/* not selectable columns */
+
+	#calcms_calendar table td.row_type:hover{
+		border-bottom:1px solid #D1C7CA;
+		border-right: 1px solid #D1C7CA;
+		background-color:#ffffff;
+	}
+
+	#calcms_calendar .row_type{
+/*		width:100px
+*/
+	}
+
+	.calcms_today{
+		font-weight:bold;
+	}
+
+/* end of calcms_calendar */
+
+
+	.blnfm, .multicultfm, .ohrfunk, .twenfm, .offenerkanalberlin, .klubradio, .piradio,
+	.studioansage, .studiolottumstrasse, .studiorebootfm
+	
+	{
+/*
+		border-radius: 12px; 
+		-moz-border-radius: 12px; 
+	        -webkit-border-radius: 12px;
+*/
+		padding:6px;
+		margin:6px;
+	}
+
+	.blnfm{
+		background-color:white;
+	}
+
+	.multicultfm{
+		background-color:white;
+	}
+
+	.ohrfunk{
+		background-color:white;
+	}
+
+	.twenfm{
+		background-color:white;
+	}
+
+	.offenerkanalberlin{
+		background-color:white;
+	}
+
+	.klubradio{
+		background-color:white;
+	}
+
+	.piradio{
+		background-color:white;
+	}
+
+	/*Einheitsradio */
+	.studiolottumstrasse{
+		background-color:white;
+		/* background-color:#ffddff; */
+	}
+	.studioansage{
+		background-color:white;
+		/* background-color:#ddffdd; */
+	}
+	.studiorebootfm{
+		background-color:white;
+		/* background-color:#ffff00; */
+	}
+
+	.feed-icon{
+		float:left;
+	}
+
+	#icon_bar{
+		padding-bottom:6px;
+	}
+
+	#icon_bar .feed-icon{
+		height:24px;
+	}
+
+	#icon_bar .feed-icon img{
+		margin:6px;
+		text-align:right;
+	}
+
+	input{
+		width:200px;
+	}
+
+	.vevent a{
+		font-weight:normal;
+	}		
+
+
+	div#jp_player_1{
+		text-decoration:none;
+		height:24px;
+		padding-left:30px;
+		color:black;
+		background-repeat:no-repeat;
+		background-image:url("/agenda/image/player4.play.png");
+		border:1px solid black;
+	}
+
+	div#jp_equalizer_1{
+		width:0px;
+		height:2px;
+		background:#ccc;
+		border:1px solid gray;
+	}
+

@@ -1,0 +1,16 @@
+
+<style>
+    ul.error{
+        list-style-type: none;
+        background:#fcc;
+        padding:6px;
+    }
+</style>
+<TMPL_IF errors>
+    <ul class="error">
+    <TMPL_LOOP errors>
+        <li><TMPL_VAR error></li>
+    </TMPL_LOOP>
+    </ul>
+</TMPL_IF>
+

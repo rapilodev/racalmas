@@ -1,0 +1,312 @@
+<TMPL_IF .allow.read_series>
+
+	<script src="js/datetime.js" type="text/javascript"></script>
+<!--	<script src="js/localization.js" type="text/javascript"></script> -->
+	<link rel="stylesheet" href="css/work_time.css" type="text/css" /> 
+
+	<link href="css/jquery-ui-timepicker.css" type="text/css" rel="stylesheet" /> 
+	<script src="js/jquery-ui-timepicker.js" type="text/javascript"></script>
+    <script src="js/jquery.autosize.min.js" type="text/javascript"></script>
+
+	<link href="css/theme.default.css" rel="stylesheet">
+	<script src="js/jquery.tablesorter.min.js"></script>
+	<script src="js/jquery.tablesorter.widgets.min.js"></script>
+	<script src="js/jquery.tablesorter.scroller.js"></script>
+	
+    <script>
+        var region='<TMPL_VAR loc.region>';
+        <TMPL_IF .getBack>
+            $(document).ready(
+                function(){
+                    getBack()
+                }
+            );
+        </TMPL_IF>
+    </script>
+
+<style>
+	#editor div p a img {
+		float:right;
+	}
+</style>
+
+<h2><TMPL_VAR .loc.title></h2>
+
+<!-- view worktime -->
+<div id="view_<TMPL_VAR .schedule_id>" class="view" style="clear:both">
+	<div class="buttons">
+    </div>
+</div>
+
+<!-- edit schedule -->
+<TMPL_IF .allow.update_schedule>
+<div id="edit_schedule_<TMPL_VAR .schedule_id>" class="editor">
+	<TMPL_LOOP schedule>
+	<div class="row schedule<TMPL_IF selected> selected</TMPL_IF>">
+		<form method="post"
+		    action="work_time.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&schedule_id=<TMPL_VAR schedule_id>"
+		    id="schedule_<TMPL_VAR schedule_id>"
+		>
+            <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+			<input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>" />
+			<input type="hidden" name="schedule_id" value="<TMPL_VAR schedule_id>" />
+            <input type="hidden" name="type" value="service" />
+
+			<div class="cell exclude"> 
+                <TMPL_VAR .loc.exception><br/>
+			    <input name="exclude" value="<TMPL_VAR exclude>" type="checkbox" class="exclude">
+			</div>
+
+			<div class="cell weekday"></div>
+			<div class="cell start">
+                <TMPL_VAR .loc.schedule_start><br/>
+			    <input name="start" value="<TMPL_VAR start>" class="datetimepicker start"/>
+			</div>
+
+			<div class="cell duration">
+                <TMPL_VAR .loc.duration><br/>
+                <select name="duration" value="<TMPL_VAR duration>" class="duration"/>
+                    <option value="60">1 <TMPL_VAR .loc.hour></option>
+                    <option value="120">2 <TMPL_VAR .loc.hours></option>
+                    <option value="180">3 <TMPL_VAR .loc.hours></option>
+                    <option value="240">4 <TMPL_VAR .loc.hours></option>
+                    <option value="300">5 <TMPL_VAR .loc.hours></option>
+                    <option value="360">6 <TMPL_VAR .loc.hours></option>
+                    <option value="420">7 <TMPL_VAR .loc.hours></option>
+                    <option value="480">8 <TMPL_VAR .loc.hours></option>
+                    <option value=""><TMPL_VAR .loc.choose_free></option>
+                </select>
+			</div>
+
+			<div class="cell title">
+                <TMPL_VAR .loc.schedule_title><br/>
+			    <input name="title" value="<TMPL_VAR title>" class="title"/>
+			</div>
+
+			<div class="cell period_type"> 
+                <TMPL_VAR .loc.period_type><br/>
+                <select name="period_type" onchange="showScheduleFields('schedule_<TMPL_VAR schedule_id>')">
+                    <option value="single" <TMPL_IF period_type_single>selected="selected"</TMPL_IF>
+                    ><TMPL_VAR .loc.period_type_single></option>
+                    <option value="days" <TMPL_IF period_type_days>selected="selected"</TMPL_IF>
+                    ><TMPL_VAR .loc.period_type_days></option>
+                    <option value="week_of_month" <TMPL_IF period_type_week_of_month>selected="selected"</TMPL_IF>
+                    ><TMPL_VAR .loc.period_type_week_of_month></option>
+                </select>
+			</div>
+
+			<div class="cell end"> 
+                <TMPL_VAR .loc.schedule_end><br/>
+			    <input name="end"  value="<TMPL_VAR end>" class="datetimepicker end"/>
+			</div>
+
+			<div class="cell frequency"> 
+                <TMPL_VAR .loc.frequency><br/>
+			    <select name="frequency" value="<TMPL_VAR frequency>" class="frequency">
+                    <option value="7"><TMPL_VAR .loc.weekly></option>
+                    <option value="14"><TMPL_VAR .loc.every> 2 <TMPL_VAR .loc.weeks></option>
+                    <option value="21"><TMPL_VAR .loc.every> 3 <TMPL_VAR .loc.weeks></option>
+                    <option value="28"><TMPL_VAR .loc.every> 4 <TMPL_VAR .loc.weeks></option>
+                    <option value="42"><TMPL_VAR .loc.every> 6 <TMPL_VAR .loc.weeks></option>
+                    <option value="56"><TMPL_VAR .loc.every> 8 <TMPL_VAR .loc.weeks></option>
+                    <option value=""><TMPL_VAR .loc.choose_free></option>
+                </select>
+			</div>
+
+			<div class="cell week_of_month"> 
+                <TMPL_VAR .loc.week_of_month><br/>
+			    <select name="week_of_month" value="<TMPL_VAR week_of_month>" class="week_of_month">
+                    <option value="1"><TMPL_VAR .loc.week_1st></option>
+                    <option value="2"><TMPL_VAR .loc.week_2nd></option>
+                    <option value="3"><TMPL_VAR .loc.week_3rd></option>
+                    <option value="4"><TMPL_VAR .loc.week_4th></option>
+                    <option value="5"><TMPL_VAR .loc.week_5th></option>
+                </select>
+			</div>
+
+			<div class="cell schedule_weekday"> 
+                <TMPL_VAR .loc.weekday><br/>
+			    <select name="weekday" value="<TMPL_VAR weekday>" class="schedule_weekday"/>
+                    <option value="1"><TMPL_VAR .loc.monday></option>
+                    <option value="2"><TMPL_VAR .loc.tuesday></option>
+                    <option value="3"><TMPL_VAR .loc.wednesday></option>
+                    <option value="4"><TMPL_VAR .loc.thursday></option>
+                    <option value="5"><TMPL_VAR .loc.friday></option>
+                    <option value="6"><TMPL_VAR .loc.saturday></option>
+                    <option value="7"><TMPL_VAR .loc.sunday></option>
+                </select>
+			</div>
+
+			<div class="cell schedule_month"> 
+                <TMPL_VAR .loc.every_month><br/>
+			    <select name="month" value="<TMPL_VAR month>" class="schedule_month"/>
+                    <option value="1"><TMPL_VAR .loc.every_time></option>
+                    <option value="2"><TMPL_VAR .loc.every_2nd_time></option>
+                    <option value="3"><TMPL_VAR .loc.every_3rd_time></option>
+                    <option value="4"><TMPL_VAR .loc.every_4th_time></option>
+                </select>
+			</div>
+
+			<div class="cell save"><br>
+			    <button type="submit" name="action" value="save_schedule"
+			    ><TMPL_VAR .loc.button_save_schedule></button>
+			</div>
+			<TMPL_IF .allow.delete_schedule>
+			<div class="cell delete"><br>
+			    <button type="submit" name="action" value="delete_schedule" 
+                    onclick="commitForm('schedule_<TMPL_VAR schedule_id>','delete_schedule','<TMPL_VAR .loc.button_delete_schedule>');return false;"
+                ><TMPL_VAR .loc.button_delete_schedule></button>
+            </div>
+			</TMPL_IF>
+		</form>
+	</div>
+	</TMPL_LOOP>
+	
+    <!-- add schedule -->
+	<div class="row schedule row<TMPL_IF show_hint_to_add_schedule> active</TMPL_IF>">
+		<form id="schedule_add" method="post" 
+		    action="work_time.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>"
+		>
+            <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+			<input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>" />
+			<input type="hidden" name="type"  value="service" />	
+
+
+			<div class="cell exclude"> 
+                <TMPL_VAR .loc.exception><br/>
+			    <input name="exclude" value="<TMPL_VAR exclude>" type="checkbox" class="exclude" onclick="updateScheduleButtonName()"/>
+			</div>
+
+			<div class="cell weekday"></div>
+			<div class="cell start">
+                <TMPL_VAR .loc.schedule_start><br/>
+			    <input name="start" value="<TMPL_VAR start>" class="datetimepicker start"/>
+			</div>
+
+			<div class="cell duration"> 
+                <TMPL_VAR .loc.duration><br/>
+                <select name="duration" value="<TMPL_VAR duration>" class="duration"/>
+                    <option value="60">1 <TMPL_VAR .loc.hour></option>
+                    <option value="120">2 <TMPL_VAR .loc.hours></option>
+                    <option value="180">3 <TMPL_VAR .loc.hours></option>
+                    <option value="240">4 <TMPL_VAR .loc.hours></option>
+                    <option value="300">5 <TMPL_VAR .loc.hours></option>
+                    <option value="360">6 <TMPL_VAR .loc.hours></option>
+                    <option value="420">7 <TMPL_VAR .loc.hours></option>
+                    <option value="480">8 <TMPL_VAR .loc.hours></option>
+                    <option value=""><TMPL_VAR .loc.choose_free></option>
+                </select>
+			</div>
+
+			<div class="cell title">
+                <TMPL_VAR .loc.schedule_title><br/>
+			    <input name="title" value="<TMPL_VAR title>" class="title"/>
+			</div>
+
+			<div class="cell period_type"> 
+                <TMPL_VAR .loc.period_type><br/>
+                <select name="period_type" onchange="showScheduleFields('schedule_add')">
+                    <option value="single" <TMPL_IF period_type_single>selected="selected"</TMPL_IF> 
+                    ><TMPL_VAR .loc.period_type_single></option>
+                    <option value="days" <TMPL_IF period_type_days>selected="selected"</TMPL_IF> 
+                    ><TMPL_VAR .loc.period_type_days></option>
+                    <option value="week_of_month" <TMPL_IF period_type_week_of_month>selected="selected"</TMPL_IF> 
+                    ><TMPL_VAR .loc.period_type_week_of_month></option>
+                </select>
+			</div>
+
+			<div class="cell end"> 
+                <TMPL_VAR .loc.schedule_end><br/>
+			    <input name="end"  value="<TMPL_VAR end>" class="datetimepicker end"/>
+			</div>
+
+			<div class="cell frequency"> 
+                <TMPL_VAR .loc.frequency><br/>
+			    <select name="frequency" value="<TMPL_VAR frequency>" class="frequency">
+                    <option value="7"><TMPL_VAR .loc.weekly></option>
+                    <option value="14"><TMPL_VAR .loc.every> 2 <TMPL_VAR .loc.weeks></option>
+                    <option value="21"><TMPL_VAR .loc.every> 3 <TMPL_VAR .loc.weeks></option>
+                    <option value="28"><TMPL_VAR .loc.every> 4 <TMPL_VAR .loc.weeks></option>
+                    <option value="42"><TMPL_VAR .loc.every> 6 <TMPL_VAR .loc.weeks></option>
+                    <option value="56"><TMPL_VAR .loc.every> 8 <TMPL_VAR .loc.weeks></option>
+                    <option value=""><TMPL_VAR .loc.choose_free></option>
+                </select>
+			</div>
+
+			<div class="cell week_of_month"> 
+                <TMPL_VAR .loc.week_of_month><br/>
+			    <select name="week_of_month" value="<TMPL_VAR week_of_month>" class="week_of_month">
+                    <option value="1"><TMPL_VAR .loc.week_1st></option>
+                    <option value="2"><TMPL_VAR .loc.week_2nd></option>
+                    <option value="3"><TMPL_VAR .loc.week_3rd></option>
+                    <option value="4"><TMPL_VAR .loc.week_4th></option>
+                    <option value="5"><TMPL_VAR .loc.week_5th></option>
+                </select>
+			</div>
+
+			<div class="cell schedule_weekday"> 
+                <TMPL_VAR .loc.weekday><br/>
+			    <select name="weekday" value="<TMPL_VAR weekday>" class="schedule_weekday"/>
+                    <option value="1"><TMPL_VAR .loc.monday></option>
+                    <option value="2"><TMPL_VAR .loc.tuesday></option>
+                    <option value="3"><TMPL_VAR .loc.wednesday></option>
+                    <option value="4"><TMPL_VAR .loc.thursday></option>
+                    <option value="5"><TMPL_VAR .loc.friday></option>
+                    <option value="6"><TMPL_VAR .loc.saturday></option>
+                    <option value="7"><TMPL_VAR .loc.sunday></option>
+                </select>
+			</div>
+
+			<div class="cell schedule_month"> 
+                <TMPL_VAR .loc.every_month><br/>
+			    <select name="month" value="<TMPL_VAR month>" class="schedule_month"/>
+                    <option value="1"><TMPL_VAR .loc.every_time></option>
+                    <option value="2"><TMPL_VAR .loc.every_2nd_time></option>
+                    <option value="3"><TMPL_VAR .loc.every_3rd_time></option>
+                    <option value="4"><TMPL_VAR .loc.every_4th_time></option>
+                </select>
+			</div>
+
+			<TMPL_IF .allow.update_schedule>
+				<div class="cell save">
+				    <br/>
+                    <button id="addScheduleButton" type="submit" name="action" value="save_schedule"
+                        ><TMPL_VAR .loc.button_add_schedule></button>
+                    <TMPL_IF show_hint_to_add_schedule><TMPL_VAR .loc.label_hint_to_add_schedule></TMPL_IF>
+                </div>
+			</TMPL_IF>
+		</form>
+	</div>
+</div>
+</TMPL_IF>
+
+<!-- show schedule -->
+<div id="show_schedule_<TMPL_VAR schedule_id>" class="show_schedule">
+    <table id="schedule_table" width="100%">
+        <thead>
+            <tr>
+                <th></th>
+                <th><TMPL_VAR .loc.from></th>
+                <th><TMPL_VAR .loc.till></th>
+                <th><TMPL_VAR .loc.title></th>
+                <th><TMPL_VAR .loc.schedule_type></th>
+            </tr>
+        </thead>
+        <tbody>
+    <TMPL_LOOP work_dates>
+            <tr <TMPL_IF exclude>class="exclude"</TMPL_IF> >
+                <td><TMPL_VAR weekday></td>
+                <td><TMPL_VAR start></td>
+                <td><TMPL_VAR end></td>
+                <td><TMPL_VAR title></td>
+                <td><TMPL_VAR type></td>
+            </tr>
+    </TMPL_LOOP>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
+
+</TMPL_IF>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+
+<TMPL_IF .allow.read_series>
+<head>
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script src="js/selectSeries.js" type="text/javascript"></script>
+</head>
+
+<body>
+<div id="selectSeries" class="panel">
+    <table>
+
+    <TMPL_IF selectProjectStudio>
+        <tr>
+            <td class="label"><TMPL_VAR .loc.label_project> & <TMPL_VAR .loc.label_Studio></td>
+            <td>
+                <select id="selectProjectStudio" onchange="updateSeriesSelection('<TMPL_VAR resultElemId>');return false;">
+                    <option value="-1_-1"><TMPL_VAR .loc.label_all></option>
+<TMPL_LOOP studios><option value="<TMPL_VAR project_id>_<TMPL_VAR id>" <TMPL_IF selected>selected="selected"</TMPL_IF> ><TMPL_VAR project_name> - <TMPL_VAR name></option>
+</TMPL_LOOP>
+                </select>
+            </td>
+        </tr>
+    </TMPL_IF>
+    <input id="projectId" value="<TMPL_VAR .project_id>" style="display:none">
+    <input id="studioId"  value="<TMPL_VAR .studio_id>"  style="display:none">
+
+    <TMPL_IF selectSeries>
+        <tr>
+            <td class="label"><TMPL_VAR .loc.label_series></td>
+            <td>
+                <select id="selectSeriesId" onchange="selectSeriesAction('<TMPL_VAR resultElemId>');return false;">
+                    <option value="-1"><TMPL_VAR .loc.label_select></option>
+<TMPL_LOOP series><option value="<TMPL_VAR series_id>" <TMPL_IF selected>selected="selected"</TMPL_IF>><TMPL_VAR series_name><TMPL_IF title> - <TMPL_VAR title></TMPL_IF></option>
+</TMPL_LOOP>
+                </select>
+            </td>
+        </tr>
+    </TMPL_IF>
+    </table>
+
+</div>
+</body>
+<TMPL_ELSE>
+missing permission to read series
+</TMPL_IF>
+</html>

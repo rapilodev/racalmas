@@ -1,0 +1,152 @@
+<TMPL_INCLUDE header.html>
+
+<h1><a href="event_manager.cgi">Sendungen verwalten</a></h1>
+
+<TMPL_INCLUDE menu.html>
+<style>
+	td,th,input {
+		font-size:10px;
+		line-height:100%
+	}
+	table{
+		wwidth:1000px;
+	}
+</style>
+projects:
+<TMPL_LOOP projects>
+	<TMPL_LOOP months>
+		<a href="event_manager.cgi?from_date=<TMPL_VAR start>&till_date=<TMPL_VAR end>"><TMPL_VAR title> <TMPL_VAR month_name></a> |
+	</TMPL_LOOP>
+</TMPL_LOOP>
+
+<div id="print_header">
+<TMPL_IF event_count><TMPL_VAR event_count> Treffer:</TMPL_IF>
+</div>
+<TMPL_VAR is_empty>
+
+<div style="text-align:right">
+	<form action="event_manager.cgi">
+		<input name="search">
+		<input type="submit" value="suchen">
+	</form>
+</div>
+
+<table border="1">
+<tr>
+	<th>Progamm</th>
+	<th>Wochentag</th>
+	<th>Datum</th>
+	<th>Start</th>
+	<th>Ende</th>
+	<th>Bild</th>
+	<th>Sendereihe</th>
+	<th>Titel</th>
+	<th>Auszug</th>
+</tr>
+
+<TMPL_LOOP events>
+	<tr>
+		<td>
+			<TMPL_VAR program>
+		</td>
+
+		<td>	
+			<TMPL_VAR weekday_name>
+		</td>
+
+		<td>
+			<TMPL_VAR start_date> 
+		</td>
+
+		<td style="background-color:<TMPL_IF same_time_alert_old>ffa</TMPL_IF><TMPL_IF same_time_alert_new>faa</TMPL_IF>">
+			<TMPL_VAR start_time_name> 
+		</td>
+
+		<td>
+			<TMPL_VAR end_time_name> 
+		</td>
+
+		<td>
+			<a href="<TMPL_VAR image>"><img src="<TMPL_VAR image>" width="75" height="75"></a>
+		</td>
+
+		<td>
+			<TMPL_VAR series_name>
+		</td>
+
+		<td>
+			<TMPL_VAR title>
+		</td>
+
+		<td>
+			<TMPL_VAR excerpt >  		
+			<a href="#event_<TMPL_VAR event_id>" onclick="showEventComments('<TMPL_VAR event_id>','event_<TMPL_VAR event_id>_comments_container');return false;" >	
+				<p><TMPL_VAR comment_count> Kommentare , 
+				<a href="#" onclick="toggle('event_<TMPL_VAR event_id>_options');return false;">mehr...</a>
+			</a>
+
+		</td>
+
+	</tr>
+
+	<tr id="event_<TMPL_VAR event_id>_comments_container" style="display:none">
+		<td colspan="20">
+			<div id="event_<TMPL_VAR event_id>_comments">
+			</div>
+		</td>
+	</tr>
+
+	<tr id="event_<TMPL_VAR event_id>_options" style="display:none">
+		<td colspan="20">
+			<div >
+				<table>
+
+				<tr>
+					<th colspan=7> </th>
+					<th>erstellt</th>
+					<th>ge&auml;ndert</th>
+					<th>Referenz</th>
+					<th>ID</th>
+					<TMPL_IF delete_events>
+					<th>L&ouml;schen</th>
+					</TMPL_IF>
+				</tr>
+
+				<tr>
+					<td colspan=7> </td>
+
+					<td>
+						<TMPL_VAR created_at >  		
+					</td>
+
+					<td>
+						<TMPL_VAR modified_at >  		
+					</td>
+
+					<td>
+						<TMPL_VAR reference >  		
+					</td>
+
+					<td>
+						<a href="<TMPL_VAR cache_base_url>/<TMPL_VAR controller_event>/<TMPL_VAR event_id>.html"><TMPL_VAR event_id></a>
+					</td>
+
+					<TMPL_IF delete_event>
+					<td>
+						<form action="event_manager.cgi" method="post">
+							<input type="hidden" name="delete_event" value="<TMPL_VAR event_id>">
+							<input type="hidden" name="from_date" value="<TMPL_VAR from_date>">
+							<input type="hidden" name="till_date" value="<TMPL_VAR till_date>">
+							<input type="submit" value="loeschen">
+						</form>
+					</td>
+					</TMPL_IF>
+
+				</td></tr></table>
+			</div>
+		</td>
+	</tr>
+
+</TMPL_LOOP>
+</table>
+

@@ -1,0 +1,62 @@
+<html>
+<head>
+    <link type="text/css" href="css/admin.css" rel="stylesheet"/>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<TMPL_LOOP images>
+	<form id="save_img_<TMPL_VAR id>"
+		method="post" action="image.cgi" 
+		onsubmit="saveImage('<TMPL_VAR id>','<TMPL_VAR filename>');return false;"
+		style="float:left" 
+	>   
+	    <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+	    <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+
+		<table>
+		    <tr>
+			    <td rowspan="5"><a href="<TMPL_VAR image_url>" onclick="showImage('<TMPL_VAR image_url>');return false;"><img src="<TMPL_VAR thumb_url>" /></a></td>
+			    <td><TMPL_VAR .loc.label_name></td>
+			    <td><input value="<TMPL_VAR name escape=0>" name="update_name" class="field"></td>
+		    </tr>
+		    <tr>
+			    <td><TMPL_VAR .loc.label_description></td>
+			    <td><textarea name="update_description" cols="50" rows=5><TMPL_VAR description escape=0></textarea></td>
+		    </tr>
+		    <tr>
+			    <td><TMPL_VAR .loc.label_created_at></td>
+			    <td><TMPL_VAR created_at> <TMPL_VAR .loc.label_created_by> <TMPL_VAR created_by></td>
+		    </tr>
+		    <tr>
+			    <td><TMPL_VAR .loc.label_modified_at></td>
+			    <td><TMPL_VAR modified_at> <TMPL_VAR .loc.label_modified_by> <TMPL_VAR modified_by></td>
+		    </tr>
+		    <tr>
+			    <td><TMPL_VAR .loc.label_editor_link></td>
+			    <td><input value="{{thumbs/<TMPL_VAR filename escape=0>|<TMPL_VAR name>}}" class="field"/></td>
+		    </tr>
+		    <tr>
+			    <td />				
+			    <td>
+				    <TMPL_IF name="update_image">
+                	    <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+				        <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>" />
+				        <input type="hidden" name="save_image" value="<TMPL_VAR filename escape=0>" />
+				        <button onclick="this.submit"><TMPL_VAR .loc.button_save></button/>
+				    </TMPL_IF>
+
+				    <TMPL_IF name="delete_image">
+                	    <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+				        <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>" />
+				        <button onclick="askDeleteImage('img_<TMPL_VAR id escape=0>','<TMPL_VAR filename escape=0>');return false;"><TMPL_VAR .loc.button_delete></button>
+				    </TMPL_IF>
+			    </td>
+            </tr>
+		</table>
+
+	</form>
+</TMPL_LOOP>
+
+</body>
+</html>
+

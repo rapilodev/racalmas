@@ -1,0 +1,75 @@
+msgid "region"
+msgstr "de"
+
+msgid  "title"
+msgstr "Einstellungen"
+
+msgid  "label_language"
+msgstr "Sprache"
+
+msgid  "label_color"
+msgstr "Farbe"
+
+msgid  "button_colors_save"
+msgstr "speichern"
+
+msgid  "button_colors_reset"
+msgstr "Farben zurücksetzen"
+
+msgid  "color_event"
+msgstr "Sendung"
+
+msgid  "color_schedule"
+msgstr "Planung"
+
+msgid  "color_no_series"
+msgstr "Sendung gehört zu keiner Sendereihe"
+
+msgid  "color_published"
+msgstr "veröffentlichte Sendung"
+
+msgid  "color_marked"
+msgstr "markierte Sendung"
+
+msgid  "color_event_error"
+msgstr "Fehler in Sendung"
+
+msgid  "color_schedule_error"
+msgstr "Fehler in Planung"
+
+msgid  "color_work"
+msgstr "Dienstzeiten"
+
+msgid  "color_playout"
+msgstr "Playout"
+
+msgid "label_period"
+msgstr "Zeitraum"
+
+msgid "label_period_7"
+msgstr "Woche"
+
+msgid "label_period_14"
+msgstr "2 Wochen"
+
+msgid "label_period_28"
+msgstr "4 Wochen"
+
+msgid "label_period_month"
+msgstr "Monat"
+
+msgid "label_change_password"
+msgstr "Passwort ändern"
+
+msgid "button_change_password"
+msgstr "Passwort ändern"
+
+msgid "label_password"
+msgstr "Passwort"
+
+msgid "label_password2"
+msgstr "Passwort (Wiederholung)"
+
+msgid "password_hint"
+msgstr "mindestens 8 Zeichen und (kleine und große Buchstaben, Zahlen und Sonderzeichen)"
+

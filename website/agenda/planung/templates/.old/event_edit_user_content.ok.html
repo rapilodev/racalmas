@@ -1,0 +1,378 @@
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>edit event</title>
+    <link href="css/event.css" type="text/css" rel="stylesheet"/> 
+    <link href="css/jquery-ui-timepicker.css" type="text/css" rel="stylesheet" /> 
+
+    <!-- for edit series-->
+    <script src="js/series.js" type="text/javascript"></script>
+    <script src="js/edit_event.js" type="text/javascript"></script>
+    <script src="js/image.js" type="text/javascript"></script>
+    <script src="js/jquery-ui-timepicker.js" type="text/javascript"></script>
+<script>
+    var event_id='<TMPL_VAR event_id>';
+    var selectImageId='';
+
+    /*
+	$(document).ready(function(){
+            $('textarea').each(function() {
+                $(this).height($(this).prop('scrollHeight'));
+            });
+		    $('textarea').on('change', function() {
+                    $(this).height($(this).prop('scrollHeight'));
+		    });
+	});
+	*/
+</script>
+
+</head>
+<body>
+
+<TMPL_UNLESS new_event>
+<TMPL_IF .allow_create_download>
+    <form>
+        <TMPL_IF download>
+        <textarea type="hidden" name="event_id" style="width:100%;height:10em;"><TMPL_VAR download></textarea>
+        </TMPL_IF>
+        <input type="hidden" name="event_id" value="<TMPL_VAR event_id>">
+        <input type="hidden" name="series_id" value="<TMPL_VAR series_id>">    
+        <input type="submit" name="action" value="download">
+    </form>
+</TMPL_IF>
+</TMPL_UNLESS>
+
+<!-- edit -->
+<TMPL_IF .allow_update_event>
+<div class="editor">
+
+<div class="buttons" id="back_to_calendar">
+    <button onclick="cancel_edit_event();return false;">back to calendar</button>
+</div>
+
+<!-- series -->
+<TMPL_UNLESS .hide_series>
+<TMPL_IF series_id>
+<table class="series">
+    <tr><td>
+        <!-- header -->
+        <div class="header">
+            <TMPL_VAR series_name> <TMPL_IF title>- <TMPL_VAR title></TMPL_IF>
+            <!--<aTMPL_UNLESS new_event>-->
+            <TMPL_IF .allow_read_series>
+            <button onclick="view_series_details('<TMPL_VAR series_id>','<TMPL_VAR .studio_id>')" style="float:right">
+                edit series
+            </button>
+            </TMPL_IF>
+            <!--</aTMPL_UNLESS>-->
+        </div>
+    </td></tr>
+    <tr class="series_details_<TMPL_VAR series_id>" style="display:none">
+        <td>
+        <div id="series_details_<TMPL_VAR series_id>">
+        </div>
+        </td>
+    </tr>
+</table>
+</TMPL_IF>
+</TMPL_UNLESS>
+
+<div>
+<div class="header">Event</div>
+
+    <!-- edit event -->
+    <form method="post" action="event.cgi" id="event_<TMPL_VAR event_id>">
+    <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+    <input type="hidden" name="series_id" value="<TMPL_VAR series_id>">    
+    <TMPL_UNLESS new_event>
+    <input type="hidden" name="event_id" value="<TMPL_VAR event_id>">    
+    </TMPL_UNLESS>
+    <input type="hidden" name="debug" value="sql">
+
+    <!-- buttons -->
+    <!--
+    <TMPL_IF .allow_update_event>
+    <button class="edit_time_<TMPL_VAR event_id>" onclick="editEventTime('<TMPL_VAR event_id>');return false;">edit</button>
+    </TMPL_IF>
+    -->
+
+    <!-- show event event summary -->
+    <!-- <TMPL_IF new_event>style="display:none"</TMPL_IF> -->
+    <!--
+    <TMPL_IF .allow_read_event>
+    <table id="event_summary_<TMPL_VAR event_id>" >
+        <TMPL_UNLESS new_event>
+        <tr> 
+            <td class="label">when</td> 
+            <td><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time_name> - <TMPL_VAR end_time>
+            </td>
+        </tr>
+        </TMPL_UNLESS>
+
+        <tr> 
+            <td class="label">title</td> 
+            <td><TMPL_VAR series_name> <TMPL_IF title>- <TMPL_VAR title></TMPL_IF> <TMPL_VAR user_title></td>
+        </tr>
+
+        <tr>
+            <td class="label">status</td>
+            <td>
+                <TMPL_IF live>live</TMPL_IF>
+                <TMPL_IF published>published</TMPL_IF>
+                <TMPL_IF preproduced>preproduced</TMPL_IF>
+                <TMPL_IF archived>archived</TMPL_IF>
+                <TMPL_IF rerun>rerun</TMPL_IF>
+                <TMPL_IF disable_event_sync>no sync</TMPL_IF>
+            </td>
+        </tr>
+
+        <tr> 
+            <td class="label">episode</td> 
+            <td><TMPL_VAR episode></td>
+        </tr>
+
+    </table>
+    </TMPL_IF>
+    -->
+
+    <!-- edit event time -->
+    <!-- <TMPL_UNLESS new_event>style="display:none"</TMPL_UNLESS> -->
+    <table id="edit_time_<TMPL_VAR event_id>" class="edit_event" >
+        <TMPL_IF .allow_update_event_time>
+        <tr> 
+            <td class="label">when</td> 
+            <td>
+                <TMPL_UNLESS new_event>
+                    <TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time_name> - <TMPL_VAR end_time><br>
+                </TMPL_UNLESS>
+                start 
+                <span id="start_date_weekday"></span>
+                <input id="start_date" class="date" name="start_date" value="<TMPL_VAR start>" onchange="onDateModified()">
+                duration <select id="duration" name="duration" onchange="onDateModified()"> minutes
+                <TMPL_LOOP durations>    
+                    <option value="<TMPL_VAR value>" <TMPL_IF selected>selected="selected"</TMPL_IF>><TMPL_VAR name></option>
+                </TMPL_LOOP>
+                </select>
+                end 
+                <input id="end_date" class="date" name="end_date" value="<TMPL_VAR end>"  disabled><br>
+
+            </td>
+        </tr>
+        </TMPL_IF>
+
+        <tr> 
+            <td class="label">status</td> 
+            <td>
+                <TMPL_IF .allow_update_event_live>
+                <input type="checkbox" name="live"   <TMPL_IF live>checked="checked"</TMPL_IF> value="1"> live
+                </TMPL_IF>
+
+                <TMPL_IF .allow_update_event_published>
+                <input type="checkbox" name="published"   <TMPL_IF published>checked="checked"</TMPL_IF> value="1"> published
+                </TMPL_IF>
+
+                <TMPL_IF .allow_update_event_preproduced>
+                    <input type="checkbox" name="preproduced" <TMPL_IF preproduced>checked="checked"</TMPL_IF> value="1"> preproduced
+                </TMPL_IF>
+
+                <TMPL_IF .allow_update_event_archived>
+                    <input type="checkbox" name="archived"    <TMPL_IF archived>checked="checked"</TMPL_IF> value="1"> archived
+                </TMPL_IF>
+
+                <TMPL_IF .allow_update_event_rerun>
+                <input type="checkbox" name="rerun"       <TMPL_IF rerun>checked="checked"</TMPL_IF> value="1"> rerun
+                </TMPL_IF>
+
+                <TMPL_IF .allow_disable_event_sync>
+                <input type="checkbox" name="disable_event_sync" <TMPL_IF rerun>checked="checked"</TMPL_IF> value="1"> no sync
+                </TMPL_IF>
+            </td>
+        </tr>
+
+        <TMPL_IF .allow_update_event_episode>
+        <tr> 
+            <td class="label">episode</td> 
+            <td><input name="episode" value="<TMPL_VAR episode>" class="episode"></td>
+        </tr>
+        </TMPL_IF>
+
+    </table>
+
+    <div class="header">content</div>
+
+    <!--
+    <TMPL_IF .allow_update_event>
+    <button class="edit_content_<TMPL_VAR event_id>" onclick="editEventContent('<TMPL_VAR event_id>');return false;">edit</button>
+    </TMPL_IF>
+    -->
+
+    <!-- show event content -->
+    <TMPL_IF read_event>
+    <table id="show_content_<TMPL_VAR event_id>" <TMPL_IF new_event>style="display:none"</TMPL_IF> >
+        <tr> 
+            <td class="label">excerpt</td>
+            <td><TMPL_VAR excerpt><TMPL_VAR user_excerpt></td>
+        </tr>
+
+        <tr> 
+            <td class="label">description</td>
+            <td>
+                <img src="<TMPL_VAR image>" style="float:right;padding-left:1em">
+                   <div><TMPL_VAR user_content_prefix></div>
+                    <div><TMPL_VAR html_content escape=0></div>
+                    <div><TMPL_VAR user_content_suffix></div>
+            </td>
+        </tr>
+    </table>
+    </TMPL_IF>
+
+    <!-- <TMPL_UNLESS new_event>style="display:none"</TMPL_UNLESS> -->
+    <!-- edit event content -->
+    <table id="edit_content_<TMPL_VAR event_id>" class="edit_event" >
+        <!--
+        <TMPL_IF .allow_update_event_user_content>
+        <tr>
+            <td colspan="2">
+                <button class="edit_content_<TMPL_VAR event_id>" onclick="editUserContent('<TMPL_VAR event_id>');return false;">extra content</button>
+            </td>
+        </tr>
+        </TMPL_IF>
+        -->
+        <tr> 
+            <td class="label">title</td> 
+            <td>
+                <TMPL_VAR series_name> - 
+                <TMPL_IF .allow_update_event_content>
+                    <input name="title" value="<TMPL_VAR title>">
+                <TMPL_ELSE>
+                    <TMPL_VAR title>
+                </TMPL_IF>
+
+                <TMPL_IF .allow_update_event_title_extension>
+                    <input name="user_title" value="<TMPL_VAR user_title>" id="user_title_<TMPL_VAR event_id>">
+                <TMPL_ELSE>
+                    <TMPL_VAR user_title>
+                </TMPL_IF>
+            </td>
+        </tr>
+
+        <tr> 
+            <td class="label">excerpt</td>
+            <td>
+                <TMPL_IF .allow_update_event_content>
+                    <textarea name="excerpt" class="excerpt"><TMPL_VAR excerpt></textarea>
+                <TMPL_ELSE>
+                    <TMPL_VAR excerpt>
+                </TMPL_IF>
+            </td>
+        </tr>
+
+        <tr id="user_excerpt_<TMPL_VAR event_id>"> 
+            <td class="label">user excerpt</td>
+            <td>
+                <TMPL_IF .allow_update_event_user_excerpt_extension>
+                     <textarea class="excerpt" name="user_excerpt" ><TMPL_VAR user_excerpt></textarea>
+                <TMPL_ELSE>
+                    <TMPL_VAR user_excerpt>
+                </TMPL_IF>
+            </td>
+        </tr>
+
+        <tr id="user_content_prefix_<TMPL_VAR event_id>">
+            <td class="label">current topics</td>
+            <td class="edit_user_content_prefix">
+                <TMPL_IF .allow_update_event_user_content>
+                    <textarea name="user_content_prefix"><TMPL_VAR user_content_prefix></textarea>
+                <TMPL_ELSE>
+                     <TMPL_VAR html_user_content_prefix escape=0>
+                </TMPL_IF>
+            </td>
+        </tr>
+
+        <tr> 
+            <td class="label">content</td>
+            <td class="edit_content">
+                <TMPL_IF .allow_update_event_topic>
+                    <textarea name="content"><TMPL_VAR content></textarea>
+                <TMPL_ELSE>
+                    <TMPL_VAR html_content escape=0>
+                </TMPL_IF>
+            </td>
+        </tr>
+
+        <!--
+        <tr id="user_content_suffix_<TMPL_VAR event_id>"> 
+            <td class="label">user content</td>
+            <td class="edit_user_content_suffix">
+                <TMPL_IF .allow_update_event_user_content>
+                    <textarea name="user_content_suffix"><TMPL_VAR user_content_suffix></textarea>
+                <TMPL_ELSE>
+                    <TMPL_VAR html_user_content_prefix escape=0>
+                </TMPL_IF>
+            </td>
+        </tr>
+        -->
+        
+        <tr> 
+            <td class="label">
+                image 
+            </td> 
+            <td>
+                <TMPL_IF .allow_update_event_content>
+                    <button onclick="selectImage(<TMPL_VAR .studio_id>,'image_<TMPL_VAR event_id>','<TMPL_VAR series_name escape=HTML>');return false;"
+                        style="padding:0;"
+                    >
+                        <img id="imagePreview" src="<TMPL_VAR image>">
+                    </button>
+                    <input id="image_<TMPL_VAR event_id>" name="image" value="<TMPL_VAR image>" class="image" style="float:right">
+                <TMPL_ELSE>
+                    <img src="<TMPL_VAR image>">
+                </TMPL_IF>
+            </td>
+        </tr>
+    </table>
+
+    <table>
+        <tr> 
+            <td colspan="2">
+                <div class="buttons" style="text-align:center">
+                    <TMPL_IF show_new_event_from_schedule>
+                        <TMPL_IF .allow_create_event_from_schedule>
+                            <button type="submit" name="action" value="create_event_from_schedule">create</button>
+                         </TMPL_IF>
+                    <TMPL_ELSIF show_new_event>
+                        <TMPL_IF .allow_create_event>
+                            <button type="submit" name="action" value="create_event">create</button>
+                         </TMPL_IF>
+                    <TMPL_ELSE>
+                        <TMPL_IF .allow_update_event>
+                            <input type="submit" name="action" value="save">
+                        </TMPL_IF>
+                    </TMPL_IF>
+                    <TMPL_IF .allow_delete_event>
+                        <TMPL_UNLESS new_event>
+                            <input type="submit" name="action" value="delete"
+                                onclick="commitForm('event_<TMPL_VAR event_id>','delete','delete event');return false;"
+                            >
+                        </TMPL_UNLESS>
+                    </TMPL_IF>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    </form>
+</div>
+
+<TMPL_IF modified_at>
+    <div class="label right">last modified at <TMPL_VAR modified_at> by <TMPL_VAR modified_by>.</div>
+</TMPL_IF>
+
+<div id="selectImage"></div>
+
+</div>
+</TMPL_IF>
+
+</body>
+</html>

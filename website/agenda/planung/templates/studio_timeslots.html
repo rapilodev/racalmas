@@ -1,0 +1,126 @@
+<style>
+	#editor div p a img {
+		float:right;
+	}
+</style>
+<script>
+    var region='<TMPL_VAR loc.region>';
+</script>
+
+<!-- view timeslot schedule and dates -->
+<h2><TMPL_VAR .loc.title></h2>
+
+<div id="tabs">
+    <ul>
+		<TMPL_IF .allow.update_schedule>
+            <li><a href="#tabs-schedule"><TMPL_VAR .loc.tab_schedule></a></li>
+        </TMPL_IF>
+            <li><a href="#tabs-events"><TMPL_VAR .loc.tab_events></a></li>
+    </ul>
+
+    <!-- schedule -->
+    <TMPL_IF .allow.update_schedule>
+    <div id="tabs-schedule">
+        
+	    <!-- edit schedule -->
+		<div id="edit_schedule" class="editor">
+			<div class="row">
+				<div class="cell" style="width:1.3em"> <TMPL_VAR .loc.weekday> </div>
+				<div class="cell" style="width:10em"> <TMPL_VAR .loc.label_start> </div>
+				<div class="cell" style="width:1.3em"> <TMPL_VAR .loc.weekday> </div>
+				<div class="cell" style="width:10em"> <TMPL_VAR .loc.label_end>  </div>
+				<div class="cell" style="width:7em"> <TMPL_VAR .loc.label_frequency> </div>
+				<div class="cell" style="width:8em"> <TMPL_VAR .loc.label_update_until> </div>
+				<div class="cell" style="width:7em"> <TMPL_VAR .loc.label_studio></div>
+			</div>
+
+			<TMPL_LOOP schedule>
+			<div class="row schedule" id="schedule_<TMPL_VAR schedule_id>">
+				<form method="post" action="studio_timeslots.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>" id="form_schedule_<TMPL_VAR schedule_id>">
+					<input type="hidden" name="project_id"      value="<TMPL_VAR .project_id>" />
+					<input type="hidden" name="studio_id"       value="<TMPL_VAR .studio_id>" />
+					<input type="hidden" name="schedule_id"     value="<TMPL_VAR schedule_id>" />
+					<div class="cell weekday"></div>
+					<div class="cell"> <input name="start"      value="<TMPL_VAR start>"      class="datetimepicker start"/> </div>
+					<div class="cell weekday"></div>
+					<div class="cell"> <input name="end"        value="<TMPL_VAR end>"        class="datetimepicker end"/>   </div>
+					<div class="cell"><!-- <input name="frequency"  value="<TMPL_VAR frequency>"  class="frequency" />  -->
+					    <select name="frequency" value="<TMPL_VAR frequency>" class="frequency">
+                            <option value="1"><TMPL_VAR .loc.daily></option>
+                            <option value="7"><TMPL_VAR .loc.weekly></option>
+                            <option value="14"><TMPL_VAR .loc.every_two_weeks></option>
+                            <option value="28"><TMPL_VAR .loc.every_month></option>
+                        </select>					
+					</div>
+					<div class="cell weekday"></div>
+					<div class="cell"> <input name="end_date"   value="<TMPL_VAR end_date>"   class="datetimepicker end_date"/>   </div>
+                    <div class="cell"> 
+                            <select name="schedule_studio_id" class="studio">
+                                <TMPL_LOOP studios>
+                                    <option value="<TMPL_VAR id>" <TMPL_IF selected>selected="selected"</TMPL_IF>><TMPL_VAR name></option>
+                                </TMPL_LOOP>
+                            </select>
+                    </div>
+
+					<div class="cell"> <button type="submit" name="action" value="save_schedule"><TMPL_VAR .loc.button_save></button>   </div>
+					<TMPL_IF .allow.delete_schedule>
+					<div class="cell">
+                        <button type="submit" name="action" value="delete_schedule" 
+                            onclick="commitForm('form_schedule_<TMPL_VAR schedule_id>','delete_schedule','<TMPL_VAR .loc.button_delete>');return false;"
+                        ><TMPL_VAR .loc.button_delete></button> 
+                    </div>
+					</TMPL_IF>
+				</form>
+			</div>
+			</TMPL_LOOP>
+			
+			<!-- add schedule-->
+			<div class="row">
+				<form method="post" action="studio_timeslots.cgi">
+					<input type="hidden" name="project_id"     value="<TMPL_VAR .project_id>" />
+					<input type="hidden" name="studio_id"      value="<TMPL_VAR .studio_id>" />
+					<div class="cell weekday"></div>
+					<div class="cell"> <input name="start"     value="<TMPL_VAR start>"     class="datetimepicker start"/> </div>
+					<div class="cell weekday"></div>
+					<div class="cell"> <input name="end"       value="<TMPL_VAR end>"       class="datetimepicker end"/>   </div>
+					<div class="cell"> <!--<input name="frequency" value="<TMPL_VAR frequency>" class="frequency"/> -->
+					    <select name="frequency" value="<TMPL_VAR frequency>" class="frequency">
+                            <option value="1"><TMPL_VAR .loc.daily></option>
+                            <option value="7"><TMPL_VAR .loc.weekly></option>
+                            <option value="14"><TMPL_VAR .loc.every_two_weeks></option>
+                            <option value="28"><TMPL_VAR .loc.every_four_weeks></option>
+                        </select>					
+					</div>
+					<div class="cell weekday"></div>
+					<div class="cell"> <input name="end_date"  value="<TMPL_VAR end_date>"   class="datetimepicker end_date"/>   </div>
+                    <div class="cell"> 
+                            <select name="schedule_studio_id" >
+                                <TMPL_LOOP studios>
+                                    <option value="<TMPL_VAR id>" <TMPL_IF selected>selected="selected"</TMPL_IF>><TMPL_VAR name></option>
+                                </TMPL_LOOP>
+                            </select>
+                    </div>
+					<TMPL_IF .allow.update_schedule>
+					<div class="cell"> <button type="submit" name="action" value="save_schedule"><TMPL_VAR .loc.button_create></button>     </div>
+					</TMPL_IF>
+				</form>
+			</div>
+		</div>
+        <p>
+    </div>
+	</TMPL_IF>
+
+    <!-- show schedule -->
+    <div id="tabs-events">
+        <div class="show_schedule_head"> <TMPL_VAR loc.label_select_range>
+            <div id="show_date"> </div>
+        </div>
+        
+        <div id="show_schedule" class="show_schedule">
+	    </div>
+    </div>
+
+</div>	    
+</body>
+</html>
+

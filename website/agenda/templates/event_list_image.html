@@ -1,0 +1,42 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
+</TMPL_IF>Content-type:text/html; charset=utf-8;
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="expires" content="3600">
+	<meta http-equiv="Content-Script-Type" content="javascript" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<title>Agenda <TMPL_VAR project_title></title>
+	<link type="text/css" rel="stylesheet" media="all" href="/agenda/css/future.css" />
+
+</head>
+
+<body>
+<TMPL_LOOP NAME=events>
+<TMPL_IF name="is_first_of_day">
+	<div class="date">
+		<TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name><TMPL_IF project_title> - <TMPL_VAR project_title></TMPL_IF>
+	</div>
+</TMPL_IF>
+
+<a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>" >
+<div  class="event">
+	<TMPL_IF event_id>
+		<div class="header"><TMPL_VAR series_name><br><TMPL_VAR full_title_no_series></div>
+		<div class="content" style="background-image: url(<TMPL_VAR image>)"></div>
+
+		<div class="label">
+			<TMPL_VAR start_time><br/>
+			<a class="comment" href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#comments"
+				<span class="submitted"><TMPL_VAR comment_count> Kommentar<TMPL_UNLESS one_comment>e</TMPL_UNLESS></span>
+			</a>
+		</div>
+	</TMPL_IF>
+</div>
+</a>
+</TMPL_LOOP>
+
+</body>
+</html>
+

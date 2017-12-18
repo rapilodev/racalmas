@@ -1,0 +1,150 @@
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title><TMPL_VAR .doc.title></title>
+    <link href="css/event.css" type="text/css" rel="stylesheet"/> 
+	<link href="css/theme.default.css" rel="stylesheet">
+	<script src="js/jquery.tablesorter.min.js"></script>
+	<script src="js/jquery.tablesorter.widgets.min.js"></script>
+
+    <style>
+        table#event_history tr td{
+            vertical-align:middle;
+        }
+        table#event_history img{
+            width:24px;
+            height:24px;
+        }
+        table#event_history th.status{
+            width:16px;
+            word-break: break-all;
+        }
+        table#event_history td.status{
+            text-align:center;
+        }
+        body #content{
+            max-width:1200px;
+            min-width:600px;
+        }
+    </style>
+
+
+<script>
+    var region='<TMPL_VAR loc.region>';
+    $(function(){
+	    $('table').tablesorter({
+		    widgets        : ['zebra','filter'],
+		    usNumberFormat : false
+	    });
+    });
+    
+    function showDiff(){
+        var ids=[];
+        $('#event_history input.diff:checked').each(function(){
+            ids.push($(this).val());
+        });
+
+        if(ids.length!=2){
+            alert("please choose exaclty 2 versions to compare")
+            return;
+        }
+
+        // forward to comparator
+        project_id='<TMPL_VAR .project_id>';
+        studio_id='<TMPL_VAR .studio_id>';
+        series_id='<TMPL_VAR series_id>';
+        event_id="<TMPL_VAR event_id>";
+        if (project_id=='') return ;
+        if (studio_id=='')  return ;
+        if (event_id=='')   return ;
+        var url= 'event_history.cgi?';
+        url+='project_id='+project_id;
+        url+='&studio_id='+studio_id;
+        url+='&series_id='+series_id;
+        url+='&event_id='+event_id;
+        url+='&action=diff';
+        url+='&v1='+ids[0];
+        url+='&v2='+ids[1];
+        load(url);
+    }
+</script>
+
+</head>
+
+<body>
+<TMPL_IF .allow.read_event>
+<!-- edit -->
+<div >
+
+
+<!-- buttons -->
+<div class="buttons">
+</div>
+
+<div>
+
+<table id="event_history" class="tablesorter">
+    <thead>
+    <tr>
+        <th class="status" title="<TMPL_VAR .loc.label_diff"><img src="image/32/diff.png"></th>
+        <th><TMPL_VAR .loc.label_event></th>
+        <th><TMPL_VAR .loc.label_start></th>
+        <th class="status" title="<TMPL_VAR .loc.label_live>"     ><img src="image/32/live.png"></th>
+        <th class="status" title="<TMPL_VAR .loc.label_published>"><img src="image/32/published.png"></th> 
+        <th class="status" title="<TMPL_VAR .loc.label_playout>"  ><img src="image/32/playout.png"></th> 
+        <th class="status" title="<TMPL_VAR .loc.label_archived>" ><img src="image/32/archived.png"></th> 
+        <th class="status" title="<TMPL_VAR .loc.label_deleted>"  ><img src="image/32/deleted.png"></th> 
+        <th><TMPL_VAR .loc.label_modified_at></th> 
+        <th><TMPL_VAR .loc.label_modified_by></th> 
+    </tr>
+    </head>
+    <tbody>
+
+<TMPL_LOOP events>
+    <tr>
+        <td class="status">
+            <input type="checkbox" class="diff" value="<TMPL_VAR change_id>">
+        </td>
+
+        <td>
+            <!--<TMPL_VAR key>-->
+            <TMPL_UNLESS has_single_events>
+                <TMPL_VAR series_name>
+                <TMPL_IF title> - <TMPL_VAR title></TMPL_IF>
+            <TMPL_ELSE>
+                <TMPL_VAR title>
+            </TMPL_UNLESS>
+            <TMPL_IF user_title> : <TMPL_VAR user_title></TMPL_IF>
+            <TMPL_IF episode> #<TMPL_VAR episode>
+                <TMPL_IF rerun>Wdhlg</TMPL_IF>
+            </TMPL_IF>
+        </td>
+
+        <td>
+            <TMPL_VAR start>
+        </td>
+
+        <td class="status"><TMPL_IF live>x<TMPL_ELSE>-</TMPL_IF></td>
+        <td class="status"><TMPL_IF published>x<TMPL_ELSE>-</TMPL_IF></td>
+        <td class="status"><TMPL_IF playout>x<TMPL_ELSE>-</TMPL_IF></td>
+        <td class="status"><TMPL_IF archived>x<TMPL_ELSE>-</TMPL_IF></td>
+        <td class="status"><TMPL_IF deleted>x<TMPL_ELSE>-</TMPL_IF></td>
+        <td><TMPL_VAR modified_at></td>
+        <td><TMPL_VAR modified_by></td>
+    </tr>
+</TMPL_LOOP>
+
+</tbody>
+
+</table>
+<button onclick="showDiff()"><TMPL_VAR loc.button_show_diff></button>
+
+</div>
+
+</div>
+<!-- end edit -->
+</TMPL_IF>
+
+</body>
+</html>

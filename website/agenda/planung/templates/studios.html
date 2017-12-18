@@ -1,0 +1,93 @@
+<h2><TMPL_VAR .loc.title></h2>
+
+<TMPL_IF .allow.update_studio>
+<div style="clear:both" class="newstudio">
+	<button onclick="add_studio('<TMPL_VAR name>')"><TMPL_VAR .loc.button_add_studio></button><br/>
+	<div id="edit_new" class="studio editor" style="clear:both;display:none">
+	    <form method="post">
+			<input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+			<input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
+	        <table>
+		        <tr><td class="label"><TMPL_VAR .loc.label_name></td> 	         <td><input name="name"        ></td></tr>
+		        <tr><td class="label"><TMPL_VAR .loc.label_description></td> 	 <td><input name="description" ></td></tr>
+		        <tr><td class="label"><TMPL_VAR .loc.label_location></td> 	     <td><input name="location"    ></td></tr>
+		        <tr><td class="label"><TMPL_VAR .loc.label_stream></td> 	     <td><input name="stream"      ></td></tr>
+<!--		        <tr><td class="label"><TMPL_VAR .loc.label_google_calendar></td> <td><input name="google_calendar" ></td></tr> -->
+		        <tr>
+			        <td></td>
+			        <td class="buttons">
+				        <button onclick="cancel_edit_studio('new');return false;"><TMPL_VAR .loc.button_cancel></button>
+				        <button type=submit name="action" value="save"><TMPL_VAR .loc.button_create></button>
+			        </td>
+		        </tr>
+	        </table>
+	    </form>
+	</div>
+</div>
+</TMPL_IF>
+
+<div style="clear:both" class="flex">
+<TMPL_LOOP studios>
+<div class="card studio">
+	<div>
+		<div class="title"><TMPL_VAR name></div>
+		<TMPL_IF .allow.update_studio>
+			<button onclick="edit_studio('<TMPL_VAR id>')"><TMPL_VAR .loc.button_edit></button>
+		</TMPL_IF>
+
+        <TMPL_IF .allow.read_event>
+            <button target="_blank"
+                onclick="load('event_history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR id>');"
+            ><TMPL_VAR .loc.button_show_changes></button>
+        </TMPL_IF>
+	</div>
+
+	<!-- view studio -->
+	<div id="view_<TMPL_VAR id>" class="view">
+		<table>
+			<tr><td class="label"><TMPL_VAR .loc.label_name></td> 	         <td><TMPL_VAR name> &nbsp;</td></tr>
+			<tr><td class="label"><TMPL_VAR .loc.label_description></td> 	 <td><TMPL_VAR description> &nbsp;</td></tr>
+			<tr><td class="label"><TMPL_VAR .loc.label_location></td> 	     <td><TMPL_VAR location> &nbsp;</td></tr>
+			<tr><td class="label"><TMPL_VAR .loc.label_stream></td> 	     <td><TMPL_VAR stream> &nbsp;</td></tr>
+			<!--<tr><td class="label"><TMPL_VAR .loc.label_google_calendar></td> <td><TMPL_VAR google_calendar> &nbsp;</td></tr>-->
+		</table>
+	</div>
+
+	<TMPL_IF .allow.update_studio>
+	<!-- update studio -->
+	<div id="edit_<TMPL_VAR id>" class="editor"  style="display:none">
+		<form method="post" id="studio_<TMPL_VAR id>">
+			<input type="hidden" name="id" value="<TMPL_VAR id>">
+			<input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+			<input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
+		    <table>
+			    <tr><td class="label"><TMPL_VAR .loc.label_name></td> 	         <td><input name="name" value="<TMPL_VAR name>"></td></tr>
+			    <tr><td class="label"><TMPL_VAR .loc.label_description></td>     <td><input name="description" value="<TMPL_VAR description>"></td></tr>
+			    <tr><td class="label"><TMPL_VAR .loc.label_location></td> 	     <td><input name="location" value="<TMPL_VAR location>"></td></tr>
+			    <tr><td class="label"><TMPL_VAR .loc.label_stream></td> 	     <td><input name="stream" value="<TMPL_VAR stream>"></td></tr>
+			    <!--<tr><td class="label"><TMPL_VAR .loc.label_>google calendar</td> <td><input name="google_calendar" value="<TMPL_VAR google_calendar>"></td></tr>		-->
+			    <tr>
+				    <td></td>
+				    <td class="buttons">
+					    <button type=submit name="action" value="save"><TMPL_VAR .loc.button_save></button>
+				    </td>
+				    <td>
+					    <div class="right">
+					        <button type=submit name="action" value="delete"
+                            onclick="commitForm('studio_<TMPL_VAR id>','delete','<TMPL_VAR .loc.button_delete>');return false;"
+                            ><TMPL_VAR .loc.button_delete></button>
+                        </div>
+				    </td>
+			    </tr>
+		    </table>
+		</form>
+	</div>
+	</TMPL_IF>
+</div>
+</TMPL_LOOP>
+
+</div>
+</div>
+</center>
+</body>
+</html>

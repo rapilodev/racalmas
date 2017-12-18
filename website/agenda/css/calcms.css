@@ -1,0 +1,621 @@
+/*
+include in your web page:
+<link rel="stylesheet" type="text/css" media="screen" href="/agenda_files/css/calcms.css" />
+*/
+
+/* fix drupal */
+
+input{
+	max-width:20em;
+}
+
+/* hide microformats */
+.vevent .dtstart,
+.vevent .dtend,
+.vevent .location{
+	display:none;
+	visibility:hidden;
+}
+
+.vevent a{
+	font-weight:normal;
+}
+
+/* end of common */
+
+
+/* menu */
+
+#calcms_menu{
+	clear:both;
+	text-align:left;
+}
+
+#calcms_menu .date{
+	margin:0.5em;
+	font-weight:bold;
+}
+
+#calcms_menu div.event{
+    padding:0.5em;
+}
+
+#calcms_menu div.icon{
+	width:25px;
+	margin-right:1em;
+	float:left;
+}
+
+#calcms_menu img{
+	border:1px solid #ccc;
+	width:25px;
+	height:25px;
+}
+
+#calcms_menu .title{
+	padding:0;
+	margin:0;
+	line-height:120%;
+}
+
+#calcms_menu .event.running{
+	font-weight:bold;
+}
+
+#calcms_menu a:hover{
+	text-decoration:none;
+}
+
+#calcms_menu .event {
+    transition: all .1s ease-in-out;
+}
+
+#calcms_menu .event:hover {
+    background: #e6e6e6;
+}
+
+
+/* coming events*/
+#calcms_playlist{
+	clear:both;
+	text-align:left;
+}
+
+#calcms_playlist div.event{
+    padding:0.5em;
+}
+
+#calcms_playlist div.icon{
+	width:25px;
+	margin-right:1em;
+	float:left;
+}
+
+#calcms_playlist img{
+	border:1px solid #ccc;
+}
+
+#calcms_playlist .title{
+	padding:0;
+	margin:0;
+	text-align:left;
+	line-height:120%;
+}
+
+#calcms_playlist a:hover{
+	text-decoration:none;
+}
+
+#calcms_playlist .event{
+    transition: all .1s ease-in-out;
+}
+
+#calcms_playlist .event:hover {
+    background: #e6e6e6;
+}
+
+
+/* calcms list */
+
+#calcms_list{
+    hyphens:auto;
+}
+
+#content div a img{
+	margin:6px;
+}
+
+#calcms_list .date{
+    margin-left:1em;
+	font-weight:bold;
+	margin-top:1em;
+}
+
+#calcms_list .excerpt{
+	margin-left:3.1rem;
+	margin-top:6px;
+	max-height:5em;
+    overflow: hidden; 
+	text-overflow: ellipsis;
+}
+
+#calcms_list .event.running{
+	color:#000;
+}
+
+#calcms_list .comments.submitted{
+	font-weight:bold;
+}
+
+#calcms_list .submitted{
+	margin-left:3.2rem;
+}
+
+#calcms_list .title{
+	margin-bottom:1em;
+}
+
+#calcms_list .content img{
+	text-align:left;
+	font-size:1.5em;
+	margin-bottom:20px;
+	border:0;
+	float: right;
+	margin-left: 1em;
+}
+
+#calcms_list .event{
+    padding:1em;
+	padding-top:0.5em;
+	padding-bottom:0.5em;
+	margin:1em;
+	margin-left:0;
+    background:#eee;
+    hyphens: none;
+    cursor:pointer;
+}
+
+
+#calcms_list hr{
+    margin:1em 0;
+    background: #ccc;
+}
+
+#calcms_list tbody{
+    border:0;
+}
+
+#icon_bar{
+    text-align:right;
+	padding:1 em;
+}
+
+#icon_bar a {
+    padding:1em;
+}
+
+#calcms_list #playlist_container .event{
+    padding:0;
+    margin:0;
+    overflow:hidden;
+}
+
+#calcms_list #playlist_container a{
+    padding:0;
+    margin:0;
+    overflow:hidden;
+    width:100px;
+    height:100px;
+    box-sizing:border-box;
+}
+
+/* calcms comments */
+#calcms_comments{
+    clear:both;
+}
+
+
+#calcms_comments .author{
+	color:#666;
+	font-weight:bold;
+	float:left;
+}
+
+#calcms_comments .date{
+	color:#888;
+	font-weight:normal;
+	margin:0;
+	padding:0;
+}
+
+#calcms_comments .content{
+	font-weight:normal;
+}
+
+#calcms_comments .comment{
+}
+
+#calcms_comments .level0{
+	margin-left:00px;
+}
+#calcms_comments .level1{
+	margin-left:20px;
+}
+#calcms_comments .level2{
+	margin-left:40px;
+}
+#calcms_comments .level3{
+	margin-left:60px;
+}
+#calcms_comments .level4{
+	margin-left:80px;
+}
+#calcms_comments .level5{
+	margin-left:100px;
+}
+#calcms_comments .level6{
+	margin-left:120px;
+}
+#calcms_comments .level7{
+	margin-left:140px;
+}
+#calcms_comments .level8{
+	margin-left:160px;
+}
+#calcms_comments .level9{
+	margin-left:180px;
+}
+#calcms_comments .level10{
+	margin-left:200px;
+}
+
+#calcms_add_comment{
+	visibility:hidden;
+	display:none;
+}
+
+/* calcms add comment */
+#calcms_comments input,
+#calcms_comments textarea{
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    box-sizing:border-box;
+	width:80%;
+    padding:6px;
+    margin:6px;
+    margin-left:0;
+    border-radius:3px;
+    border:1px solid #ccc;
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
+}
+
+#calcms_comments input{
+	max-width:20em;
+    height:32px;
+}
+
+#calcms_comments input[type=submit]{
+	max-width:10em;
+    background:#ddd;
+}
+
+#calcms_comments input[type="submit"]:hover{
+    cursor:pointer;
+    background:#eee;
+    border:1px solid #aaa;
+}
+
+#calcms_comments textarea{
+    height:10em;
+    width:40em;
+}
+
+/* calcms comment list */
+#calcms_newest_comments .author{
+	font-weight:bold;
+}
+
+#calcms_newest_comments div{
+    padding-left:1em;
+    padding-bottom:1em;
+}
+
+#calcms_newest_comments a:hover{
+	text-decoration:none;
+}
+
+#calcms_newest_comments span.content{
+	text-overflow: ellipsis; 
+}
+
+#calcms_newest_comments .comments{
+    transition: all .1s ease-in-out;
+}
+
+#calcms_newest_comments .comments:hover{
+    background: #e6e6e6;
+}
+
+/* end of calcms comments*/
+
+/* calcms_search */
+#calcms_search{
+	margin:0;
+	padding:0;
+	z-index:3;
+	text-align:left;
+	clear:both;
+    text-align:center;
+}
+
+#calcms_search input,
+#calcms_search select{
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    box-sizing:border-box;
+	width:80%;
+    padding:6px;
+    margin:6px;
+    margin-left:0;
+    border-radius:3px;
+    border:1px solid #ccc;
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
+    height:32px;
+}
+
+#calcms_search select{
+    background: white;
+    background-image: url("/agenda/image/select.png");
+    background-position: right center;
+    background-repeat: no-repeat;
+}
+
+#calcms_search input[type="checkbox"]{
+    background: none;
+    width:1em;
+    height:1em;
+    border:1px solid #ccc;
+    display:inline-block;
+    box-shadow:0 1px 1px 0 rgba(0, 0, 0, 0.1) inset;
+    content: " ";
+    margin-right:1em;
+}
+
+#calcms_search input[type="button"]{
+    background: none;
+    width:50%;
+}
+
+#calcms_search input[type="button"]:hover{
+    cursor:pointer;
+    background:#eee;
+    border:1px solid #aaa;
+}
+
+
+#calcms_search input{}
+#calcms_search input#calcms_search_field{}
+#calcms_search a#calcms_search_show_details{
+    padding-left:1em;
+    display:block;
+}
+
+a#calcms_search_show_details #plus{
+    font-size:16px;
+}
+
+/* end of calcms_search */
+
+
+/* calcms_calendar  */
+#calcms_calendar{
+	overflow:hidden;
+	text-align:center;
+	padding:0;
+	margin:0;
+	vertical-align:top;
+	clear:both;
+}
+
+#calcms_calendar table{
+	padding:0;
+	margin:0;
+	background:#fff;
+	border:1px solid #ddd;
+    border-collapse:collapse;
+	text-align:center;
+}
+
+#calcms_calendar table thead a:hover,
+#calcms_calendar table thead a:link,
+#calcms_calendar table thead a:visited{
+	color:#333;
+    padding:0;
+    text-decoration:none;
+	font-weight:normal;
+}
+
+#calcms_calendar table thead th{
+    padding-top:0px;
+    padding-bottom:2px;
+}
+
+#calcms_calendar table tbody a:hover,
+#calcms_calendar table tbody a:link,
+#calcms_calendar table tbody a:visited{
+	color:#333;
+	padding:5px;
+	padding-top:2px;
+	padding-bottom:3px;
+    text-decoration:none;
+	font-weight:normal;
+}
+
+#calcms_calendar table td,
+#calcms_calendar table th{
+	padding:0;
+	margin:0;
+	border:0;
+	text-align:center;
+	font-weight:normal;
+	border-bottom:1px solid #ddd;
+}
+
+#calcms_calendar table thead td:hover,
+#calcms_calendar table thead th:hover{
+	background-color:#ddd;
+}
+
+/* header */
+#calcms_calendar table th.first,
+#calcms_calendar table th.last{
+	font-size:large;
+}
+
+#calcms_calendar table th,
+#calcms_calendar table td{
+    transition: all .1s ease-in-out;
+}
+
+/* month selector */
+#calcms_calendar table thead tr:first-child a{
+    padding:6px;
+}
+
+#calcms_calendar table thead tr:first-child{
+	background:#ccc;
+}
+
+/* weekdays */
+#calcms_calendar table thead tr:nth-child(2) {
+	background:#eee;
+}
+
+/* week numbers */
+#calcms_calendar table tbody tr:first-child th:first-child,
+#calcms_calendar table tbody tr th:first-child a{
+	color:#aaa;
+}
+
+#calcms_calendar table tbody td:hover,
+#calcms_calendar table tbody th:hover{
+	background-color:#f0f0f0;
+}
+
+#calcms_calendar table td.selected{
+	background:#eee;
+	font-weight:bold;
+}
+
+#calcms_calendar table td.selected:hover{
+	background-color:#ddd;
+}
+
+#calcms_calendar table td.other_month a{
+	opacity:0.3;
+}
+
+
+
+/* player */
+#player{
+    border:0;
+    padding:0;
+    height:26px;
+    width:180px;
+    overflow:hidden;
+}
+
+/* mobile menu */
+
+#mobileMenuButton{
+    display:block;
+    position:fixed;
+    z-index:99;
+    right:6px;
+    top:3px;
+    font-size:1.5em;
+    padding:1em;
+    line-height:1em;
+    background:#ddd;
+    color:#000;
+    font-weight:bold;
+    cursor: pointer;
+    background:#ccc;
+    background:linear-gradient(to bottom, #333 0%, #333 20%, #bbb 20%, #bbb 40%, #333 40%, #333 60%, #bbb 60%, #bbb 80%, #333 80%, #333 100%);
+    border:0.4em solid #bbb;
+    border-radius:6px;
+    transition:all 0.2s ease-in-out 0s;
+}
+#mobileMenuButton:hover{
+    transform: scale(1.05);
+}
+
+ul.mobileMenu{
+    position:fixed;
+    top:0px;
+    background:#333!important;
+    width:100%;
+}
+
+ul.mobileMenu li,
+ul.mobileMenu li a{
+    float:none!important;
+    background:#444!important;
+    display:block;
+    text-align:center;
+    font-size:1.3em;
+    padding:0.5em!important;
+    line-height:1em;
+    z-index:99;
+    margin-bottom:1px;
+    width:80%;
+}
+
+ul.mobileMenu a,
+ul.mobileMenu a:link,
+ul.mobileMenu a:hover,
+ul.mobileMenu a:visited{
+    background-image:url()!important;
+    background:#444!important;
+    width:80%;
+}
+
+ul.mobileMenu li:hover,
+ul.mobileMenu li:hover a{
+    background:#999!important;
+    transition:all 0.2s ease;
+    
+}
+
+ul.mobileMenu li a:hover{
+    text-decoration:none!important;
+}
+
+#footer .content a{
+    padding:0.5em;
+    line-height:2em;
+}
+
+/*
+pre{
+	text-align:left;
+	font-family:Courier;
+	padding:1em;
+	margin:1em;
+	border:1px solid black;
+}
+
+div.update{
+	position:absolute;
+	bottom:0px;
+}
+
+div.update, div.update a{
+	text-align:left;
+	font-size:6px;
+	color:#bbb;
+}
+*/

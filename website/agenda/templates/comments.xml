@@ -1,0 +1,37 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
+</TMPL_IF>Content-type:application/atom+xml; charset=UTF-8
+
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns='http://www.w3.org/2005/Atom' xmlns:gCal='http://schemas.google.com/gCal/2005'>
+<id><TMPL_VAR cache_base_url>comments</id>
+
+<title type='text'><TMPL_VAR project_title> - Kommentare</title>
+<updated><TMPL_VAR created_at></updated>
+<category term='Radioprogramm'/>
+<subtitle type='text'>Das Schaerfste kommentiert noch</subtitle>
+
+<author>
+	<name><TMPL_VAR project_title></name>
+	<email>info@radiopiloten.de</email>
+</author>
+<link rel='alternate' type='text/html' href='<TMPL_VAR cache_base_url>feed_kommentare/'/>
+<generator version='0.1' uri='http://radiopiloten.org'>calcms</generator>
+<gCal:timezone value='Europe/Berlin'/>
+<gCal:timesCleaned value='0'/>
+<TMPL_LOOP comments>
+<entry>
+<id><TMPL_VAR static_files_url><TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url><TMPL_VAR id></id>
+<published><TMPL_VAR created_at></published>
+<updated><TMPL_VAR created_at></updated>
+
+<category term='Kommentar'/>
+<TMPL_IF short_content><title type='text'><TMPL_VAR short_content></title></TMPL_IF>
+<TMPL_IF content><summary type='text'><TMPL_VAR content></summary></TMPL_IF>
+<TMPL_IF content><content type='html'><![CDATA[<TMPL_VAR content>]]></content></TMPL_IF>
+
+<link rel='alternate'	type='text/html'		href='<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event escape=url>/<TMPL_VAR event_id escape=url>.html#comment_<TMPL_VAR id escape=url>' title='alternate'/>
+<link rel='self' 	type='application/atom+xml'	href='<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event escape=url>/<TMPL_VAR event_id escape=url>.html#comment_<TMPL_VAR id escape=url>'/>
+<author><name><TMPL_VAR author></name></author>
+</entry>
+</TMPL_LOOP>
+</feed>

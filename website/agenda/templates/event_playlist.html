@@ -1,0 +1,28 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
+</TMPL_IF>Content-type:text/html; charset=UTF-8;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Cache-control" content="public">
+    <meta http-equiv="expires" content="600">
+</head>
+
+<body>
+<TMPL_LOOP NAME=events>
+<a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>" 
+> 
+    <div id="event_playlist_<TMPL_VAR event_id>" class="event"  title="<TMPL_VAR full_title><TMPL_IF excerpt>. <TMPL_VAR excerpt></TMPL_IF>">
+        <div class="icon">
+            <img src="<TMPL_VAR icon>"></img>
+        </div>
+        <div class="title">
+            <TMPL_VAR weekday_short_name> <TMPL_VAR start_time_name><br />
+            <TMPL_IF series_name><TMPL_VAR series_name><TMPL_ELSE><TMPL_VAR title></TMPL_IF>
+        </div>
+    </div>
+</a>
+</TMPL_LOOP>
+</body>
+</html>
+

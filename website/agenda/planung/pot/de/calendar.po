@@ -1,0 +1,131 @@
+msgid "region"
+msgstr "de"
+
+msgid "selected_language"
+msgstr "de"
+
+msgid "button_today"
+msgstr "Heute"
+
+msgid "button_search"
+msgstr "Suche"
+
+msgid "label_month"
+msgstr "Monat"
+
+msgid "label_4_weeks"
+msgstr "4 Wochen"
+
+msgid "label_2_weeks"
+msgstr "2 Wochen"
+
+msgid "label_1_week"
+msgstr "1 Woche"
+
+msgid "label_day"
+msgstr "Tag"
+
+msgid "label_events"
+msgstr "Sendungen"
+
+msgid "label_schedule"
+msgstr "Planung"
+
+msgid "label_worktime"
+msgstr "Studiodienst"
+
+msgid "label_playout"
+msgstr "Playout"
+
+msgid "label_no_markup"
+msgstr "kein Filter"
+
+msgid "label_conflicts"
+msgstr "Konflikte"
+
+msgid "label_rerun"
+msgstr "Wiederholung"
+
+msgid "label_archived"
+msgstr "archiviert"
+
+msgid "label_playout"
+msgstr "Playout"
+
+msgid "label_published"
+msgstr "veröffentlicht"
+
+msgid "label_live"
+msgstr "Live"
+
+msgid "label_disable_event_sync"
+msgstr "kein Google Import"
+
+msgid "label_date"
+msgstr "Datum"
+
+msgid "label_duration"
+msgstr "Dauer"
+
+msgid "label_series"
+msgstr "Sendereihe"
+
+msgid "label_assign_event_series"
+msgstr "Sendung zu Sendereihe zuordnen"
+
+msgid "button_assign_event_series"
+msgstr "Hinzufügen"
+
+msgid "button_edit_series"
+msgstr "Sendereihe bearbeiten"
+
+msgid "label_create_series"
+msgstr "Sendereihe anlegen"
+
+msgid "button_create_series"
+msgstr "Anlegen"
+
+msgid "label_no_studio_selected"
+msgstr "Bitte ein Studio wählen und neu probieren"
+
+msgid "label_event_not_assigned_to_series"
+msgstr "Die Sendung ist keiner Sendereihe hinzugefügt"
+
+msgid "label_schedule_series"
+msgstr "Sendung planen"
+
+msgid "label_name"
+msgstr "Sendereihe"
+
+msgid "label_title"
+msgstr "Titel"
+
+msgid "label_subtitle"
+msgstr "Untertitel"
+
+msgid "label_episode"
+msgstr "Folge"
+
+msgid "label_rerun"
+msgstr "Wiederholung"
+
+msgid "button_cancel"
+msgstr "Abbrechen"
+
+msgid "single_events"
+msgstr "Einzelsendungen"
+
+msgid "single_event"
+msgstr "Einzelsendung"
+
+msgid "label_start"
+msgstr "Start"
+
+msgid "label_end"
+msgstr "Ende"
+
+msgid "label_weekday"
+msgstr "WT"
+
+msgid "label_day_of_year"
+msgstr "TiJ"

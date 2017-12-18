@@ -1,0 +1,58 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=3600, must-revalidate
+</TMPL_IF>Content-type:text/html; charset=UTF-8;
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="expires" content="36000">
+	<meta http-equiv="Content-Script-Type" content="javascript" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<title>Calendar <TMPL_VAR project_title></title>
+</head>
+<body>
+
+<div >
+<TMPL_IF debug>
+	<div id="calendar_debug"></div>
+</TMPL_IF>
+
+<table>
+<thead>
+<tr>
+	<th class="first">
+		<a 	href="<TMPL_VAR .cache_base_url>/<TMPL_VAR .controllers.calendar>/<TMPL_VAR previous_month>.html" 
+		>&laquo;</a>
+	</th>
+	<th colspan="5" align="center">
+		<a 	href="<TMPL_VAR .cache_base_url>/<TMPL_VAR .controllers.calendar>/<TMPL_VAR start_date>_<TMPL_VAR end_date>.html" 
+		><TMPL_VAR start_month_name> <TMPL_VAR start_year></a>
+	</th>
+	<th class="last">
+		<a 	href="<TMPL_VAR .cache_base_url>/<TMPL_VAR .controllers.calendar>/<TMPL_VAR next_month>.html" 
+		>&raquo;</a>
+	</th>
+</tr>
+
+<tr>
+<!--<th>Wo</th>
+-->
+<TMPL_LOOP weekdays><th><a href="<TMPL_VAR .local_base_url>/<TMPL_VAR .controllers.events>/<TMPL_VAR start_date>/<TMPL_VAR end_date>/<TMPL_VAR weekday>/" onclick="calcms.selectWeekdayEventListener('<TMPL_VAR start_date>','<TMPL_VAR end_date>','<TMPL_VAR weekday>');return false;"><TMPL_VAR "weekday_short_name"></a></th></TMPL_LOOP>
+</tr>
+
+</thead>
+<tbody>
+
+<TMPL_LOOP week_and_days>
+<tr>
+<!--
+<TMPL_LOOP week><th class="<TMPL_VAR class>"><a href="<TMPL_VAR .local_base_url>/<TMPL_VAR .controllers.events>/<TMPL_VAR from_date>/<TMPL_VAR till_date>/" title="Woche anzeigen" onclick="calcms.selectDateRangeEventListener('<TMPL_VAR from_date>','<TMPL_VAR till_date>');return false;" ><TMPL_VAR week_of_year></a></th></TMPL_LOOP>
+-->
+<TMPL_LOOP days><td class="<TMPL_VAR class>"><a href="<TMPL_VAR .cache_base_url>/<TMPL_VAR .controllers.events>/<TMPL_VAR date>.html" title="<TMPL_VAR day>.<TMPL_VAR month>. zeigen"><TMPL_VAR day></a></td>
+</TMPL_LOOP></tr></TMPL_LOOP>
+</tbody>
+</table>
+
+
+</div>
+</body>
+</html>

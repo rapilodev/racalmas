@@ -1,0 +1,35 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=3600, must-revalidate
+</TMPL_IF>Content-type:text/html; charset=UTF-8;
+
+<!DOCTYPE html>
+<html>
+<body>
+<form id="calcms_projects" name="calcms_project">
+	<select id="calcms_project" name="project" 
+		onchange="calcms.selectProject()" 
+	>
+	<TMPL_LOOP projects><option value="<TMPL_VAR name escape=0>"><TMPL_VAR title></option>
+</TMPL_LOOP>
+	</select>
+</form>
+
+<TMPL_IF projects>
+<form id="calcmsCategoryForm" name="calcms_category">
+	<TMPL_LOOP projects>
+	<TMPL_UNLESS isEmpty>
+	<select id="calcms_category_<TMPL_VAR js_name escape=0>" name="category_<TMPL_VAR js_name escape=0>" 
+		title="Kategorien durchsuchen" 
+		onchange="calcms.selectCategory('<TMPL_VAR name>', jQuery(this).val())" 
+		style="display:none;"
+	>
+		<option value="">- Kategorie -</option>
+<TMPL_LOOP categories><option value="<TMPL_VAR name escape=0>"<TMPL_VAR selected>><TMPL_VAR name> (<TMPL_VAR sum>)</option>
+</TMPL_LOOP>
+	</select>
+    </TMPL_UNLESS>
+	</TMPL_LOOP>
+</form>
+</TMPL_IF>
+
+</body>
+</html>

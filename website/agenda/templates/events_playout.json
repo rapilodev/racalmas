@@ -1,0 +1,4 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
+</TMPL_IF>Content-type:application/json; charset=UTF-8
+
+("events" : [<TMPL_LOOP events>"event":{"id" : "<TMPL_VAR event_id>"}<TMPL_UNLESS NAME="__last__">,</TMPL_UNLESS></TMPL_LOOP>])

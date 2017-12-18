@@ -1,0 +1,628 @@
+<TMPL_IF .allow.read_series>
+
+	<link href="css/jquery-ui-timepicker.css" type="text/css" rel="stylesheet" /> 
+	<script src="js/jquery-ui-timepicker.js" type="text/javascript"></script>
+
+    <script src="js/jquery.autosize.min.js" type="text/javascript"></script>
+	<link href="css/theme.default.css" rel="stylesheet">
+
+	<script src="js/jquery.tablesorter.min.js"></script>
+	<script src="js/jquery.tablesorter.widgets.min.js"></script>
+	<script src="js/jquery.tablesorter.scroller.js"></script>
+	
+    <script src="js/image.js" type="text/javascript"></script>
+    <script>
+        var region='<TMPL_VAR loc.region>';
+        var event_id='<TMPL_VAR event_id>';
+        var selectImageId='';
+        <TMPL_IF .getBack>
+            $(document).ready(
+                function(){
+                    getBack()
+                }
+            );
+        </TMPL_IF>
+    </script>
+
+<style>
+	#editor div p a img {
+		float:right;
+	}
+</style>
+
+<!-- view series -->
+<div id="view_<TMPL_VAR .series_id>" class="view" style="clear:both">
+	<div class="buttons">
+	    <TMPL_IF .allow.read_event>
+            <button 
+                onclick="window.location='calendar.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>&list=1'"
+                style="float:left"
+            ><TMPL_VAR .loc.button_event_list></button>
+        </TMPL_IF>
+
+        <TMPL_IF .allow.read_event>
+            <button target="_blank"
+                onclick="load('event_history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>');"
+                style="float:left"
+            ><TMPL_VAR .loc.button_show_changes></button>
+        </TMPL_IF>
+
+	    <TMPL_IF .allow.create_event>
+	        <form action="event.cgi">
+	            <input  type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+	            <input  type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
+	            <input  type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
+	            <button type="submit" name="action"     value="show_new_event"><TMPL_VAR .loc.button_create_event></button>
+	        </form>
+	    </TMPL_IF>
+    </div>
+
+	<table>	
+		<tr><td colspan="2">
+			<div class="header">
+            <TMPL_IF has_single_events>
+                <TMPL_VAR .loc.single_events> <TMPL_IF title><TMPL_VAR title></TMPL_IF>
+            <TMPL_ELSE>
+                <TMPL_VAR .loc.title>
+    			<TMPL_IF series_name> <TMPL_VAR series_name></TMPL_IF><TMPL_IF title> - <TMPL_VAR title></TMPL_IF>
+            </TMPL_IF>
+            </div>
+		</td></tr>
+	</table>
+
+</div>
+
+<div id="tabs">
+    <ul>
+        <TMPL_IF .allow.update_series_template>
+            <li><a href="#tabs-template"><TMPL_VAR .loc.tab_template></a></li>
+        </TMPL_IF>
+            <li><a href="#tabs-schedule"><TMPL_VAR .loc.tab_schedule></a></li>
+            <li><a href="#tabs-events"><TMPL_VAR .loc.tab_current_events></a></li>
+        <TMPL_UNLESS has_single_events>
+             <li><a href="#tabs-members"><TMPL_VAR .loc.tab_members></a></li>
+             <!--
+             <TMPL_IF .allow.scan_series_events>
+                 <li><a href="#tabs-import"><TMPL_VAR .loc.tab_import></a></li>
+             </TMPL_IF>
+             -->
+             <TMPL_IF .allow.delete_series>
+                 <li><a href="#tabs-delete"><TMPL_VAR .loc.tab_delete></a></li>
+            </TMPL_IF>
+        </TMPL_UNLESS>
+    </ul>
+
+    <!-- edit template-->
+    <TMPL_IF .allow.update_series_template>
+    <div id="tabs-template">
+        <!--
+	    <div class="header">Template</div>
+        <div class="buttons">
+    		<button onclick="edit_series('<TMPL_VAR .series_id>');return false;">edit</button>
+        </div>
+        -->
+        
+	    <div id="edit_<TMPL_VAR .series_id>" class="editor"> <!--style="display:none;"-->
+	    <form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-template">
+            <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+		    <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
+		    <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">	
+		    <table>
+                <!--
+			    <tr> <td class="label">program</td>	<td><input name="program" value="<TMPL_VAR program>"></td></tr>
+                -->
+                <TMPL_UNLESS has_single_events>
+			    <tr> <td class="label"><TMPL_VAR .loc.template_series></td> 	      
+                     <td><input name="series_name" value="<TMPL_VAR series_name>" placeholder="<TMPL_VAR .loc.template_series>"></td></tr>
+                <TMPL_ELSE>
+                     <input type="hidden" name="series_name" value="_single_">
+                </TMPL_UNLESS>
+			    <tr> <td class="label"><TMPL_VAR .loc.template_title></td> 	      
+                     <td><input name="title" value="<TMPL_VAR title>" placeholder="<TMPL_VAR .loc.template_title>"></td></tr>
+			    <tr id="excerpt">
+			        <td class="label"><TMPL_VAR .loc.template_excerpt></td> 	  
+                    <td>
+                        <div id="excerpt_too_long" class="error" style="display:none"><TMPL_VAR .loc.label_excerpt_too_long></div>
+                        <textarea name="excerpt" class="animated" style="width:100%;" maxlength="251" placeholder="<TMPL_VAR .loc.template_excerpt>"><TMPL_VAR excerpt></textarea>
+                    </td>
+                </tr>
+			    <tr> <td class="label"><TMPL_VAR .loc.template_topic></td>
+                     <td><textarea name="topic" class="animated" style="width:100%;" placeholder="<TMPL_VAR .loc.template_topic>"><TMPL_VAR topic></textarea></td></tr>
+			    <tr> <td class="label"><TMPL_VAR .loc.template_content></td>	      
+                     <td><textarea name="content" class="animated" style="width:100%;" placeholder="<TMPL_VAR .loc.template_content>"><TMPL_VAR content></textarea></td></tr>
+			    <tr> <td class="label"><TMPL_VAR .loc.template_image></td>
+			         <td>
+                    <TMPL_IF .allow.read_image>
+                        <button onclick="selectImage('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','image_<TMPL_VAR .series_id>','<TMPL_VAR series_name escape=HTML>','<TMPL_VAR image escape=URL>','<TMPL_VAR series_id>');return false;"
+                            style="padding:0;float:left"
+                        >
+                            <img id="imagePreview" src="<TMPL_VAR image>">
+                        </button>
+                        <input id="image_<TMPL_VAR .series_id>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.template_image>">
+                    <TMPL_ELSE>
+                        <img src="<TMPL_VAR image>">
+                    </TMPL_IF>
+                </td></tr>
+			    <tr> <td class="label"><TMPL_VAR .loc.template_duration></td>	  
+                     <td><input name="default_duration" value="<TMPL_VAR default_duration>" style="width:3em" placeholder="<TMPL_VAR .loc.template_duration>"> <TMPL_VAR .loc.minutes></td></tr>
+
+			    <tr> <td class="label"><TMPL_VAR .loc.template_live></td>	      
+                     <td><input name="live" type="checkbox"<TMPL_IF live> value="1" checked="checked"<TMPL_ELSE> value="0"</TMPL_IF> ></td></tr>
+
+                <TMPL_UNLESS has_single_events>
+			    <tr> <td class="label"><TMPL_VAR .loc.template_count_episodes></td>
+                     <td><input name="count_episodes" type="checkbox"<TMPL_IF count_episodes> value="1" checked="checked"<TMPL_ELSE> value="0"</TMPL_IF> ></td></tr>
+                </TMPL_UNLESS>
+
+			    <tr> <td class="label"><TMPL_VAR .loc.template_podcast_url></td>	      
+                     <td><input name="podcast_url" style="width:100%;" value="<TMPL_VAR podcast_url>" placeholder="<TMPL_VAR .loc.template_podcast_url>"></td></tr>
+
+			    <tr> <td class="label"><TMPL_VAR .loc.template_archive_url></td>	      
+                     <td><input name="archive_url" style="width:100%;" value="<TMPL_VAR archive_url>" placeholder="<TMPL_VAR .loc.template_archive_url>"></td></tr>
+
+			    <tr> <td class="label"><TMPL_VAR .loc.template_comments></td>	  
+                     <td><textarea name="comment" class="animated" style="width:100%;" placeholder="<TMPL_VAR .loc.template_comments>"><TMPL_VAR comment></textarea></td></tr>
+			    <!--<tr> <td class="label">studio</td> 	<td><TMPL_VAR studio></td></tr>-->
+		    </table>
+
+		    <div class="buttons">
+			    <TMPL_IF .allow.update_series_template>
+				    <button type=submit name="action" value="save"><TMPL_VAR .loc.button_save_template></button>
+			    </TMPL_IF>
+			    <!--
+			    <button onclick="cancel_edit_series('<TMPL_VAR series_id>');return false;">cancel</button>
+			    -->
+		    </div>
+	    </form>
+	    </div>
+    </div>
+    </TMPL_IF>
+
+    <!-- schedule -->
+    <div id="tabs-schedule">
+        
+	    <!-- edit schedule -->
+		<TMPL_IF .allow.update_schedule>
+		<div id="edit_schedule_<TMPL_VAR .series_id>" class="editor">
+			<TMPL_LOOP schedule>
+			<div class="row schedule">
+				<form method="post"
+				    action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-schedule"
+				    id="schedule_<TMPL_VAR schedule_id>"
+				>
+                    <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+					<input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>" />
+					<input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>" />
+					<input type="hidden" name="schedule_id" value="<TMPL_VAR schedule_id>" />
+
+					<div class="cell exclude"> 
+                        <TMPL_VAR .loc.exception><br/>
+					    <input name="exclude" value="<TMPL_VAR exclude>" type="checkbox" class="exclude">
+					</div>
+
+					<div class="cell weekday"></div>
+					<div class="cell start">
+                        <TMPL_VAR .loc.schedule_start><br/>
+					    <input name="start" value="<TMPL_VAR start>" class="datetimepicker start" placeholder="<TMPL_VAR .loc.schedule_start>"/>
+					</div>
+
+					<div class="cell duration">
+                        <TMPL_VAR .loc.duration><br/>
+                        <select name="duration" value="<TMPL_VAR duration>" class="duration"/>
+                            <option value="30">30 <TMPL_VAR .loc.minutes></option>
+                            <option value="60">1 <TMPL_VAR .loc.hour></option>
+                            <option value="90">1.5 <TMPL_VAR .loc.hours></option>
+                            <option value="120">2 <TMPL_VAR .loc.hours></option>
+                            <option value=""><TMPL_VAR .loc.choose_free></option>
+                        </select>
+					</div>
+
+					<div class="cell period_type"> 
+                        <TMPL_VAR .loc.period_type><br/>
+                        <select name="period_type" onchange="showScheduleFields('schedule_<TMPL_VAR schedule_id>')">
+                            <option value="single" <TMPL_IF period_type_single>selected="selected"</TMPL_IF>
+                            ><TMPL_VAR .loc.period_type_single></option>
+                            <option value="days" <TMPL_IF period_type_days>selected="selected"</TMPL_IF>
+                            ><TMPL_VAR .loc.period_type_days></option>
+                            <option value="week_of_month" <TMPL_IF period_type_week_of_month>selected="selected"</TMPL_IF>
+                            ><TMPL_VAR .loc.period_type_week_of_month></option>
+                        </select>
+					</div>
+
+					<div class="cell end"> 
+                        <TMPL_VAR .loc.schedule_end><br/>
+					    <input name="end"  value="<TMPL_VAR end>" class="datetimepicker end" placeholder="<TMPL_VAR .loc.schedule_end>"/>
+					</div>
+
+					<div class="cell frequency"> 
+                        <TMPL_VAR .loc.frequency><br/>
+					    <select name="frequency" value="<TMPL_VAR frequency>" class="frequency">
+                            <option value="1"><TMPL_VAR .loc.daily></option>
+                            <option value="7"><TMPL_VAR .loc.weekly></option>
+                            <option value="14"><TMPL_VAR .loc.every> 2 <TMPL_VAR .loc.weeks></option>
+                            <option value="21"><TMPL_VAR .loc.every> 3 <TMPL_VAR .loc.weeks></option>
+                            <option value="28"><TMPL_VAR .loc.every> 4 <TMPL_VAR .loc.weeks></option>
+                            <option value="42"><TMPL_VAR .loc.every> 6 <TMPL_VAR .loc.weeks></option>
+                            <option value="56"><TMPL_VAR .loc.every> 8 <TMPL_VAR .loc.weeks></option>
+                            <option value=""><TMPL_VAR .loc.choose_free></option>
+                        </select>
+					</div>
+
+					<div class="cell week_of_month"> 
+                        <TMPL_VAR .loc.week_of_month><br/>
+					    <select name="week_of_month" value="<TMPL_VAR week_of_month>" class="week_of_month">
+                            <option value="1"><TMPL_VAR .loc.week_1st></option>
+                            <option value="2"><TMPL_VAR .loc.week_2nd></option>
+                            <option value="3"><TMPL_VAR .loc.week_3rd></option>
+                            <option value="4"><TMPL_VAR .loc.week_4th></option>
+                            <option value="5"><TMPL_VAR .loc.week_5th></option>
+                        </select>
+					</div>
+
+					<div class="cell schedule_weekday"> 
+                        <TMPL_VAR .loc.weekday><br/>
+					    <select name="weekday" value="<TMPL_VAR weekday>" class="schedule_weekday"/>
+                            <option value="1"><TMPL_VAR .loc.monday></option>
+                            <option value="2"><TMPL_VAR .loc.tuesday></option>
+                            <option value="3"><TMPL_VAR .loc.wednesday></option>
+                            <option value="4"><TMPL_VAR .loc.thursday></option>
+                            <option value="5"><TMPL_VAR .loc.friday></option>
+                            <option value="6"><TMPL_VAR .loc.saturday></option>
+                            <option value="7"><TMPL_VAR .loc.sunday></option>
+                        </select>
+					</div>
+
+					<div class="cell schedule_month"> 
+                        <TMPL_VAR .loc.every_month><br/>
+					    <select name="month" value="<TMPL_VAR month>" class="schedule_month"/>
+                            <option value="1"><TMPL_VAR .loc.every_time></option>
+                            <option value="2"><TMPL_VAR .loc.every_2nd_time></option>
+                            <option value="3"><TMPL_VAR .loc.every_3rd_time></option>
+                            <option value="4"><TMPL_VAR .loc.every_4th_time></option>
+                        </select>
+					</div>
+
+					<div class="cell nextDay"> 
+                        <TMPL_VAR .loc.nextDay><br/>
+					    <input name="nextDay" value="<TMPL_VAR nextDay>" type="checkbox" class="nextDay">
+					</div>
+
+					<div class="cell save"><br>
+					    <button type="submit" name="action" value="save_schedule"
+					    ><TMPL_VAR .loc.button_save_schedule></button>
+					</div>
+					<TMPL_IF .allow.delete_schedule>
+					<div class="cell delete"><br>
+					    <button type="submit" name="action" value="delete_schedule" 
+                            onclick="commitForm('schedule_<TMPL_VAR schedule_id>','delete_schedule','<TMPL_VAR .loc.button_delete_schedule>');return false;"
+                        ><TMPL_VAR .loc.button_delete_schedule></button>
+                    </div>
+					</TMPL_IF>
+				</form>
+			</div>
+			</TMPL_LOOP>
+			
+			<div class="row schedule row<TMPL_IF show_hint_to_add_schedule> active</TMPL_IF>">
+				<form id="schedule_add" method="post" 
+				    action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-schedule"
+				>
+                    <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+					<input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>" />
+					<input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>" />	
+
+					<div class="cell exclude"> 
+                        <TMPL_VAR .loc.exception><br/>
+					    <input name="exclude" value="<TMPL_VAR exclude>" type="checkbox" class="exclude" onclick="updateScheduleButtonName()"/>
+					</div>
+
+					<div class="cell weekday"></div>
+					<div class="cell start">
+                        <TMPL_VAR .loc.schedule_start><br/>
+					    <input name="start" value="<TMPL_VAR start>" class="datetimepicker start" placeholder="<TMPL_VAR .loc.schedule_start>"/>
+					</div>
+
+					<div class="cell duration"> 
+                        <TMPL_VAR .loc.duration><br/>
+                        <select name="duration" value="<TMPL_VAR duration>" class="duration"/>
+                            <option value="30">30 <TMPL_VAR .loc.minutes></option>
+                            <option value="60">1 <TMPL_VAR .loc.hour></option>
+                            <option value="90">1.5 <TMPL_VAR .loc.hours></option>
+                            <option value="120">2 <TMPL_VAR .loc.hours></option>
+                            <option value=""><TMPL_VAR .loc.choose_free></option>
+                        </select>
+					</div>
+
+					<div class="cell period_type"> 
+                        <TMPL_VAR .loc.period_type><br/>
+                        <select name="period_type" onchange="showScheduleFields('schedule_add')">
+                            <option value="single" <TMPL_IF period_type_single>selected="selected"</TMPL_IF> 
+                            ><TMPL_VAR .loc.period_type_single></option>
+                            <option value="days" <TMPL_IF period_type_days>selected="selected"</TMPL_IF> 
+                            ><TMPL_VAR .loc.period_type_days></option>
+                            <option value="week_of_month" <TMPL_IF period_type_week_of_month>selected="selected"</TMPL_IF> 
+                            ><TMPL_VAR .loc.period_type_week_of_month></option>
+                        </select>
+					</div>
+
+					<div class="cell end"> 
+                        <TMPL_VAR .loc.schedule_end><br/>
+					    <input name="end"  value="<TMPL_VAR end>" class="datetimepicker end" placeholder="<TMPL_VAR .loc.schedule_end>"/>
+					</div>
+
+					<div class="cell frequency"> 
+                        <TMPL_VAR .loc.frequency><br/>
+					    <select name="frequency" value="<TMPL_VAR frequency>" class="frequency">
+                            <option value="1"><TMPL_VAR .loc.daily></option>
+                            <option value="7"><TMPL_VAR .loc.weekly></option>
+                            <option value="14"><TMPL_VAR .loc.every> 2 <TMPL_VAR .loc.weeks></option>
+                            <option value="21"><TMPL_VAR .loc.every> 3 <TMPL_VAR .loc.weeks></option>
+                            <option value="28"><TMPL_VAR .loc.every> 4 <TMPL_VAR .loc.weeks></option>
+                            <option value="42"><TMPL_VAR .loc.every> 6 <TMPL_VAR .loc.weeks></option>
+                            <option value="56"><TMPL_VAR .loc.every> 8 <TMPL_VAR .loc.weeks></option>
+                            <option value=""><TMPL_VAR .loc.choose_free></option>
+                        </select>
+					</div>
+
+					<div class="cell week_of_month"> 
+                        <TMPL_VAR .loc.week_of_month><br/>
+					    <select name="week_of_month" value="<TMPL_VAR week_of_month>" class="week_of_month">
+                            <option value="1"><TMPL_VAR .loc.week_1st></option>
+                            <option value="2"><TMPL_VAR .loc.week_2nd></option>
+                            <option value="3"><TMPL_VAR .loc.week_3rd></option>
+                            <option value="4"><TMPL_VAR .loc.week_4th></option>
+                            <option value="5"><TMPL_VAR .loc.week_5th></option>
+                        </select>
+					</div>
+
+					<div class="cell schedule_weekday"> 
+                        <TMPL_VAR .loc.weekday><br/>
+					    <select name="weekday" value="<TMPL_VAR weekday>" class="schedule_weekday"/>
+                            <option value="1"><TMPL_VAR .loc.monday></option>
+                            <option value="2"><TMPL_VAR .loc.tuesday></option>
+                            <option value="3"><TMPL_VAR .loc.wednesday></option>
+                            <option value="4"><TMPL_VAR .loc.thursday></option>
+                            <option value="5"><TMPL_VAR .loc.friday></option>
+                            <option value="6"><TMPL_VAR .loc.saturday></option>
+                            <option value="7"><TMPL_VAR .loc.sunday></option>
+                        </select>
+					</div>
+
+					<div class="cell schedule_month"> 
+                        <TMPL_VAR .loc.every_month><br/>
+					    <select name="month" value="<TMPL_VAR month>" class="schedule_month"/>
+                            <option value="1"><TMPL_VAR .loc.every_time></option>
+                            <option value="2"><TMPL_VAR .loc.every_2nd_time></option>
+                            <option value="3"><TMPL_VAR .loc.every_3rd_time></option>
+                            <option value="4"><TMPL_VAR .loc.every_4th_time></option>
+                        </select>
+					</div>
+
+					<div class="cell nextDay"> 
+                        <TMPL_VAR .loc.nextDay><br/>
+					    <input name="nextDay" value="<TMPL_VAR nextDay>" type="checkbox" class="nextDay">
+					</div>
+
+					<TMPL_IF .allow.update_schedule>
+    					<div class="cell save">
+    					    <br/>
+                            <button id="addScheduleButton" type="submit" name="action" value="save_schedule"
+                                ><TMPL_VAR .loc.button_add_schedule></button>
+                            <TMPL_IF show_hint_to_add_schedule><TMPL_VAR .loc.label_hint_to_add_schedule></TMPL_IF>
+                        </div>
+					</TMPL_IF>
+				</form>
+			</div>
+		</div>
+		</TMPL_IF>
+
+        <!-- show schedule -->
+        <div id="show_schedule_<TMPL_VAR series_id>" class="show_schedule">
+	        <table id="schedule_table" class="table" width="100%">
+                <thead>
+	                <tr>
+                        <th></th>
+		                <th><TMPL_VAR .loc.from></th>
+		                <th><TMPL_VAR .loc.till></th>
+		                <!--<th class="cell">exclude</th>-->
+	                </tr>
+                </thead>
+                <tbody>
+	        <TMPL_LOOP series_dates>
+		            <tr <TMPL_IF exclude>class="exclude"</TMPL_IF> >
+		                <td><TMPL_VAR weekday></td>
+		                <td><TMPL_VAR start></td>
+		                <td><TMPL_VAR end></td>
+	                </tr>
+	        </TMPL_LOOP>
+                </tbody>
+	        </table>
+	    </div>
+    </div>
+
+	<!-- series events -->
+	<div id="tabs-events">
+		
+		<table class="table">
+		<TMPL_LOOP events>
+			<tr id="event_<TMPL_VAR event_id>">
+				<td class="logo"><img src="<TMPL_VAR image>" width="33" height="33"></td>
+				<td class="weekday"><TMPL_VAR weekday_short_name></td>
+				<td class="date"><TMPL_VAR start_date></td>
+				<td class="time"><TMPL_VAR start_time_name></td>
+				<td class="spacer">-</td>
+				<td class="time"><TMPL_VAR end_time></td>
+				<td class="title"><TMPL_VAR full_title></td>
+				<TMPL_IF .allow.update_event>
+
+				<td>
+					<button onclick="edit_event('<TMPL_VAR event_id>','<TMPL_VAR .series_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .project_id>','hide_series')"
+					><TMPL_VAR .loc.button_edit></button>
+				</td>
+				</TMPL_IF>
+			</tr>
+			<tr id="event_container_<TMPL_VAR event_id>" style="display:none">
+				<td colspan="5">
+				<div id="event_details_<TMPL_VAR event_id>">
+				</div>
+				</td>
+			</tr>
+
+		</TMPL_LOOP>
+		</table>
+		
+	</div>
+
+<TMPL_UNLESS has_single_events>
+	<!-- series members -->
+	<div id="tabs-members">
+	    <!--
+		<div class="header">Members</div>
+        -->
+        
+		<table>
+
+		<!-- add members -->
+		<TMPL_IF .allow.update_series>
+		<tr>
+		    <td>
+			    <button onclick="edit_series_members('<TMPL_VAR .series_id>')" style="float:left"
+			    ><TMPL_VAR .loc.button_edit_member></button>
+		    </td>
+		    <td colspan="2">
+			    <TMPL_IF .allow.assign_series_member>
+			    <div class="edit_series_members_<TMPL_VAR .series_id>" style="display:none;">
+			        <form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-members">
+                        <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+				        <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
+				        <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
+				        <input type="hidden" name="action"     value="add_user">
+				        <select name="user_id">
+					        <option value=""><TMPL_VAR .loc.label_choose_member></option>
+				        <TMPL_LOOP studio_users>
+					        <option value="<TMPL_VAR user_id>"><TMPL_VAR full_name></option>
+				        </TMPL_LOOP>
+				        </select>
+				        <button type="submit" value="add user"
+				            ><TMPL_VAR .loc.button_add_member></button>
+			        </form>
+			    </div>
+			    </TMPL_IF>
+
+		    </div>
+		    </td>
+		</TMPL_IF>
+		</tr>
+
+		<!-- view members -->
+		<TMPL_LOOP series_users>
+		<tr>
+			<td>
+				<TMPL_VAR full_name>
+			</td>
+
+			<TMPL_IF .allow.remove_series_member>
+			<td>
+			<div class="edit_series_members_<TMPL_VAR .series_id>" style="display:none">
+				<form method="post" id="series_members_<TMPL_VAR .series_id>_<TMPL_VAR user_id>"
+				    action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-members" 
+				>
+                    <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+					<input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
+					<input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
+					<input type="hidden" name="user_id"    value="<TMPL_VAR user_id>">
+					<input type="hidden" name="action"     value="remove_user">
+					<button type="submit" value="remove user"
+                        onclick="commitForm('series_members_<TMPL_VAR .series_id>_<TMPL_VAR user_id>', 'remove_user', '<TMPL_VAR .loc.button_remove_member>'); return false;"
+                    ><TMPL_VAR .loc.button_remove_member></button>
+				</form>
+			</div>
+			</td>
+
+			<td class="edit_series_members_<TMPL_VAR .series_id> label" style="display:none;max-width:10em;">
+				<TMPL_VAR .loc.added> <TMPL_VAR .loc.at> <TMPL_VAR modified_at> <TMPL_VAR .loc.by> <TMPL_VAR modified_by>
+			</td>
+			</TMPL_IF>
+		</tr>
+		</TMPL_LOOP>
+		</table>
+	</div>
+
+    <!-- assign events from series_name and title-->
+    <TMPL_IF .allow.scan_series_events>
+    <!--
+    <div id="tabs-import">
+	    <div id="scan_<TMPL_VAR .series_id>" class="editor"> 
+	        <div><TMPL_VAR .loc.label_import></div>
+            <form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-import">
+                <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+	            <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+	            <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">	
+	            <input type="hidden" name="action" value="save_scan">
+                <table>
+	                <tr> 
+	                    <td class="label"><TMPL_VAR .loc.label_import_series></td>
+	                    <td><input name="assign_event_series_name" value="<TMPL_VAR assign_event_series_name>"></td>
+	                </tr>
+	                <tr>
+	                    <td class="label"><TMPL_VAR .loc.label_import_title></td>
+	                    <td><input name="assign_event_title" value="<TMPL_VAR assign_event_title>"></td>
+	                </tr>
+      			    <tr>
+      			        <td></td>
+      			        <td><button type="submit" value="save"><TMPL_VAR .loc.button_import_save></button></td>
+  			    </table>
+            </form>
+        </div>
+
+        <div class="buttons">
+		    <div><TMPL_VAR .loc.label_import_scan></div>
+            <form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-import">
+                <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+	            <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+	            <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">	
+	            <input type="hidden" name="action" value="scan_events">
+                <table>
+	                <tr>
+	                    <td class="label"></td> 	
+	                    <td><button type="submit" value="scan"
+	                        ><TMPL_VAR .loc.button_import_scan></button>
+	                    </td>
+	                </tr>
+  			    </table>
+            </form>
+        </div>
+        <TMPL_VAR scan_results escape="no">
+    </div>
+    -->
+    </TMPL_IF>
+    
+    <!-- delete series -->
+    <TMPL_IF .allow.delete_series>
+    <div id="tabs-delete">
+        <center>
+        <div><TMPL_VAR .loc.label_delete_series></div>
+        <div>
+	        <form method="post" action="series.cgi#tabs-delete" id="series_<TMPL_VAR .series_id>">
+                <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+		        <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+		        <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">	
+		        <input type="hidden" name="action" value="delete">
+		        <button type="submit" value="delete this series" 
+                    onclick="commitForm('series_<TMPL_VAR .series_id>','delete','<TMPL_VAR .loc.button_delete_series>');return false;"
+                ><TMPL_VAR .loc.button_delete_series></button>
+            </form>
+        </div>
+        </center>
+    </div>
+    </TMPL_IF>
+
+</TMPL_UNLESS> <!-- has single events-->
+
+    <div id="selectImage"></div>
+	<div class="label right"><TMPL_VAR .loc.modified> <TMPL_VAR .loc.at> <TMPL_VAR modified_at> <TMPL_VAR .loc.by> <TMPL_VAR modified_by>.</div>
+
+</div>	    
+</body>
+</html>
+
+</TMPL_IF>

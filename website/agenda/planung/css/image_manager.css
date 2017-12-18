@@ -1,0 +1,48 @@
+#content div.image{
+	display:inline-block;
+	vertical-alignment:top;
+	border:1px solid gray;
+	margin:6px;
+	padding:0;
+	text-align:left;
+	background-repeat:no-repeat;
+	width:150px;
+	height:150px;
+	vertical-align:bottom;
+}
+
+#content .image_detail{
+	width:150px;
+	height:150px;
+}
+
+#content .close{
+	text-align:right;
+	padding:0;
+	margin:0;
+	color:white;
+	float:right;
+}
+
+form table{
+	width:100%;
+	height:100%;
+}
+
+input.field{
+	width:30em;
+}
+
+
+#content div.image .label{
+	text-align:center;
+	background-color:#333;
+	color:#fff;
+	vertical-align:bottom;
+	opacity:0.8;
+	padding:6px;
+	width:138px;
+	margin:0;
+}
+
+

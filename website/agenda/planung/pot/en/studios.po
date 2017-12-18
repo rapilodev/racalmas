@@ -1,0 +1,42 @@
+msgid "region"
+msgstr "en"
+
+msgid "title"
+msgstr "Studios"
+
+msgid "button_cancel"
+msgstr "cancel"
+
+msgid "button_add_studio"
+msgstr "add studio"
+
+msgid "button_create"
+msgstr "create"
+
+msgid "button_save"
+msgstr "save"
+
+msgid "button_delete"
+msgstr "delete"
+
+msgid "button_edit"
+msgstr "edit"
+
+msgid "button_show_changes"
+msgstr "changes"
+
+msgid "label_name"
+msgstr "name"
+
+msgid "label_description"
+msgstr "description"
+
+msgid "label_location"
+msgstr "id"
+
+msgid "label_stream"
+msgstr "stream"
+
+msgid "label_google_calendar"
+msgstr "google_calendar"
+

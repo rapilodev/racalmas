@@ -1,0 +1,31 @@
+<TMPL_IF no_result>
+<div id="empty_or_not">
+
+    <script>
+    jQuery( document ).ready(function() {
+        //load next shows into current playlist
+        if(jQuery('#coming_shows').length!=0) jQuery('#coming_shows').load('/agenda/playlistLong/');
+
+        //hide next shows
+        if(jQuery('#calcms_playlist').length!=0) jQuery('#calcms_playlist').parent().parent().hide();
+
+        //hide programm menu
+        if(jQuery('#calcms_menu').length!=0) jQuery('#calcms_menu').parent().parent().hide();
+    });
+    </script>
+
+    <!--
+	<div class="content" style="clear:both"> 
+		nichts gefunden...<br> 
+		<br>
+	</div>
+	-->
+
+	<h3 class="summary title">Kommende Sendungen</h3>
+
+    <div id="coming_shows"></div>
+
+</div>
+</TMPL_IF>
+
+

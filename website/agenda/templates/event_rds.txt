@@ -1,0 +1,4 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
+</TMPL_IF>Content-type:text/plain; charset=UTF-8;
+
+<TMPL_LOOP NAME=events><TMPL_IF __first__><TMPL_VAR rds_title></TMPL_IF></TMPL_LOOP>

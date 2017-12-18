@@ -1,0 +1,329 @@
+msgid "region"
+msgstr "de"
+
+msgid "title"
+msgstr "Sendereihen"
+
+msgid "button_add_series"
+msgstr "Sendereihe hinzufügen"
+
+msgid "button_create"
+msgstr "Anlegen"
+
+msgid "button_edit"
+msgstr "Bearbeiten"
+
+msgid "button_cancel"
+msgstr "Abbrechen"
+
+msgid "button_old_series"
+msgstr "Alte Sendereihen"
+
+msgid "button_show_changes"
+msgstr "Änderungen"
+
+msgid "label_name"
+msgstr "Name"
+
+msgid "label_title"
+msgstr "Titel"
+
+msgid "button_event_list"
+msgstr "Sendungen zeigen"
+
+msgid "button_create_event"
+msgstr "Sendung anlegen"
+
+
+msgid "tab_template"
+msgstr "Vorlage"
+
+msgid "button_save_template"
+msgstr "speichern"
+
+msgid "template_series"
+msgstr "Sendereihe"
+
+msgid "template_title"
+msgstr "Titel"
+
+msgid "template_excerpt"
+msgstr "Auszug"
+
+msgid "template_topic"
+msgstr "Aktuelle Themen"
+
+msgid "template_content"
+msgstr "Beschreibung"
+
+msgid "template_image"
+msgstr "Bild"
+
+msgid "template_duration"
+msgstr "Dauer"
+
+msgid "template_live"
+msgstr "Live-Sendung"
+
+msgid "template_count_episodes"
+msgstr "Folgen zählen"
+
+msgid "template_comments"
+msgstr "interne Kommentare"
+
+msgid "template_podcast_url"
+msgstr "Podcast URL"
+
+msgid "template_archive_url"
+msgstr "Archiv URL"
+
+msgid "tab_schedule"
+msgstr "Planung"
+
+msgid "button_save_schedule"
+msgstr "Speichern"
+
+msgid "button_delete_schedule"
+msgstr "Löschen"
+
+msgid "button_add_schedule"
+msgstr "Hinzufügen"
+
+msgid "label_add_schedule"
+msgstr "Plantermin hinzufügen"
+
+msgid "label_remove_schedule"
+msgstr "Ausnahme hinzufügen"
+
+msgid "label_hint_to_add_schedule"
+msgstr ""
+
+msgid "tab_current_events"
+msgstr "Aktuelle Sendungen"
+
+msgid "schedule_start"
+msgstr "Start"
+
+msgid "schedule_end"
+msgstr "wiederholt bis"
+
+msgid "duration"
+msgstr "Dauer"
+
+msgid "duration_in_minutes"
+msgstr "Dauer in Minuten"
+
+msgid "frequency"
+msgstr "wie oft"
+
+msgid "frequency_days"
+msgstr "alle x Tage"
+
+msgid "exception"
+msgstr "Ausnahme"
+
+msgid "week_of_month"
+msgstr "Woche"
+
+msgid "weekday"
+msgstr "Wochentag"
+
+msgid "period_type"
+msgstr "Wiederholung"
+
+msgid "period_type_single"
+msgstr "keine"
+
+msgid "period_type_days"
+msgstr "festes Interval"
+
+msgid "period_type_week_of_month"
+msgstr "Woche im Monat"
+
+msgid "nextDay"
+msgstr "Nacht"
+
+
+msgid "tab_members"
+msgstr "Redaktion"
+
+msgid "button_edit_member"
+msgstr "Bearbeiten"
+
+msgid "label_choose_member"
+msgstr "Wähle..."
+
+msgid "button_add_member"
+msgstr "Hinzufügen"
+
+msgid "button_remove_member"
+msgstr "Entfernen"
+
+
+msgid "tab_import"
+msgstr "DB Import/Scan"
+
+msgid "label_import"
+msgstr "Name und Titel der Sendungen, die zu der Sendereihe hinzugefügt werden sollen"
+
+msgid "label_import_series"
+msgstr "Sendereihe"
+
+msgid "label_import_title"
+msgstr "Titel"
+
+msgid "button_import_save"
+msgstr "speichern"
+
+msgid "label_import_scan"
+msgstr "Sendungen neu zuordnen"
+
+msgid "button_import_scan"
+msgstr "Zuordnen"
+
+
+msgid "tab_delete"
+msgstr "Sendereihe löschen"
+
+msgid "button_delete_series"
+msgstr "Diese Sendereihe löschen"
+
+msgid "label_delete_series"
+msgstr "Die Sendereihe, ihre Vorlage, Planung wird gelöscht und alle Nutzer entfernt.\nDie einzelnen Sendungen der Sendereihe werden nicht gelöscht."
+
+
+msgid "event"
+msgstr "Sendung"
+
+msgid "series"
+msgstr "Sendereihe"
+
+msgid "schedule"
+msgstr "Sendeplan"
+
+msgid "minutes"
+msgstr "Minuten"
+
+msgid "hour"
+msgstr "Stunde"
+
+msgid "hours"
+msgstr "Stunden"
+
+msgid "day"
+msgstr "Tag"
+
+msgid "days"
+msgstr "Tage"
+
+msgid "daily"
+msgstr "täglich"
+
+msgid "week"
+msgstr "Woche"
+
+msgid "weeks"
+msgstr "Wochen"
+
+msgid "weekly"
+msgstr "wöchentlich"
+
+msgid "month"
+msgstr "Monat"
+
+msgid "months"
+msgstr "Monate"
+
+msgid "from"
+msgstr "von"
+
+msgid "till"
+msgstr "bis"
+
+msgid "modified"
+msgstr "bearbeited"
+
+msgid "added"
+msgstr "hinzugefügt"
+
+msgid "at"
+msgstr "am"
+
+msgid "by"
+msgstr "von"
+
+msgid "unit"
+msgstr "in"
+
+msgid "choose_free"
+msgstr "frei wählbar"
+
+msgid "every"
+msgstr "alle"
+
+msgid "every_month"
+msgstr "wie oft"
+
+msgid "every_time"
+msgstr "jedes Mal"
+
+msgid "every_2nd_time"
+msgstr "jedes 2. Mal"
+
+msgid "every_3rd_time"
+msgstr "jedes 3. Mal"
+
+msgid "every_4th_time"
+msgstr "jedes 4. Mal"
+
+msgid "week_1st"
+msgstr "erster"
+
+msgid "week_2nd"
+msgstr "zweiter"
+
+msgid "week_3rd"
+msgstr "dritter"
+
+msgid "week_4th"
+msgstr "vierter"
+
+msgid "week_5th"
+msgstr "fünter"
+
+msgid "monday"
+msgstr "Montag"
+
+msgid "tuesday"
+msgstr "Dienstag"
+
+msgid "wednesday"
+msgstr "Mittwoch"
+
+msgid "thursday"
+msgstr "Donnerstag"
+
+msgid "friday"
+msgstr "Freitag"
+
+msgid "saturday"
+msgstr "Samstag"
+
+msgid "sunday"
+msgstr "Sonntag"
+
+msgid "single_events"
+msgstr "Einzelsendungen"
+
+msgid "single_event"
+msgstr "Einzelsendung"
+
+msgid "label_search"
+msgstr "Suche"
+
+msgid "label_clear_search"
+msgstr "löschen"
+
+msgid "label_excerpt_too_long"
+msgstr "Auszug ist zu lang. Für längeren Text bitte das Feld «aktuelle Themen» verwenden."
+

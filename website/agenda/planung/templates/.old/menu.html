@@ -1,0 +1,283 @@
+<script type="text/javascript">
+function run(menu_id){
+	var url=$("#"+menu_id).val();
+	//alert(url);
+	if (url!='' && url!='undefined'){
+		load(url);
+	}
+}
+
+function getParentDiv(elem,type,level){
+	if (level==null || level=='') level=0;
+	//alert(level)
+	if (level>5)		return null;
+	elem=elem.parent();
+	if (elem=='') 		return null;
+	if (elem.is(type)){
+		//if  (elem.parent().parent().attr('id')=='#calcms_admin_menu')	
+		return elem;
+		//return null;
+	}
+	return getParentDiv(elem,type,level+1);
+}
+
+$(document).ready(
+	function() {
+
+		if ($('#calcms_admin_menu').length == 0) return; 
+		var menus=new Array("event_submenu","comment_submenu", "pic_submenu", "update_agenda_submenu","system_submenu");
+
+		//$("#calcms_admin_menu").height($(document).height());
+
+		for (var index in menus){
+			var menu_id="#"+menus[index];
+			$(menu_id).hide();
+		}
+/*
+		$('#calcms_admin_menu li li').hover(
+			function() {
+				jQuery(this).stop(true, true).animate({
+					fontSize: '+=3'
+				});
+			}, function() {
+				jQuery(this).stop(true, true).animate({
+					fontSize: '-=3'
+				});
+			}
+		);
+*/
+		var url=getController();
+		url=url.replace("&amp;","&");
+		
+		//hide menus on index or /admin/
+		if (url==null || url=='')return;
+
+		$("select[id$='_select'] option").each(
+			function(){
+				if ($(this).val()==url){
+					//get option
+					$(this).attr('selected','true');
+
+					// select
+					var elem=$(this).parent();
+					if (elem==null)return;
+					elem.css("opacity","1.0");
+
+					//menu
+					var menu=getParentDiv(elem,'div');
+					menu.show();
+					//menu point
+					elem=getParentDiv(elem,'li');
+					if (elem!=null)elem.css("opacity","1.0");
+				}
+			}
+		)
+		$("a[id$='_menupoint']").each(
+			function(){
+				if ($(this).attr('href')==url){
+					//a
+					$(this).css("opacity","1.0");
+
+					//menu
+					var elem=getParentDiv($(this),'div');
+					elem.show();
+					//menu point
+					elem=getParentDiv($(this),'li');
+					if (elem!=null)elem.css("opacity","1.0");
+				}
+			}
+		)
+
+	}
+);
+
+</script>
+
+<!--
+<table style="border:0;margin:0;position:absolute;left:-5px;top:118px;;height:100%">
+<tr><td>
+-->
+<center>
+<div id="calcms_admin_menu">
+
+	<ul>	
+		<li>
+			<a href="/"><img width="20px" height="20px" src="<TMPL_VAR static_files_url>/style/logo.jpg" alt="Hauptseite"/> </a>
+
+		</li>
+
+		<li>
+			<a href="/agenda/programm.html">Programmplan</a>
+
+		</li>
+
+		<TMPL_IF access_events>
+		<li>
+			<a href="#" onclick="toggle('event_submenu');return false;">Sendungen</a>
+			<div id="event_submenu">
+				<ul>
+
+				<li>
+					<select id="event_manager_select" onchange="run('event_manager_select')">
+						<option value="">w&auml;hlen</option>
+						<TMPL_UNLESS read_event_all>
+							<TMPL_LOOP projects>
+								<TMPL_LOOP months>
+									<option value="event_manager.cgi?from_date=<TMPL_VAR start>&amp;till_date=<TMPL_VAR end>&amp;location=<TMPL_VAR user escape=url>"><TMPL_VAR year>-<TMPL_VAR month> <TMPL_VAR title></option>
+								</TMPL_LOOP>
+							</TMPL_LOOP>
+						<TMPL_ELSE>
+							<TMPL_LOOP projects>
+								<TMPL_LOOP months>
+									<option value="event_manager.cgi?from_date=<TMPL_VAR start>&amp;till_date=<TMPL_VAR end>"><TMPL_VAR year>-<TMPL_VAR month> <TMPL_VAR title></option>
+								</TMPL_LOOP>
+							</TMPL_LOOP>
+						</TMPL_UNLESS>
+					</select>	
+				</li>
+
+				<TMPL_IF create_event>
+				<li>
+					<a id="wiki_editor_menupoint" href="wiki_editor.cgi">Editor</a>
+				</li>
+				</TMPL_IF>
+
+				</ul>
+			</div>
+		</li>
+		</TMPL_IF>
+
+		<!-- pic manager -->
+		<TMPL_IF access_images>
+		<li>	
+			<a href="#" onclick="toggle('pic_submenu');return false;">Bilder</a><br/>
+			<div id="pic_submenu">
+				<ul>	
+				<li>
+					<select id="pic_manager_select" onchange="run('pic_manager_select')">
+					<option value="">w&auml;hlen</option>
+					<TMPL_LOOP projects>
+					<TMPL_LOOP months>
+						<option value="image_manager.cgi?from=<TMPL_VAR start>&amp;till=<TMPL_VAR end>"><TMPL_VAR year>-<TMPL_VAR month> <TMPL_VAR title></option>
+					</TMPL_LOOP>
+					</TMPL_LOOP>
+					<option value="image_manager.cgi?search=neu">nicht zugeordnet</option>
+					<option value="image_manager.cgi">alle</option>
+					</select>
+				</li>
+
+				<!-- pic upload -->
+				<TMPL_IF create_image>
+				<li>
+					<a id="pic_upload_menupoint" href="image_upload.cgi">neues Bild</a>
+				</li>
+				</TMPL_IF>
+
+				</ul>
+			</div>
+		</li>	
+		</TMPL_IF>
+
+		<!-- comment manager -->
+		<TMPL_IF access_comments>
+		<li>
+			<a href="#" onclick="toggle('comment_submenu');return false;">Kommentare</a>
+			<div id="comment_submenu">
+			<ul>
+				<li>Aktualit&auml;t<br/>
+					<select id="comment_by_age_select" onchange="run('comment_by_age_select')">	
+						<option value="">w&auml;hlen</option>
+						<option value="comment_manager.cgi?age=1">Stunde </option>
+						<option value="comment_manager.cgi?age=6">6 Stunden</option>
+						<option value="comment_manager.cgi?age=24">24 Stunden</option>
+						<option value="comment_manager.cgi?age=168">Woche</option>
+						<option value="comment_manager.cgi?age=720">Monat</option>
+						<option value="comment_manager.cgi?age=2160">3 Monate</option>
+						<option value="comment_manager.cgi?age=4360">6 Monate</option>
+						<option value="comment_manager.cgi">alle</option>
+					</select>	
+				</li>
+				<li>Sendungen<br/>
+					<select id="comment_by_date_select" onchange="run('comment_by_date_select')">
+						<option value="">w&auml;hlen</option>
+						<TMPL_LOOP projects>
+							<TMPL_LOOP months>
+								<option value="comment_manager.cgi?from=<TMPL_VAR start>&amp;till=<TMPL_VAR end>"><TMPL_VAR year>-<TMPL_VAR month> <TMPL_VAR title></option>
+							</TMPL_LOOP>
+						</TMPL_LOOP>
+					</select>
+				</li>
+			</ul>
+			</div>
+		</li>
+		</TMPL_IF>
+
+		<!-- update agenda -->
+		<TMPL_IF access_sync>
+		<li id="update_agenda_menu">
+			<a href="#" onclick="toggle('update_agenda_submenu');return false;">Synchronisierung</a>
+			<div id="update_agenda_submenu">
+				<ul>
+
+<!--
+				<TMPL_IF sync_all>
+				<li>
+				<select id="update_agenda_select" onchange="run('update_agenda_select')">
+					<option value="">w&auml;hlen</option>
+					<option value="update_agenda.cgi">ge&auml;ndert</option>
+					<TMPL_LOOP projects>
+					<TMPL_LOOP months>
+					<option value="update_agenda.cgi?update=all&amp;from=<TMPL_VAR start>&amp;till=<TMPL_VAR end>"><TMPL_VAR year>-<TMPL_VAR month> <TMPL_VAR title></option>
+					</TMPL_LOOP>
+					</TMPL_LOOP>
+					<option value="update_agenda.cgi?update=all">alles</option>
+				</select>
+				</li>
+				</TMPL_IF>
+-->
+				<TMPL_IF sync_own>
+				<li>
+					<a id="jobs_menupoint" href="jobs.cgi">Jobs</a>
+				</li>
+				</TMPL_IF>
+				</ul>
+			</div>
+		</li>
+		</TMPL_IF>
+
+		<!-- admin -->
+		<TMPL_IF access_system>
+		<li id="system_menu">
+			<a href="#" onclick="toggle('system_submenu');return false;">System</a>
+			<div id="system_submenu">
+				<ul>
+					<li>
+						<a id="clear_cache_menupoint" href="clear_cache.cgi">Cache l&ouml;schen</a>
+					</li>
+					<li>
+						<a id="compress_menupoint" href="compress_templates.cgi">compress templates</a>
+
+					<li>
+						<a id="pic_scan_menupoint" href="pic_scan.cgi">Bilder Update</a>
+					</li>
+		
+					<li>
+						<a id="log_menupoint" href="error_log.cgi">Error-Log</a>
+					</li>
+					<li>	
+						<a id="stats_menupoint" href="/webstat">Statistik</a>
+					</li>
+				</ul>
+			</div>
+		</li>
+		</TMPL_IF>
+
+		<li class="login" >Willkommen, <TMPL_VAR user>!</li>
+	</ul>
+</div>
+<!--
+</td><td>
+-->
+<div style="height:3em"></div>
+<div id="content">
+

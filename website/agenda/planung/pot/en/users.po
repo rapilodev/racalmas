@@ -1,0 +1,48 @@
+msgid "region"
+msgstr "en"
+
+msgid "title"
+msgstr "User"
+
+msgid "button_cancel"
+msgstr "cancel"
+
+msgid "button_add_user"
+msgstr "add user"
+
+msgid "label_name"
+msgstr "login"
+
+msgid "label_full_name"
+msgstr "full name"
+
+msgid "label_email"
+msgstr "email"
+
+msgid "label_password"
+msgstr "password"
+
+msgid "label_password2"
+msgstr "password"
+
+msgid "button_create_user"
+msgstr "create"
+
+msgid "label_disabled"
+msgstr "locked"
+
+msgid "button_edit_user"
+msgstr "edit"
+
+msgid "button_edit_roles"
+msgstr "roles"
+
+msgid "button_delete_user"
+msgstr "delete user"
+
+msgid "button_save_user"
+msgstr "save"
+
+msgid "button_assign_role"
+msgstr "assign"
+

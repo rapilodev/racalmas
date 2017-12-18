@@ -1,0 +1,17 @@
+Options -Indexes +FollowSymLinks +MultiViews -ExecCGI
+#Order allow,deny
+#allow from all
+Require all granted
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 5 minutes"
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(jpg|jpeg|png|gif|js|css|swf)$">
+#        Header set Cache-Control "public"
+        Header set Cache-Control "max-age=600, public"
+    </FilesMatch>
+</IfModule>
+

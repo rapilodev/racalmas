@@ -1,0 +1,55 @@
+msgid "region"
+msgstr "de"
+
+msgid "tab_select"
+msgstr "Auswählen"
+
+msgid "tab_edit"
+msgstr "Bearbeiten"
+
+msgid "tab_upload"
+msgstr "Hochladen"
+
+msgid "button_upload"
+msgstr "Hochladen"
+
+msgid "button_search"
+msgstr "Suchen"
+
+msgid "button_zoom_in"
+msgstr "Vergrößern"
+
+msgid "button_zoom_out"
+msgstr "Verkleinern"
+
+msgid "button_save"
+msgstr "Speichern"
+
+msgid "button_delete"
+msgstr "Löschen"
+
+msgid "label_name"
+msgstr "Name"
+
+msgid "label_description"
+msgstr "Beschreibung"
+
+msgid "label_created_at"
+msgstr "erstellt am"
+
+msgid "label_created_by"
+msgstr "von"
+
+msgid "label_modified_at"
+msgstr "bearbeitet am"
+
+msgid "label_modified_by"
+msgstr "von"
+
+msgid "label_link"
+msgstr "Editor-Link"
+
+msgid "label_search_hits"
+msgstr "Treffer"
+
+

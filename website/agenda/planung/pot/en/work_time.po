@@ -1,0 +1,181 @@
+msgid "region"
+msgstr "en"
+
+msgid "title"
+msgstr "work time"
+
+msgid "button_create"
+msgstr "create"
+
+msgid "button_edit"
+msgstr "edit"
+
+msgid "button_cancel"
+msgstr "cancel"
+
+msgid "button_save_schedule"
+msgstr "save"
+
+msgid "button_delete_schedule"
+msgstr "delete"
+
+msgid "button_add_schedule"
+msgstr "add"
+
+msgid "schedule_start"
+msgstr "start"
+
+msgid "schedule_end"
+msgstr "end"
+
+msgid "duration"
+msgstr "duration"
+
+msgid "duration_in_minutes"
+msgstr "duration in minutes"
+
+msgid "schedule_title"
+msgstr "who"
+
+msgid "schedule_type"
+msgstr "title"
+
+msgid "frequency"
+msgstr "interval"
+
+msgid "frequency_days"
+msgstr "every n days"
+
+msgid "exception"
+msgstr "exception"
+
+msgid "week_of_month"
+msgstr "week of month"
+
+msgid "weekday"
+msgstr "weekday"
+
+msgid "period_type"
+msgstr "recurrence"
+
+msgid "period_type_single"
+msgstr "no"
+
+msgid "period_type_days"
+msgstr "fix"
+
+msgid "period_type_week_of_month"
+msgstr "week of month"
+
+msgid "schedule"
+msgstr "schedule"
+
+msgid "minutes"
+msgstr "minutes"
+
+msgid "hour"
+msgstr "hour"
+
+msgid "hours"
+msgstr "hours"
+
+msgid "day"
+msgstr "day"
+
+msgid "days"
+msgstr "days"
+
+msgid "week"
+msgstr "week"
+
+msgid "weeks"
+msgstr "weeks"
+
+msgid "weekly"
+msgstr "weekly"
+
+msgid "month"
+msgstr "month"
+
+msgid "months"
+msgstr "months"
+
+msgid "from"
+msgstr "from"
+
+msgid "till"
+msgstr "till"
+
+msgid "modified"
+msgstr "modified"
+
+msgid "added"
+msgstr "added"
+
+msgid "at"
+msgstr "at"
+
+msgid "by"
+msgstr "by"
+
+msgid "unit"
+msgstr "in"
+
+msgid "choose_free"
+msgstr "choose free"
+
+msgid "every"
+msgstr "every"
+
+msgid "every_month"
+msgstr "every nth time"
+
+msgid "every_time"
+msgstr "every time"
+
+msgid "every_2nd_time"
+msgstr "every 2nd time"
+
+msgid "every_3rd_time"
+msgstr "every 3rd time"
+
+msgid "every_4th_time"
+msgstr "every 4th time"
+
+msgid "week_1st"
+msgstr "1st"
+
+msgid "week_2nd"
+msgstr "2nd"
+
+msgid "week_3rd"
+msgstr "3rd"
+
+msgid "week_4th"
+msgstr "4th"
+
+msgid "week_5th"
+msgstr "5th"
+
+msgid "monday"
+msgstr "Monday"
+
+msgid "tuesday"
+msgstr "Tuesday"
+
+msgid "wednesday"
+msgstr "Wednesday"
+
+msgid "thursday"
+msgstr "Thursday"
+
+msgid "friday"
+msgstr "Friday"
+
+msgid "saturday"
+msgstr "Saturday"
+
+msgid "sunday"
+msgstr "Sunday"
+
+

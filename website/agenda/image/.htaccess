@@ -1,0 +1,10 @@
+Options -Indexes +FollowSymLinks +MultiViews -ExecCGI
+#Order allow,deny
+#allow from all
+Require all granted
+
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresDefault "access plus 10 minutes"
+</IfModule>
+

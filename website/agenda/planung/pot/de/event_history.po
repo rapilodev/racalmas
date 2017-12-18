@@ -1,0 +1,45 @@
+msgid "region"
+msgstr "de"
+
+msgid "title"
+msgstr "Änderungen"
+
+msgid "label_event"
+msgstr "Sendung"
+
+msgid "label_start"
+msgstr "Start"
+
+msgid "label_live"
+msgstr "Live-Sendung"
+
+msgid "label_published"
+msgstr "veröffentlicht"
+
+msgid "label_playout"
+msgstr "im Playout"
+
+msgid "label_archived"
+msgstr "archiviert"
+
+msgid "label_rerun"
+msgstr "Wiederholung"
+
+msgid "label_no_sync"
+msgstr "kein Google Import"
+
+msgid "label_deleted"
+msgstr "gelöscht"
+
+msgid "label_modified_at"
+msgstr "bearbeitet am"
+
+msgid "label_modified_by"
+msgstr "von"
+
+msgid "label_diff"
+msgstr "Unterschiede"
+
+msgid "button_show_diff"
+msgstr "Unterschiede zeigen"
+

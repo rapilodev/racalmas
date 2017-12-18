@@ -1,0 +1,33 @@
+msgid "region"
+msgstr "de"
+
+msgid "title"
+msgstr "Aktivitäten"
+
+msgid "label_user"
+msgstr "Nutzer"
+
+msgid "label_create_events"
+msgstr "angelegte Sendungen"
+
+msgid "label_update_events"
+msgstr "bearbeitete Sendungen"
+
+msgid "label_delete_events"
+msgstr "gelöschte Sendungen"
+
+msgid "label_create_series"
+msgstr "angelegte Sendereihe"
+
+msgid "label_update_series"
+msgstr "bearbeitete Sendereihe"
+
+msgid "label_delete_series"
+msgstr "gelöschte Sendereihe"
+
+msgid "label_modified_at"
+msgstr "letzte Änderung"
+
+msgid "label_score"
+msgstr "Punkte"
+

@@ -1,0 +1,78 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
+</TMPL_IF>Content-type:text/html; charset=UTF-8;
+
+<!DOCTYPE html>
+<TMPL_IF extern_access><TMPL_INCLUDE ../index.html>gesucht und gefunden...<TMPL_ELSE>
+<html>
+<body>
+<TMPL_IF no_result>
+    <script>
+    jQuery( document ).ready(function() {
+        //load next shows into current playlist
+        if(jQuery('#coming_shows').length!=0){
+            jQuery('#coming_shows').load('/agenda/playlistLong/');
+        }
+        //hide next shows
+        if(jQuery('#calcms_playlist').length!=0) jQuery('#calcms_playlist').parent().parent().hide();
+    });
+     </script>
+    <style>
+        #coming_shows{
+            width:100%;
+            height:110px;
+            overflow:hidden;
+        }
+    </style>
+	<div class="content" style="clear:both"> 
+
+	    <h1 class="summary title">Freies Radio</h1>
+	    
+        <div id="coming_shows"></div>
+	    <a href="/agenda/programm.html">
+		    Programmplan
+	    </a>
+
+	    <TMPL_IF search>
+		    <TMLP_VAR count> Treffer:
+	    </TMPL_IF>
+	</div>
+
+</TMPL_IF>
+
+<TMPL_LOOP events>
+	<p>
+	<div class="event">
+		<TMPL_IF event_id>
+			<div class="date<TMPL_IF is_running> running</TMPL_IF>">
+				<p>
+				<h1 class="summary title">
+					Aktuelle Sendung: <a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
+						<TMPL_VAR full_title>
+					</a>
+				</h1>
+				<span class="submitted"><TMPL_VAR weekday_name>, <TMPL_VAR start_date_name> -
+				<TMPL_VAR start_time_name> bis <TMPL_VAR end_time_name> Uhr <TMPL_IF program>(<TMPL_VAR program>)</TMPL_IF></span><br />
+			</div>
+			<div class="content" > 
+				<div class="image-attach-teaser" style="width: 150px;">
+					<a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
+						<img class="image image-thumbnail" src="<TMPL_VAR image>" width="150" height="150" />
+					</a>
+				</div>
+				<TMPL_VAR excerpt >
+			</div>
+				<a 	href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#comments">
+					<span><TMPL_VAR comment_count> Kommentar<TMPL_UNLESS one_comment>e</TMPL_UNLESS></span>
+				</a>	
+			</div>
+			</p>
+			<TMPL_UNLESS __last__><hr /></TMPL_UNLESS>
+		</TMPL_IF>
+	</TMPL_LOOP>
+	</TMPL_IF>
+
+<!--end of content -->
+
+
+</body>
+</html>

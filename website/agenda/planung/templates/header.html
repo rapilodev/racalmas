@@ -1,0 +1,25 @@
+Content-Type: text/html; charset=UTF-8;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Radio: Admin</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Script-Type" content="javascript" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <TMPL_IF arefresh_time><meta http-equiv="refresh" content="<TMPL_VAR refresh_time>;url=<TMPL_VAR refresh_url escape=url>"></TMPL_IF>
+    <TMPL_INCLUDE header_head.html>
+</head>
+<body>
+    <TMPL_IF action_result>
+        <br/> <br/> <br/>
+        <div class="ok head"><TMPL_VAR action_result></div>
+    </TMPL_IF>
+    <TMPL_IF error>
+        <br/> <br/> <br/>
+        <div class="error head"><TMPL_VAR error></div>
+    </TMPL_IF>
+    <TMPL_IF subheader>
+        <div><TMPL_VAR subheader></div>
+    </TMPL_IF>
+

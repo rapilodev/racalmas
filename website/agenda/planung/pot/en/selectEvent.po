@@ -1,0 +1,33 @@
+msgid "region"
+msgstr "en"
+
+msgid "title"
+msgstr "select events"
+
+msgid "label_project"
+msgstr "project"
+
+msgid "label_studio"
+msgstr "studio"
+
+msgid "label_series"
+msgstr "series"
+
+msgid "label_event"
+msgstr "event"
+
+msgid "label_filter"
+msgstr "filter"
+
+msgid "label_year"
+msgstr "year"
+
+msgid "label_select"
+msgstr "please select..."
+
+msgid "label_all"
+msgstr "all"
+
+msgid "button_cancel"
+msgstr "cancel"
+

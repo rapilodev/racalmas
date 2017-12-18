@@ -1,0 +1,19 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
+</TMPL_IF>Content-type:application/json; charset=UTF-8
+
+"events" : {
+<TMPL_LOOP events>
+  "event" : [ {
+    "id"        : "<TMPL_VAR event_id>",
+    "program"   : "<TMPL_VAR program>",
+    "series"    : "<TMPL_VAR series_name>",
+    "title"     : "<TMPL_VAR title>",
+    "start"     : "<TMPL_VAR start_date> <TMPL_VAR start_time>:00",
+    "end"       : "<TMPL_VAR end_date> <TMPL_VAR end_time>:00",
+    "location"  : "<TMPL_VAR location>",
+    "published" : "<TMPL_VAR created_at>",
+    "updated"   : "<TMPL_VAR modified_at>",
+  } ]
+  <TMPL_UNLESS NAME="__last__">,</TMPL_UNLESS>
+</TMPL_LOOP>
+}

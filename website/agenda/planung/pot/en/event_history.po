@@ -1,0 +1,45 @@
+msgid "region"
+msgstr "en"
+
+msgid "title"
+msgstr "Changes"
+
+msgid "label_event"
+msgstr "event"
+
+msgid "label_start"
+msgstr "start"
+
+msgid "label_live"
+msgstr "live"
+
+msgid "label_published"
+msgstr "published"
+
+msgid "label_playout"
+msgstr "playout"
+
+msgid "label_archived"
+msgstr "archived"
+
+msgid "label_rerun"
+msgstr "rerun"
+
+msgid "label_no_sync"
+msgstr "no sync"
+
+msgid "label_deleted"
+msgstr "deleted"
+
+msgid "label_modified_at"
+msgstr "modified at"
+
+msgid "label_modified_by"
+msgstr "by"
+
+msgid "label_diff"
+msgstr "differences"
+
+msgid "button_show_diff"
+msgstr "show differences"
+

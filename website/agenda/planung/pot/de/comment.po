@@ -1,0 +1,36 @@
+msgid "label_events"
+msgstr "Sendungen"
+
+msgid "label_comments"
+msgstr "Kommentare"
+
+msgid "label_no_comments_found"
+msgstr "keine Kommentare gefunden"
+
+msgid "label_depth"
+msgstr "Tiefe"
+
+msgid "label_date"
+msgstr "Datum"
+
+msgid "label_time"
+msgstr "Zeit"
+
+msgid "label_author"
+msgstr "Autor"
+
+msgid "label_content"
+msgstr "Inhalt"
+
+msgid "label_status_show"
+msgstr "veröffentlichen"
+
+msgid "label_status_hide"
+msgstr "depublizieren"
+
+msgid "label_status_read"
+msgstr "als gelesen markieren"
+
+msgid "label_status_unread"
+msgstr "als ungelesen markieren"
+

@@ -1,0 +1,69 @@
+msgid "region"
+msgstr "de"
+
+msgid "title"
+msgstr "Projekte"
+
+msgid "button_cancel"
+msgstr "Abbrechen"
+
+msgid "button_add_project"
+msgstr "Projekt anlegen"
+
+msgid "button_remove_project"
+msgstr "Projekt löschen"
+
+msgid "button_assign_studios"
+msgstr "Studios hinzufügen"
+
+msgid "button_assign_studio"
+msgstr "Studio hinzufügen"
+
+msgid "button_unassign_studio"
+msgstr "Studio entfernen"
+
+msgid "button_edit"
+msgstr "Bearbeiten"
+
+msgid "button_create"
+msgstr "Anlegen"
+
+msgid "button_save"
+msgstr "Speichern"
+
+msgid "button_delete"
+msgstr "Löschen"
+
+msgid "label_select_studio"
+msgstr "wählen"
+
+msgid "label_assign_studios"
+msgstr "Studios hinzufügen"
+
+msgid "label_assign_studio"
+msgstr "Studio hinzufügen"
+
+msgid "label_name"
+msgstr "Name"
+
+msgid "label_title"
+msgstr "Titel"
+
+msgid "label_subtitle"
+msgstr "Untertitel"
+
+msgid "label_start_date"
+msgstr "Start"
+
+msgid "label_end_date"
+msgstr "Ende"
+
+msgid "label_image"
+msgstr "Logo"
+
+msgid "label_email"
+msgstr "email"
+
+msgid "label_studios"
+msgstr "Studios"
+

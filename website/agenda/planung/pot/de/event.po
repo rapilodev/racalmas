@@ -1,0 +1,171 @@
+msgid "region"
+msgstr "de"
+
+msgid "title"
+msgstr "edit events"
+
+msgid "button_edit_series"
+msgstr "Sendereihe bearbeiten"
+
+msgid "button_download"
+msgstr "Mittschnitt runterladen"
+
+msgid "button_upload"
+msgstr "Vorproduktion hochladen"
+
+msgid "button_create"
+msgstr "Anlegen"
+
+msgid "button_save"
+msgstr "Speichern"
+
+msgid "button_delete"
+msgstr "Löschen"
+
+msgid "button_unassign_event"
+msgstr "aus Sendereihe entfernen"
+
+msgid "button_show_event"
+msgstr "Progammansicht"
+
+msgid "button_show_changes"
+msgstr "Änderungen"
+
+msgid "button_reminder"
+msgstr "Erinnerung"
+
+msgid "button_assign_series"
+msgstr "in andere Sendereihe verschieben"
+
+msgid "button_assign"
+msgstr "Zuweisen"
+
+msgid "button_cancel"
+msgstr "Abbrechen"
+
+msgid "label_series"
+msgstr "Sendereihe"
+
+msgid "label_delete"
+msgstr "Sendung löschen"
+
+msgid "label_when"
+msgstr "Wann"
+
+msgid "label_status"
+msgstr "Status"
+
+msgid "label_title"
+msgstr "Titel"
+
+msgid "label_title_extension"
+msgstr "Titel (Redaktion)"
+
+msgid "label_excerpt"
+msgstr "Auszug"
+
+msgid "label_excerpt_extension"
+msgstr "Auszug (Redaktion)"
+
+msgid "label_topics"
+msgstr "aktuelle Themen"
+
+msgid "label_description"
+msgstr "Beschreibung"
+
+msgid "label_image"
+msgstr "Bild"
+
+msgid "label_podcast_url"
+msgstr "Podcast URL"
+
+msgid "label_archive_url"
+msgstr "Archiv URL"
+
+msgid "label_start"
+msgstr "Start"
+
+msgid "label_duration"
+msgstr "Dauer"
+
+msgid "label_end"
+msgstr "Ende"
+
+msgid "label_episode"
+msgstr "Folge"
+
+msgid "label_live"
+msgstr "Live-Sendung"
+
+msgid "label_published"
+msgstr "veröffentlicht"
+
+msgid "label_playout"
+msgstr "im Playout"
+
+msgid "label_archived"
+msgstr "archiviert"
+
+msgid "label_rerun"
+msgstr "Wiederholung"
+
+msgid "label_no_sync"
+msgstr "kein Google Import"
+
+msgid "label_modified_at"
+msgstr "bearbeitet am"
+
+msgid "label_modified_by"
+msgstr "von"
+
+msgid "button_event_list"
+msgstr "Sendungen zeigen"
+
+msgid "button_copy_existing_event"
+msgstr "mit alter Sendung überschreiben"
+
+msgid "button_rerun"
+msgstr "Wiederholung von ..."
+
+msgid "label_rerun"
+msgstr "Wiederholung"
+
+msgid "label_rerun_select_old"
+msgstr "einer alten Sendung der gleichen Sendereihe"
+
+msgid "label_rerun_select_other"
+msgstr "einer anderen Sendung (erweiterte Auswahl)"
+
+msgid "label_select_event"
+msgstr "aktuelle Sendung mit"
+
+msgid "label_overwrite_event"
+msgstr "Sendung überschreiben mit folgender Sendung"
+
+msgid "button_copy_event"
+msgstr "überschreiben"
+
+msgid "button_delete_from_schedule"
+msgstr "Planungstermin löschen"
+
+msgid "single_events"
+msgstr "Einzeltermine"
+
+msgid "single_event"
+msgstr "Einzeltermin"
+
+msgid "label_edit_lock"
+msgstr "Die Sendung kann nicht mehr bearbeitet werden, da sie vor mehr als 2 Wochen gesendet wurde."
+
+msgid "label_events"
+msgstr "Sendungen"
+
+msgid "label_comments"
+msgstr "Kommentare"
+
+msgid "label_excerpt_too_long"
+msgstr "Auszug ist zu lang. Für längeren Text bitte das Feld «aktuelle Themen» verwenden."
+
+msgid "label_excerpt_extension_too_long"
+msgstr "Auszug ist zu lang. Für längeren Text bitte das Feld «aktuelle Themen» verwenden."
+

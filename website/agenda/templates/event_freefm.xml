@@ -1,0 +1,76 @@
+Content-type:text/xml; charset=UTF-8
+
+<?xml version="1.0" encoding="UTF-8"?>
+<station lastupdate="<TMPL_VAR modified_at_datetime_utc>" xmlns:gml="http://www.opengis.net/gml">
+    <info>
+        <displayname>shortRadioName</displayname>
+        <fullname>fullRadioName</fullname>
+        <logo src="https://www.freie-radios.net/" />
+        <basecolor>#FF6600</basecolor>
+        <city>Berlin</city>
+        <studio>
+            <street>street</street>
+            <number>number</number>
+            <city>city</city>
+            <zip>plz</zip>
+            <studio-location>    
+                <gml:Point>
+                    <gml:pos>52.53119 13.4066</gml:pos>
+                </gml:Point>
+            </studio-location>
+            <phone type="studio">+49 030 1234 5678</phone>
+        </studio>
+    </info>
+
+    <media-channels>
+        <transmitter type="ukw">
+            <frequency>88.4</frequency>
+            <frequencyunit>MHz</frequencyunit>
+            <city>Berlin</city>
+            <operator>MediaBroadcast</operator>
+            <transmit-power>500</transmit-power>
+            <transmit-power-unit>W</transmit-power-unit>
+            <transmit-rds-id>88vier</transmit-rds-id>
+            <transmit-times>
+                <transmit-time recurrence="true" />
+                    <weekly day="DO" priority="0" time-from="06:00:00" time-to="24:00:00" />
+                    <weekly day="FR" priority="0" time-from="00:00:00" time-to="01:00:00" />
+                    <weekly day="FR" priority="0" time-from="06:00:00" time-to="24:00:00" />
+                    <weekly day="SA" priority="0" time-from="00:00:00" time-to="01:00:00" />
+            </transmit-times>
+
+            <transmitter-location>
+                <gml:Point>
+                    <gml:pos>52.456534 13.625693</gml:pos>
+                </gml:Point>
+            </transmitter-location>
+        </transmitter>
+
+        <website>
+            <url>https://www.freie-radios.net/</url>
+        </website>
+    </media-channels>
+
+<programme>
+<TMPL_LOOP events>
+<broadcast id="<TMPL_VAR event_id>">
+    <title><TMPL_VAR full_title></title>
+    <description>
+        <TMPL_VAR excerpt> <TMPL_VAR user_excerpt>
+    </description>
+    <categories>
+        <category name="Wort" id="1" />
+        <category name="Musik" id="2" />
+    </categories>
+    <feed>
+        <title>Sendebeschreibung</title>
+        <url>http://localhost<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url></url>
+    </feed>
+    <transmit-times>
+        <transmit-time date-from="<TMPL_VAR start_datetime_utc>" date-to="<TMPL_VAR end_datetime_utc>" recurrence="false" rerun="<TMPL_IF rerun>true<TMPL_ELSE>false</TMPL_IF>" />
+    </transmit-times>
+</broadcast>
+</TMPL_LOOP>
+</programme>
+</station>
+

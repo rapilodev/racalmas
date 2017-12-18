@@ -1,0 +1,95 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
+</TMPL_IF>Content-type:text/html; charset=utf-8;
+
+<!DOCTYPE html>
+<TMPL_IF extern_access><TMPL_INCLUDE ../index.html>gesucht und gefunden...<TMPL_ELSE>
+<html>
+<body>
+	<TMPL_IF no_result>
+	<div id="is_empty">
+			<TMPL_IF search>
+				<TMLP_VAR count> Treffer:
+			</TMPL_IF>
+	</div>
+	</TMPL_IF>
+
+	<TMPL_LOOP events>
+	<div class="vevent">
+		<span class="dtstart"><TMPL_VAR start></span>
+		<TMPL_IF NAME=end><span class="dtend"><TMPL_VAR end></span></TMPL_IF>
+	    <span class="location"><TMPL_VAR location_mapped></span>
+	
+		<div class="date<TMPL_IF is_running> running</TMPL_IF>">
+			<TMPL_IF is_running> ... Diese Sendung l&auml;uft gerade ...<p></TMPL_IF>
+			<table>
+			<tr>
+				<td>	
+					<TMPL_VAR weekday_name>, <TMPL_VAR start_date_name> 
+				</td> 
+				<td>
+					<TMPL_VAR project_title> 
+					<TMPL_IF location_label_studiorebootfm>
+						- Studio reboot.fm
+					<TMPL_ELSIF location_label_dt64>
+                        -  DT 64 Festival
+					<TMPL_ELSE>
+						- <TMPL_VAR location_mapped>
+					</TMPL_IF>
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<TMPL_VAR start_time_name> bis <TMPL_VAR end_time_name> Uhr 
+				</td>
+				<td>
+					<TMPL_IF program>(<TMPL_VAR program>)</TMPL_IF>
+				</td>
+			</tr>
+			</table>
+			
+			<p>
+				<h1 class="summary title">
+				    <TMPL_IF series_name>
+					<a href="#" onclick="calcms.showPrevSeriesEvent(<TMPL_VAR event_id>)" title="vorherige Sendung">&laquo;</a><TMPL_VAR series_name><a href="#" onclick="calcms.showNextSeriesEvent(<TMPL_VAR event_id>)" title="n&auml;chste Sendung">&raquo;</a>
+					</TMPL_IF>
+				    <TMPL_VAR full_title_no_series>
+				</h1>
+			</p>
+		</div>
+		<div class="content" > 
+			<TMPL_VAR excerpt > <TMPL_VAR user_excerpt >
+            <TMPL_IF excerpt><hr><TMPL_ELSE><TMPL_IF user_excerpt><hr></TMPL_IF></TMPL_IF>
+            <TMPL_IF no_image_in_text>
+                <p>
+                    <a href="<TMPL_VAR image>">
+                        <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR thumb>">
+                    </a>
+                </p>
+            </TMPL_IF>
+			<TMPL_VAR topic ESCAPE=0><TMPL_VAR content ESCAPE=0>
+			<TMPL_IF recurrence_date><a href="<TMPL_VAR recurrence>.html">Wiederholung vom <TMPL_VAR recurrence_date></a></TMPL_IF>
+		</div>
+
+	</div>
+
+	<div id="icon_bar">
+		<a href="<TMPL_VAR .controllers.domain><TMPL_VAR .controllers.atom>/radio.atom.xml" title="Sendeplan abonnieren - Atom"><img width="16" height="16" alt="Atom Feed" src="<TMPL_VAR static_files_url>image/feed.png" /></a>
+		<a href="<TMPL_VAR .controllers.domain><TMPL_VAR .controllers.rss>/radio.rss.xml"  title="Sendeplan abonnieren - RSS"><img width="16" height="16" alt="RSS Feed" src="<TMPL_VAR static_files_url>image/feed.png" /></a>
+        <a href="<TMPL_VAR .controllers.domain><TMPL_VAR .controllers.ical>/<TMPL_VAR event_id>/<TMPL_IF series_name><TMPL_VAR series_name escape=url>-</TMPL_IF><TMPL_VAR title  escape=url>.ics" title="Termin merken"><img width="16" height="16"  alt="ICalendar" src="<TMPL_VAR static_files_url>image/ical.png" /></a>
+	</div>
+
+	<div id="calcms_comments">
+		<script>
+			jQuery(document).ready(
+				function() {
+					calcms.showCommentsByEventIdOrEventStart('<TMPL_VAR event_id>','<TMPL_VAR start_datetime>');
+				}
+			);
+		</script>
+	</div>
+
+	</TMPL_LOOP>
+	</TMPL_IF>
+
+</body>
+</html>

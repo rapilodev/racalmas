@@ -1,0 +1,63 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
+</TMPL_IF>Content-type:text/html; charset=utf-8;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="expires" content="3600">
+    <meta http-equiv="Cache-control" content="public">    
+    <meta http-equiv="Content-Script-Type" content="javascript" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Agenda <TMPL_VAR project_title></title>
+<body>
+
+<TMPL_INCLUDE no_search_result.html>
+<TMPL_INCLUDE no_result.html>
+
+<div>
+<TMPL_LOOP NAME=events>
+<TMPL_IF event_id>
+    <TMPL_IF name="is_first_of_day">
+        <div class="date">
+            <TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name><TMPL_IF project_title> - <TMPL_VAR project_title></TMPL_IF>
+        </div>
+    </TMPL_IF>
+    <div id="event_<TMPL_VAR event_id>" class="event<TMPL_IF location_css> <TMPL_VAR location_css></TMPL_IF><TMPL_IF is_running> running</TMPL_IF>"
+    onclick="window.location.href='<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>'"
+    >
+        <span class="summary title" title="Mehr Infos zur Sendung">
+
+            <TMPL_VAR start_time_name><TMPL_IF name="__last__"> - <TMPL_VAR end_time_name></TMPL_IF> | 
+            <a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>"
+            ><TMPL_VAR full_title></a>
+            <TMPL_IF location_mapped>(<TMPL_VAR location_mapped>)</TMPL_IF>
+        </span>
+
+        <div class="excerpt"><TMPL_VAR excerpt> <TMPL_VAR user_excerpt></div>
+        <TMPL_UNLESS no_comment>
+        <a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri>#comments"
+            >
+            <span class="submitted<TMPL_IF comment_count> comments</TMPL_IF>"><TMPL_VAR comment_count> Kommentar<TMPL_UNLESS one_comment>e</TMPL_UNLESS></span>
+        </a>
+        </TMPL_UNLESS>
+    </div>
+</TMPL_IF>
+</TMPL_LOOP>
+</div>
+
+<TMPL_UNLESS no_result>
+<TMPL_UNLESS no_search_result>
+<!--onclick="calcms.selectListEventListener('<TMPL_VAR event_id>');return false;"-->
+<div id="icon_bar">
+    <a href="<TMPL_VAR .controllers.domain><TMPL_VAR .controllers.atom>/radio.atom.xml" title="Sendeplan abonnieren - Atom"><img width="16" height="16" alt="Atom Feed" src="<TMPL_VAR static_files_url>image/feed.png" /></a>
+    <a href="<TMPL_VAR .controllers.domain><TMPL_VAR .controllers.rss>/radio.rss.xml"  title="Sendeplan abonnieren - RSS"><img width="16" height="16" alt="RSS Feed" src="<TMPL_VAR static_files_url>image/feed.png" /></a>
+    <a href="<TMPL_VAR .controllers.domain><TMPL_VAR .controllers.ical>/<TMPL_VAR month>/" title="alle Sendungen des Monats merken"><img width="16" height="16" alt="Icalendar" src="<TMPL_VAR static_files_url>image/icals.png" /></a>
+    <a href="<TMPL_VAR .controllers.domain><TMPL_VAR .controllers.ical>/<TMPL_VAR month>/" onclick="calcms.selectICalEventListener();return false;" title="gewaehlte Sendungen merken"><img width="16" height="16"  alt="ICalendar" src="<TMPL_VAR static_files_url>image/ical.png"/></a>
+
+</div>
+</TMPL_UNLESS>
+</TMPL_UNLESS>
+
+</body>
+</html>
+
