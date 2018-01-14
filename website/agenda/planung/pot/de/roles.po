@@ -244,3 +244,6 @@ msgstr "Vorproduktion hochladen"
 msgid "label_delete_audio_recordings"
 msgstr "Vorproduktion löschen"
 
+msgid "label_read_playout"
+msgstr "Playout anzeigen"
+

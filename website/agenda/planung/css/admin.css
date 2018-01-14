@@ -14,7 +14,6 @@ body #content{
 	max-width:980px;
 	color:#000;
 	background:#fff;
-	line-height:100%;
 	text-align:left;
 }
 
@@ -31,10 +30,9 @@ body,
  	font-family:sans-serif;
 }
 
-#content input,
 #content textarea{
-    border:1px solid #ccc;
     padding:6px;
+    border:1px solid #ccc;
 }
 
 @media handheld{
@@ -96,6 +94,10 @@ body,
 #calcms_admin_menu div:hover,
 #calcms_admin_menu select:hover{
     background:#888;
+}
+
+#calcms_admin_menu div {
+    transition: all 0.2s;
 }
 
 #calcms_admin_menu select,
@@ -321,6 +323,8 @@ tr.tablesorter-filter-row input{
 }
 
 /*colors*/    
+#content input[type="submit"],
+#content input[type="file"],
 #content button,
 #content .ui-state-active, 
 #content a.ui-button:active,
@@ -328,13 +332,16 @@ tr.tablesorter-filter-row input{
     background-color:#2196f3;
 }
 
+#content input[type="submit"]:hover,
+#content input[type="file"]:hover,
 #content button:hover,
 #content .ui-button.ui-state-active:hover{
     background-color:#39a1f4;
 }
 
 /*colors end */
-
+#content input[type="submit"],
+#content input[type="file"],
 #content button{
     border:none;
     color:#fff;
@@ -347,6 +354,8 @@ tr.tablesorter-filter-row input{
     font-size: 12px;
 }
 
+#content input[type="submit"],
+#content input[type="file"],
 #content button{
     box-shadow:0 2px 5px 0 rgba(0,0,0,.16),0 2px 10px 0 rgba(0,0,0,.12);
     position:relative;
@@ -356,11 +365,15 @@ tr.tablesorter-filter-row input{
     border:0
 }
 
+#content input[type="submit"]:hover,
+#content input[type="file"]:hover,
 #content button:focus{
     outline:0;
     transition:all 0.5s cubic-bezier(.64,.09,.08,1)
 }
 
+#content input[type="submit"]:hover,
+#content input[type="file"]:hover,
 #content button:hover{
     box-shadow:0 5px 11px 0 rgba(0,0,0,.18),0 4px 15px 0 rgba(0,0,0,.15);
 }
@@ -377,7 +390,7 @@ tr.tablesorter-filter-row input{
     text-decoration: none;
 }
 
-#content input:focus{
+#content input[type="text"]:focus{
     border-bottom:2px solid #03a9f4;
 }
 

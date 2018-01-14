@@ -1,0 +1,43 @@
+<link href="css/jquery-ui-timepicker.css" type="text/css" rel="stylesheet" /> 
+<script src="js/jquery-ui-timepicker.js" type="text/javascript"></script>
+
+<script src="js/jquery.autosize.min.js" type="text/javascript"></script>
+<link href="css/theme.default.css" rel="stylesheet">
+
+<script src="js/jquery.tablesorter.min.js"></script>
+<script src="js/jquery.tablesorter.widgets.min.js"></script>
+<script src="js/jquery.tablesorter.scroller.js"></script>
+
+<script src="js/image.js" type="text/javascript"></script>
+
+
+<table id="playout-table" class="table">
+<thead>
+<tr>
+    <th>start</th>
+    <th>playout path</th>
+    <th>seconds</th>
+    <th>loudness</th>
+    <th>format</th>
+    <th>image</th>
+    <th>bytes</th>
+    <th>modified at</th>
+</thead>
+</tr>
+<tbody>
+<TMPL_LOOP events>
+<tr>
+    <td><TMPL_VAR start></td>
+    <td><TMPL_VAR file></td>
+    <td><TMPL_VAR duration escape="text"></td>
+    <td><TMPL_VAR rms_left escape="text"> <TMPL_VAR rms_right escape="text"></td>
+    <td><TMPL_VAR bitrate escape="text"> <TMPL_VAR sampling_rate> <TMPL_VAR channels>&nbsp;ch.</td>
+    <td><TMPL_IF rms_image><a href="/agenda_files/playout/<TMPL_VAR rms_image>"><img src="/agenda_files/playout/<TMPL_VAR rms_image>"></a></TMPL_IF></td>
+    <td><TMPL_VAR stream_size></td>
+    <td><TMPL_VAR modified_at></td>
+</tr>
+</TMPL_LOOP>
+</tbody>
+</table>
+
+

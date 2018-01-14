@@ -56,6 +56,7 @@ $comment->{content}=~s/(^|\s)((www\.)(.*?))(\s|$|\<)/$1\<a href\=\"http\:\/\/$2\
 
 if (comments::check($dbh, $config, $comment)){
     my $nslookup=nslookup();
+
     #if (is_blocked($nslookup)==1){
     #    send_mail($comment, $nslookup, 'blocked');
     #    return;
@@ -68,20 +69,17 @@ if (comments::check($dbh, $config, $comment)){
     }
 }
 
-
 sub is_blocked{
     my $nslookup=shift;
 
     my $user_agent=$ENV{HTTP_USER_AGENT};
 
     my $block=0;
-    $block=1 if (
-           ($user_agent eq 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:35.0) Gecko/20100101 Firefox/35.0') 
-        && ($nslookup=~/alicedsl/)
-    );
+	$block = 1
+	  if ( ( $user_agent eq 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:35.0) Gecko/20100101 Firefox/35.0' )
+		&& ( $nslookup =~ /alicedsl/ ) );
     return $block;
 }
-
 
 sub send_mail{
     my $comment  = shift;
@@ -227,13 +225,15 @@ sub check_params{
 	my $today=time::datetime_to_array(time::time_to_datetime());
 	my $date =time::datetime_to_array($comment->{event_start});
 	my $delta_days=time::days_between($today,$date);
-	log::error($config, 'add_comment.cgi: no comments allowed, yet')     if ($delta_days >    $config->{permissions}->{no_new_comments_before} );
-	log::error($config, 'add_comment.cgi: no comments allowed anymore')  if ($delta_days < -1*$config->{permissions}->{no_new_comments_after}  );
+	log::error( $config, 'add_comment.cgi: no comments allowed, yet' )
+	  if ( $delta_days > $config->{permissions}->{no_new_comments_before} );
+	log::error( $config, 'add_comment.cgi: no comments allowed anymore' )
+	  if ( $delta_days < -1 * $config->{permissions}->{no_new_comments_after} );
 
 	return {
 		template	=>$template,
 		comment		=>$comment		
-	}
+	};
 }
 
 sub escape_text{

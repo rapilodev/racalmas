@@ -16,8 +16,9 @@ our %EXPORT_TAGS = ( 'all'  => [ @EXPORT_OK ] );
 
 # columns:
 # id, project_id, studio_id, event_id
-# created_by, created_at
-# path, md5
+# path, size, created_by, created_at
+# mastered, processed
+# audioDuration, eventDuration, rmsLeft, rmsRight
 
 sub debug;
 
@@ -88,16 +89,22 @@ sub get{
 				,studio_id
 				,event_id
 				,path
-				,md5
 				,size
 				,created_by
 				,created_at
+				,modified_at
+				,mastered
+				,processed
+				,audioDuration
+				,eventDuration
+				,rmsLeft
+				,rmsRight
 		from 	calcms_audio_recordings
 		$whereClause
 		order by created_at desc
 	};
 
-    print STDERR Dumper($query).Dumper($bind_values);
+    #print STDERR Dumper($query).Dumper($bind_values);
 	my $entries=db::get($dbh, $query, $bind_values);
 	return $entries;
 }
@@ -109,21 +116,31 @@ sub update{
     my $dbh      = shift;
     my $entry    = shift;
     
-    print STDERR "update:".Dumper($entry);
+    #print STDERR "update:".Dumper($entry);
 
 	my $day_start=$config->{date}->{day_starting_hour};    
 
     my $bind_values=[
-        $entry->{path}, $entry->{md5}, $entry->{size}, $entry->{created_by}, $entry->{created_at},
+        $entry->{path}, $entry->{size}, 
+        $entry->{created_by}, $entry->{created_at}, 
+        $entry->{modified_at} || time::time_to_datetime(time()),
+        $entry->{processed}, $entry->{mastered},
+        $entry->{eventDuration}, $entry->{audioDuration}, 
+        $entry->{rmsLeft}, $entry->{rmsRight},
         $entry->{project_id}, $entry->{studio_id}, $entry->{event_id}
     ];
     
     my $query=qq{
         update calcms_audio_recordings
-        set    path=?, md5=?, size=?, created_by=?, created_at=?
+        set    path=?, size=?, 
+               created_by=?, created_at=?, 
+               modified_at=?,
+               processed=?, mastered=?,
+               eventDuration=?, audioDuration=?, 
+               rmsLeft=?, rmsRight=?
         where  project_id=? and studio_id=? and event_id=?
     };
-    print STDERR Dumper($query).Dumper($bind_values);
+    #print STDERR Dumper($query).Dumper($bind_values);
     return db::put($dbh, $query, $bind_values);
 }
 
@@ -138,15 +155,20 @@ sub insert{
 	return undef unless defined $entry->{event_id};
 	return undef unless defined $entry->{path};
 
-    print STDERR "insert into audio_recordings:".Dumper($entry);
+    #print STDERR "insert into audio_recordings:".Dumper($entry);
     return db::insert($dbh, 'calcms_audio_recordings', {
-        project_id  => $entry->{project_id},
-        studio_id   => $entry->{studio_id},
-        event_id    => $entry->{event_id},
-        path        => $entry->{path},
-        size        => $entry->{size},
-        md5         => $entry->{md5},
-        created_by  => $entry->{created_by},
+        project_id       => $entry->{project_id},
+        studio_id        => $entry->{studio_id},
+        event_id         => $entry->{event_id},
+        path             => $entry->{path},
+        size             => $entry->{size},
+        created_by       => $entry->{created_by},
+        eventDuration    => $entry->{eventDuration},
+        audioDuration    => $entry->{audioDuration},
+        rmsLeft          => $entry->{rmsLeft},
+        rmsRight         => $entry->{rmsRight},
+        processed        => $entry->{processed},
+        mastered         => $entry->{mastered} || '0',
     });
 
 }

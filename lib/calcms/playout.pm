@@ -85,6 +85,9 @@ sub get{
 
 	my $conditions='';
 	$conditions=" where ".join(" and ",@conditions) if (@conditions>0);
+	
+	my $order='start';
+	$order=$condition->{order} if (defined $condition->{order} ) && ($condition->{order} ne'');
 
 	my $query=qq{
 		select	 date(start) 		start_date
@@ -111,9 +114,12 @@ sub get{
                 ,rms_left
                 ,rms_right
                 ,rms_image
+                ,modified_at
+                ,updated_at
 		from 	calcms_playout
 		$conditions
-		order by start
+		order by $order
+        $limit
 	};
 
     #print STDERR Dumper($query).Dumper(\@bind_values);
@@ -128,7 +134,7 @@ sub sync{
 	my $options=shift;
 
     #print STDERR Dumper($config);
-    #print STDERR Dumper($options);
+    print STDERR "upload ".Dumper($options);
 	return undef unless defined $options->{project_id} ;
 	return undef unless defined $options->{studio_id} ;
 	return undef unless defined $options->{from} ;
@@ -227,7 +233,7 @@ sub has_changed{
     my $newEntry=shift;
 
     my $update=0;
-    for my $key ('duration', 'errors', 'file', 'channels', 'format', 'format_version', 'format_profile', 'format_settings', 'stream_size', 'bitrate', 'bitrate_mode', 'sampling_rate', 'writing_library'){
+    for my $key ('duration', 'errors', 'file', 'channels', 'format', 'format_version', 'format_profile', 'format_settings', 'stream_size', 'bitrate', 'bitrate_mode', 'sampling_rate', 'writing_library', 'modified_at'){
         return 1 if ($oldEntry->{$key}||'') ne ($newEntry->{$key}||'');
     }
     return 0;
@@ -242,7 +248,7 @@ sub update{
     
     return if has_changed($oldEntry, $newEntry)==0;
     
-    for my $key ('duration', 'errors', 'file', 'channels', 'format', 'format_version', 'format_profile', 'format_settings', 'stream_size', 'bitrate', 'bitrate_mode', 'sampling_rate', 'writing_library', 'rms_left', 'rms_right', 'rms_image', 'replay_gain'){
+    for my $key ('duration', 'errors', 'file', 'channels', 'format', 'format_version', 'format_profile', 'format_settings', 'stream_size', 'bitrate', 'bitrate_mode', 'sampling_rate', 'writing_library', 'rms_left', 'rms_right', 'rms_image', 'replay_gain', 'modified_at'){
         if (($oldEntry->{$key}||'') ne ($newEntry->{$key}||'')){
             $oldEntry->{$key}=$newEntry->{$key};
         }
@@ -257,13 +263,13 @@ sub update{
     $entry->{end_date}   =  time::add_hours_to_datetime($entry->{end},   -$day_start);
 
     my $bind_values=[
-        $entry->{end},        $entry->{duration},     $entry->{file},  $entry->{errors},
-        $entry->{start_date}, $entry->{end_date},
-        $entry->{channels},   $entry->{'format'},     $entry->{format_version}, $entry->{format_profile}, $entry->{format_settings}, $entry->{stream_size},
-        $entry->{bitrate},    $entry->{bitrate_mode}, $entry->{sampling_rate},  $entry->{writing_library},
-        $entry->{rms_left},   $entry->{rms_right},    $entry->{rms_image},
-        $entry->{replay_gain}, 
-        $entry->{project_id}, $entry->{studio_id},    $entry->{start}
+        $entry->{end},         $entry->{duration},     $entry->{file},  $entry->{errors},
+        $entry->{start_date},  $entry->{end_date},
+        $entry->{channels},    $entry->{'format'},     $entry->{format_version}, $entry->{format_profile}, $entry->{format_settings}, $entry->{stream_size},
+        $entry->{bitrate},     $entry->{bitrate_mode}, $entry->{sampling_rate},  $entry->{writing_library},
+        $entry->{rms_left},    $entry->{rms_right},    $entry->{rms_image},
+        $entry->{replay_gain}, $entry->{modified_at}, 
+        $entry->{project_id},  $entry->{studio_id},    $entry->{start}
     ];
     my $query=qq{
         update calcms_playout
@@ -272,7 +278,7 @@ sub update{
                channels=?, format=?, format_version=?, format_profile=?, format_settings=?, stream_size=?,
                bitrate=?, bitrate_mode=?, sampling_rate=?, writing_library=?, 
                rms_left=?, rms_right=?, rms_image=?,
-               replay_gain=?
+               replay_gain=?, modified_at=?
         where  project_id=? and studio_id=? and start=?
     };
     return db::put($dbh, $query, $bind_values);
@@ -318,7 +324,8 @@ sub insert{
         bitrate          => $entry->{bitrate},
         bitrate_mode     => $entry->{bitrate_mode},
         sampling_rate    => $entry->{sampling_rate},
-        writing_library  => $entry->{writing_library}
+        writing_library  => $entry->{writing_library},
+        modified_at      => $entry->{modified_at}
     });
 
 }

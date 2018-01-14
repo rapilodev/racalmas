@@ -1,0 +1,16 @@
+<html>
+<body>
+
+<table id="events">
+<TMPL_LOOP events>
+<tr id="header_<TMPL_VAR event_id>" class="mailHeader">
+    <td><TMPL_VAR start></td>
+    <td><TMPL_IF live>live</TMPL_IF> <TMPL_IF preproduction>preproduction</TMPL_IF> <TMPL_IF playout>playout</TMPL_IF></td>
+    <td><TMPL_VAR full_title></td>
+    <td><TMPL_VAR mail.To></td>
+</tr>
+</TMPL_LOOP>
+</table>
+
+</body>
+</html>

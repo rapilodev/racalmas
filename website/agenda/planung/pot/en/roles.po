@@ -247,3 +247,6 @@ msgstr "upload audio recordings"
 msgid "label_delete_audio_recordings"
 msgstr "delete audio recordings"
 
+msgid "label_read_playout"
+msgstr "show playout"
+

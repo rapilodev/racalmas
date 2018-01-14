@@ -436,6 +436,7 @@
             </td>
         </tr>
         
+        <TMPL_IF .allow.read_image>
         <tr> 
             <td class="label">
                 <TMPL_VAR .loc.label_image> 
@@ -448,11 +449,10 @@
                         <img id="imagePreview" src="<TMPL_VAR image>">
                     </button>
                     <input id="image_<TMPL_VAR event_id>" name="image" value="<TMPL_VAR image>" class="image" style="float:right" placeholder="<TMPL_VAR .loc.label_image>">
-                <TMPL_ELSE>
-                    <img src="<TMPL_VAR image>">
                 </TMPL_IF>
             </td>
         </tr>
+        </TMPL_IF>
 
         <tr> 
             <td class="label">

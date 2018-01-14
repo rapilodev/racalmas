@@ -61,10 +61,10 @@ function isNewToHistory(url){
         var ignore=0;
         //provide back to series from series details
         if(contains(url,'series')){
-            console.log(url);
-            console.log(history[0]);
+            //console.log(url);
+            //console.log(history[0]);
             if( (contains(url,'series_id')==true)  && (contains(history[0],'series_id')==false)) ignore=1;
-            console.log(ignore);
+            //console.log(ignore);
         }
         if (ignore==0) history.shift();
     }

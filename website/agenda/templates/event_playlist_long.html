@@ -10,97 +10,114 @@
 	<meta http-equiv="Content-Style-Type" content="text/css" />
 	<title>Playlist <TMPL_VAR project_title></title>
 
-    <style>
-        #coming_shows .eventContainer {
-            display:inline-block;
-            vertical-align:top;
-            text-align:center;
-            cursor:pointer;
-            width:100px;
-            height:100px;
-            margin:0;
-            overflow:hidden;
-            padding:6px;
-        }
-        #coming_shows .eventContainer:hover {
-            background:#eeeeee;
-        }
-        #coming_shows a:hover {
-            text-decoration:none;
-        }
-        
-        #coming_shows div.event{
-            position:relative;
-            width:100px;
-            height:100px;
-            background-repeat: no-repeat;
-            background-position: center center;
-            background-size: cover;            
-        }
-        #coming_shows div.event .top, 
-        #coming_shows div.event .bottom{
-            position:absolute;
-            background:#222;
-            color:#fff;
-            opacity:0.8;
-            width:100%;
-        }
-        #coming_shows div.event .top:hover,
-        #coming_shows div.event .bottom:hover{
-            opacity:1;
-        }
+<script>
+/**
+ * @fileoverview dragscroll - scroll area by dragging
+ * @version 0.0.8
+ * 
+ * @license MIT, see http://github.com/asvd/dragscroll
+ * @copyright 2015 asvd <heliosframework@gmail.com> 
+ */
 
 
-        #coming_shows div.event .top{
-            top:0;
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], factory);
+    } else if (typeof exports !== 'undefined') {
+        factory(exports);
+    } else {
+        factory((root.dragscroll = {}));
+    }
+}(this, function (exports) {
+    var _window = window;
+    var _document = document;
+    var mousemove = 'mousemove';
+    var mouseup = 'mouseup';
+    var mousedown = 'mousedown';
+    var EventListener = 'EventListener';
+    var addEventListener = 'add'+EventListener;
+    var removeEventListener = 'remove'+EventListener;
+    var newScrollX, newScrollY;
+
+    var dragged = [];
+    var reset = function(i, el) {
+        for (i = 0; i < dragged.length;) {
+            el = dragged[i++];
+            el = el.container || el;
+            el[removeEventListener](mousedown, el.md, 0);
+            _window[removeEventListener](mouseup, el.mu, 0);
+            _window[removeEventListener](mousemove, el.mm, 0);
         }
 
-        #coming_shows div.event .bottom{
-            bottom:0;
-        }
-        
-        #coming_shows div.event{
-            transition: all .2s ease-in-out;
-        }
+        // cloning into array since HTMLCollection is updated dynamically
+        dragged = [].slice.call(_document.getElementsByClassName('dragscroll'));
+        for (i = 0; i < dragged.length;) {
+            (function(el, lastClientX, lastClientY, pushed, scroller, cont){
+                (cont = el.container || el)[addEventListener](
+                    mousedown,
+                    cont.md = function(e) {
+                        if (!el.hasAttribute('nochilddrag') ||
+                            _document.elementFromPoint(
+                                e.pageX, e.pageY
+                            ) == cont
+                        ) {
+                            pushed = 1;
+                            lastClientX = e.clientX;
+                            lastClientY = e.clientY;
 
-        #coming_shows div.event:hover{
-            transform: scale(1.1);
+                            e.preventDefault();
+                        }
+                    }, 0
+                );
+
+                _window[addEventListener](
+                    mouseup, cont.mu = function() {pushed = 0;}, 0
+                );
+
+                _window[addEventListener](
+                    mousemove,
+                    cont.mm = function(e) {
+                        if (pushed) {
+                            (scroller = el.scroller||el).scrollLeft -=
+                                newScrollX = (- lastClientX + (lastClientX=e.clientX));
+                            scroller.scrollTop -=
+                                newScrollY = (- lastClientY + (lastClientY=e.clientY));
+                            if (el == _document.body) {
+                                (scroller = _document.documentElement).scrollLeft -= newScrollX;
+                                scroller.scrollTop -= newScrollY;
+                            }
+                        }
+                    }, 0
+                );
+             })(dragged[i++]);
         }
-    </style>
+    }
+
+      
+    if (_document.readyState == 'complete') {
+        reset();
+    } else {
+        _window[addEventListener]('load', reset, 0);
+    }
+
+    exports.reset = reset;
+}));
+</script>
 </head>
 
-<script>
-    //handler for sliding events bound to onmouseenter/onmouseleave at playlist_container
-    var slideEvents=1;
-    function enter_playlist(){
-        slideEvents=0;
-    }
-
-    function leave_playlist(){
-        slideEvents=1;
-    }
-</script>
-
 <body>
-<div id="playlist_container" onmouseenter="enter_playlist()" onmouseleave="leave_playlist()">
+<div id="playlist_container" class="dragscroll">
 <TMPL_LOOP NAME=events>
-	<div id="event_playlist_<TMPL_VAR event_id>" class="eventContainer"
-	onclick="window.location.href='<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>'"
-	>
-	    <a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>" 
-	    > 
-		    <div class="event"
-                style="background-image:url(<TMPL_VAR thumb>)"
-		    >
-			    <div class="top" title="<TMPL_VAR full_title><TMPL_IF excerpt>. <TMPL_VAR excerpt></TMPL_IF>">
-					    <TMPL_VAR weekday_short_name> <TMPL_VAR start_time_name>
-			    </div>
-                <div class="bottom">
-                    <TMPL_IF series_name><TMPL_VAR series_name><TMPL_ELSE><TMPL_VAR title></TMPL_IF>
-                </div>
+    <a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>" > 
+    	<div id="event_playlist_<TMPL_VAR event_id>" class="eventContainer event">
+		    <div class="top" title="<TMPL_VAR full_title><TMPL_IF excerpt>. <TMPL_VAR excerpt></TMPL_IF>">
+				    <TMPL_VAR weekday_short_name> <TMPL_VAR start_time_name>
 		    </div>
-	    </a>
-	</div>
+            <div class="bottom">
+                <TMPL_IF series_name><TMPL_VAR series_name><TMPL_ELSE><TMPL_VAR title></TMPL_IF>
+            </div>
+    	</div>
+    </a>
 </TMPL_LOOP>
 </div>
 </body>

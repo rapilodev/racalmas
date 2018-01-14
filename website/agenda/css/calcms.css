@@ -4,9 +4,13 @@ include in your web page:
 */
 
 /* fix drupal */
-
 input{
 	max-width:20em;
+}
+
+a{
+    text-decoration:none;
+    box-shadow:none !important;
 }
 
 /* hide microformats */
@@ -25,7 +29,6 @@ input{
 
 
 /* menu */
-
 #calcms_menu{
 	clear:both;
 	text-align:left;
@@ -92,6 +95,8 @@ input{
 }
 
 #calcms_playlist img{
+    width:25px;
+    height:25px;
 	border:1px solid #ccc;
 }
 
@@ -139,8 +144,10 @@ input{
 	text-overflow: ellipsis;
 }
 
-#calcms_list .event.running{
-	color:#000;
+#calcms_list .event.running,
+#calcms_list .event.running a{
+	color:#fff;
+	background:#aaa;
 }
 
 #calcms_list .comments.submitted{
@@ -153,6 +160,7 @@ input{
 
 #calcms_list .title{
 	margin-bottom:1em;
+	font-weight:bold;
 }
 
 #calcms_list .content img{
@@ -165,14 +173,16 @@ input{
 }
 
 #calcms_list .event{
-    padding:1em;
-	padding-top:0.5em;
-	padding-bottom:0.5em;
-	margin:1em;
-	margin-left:0;
-    background:#eee;
+    padding:1rem;
+    padding-right:0.5rem;
+	border-bottom:1rem solid #fff;
     hyphens: none;
     cursor:pointer;
+    background:#eee;
+    color:#666;
+    max-height:8rem;
+    overflow:hidden;
+  	text-overflow: ellipsis;
 }
 
 
@@ -192,6 +202,19 @@ input{
 
 #icon_bar a {
     padding:1em;
+    float:left;
+}
+
+/* slider */
+#coming_shows{
+	white-space:nowrap;
+	height:120px;
+}
+
+#calcms_list #playlist_container{
+	overflow:hidden;
+	height:120px;
+	padding:10px;
 }
 
 #calcms_list #playlist_container .event{
@@ -208,6 +231,67 @@ input{
     height:100px;
     box-sizing:border-box;
 }
+
+#playlist_container .event div.bottom{
+    max-height:70px;
+	font-size:12px;
+	padding:6px;
+	white-space:wrap;
+	text-overflow: ellipsis;
+}
+
+#coming_shows .eventContainer {
+    display:inline-block;
+    vertical-align:top;
+    text-align:center;
+    cursor:pointer;
+    width:100px;
+    height:100px;
+}
+#coming_shows .eventContainer:hover {
+    background:#eeeeee;
+}
+#coming_shows a:hover {
+    text-decoration:none;
+}
+
+#coming_shows div.event{
+    position:relative;
+    width:100px;
+    height:100px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;            
+}
+#coming_shows div.event .top, 
+#coming_shows div.event .bottom{
+    position:absolute;
+    background:#222;
+    color:#fff;
+    opacity:0.8;
+    width:100%;
+}
+#coming_shows div.event .top:hover,
+#coming_shows div.event .bottom:hover{
+    opacity:1;
+}
+
+#coming_shows div.event .top{
+    top:0;
+}
+
+#coming_shows div.event .bottom{
+    bottom:0;
+}
+
+#coming_shows div.event{
+    transition: all .2s ease-in-out;
+}
+
+#coming_shows div.event:hover{
+    transform: scale(1.05);
+}
+
 
 /* calcms comments */
 #calcms_comments{
@@ -461,6 +545,7 @@ a#calcms_search_show_details #plus{
 	text-align:center;
 	font-weight:normal;
 	border-bottom:1px solid #ddd;
+    transition: all .1s ease-in-out;
 }
 
 #calcms_calendar table thead td:hover,
@@ -472,11 +557,6 @@ a#calcms_search_show_details #plus{
 #calcms_calendar table th.first,
 #calcms_calendar table th.last{
 	font-size:large;
-}
-
-#calcms_calendar table th,
-#calcms_calendar table td{
-    transition: all .1s ease-in-out;
 }
 
 /* month selector */

@@ -13,6 +13,10 @@
 <div> <a href="series.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.series></a> </div>
 </TMPL_IF>
 
+<TMPL_IF .allow.read_playout>
+<div> <a href="show-playout.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.playout></a> </div>
+</TMPL_IF>
+
 <TMPL_IF .allow.read_user>
 <div> <a href="users.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.users></a> </div>
 </TMPL_IF>

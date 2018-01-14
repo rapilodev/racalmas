@@ -3,22 +3,22 @@ Content-type:text/xml; charset=UTF-8
 <?xml version="1.0" encoding="UTF-8"?>
 <station lastupdate="<TMPL_VAR modified_at_datetime_utc>" xmlns:gml="http://www.opengis.net/gml">
     <info>
-        <displayname>shortRadioName</displayname>
-        <fullname>fullRadioName</fullname>
-        <logo src="https://www.freie-radios.net/" />
+        <displayname>Pi-Radio</displayname>
+        <fullname>Pi-Radio</fullname>
+        <logo src="https://piradio.de/agenda/image/logo.jpg" />
         <basecolor>#FF6600</basecolor>
         <city>Berlin</city>
         <studio>
-            <street>street</street>
-            <number>number</number>
-            <city>city</city>
-            <zip>plz</zip>
+            <street>Lottumstrasse</street>
+            <number>9</number>
+            <city>Berlin</city>
+            <zip>10119</zip>
             <studio-location>    
                 <gml:Point>
                     <gml:pos>52.53119 13.4066</gml:pos>
                 </gml:Point>
             </studio-location>
-            <phone type="studio">+49 030 1234 5678</phone>
+            <phone type="studio">+49 030 609 37 277</phone>
         </studio>
     </info>
 
@@ -33,10 +33,8 @@ Content-type:text/xml; charset=UTF-8
             <transmit-rds-id>88vier</transmit-rds-id>
             <transmit-times>
                 <transmit-time recurrence="true" />
-                    <weekly day="DO" priority="0" time-from="06:00:00" time-to="24:00:00" />
-                    <weekly day="FR" priority="0" time-from="00:00:00" time-to="01:00:00" />
-                    <weekly day="FR" priority="0" time-from="06:00:00" time-to="24:00:00" />
-                    <weekly day="SA" priority="0" time-from="00:00:00" time-to="01:00:00" />
+                    <weekly day="MI" priority="0" time-from="19:00:00" time-to="06:00:00" />
+                    <weekly day="DO" priority="0" time-from="19:00:00" time-to="06:00:00" />
             </transmit-times>
 
             <transmitter-location>
@@ -45,9 +43,16 @@ Content-type:text/xml; charset=UTF-8
                 </gml:Point>
             </transmitter-location>
         </transmitter>
-
+        <webstream>
+			<transmit-times>
+				<transmit-time time-from="00:00:00" time-to="23:59:59"/>
+			</transmit-times>
+			<url>http://ice.rosebud-media.de:8000/88vier</url>
+			<format>audio/mpeg</format>
+			<quality>160kbps</quality>
+		</webstream>
         <website>
-            <url>https://www.freie-radios.net/</url>
+            <url>https://piradio.de</url>
         </website>
     </media-channels>
 
@@ -64,7 +69,7 @@ Content-type:text/xml; charset=UTF-8
     </categories>
     <feed>
         <title>Sendebeschreibung</title>
-        <url>http://localhost<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url></url>
+        <url>https://piradio.de<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url></url>
     </feed>
     <transmit-times>
         <transmit-time date-from="<TMPL_VAR start_datetime_utc>" date-to="<TMPL_VAR end_datetime_utc>" recurrence="false" rerun="<TMPL_IF rerun>true<TMPL_ELSE>false</TMPL_IF>" />

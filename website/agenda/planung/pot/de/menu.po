@@ -40,6 +40,9 @@ msgstr "Studio"
 msgid "project"
 msgstr "Projekt"
 
+msgid "playout"
+msgstr "Playout"
+
 msgid "import"
 msgstr "Import"
 

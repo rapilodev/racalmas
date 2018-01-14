@@ -1,5 +1,6 @@
 img{
     margin-right :1em;
+    margin-bottom :1em;
     vertical-align:middle
 }
 
@@ -11,3 +12,10 @@ h2 {
     line-height:1.5em;
 }
 
+.thin{
+    font-weight:100;
+}
+
+th{
+    text-align:center;
+}

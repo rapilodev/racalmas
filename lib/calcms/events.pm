@@ -18,8 +18,22 @@ use studios;
 
 require Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK =
-  qw(init get_cached_or_render get modify_results get_query render get_running_event_id delete check_params configure_cache get_duration calc_dates get_keys add_recordings);
+our @EXPORT_OK = qw(
+	init 
+	get_cached_or_render 
+	get 
+	modify_results 
+	get_query 
+	render 
+	get_running_event_id 
+	delete 
+	check_params 
+	configure_cache 
+	get_duration 
+	calc_dates 
+	get_keys 
+	add_recordings
+);
 our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub init {
@@ -1050,7 +1064,7 @@ sub get_query {
 		$query .= ', ar.path';
 		$query .= ', ar.size';
 		$query .= ', ar.created_by uploaded_by';
-		$query .= ', ar.created_at uploaded_at';
+		$query .= ', ar.modified_at uploaded_at';
 		#push @$where_cond,  'e.id=ar.event_id';
 	}
 	
@@ -1456,10 +1470,13 @@ sub get_duration {
 	my $event    = shift;
 	my $timezone = $config->{date}->{time_zone};
 	my $start    = time::get_datetime( $event->{start}, $timezone );
-	my $end      = time::get_datetime( $event->{end}, $timezone );
+	my $end      = time::get_datetime( $event->{end},   $timezone );
+	#my $seconds  = $end->subtract($start)->in_units("minutes");
+	#return $seconds;
 	return undef unless defined $start;
 	return undef unless defined $end;
 	my $duration = $end->epoch() - $start->epoch();
+	#print STDERR "duration=$duration, end=".$end->datetime()." start=".$start->datetime()."\n";
 	return $duration / 60;
 }
 

@@ -1,4 +1,4 @@
-# !/usr/bin/perl -w 
+# !/usr/bin/perl -w
 
 use warnings "all";
 use strict;
@@ -19,42 +19,47 @@ use localization;
 
 #binmode STDOUT, ":utf8";
 
-my $r=shift;
-(my $cgi, my $params, my $error)=params::get($r);
+my $r = shift;
+( my $cgi, my $params, my $error ) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
 my $debug  = $config->{system}->{debug};
-my ($user,$expires)  = auth::get_user($cgi, $config);
-return if ((!defined $user) || ($user eq ''));
+my ( $user, $expires ) = auth::get_user( $cgi, $config );
+return if ( ( !defined $user ) || ( $user eq '' ) );
 
-my $user_presets=uac::get_user_presets($config, {
-    user       => $user, 
-    project_id => $params->{project_id}, 
-    studio_id  => $params->{studio_id}
-});
-$params->{default_studio_id}=$user_presets->{studio_id};
-$params->{studio_id}=$params->{default_studio_id} if ((!(defined $params->{action}))||($params->{action}eq'')||($params->{action}eq'login'));
-$params->{project_id}=$user_presets->{project_id} if ((!(defined $params->{action}))||($params->{action}eq'')||($params->{action}eq'login'));
+my $user_presets = uac::get_user_presets(
+	$config,
+	{
+		user       => $user,
+		project_id => $params->{project_id},
+		studio_id  => $params->{studio_id}
+	}
+);
+$params->{default_studio_id} = $user_presets->{studio_id};
+$params->{studio_id}         = $params->{default_studio_id}
+  if ( ( !( defined $params->{action} ) ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' ) );
+$params->{project_id} = $user_presets->{project_id}
+  if ( ( !( defined $params->{action} ) ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' ) );
 
-my $request={
-	url	=> $ENV{QUERY_STRING}||'',
-	params	=> {
+my $request = {
+	url => $ENV{QUERY_STRING} || '',
+	params => {
 		original => $params,
-		checked  => check_params($params), 
+		checked  => check_params($params),
 	},
 };
-$request = uac::prepare_request($request, $user_presets);
+$request = uac::prepare_request( $request, $user_presets );
 log::init($request);
 
-$params=$request->{params}->{checked};
+$params = $request->{params}->{checked};
 
 #process header
-my $headerParams=uac::set_template_permissions($request->{permissions}, $params);
-$headerParams->{loc} = localization::get($config, {user=>$user, file=>'menu'});
-template::process('print', template::check('default.html'), $headerParams);
-return unless uac::check($config, $params, $user_presets)==1;
+my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
+template::process( 'print', template::check('default.html'), $headerParams );
+return unless uac::check( $config, $params, $user_presets ) == 1;
 
-my $toc=$headerParams->{loc}->{toc};
+my $toc = $headerParams->{loc}->{toc};
 
 print q!
 <style>
@@ -121,16 +126,16 @@ $( document ).ready(function() {
 </script>
 !;
 
-print markup::creole_to_html(getHelp($headerParams->{loc}->{region}));
+print markup::creole_to_html( getHelp( $headerParams->{loc}->{region} ) );
 
-sub getHelp{
-    my $region=shift;
-    return getGermanHelp() if $region eq 'de';
-    return getEnglishHelp();
+sub getHelp {
+	my $region = shift;
+	return getGermanHelp() if $region eq 'de';
+	return getEnglishHelp();
 }
 
-sub getGermanHelp{
-return q{
+sub getGermanHelp {
+	return q{
 
 <div id="toc"><h1 class="hide">Inhaltsverzeichnis</h1></div>
 
@@ -373,8 +378,8 @@ Folgende Status-Felder gibt es:
 };
 }
 
-sub getEnglishHelp{
-    return q{
+sub getEnglishHelp {
+	return q{
 <div id="toc"><h1 class="hide">Table of Contents</h1></div>
 
 = Menu
@@ -608,33 +613,32 @@ There are following status fields:
 * The user needs permissiosn to "edit series he/she is assigned to"
 
 };
-    
-    
+
 }
 
-sub check_params{
-	my $params=shift;
+sub check_params {
+	my $params = shift;
 
-	my $checked={};
+	my $checked = {};
 
-	my $debug=$params->{debug} || '';
-	if ($debug=~/([a-z\_\,]+)/){
-		$debug=$1;
+	my $debug = $params->{debug} || '';
+	if ( $debug =~ /([a-z\_\,]+)/ ) {
+		$debug = $1;
 	}
-	$checked->{debug}=$debug;
+	$checked->{debug} = $debug;
 
 	#numeric values
-	$checked->{exclude}=0;
-	for my $param ('id', 'project_id', 'studio_id', 'default_studio_id'){
-		if ((defined $params->{$param})&&($params->{$param}=~/^\d+$/)){
-			$checked->{$param}=$params->{$param};
+	$checked->{exclude} = 0;
+	for my $param ( 'id', 'project_id', 'studio_id', 'default_studio_id' ) {
+		if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
+			$checked->{$param} = $params->{$param};
 		}
 	}
-    if (defined $checked->{studio_id}){
-        $checked->{default_studio_id}=$checked->{studio_id};
-    }else{
-        $checked->{studio_id}=-1;
-    }
+	if ( defined $checked->{studio_id} ) {
+		$checked->{default_studio_id} = $checked->{studio_id};
+	} else {
+		$checked->{studio_id} = -1;
+	}
 
 	return $checked;
 }

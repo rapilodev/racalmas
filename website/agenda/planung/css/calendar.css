@@ -19,9 +19,7 @@ button:hover{
 	#content{
 	    top:0;
 	}
-	
 }
-
 
 #content #calendar_weekdays,
 #content #calendar_weekdays table,
@@ -66,7 +64,6 @@ button:hover{
 #calendar table td{
 	word-wrap:break-word;
 	hyphens:auto;
-	/*word-break:break-all;*/
 }
 
 #calendar div.text{
@@ -98,9 +95,6 @@ button:hover{
     padding-left:0;
     padding-top:0;
     padding-bottom:0;
-    /*
-//    padding-right:16px;
-*/
 }
 
 #calendar div.event div.icons{
@@ -108,20 +102,7 @@ button:hover{
     top:-5px;
     right:-7px;
     width:16px;
-    image-rendering: optimizeSpeed;             /* FUCK SMOOTHING, GIVE ME SPEED  */
- 	image-rendering: -moz-crisp-edges;          /* Firefox                        */
- 	image-rendering: -o-crisp-edges;            /* Opera                          */
- 	image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
- 	image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
- 	-ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
 }
-
-/*
-#calendar div.event,
-#calendar div.schedule{
-	border-bottom:1px solid black;
-}
-*/
 
 #calendar div.time.now {
     padding:0;
@@ -185,7 +166,6 @@ button:hover{
 	border:0;
 	border-bottom:1px solid #666;
 	border-top:1px solid #666;
-	/*border:1px solid black;*/
 }
 
 #calendar div.time,
@@ -230,14 +210,8 @@ button:hover{
     z-index:1;
     margin-left:0px;
     background:white;
-    /*
-//    margin-right:15px;
-*/
 }
 
-#event_list tr{
-    /*border-bottom:1px solid #999;*/
-}
 #event_list tr th:hover{
     cursor:pointer;
 }
@@ -342,12 +316,6 @@ input.tablesorter-filter{
 
 /* calendar colors */
 
-/*
-#content .grid{
-    border:1px dashed #ccc;
-}
-*/
-
 #content div.event.no_series{
 	color:#000;
 }
@@ -421,6 +389,11 @@ div#toolbar input.search{
     padding-bottom:6px;
 }
 
+#content #toolbar div#selectDate:hover{
+    padding-top:0;
+    padding-bottom:0;
+}
+
 #content #toolbar div#current_date{
     cursor:pointer;
     font-size:1.5em;
@@ -444,11 +417,9 @@ div#toolbar input.search{
     padding:6px;
 }
 
-
-#calendar td div.play {
-    transition: min-height 0.1s;
-    transition: min-width 0.1s;
-    transition-delay: 0.7s;
+#calendar div {
+    transition: all 0.1s;
+    transition-delay: 0s;
 }
 
 #calendar td div.play:hover {
@@ -516,16 +487,19 @@ div.rms_detail div.text{
 
 div.event .ok,
 div.play .ok{
+    display:inline;
     background:#4caf50;
 }
 
 div.event .warn,
 div.play .warn{
+    display:inline;
     background:#ffeb3b;
 }
 
 div.event .error,
 div.play .error{
+    display:inline;
     background:#f44336;
 }
 

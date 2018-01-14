@@ -1,0 +1,9 @@
+Content-type:text/plain
+
+<TMPL_LOOP events>
+date: <TMPL_VAR start>
+<TMPL_IF live>live</TMPL_IF> <TMPL_IF preproduction>preproduction</TMPL_IF> <TMPL_IF playout>playout</TMPL_IF>
+<TMPL_VAR full_title>
+<TMPL_VAR mail.To>
+</TMPL_LOOP>
+

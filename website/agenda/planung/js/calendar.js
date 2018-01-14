@@ -589,7 +589,7 @@ function deleteFromPlayout(id, projectId, studioId, start){
     url+='&project_id='+escape(projectId);
     url+='&studio_id='+escape(studioId);
     url+='&start_date='+escape(start);
-    
+    //console.log(url);
     $('#'+id).dialog({
         width:940, 
         height:440,

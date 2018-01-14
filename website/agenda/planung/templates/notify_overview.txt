@@ -1,0 +1,9 @@
+Content-type:text/plain; charset=utf-8;
+
+<TMPL_LOOP events>
+date:    <TMPL_VAR start>
+title:   <TMPL_VAR full_title>
+status:  <TMPL_IF live>live<TMPL_ELSE><TMPL_IF preproduction>preproduction</TMPL_IF></TMPL_IF><TMPL_IF playout>playout</TMPL_IF>
+contact: <TMPL_VAR mail.To>
+</TMPL_LOOP>
+

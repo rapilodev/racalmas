@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.55, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.20, for Linux (x86_64)
 --
 -- Host: localhost    Database: calcms
 -- ------------------------------------------------------
--- Server version	5.5.55-0ubuntu0.14.04.1
+-- Server version	5.7.20-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -29,9 +29,15 @@ CREATE TABLE `calcms_audio_recordings` (
   `event_id` int(11) NOT NULL,
   `created_by` varchar(100) NOT NULL,
   `path` varchar(300) NOT NULL,
-  `md5` varchar(100) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `size` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `audioDuration` float DEFAULT '0',
+  `eventDuration` int(11) DEFAULT '0',
+  `rmsLeft` float DEFAULT NULL,
+  `rmsRight` float DEFAULT NULL,
+  `mastered` tinyint(1) DEFAULT '0',
+  `processed` tinyint(1) DEFAULT '0',
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `project_index` (`project_id`),
   KEY `studio_index` (`studio_id`),
@@ -384,14 +390,17 @@ CREATE TABLE `calcms_playout` (
   `rms_left` float DEFAULT NULL,
   `rms_right` float DEFAULT NULL,
   `rms_image` varchar(300) DEFAULT NULL,
-  `relpay_gain` float DEFAULT NULL,
+  `replay_gain` float DEFAULT NULL,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` datetime DEFAULT NULL,
   PRIMARY KEY (`project_id`,`studio_id`,`start`),
   KEY `project_id` (`project_id`),
   KEY `studio_id` (`studio_id`),
   KEY `start` (`start`),
   KEY `end` (`end`),
   KEY `start_date` (`start_date`),
-  KEY `end_date` (`end_date`)
+  KEY `end_date` (`end_date`),
+  KEY `modified_at` (`modified_at`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -576,6 +585,7 @@ CREATE TABLE `calcms_roles` (
   `update_comment_status_read` tinyint(1) unsigned NOT NULL,
   `upload_audio_recordings` tinyint(1) unsigned NOT NULL,
   `delete_audio_recordings` tinyint(1) unsigned NOT NULL,
+  `read_playout` tinyint(1) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `role_2` (`role`),
   KEY `studio_id` (`studio_id`),
@@ -590,8 +600,7 @@ CREATE TABLE `calcms_roles` (
 
 LOCK TABLES `calcms_roles` WRITE;
 /*!40000 ALTER TABLE `calcms_roles` DISABLE KEYS */;
-INSERT INTO `calcms_roles` VALUES (7,'Admin',1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,1,1,1,'0000-00-00 00:00:00','2016-05-16 13:53:46',1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
-/*!40000 ALTER TABLE `calcms_roles` ENABLE KEYS */;
+INSERT INTO `calcms_roles` VALUES (7,'Admin',1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,1,1,1,'0000-00-00 00:00:00','2017-07-30 14:32:32',1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);/*!40000 ALTER TABLE `calcms_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -696,7 +705,8 @@ CREATE TABLE `calcms_series_events` (
   KEY `event_id` (`event_id`),
   KEY `studio_id` (`studio_id`),
   KEY `project_id` (`project_id`),
-  KEY `manual` (`manual`)
+  KEY `manual` (`manual`),
+  KEY `pse` (`project_id`,`studio_id`,`event_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -730,8 +740,8 @@ CREATE TABLE `calcms_series_schedule` (
   `period_type` varchar(16) DEFAULT NULL,
   `month` int(10) unsigned NOT NULL DEFAULT '0',
   `project_id` int(10) unsigned NOT NULL DEFAULT '1',
-  `start_offset` int(11) NOT NULL DEFAULT '0',
-  `nextDay` int(11) NOT NULL DEFAULT '0',
+  `start_offset` int(11) DEFAULT '0',
+  `nextDay` int(11) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `series_id` (`series_id`),
   KEY `studio_id` (`studio_id`),
@@ -1165,4 +1175,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-29 13:34:58
+-- Dump completed on 2018-01-14 17:23:51
