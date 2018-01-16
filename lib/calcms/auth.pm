@@ -1,7 +1,7 @@
 #!/bin/perl
 
 use CGI;
-use CGI::Carp qw(warningsToBrowser fatalsToBrowser); 
+#use CGI::Carp qw(warningsToBrowser fatalsToBrowser); 
 use CGI::Session qw(-ip-match);
 use CGI::Cookie;
 #$CGI::Session::IP_MATCH=1;

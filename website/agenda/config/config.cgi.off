@@ -87,6 +87,9 @@ project                 Corax
     local_archive_dir       /home/calcms/archive/
     local_archive_url       /archive/
 
+    local_audio_recordings_dir /home/calcms/recordings/
+    local_audio_recordings_url /recordings/
+
     # synchronization
     sync_cms_dir            /home/calcms/sync_cms/
 
