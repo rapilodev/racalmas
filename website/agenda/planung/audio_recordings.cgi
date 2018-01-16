@@ -403,10 +403,9 @@ sub updateDatabase {
 		studio_id     => $params->{studio_id},
 		event_id      => $params->{event_id},
 		path          => $params->{path},
-		md5           => $params->{md5} || '',
 		size          => $params->{size},
 		created_by    => $user,
-		eventDuration => $eventDuration,
+		eventDuration => $eventDuration
 	};
 	#print STDERR "updateDatabase:" . Dumper($entry);
 
@@ -432,6 +431,12 @@ sub updateDatabase {
 	} else {
 		print STDERR "insert\n";
 		$entry->{created_by} = $user;
+        $entry->{processed} = 0;
+        $entry->{mastered} = 0;
+        $entry->{rmsLeft} = 0.0;
+        $entry->{rmsRight} = 0.0;
+        $entry->{audioDuration} = 0.0;
+        $entry->{modified_at} = time();
 		$params->{id} = audio_recordings::insert( $config, $dbh, $entry );
 	}
 	$config->{access}->{write} = 0;
