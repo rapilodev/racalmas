@@ -148,6 +148,8 @@ apt-get install <deb-package>
 
 == Install by deb package ==
 
+mariadb-server 
+build-essentials
 libapreq2-3
 libapache-dbi-perl
 libauthen-passphrase-blowfish-perl
@@ -171,19 +173,20 @@ libtext-wikicreole-perl
 liburi-escape-xs-perl
 perlmagick
 
-
 == Install by CPAN perl packages ==
 
   cpan <perl-package>
 
 Apache2::Upload
 Apache::DBI
+Authen::Passphrase
 Authen::Passphrase::BlowfishCrypt
 Calendar::Simple
+CGI::Simple
+CGI::Session
 CGI
 CGI::Carp
 CGI::Cookie
-CGI::Session
 Config::General
 Data::Dumper
 DateTime
@@ -201,7 +204,7 @@ HTML::Template::Compiled::Plugin::XMLEscape
 JSON
 MIME::Base64
 MIME::Lite
-POSIX
+Text::Diff::FormatedHtml
 Text::WikiCreole
 Time::Local
 Time::localtime
@@ -224,4 +227,12 @@ you may have to update the paths inside update_page.sh
 https://localhost/agenda/planung/
 ccAdmin
 shug!3Lu
+
+=== how to migrate schema from one version to another one
+
+cat  calcmsOld.sql | mysql -u root calcmsOld
+cat  calcmsNew.sql | mysql -u root calcmsNew
+
+mysqldiff --force --changes-for=server2 --difftype=sql calcmsOld:calcmsNew > migrate.sql
+cat migrate | mysql -u root calcms
 
