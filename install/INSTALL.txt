@@ -234,5 +234,7 @@ cat  calcmsOld.sql | mysql -u root calcmsOld
 cat  calcmsNew.sql | mysql -u root calcmsNew
 
 mysqldiff --force --changes-for=server2 --difftype=sql calcmsOld:calcmsNew > migrate.sql
+# make sure lines with "modified_at" contain "ON UPDATE CURRENT_TIMESTAMP"
+# for example: `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 cat migrate | mysql -u root calcms
 

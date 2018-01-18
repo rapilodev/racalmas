@@ -140,6 +140,10 @@ sub update{
                rmsLeft=?, rmsRight=?
         where  project_id=? and studio_id=? and event_id=?
     };
+    if (defined $entry->{id}){
+        $query.=' and id=?';
+        push @$bind_values, $entry->{id};
+    }
     #print STDERR Dumper($query).Dumper($bind_values);
     return db::put($dbh, $query, $bind_values);
 }
