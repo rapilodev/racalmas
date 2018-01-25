@@ -422,7 +422,7 @@ var calcms_settings = new Array();
 		// setImageSize();
 		// setThumbs();
 		// scrollNextEvent();
-		/initSlider();
+		//initSlider();
 		// mobilise();
 		initSearch();
 		console.log("calcms inited")
