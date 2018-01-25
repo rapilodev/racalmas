@@ -157,6 +157,7 @@ var calcms_settings = new Array();
 		return false;
 	}
 
+    /*
 	function insertDeskDetails() {
 		var pattern = new RegExp(/redaktion\/(.*)$/);
 		var matchs = pattern.exec(document.location.href);
@@ -173,7 +174,9 @@ var calcms_settings = new Array();
 							+ '<div id="showDesk" />' + '</div>');
 		}
 	}
+	*/
 
+    /*
 	function fixBlogEntries() {
 		if (document.location.href.match('/redaktionen/')
 				|| document.location.href.match('/redaktionen?')
@@ -199,7 +202,9 @@ var calcms_settings = new Array();
 
 		}
 	}
+    */
 
+    /*
 	function setImageSize() {
 		var image = '#calcms_list div.content img';
 		var size = $(window).width();
@@ -225,6 +230,7 @@ var calcms_settings = new Array();
 			});
 		}
 	}
+    */	
 
 	function setThumbs() {
 		$('#calcms_playlist img').each(function(index) {
@@ -236,6 +242,7 @@ var calcms_settings = new Array();
 		});
 	}
 
+    /*
 	function addCommentsOnAgendaPages() {
 		if (calcms.contains(window.location.href, '/programm/')
 				|| calcms.contains(window.location.href, '/agenda/')) {
@@ -246,6 +253,7 @@ var calcms_settings = new Array();
 									+ '</div></div>');
 		}
 	}
+	*/
 
 	function scrollNextEvent() {
 		if ($('#calcms_running_event').length == 0)
@@ -379,9 +387,33 @@ var calcms_settings = new Array();
 		}
 	}
 
+    var isCalcms=false;
+    function initWordpress(){
+        $('header.entry-header').each( function(){
+            var elem=$(this);
+            $(this).find("h1").each( function(){
+                if ( $(this).text() == "calcms" ){
+                    isCalcms=true;
+                    $(this).text("Programm");
+                }
+            });
+        });
+
+        $('div.site-info').remove();
+        
+        if (isCalcms==false){
+            $('#calcms_calendar').parent().parent().remove();
+            $('#calcms_menu').parent().parent().remove();
+            $('#calcms_search').parent().parent().remove();
+            $('#calcms_playlist').parent().parent().remove();
+            $('#calcms_newest_comments').parent().parent().remove();
+        }
+    }
+
 	function initAll() {
 		initCalcms();
-		addCommentsOnAgendaPages();
+		//initWordpress();
+		//addCommentsOnAgendaPages();
 		calcms.showPlaylist();
 		calcms.showNewestComments();
 		// insertDeskDetails();
@@ -390,6 +422,7 @@ var calcms_settings = new Array();
 		// setImageSize();
 		// setThumbs();
 		// scrollNextEvent();
+		/initSlider();
 		// mobilise();
 		initSearch();
 		console.log("calcms inited")

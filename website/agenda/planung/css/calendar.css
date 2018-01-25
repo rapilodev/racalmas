@@ -291,6 +291,15 @@ input.tablesorter-filter{
     text-align:center;
 }
 
+#event_list tr th.draft,
+#event_list tr td.draft{
+    background:none;
+}
+
+#event_list tr th{
+    border-right:1px solid #ccc;
+}
+
 #event_list td:nth-child(9),
 #event_list th:nth-child(9),
 #event_list td:nth-child(9) .tablesorter-filter{
@@ -458,12 +467,14 @@ div#toolbar input.search{
 
 #calendar div.event.error,
 #calendar div.event.schedule{
-    width:50%;
+/*    width:50%; */
 }
 
 #calendar div.event.error.x2,
 #calendar div.event.schedule.x2{
+    /*
     margin-left:50%;
+    */
 }
 
 div.rms_detail{

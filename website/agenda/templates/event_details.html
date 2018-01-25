@@ -21,40 +21,21 @@
 	
 		<div class="date<TMPL_IF is_running> running</TMPL_IF>">
 			<TMPL_IF is_running> ... Diese Sendung l&auml;uft gerade ...<p></TMPL_IF>
-			<table>
-			<tr>
-				<td>	
-					<TMPL_VAR weekday_name>, <TMPL_VAR start_date_name> 
-				</td> 
-				<td>
-					<TMPL_VAR project_title> 
-					<TMPL_IF location_label_studiorebootfm>
-						- Studio reboot.fm
-					<TMPL_ELSIF location_label_dt64>
-                        -  DT 64 Festival
-					<TMPL_ELSE>
-						- <TMPL_VAR location_mapped>
-					</TMPL_IF>
-				</td>
-			</tr>
-			<tr>
-				<td> 
-					<TMPL_VAR start_time_name> bis <TMPL_VAR end_time_name> Uhr 
-				</td>
-				<td>
-					<TMPL_IF program>(<TMPL_VAR program>)</TMPL_IF>
-				</td>
-			</tr>
-			</table>
 			
-			<p>
 				<h1 class="summary title">
 				    <TMPL_IF series_name>
 					<a href="#" onclick="calcms.showPrevSeriesEvent(<TMPL_VAR event_id>)" title="vorherige Sendung">&laquo;</a><TMPL_VAR series_name><a href="#" onclick="calcms.showNextSeriesEvent(<TMPL_VAR event_id>)" title="n&auml;chste Sendung">&raquo;</a>
 					</TMPL_IF>
 				    <TMPL_VAR full_title_no_series>
+
+			    <div style="font-size:1rem">
+			    <TMPL_VAR weekday_name>, <TMPL_VAR start_date_name>, 
+			    <span style="font-size:1.5rem"><TMPL_VAR start_time_name></span> bis <TMPL_VAR end_time_name> Uhr
+			    </div>
+
 				</h1>
-			</p>
+
+			<TMPL_IF program> (<TMPL_VAR program>)</TMPL_IF>
 		</div>
 		<div class="content" > 
 			<TMPL_VAR excerpt > <TMPL_VAR user_excerpt >

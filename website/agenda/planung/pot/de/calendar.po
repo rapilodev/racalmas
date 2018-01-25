@@ -109,6 +109,9 @@ msgstr "Folge"
 msgid "label_rerun"
 msgstr "Wiederholung"
 
+msgid "label_draft"
+msgstr "Entwurf"
+
 msgid "button_cancel"
 msgstr "Abbrechen"
 

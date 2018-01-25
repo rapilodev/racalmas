@@ -22,6 +22,9 @@ msgstr "event"
 msgid  "color_schedule"
 msgstr "schedule"
 
+msgid  "color_draft"
+msgstr "draft"
+
 msgid  "color_no_series"
 msgstr "no series assigned to event"
 

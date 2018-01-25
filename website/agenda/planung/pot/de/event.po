@@ -97,6 +97,9 @@ msgstr "Folge"
 msgid "label_live"
 msgstr "Live-Sendung"
 
+msgid "label_draft"
+msgstr "Entwurf"
+
 msgid "label_published"
 msgstr "veröffentlicht"
 

@@ -130,14 +130,16 @@ a{
 	margin:6px;
 }
 
+#content li{
+    margin-left:1.7rem;
+}
+
 #calcms_list .date{
-    margin-left:1em;
 	font-weight:bold;
-	margin-top:1em;
 }
 
 #calcms_list .excerpt{
-	margin-left:3.1rem;
+	margin-left:3rem;
 	margin-top:6px;
 	max-height:5em;
     overflow: hidden; 
@@ -507,7 +509,7 @@ a#calcms_search_show_details #plus{
 	padding:0;
 	margin:0;
 	background:#fff;
-	border:1px solid #ddd;
+	border:0px solid #ddd;
     border-collapse:collapse;
 	text-align:center;
 }
@@ -519,11 +521,6 @@ a#calcms_search_show_details #plus{
     padding:0;
     text-decoration:none;
 	font-weight:normal;
-}
-
-#calcms_calendar table thead th{
-    padding-top:0px;
-    padding-bottom:2px;
 }
 
 #calcms_calendar table tbody a:hover,
@@ -546,6 +543,8 @@ a#calcms_search_show_details #plus{
 	font-weight:normal;
 	border-bottom:1px solid #ddd;
     transition: all .1s ease-in-out;
+    padding-top:2%;
+    padding-bottom:2%;
 }
 
 #calcms_calendar table thead td:hover,

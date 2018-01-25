@@ -43,6 +43,9 @@ msgstr "conflicts"
 msgid "label_rerun"
 msgstr "rerun"
 
+msgid "label_draft"
+msgstr "draft"
+
 msgid "label_archived"
 msgstr "archived"
 

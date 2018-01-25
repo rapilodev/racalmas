@@ -352,6 +352,12 @@
                     <TMPL_IF rerun><TMPL_VAR .loc.label_rerun></TMPL_IF>
                 </TMPL_IF>
 
+                <TMPL_IF .allow.update_event_status_draft>
+                    <input type="checkbox" name="draft"       <TMPL_IF draft>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF> > <TMPL_VAR .loc.label_draft>
+                <TMPL_ELSE>
+                    <TMPL_IF draft><TMPL_VAR .loc.label_draft></TMPL_IF>
+                </TMPL_IF>
+
                 <TMPL_IF .allow.update_event_status_disable_event_sync>
                     <input type="hidden" name="disable_event_sync" value="1">
                     <!--

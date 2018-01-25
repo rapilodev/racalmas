@@ -100,6 +100,9 @@ msgstr "publish events"
 msgid "label_update_event_status_rerun" 
 msgstr "set event for rerun"
 
+msgid "label_update_event_status_draft" 
+msgstr "set event to draft"
+
 msgid "label_update_event_status_disable_event_sync" 
 msgstr "prevent events to be overridden (by calendar synchronization)"
 

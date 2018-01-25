@@ -97,6 +97,9 @@ msgstr "Sendung veröffentlichen"
 msgid "label_update_event_status_rerun" 
 msgstr "Wiederholung-Sende Status ändern "
 
+msgid "label_update_event_status_draft" 
+msgstr "Sendungsentwurf-Status ändern"
+
 msgid "label_update_event_status_disable_event_sync" 
 msgstr "Google-Import blockieren"
 

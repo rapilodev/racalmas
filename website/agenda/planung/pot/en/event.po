@@ -97,6 +97,9 @@ msgstr "episode"
 msgid "label_live"
 msgstr "live"
 
+msgid "label_draft"
+msgstr "draft"
+
 msgid "label_published"
 msgstr "published"
 

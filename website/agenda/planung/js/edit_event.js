@@ -116,6 +116,7 @@ function loadEvent(projectId,studioId,seriesId,eventId, callback){
         updateCheckBox( "#edit_event input[name='archived']", event.archived);
         updateCheckBox( "#edit_event input[name='rerun']", event.rerun);
         updateCheckBox( "#edit_event input[name='playout']", event.playout);
+        updateCheckBox( "#edit_event input[name='draft']", event.draft);
 
         $("#edit_event textarea[name='excerpt'").html(event.excerpt);
         $("#edit_event textarea[name='user_excerpt'").html(event.user_excerpt);
@@ -299,6 +300,16 @@ $(document).ready(
         checkFields();
 
         $('textarea').autosize();
+        
+        // unset published on setting draft
+        $("#edit_event input[name='draft']").change(
+            function(){
+                if ($(this).val()==1){
+                    console.log( 'unset published' );
+                    updateCheckBox("#edit_event input[name='published']", 0);
+                }
+            }
+        )        
         console.log("done")
     }
 );

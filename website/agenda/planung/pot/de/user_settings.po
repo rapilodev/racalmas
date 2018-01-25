@@ -22,6 +22,9 @@ msgstr "Sendung"
 msgid  "color_schedule"
 msgstr "Planung"
 
+msgid  "color_draft"
+msgstr "Entwurf"
+
 msgid  "color_no_series"
 msgstr "Sendung gehört zu keiner Sendereihe"
 
