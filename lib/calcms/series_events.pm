@@ -72,12 +72,13 @@ sub save_content{
 	for my $key ('series_name', 'title', 'excerpt', 'content', 'html_content',  
 	    'user_title', 'user_excerpt', 'topic', 'html_topic',
 	    'episode', 'image', 'podcast_url', 'archive_url',
-		'live', 'published', 'playout', 'archived', 'rerun', 'disable_event_sync',
+		'live', 'published', 'playout', 'archived', 'rerun', 'draft', 'disable_event_sync',
 		'modified_by'
 	){
 	    push @keys, $key if defined $entry->{$key};
 	}
-    $entry->{episode}=undef if((defined $entry->{episode}) && ($entry->{episode}eq'0'));
+    $entry->{episode}   = undef if (defined $entry->{episode}) && ($entry->{episode} eq '0');
+    $entry->{published} = 0     if (defined $entry->{draft})   && ($entry->{draft}   eq '1');
 
 	my $values	=join(",", map {$_.'=?'} (@keys));
 	my @bind_values	=map {$entry->{$_}} (@keys);
@@ -89,7 +90,7 @@ sub save_content{
 		where  id=?
 	};
 
-	#print STDERR $query.Dumper(\@bind_values);
+	print STDERR $query.Dumper(\@bind_values);
 	db::put($dbh, $query, \@bind_values);
 	return $entry;
 }
@@ -307,6 +308,9 @@ sub check_permission{
     my $series_name=$series->[0]->{series_name}||'';
     $series_name.=' - '.$series->[0]->{title} if $series->[0]->{series_name} ne '';
     
+    my $draft = 0;
+    $draft = 1 if (defined $options->{draft}) && ($options->{draft} == 1 );
+
     #check all items from checklist
 	if((defined $check->{user})&&(uac::is_user_assigned_to_studio($request, $options)==0)){
 		return "User '$request->{user}' is not assigned to studio $studio_name ($options->{studio_id})";
@@ -328,7 +332,7 @@ sub check_permission{
 		return "User $request->{user} cannot create events for series '$series_name' ($options->{series_id})";
 	}
 	
-    if((defined $check->{studio_timeslots})&&(studio_timeslot_dates::can_studio_edit_events($config, $options)==0)){
+    if( ($draft==0) && (defined $check->{studio_timeslots}) && (studio_timeslot_dates::can_studio_edit_events($config, $options)==0) ){
 		return "requested time is not assigned to studio '$studio_name' ($options->{studio_id})";
     }
 
@@ -340,7 +344,7 @@ sub check_permission{
     }
 
     # prevent editing events that are over for more than 14 days
-    if(defined $check->{event_age}){
+    if( ($draft==0) && (defined $check->{event_age}) ){
         if (series::is_event_older_than_days($config, {
             project_id => $options->{project_id}, 
             studio_id  => $options->{studio_id}, 
@@ -356,7 +360,7 @@ sub check_permission{
     }
 
     #check if schedule event exists for given date 
-	if(defined $check->{schedule}){
+	if( ($draft == 0) && (defined $check->{schedule}) ){
         return "unknown series" unless defined $series;
 	    return "missing start_at at check_permission" unless defined $options->{start_date};
         #TODO: check "is_event_scheduled" if start_at could be moved to start_date
@@ -414,7 +418,7 @@ sub insert_event{
    	$event->{'html_topic'}   = markup::creole_to_html($event->{'topic'})   if defined $event->{'topic'};
 
     #add event status
-    for my $attr ('live', 'published', 'playout', 'archived', 'rerun', 'disable_event_sync'){
+    for my $attr ('live', 'published', 'playout', 'archived', 'rerun', 'draft', 'disable_event_sync'){
         $event->{$attr}=$params->{$attr}||0;
     }
 

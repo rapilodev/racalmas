@@ -486,10 +486,17 @@ sub get_events{
 		push @conditions, 'e.location = ?';
 		push @bind_values, $options->{location};
 	}
+
+	if(defined $options->{draft}){
+		push @conditions, 'e.draft = ?';
+		push @bind_values, $options->{draft};
+	}
+
 	my $conditions='';
 	if (@conditions>0){
 		$conditions=' and '.join(' and ', @conditions);
 	}
+	
 	my $limit='';
 	if( (defined $options->{limit}) && ($limit=~/(\d+)/) ){
 		$limit='limit '.$1;
@@ -542,7 +549,8 @@ sub get_event{
     my $project_id = $options->{project_id}||'';
     my $studio_id  = $options->{studio_id}||'';
     my $series_id  = $options->{series_id}||'';
-    my $event_id   = $options->{event_id} ||'';
+    my $event_id   = $options->{event_id} ||''; 
+    my $draft      = $options->{draft} ||'';
 
     unless(defined($options->{allow_any})){
         if ($project_id eq''){
@@ -569,6 +577,7 @@ sub get_event{
     $queryOptions->{studio_id}  = $studio_id  if $studio_id  ne '';
     $queryOptions->{series_id}  = $series_id  if $series_id  ne '';
     $queryOptions->{event_id}   = $event_id   if $event_id   ne '';
+    $queryOptions->{draft}      = $draft      if $draft      ne '';
 
     my $events=series::get_events($config, $queryOptions);
 
@@ -1113,6 +1122,7 @@ sub update_recurring_events{
 		    project_id => $options->{project_id},
             studio_id  => $options->{studio_id}, 
             series_id  => $options->{series_id},
+            draft      => 0
 		}
 	);
 	@$events=sort { $a->{start} cmp $b->{start}} @$events;

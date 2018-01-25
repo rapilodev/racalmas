@@ -40,6 +40,5 @@ if ($0=~/comments.*?\.cgi$/){
 	print $output;
 }
 
-
 #do not delete last line
 1;

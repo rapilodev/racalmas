@@ -630,6 +630,12 @@ sub get_query {
 			push @$bind_values, $published;
 		}
 
+		my $draft = $params->{draft} || '0';
+		if ( ( $draft eq '0' ) || ( $draft eq '1' ) ) {
+			push @$where_cond,  'draft=?';
+			push @$bind_values, $draft;
+		}
+
 	} else {
 
 		# conditions by date
@@ -937,6 +943,14 @@ sub get_query {
 		push @$bind_values, $published;
 	}
 
+	#filter by draft, default =1, set to 'all' to see all
+	my $draft_cond = '';
+	my $draft = $params->{draft} || '0';
+	if ( ( $draft eq '0' ) || ( $draft eq '1' ) ) {
+		$draft_cond = 'draft=?';
+		push @$bind_values, $draft;
+	}
+
 	my $disable_event_sync_cond = '';
 	my $disable_event_sync = $params->{disable_event_sync} || '';
 	if ( ( $disable_event_sync eq '0' ) || ( $disable_event_sync eq '1' ) ) {
@@ -960,6 +974,7 @@ sub get_query {
 	push @$where_cond, $search_cond      if ( $search_cond =~ /\S/ );
 	push @$where_cond, $project_cond     if ( $project_cond =~ /\S/ );
 	push @$where_cond, $published_cond   if ( $published_cond =~ /\S/ );
+	push @$where_cond, $draft_cond       if ( $draft_cond =~ /\S/ );
 	push @$where_cond, $disable_event_sync_cond
 	  if ( $disable_event_sync_cond ne '' );
 
@@ -1016,6 +1031,7 @@ sub get_query {
             ,e.user_title
             ,e.user_excerpt
             ,e.published
+            ,e.draft
             ,e.playout
             ,e.archived
             ,e.rerun

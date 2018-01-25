@@ -80,4 +80,18 @@ ALTER TABLE `calcms_users`
   CHANGE COLUMN created_at created_at timestamp NULL DEFAULT CURRENT_TIMESTAMP, 
   CHANGE COLUMN modified_at modified_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
 
+ALTER TABLE `calcms_audio_recordings` 
+  CHANGE COLUMN processed processed tinyint(1) NOT NULL DEFAULT '0', 
+  CHANGE COLUMN modified_at modified_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+  CHANGE COLUMN mastered mastered tinyint(1) NOT NULL DEFAULT '0', 
+  CHANGE COLUMN eventDuration eventDuration int(11) NOT NULL DEFAULT '0', 
+  CHANGE COLUMN rmsLeft rmsLeft float NOT NULL, 
+  CHANGE COLUMN rmsRight rmsRight float NOT NULL, 
+  CHANGE COLUMN audioDuration audioDuration float NOT NULL DEFAULT '0';
+
+ALTER TABLE `calcms_events` 
+  ADD COLUMN draft tinyint(1) unsigned NOT NULL DEFAULT '0' AFTER recurrence_count;
+
+ALTER TABLE `calcms_users` 
+  CHANGE COLUMN email email varchar(300) NOT NULL;
 

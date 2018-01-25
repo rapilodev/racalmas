@@ -111,6 +111,8 @@ sub show_events {
 		studio_id  => $params->{studio_id},
 		from_date  => time::time_to_date(),
 		till_date  => time::time_to_date( time() + $duration * 24 * 60 * 60 ),
+		draft      => 0,
+		published  => 1
 	};
 
 	my $events = series::get_events( $config, $options );
@@ -158,6 +160,8 @@ sub sendMail {
 		studio_id  => $params->{studio_id},
 		series_id  => $params->{series_id},
 		event_id   => $params->{event_id},
+		draft      => 0,
+		published  => 0,
 	};
 	my $events = series::get_events( $config, $options );
 

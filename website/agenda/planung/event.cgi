@@ -166,6 +166,7 @@ sub show_event {
 	unless ( defined $event ) {
 		uac::print_error("event not found");
 	}
+	#print STDERR "show:".Dumper($event->{draft});
 
 	my $editLock = 1;
 	if ( ( defined $permissions->{update_event_after_week} ) && ( $permissions->{update_event_after_week} eq '1' ) ) {
@@ -196,7 +197,8 @@ sub show_event {
 				#project_id => $params->{project_id},
 				#studio_id  => $params->{studio_id},
 				#series_id  => $params->{series_id},
-				event_id => $params->{source_event_id}
+				event_id    => $params->{source_event_id},
+				draft       => 0,
 			}
 		);
 		if ( defined $event2 ) {
@@ -582,6 +584,7 @@ sub save_event {
 		studio_id  => $params->{studio_id},
 		series_id  => $params->{series_id},
 		event_id   => $params->{event_id},
+		draft      => $params->{draft},
 		start      => $start,
 		end        => $end,
 	};
@@ -616,7 +619,7 @@ sub save_event {
 	}
 
 	#status field
-	for my $key ( 'live', 'published', 'playout', 'archived', 'rerun', 'disable_event_sync' ) {
+	for my $key ( 'live', 'published', 'playout', 'archived', 'rerun', 'disable_event_sync', 'draft' ) {
 		next unless defined $permissions->{ 'update_event_status_' . $key };
 		if ( $permissions->{ 'update_event_status_' . $key } eq '1' ) {
 			$entry->{$key} = $params->{$key} || 0;
@@ -717,8 +720,9 @@ sub create_event {
 			studio_id  => $params->{studio_id},
 			series_id  => $params->{series_id},
 			start_date => $params->{start_date},
+			draft      => $params->{draft},
 			start      => $start,
-			end        => $end
+			end        => $end,
 		}
 	);
 
@@ -942,9 +946,10 @@ sub check_params {
 	}
 
 	#checkboxes
-	for my $param ( 'live', 'published', 'playout', 'archived', 'rerun', 'disable_event_sync', 'get_rerun' ) {
+	for my $param ( 'live', 'published', 'playout', 'archived', 'rerun', 'draft', 'disable_event_sync', 'get_rerun' ) {
 		if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /([01])/ ) ) {
 			$checked->{$param} = $1;
+			# print STDERR "check $param = $1\n";
 		}
 	}
 

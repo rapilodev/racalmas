@@ -19,6 +19,10 @@ our $defaultColors=[
         css   => '#content .event',
         color => '#c5e1a5'
     },{
+        name  => 'color_draft',
+        css   => '#content .draft',
+        color => '#eeeeee',
+    },{
         name  => 'color_schedule',
         css   => '#content .schedule',
         color => '#dde4e6',

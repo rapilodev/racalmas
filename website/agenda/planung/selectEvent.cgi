@@ -69,6 +69,7 @@ print "Content-type:text/html; charset=UTF-8;\n\n";
 return unless uac::check( $config, $params, $user_presets ) == 1;
 show_events( $config, $request );
 
+#TODO: filter by published, draft
 sub show_events {
 	my $config  = shift;
 	my $request = shift;

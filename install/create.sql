@@ -31,12 +31,12 @@ CREATE TABLE `calcms_audio_recordings` (
   `path` varchar(300) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `size` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `audioDuration` float DEFAULT '0',
-  `eventDuration` int(11) DEFAULT '0',
-  `rmsLeft` float DEFAULT NULL,
-  `rmsRight` float DEFAULT NULL,
-  `mastered` tinyint(1) DEFAULT '0',
-  `processed` tinyint(1) DEFAULT '0',
+  `audioDuration` float NOT NULL DEFAULT '0',
+  `eventDuration` int(11) NOT NULL DEFAULT '0',
+  `rmsLeft` float NOT NULL,
+  `rmsRight` float NOT NULL,
+  `mastered` tinyint(1) NOT NULL DEFAULT '0',
+  `processed` tinyint(1) NOT NULL DEFAULT '0',
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `project_index` (`project_id`),
@@ -178,6 +178,7 @@ CREATE TABLE `calcms_event_history` (
   `series_id` int(10) unsigned DEFAULT NULL,
   `deleted` tinyint(1) unsigned DEFAULT '0',
   `project_id` int(10) unsigned NOT NULL,
+  `draft` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `end` (`end`),
   KEY `start` (`start`),
@@ -262,6 +263,7 @@ CREATE TABLE `calcms_events` (
   `modified_by` varchar(20) DEFAULT NULL,
   `archive_url` varchar(300) DEFAULT NULL,
   `recurrence_count` int(10) unsigned NOT NULL DEFAULT '0',
+  `draft` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `end` (`end`),
   KEY `start` (`start`),
@@ -281,7 +283,8 @@ CREATE TABLE `calcms_events` (
   KEY `location` (`location`),
   KEY `published` (`published`),
   KEY `preproduced` (`playout`),
-  KEY `archived` (`archived`)
+  KEY `archived` (`archived`),
+  KEY `draft` (`draft`)
 ) ENGINE=MyISAM AUTO_INCREMENT=23271 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -391,8 +394,8 @@ CREATE TABLE `calcms_playout` (
   `rms_right` float DEFAULT NULL,
   `rms_image` varchar(300) DEFAULT NULL,
   `replay_gain` float DEFAULT NULL,
-  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` datetime DEFAULT NULL,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` datetime NOT NULL,
   PRIMARY KEY (`project_id`,`studio_id`,`start`),
   KEY `project_id` (`project_id`),
   KEY `studio_id` (`studio_id`),
@@ -586,6 +589,7 @@ CREATE TABLE `calcms_roles` (
   `upload_audio_recordings` tinyint(1) unsigned NOT NULL,
   `delete_audio_recordings` tinyint(1) unsigned NOT NULL,
   `read_playout` tinyint(1) unsigned NOT NULL,
+  `update_event_status_draft` tinyint(1) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `role_2` (`role`),
   KEY `studio_id` (`studio_id`),
@@ -600,7 +604,7 @@ CREATE TABLE `calcms_roles` (
 
 LOCK TABLES `calcms_roles` WRITE;
 /*!40000 ALTER TABLE `calcms_roles` DISABLE KEYS */;
-INSERT INTO `calcms_roles` VALUES (7,'Admin',1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,1,1,1,'0000-00-00 00:00:00','2017-07-30 14:32:32',1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);/*!40000 ALTER TABLE `calcms_roles` ENABLE KEYS */;
+INSERT INTO `calcms_roles` VALUES (7,'Admin',1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,1,1,1,'0000-00-00 00:00:00','2017-07-30 14:32:32',1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);/*!40000 ALTER TABLE `calcms_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1068,7 +1072,7 @@ CREATE TABLE `calcms_users` (
   `full_name` varchar(30) DEFAULT NULL,
   `salt` varchar(32) NOT NULL,
   `pass` varchar(100) NOT NULL,
-  `email` varchar(300) DEFAULT NULL,
+  `email` varchar(300) NOT NULL,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `disabled` int(10) unsigned DEFAULT '0',

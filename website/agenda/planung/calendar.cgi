@@ -245,6 +245,8 @@ sub showCalendar {
 			delete $options->{till_date}          if ( $params->{list} == 1 );
 			delete $options->{date_range_include} if ( $params->{list} == 1 );
 		}
+		
+		$options->{draft}=0 unless $params->{list}==1;
 
 		#get events sorted by date
 		$events = getSeriesEvents( $config, $request, $options, $params );
@@ -723,6 +725,7 @@ sub showEventList {
                     <th class="episode">$params->{loc}->{label_episode}</th>
                     <th class="rerun" title="$params->{loc}->{label_rerun}"><img src="image/32/rerun.png"></th>
                     <th class="live" title="$params->{loc}->{label_live}"><img src="image/32/live.png"></th>
+                    <th class="draft" title="$params->{loc}->{label_draft}"><img src="image/32/draft.png"></th>
                     <th class="archive" title="$params->{loc}->{label_archived}"><img src="image/32/archived.png"></th>
                  </tr>
             </thead>
@@ -754,7 +757,7 @@ sub showEventList {
 				$class .= ' error'     if defined $event->{error};
 				$class .= ' no_series' if ( ( $class eq 'event' ) && ( $event->{series_id} eq '-1' ) );
 
-				for my $filter ( 'rerun', 'archived', 'playout', 'published', 'live', 'disable_event_sync' ) {
+				for my $filter ( 'rerun', 'archived', 'playout', 'published', 'live', 'disable_event_sync', 'draft' ) {
 					$class .= ' ' . $filter if ( ( defined $event->{$filter} ) && ( $event->{$filter} eq '1' ) );
 				}
 				$class .= ' preproduced' unless ( ( defined $event->{'live'} )    && ( $event->{'live'} eq '1' ) );
@@ -772,7 +775,8 @@ sub showEventList {
 			$event->{user_title}         ||= '';
 			$event->{episode}            ||= '';
 			$event->{rerun}              ||= '';
-			$id                          ||= '';
+	        $event->{draft}              ||= '';
+	    	$id                          ||= '';
 			$class                       ||= '';
 
 			my $archived = $event->{archived} || '-';
@@ -790,6 +794,11 @@ sub showEventList {
 			$rerun = " [" . markup::base26( $event->{recurrence_count} + 1 ) . "]"
 			  if ( defined $event->{recurrence_count} ) && ( $event->{recurrence_count} ne '' ) && ( $event->{recurrence_count} > 0 );
 
+
+            my $draft = $event->{draft} || '0';
+			$draft='-' if $draft eq '0';
+			$draft='x' if $draft eq '1';
+
 			my $title = $event->{title};
 			$title .= ': ' . $event->{user_title} if $event->{user_title} ne '';
 
@@ -804,6 +813,7 @@ sub showEventList {
 			  . qq!<td class="title">$title</td>!
 			  . qq!<td class="episode">$event->{episode}</td>!
 			  . qq!<td class="rerun">$rerun</td>!
+			  . qq!<td class="draft">$draft</td>!
 			  . qq!<td class="live">$live</td>!
 			  . qq!<td class="archived">$archived</td>!
 			  . qq!</tr>! . "\n";
@@ -1358,7 +1368,7 @@ sub print_event {
 		$class .= ' no_series'              if ( ( $class eq 'event' ) && ( $event->{series_id} eq '-1' ) );
 		$class .= " error x$event->{error}" if defined $event->{error};
 
-		for my $filter ( 'rerun', 'archived', 'playout', 'published', 'live', 'disable_event_sync' ) {
+		for my $filter ( 'rerun', 'archived', 'playout', 'published', 'live', 'disable_event_sync', 'draft' ) {
 			$class .= ' ' . $filter if ( ( defined $event->{$filter} ) && ( $event->{$filter} eq '1' ) );
 		}
 		$class .= ' preproduced' unless ( ( defined $event->{'live'} )    && ( $event->{'live'} eq '1' ) );
@@ -1455,6 +1465,7 @@ sub find_errors {
 		next if defined $event->{grid};
 		next if defined $event->{work};
 		next if defined $event->{play};
+		next if (defined $event->{draft}) && ($event->{draft} == 1);
 		next unless defined $event->{ystart};
 		next unless defined $event->{yend};
 		$event->{check_errors} = 1;
@@ -1583,7 +1594,7 @@ sub printToolbar {
         <select id="filter" name="filter" onchange="reloadCalendar()">
     };
 
-	for my $filter ( 'no markup', 'conflicts', 'rerun', 'archived', 'playout', 'published', 'live', 'disable_event_sync' ) {
+	for my $filter ( 'no markup', 'conflicts', 'rerun', 'archived', 'playout', 'published', 'live', 'disable_event_sync', 'draft' ) {
 		my $key = $filter;
 		$key =~ s/ /_/g;
 
@@ -1733,6 +1744,7 @@ sub getSeriesEvents {
 		permissions => $request->{permissions}
 	};
 	$request2->{params}->{checked}->{published} = 'all';
+    $request2->{params}->{checked}->{draft} = '1' if $params->{list}==1;
 	delete $request2->{params}->{checked}->{exclude_locations}
 	  if ( ( $params->{studio_id} == -1 ) && ( defined $request2->{params}->{checked}->{exclude_locations} ) );
 
