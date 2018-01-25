@@ -79,8 +79,11 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 	my $list = aggregator::get_list( $config, $request );
 
 	my $menu = { content => '' };
-	$list->{day} = $params->{date} if ( ( !defined $list->{day} ) || ( $list->{day} eq '' ) );
-	$list->{day} = 'today' if ( $list->{day} eq '' && $params->{date} eq '' );
+
+	$list->{day} = '' unless defined $list->{day};
+    $list->{day} = $params->{date}      if (defined $params->{date})      && ($params->{date} ne '');
+    $list->{day} = $params->{from_date} if (defined $params->{from_date}) && ($params->{from_date} ne '');
+    $list->{day} = 'today'              if $list->{day} eq '';
 
 	$menu = aggregator::get_menu( $config, $request, $list->{day}, $list->{results} );
 
