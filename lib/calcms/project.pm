@@ -1,14 +1,17 @@
 #!/bin/perl
     
 package project; 
+
 use warnings "all";
 use strict;
 
 use Data::Dumper;
 use Date::Calc;
+
 use config;
 use log;
 use template;
+use images;
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -109,21 +112,14 @@ sub insert{
     my $columns=get_columns($config);
     my $project={};
     for my $column (keys %$columns){
-        $project->{$column}=$entry->{$column} if defined $entry->{$column};
+        $project->{$column} = $entry->{$column} if defined $entry->{$column};
     }
+
+    $project->{image} = images::normalizeName( $project->{image} ) if defined $project->{image};
 
 	my $dbh=db::connect($config);
 	my $id=db::insert($dbh, 'calcms_projects', $project);
     return $id;
-}
-
-# delete project
-sub delete{
-	my $config=shift;
-	my $entry=shift;
-	
-	my $dbh=db::connect($config);
-	db::put($dbh, 'delete from calcms_projects where project_id=?', [$entry->{project_id}]);
 }
 
 # update project
@@ -137,6 +133,8 @@ sub update{
         $entry->{$column}=$project->{$column} if defined $project->{$column};
     }
 
+    $entry->{image} = images::normalizeName( $entry->{image} ) if defined $entry->{image};
+
 	my $values	=join(",", map {$_.'=?'} (keys %$entry));
 	my @bind_values	=map {$entry->{$_}} (keys %$entry);
 	push @bind_values,$entry->{project_id};
@@ -149,6 +147,15 @@ sub update{
     #print STDERR Dumper($query).Dumper(\@bind_values);
 	my $dbh=db::connect($config);
 	db::put($dbh, $query, \@bind_values);
+}
+
+# delete project
+sub delete{
+	my $config=shift;
+	my $entry=shift;
+	
+	my $dbh=db::connect($config);
+	db::put($dbh, 'delete from calcms_projects where project_id=?', [$entry->{project_id}]);
 }
 
 

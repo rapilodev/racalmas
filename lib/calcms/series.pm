@@ -2,8 +2,12 @@ package series;
 
 use warnings "all";
 use strict;
+
 use Data::Dumper;
+
 use events;
+use images;
+
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -136,15 +140,16 @@ sub insert{
 	return undef unless defined $series->{project_id};
 	return undef unless defined $series->{studio_id};
 
-    my $project_id=$series->{project_id};
-    my $studio_id =$series->{studio_id};
+    my $project_id = $series->{project_id};
+    my $studio_id  = $series->{studio_id};
 
     my $columns=series::get_columns($config);
 
     my $entry={};
     for my $column (keys %$columns){
-        $entry->{$column}=$series->{$column} if defined $series->{$column};
+        $entry->{$column} = $series->{$column} if defined $series->{$column};
     }
+    $entry->{image} = images::normalizeName( $entry->{image} ) if defined $entry->{image};
 
 	$entry->{created_at} = time::time_to_datetime(time());
 	$entry->{modified_at}= time::time_to_datetime(time());
@@ -179,6 +184,7 @@ sub update{
     for my $column (keys %$columns){
         $entry->{$column}=$series->{$column} if defined $series->{$column};
     }
+    $entry->{image}      = images::normalizeName( $entry->{image} ) if defined $entry->{image};
     $entry->{id}         = $series->{series_id};
 	$entry->{modified_at}= time::time_to_datetime(time());
 
@@ -522,7 +528,18 @@ sub get_events{
 
 	my $dbh=db::connect($config);
 	my $results=db::get($dbh, $query, \@bind_values);
-	$results=events::modify_results($dbh, $config, {base_url=>'', params=>{checked=>{template=>''}}}, $results);
+	#print STDERR Dumper($results);
+	
+	$results=events::modify_results(
+	    $dbh, $config, {
+	        base_url => '', 
+	        params   => { 
+	            checked => { 
+	                template => '' 
+	            } 
+	        } 
+	    } , $results
+	);
 
     #add studio id to events
 	my $studios=studios::get($config, $options);
@@ -552,7 +569,7 @@ sub get_event{
     my $event_id   = $options->{event_id} ||''; 
     my $draft      = $options->{draft} ||'';
 
-    unless(defined($options->{allow_any})){
+    unless(defined $options->{allow_any} ){
         if ($project_id eq''){
             uac::print_error("missing project_id");
             return undef;
@@ -580,18 +597,19 @@ sub get_event{
     $queryOptions->{draft}      = $draft      if $draft      ne '';
 
     my $events=series::get_events($config, $queryOptions);
+    
 
     unless (defined $events){
         uac::print_error("error on loading event");
         return undef;
     }
 
-    if(@$events==0){
+    if(scalar(@$events)==0){
         uac::print_error("event not found");
         return undef;
     }
 
-    if(@$events>1){
+    if(scalar(@$events)>1){
         print STDERR q{multiple assignments found for }
             .q{project_id=}.$options->{project_id}
             .q{, studio_id=}.$options->{studio_id}

@@ -232,7 +232,7 @@ sub modify_results {
 		$result->{rds_title} =~ s/\_{2,99}/\_/gi;
 		$result->{rds_title} = substr( $result->{rds_title}, 0, 63 );
 
-		#        $result->{event_id}=$result->{id};
+		#$result->{event_id}=$result->{id};
 
 		$result->{base_url}         = $request->{base_url};
 		$result->{base_domain}      = $config->{locations}->{base_domain};
@@ -246,20 +246,28 @@ sub modify_results {
 		$result->{no_comment}  = 1 if ( $result->{comment_count} == 0 );
 
 		#fix image url
-
-		if ((defined $config->{permissions}->{hide_event_images}) && ($config->{permissions}->{hide_event_images} eq '1')){
-		    $result->{image}       = $result->{series_image};
-            $result->{image_label} = $result->{series_image_label};
+		#$params->{exclude_event_images}=0 unless defined $params->{exclude_event_images};
+		#if ($params->{exclude_event_images}==1){
+		#    if ( (defined $config->{permissions}->{hide_event_images}) && ($config->{permissions}->{hide_event_images} eq '1') ){
+		#        $result->{image}       = $result->{series_image};
+        #        $result->{image_label} = $result->{series_image_label};
+		#    }
+        #}
+		
+		if ( defined $result->{image} ) {
+		    my $url   = $config->{locations}->{local_media_url}||'';
+	        my $image = $result->{image};
+		    $result->{thumb_url} = $url.'/thumbs/'.$image;
+		    $result->{icon_url}  = $url.'/icons/'.$image;
+		    $result->{image_url} = $url.'/images/'.$image;
 		}
 
-		if ( defined $result->{image} ) {
-		    my $url=$config->{locations}->{local_media_url}||'';
-		    if (defined $result->{image}){
-		        my $image=$result->{image};
-			    $result->{thumb} = $url.'/thumbs/'.$image;
-			    $result->{icon}  = $url.'/icons/'.$image;
-			    $result->{image} = $url.'/images/'.$image;
-            }
+		if ( defined $result->{series_image} ) {
+		    my $url   = $config->{locations}->{local_media_url}||'';
+	        my $image = $result->{series_image};
+		    $result->{series_thumb_url} = $url.'/thumbs/'.$image;
+		    $result->{series_icon_url}  = $url.'/icons/'.$image;
+		    $result->{series_image_url} = $url.'/images/'.$image;
 		}
 
 		$result->{location_css} = $result->{location} || '';
@@ -811,11 +819,11 @@ sub get_query {
 
 	# exclude location
 	my $exclude_location_cond = '';
-	if ( $params->{no_exclude} ne '1' ) {
-		if ( $params->{exclude_locations} ne '' ) {
-			my @exclude_locations = split( /,/, $params->{exclude_locations} );
-			$exclude_location_cond = 'location not in (' . join( ",", map { '?' } @exclude_locations ) . ')';
-			for my $location (@exclude_locations) {
+	if ( $params->{exclude_locations} eq '1' ) {
+		if ( $params->{locations_to_exclude} ne '' ) {
+			my @locations_to_exclude = split( /,/, $params->{locations_to_exclude} );
+			$exclude_location_cond = 'location not in (' . join( ",", map { '?' } @locations_to_exclude ) . ')';
+			for my $location (@locations_to_exclude) {
 				$location =~ s/^\s+//g;
 				$location =~ s/\s+$//g;
 				push @$bind_values, $location;
@@ -825,11 +833,11 @@ sub get_query {
 
 	# exclude project
 	my $exclude_project_cond = '';
-	if ( $params->{no_exclude} ne '1' ) {
-		if ( $params->{exclude_projects} ne '' ) {
-			my @exclude_projects = split( /,/, $params->{exclude_projects} );
-			$exclude_project_cond = 'project not in (' . join( ",", map { '?' } @exclude_projects ) . ')';
-			for my $project (@exclude_projects) {
+	if ( $params->{exclude_projects} eq '1' ) {
+		if ( $params->{projects_to_exclude} ne '' ) {
+			my @projects_to_exclude = split( /,/, $params->{projects_to_exclude} );
+			$exclude_project_cond = 'project not in (' . join( ",", map { '?' } @projects_to_exclude ) . ')';
+			for my $project (@projects_to_exclude) {
 				$project =~ s/^\s+//g;
 				$project =~ s/\s+$//g;
 				push @$bind_values, $project;
@@ -1202,10 +1210,11 @@ sub render {
 	$template_parameters->{ 'project_' . $project->{name} } = 1
 	  if ( $project->{name} ne '' );
 
-	$template_parameters->{controllers} = $config->{controllers},
+	$template_parameters->{controllers} = $config->{controllers};
+	$template_parameters->{hide_event_images}=1 if $config->{permissions}->{hide_event_images} == 1;
 
 	  #    use Data::Dumper;print STDERR Dumper($template_parameters)."\n";
-	  template::process( $_[0], $params->{template}, $template_parameters );
+    template::process( $_[0], $params->{template}, $template_parameters );
 
 	return $_[0];
 }
@@ -1241,37 +1250,47 @@ sub setDefaultEventConditions {
 	my $config      = shift;
 	my $conditions  = $_[0];
 	my $bind_values = $_[1];
+    my $options     = $_[2];
+    $options={} unless defined $options;
 
 	# exclude projects
-	if (   ( defined $config->{filter} )
-		&& ( defined $config->{filter}->{exclude_projects} ) )
+	if (   
+           ( defined $options->{exclude_projects} )
+        && ( $options->{exclude_projects} == 1 )
+        && ( defined $config->{filter} )
+		&& ( defined $config->{filter}->{projects_to_exclude} ) )
 	{
-		my @exclude_projects =
-		  split( /,/, $config->{filter}->{exclude_projects} );
-		push @$conditions, 'project not in (' . join( ",", map { '?' } @exclude_projects ) . ')';
-		for my $project (@exclude_projects) {
+		my @projects_to_exclude =
+		  split( /,/, $config->{filter}->{projects_to_exclude} );
+		push @$conditions, 'project not in (' . join( ",", map { '?' } @projects_to_exclude ) . ')';
+		for my $project (@projects_to_exclude) {
 			push @$bind_values, $project;
 		}
 	}
 
 	# exclude locations
-	if (   ( defined $config->{filter} )
-		&& ( defined $config->{filter}->{exclude_locations} ) )
+	if (   
+           ( defined $options->{exclude_locations} )
+        && ( $options->{exclude_locations} == 1 )
+	    && ( defined $config->{filter} )
+		&& ( defined $config->{filter}->{locations_to_exclude} ) )
 	{
-		my @exclude_locations =
-		  split( /,/, $config->{filter}->{exclude_locations} );
-		push @$conditions, 'location not in (' . join( ",", map { '?' } @exclude_locations ) . ')';
-		for my $location (@exclude_locations) {
+		my @locations_to_exclude =
+		  split( /,/, $config->{filter}->{locations_to_exclude} );
+		push @$conditions, 'location not in (' . join( ",", map { '?' } @locations_to_exclude ) . ')';
+		for my $location (@locations_to_exclude) {
 			push @$bind_values, $location;
 		}
 	}
 
 }
 
+# for local use only or add support for exclude_projects and exclude_locations
 sub getEventById {
 	my $dbh      = shift;
 	my $config   = shift;
 	my $event_id = shift;
+    my $options  = shift;
 
 	$dbh = db::connect($config) unless defined $dbh;
 
@@ -1281,7 +1300,7 @@ sub getEventById {
 	push @$conditions,  "id=?";
 	push @$bind_values, $event_id;
 
-	setDefaultEventConditions( $config, $conditions, $bind_values );
+	setDefaultEventConditions( $config, $conditions, $bind_values, $options );
 	$conditions = join( ' and ', @$conditions );
 
 	my $query = qq{
@@ -1297,12 +1316,15 @@ sub getEventById {
 sub get_next_event_of_series {
 	my $dbh      = shift;
 	my $config   = shift;
-	my $event_id = shift;
+    my $options = shift;
+
+    my $eventId = $options->{event_id};
+    return undef unless defined $eventId;
 
 	$dbh = db::connect($config) unless defined $dbh;
 
-	my $events = getEventById( $dbh, $config, $event_id );
-	return undef unless @$events == 1;
+	my $events = getEventById( $dbh, $config, $eventId, $options );
+	return undef unless scalar(@$events) == 1;
 	my $event = $events->[0];
 
 	my $conditions  = [];
@@ -1314,7 +1336,7 @@ sub get_next_event_of_series {
 	push @$conditions,  "series_name=?";
 	push @$bind_values, $event->{series_name};
 
-	setDefaultEventConditions( $config, $conditions, $bind_values );
+	setDefaultEventConditions( $config, $conditions, $bind_values, $options );
 	$conditions = join( ' and ', @$conditions );
 
 	my $query = qq{
@@ -1334,12 +1356,14 @@ sub get_next_event_of_series {
 sub get_previous_event_of_series {
 	my $dbh      = shift;
 	my $config   = shift;
-	my $event_id = shift;
+    my $options  = shift;
+
+    my $eventId = $options->{event_id};
+    return undef unless defined $eventId;
 
 	$dbh = db::connect($config) unless defined $dbh;
-
-	my $events = getEventById( $dbh, $config, $event_id );
-	return undef unless @$events == 1;
+	my $events = getEventById( $dbh, $config, $eventId, $options );
+	return undef unless scalar(@$events) == 1;
 	my $event = $events->[0];
 
 	my $conditions  = [];
@@ -1351,7 +1375,7 @@ sub get_previous_event_of_series {
 	push @$conditions,  "series_name=?";
 	push @$bind_values, $event->{series_name};
 
-	setDefaultEventConditions( $config, $conditions, $bind_values );
+	setDefaultEventConditions( $config, $conditions, $bind_values, $options );
 	$conditions = join( ' and ', @$conditions );
 
 	my $query = qq{
@@ -1362,7 +1386,7 @@ sub get_previous_event_of_series {
     };
 	$events = db::get( $dbh, $query, $bind_values );
 
-	return undef unless @$events == 1;
+	return undef unless scalar(@$events) == 1;
 	return $events->[0]->{id};
 }
 
@@ -1371,12 +1395,13 @@ sub get_by_date_range {
 	my $config     = shift;
 	my $start_date = shift;
 	my $end_date   = shift;
+    my $options    = shift;
 
 	my $conditions = [];
 	push @$conditions, 'start_date between ? and ?';
 	my $bind_values = [ $start_date, $end_date ];
 
-	setDefaultEventConditions( $config, $conditions, $bind_values );
+	setDefaultEventConditions( $config, $conditions, $bind_values, $options );
 
 	$conditions = join( ' and ', @$conditions );
 
@@ -1605,28 +1630,33 @@ sub check_params {
 	}
 
 	#if no location is set, use exclude location filter from default config
-	my $exclude_locations = '';
+	my $locations_to_exclude = '';
 	if (   ( $location eq '' )
 		&& ( defined $config->{filter} )
-		&& ( defined $config->{filter}->{exclude_locations} ) )
+		&& ( defined $config->{filter}->{locations_to_exclude} ) )
 	{
-		$exclude_locations = $config->{filter}->{exclude_locations} || '';
-		$exclude_locations =~ s/\s+/ /g;
+		$locations_to_exclude = $config->{filter}->{locations_to_exclude} || '';
+		$locations_to_exclude =~ s/\s+/ /g;
 	}
 
-	my $exclude_projects = '';
+	my $projects_to_exclude = '';
 	if (   ( defined $config->{filter} )
-		&& ( defined $config->{filter}->{exclude_projects} ) )
+		&& ( defined $config->{filter}->{projects_to_exclude} ) )
 	{
-		$exclude_projects = $config->{filter}->{exclude_projects} || '';
-		$exclude_projects =~ s/\s+/ /g;
+		$projects_to_exclude = $config->{filter}->{projects_to_exclude} || '';
+		$projects_to_exclude =~ s/\s+/ /g;
 	}
 
-	#disable exclude filter by 'no_exlude=1'
-	my $no_exclude = '';
-	$no_exclude = '1'
-	  if ( ( defined $params->{no_exclude} )
-		&& ( $params->{no_exclude} eq '1' ) );
+
+	#enable exclude locations filter 
+	my $exclude_locations = 0;
+	$exclude_locations = 1 if  ( defined $params->{exclude_locations} ) && ( $params->{exclude_locations} eq '1' ) ;
+
+	my $exclude_projects = 0;
+	$exclude_projects = 1 if ( defined $params->{exclude_projects} ) && ( $params->{exclude_projects} eq '1' ) ;
+
+	my $exclude_event_images = 0;
+	$exclude_event_images = 1 if ( defined $params->{exclude_event_images} ) && ( $params->{exclude_event_images} eq '1' ) ;
 
 	#show future events by default
 	my $archive = 'future';
@@ -1670,7 +1700,7 @@ sub check_params {
 
 	#print STDERR $params->{template}."\n";
 	my $template = '.html';
-	if ( $params->{template} eq 'no' ) {
+	if ( ( defined $params->{template} ) && ($params->{template} eq 'no') ) {
 		$template = 'no';
 	} else {
 		$template = template::check( $params->{template}, 'event_list.html' );
@@ -1690,7 +1720,7 @@ sub check_params {
 	my $default_project = undef;
 	my $projects = project::get( $config, { name => $project_name } );
 	log::error( $config, "no configuration found for project '$project_name'" )
-	  unless ( @$projects == 1 );
+	  unless ( scalar(@$projects) == 1 );
 	$default_project = $projects->[0];
 
 	# get project from parameter (by name)
@@ -1702,7 +1732,7 @@ sub check_params {
 		my $project_name = $params->{project};
 		my $projects = project::get( $config, { name => $project_name } );
 		log::error( $config, 'invalid project ' . $project_name )
-		  unless @$projects == 1;
+		  unless scalar(@$projects) == 1;
 		$project = $projects->[0];
 	}
 
@@ -1759,12 +1789,14 @@ sub check_params {
 		studio_id          => $studio_id,
 		json_callback      => $json_callback,
 		get                => $get,
-		exclude_locations  => $exclude_locations,
-		exclude_projects   => $exclude_projects,
-		no_exclude         => $no_exclude,
-		disable_event_sync => $disable_event_sync,
-		extern             => $extern,
-		recordings         => $recordings,
+		locations_to_exclude  => $locations_to_exclude,
+		projects_to_exclude   => $projects_to_exclude,
+		exclude_locations     => $exclude_locations,
+        exclude_projects      => $exclude_projects,
+        exclude_event_images  => $exclude_event_images,
+		disable_event_sync    => $disable_event_sync,
+		extern                => $extern,
+		recordings            => $recordings,
 	};
 
 	#print STDERR Dumper($checked);

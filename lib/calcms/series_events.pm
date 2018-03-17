@@ -17,6 +17,8 @@ use series_dates;
 use studios;
 use studio_timeslot_dates;
 use event_history;
+use images;
+
 
 # check permissions, insert and update events related to series
 
@@ -46,9 +48,14 @@ sub save_content{
 	return undef unless(defined $entry->{id});
 
 	for my $attr (keys %$entry){
+	    next unless defined $entry->{$attr};
 		$entry->{$attr}=~s/^\s+//g;
 		$entry->{$attr}=~s/\s+$//g;
 	}
+
+    for my $attr ('image', 'series_image'){
+        $entry->{$attr} = images::normalizeName($entry->{$attr}) if defined $entry->{$attr};
+    }
 
     #print STDERR Dumper(\$entry->{content});
 	for my $attr ('content', 'topic'){
@@ -60,7 +67,7 @@ sub save_content{
         }
 	}
 
-    #print STDERR Dumper(\$entry->{html_content});
+    #print STDERR Dumper(\$entry->{series_image});
     #print STDERR "ok2\n";
     #return;
     $entry->{modified_at}= time::time_to_datetime(time());
@@ -93,8 +100,15 @@ sub save_content{
 		where  id=?
 	};
 
-	#print STDERR $query.Dumper(\@bind_values);
-	db::put($dbh, $query, \@bind_values);
+	#print STDERR "update:".$query.Dumper(\@bind_values);
+	my $result=db::put($dbh, $query, \@bind_values);
+	unless (defined $result){
+        print STDERR "error on updating event\n" ;
+	    return undef;
+	}
+
+	#print STDERR "result=$result\n";
+	#print STDERR "entr after update".Dumper($entry);
 	return $entry;
 }
 
@@ -410,14 +424,14 @@ sub insert_event{
 
     #get event content from series
     for my $attr ('program', 'series_name', 'title', 'excerpt', 'content', 'topic', 'image', 'episode', 'podcast_url', 'archive_url'){
-        $event->{$attr}=$serie->{$attr} if defined $serie->{$attr};
+        $event->{$attr} = $serie->{$attr} if defined $serie->{$attr};
     }
     $event->{series_image}       = $serie->{image}   if defined $serie->{image};
     $event->{series_image_label} = $serie->{licence} if defined $serie->{licence};
 
     #overwrite series values from parameters
     for my $attr ('program', 'series_name', 'title', 'user_title', 'excerpt', 'user_except', 'content', 'topic', 'image', 'episode', 'podcast_url', 'archive_url'){
-        $event->{$attr}=$params->{$attr} if defined $params->{$attr};
+        $event->{$attr} = $params->{$attr} if defined $params->{$attr};
     }
 	$event->{'html_content'} = markup::creole_to_html($event->{'content'}) if defined $event->{'content'};
    	$event->{'html_topic'}   = markup::creole_to_html($event->{'topic'})   if defined $event->{'topic'};
@@ -475,6 +489,8 @@ sub update_series_images{
     return "missing studio_id"     unless defined $options->{studio_id};
     return "missing series_id"     unless defined $options->{series_id};
     return "missing series_image"  unless defined $options->{series_image};
+    
+    #print "save $options->{series_image}\n";
 
 	my $events=series::get_events(
 		$config, {

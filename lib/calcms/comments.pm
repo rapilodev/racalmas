@@ -112,18 +112,18 @@ sub get_query{
     my @conditions=();
     my $bind_values=[];
 
-    #exclude comments from config filter/exclude_locations
+    #exclude comments from config filter/locations_to_exclude
     if (
            (defined $config->{filter})
-        && (defined $config->{filter}->{exclude_locations})
+        && (defined $config->{filter}->{locations_to_exclude})
     ){
-        my @exclude_locations=split(/[,\s]+/,$config->{filter}->{exclude_locations});
-        my $exclude_locations=join(', ',map {'?'} @exclude_locations);
+        my @locations_to_exclude=split(/[,\s]+/,$config->{filter}->{locations_to_exclude});
+        my $locations_to_exclude=join(', ',map {'?'} @locations_to_exclude);
         
         $from.=',calcms_events e';
         push @conditions,'e.id=c.event_id';
-        push @conditions,'e.location not in ('.$exclude_locations.')';
-        for my $location (@exclude_locations){
+        push @conditions,'e.location not in ('.$locations_to_exclude.')';
+        for my $location (@locations_to_exclude){
             push @$bind_values, $location;
         }
     }

@@ -364,6 +364,13 @@ sub getInternalPath{
     return $path;
 }
 
+sub normalizeName{
+    my $name = shift;
+    return undef unless defined $name;
+    $name =~s/.*\///g;
+    return $name;
+}
+
 sub readFile{
     my $path=shift;
     my $content='';

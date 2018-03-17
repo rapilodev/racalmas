@@ -246,12 +246,20 @@ sub check_params{
 
     my $previous_series=$params->{previous_series} || '';
     if(($previous_series)&&($previous_series=~/(\d+)/)){
-        $params->{event_id}=events::get_previous_event_of_series(undef, $config, $1);
+        $params->{event_id}=events::get_previous_event_of_series(undef, $config, {
+            event_id => $1,
+            exclude_projects => 1,
+            exclude_locations => 1,
+        });
     }
 
     my $next_series=$params->{next_series} || '';
     if(($next_series)&&($next_series=~/(\d+)/)){
-        $params->{event_id}=events::get_next_event_of_series(undef, $config, $1);
+        $params->{event_id}=events::get_next_event_of_series(undef, $config, {
+            event_id => $1,
+            exclude_projects => 1,
+            exclude_locations => 1,
+        });
     }
 
     my $event_id=$params->{event_id}||'';

@@ -262,9 +262,17 @@ sub authenticate{
 }
 
 sub show_login_form{
-	my $user=shift||'';
-	my $uri=$ENV{HTTP_REFERER}||'';
-	my $message=shift||'';
+	my $user= shift || '';
+	my $uri = $ENV{HTTP_REFERER} || '';
+	my $message = shift || '';
+    my $requestReset = '';
+
+    if (($user ne '') && ($message ne '')){
+        $requestReset = qq{
+            <a href="requestPassword.cgi?user=$user">forgotten</a>
+        };
+    }
+
 	debug("show_login_form")if ($debug);
 	print qq{Content-type:text/html
 
@@ -337,6 +345,7 @@ sub show_login_form{
             </div>
 		    <input type="hidden" name="uri" value="$uri">
 	    </form>
+        $requestReset
     </div>
 </container>
 </body>

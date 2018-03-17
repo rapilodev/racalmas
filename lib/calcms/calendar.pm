@@ -184,7 +184,10 @@ sub get{
 
     my $dbh=db::connect($config, $request);
 
-    my $used_days=events::get_by_date_range($dbh, $config, $start_date, $end_date);
+    my $used_days=events::get_by_date_range($dbh, $config, $start_date, $end_date,{
+        exclude_projects  => 1,
+        exclude_locations => 1,
+    });
     my $used_day={};
     for my $day(@$used_days){
         $used_day->{$day->{start_date}}=1;

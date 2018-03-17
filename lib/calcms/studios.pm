@@ -1,15 +1,18 @@
 #!/bin/perl
 
-use CGI;
+#use CGI;
 #use CGI::Carp qw(warningsToBrowser fatalsToBrowser); 
-use CGI::Session qw(-ip-match);
-use CGI::Cookie;
+#use CGI::Session qw(-ip-match);
+#use CGI::Cookie;
 #$CGI::Session::IP_MATCH=1;
 
 package studios; 
 use warnings "all";
 use strict;
+
 use Data::Dumper;
+
+use images;
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -96,8 +99,9 @@ sub insert{
 	my $config=shift;
 	my $entry=shift;
 
-	$entry->{created_at} = time::time_to_datetime(time());
-	$entry->{modified_at}= time::time_to_datetime(time());
+	$entry->{created_at}  = time::time_to_datetime(time());
+	$entry->{modified_at} = time::time_to_datetime(time());
+    $entry->{image}       = images::normalizeName( $entry->{image} ) if defined $entry->{image};
 	
 	my $dbh=db::connect($config);
 	my $id=db::insert($dbh, 'calcms_studios', $entry);
@@ -116,6 +120,7 @@ sub update{
     for my $column (keys %$columns){
         $entry->{$column}=$studio->{$column} if defined $studio->{$column};
     }
+    $entry->{image} = images::normalizeName( $entry->{image} ) if defined $entry->{image};
 
 	my $values	=join(",", map {$_.'=?'} (keys %$entry));
 	my @bind_values	=map {$entry->{$_}} (keys %$entry);

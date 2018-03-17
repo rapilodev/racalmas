@@ -540,11 +540,41 @@ sub delete{
 		from calcms_series_dates 
 		where project_id=? and studio_id=? and series_id=?
 	};
-	my $bind_values=[$entry->{project_id}, $entry->{studio_id}, $entry->{series_id}];
+	my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id} ];
 	#print '<pre>$query'.$query.Dumper($bind_values).'</pre>';
 	db::put($dbh, $query, $bind_values);
 }
 
+# get all series dates where no event has been created for
+sub getDatesWithoutEvent{
+    my $config  = shift;
+    my $options = shift;
+
+	return unless defined $options->{project_id};
+	return unless defined $options->{studio_id};
+	return unless defined $options->{from};
+	return unless defined $options->{till};
+    
+	my $dbh=db::connect($config);
+	    
+    my $query=q{
+        SELECT sd.* 
+        FROM calcms_series_dates sd LEFT JOIN calcms_events e
+        on (sd.start = e.start) 
+        where e.start is null
+        and sd.exclude != 1
+        and sd.project_id = ? 
+        and sd.studio_id  = ?
+        and sd.start      > ? 
+        and sd.end        < ?
+        order by sd.start
+    };
+    
+	my $bind_values = [ $options->{project_id}, $options->{studio_id}, $options->{from}, $options->{till} ];
+	my $entries = db::get($dbh, $query, $bind_values);
+	return $entries;
+	
+}
 
 sub error{
 	my $msg=shift;
