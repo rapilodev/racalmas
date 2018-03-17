@@ -52,4 +52,15 @@ msgstr "Editor-Link"
 msgid "label_search_hits"
 msgstr "Treffer"
 
+msgid "label_author"
+msgstr "Author"
+
+msgid "label_licence"
+msgstr "Lizenz"
+
+msgid "label_public"
+msgstr "veröffentlicht"
+
+msgid "label_licence_missing"
+msgstr "bitte eintragen"
 

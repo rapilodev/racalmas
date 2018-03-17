@@ -216,7 +216,6 @@ sub showCalendar {
 			till_date          => $till,
 			date_range_include => 1,
 			archive            => 'all',
-			no_exclude         => '1',
 		};
 
 		# set options depending on switches
@@ -1745,8 +1744,9 @@ sub getSeriesEvents {
 	};
 	$request2->{params}->{checked}->{published} = 'all';
     $request2->{params}->{checked}->{draft} = '1' if $params->{list}==1;
-	delete $request2->{params}->{checked}->{exclude_locations}
-	  if ( ( $params->{studio_id} == -1 ) && ( defined $request2->{params}->{checked}->{exclude_locations} ) );
+
+	#delete $request2->{params}->{checked}->{locations_to_exclude}
+	#  if ( ( $params->{studio_id} == -1 ) && ( defined $request2->{params}->{checked}->{locations_to_exclude} ) );
 
 	my $events = events::get( $config, $request2 );
 

@@ -31,7 +31,13 @@ if ( $0 =~ /events.*?\.cgi$/ ) {
 	#my %params=$cgi->Vars();
 	our $config = config::get('config/config.cgi');
 
+    $params->{template} = '' unless defined $params->{template};
 	$params->{recordings} = 1 if $params->{template} =~ /events_playout/;
+
+    $params->{exclude_locations} = 1;
+    $params->{exclude_projects} = 1;
+    $params->{exclude_event_images} = 1;
+    
 	my $request = {
 		url    => $ENV{QUERY_STRING},
 		params => {

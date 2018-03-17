@@ -71,7 +71,10 @@ sub save_content{
 	my @keys=();
 	for my $key ('series_name', 'title', 'excerpt', 'content', 'html_content',  
 	    'user_title', 'user_excerpt', 'topic', 'html_topic',
-	    'episode', 'image', 'podcast_url', 'archive_url',
+	    'episode', 
+        'image', 'image_label', 
+        'series_image', 'series_image_label', 
+	    'podcast_url', 'archive_url',
 		'live', 'published', 'playout', 'archived', 'rerun', 'draft', 'disable_event_sync',
 		'modified_by'
 	){
@@ -90,7 +93,7 @@ sub save_content{
 		where  id=?
 	};
 
-	print STDERR $query.Dumper(\@bind_values);
+	#print STDERR $query.Dumper(\@bind_values);
 	db::put($dbh, $query, \@bind_values);
 	return $entry;
 }
@@ -409,6 +412,8 @@ sub insert_event{
     for my $attr ('program', 'series_name', 'title', 'excerpt', 'content', 'topic', 'image', 'episode', 'podcast_url', 'archive_url'){
         $event->{$attr}=$serie->{$attr} if defined $serie->{$attr};
     }
+    $event->{series_image}       = $serie->{image}   if defined $serie->{image};
+    $event->{series_image_label} = $serie->{licence} if defined $serie->{licence};
 
     #overwrite series values from parameters
     for my $attr ('program', 'series_name', 'title', 'user_title', 'excerpt', 'user_except', 'content', 'topic', 'image', 'episode', 'podcast_url', 'archive_url'){
@@ -461,6 +466,30 @@ sub add_event_dates{
 	$event->{end_date}   = time::date_cond(time::add_hours_to_datetime($event->{end},   -$day_start));
     return $event;
 }
+
+sub update_series_images{
+    my $config  = shift;
+    my $options = shift;
+
+    return "missing project_id"    unless defined $options->{project_id};
+    return "missing studio_id"     unless defined $options->{studio_id};
+    return "missing series_id"     unless defined $options->{series_id};
+    return "missing series_image"  unless defined $options->{series_image};
+
+	my $events=series::get_events(
+		$config, {
+		    project_id => $options->{project_id},
+            studio_id  => $options->{studio_id}, 
+            series_id  => $options->{series_id},
+		}
+	);
+
+	for my $event (@$events){
+        $event->{series_image} = $options->{series_image};
+        series_events::save_content($config, $event);
+	}
+}
+
 
 sub error{
 	my $msg=shift;

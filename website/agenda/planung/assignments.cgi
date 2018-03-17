@@ -227,7 +227,6 @@ sub assign_events {
 						template   => 'no',
 						limit      => 1,
 						archive    => 'all',
-						no_exclude => '1'
 					}
 				)
 			},

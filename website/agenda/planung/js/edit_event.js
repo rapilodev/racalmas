@@ -178,6 +178,7 @@ function changeSeries(seriesId){
     url += '&event_id='+eventId;
     url += '&new_series_id='+newSeriesId;
     url += '&action=reassign_event';
+    //alert(url);
     
 	$.post(
 		url, 

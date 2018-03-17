@@ -85,8 +85,8 @@ sub getProjects {
 	my $projects          = project::get_sorted($config);
 
 	my $excludedProjects = {};
-	if ( defined $config->{filter}->{exclude_projects} ) {
-		for my $project ( split( /\,/, $config->{filter}->{exclude_projects} ) ) {
+	if ( defined $config->{filter}->{projects_to_exclude} ) {
+		for my $project ( split( /\,/, $config->{filter}->{projects_to_exclude} ) ) {
 			$project =~ s/^\s+//g;
 			$project =~ s/\s+$//g;
 			$excludedProjects->{$project} = 1;
@@ -126,9 +126,9 @@ sub getSeriesNames {
 	my $bind_values = [];
 
 	my @conds = ();
-	if ( defined $config->{filter}->{exclude_locations} ) {
+	if ( defined $config->{filter}->{locations_to_exclude} ) {
 		my @exclude = ();
-		for my $location ( split( /\,/, $config->{filter}->{exclude_locations} ) ) {
+		for my $location ( split( /\,/, $config->{filter}->{locations_to_exclude} ) ) {
 			$location =~ s/^\s+//g;
 			$location =~ s/\s+$//g;
 			push @exclude,      '?';
@@ -137,9 +137,9 @@ sub getSeriesNames {
 		push @conds, 'location not in (' . join( ',', @exclude ) . ')';
 	}
 
-	if ( defined $config->{filter}->{exclude_projects} ) {
+	if ( defined $config->{filter}->{projects_to_exclude} ) {
 		my @exclude = ();
-		for my $project ( split( /\,/, $config->{filter}->{exclude_projects} ) ) {
+		for my $project ( split( /\,/, $config->{filter}->{projects_to_exclude} ) ) {
 			$project =~ s/^\s+//g;
 			$project =~ s/\s+$//g;
 			push @exclude,      '?';

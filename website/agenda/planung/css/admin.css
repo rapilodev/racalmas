@@ -17,6 +17,10 @@ body #content{
 	text-align:left;
 }
 
+#selectImage #content{
+    max-width:none;
+}
+
 body,
 #content input,
 #content textarea,
@@ -27,7 +31,7 @@ body,
 #content li{
     font-size:14px;
     font-size:0.75rem;
- 	font-family:sans-serif;
+ 	font-family:Roboto,sans-serif;
 }
 
 #content textarea{
@@ -388,6 +392,10 @@ tr.tablesorter-filter-row input{
     margin-bottom:0px;
     margin-left:6px;
     text-decoration: none;
+}
+
+#content input.error{
+    border-bottom:2px solid #d30000;
 }
 
 #content input[type="text"]:focus{

@@ -1,7 +1,50 @@
 /*
 include in your web page:
 <link rel="stylesheet" type="text/css" media="screen" href="/agenda_files/css/calcms.css" />
+* {font-size:1em !important;}
 */
+
+/* latin-ext */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto'), local('Roboto-Regular'), url(https://fonts.gstatic.com/s/roboto/v18/KFOmCnqEu92Fr1Mu7GxKOzY.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto'), local('Roboto-Regular'), url(https://fonts.gstatic.com/s/roboto/v18/KFOmCnqEu92Fr1Mu4mxK.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* latin-ext */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(https://fonts.gstatic.com/s/opensans/v15/mem8YaGs126MiZpBA-UFW50bbck.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(https://fonts.gstatic.com/s/opensans/v15/mem8YaGs126MiZpBA-UFVZ0b.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+#page * {
+    font-family: Roboto, serif !important;
+}
+
+#page p {
+    font-family: Open Sans, serif !important;
+}
 
 /* fix drupal */
 input{
@@ -134,22 +177,100 @@ a{
     margin-left:1.7rem;
 }
 
+#calcms_list .event{
+    display:flex;
+    flex-direction: row;
+    width:100%;
+    justify-content: space-between;
+	border-bottom:1px solid rgba(100,100,100,0.24);
+    hyphens: none;
+    cursor:pointer;
+    background:rgba(200, 200, 200, 0.2);
+    color:#666;
+    overflow:hidden;
+  	text-overflow: ellipsis;
+    transition: all .1s ease-in-out;
+}
+
+#calcms_list .event:hover{
+    background:rgba(200, 200, 200, 0.3);
+}
+
 #calcms_list .date{
 	font-weight:bold;
 }
 
+#calcms_list .time{
+    width:10%;
+    min-width:5rem;
+    padding:1rem;
+    padding-right:0;
+    text-align:center;
+	font-size:1.1rem;
+}
+
+#calcms_list .summary{
+    width:70%;
+    padding:1rem;
+    padding-right:0;
+    hyphens: auto;
+}
+
+#calcms_list .title{
+	font-weight:bold;
+    hyphens: auto;
+}
+
+#calcms_list .title a{
+    font-weight:bold;
+}
+
+#calcms_list .location{
+	width:20%;
+    padding:1rem;
+	font-weight:100;
+    text-align:center;
+    color:rgba(0, 0, 0, 0.7);
+}
+
+@media all and (max-width: 959px) {
+    #calcms_list .summary{
+        width:90%;
+    }
+    #calcms_list .location {
+    	width:0;
+        display:none;
+    }
+}
+
+@media all and (max-width: 800px) {
+    #calcms_list .excerpt{
+    	width:0;
+        display:none;
+    }
+    #calcms_list .location {
+    	width:0;
+        display:none;
+    }
+}
+
 #calcms_list .excerpt{
-	margin-left:3rem;
-	margin-top:6px;
-	max-height:5em;
+	max-height:3.9rem;
     overflow: hidden; 
 	text-overflow: ellipsis;
+    color:rgba(0, 0, 0, 0.7);
+}
+
+#calcms_list .event.running:hover{
+    opacity:0.9;
 }
 
 #calcms_list .event.running,
+#calcms_list .event.running .excerpt,
+#calcms_list .event.running .location,
 #calcms_list .event.running a{
 	color:#fff;
-	background:#aaa;
+	background:#007acc;
 }
 
 #calcms_list .comments.submitted{
@@ -157,36 +278,45 @@ a{
 }
 
 #calcms_list .submitted{
-	margin-left:3.2rem;
-}
-
-#calcms_list .title{
-	margin-bottom:1em;
-	font-weight:bold;
 }
 
 #calcms_list .content img{
-	text-align:left;
-	font-size:1.5em;
-	margin-bottom:20px;
 	border:0;
-	float: right;
+}
+
+#calcms_list .content figure{
+    float:right;
+	margin-left: 1em;
+	margin-bottom:20px;
+}
+
+#calcms_list .content figcaption{
+    font-size:12px;
 	margin-left: 1em;
 }
 
-#calcms_list .event{
-    padding:1rem;
-    padding-right:0.5rem;
-	border-bottom:1rem solid #fff;
-    hyphens: none;
-    cursor:pointer;
-    background:#eee;
-    color:#666;
-    max-height:8rem;
-    overflow:hidden;
-  	text-overflow: ellipsis;
+
+#calcms_list .piradio,
+#calcms_list .dt64,
+#calcms_list .galerie,
+#calcms_list .studiolottumstrasse,
+#calcms_list .ansage,
+#calcms_list .potsdam,
+#calcms_list .colabo{
+    color:#333;
 }
 
+#calcms_list .blnfm,
+#calcms_list .multicultfm,
+#calcms_list .ohrfunk,
+#calcms_list .twenfm,
+#calcms_list .offenerkanalberlin,
+#calcms_list .studioansage,
+#calcms_list .studiorebootfm,
+#calcms_list .frrapo,
+#calcms_list .klubradio{
+    color:#666;
+}
 
 #calcms_list hr{
     margin:1em 0;
@@ -583,6 +713,12 @@ a#calcms_search_show_details #plus{
 	background-color:#f0f0f0;
 }
 
+#calcms_calendar table tbody td.calcms_today,
+#calcms_calendar table tbody td.calcms_today a{
+    background:#007acc;
+    color:white;
+}
+
 #calcms_calendar table td.selected{
 	background:#eee;
 	font-weight:bold;
@@ -598,7 +734,7 @@ a#calcms_search_show_details #plus{
 
 
 
-/* player */
+/* player
 #player{
     border:0;
     padding:0;
@@ -606,9 +742,18 @@ a#calcms_search_show_details #plus{
     width:180px;
     overflow:hidden;
 }
+*/
+
+#player{
+    border:0;
+    padding:0;
+    height:64px;
+}
+#player:hover{
+    opacity:0.9;
+}
 
 /* mobile menu */
-
 #mobileMenuButton{
     display:block;
     position:fixed;
@@ -698,3 +843,25 @@ div.update, div.update a{
 	color:#bbb;
 }
 */
+#listen_radio{
+    width:100%;
+    text-align:left;
+}
+#listen_radio iframe{
+    margin-top:1em;
+}
+#listen_radio td{
+    border:0;
+}
+
+div#content header h1.entry-title{
+    margin-bottom:0;
+}
+
+@media screen and (min-width: 61.5625em) {
+	.site-header {
+		padding: 3rem;
+        padding-top: 1rem;
+        padding-bottom: 0rem;
+	}
+}	

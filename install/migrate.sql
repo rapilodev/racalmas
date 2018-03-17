@@ -94,4 +94,23 @@ ALTER TABLE `calcms_events`
 
 ALTER TABLE `calcms_users` 
   CHANGE COLUMN email email varchar(300) NOT NULL;
+  
+ALTER TABLE `calcms_events` ADD COLUMN `series_image` VARCHAR(200)  DEFAULT NULL AFTER `draft`;
 
+ALTER TABLE `calcms_events` ADD COLUMN `image_label` VARCHAR(200)  DEFAULT NULL AFTER `series_image`,
+ ADD COLUMN `series_image_label` VARCHAR(200)  DEFAULT NULL AFTER `image_label`;
+
+ALTER TABLE `calcms_playout` 
+  CHANGE COLUMN `modified_at` `modified_at` datetime  DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE `calcms_images` 
+  ADD COLUMN public tinyint(1) unsigned NULL DEFAULT '0', 
+  ADD COLUMN licence varchar(300) NULL AFTER project_id;
+
+ALTER TABLE `calcms_event_history` 
+  CHANGE COLUMN draft draft tinyint(1) unsigned NOT NULL DEFAULT '0', 
+  ADD COLUMN series_image_label varchar(200) NULL, 
+  ADD COLUMN series_image varchar(200) NULL AFTER draft, 
+  ADD COLUMN recurrence_count int(10) unsigned NOT NULL DEFAULT '0' AFTER project_id, 
+  ADD COLUMN image_label varchar(200) NULL;
+  

@@ -647,9 +647,10 @@ var calcms = (function($) {
 	// show comment for given event id and start time
 	my.showCommentsByEventIdOrEventStart = function showCommentsByEventIdOrEventStart(
 			event_id, event_start) {
-		var url = my.get('comments_url');
+		var url = my.get('comments_url') || '/agenda/kommentare/';
 		if (event_id == '' || event_start == '' || url == '')
 			return false;
+		console.log("showCommentsByEventIdOrEventStart url="+url);
 
 		my.set('comments_event_start', event_start);
 		my.set('comments_event_id', event_id);

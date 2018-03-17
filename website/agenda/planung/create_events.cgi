@@ -11,16 +11,18 @@ use config;
 #use template;
 use auth;
 use uac;
+use time;
 
 #use roles;
 #use project;
 #use studios;
 #use events;
 use series;
+use eventOps;
 
 #use series_schedule;
 #use series_events;
-#use series_dates;
+use series_dates;
 #use markup;
 #use URI::Escape;
 #use Encode;
@@ -85,13 +87,129 @@ unless ( $permissions->{create_event_from_schedule} == 1 ) {
 
 if ( defined $params->{action} ) {
 
-	#    assign_series ($config, $request)    if ($params->{action} eq 'assign_series');
+	#    assign_s ($config, $request)    if ($params->{action} eq 'assign_series');
 }
 
 #print Dumper($params);
 show_events( $config, $request );
 
-sub show_events {
+sub show_events{
+	my $config  = shift;
+	my $request = shift;
+
+	my $params      = $request->{params}->{checked};
+	my $permissions = $request->{permissions};
+	unless ( $permissions->{assign_series_events} == 1 ) {
+		uac::permissions_denied('assign_series_events');
+		return;
+	}
+
+    my $project_id = $params->{project_id};
+    my $studio_id  = $params->{studio_id};
+    my $from_date  = $params->{from_date};
+    my $till_date  = $params->{till_date};
+
+    $from_date = time::time_to_datetime();
+    if ($from_date=~/(\d\d\d\d\-\d\d\-\d\d \d\d)/){
+        $from_date = $1.':00';
+    }
+    $till_date = time::add_days_to_datetime($from_date, 28);
+    if ($from_date=~/(\d\d\d\d\-\d\d\-\d\d)/){
+        $from_date = $1;
+    }
+    if ($till_date=~/(\d\d\d\d\-\d\d\-\d\d)/){
+        $till_date = $1;
+    }
+
+    print "update from $from_date to $till_date\n";
+
+    my $dates = series_dates::getDatesWithoutEvent(
+        $config, {
+            project_id => $project_id,
+            studio_id  => $studio_id,
+            from       => $from_date,
+            till       => $till_date
+        }
+    );
+    print "<pre>found ".(scalar @$dates)." dates\n";
+    for my $date (@$dates){
+        print $date->{start}."\n";
+        createEvent($config, $request, $date);
+        #return;
+    }
+}
+
+sub createEvent{
+    my $config      = shift;
+	my $request     = shift;
+    my $date        = shift;
+
+	my $permissions = $request->{permissions};
+    my $user        = $request->{user};
+
+	$date->{show_new_event_from_schedule} = 1;
+	unless ( $permissions->{create_event_from_schedule} == 1 ) {
+		uac::permissions_denied('create_event_from_schedule');
+		return;
+	}
+
+    $date->{start_date} = $date->{start};
+    my $event = eventOps::getNewEvent($config, $date, 'show_new_event_from_schedule');
+
+    return undef unless defined $event;
+
+    $event->{start_date} = $event->{start};
+    return eventOps::createEvent($request, $event, 'create_event_from_schedule');
+
+}
+
+sub check_params {
+	my $params = shift;
+
+	my $checked = {};
+
+	my $debug = $params->{debug} || '';
+	if ( $debug =~ /([a-z\_\,]+)/ ) {
+		$debug = $1;
+	}
+	$checked->{debug} = $debug;
+
+	#actions and roles
+	$checked->{action} = '';
+	if ( defined $params->{action} ) {
+		if ( $params->{action} =~ /^(create_events)$/ ) {
+			$checked->{action} = $params->{action};
+		}
+	}
+
+	#numeric values
+	$checked->{exclude} = 0;
+	for my $param ( 'id', 'project_id', 'studio_id', 'series_id' ) {
+		if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
+			$checked->{$param} = $params->{$param};
+		}
+	}
+
+	if ( defined $checked->{studio_id} ) {
+		$checked->{default_studio_id} = $checked->{studio_id};
+	} else {
+		$checked->{studio_id} = -1;
+	}
+
+	for my $param ( 'date', 'from_date', 'till_date' ) {
+		$checked->{$param} = time::check_date( $params->{$param} );
+	}
+
+	$checked->{template} = template::check( $params->{template}, 'create_events' );
+
+	return $checked;
+}
+
+__DATA__
+
+https://piradio.de/agenda/planung/create_events.cgi?project_id=1&studio_id=1&from_date=2016-09-01&till_date=2016-10-01
+
+sub show_events2 {
 	my $config  = shift;
 	my $request = shift;
 
@@ -205,7 +323,7 @@ sub getEvents {
 		till_date          => $till,
 		date_range_include => 1,
 		archive            => 'all',
-		no_exclude         => '1',
+		#exclude_locations         => '1',
 	};
 
 	my $events = getSeriesEvents( $config, $request, $options, $params );
@@ -237,8 +355,10 @@ sub getSeriesEvents {
 		permissions => $request->{permissions}
 	};
 	$request2->{params}->{checked}->{published} = 'all';
-	delete $request2->{params}->{checked}->{exclude_locations}
-	  if ( ( $params->{studio_id} == -1 ) && ( defined $request2->{params}->{checked}->{exclude_locations} ) );
+
+    #$request2->{params}->{checked}->{exclude_locations} = 1;
+	#delete $request2->{params}->{checked}->{locations_to_exclude}
+	#  if ( ( $params->{studio_id} == -1 ) && ( defined $request2->{params}->{checked}->{locations_to_exclude} ) );
 
 	my $events = events::get( $config, $request2 );
 
@@ -265,48 +385,3 @@ sub getSeriesEvents {
 	return $events;
 }
 
-sub check_params {
-	my $params = shift;
-
-	my $checked = {};
-
-	my $debug = $params->{debug} || '';
-	if ( $debug =~ /([a-z\_\,]+)/ ) {
-		$debug = $1;
-	}
-	$checked->{debug} = $debug;
-
-	#actions and roles
-	$checked->{action} = '';
-	if ( defined $params->{action} ) {
-		if ( $params->{action} =~ /^(create_events)$/ ) {
-			$checked->{action} = $params->{action};
-		}
-	}
-
-	#numeric values
-	$checked->{exclude} = 0;
-	for my $param ( 'id', 'project_id', 'studio_id', 'series_id' ) {
-		if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
-			$checked->{$param} = $params->{$param};
-		}
-	}
-
-	if ( defined $checked->{studio_id} ) {
-		$checked->{default_studio_id} = $checked->{studio_id};
-	} else {
-		$checked->{studio_id} = -1;
-	}
-
-	for my $param ( 'date', 'from_date', 'till_date' ) {
-		$checked->{$param} = time::check_date( $params->{$param} );
-	}
-
-	$checked->{template} = template::check( $params->{template}, 'create_events' );
-
-	return $checked;
-}
-
-__DATA__
-
-https://piradio.de/agenda/planung/create_events.cgi?project_id=1&studio_id=1&from_date=2016-09-01&till_date=2016-10-01

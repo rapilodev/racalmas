@@ -16,7 +16,7 @@ our %EXPORT_TAGS = ( 'all'  => [ @EXPORT_OK ] );
 
 #column 'created_at' will be set at insert
 #column 'modified_at' will be set by default (do not update)
-my $sql_columns =['filename', 'name', 'description', 'created_by', 'modified_by', 'modified_at', 'studio_id', 'project_id'];
+my $sql_columns =['filename', 'name', 'description', 'created_by', 'modified_by', 'modified_at', 'studio_id', 'project_id', 'public', 'licence'];
 
 sub get{
     my $config=shift;
@@ -52,6 +52,15 @@ sub get{
 		push @cond, 'modified_by = ?';
 		push @$bind_values,$options->{modified_by};
 	}
+	if ((defined $options->{licence}) && ($options->{licence}ne'')){
+		push @cond, 'licence = ?';
+		push @$bind_values,$options->{licence};
+	}
+	if ((defined $options->{public}) && ($options->{public}ne'')){
+		push @cond, 'public = ?';
+		push @$bind_values,$options->{public};
+	}
+	
 	if ((defined $options->{search}) && ($options->{search}ne'')){
 		push @cond, '(filename    like ?'
 				.' or name        like ?'
@@ -85,8 +94,8 @@ sub get{
 	};
 	#print STDERR Dumper($query).Dumper($bind_values);
 
-	my $dbh=db::connect($config);
-	my $results=db::get($dbh, $query, $bind_values);
+	my $dbh     = db::connect($config);
+	my $results = db::get($dbh, $query, $bind_values);
 
     #print STDERR @$results."\n";
 	return $results;
@@ -96,8 +105,8 @@ sub insert_or_update{
 	my $dbh=shift;
 	my $image=shift;
 
-	$image->{name}='new' if ($image->{name}eq'');
-	my $entry=get_by_filename($dbh, $image->{filename});
+	$image->{name} = 'new' if  $image->{name} eq '' ;
+	my $entry = get_by_filename($dbh, $image->{filename});
 	if (defined $entry){
 		update($dbh, $image);
 	}else{
@@ -128,6 +137,10 @@ sub insert{
         return undef;
     }
     
+    for my $attr ('public'){
+        $image->{$attr} = 0 unless (defined $image->{$attr}) && ($image->{$attr} eq '1');
+    }
+    
 	my $query=q{
 		insert into calcms_images(
 			}.join(',',@sql_columns).qq{
@@ -137,7 +150,12 @@ sub insert{
 	my @bind_values=map { $image->{$_} } @sql_columns;
 
 	#print STDERR Dumper($query).Dumper(\@bind_values);
-    return db::put($dbh, $query, \@bind_values);
+    my $result = db::put($dbh, $query, \@bind_values);
+    
+   	images::setSeriesLabels($dbh, $image);
+	images::setEventLabels($dbh, $image);
+
+    return $result;
 }
 
 
@@ -153,8 +171,16 @@ sub update{
         print STDERR "missing project_id at image::update\n";
         return undef;
     }
+    unless (defined $image->{filename}){
+        print STDERR "missing filename at image::update\n";
+        return undef;
+    }
 
     $image->{modified_at}=time::time_to_datetime();
+
+    for my $attr ('public'){
+        $image->{$attr} = 0 unless (defined $image->{$attr}) && ($image->{$attr} eq '1');
+    }
 
 	my @set=();
 	my $bind_values=[];
@@ -164,7 +190,7 @@ sub update{
 			push @$bind_values,$image->{$column};
 		}
 	}
-
+	
     #conditions
 	my $conditions=['filename=?'];
 	push @$bind_values,$image->{filename};
@@ -184,9 +210,15 @@ sub update{
 		set	   $set
 		where  $conditions
 	};
-	#print STDERR Dumper($query).Dumper($bind_values);
-	return db::put($dbh,$query,$bind_values);
+	print STDERR Dumper($query).Dumper($bind_values);
+	my $result= db::put($dbh,$query,$bind_values);
+	
+	images::setSeriesLabels($dbh, $image);
+	images::setEventLabels($dbh, $image);
+	
+    return $result;
 }
+
 
 sub delete{
 	my $dbh=shift;
@@ -196,8 +228,8 @@ sub delete{
         print STDERR "missing project_id at images::delete\n";
         return undef;
     }
-    unless (defined $image->{project_id}){
-        print STDERR "missing project_id at images::delete\n";
+    unless (defined $image->{studio_id}){
+        print STDERR "missing studio_id at images::delete\n";
         return undef;
     }
     unless (defined $image->{filename}){
@@ -290,6 +322,206 @@ sub delete_file{
 	}else{
 		$errors.= qq{Error on deleting $type<br>};
 	}
+}
+
+sub getPath{
+    my $config=shift;
+    my $options=shift;
+
+    my $dir = $config->{locations}->{local_media_dir};
+    return undef unless defined $dir;
+    return undef unless -e $dir;
+   
+    my $filename=$options->{filename};
+    return undef unless defined $filename;
+    $filename=~s/^.*\///g;
+
+    my $type='thumbs';
+    $type=$options->{type} if (defined $options->{type}) && ($options->{type}=~/^(images|thumbs|icons)$/);
+
+    my $path = $dir.'/'.$type.'/'.$filename;
+    $path=~s/\/+/\//g;
+    return $path;
+}
+
+sub getInternalPath{
+    my $config=shift;
+    my $options=shift;
+
+    my $dir=$config->{locations}->{local_media_dir};
+    return undef unless defined $dir;
+    return undef unless -e $dir;
+   
+    my $filename=$options->{filename};
+    return undef unless defined $filename;
+    $filename=~s/^.*\///g;
+
+    my $type='thumbs';
+    $type=$options->{type} if (defined $options->{type}) && ($options->{type}=~/^(images|thumbs|icons)$/);
+
+    my $path = $dir.'/internal/'.$type.'/'.$filename;
+    $path=~s/\/+/\//g;
+    return $path;
+}
+
+sub readFile{
+    my $path=shift;
+    my $content='';
+
+    print STDERR "read '$path'\n";
+    return { error=> "source '$path' does not exist"} unless -e $path;
+    return { error=> "cannot read source '$path'"}    unless -r $path;
+
+	open my $file, '< :raw', $path or return { error => 'could not open image file. ' . $! . " $path" };
+	binmode $file;
+	$content = join("",<$file>);
+	close $file;
+	return {content => $content};
+}
+
+sub writeFile{
+    my $path=shift;
+    my $content=shift;
+    
+    print STDERR "save '$path'\n";
+	open my $fh, '> :raw', $path or return { error => 'could not save image. ' . $! . " $path" };
+	binmode $fh;
+	print $fh $content;
+	close $fh;
+    return {};	
+}
+
+sub deleteFile{
+    my $path=shift;
+    return { error=> "source '$path' does not exist"} unless -e $path;
+    #unlink $path;
+    return {};
+    
+}
+
+sub copyFile{
+    my $source = shift;
+    my $target = shift;
+    my $errors = shift;
+    
+    my $read=images::readFile($source);
+    return $read if defined $read->{error};
+
+    my $write=images::writeFile($target, $read->{content});
+    return $write;
+}
+
+sub publish{
+    my $config=shift;
+    my $filename=shift;
+
+    print STDERR "publish\n";
+    return undef unless defined $config;    
+    return undef unless defined $filename;
+    my $errors=[];
+    for my $type ('images','thumbs','icons'){
+        my $source = getInternalPath($config, {filename=>$filename, type=>$type});
+        my $target = getPath($config, {filename=>$filename, type=>$type});
+        my $result = copyFile($source, $target, $errors);
+        if (defined $result->{error}){
+            push @$errors, $result->{error} ;
+            print STDERR "error on copy '$source' to '$target': $result->{error}\n";
+        }
+    }
+    return $errors;
+}
+
+sub depublish{
+    my $config=shift;
+    my $filename=shift;
+
+    print STDERR "depublish\n";
+    return undef unless defined $config;    
+    return undef unless defined $filename;
+    my $errors=[];
+    for my $type ('images','thumbs','icons'){
+        my $path = getPath($config, {filename=>$filename, type=>$type});
+        next unless defined $path;
+        print STDERR "remove '$path'\n";
+        unlink $path;
+        #push @$errors, $result->{error} if defined $result->{error};
+    }
+    return $errors;
+}
+
+sub checkLicence{
+    my $config = shift;
+    my $result = shift;
+
+    print STDERR "depublish\n";
+    return undef unless defined $config;    
+    return undef unless defined $result;
+
+    return if $result->{licence}=~/\S/;
+    if ((defined $result->{public}) && ($result->{public}eq'1')){
+        depublish($config, $result->{filename});
+        $result->{public}=0;
+    }
+}
+
+sub setEventLabels{
+    my $dbh   = shift;
+    my $image = shift;
+    
+    unless (defined $image->{project_id}){
+        print STDERR "missing project_id at images::setEventLabels\n";
+        return undef;
+    }
+    unless (defined $image->{studio_id}){
+        print STDERR "missing studio_id at images::setEventLabels\n";
+        return undef;
+    }
+    unless (defined $image->{filename}){
+        print STDERR "missing filename at images::setEventLabels\n";
+        return undef;
+    }
+
+    my $query=qq{
+        update calcms_events 
+        set    image_label=?
+        where  image=?
+    };
+    my $bind_values=[$image->{licence}, $image->{filename}];
+  	print STDERR Dumper($query).Dumper($bind_values);
+
+  	my $results= db::put($dbh, $query, $bind_values);	
+    print STDERR Dumper($results)." changes\n";
+  	return $results;
+}
+
+sub setSeriesLabels{
+    my $dbh   = shift;
+    my $image = shift;
+    
+    unless (defined $image->{project_id}){
+        print STDERR "missing project_id at images::setSeriesLabels\n";
+        return undef;
+    }
+    unless (defined $image->{studio_id}){
+        print STDERR "missing studio_id at images::setSeriesLabels\n";
+        return undef;
+    }
+    unless (defined $image->{filename}){
+        print STDERR "missing filename at images::setSeriesLabels\n";
+        return undef;
+    }
+
+    my $query=qq{
+        update calcms_events 
+        set    series_image_label=?
+        where  series_image=?
+    };
+    my $bind_values=[$image->{licence}, $image->{filename}];
+    print STDERR Dumper($query).Dumper($bind_values);
+  	
+  	my $results= db::put($dbh, $query, $bind_values);	
+  	print STDERR Dumper($results)." changes\n";
+  	return $results;
 }
 
 

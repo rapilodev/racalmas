@@ -246,20 +246,20 @@ sub modify_results {
 		$result->{no_comment}  = 1 if ( $result->{comment_count} == 0 );
 
 		#fix image url
+
+		if ((defined $config->{permissions}->{hide_event_images}) && ($config->{permissions}->{hide_event_images} eq '1')){
+		    $result->{image}       = $result->{series_image};
+            $result->{image_label} = $result->{series_image_label};
+		}
+
 		if ( defined $result->{image} ) {
-			$result->{thumb} = $result->{image};
-			$result->{icon}  = $result->{image};
-
-			$result->{image} =~ s/thumbs/images/g;
-			$result->{image} =~ s/icons/images/g;
-
-			#fix thumbs url
-			$result->{thumb} =~ s/images/thumbs/s;
-			$result->{thumb} =~ s/icons/thumbs/s;
-
-			#fix icon url
-			$result->{icon} =~ s/thumbs/icons/s;
-			$result->{icon} =~ s/images/icons/s;
+		    my $url=$config->{locations}->{local_media_url}||'';
+		    if (defined $result->{image}){
+		        my $image=$result->{image};
+			    $result->{thumb} = $url.'/thumbs/'.$image;
+			    $result->{icon}  = $url.'/icons/'.$image;
+			    $result->{image} = $url.'/images/'.$image;
+            }
 		}
 
 		$result->{location_css} = $result->{location} || '';
@@ -1019,6 +1019,9 @@ sub get_query {
             ,e.modified_by
             ,e.comment_count
             ,e.image
+            ,e.image_label
+            ,e.series_image
+            ,e.series_image_label
             ,e.reference
             ,e.recurrence
             ,e.recurrence_count

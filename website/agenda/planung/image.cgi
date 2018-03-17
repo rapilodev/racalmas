@@ -6,7 +6,7 @@ use Data::Dumper;
 
 use File::stat;
 use Time::localtime;
-use CGI qw(header param Vars escapeHTML uploadInfo cgi_error);
+use CGI::Simple;# qw(header param Vars escapeHTML uploadInfo cgi_error);
 use URI::Escape;
 
 use time;
@@ -67,17 +67,12 @@ $headerParams->{loc} = localization::get( $config, { user => $user, file => 'men
 template::process( 'print', template::check('ajax_header.html'), $headerParams );
 return unless defined uac::check( $config, $params, $user_presets );
 
-#my $base_dir	    = $config->{locations}->{base_dir};
 my $local_media_dir = $config->{locations}->{local_media_dir};
 my $local_media_url = $config->{locations}->{local_media_url};
 
-#my $local_base_url	= $config->{locations}->{local_base_url};
-
-log::error( $config, 'cannot locate media dir' . $local_media_dir ) unless ( -e $local_media_dir );
-
-#continue on error
-uac::permissions_denied('reading from local media dir') unless ( -r $local_media_dir );
-uac::permissions_denied('writing to local media dir')   unless ( -w $local_media_dir );
+log::error( $config, 'cannot locate media dir' . $local_media_dir ) unless -e $local_media_dir ;
+uac::permissions_denied('reading from local media dir') unless -r $local_media_dir;
+uac::permissions_denied('writing to local media dir')   unless -w $local_media_dir;
 
 if ( $params->{delete_image} ne '' ) {
 	delete_image( $config, $request, $user, $local_media_dir );
@@ -114,69 +109,73 @@ sub show_image {
 	$config->{access}->{write} = 0;
 	my $dbh = db::connect( $config, undef );
 
+    my $projectId        = $params->{project_id};
+    my $studioId         = $params->{studio_id};
 	my $selectedFilename = $params->{filename} || '';
+
 	my $filenames        = {};
 	my $results          = [];
 
 	# add images from series
 	if ( defined $params->{series_id} ) {
-		my $seriesImages = series::get_images( $config, $params );
+		my $seriesImages = series::get_images( $config, {
+		    project_id => $projectId,
+		    studio_id  => $studioId,
+		    series_id  => $params->{series_id}
+		} );
 
 		for my $image (@$seriesImages) {
 			my $filename = $image->{filename};
-			unless ( defined $filenames->{$filename} ) {
-
-				#print STDERR "add1 $filename\n";
-				push @$results, $image;
-				$filenames->{$filename} = $image;
-			}
+			next if defined $filenames->{$filename};
+			$filenames->{$filename} = $image;
+			push @$results, $image;
 		}
 	}
 
 	#load images matching by search
-	if ( defined $params->{search} ) {
+	if ( $params->{search}=~/\S/ ) {
 
 		#remove filename from search
-		delete $params->{filename};
-		delete $params->{series_id};
-		my $searchImages = images::get( $config, $params );
+		#delete $params->{filename};
+		#delete $params->{series_id};
+		my $searchImages = images::get( $config, {
+		    project_id => $projectId,
+		    studio_id  => $studioId,
+		    search     => $params->{search}
+		} );
 
 		for my $image (@$searchImages) {
 			my $filename = $image->{filename};
-			unless ( defined $filenames->{$filename} ) {
-
-				#print STDERR "add2 $filename\n";
-				push @$results, $image;
-				$filenames->{$filename} = $image;
-			}
+			next if defined $filenames->{$filename};
+			$filenames->{$filename} = $image;
+			push @$results, $image;
 		}
 	}
 
 	#load selected image, if not already loaded
+	my $selectedImage=undef;
 	if ( $selectedFilename ne '' ) {
-		my $search = $params->{search} || '';
-
-		# use selected image if already loaded
-		my $selectedImage = undef;
 		if ( defined $filenames->{$selectedFilename} ) {
 			$selectedImage = $filenames->{$selectedFilename};
 		} else {
-
-			#now add filename and remove search
-			$params->{filename} = $selectedFilename;
-			delete $params->{search};
+			#print STDERR "getByName:".Dumper($params);
 
 			#put selected image to the top
-			my $imagesByNames = images::get( $config, $params );
-			$selectedImage = $imagesByNames->[0] if ( scalar(@$imagesByNames) > 0 );
-		}
+			my $imagesByNames = images::get( $config, {
+			    project_id => $projectId,
+			    studio_id  => $studioId,
+			    filename   => $selectedFilename
+			} );
+			#print STDERR Dumper($imagesByNames);
+			$selectedImage = $imagesByNames->[0] if scalar(@$imagesByNames) > 0;		
+	    }
 
 		my $finalResults = [];
 
 		# put selected image first
 		$selectedFilename = 'not-found';
 		if ( defined $selectedImage ) {
-			push @$finalResults, $selectedImage;
+			$finalResults = [ $selectedImage ];
 			$selectedFilename = $selectedImage->{filename};
 		}
 
@@ -185,20 +184,21 @@ sub show_image {
 			push @$finalResults, $image if $image->{filename} ne $selectedFilename;
 		}
 		$results = $finalResults;
-
-		#add search again
-		$params->{search} = $search;
 	}
 
 	if ( $params->{template} =~ /edit/ ) {
-		$results = [ $results->[0] ] || undef;
+	    my $result = $results->[0];
+        $result->{missing_licence}=1 unless $result->{licence}=~/\S/;
+		$results = [ $result ] ;
 	}
+
 	if ( defined $results ) {
 		$results = modify_results( $results, $permissions, $user, $local_media_url );
 	}
 
 	my $search = $params->{search} || '';
 	$search =~ s/\%+/ /g;
+
 	my $template_params = {
 		'search'     => $search,
 		'images'     => $results,
@@ -250,18 +250,24 @@ sub save_image {
 
 	my $image = {};
 	$image->{filename}    = $params->{save_image};
-	$image->{name}        = $params->{update_name} if ( $params->{update_name} ne '' );
-	$image->{description} = $params->{update_description} if ( $params->{update_description} ne '' );
+	$image->{name}        = $params->{update_name}        if $params->{update_name} ne '' ;
+	$image->{description} = $params->{update_description} if $params->{update_description} ne '' ;
 	$image->{project_id}  = $params->{project_id};
 	$image->{studio_id}   = $params->{studio_id};
+	$image->{licence}     = $params->{licence};
+	$image->{public}      = $params->{public};
 	$image->{modified_by} = $user;
 
-	$image->{name} = 'new' if ( $image->{name} eq '' );
+	$image->{name} = 'new' if $image->{name} eq '';
+
+    images::checkLicence($config, $image);
 
 	$config->{access}->{write} = 1;
 	my $dbh = db::connect($config);
 
-	#print STDERR "going to save\n";
+	print STDERR "going to save\n";
+	print STDERR Dumper($image);
+
 	my $entries = images::get(
 		$config,
 		{
@@ -271,7 +277,6 @@ sub save_image {
 		}
 	);
 
-	#print STDERR Dumper($entries);
 	if ( scalar @$entries > 1 ) {
 		print_js_error('more than one matching result found');
 		return 0;
@@ -283,6 +288,8 @@ sub save_image {
 	my $entry = $entries->[0];
 	if ( defined $entry ) {
 		images::update( $dbh, $image );
+		images::publish(  $config, $image->{filename}) if (($image->{public}==1) && ($entry->{public}==0));
+		images::depublish($config, $image->{filename}) if (($image->{public}==0) && ($entry->{public}==1));
 	} else {
 		$image->{created_by} = $user;
 		images::insert( $dbh, $image );
@@ -410,7 +417,7 @@ sub check_params {
 		$checked->{search} = $1;
 	}
 
-	for my $attr ( 'update_name', 'update_description' ) {
+	for my $attr ( 'update_name', 'update_description', 'licence' ) {
 		$checked->{$attr} = '';
 		if ( ( defined $params->{$attr} ) && ( $params->{$attr} =~ /^\s*(.+?)\s*$/ ) ) {
 			$checked->{$attr} = $params->{$attr};
@@ -427,6 +434,13 @@ sub check_params {
 		}
 	}
 
+	#checkboxes
+	for my $param ( 'public' ) {
+		if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /([01])/ ) ) {
+			$checked->{$param} = $1;
+		}
+	}
+
 	#map show to filename, but overwrite if filename given
 	if ( $checked->{show} ne '' ) {
 		$checked->{filename} = $checked->{show};
@@ -438,6 +452,7 @@ sub check_params {
 
 	$checked->{from} = time::check_date( $params->{from} );
 	$checked->{till} = time::check_date( $params->{till} );
+	#print STDERR 'checked:'.Dumper ($checked);
 
 	return $checked;
 }

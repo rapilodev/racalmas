@@ -200,7 +200,13 @@ sub update_user {
 			return;
 		}
 
-		return unless ( check_password( $params->{user_password} ) );
+        my $users= uac::get_users($config, {email => $params->{email}});
+        if (scalar (@$users) > 0){
+			error('There is already a user registered for the given email address');
+			return;
+        }
+
+		return unless password_request::checkPassword( $params->{user_password} ) ;
 
 		if ( $params->{user_password} ne $params->{user_password2} ) {
 			error('password mismatch');
@@ -236,76 +242,17 @@ sub change_password {
 	my $params      = $request->{params}->{checked};
 	my $permissions = $request->{permissions};
 
-	unless ( ( defined $userName ) || ( $userName eq '' ) ) {
-		uac::print_error('user not found');
-		return;
-	}
+    my $result = password_requests::changePassword($config, $request, $userName);
 
-	my $user = uac::get_user( $config, $userName );
-
-	unless ( ( defined $user ) && ( defined $user->{id} ) && ( $user->{id} ne '' ) ) {
-		uac::print_error('user id not found');
-		return;
-	}
-
-	unless ( check_password( $params->{user_password} ) ) {
-		error('password does not meet requirements');
-	}
-
-	if ( $params->{user_password} ne $params->{user_password2} ) {
-		error('entered passwords do not match');
-	}
-
-	print STDERR "error at changing password:" . Dumper($errors);
-
-	if ( @$errors == 0 ) {
-		my $crypt = auth::crypt_password( $params->{user_password} );
-		$user = { id => $user->{id} };
-		$user->{salt} = $crypt->{salt};
-		$user->{pass} = $crypt->{crypt};
-
-		#print '<pre>'.Dumper($user).'</pre>';
-		$config->{access}->{write} = 1;
-		uac::update_user( $config, $user );
-		$config->{access}->{write} = 0;
-		print STDERR "password changed for $params->{presets}->{user}\n";
-	}
-	$params->{errors} = $errors;    #join("<br>", (map {$_>{error}} (@$errors)) );
-	$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'users' } );
+	$params->{errors} = $result->{error}   if defined $result->{error};
+    $params->{info}   = $result->{success} if defined $result->{success};
+	$params->{loc}    = localization::get( $config, { user => $params->{presets}->{user}, file => 'users' } );
 	uac::set_template_permissions( $permissions, $params );
 
 	#print Dumper($permissions);
 	template::process( 'print', template::check('change_password'), $params );
 }
 
-sub check_password {
-	my $password = shift;
-	unless ( defined $password || $password eq '' ) {
-		error("password is empty");
-		return;
-	}
-	if ( length($password) < 8 ) {
-		error("password to short");
-		return 0;
-	}
-	unless ( $password =~ /[a-z]/ ) {
-		error("password should contains at least one small character");
-		return 0;
-	}
-	unless ( $password =~ /[A-Z]/ ) {
-		error("password should contains at least one big character");
-		return 0;
-	}
-	unless ( $password =~ /[0-9]/ ) {
-		error("password should contains at least one number");
-		return 0;
-	}
-	unless ( $password =~ /[^a-zA-Z0-9]/ ) {
-		error("password should contains at least one special character");
-		return 0;
-	}
-	return 1;
-}
 
 sub delete_user {
 	my $config  = shift;
@@ -473,7 +420,16 @@ sub check_params {
 		$checked->{studio_id} = -1;
 	}
 
-	for my $param ( 'user_name', 'user_full_name', 'user_email', 'user_password', 'user_password2' ) {
+	for my $param ( 'user_name', 'user_full_name', 'user_email') {
+		if ( defined $params->{$param} ) {
+			my $value = $params->{$param};
+            $value =~s/^\s+//g;
+            $value =~s/\s+$//g;
+            $checked->{$param} = $value;
+		}
+	}
+
+	for my $param (  'user_password', 'user_password2' ) {
 		if ( defined $params->{$param} ) {
 			$checked->{$param} = $params->{$param};
 		}

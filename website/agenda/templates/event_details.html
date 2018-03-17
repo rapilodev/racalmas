@@ -37,16 +37,32 @@
 
 			<TMPL_IF program> (<TMPL_VAR program>)</TMPL_IF>
 		</div>
-		<div class="content" > 
+		<div class="content description" > 
 			<TMPL_VAR excerpt > <TMPL_VAR user_excerpt >
             <TMPL_IF excerpt><hr><TMPL_ELSE><TMPL_IF user_excerpt><hr></TMPL_IF></TMPL_IF>
+
             <TMPL_IF no_image_in_text>
-                <p>
-                    <a href="<TMPL_VAR image>">
-                        <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR thumb>">
+                <TMPL_IF .hide_event_images>
+                    <a href="<TMPL_VAR series_image_url>">
+                    <figure>
+                            <TMPL_IF series_thumb_url>
+                                <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR series_thumb_url>">
+                                <TMPL_IF series_image_label><figcaption>Bild:<TMPL_VAR series_image_label></figcaption></TMPL_IF>
+                            </TMPL_IF>
+                        </figure>
                     </a>
-                </p>
+                <TMPL_ELSE>
+                    <a href="<TMPL_VAR image_url>">
+                        <figure>
+                            <TMPL_IF thumb_url>
+                                <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR thumb_url>">
+                        <TMPL_IF image_label><figcaption>Bild:<TMPL_VAR image_label></figcaption></TMPL_IF>
+                            </TMPL_IF>
+                    </figure>
+                    </a>
+                </TMPL_IF>
             </TMPL_IF>
+
 			<TMPL_VAR topic ESCAPE=0><TMPL_VAR content ESCAPE=0>
 			<TMPL_IF recurrence_date><a href="<TMPL_VAR recurrence>.html">Wiederholung vom <TMPL_VAR recurrence_date></a></TMPL_IF>
 		</div>

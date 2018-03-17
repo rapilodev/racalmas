@@ -52,3 +52,15 @@ msgstr "Editor-Link"
 msgid "label_search_hits"
 msgstr "hits"
 
+msgid "label_licence"
+msgstr "licence"
+
+msgid "label_author"
+msgstr "author"
+
+msgid "label_public"
+msgstr "published"
+
+msgid "label_licence_missing"
+msgstr "please fill in"
+

@@ -226,11 +226,12 @@ sub update_database {
 
 	my $image = {
 		filename    => $params->{filename},
-		name        => $params->{name} || 'new',
+		name        => $name,
 		description => $params->{description},
 		modified_by => $user,
 		project_id  => $params->{project_id},
-		studio_id   => $params->{studio_id}
+		studio_id   => $params->{studio_id},
+		licence     => $params->{licence}
 	};
 
 	#connect
@@ -238,7 +239,7 @@ sub update_database {
 	my $dbh = db::connect($config);
 
 	my $entries = images::get( $config, { filename => $image->{filename} } );
-	if ( ( defined $entries ) && ( @$entries > 0 ) ) {
+	if ( ( defined $entries ) && ( scalar(@$entries) > 0 ) ) {
 		images::update( $dbh, $image );
 		my $entry = $entries->[0];
 		$params->{image_id} = $entry->{id};
@@ -318,16 +319,14 @@ sub process_image {
 	my $md5_filename = shift;
 	my $content      = shift;
 
-	my $upload_path = $config->{locations}->{local_media_dir} . 'upload/' . $md5_filename . '.' . $extension;
-	my $thumb_path  = $config->{locations}->{local_media_dir} . 'thumbs/' . $md5_filename . '.jpg';
-	my $icon_path   = $config->{locations}->{local_media_dir} . 'icons/' . $md5_filename . '.jpg';
-	my $image_path  = $config->{locations}->{local_media_dir} . 'images/' . $md5_filename . '.jpg';
+	my $upload_path = images::getInternalPath($config, {type=>'upload', filename=> $md5_filename . '.' . $extension});
+	my $thumb_path  = images::getInternalPath($config, {type=>'thumbs', filename=> $md5_filename . '.jpg'});
+	my $icon_path   = images::getInternalPath($config, {type=>'icons',  filename=> $md5_filename . '.jpg'});
+	my $image_path  = images::getInternalPath($config, {type=>'images', filename=> $md5_filename . '.jpg'});
 
 	#copy file to upload space
-	open DAT, '>' . $upload_path or return { error => 'could not save image. ' . $! . " $upload_path" };
-	binmode DAT;
-	print DAT $content;
-	close DAT;
+	my $result=images::writeFile($upload_path, $content);
+	return $result if defined $result->{error};
 
 	#write image
 	my $image = new Image::Magick;
@@ -363,7 +362,7 @@ sub process_image {
 	$icon->Write( 'jpg:' . $icon_path );
 
 	unless ( -e $thumb_path ) {
-		return { error => 'could not create thumb nail file!' };
+		return { error => 'could not create thumb file!' };
 	}
 	unless ( -e $icon_path ) {
 		return { error => 'could not create icon file!' };
@@ -403,7 +402,7 @@ sub check_params {
 	}
 
 	#string
-	for my $param ( 'debug', 'name', 'description' ) {
+	for my $param ( 'debug', 'name', 'description', 'licence' ) {
 		if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\s*(.+?)\s*$/ ) ) {
 			$checked->{$param} = $1;
 		}

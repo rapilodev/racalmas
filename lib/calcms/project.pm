@@ -78,6 +78,17 @@ sub get{
 	return $projects;
 }
 
+# requires at least project_id
+sub getImageById{
+	my $config     = shift;
+    my $conditions = shift;
+    
+    return undef unless defined $conditions->{project_id};
+    my $projects=project::get($config, $conditions);
+    return undef if scalar(@$projects) != 1;
+    return $projects->[0]->{image};
+}
+
 sub get_date_range{
 	my $config=shift;
 	my $query=qq{

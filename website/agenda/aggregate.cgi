@@ -130,14 +130,16 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 	$list->{project_title} = '' unless ( defined $list->{project_title} );
 	$content =~ s/(<(div|span)\s+id="calcms_title".*?>).*?(<\/(div|span)>)/$list->{project_title}/g;
 
-	my $title = $list->{program} || '';
-	$title .= ' - ' . $list->{series_name} if ( ( defined $list->{series_name} ) && ( $list->{series_name} ne '' ) );
-	$title .= ' - ' . $list->{title}       if ( ( defined $list->{title} )       && ( $list->{title} ne '' ) );
-	$title = ' | ' . $title if ( $title ne '' );
-	$title .= 'Programmplan';
-	$title .= ' | ' . $list->{project_title} if $list->{project_title} ne '';
+	my $values = [];
+	for my $value ($list->{'program'}, $list->{'series_name'}, $list->{'title'}, $list->{'location'}, $list->{'project_title'}){
+	    next unless defined $value;
+	    next if $value eq '';
+	    push @$values, $value;
+	}
 
-	#$content=~s/(<title>)(.*?)(<\/title>)/$1$title$3/;
+	my $title = join (' - ', @$values);
+
+	$content=~s/(<title>)(.*?)(<\/title>)/$1$title$3/;
 
 	$js = '';
 	if ( ( defined $list->{event_id} ) && ( $list->{event_id} ne '' ) ) {

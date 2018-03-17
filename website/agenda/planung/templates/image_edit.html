@@ -2,11 +2,51 @@
 <head>
     <link type="text/css" href="css/admin.css" rel="stylesheet"/>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<script>
+
+function updateCheckBox(selector, value){
+    $(selector).attr('value', value)
+    if (value==1){
+        $(selector).prop( "checked", true );
+    } else {
+        $(selector).prop( "checked", false );
+    }
+}
+
+function updatePublicCheckbox(elem){
+    console.log(elem.prop('checked'))
+    if (elem.prop('checked')){
+        console.log( 'set public' );
+        updateCheckBox(elem, 1);
+    }else{
+        console.log( 'unset public' );
+        updateCheckBox(elem, 0);
+    }
+}
+
+
+$(document).ready(
+    function(){
+        var publicCheckbox=$("#img_editor input[name='public']");
+
+        updatePublicCheckbox( publicCheckbox );
+        publicCheckbox.change(
+            function(){
+                updatePublicCheckbox($(this));
+            }
+        )        
+        console.log("image handler initialized");
+    }
+);
+
+</script>
+	
 </head>
 <body>
 <TMPL_LOOP images>
 	<form id="save_img_<TMPL_VAR id>"
-		method="post" action="image.cgi" 
+		method="post" 
+		action="image.cgi" 
 		onsubmit="saveImage('<TMPL_VAR id>','<TMPL_VAR filename>');return false;"
 		style="float:left" 
 	>   
@@ -15,9 +55,10 @@
 
 		<table>
 		    <tr>
-			    <td rowspan="5"><a href="<TMPL_VAR image_url>" onclick="showImage('<TMPL_VAR image_url>');return false;"><img src="<TMPL_VAR thumb_url>" /></a></td>
 			    <td><TMPL_VAR .loc.label_name></td>
 			    <td><input value="<TMPL_VAR name escape=0>" name="update_name" class="field"></td>
+			    <td rowspan="99"><a href="<TMPL_VAR image_url>" onclick="showImage('<TMPL_VAR image_url>');return false;"
+			    ><img src="showImage.cgi?project_id=<TMPL_VAR project_id>&studioId=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR filename>" /></a></td>
 		    </tr>
 		    <tr>
 			    <td><TMPL_VAR .loc.label_description></td>
@@ -33,21 +74,25 @@
 		    </tr>
 		    <tr>
 			    <td><TMPL_VAR .loc.label_editor_link></td>
-			    <td><input value="{{thumbs/<TMPL_VAR filename escape=0>|<TMPL_VAR name>}}" class="field"/></td>
+			    <td><input value="{{<TMPL_VAR filename escape=0>|<TMPL_VAR name>}}" class="field" /></td>
+		    </tr>
+		    <tr>
+			    <td><TMPL_VAR .loc.label_author>/<TMPL_VAR .loc.label_licence></td>
+			    <td><input name="licence" value="<TMPL_VAR licence>" class="field<TMPL_IF missing_licence> error</TMPL_IF>" placeholder="<TMPL_VAR .loc.label_licence_missing>"/></td>
+		    </tr>
+		    <tr>
+			    <td><TMPL_VAR .loc.label_public></td>
+			    <td><input type="checkbox" name="public" <TMPL_IF public>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF> /></td>
 		    </tr>
 		    <tr>
 			    <td />				
 			    <td>
 				    <TMPL_IF name="update_image">
-                	    <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-				        <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>" />
 				        <input type="hidden" name="save_image" value="<TMPL_VAR filename escape=0>" />
 				        <button onclick="this.submit"><TMPL_VAR .loc.button_save></button/>
 				    </TMPL_IF>
 
 				    <TMPL_IF name="delete_image">
-                	    <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-				        <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>" />
 				        <button onclick="askDeleteImage('img_<TMPL_VAR id escape=0>','<TMPL_VAR filename escape=0>');return false;"><TMPL_VAR .loc.button_delete></button>
 				    </TMPL_IF>
 			    </td>

@@ -1,4 +1,6 @@
 
+var windowOffsetX=32;
+var windowOffsetY=32;
 
 // choose action depending on selected tab
 function imageAction(filename){
@@ -6,6 +8,7 @@ function imageAction(filename){
         selectThisImage(filename);
         return false;
     }
+
     if(selectedImageTab=='edit'){
         editImage(filename);
         return false;
@@ -28,24 +31,33 @@ function selectImage(project_id, studio_id, id, value, imageUrl, series_id){
     if((series_id!=null)&&(series_id != '')){
         url+='&series_id='+series_id;
     }
+
     if(imageUrl!=null){
         var filename=imageUrl.split('%2F').pop();
         url+='&filename='+filename;
     }
+    var x=$(window).width()  - windowOffsetX;
+    var y=$(window).height() - windowOffsetY;
+    hideContent();
+        
     $('#selectImage').load(url);
     $('#selectImage').dialog({
         appendTo: "#content",
 		title:"select image",
-		width:"980",
-		height:640
+		width:x,
+		height:y,
+		close: function( event, ui ) { 
+		    showContent(); 
+		}
     });
     return false;    
 }
 
 // set editor image and image url to selected image
 function selectThisImage(filename){
-    var url=('/agenda_files/media/thumbs/'+filename);
-    $('#'+selectImageId).val(url);
+    $('#'+selectImageId).val(filename);
+    var url = 'showImage.cgi?project_id='+project_id+'&studio_id='+studio_id+'&filename=' + filename;
+    console.log(url);
     $('#imagePreview').prop('src',url);
 
     try{
@@ -75,7 +87,34 @@ function searchImage(){
         $( "#image-tabs" ).tabs();
         $( "#image-tabs" ).tabs( "option", "active", 1 );
     });
-    //
+    return false;
+}    
+
+function hideContent(){
+
+    $(window).resize(function () {
+       $('.ui-dialog').css({
+            'width':  $(window).width()  - windowOffsetX,
+            'height': $(window).height() - windowOffsetY,
+            'left':   windowOffsetX/2+'px',
+            'top':    windowOffsetY/2+'px'
+       });
+    }).resize();
+
+    $('.editor').each(
+        function(){
+            $(this).hide();
+        }
+    );
+    return false;
+}
+
+function showContent(){
+    $('.editor').each(
+        function(){
+            $(this).show();
+        }
+    );
     return false;
 }
 
@@ -84,10 +123,17 @@ function editImage(filename){
 	$("#img_editor").load(
 	    'image.cgi?show='+filename+'&template=image_edit.html&project_id='+project_id+'&studio_id='+studio_id,
 		function(){
+            var x=$(window).width()  - windowOffsetX;
+            var y=$(window).height() - windowOffsetY;
+            hideContent(); 
+
 			$('#img_editor').dialog({
                appendTo: "#content",
-				width:"100%",
-				height:430
+				width:x,
+				height:y,
+				close: function( event, ui ) { 
+				    showContent(); 
+				}
 			});
 		}
 	);
@@ -96,10 +142,18 @@ function editImage(filename){
 // open dialog to show image preview
 function showImage(url){
 	$("#img_image").html('<img src="'+url+'" onclick="$(\'#img_image\').dialog(\'close\');return false;"/>');
+    var x=$(window).width()  - windowOffsetX;
+    var y=$(window).height() - windowOffsetY;
+    hideContent();
+
 	$("#img_image").dialog({
         appendTo: "#content",
-		width:"100%",
-		height:660
+		width:x,
+		height:y,
+		close: function( event, ui ) { 
+		    showContent(); 
+		}
+		
 	});
 }
 
@@ -121,7 +175,7 @@ function saveImage(id, filename) {
                 var line=lines[index];
                 if(contains(line,'ERROR:')){
                     //add error field
-                    if($('#image-tabs .error').length==0){
+                    if( $('#image-tabs .error').length==0 ){
                         $('#image-tabs').append('<div class="error"></div>');
                     }
                     $('#image-tabs div.error').append(line);
@@ -162,7 +216,7 @@ function hideImageDetails(id,filename){
 function showImageUrl(id){
 	var el=document.getElementById(id);
 	var input_id=id+'_input';
-	var text='<input id="'+input_id+'" value="{{thumbs/'+id+'|title}}" title="3fach-Klick zum Markieren!">';
+	var text='<input id="'+input_id+'" value="{{'+id+'|title}}" title="3fach-Klick zum Markieren!">';
 	if (el.innerHTML==text){
 		el.innerHTML='';
 	}else{

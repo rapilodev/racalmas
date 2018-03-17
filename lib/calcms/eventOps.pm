@@ -46,6 +46,8 @@ sub setAttributesFromSeriesTemplate{
     ){
         $event->{$attr}=$serie->{$attr};
     }
+    $event->{series_image}       = $serie->{image};
+    $event->{series_image_label} = $serie->{licence};
     return $serie;
 }
 
@@ -97,7 +99,7 @@ sub setAttributesFromOtherEvent{
         event_id   => $params->{source_event_id}
     });
     if (defined $event2){
-        for my $attr ('title', 'user_title', 'excerpt', 'user_excerpt', 'content', 'html_content', 'topics', 'image', 'live', 'no_event_sync', 'podcast_url', 'archive_url'){
+        for my $attr ('title', 'user_title', 'excerpt', 'user_excerpt', 'content', 'html_content', 'topics', 'image', 'series_image', 'live', 'no_event_sync', 'podcast_url', 'archive_url', 'image_label', 'series_image_label'){
             $event->{$attr}=$event2->{$attr};
         }
         $event->{rerun}=1;

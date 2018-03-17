@@ -20,7 +20,7 @@
             $("#image-tabs").tabs({
                 activate: function(event, ui){
                     if (ui==null) return;
-                    selectedImageTab=getSelectedTab('image-tabs');
+                    selectedImageTab = getSelectedTab('image-tabs');
 
                     <TMPL_IF .allow.create_image>
                     if(selectedImageTab=="upload"){
@@ -100,7 +100,7 @@
             <TMPL_LOOP images>
 	            <div class="image" 
 		            id="img_<TMPL_VAR id>" 
-		            style="background-image:url('<TMPL_VAR thumb_url>')"
+		            style="background-image:url('showImage.cgi?project_id=<TMPL_VAR project_id>&studioId=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR filename>')"
 		            title="<TMPL_VAR description>"
 		            onclick="imageAction('<TMPL_VAR filename>');return false;"
 	            >

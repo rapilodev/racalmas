@@ -92,7 +92,7 @@ if ( defined $params->{action} ) {
 	unassign_event( $config, $request ) if ( $params->{action} eq 'unassign_event' );
 	if ( $params->{action} eq 'reassign_event' ) {
 		my $result = reassign_event( $config, $request );
-		return if $result == 1;
+		return if defined $result;
 	}
 
 	#    save_scan    ($config, $request)    if ($params->{action} eq 'save_scan');
@@ -427,6 +427,13 @@ sub save_series {
 		#print STDERR Dumper($entry);
 		$config->{access}->{write} = 1;
 		my $result = series::update( $config, $entry );
+		
+		series_events::update_series_images($config,{
+				project_id => $entry->{project_id},
+				studio_id  => $entry->{studio_id},
+				series_id  => $entry->{series_id},
+				series_image => $params->{image}
+		});
 
 		user_stats::increase(
 			$config,
@@ -581,11 +588,13 @@ sub assign_event {
 	my $config  = shift;
 	my $request = shift;
 
+    print STDERR "assign event\n";
+
 	my $params      = $request->{params}->{checked};
 	my $permissions = $request->{permissions};
 	unless ( $permissions->{assign_series_events} == 1 ) {
 		uac::permissions_denied('assign_series_events');
-		return;
+		return undef;
 	}
 
 	my $entry = {};
@@ -594,9 +603,10 @@ sub assign_event {
 			$entry->{$attr} = $params->{$attr};
 		} else {
 			uac::print_error( $attr . ' not given!' );
-			return;
+			return undef;
 		}
 	}
+    #print STDERR "found all parameters:\n".Dumper($entry);
 
 	# check if event exists,
 	# this has to use events::get, since it cannot check for series_id
@@ -606,10 +616,11 @@ sub assign_event {
 			checked => events::check_params(
 				$config,
 				{
-					event_id => $entry->{event_id},
-					template => 'no',
-					limit    => 1,
-					archive  => 'all'
+					event_id   => $entry->{event_id},
+					template   => 'no',
+					limit      => 1,
+					archive    => 'all',
+#                    no_exclude => 1
 				}
 			)
 		},
@@ -617,10 +628,15 @@ sub assign_event {
 		permissions => $request->{permissions}
 	};
 	$request2->{params}->{checked}->{published} = 'all';
-	my $events = events::get( $config, $request2 );
-	my $event = $events->[0];
 
-	#print STDERR Dumper($event);
+	my $events = events::get( $config, $request2 );
+	#print STDERR "found events:".Dumper($events);
+    if (scalar (@$events) != 1){
+        uac::print_error("no event found for event_id=$entry->{event_id}, archive=all");
+        return undef;
+    }
+
+	my $event = $events->[0];
 
 	#is series assigned to studio
 	my $result = series_events::check_permission(
@@ -721,7 +737,7 @@ sub unassign_event {
 	my $permissions = $request->{permissions};
 	unless ( $permissions->{assign_series_events} == 1 ) {
 		uac::permissions_denied('assign_series_events');
-		return;
+		return undef;
 	}
 
 	my $entry = {};
@@ -730,7 +746,7 @@ sub unassign_event {
 			$entry->{$attr} = $params->{$attr};
 		} else {
 			uac::print_error( $attr . ' not given!' );
-			return;
+			return undef;
 		}
 	}
 
@@ -748,7 +764,7 @@ sub unassign_event {
 		uac::print_error(
 "event $entry->{event_id} not found for project_id=$entry->{project_id}, studio_id=$entry->{studio_id}, series_id=$entry->{series_id}"
 		);
-		return;
+		return undef;
 	}
 
 	#print Dumper($event);
@@ -801,13 +817,13 @@ sub reassign_event {
 	my $permissions = $request->{permissions};
 	unless ( $permissions->{assign_series_events} == 1 ) {
 		uac::permissions_denied('assign_series_events');
-		return;
+		return undef;
 	}
 
 	for my $attr ( 'project_id', 'studio_id', 'series_id', 'new_series_id', 'event_id' ) {
 		unless ( defined $params->{$attr} ) {
 			uac::print_error( $attr . ' not given!' );
-			return;
+			return undef;
 		}
 	}
 
@@ -819,17 +835,24 @@ sub reassign_event {
 
 	$request->{params}->{checked}->{series_id} = $new_series_id;
 	my $result = assign_event( $config, $request );
-	if ( $result == 1 ) {
-		$request->{params}->{checked}->{series_id} = $series_id;
-		$result = unassign_event( $config, $request );
-	}
-	if ( $result == 1 ) {
-		my $url =
-		  'event.cgi?project_id=' . $project_id . '&studio_id=' . $studio_id . '&series_id=' . $new_series_id . '&event_id=' . $event_id;
-		print qq{<meta http-equiv="refresh" content="0; url=$url" />} . "\n";
-		delete $params->{getBack};
-		return 1;
-	}
+    unless (defined $result){
+        uac::print_error("could not assign event");
+        return undef;
+    }
+
+	$request->{params}->{checked}->{series_id} = $series_id;
+	$result = unassign_event( $config, $request );
+    unless (defined $result){
+        uac::print_error("could not unassign event");
+        return undef;
+    }
+
+    #print STDERR " event\n";
+	my $url =
+	  'event.cgi?project_id=' . $project_id . '&studio_id=' . $studio_id . '&series_id=' . $new_series_id . '&event_id=' . $event_id;
+	print qq{<meta http-equiv="refresh" content="0; url=$url" />} . "\n";
+	delete $params->{getBack};
+	return 1;
 }
 
 sub add_user {
@@ -921,15 +944,30 @@ sub list_series {
 
 	my $project_id        = $params->{project_id};
 	my $studio_id         = $params->{studio_id};
+
+	my $studios = studios::get(
+		$config,
+		{
+			project_id => $project_id,
+			studio_id  => $studio_id
+		}
+	);
+
+	my $studio_by_id = {};
+	for my $studio (@$studios) {
+		$studio_by_id->{ $studio->{id} } = $studio;
+	}
+	my $studio = $studio_by_id->{ $studio_id };
+
 	my $series_conditions = {
 		project_id => $project_id,
 		studio_id  => $studio_id
 	};
 	my $series    = series::get_event_age( $config, $series_conditions );
+
 	my $newSeries = [];
 	my $oldSeries = [];
 	for my $serie ( sort { lc $a->{series_name} cmp lc $b->{series_name} } (@$series) ) {
-
 		if ( $serie->{days_over} > 30 ) {
 			push @$oldSeries, $serie;
 		} else {
@@ -939,6 +977,10 @@ sub list_series {
 
 	$params->{newSeries} = $newSeries;
 	$params->{oldSeries} = $oldSeries;
+
+    $params->{image} = studios::getImageById($config, {project_id => $project_id, studio_id => $studio_id} ) if ( (!defined $params->{image}) || ($params->{image} eq '') );
+    $params->{image} = project::getImageById($config, {project_id => $project_id} ) if ( (!defined $params->{image}) || ($params->{image} eq '') );
+    #print STDERR Dumper $params->{image};
 
 	$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'all,series' } );
 	template::process( 'print', $params->{template}, $params );
@@ -1034,6 +1076,11 @@ sub show_series {
 	$serie->{studio} = $studio->{name};
 
 	my $location = $studio->{location};
+
+    # set default image from studio
+    $serie->{image} = studios::getImageById($config, {project_id => $project_id, studio_id => $studio_id} ) if ( (!defined $serie->{image}) || ($serie->{image} eq '') );
+    $serie->{image} = project::getImageById($config, {project_id => $project_id} ) if ( (!defined $serie->{image}) || ($serie->{image} eq '') );
+    #print STDERR Dumper $serie->{image};
 
 	#add users
 	$serie->{series_users} = series::get_users(
@@ -1221,7 +1268,7 @@ sub check_params {
 		}
 	}
 
-	for my $param ( 'series_name', 'title', 'excerpt', 'content', 'topic', 'image',
+	for my $param ( 'series_name', 'title', 'excerpt', 'content', 'topic', 'image', 'image_label',
 		'assign_event_series_name', 'assign_event_title', 'comment', 'podcast_url', 'archive_url' )
 	{
 		if ( defined $params->{$param} ) {

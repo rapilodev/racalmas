@@ -28,6 +28,7 @@ use series_events;
 use user_stats;
 use localization;
 use eventOps;
+use images;
 
 binmode STDOUT, ":utf8";
 
@@ -167,6 +168,7 @@ sub show_event {
 		uac::print_error("event not found");
 	}
 	#print STDERR "show:".Dumper($event->{draft});
+	#print STDERR "show event".Dumper($event);
 
 	my $editLock = 1;
 	if ( ( defined $permissions->{update_event_after_week} ) && ( $permissions->{update_event_after_week} eq '1' ) ) {
@@ -204,7 +206,8 @@ sub show_event {
 		if ( defined $event2 ) {
 			for my $attr (
 				'title', 'user_title',         'excerpt',     'user_excerpt', 'content', 'topic',
-				'image', 'live no_event_sync', 'podcast_url', 'archive_url'
+				'image', 'image_label', 'series_image', 'series_image_label', 
+				'live no_event_sync', 'podcast_url', 'archive_url'
 			  )
 			{
 				$event->{$attr} = $event2->{$attr};
@@ -215,8 +218,8 @@ sub show_event {
 	}
 
 	$event->{rerun} = 1 if ( $event->{rerun} =~ /a-z/ );
-
 	$event->{series_id} = $params->{series_id};
+
 	$event->{duration}  = events::get_duration( $config, $event );
 	$event->{durations} = \@durations;
 	if ( defined $event->{duration} ) {
@@ -226,7 +229,7 @@ sub show_event {
 	}
 	$event->{start} =~ s/(\d\d:\d\d)\:\d\d/$1/;
 	$event->{end} =~ s/(\d\d:\d\d)\:\d\d/$1/;
-
+	
 	# overwrite event with old one
 	#my $series_events=get_series_events($config,{
 	#    project_id => $params->{project_id},
@@ -260,7 +263,7 @@ sub show_event {
 			series_id  => $params->{series_id}
 		}
 	);
-	if ( @$series == 1 ) {
+	if ( scalar(@$series) == 1 ) {
 		$event->{has_single_events} = $series->[0]->{has_single_events};
 	}
 
@@ -416,55 +419,7 @@ sub show_new_event {
 		return 1;
 	}
 
-	# check for missing parameters
-	my $required_fields = [ 'project_id', 'studio_id', 'series_id' ];
-	push @$required_fields, 'start_date' if ( $params->{action} eq 'show_new_event_from_schedule' );
-
-	my $event = {};
-	for my $attr (@$required_fields) {
-		unless ( defined $params->{$attr} ) {
-			uac::print_error( "missing " . $attr );
-			return;
-		}
-		$event->{$attr} = $params->{$attr};
-	}
-
-	my $serie = eventOps::setAttributesFromSeriesTemplate( $config, $params, $event );
-
-	if ( $params->{action} eq 'show_new_event_from_schedule' ) {
-		eventOps::setAttributesFromSchedule( $config, $params, $event );
-	} else {
-		eventOps::setAttributesForCurrentTime( $serie, $event );
-	}
-
-	if ( defined $params->{source_event_id} ) {
-
-		#overwrite by existing event (rerun)
-		eventOps::setAttributesFromOtherEvent( $config, $params, $event );
-	}
-
-	$event = events::calc_dates( $config, $event );
-
-	if ( $serie->{has_single_events} eq '1' ) {
-		$event->{has_single_events} = 1;
-		$event->{series_name}       = undef;
-		$event->{episode}           = undef;
-	}
-
-	#get next episode
-	$event->{episode} = series::get_next_episode(
-		$config,
-		{
-			project_id => $params->{project_id},
-			studio_id  => $params->{studio_id},
-			series_id  => $params->{series_id},
-		}
-	);
-	delete $event->{episode} if $event->{episode} == 0;
-
-	$event->{disable_event_sync} = 1;
-	$event->{published}          = 1;
-	$event->{new_event}          = 1;
+    my $event = eventOps::getNewEvent($config, $params, $params->{action});
 
 	#copy event to template params
 	for my $key ( keys %$event ) {
@@ -574,7 +529,8 @@ sub save_event {
 	}
 
 	#print Dumper($params);
-	my $start = $params->{start_date}, my $end = time::add_minutes_to_datetime( $params->{start_date}, $params->{duration} );
+	my $start = $params->{start_date};
+	my $end = time::add_minutes_to_datetime( $params->{start_date}, $params->{duration} );
 
 	#check permissions
 	my $options = {
@@ -601,19 +557,25 @@ sub save_event {
 	my $found = 0;
 
 	#content fields
-	for my $key ( 'content', 'topic', 'title', 'excerpt', 'episode', 'image', 'podcast_url', 'archive_url' ) {
+	for my $key ( 'content', 'topic', 'title', 'excerpt', 'episode', 
+	    'image', 'series_image', 'image_label', 'series_image_label',
+	    'podcast_url', 'archive_url' ) {
 		next unless defined $permissions->{ 'update_event_field_' . $key };
 		if ( $permissions->{ 'update_event_field_' . $key } eq '1' ) {
-			$entry->{$key} = $params->{$key} if defined $params->{$key};
+		    next unless defined $params->{$key};
+			$entry->{$key} = $params->{$key};
 			$found++;
 		}
 	}
+
+    #print STDERR "event to update1: ".Dumper($entry);
 
 	#user extension fields
 	for my $key ( 'title', 'excerpt' ) {
 		next unless defined $permissions->{ 'update_event_field_' . $key . '_extension' };
 		if ( $permissions->{ 'update_event_field_' . $key . '_extension' } eq '1' ) {
-			$entry->{ 'user_' . $key } = $params->{ 'user_' . $key } if defined $params->{ 'user_' . $key };
+		    next unless defined $params->{ 'user_' . $key };
+			$entry->{ 'user_' . $key } = $params->{ 'user_' . $key };
 			$found++;
 		}
 	}
@@ -643,6 +605,10 @@ sub save_event {
 		uac::print_error("event not found");
 		return;
 	}
+    
+    $entry->{image}        = images::normalizeName($entry->{image});
+    $entry->{series_image} = images::normalizeName($entry->{series_image});
+    #print STDERR "event to update2: ".Dumper($entry);
 
 	$config->{access}->{write} = 1;
 
@@ -701,119 +667,11 @@ sub create_event {
 	my $config  = shift;
 	my $request = shift;
 
-	my $params      = $request->{params}->{checked};
-	my $permissions = $request->{permissions};
+	my $params     = $request->{params}->{checked};
+	my $event      = $request->{params}->{checked};
+    my $action     = $params->{action};
+    return eventOps::createEvent($request, $event, $action);
 
-	my $checklist = [ 'studio', 'user', 'create_events', 'studio_timeslots' ];
-	if ( $params->{action} eq 'create_event_from_schedule' ) {
-		push @$checklist, 'schedule' if $params->{action} eq 'create_event_from_schedule';
-	}
-
-	my $start = $params->{start_date}, my $end = time::add_minutes_to_datetime( $params->{start_date}, $params->{duration} );
-
-	my $result = series_events::check_permission(
-		$request,
-		{
-			permission => 'create_event,create_event_of_series',
-			check_for  => $checklist,
-			project_id => $params->{project_id},
-			studio_id  => $params->{studio_id},
-			series_id  => $params->{series_id},
-			start_date => $params->{start_date},
-			draft      => $params->{draft},
-			start      => $start,
-			end        => $end,
-		}
-	);
-
-	#print Dumper("            start_date => $params->{start_date}");
-	unless ( $result eq '1' ) {
-		uac::print_error($result);
-		return undef;
-	}
-
-	#get series name from series
-	my $series = series::get(
-		$config,
-		{
-			project_id => $params->{project_id},
-			studio_id  => $params->{studio_id},
-			series_id  => $params->{series_id},
-		}
-	);
-	if ( @$series != 1 ) {
-		uac::print_error("series not found");
-		return undef;
-	}
-	my $serie = $series->[0];
-
-	#get studio location from studios
-	my $studios = studios::get(
-		$config,
-		{
-			project_id => $params->{project_id},
-			studio_id  => $params->{studio_id}
-		}
-	);
-	unless ( defined $studios ) {
-		uac::print_error("studio not found");
-		return undef;
-	}
-	unless ( @$studios == 1 ) {
-		uac::print_error("studio not found");
-		return undef;
-	}
-	my $studio = $studios->[0];
-
-	$config->{access}->{write} = 1;
-
-	#insert event content and save history
-	my $event_id = series_events::insert_event(
-		$config,
-		{
-			project_id => $params->{project_id},
-			studio     => $studio,
-			serie      => $serie,
-			event      => $params,
-			user       => $params->{presets}->{user}
-		}
-	);
-	uac::print_error("could not insert event") if $event_id <= 0;
-
-	#assign event to series
-	$result = series::assign_event(
-		$config,
-		{
-			project_id => $params->{project_id},
-			studio_id  => $params->{studio_id},
-			series_id  => $params->{series_id},
-			event_id   => $event_id
-		}
-	);
-	uac::print_error("could not assign event") unless defined $result;
-
-	#update recurrences
-	my $event = $params;
-	$event->{event_id} = $event_id;
-	series::update_recurring_events( $config, $event );
-
-	# update user stats
-	user_stats::increase(
-		$config,
-		'create_events',
-		{
-			project_id => $params->{project_id},
-			studio_id  => $params->{studio_id},
-			series_id  => $params->{series_id},
-			user       => $params->{presets}->{user}
-		}
-	);
-
-	#forward to edit event
-	#print STDERR Dumper($event_id);
-	#$params->{event_id}=$event_id;
-	uac::print_info("event created");
-	return $event_id;
 }
 
 #TODO: replace permission check with download
@@ -849,6 +707,7 @@ sub download {
 					event_id => $params->{event_id},
 					template => 'no',
 					limit    => 1,
+                    #no_exclude => 1
 				}
 			)
 		},
@@ -955,7 +814,7 @@ sub check_params {
 
 	#strings
 	for my $param (
-		'series_name',  'title',      'excerpt',      'content',     'topic', 'program', 'category', 'image',
+		'series_name',  'title',      'excerpt',      'content',     'topic', 'program', 'category', 'image', 'series_image',
 		'user_content', 'user_title', 'user_excerpt', 'podcast_url', 'archive_url'
 	  )
 	{
@@ -985,7 +844,7 @@ sub check_params {
 		}
 	}
 
-	#print STDERR Dumper($checked);
+	#print STDERR "event params:".Dumper($checked);
 	return $checked;
 }
 

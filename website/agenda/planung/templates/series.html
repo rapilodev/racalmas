@@ -12,8 +12,9 @@ var region='<TMPL_VAR loc.region>';
 	<button onclick="add_series('<TMPL_VAR series_name>')"><TMPL_VAR .loc.button_add_series></button>
 	<div id="edit_new" class="editor" style="display:none;clear:both">
 		<form method="post" action="series.cgi">
-			<input type="hidden" name="project_id" value="<TMPL_VAR project_id>">
-			<input type="hidden" name="studio_id" value="<TMPL_VAR studio_id>">
+			<input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+			<input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+			<input type="hidden" name="image" value="<TMPL_VAR .image>">
 
 		    <div class="formField">
 		        <div class="label"><TMPL_VAR .loc.label_name></div>

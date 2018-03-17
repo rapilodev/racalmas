@@ -81,6 +81,17 @@ sub get{
 	return $studios;
 }
 
+sub getImageById{
+	my $config     = shift;
+    my $conditions = shift;
+    
+    return undef unless defined $conditions->{project_id};
+    return undef unless defined $conditions->{studio_id};
+    my $studios = studios::get($config, $conditions);
+    return undef if scalar(@$studios) != 1;
+    return $studios->[0]->{image};
+}
+
 sub insert{
 	my $config=shift;
 	my $entry=shift;

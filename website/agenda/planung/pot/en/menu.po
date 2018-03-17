@@ -49,3 +49,6 @@ msgstr "Import"
 msgid "help"
 msgstr "Help"
 
+msgid "images"
+msgstr "Images"
+

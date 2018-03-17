@@ -74,8 +74,8 @@ sub getProjects {
 	my $config = shift;
 
 	my $excludedProjects = {};
-	if ( defined $config->{filter}->{exclude_projects} ) {
-		for my $project ( split( /\,/, $config->{filter}->{exclude_projects} ) ) {
+	if ( defined $config->{filter}->{projects_to_exclude} ) {
+		for my $project ( split( /\,/, $config->{filter}->{projects_to_exclude} ) ) {
 			$project =~ s/^\s+//g;
 			$project =~ s/\s+$//g;
 			$excludedProjects->{$project} = 1;
