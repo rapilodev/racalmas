@@ -31,8 +31,6 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 	my %params = $cgi->Vars();
 	my $params = \%params;
 
-	#print STDERR Dumper($params);
-
 	my $config    = config::get('config/config.cgi');
 	my $debug     = $config->{system}->{debug};
 	my $mem_debug = $config->{system}->{debug_memory};
@@ -44,8 +42,11 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 		$output_header .= "Content-type:text/html; charset=UTF-8;\n\n";
 	}
 
-	#    $output_header.='<!DOCTYPE html>'."\n";
+    $params->{exclude_locations} = 1;
+    $params->{exclude_projects} = 1;
+    $params->{exclude_event_images} = 1;
 
+	#    $output_header.='<!DOCTYPE html>'."\n";
 	my $request = {
 		url    => $ENV{QUERY_STRING},
 		params => {
@@ -54,6 +55,7 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 		},
 	};
 	$params = $request->{params}->{checked};
+	#print STDERR Dumper($params);
 
 	my $mem = 0;
 	log::init($request);

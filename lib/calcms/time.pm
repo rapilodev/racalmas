@@ -24,7 +24,7 @@ our @EXPORT_OK = qw(
 	date_cond time_cond check_date check_time check_datetime check_year_month 
 	datetime_to_rfc822 get_datetime datetime_to_utc datetime_to_utc_datetime
 	get_duration get_duration_seconds 
-	get_durations get_names get_all_names get_weekdays weekday_index
+	get_durations get_names get_all_names weekday_index
 	$names 
 );
 
@@ -86,24 +86,24 @@ our $weekday_index={
 
 sub get_weekdays{
     return{
-        0 => 0,
         1 => 1,
         2 => 2,
         3 => 3,
         4 => 4,
         5 => 5,
         6 => 6,
-        'Mo'=>0,
-        'Tu'=>1,
-        'Di'=>1,
-        'We'=>2,
-        'Mi'=>2,
-        'Th'=>3,
-        'Do'=>3,
-        'Fr'=>4,
-        'Sa'=>5,
-        'Su'=>6,
-        'So'=>6
+        7 => 7,
+        'Mo'=>1,
+        'Tu'=>2,
+        'Di'=>2,
+        'We'=>3,
+        'Mi'=>3,
+        'Th'=>4,
+        'Do'=>4,
+        'Fr'=>5,
+        'Sa'=>6,
+        'Su'=>7,
+        'So'=>7
     };
 }
 
@@ -518,14 +518,15 @@ sub get_event_date{
 
 	my $datetime=time::time_to_datetime(time());
 	my $hour=(time::datetime_to_array($datetime))->[3];
+    #print STDERR "datetime=$datetime hour=$hour\n";
 	#today: between 0:00 and starting_hour show last day
 	if ($hour < $config->{date}->{day_starting_hour}){
-		my $date=time::datetime_to_array(time::add_hours_to_datetime($datetime,-24));
-		return $date->[0].'-'.$date->[1].'-'.$date->[2];
+		my $date=time::datetime_to_array(time::add_days_to_datetime($datetime,-1));
+		return join('-', ($date->[0], $date->[1], $date->[2]) );
 	}else{
 	#today: between starting_hour and end of day show current day
 		my $date=time::datetime_to_array(time::time_to_datetime(time()));
-		return $date->[0]."-".$date->[1]."-".$date->[2];
+		return join('-', ($date->[0], $date->[1], $date->[2]) );
 	}
 }
 
@@ -559,15 +560,22 @@ sub get_datetime{
 
 #get list of nth weekday in month from start to end
 sub get_nth_weekday_in_month{
-    my $start=shift;   # datetime string
-    my $end=shift;     # datetime string
-    my $nth=shift;     # every nth week of month
-    my $weekday=shift; # weekday [0..6,'Mo'-'Su','Mo'-'Fr'] 
+    my $start   = shift; # datetime string
+    my $end     = shift; # datetime string
+    my $nth     = shift; # every nth week of month
+    my $weekday = shift; # weekday [1..7,'Mo'-'Su','Mo'-'Fr'] 
 
-    my $weekdays=time::get_weekdays();
-    $weekday=$weekdays->{$weekday+1};
+    return [] unless defined $start;
+    return [] unless defined $end;
+    return [] unless defined $nth;
+    return [] unless defined $weekday;
+
+    my $weekdays = time::get_weekdays();
+    return [] unless defined $weekdays->{$weekday};
+    $weekday = $weekdays->{$weekday};
     
     my $dates=[];
+    
     if ($start=~/(\d\d\d\d)-(\d\d)-(\d\d)[ T](\d\d)\:(\d\d)/){
         my $hour=int($4);
         my $min=int($5);

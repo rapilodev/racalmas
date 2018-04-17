@@ -57,15 +57,31 @@ sub get_user{
 
 # get all users
 sub get_users{
-	my $config=shift;
+	my $config    = shift;
+    my $condition = shift;
+
+	my @conditions=();
+	my @bind_values=();
+
+    for my $key ('name', 'email'){
+        my $value = $condition->{$key};
+        next unless defined $value;
+        next if $value eq '';
+	    push @conditions, $key.'=?';
+	    push @bind_values, $value;
+    }
+
+	my $conditions='';
+	$conditions=" where ".join(" and ",@conditions) if (scalar @conditions>0);
 
 	my $query=qq{
 		select	id, name, full_name, email, disabled, modified_at, created_at
 		from 	calcms_users
+        $conditions
 	};
 
-	my $dbh=db::connect($config);
-	my $users=db::get($dbh, $query);
+	my $dbh   = db::connect($config);
+	my $users = db::get($dbh, $query, \@bind_values);
 	return $users;
 }
 
@@ -93,7 +109,7 @@ sub get_users_by_studio{
 	}
 
 	my $conditions='';
-	$conditions=" and ".join(" and ",@conditions) if (@conditions>0);
+	$conditions=" and ".join(" and ",@conditions) if (scalar @conditions>0);
 
 	my $query=qq{
 		select	distinct(u.id), u.name, u.full_name
@@ -808,9 +824,11 @@ sub print_warn{
 }
 
 sub print_error{
+    my $message=shift;
+    print STDERR "ERROR:".$message."\n";
     print '<div class="error" head>'
         .'<span class="ui-icon ui-icon-alert" style="float:left"></span>&nbsp;'
-        .$_[0].
+        .$message.
         '</div>'."\n";
 }
 

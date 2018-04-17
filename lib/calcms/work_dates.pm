@@ -247,7 +247,7 @@ sub get_week_of_month_dates{
     return undef if $frequency eq'';
     return undef if $frequency==0;
 
-    my $start_dates=time::get_nth_weekday_in_month($start, $end, $week, $weekday-1);
+    my $start_dates=time::get_nth_weekday_in_month($start, $end, $week, $weekday);
 
     my $results=[];
     

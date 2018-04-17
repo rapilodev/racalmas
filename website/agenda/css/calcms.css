@@ -747,7 +747,7 @@ a#calcms_search_show_details #plus{
 #player{
     border:0;
     padding:0;
-    height:64px;
+    height:3rem;
 }
 #player:hover{
     opacity:0.9;

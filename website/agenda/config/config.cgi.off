@@ -104,6 +104,8 @@ project                 Corax
     # limit creating comments in days before and after start of event
     no_new_comments_before  10 
     no_new_comments_after   60
+    
+    # hide_event_images   1
 </permissions>
 
 <access>
