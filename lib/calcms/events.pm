@@ -1211,7 +1211,7 @@ sub render {
 	  if ( $project->{name} ne '' );
 
 	$template_parameters->{controllers} = $config->{controllers};
-	$template_parameters->{hide_event_images}=1 if $config->{permissions}->{hide_event_images} == 1;
+	$template_parameters->{hide_event_images}=1 if (defined $config->{permissions}->{hide_event_images}) && ($config->{permissions}->{hide_event_images} == 1);
 
 	  #    use Data::Dumper;print STDERR Dumper($template_parameters)."\n";
     template::process( $_[0], $params->{template}, $template_parameters );

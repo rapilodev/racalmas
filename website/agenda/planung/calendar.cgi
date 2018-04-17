@@ -28,6 +28,7 @@ use markup;
 use user_settings;
 use localization;
 use DateTime;
+use audio_recordings;
 
 binmode STDOUT, ":utf8";
 
@@ -423,9 +424,12 @@ sub showCalendar {
 				$events_by_start->{ $date->{start} }->{duration}  = $date->{duration}  || 0;
 				$events_by_start->{ $date->{start} }->{rms_left}  = $date->{rms_left}  || 0;
 				$events_by_start->{ $date->{start} }->{rms_right} = $date->{rms_right} || 0;
+                $events_by_start->{ $date->{start} }->{playout_modified_at} = $date->{modified_at};
+                $events_by_start->{ $date->{start} }->{playout_updated_at}  = $date->{updated_at} ;
 			}
 			push @$events, $date;
 		}
+
 	}
 
 	#output
@@ -489,6 +493,15 @@ sub showCalendar {
 			find_errors($events);
 		}
 	}
+
+    for my $event (@$events){
+        next unless defined $event->{uploaded_at};
+        #print STDERR "uploadAt=$event->{uploaded_at}, playoutModified:$event->{playout_modified_at}, playoutUpdatedAt:$event->{playout_updated_at}\n";
+        next if (defined $event->{playout_updated_at}) && ( $event->{uploaded_at} lt $event->{playout_updated_at} );
+        #print STDERR Dumper($event);
+        $event->{upload} ='pending' ;
+        #$event->{title}.='<br>pending';
+    }
 
 	if ( $params->{list} == 1 ) {
 		showEventList( $config, $permissions, $params, $events_by_day );
@@ -1405,6 +1418,10 @@ sub print_event {
 		$attr .= ' start="' . $event->{start} . '"'   if defined $event->{start};
 	}
 
+    if (defined $event->{upload}){
+        $content.='<br>uploading <progress max="10" ></progress> ';
+    }
+
 	if ($showIcons) {
 		$content = '<div class="text">' . $content . '</div><div class="icons"></div>';
 	}
@@ -1734,6 +1751,7 @@ sub getSeriesEvents {
 	#get events (directly from database to get the ones, not assigned, yet)
 	delete $options->{studio_id};
 	delete $options->{project_id};
+    $options->{recordings}=1;
 
 	my $request2 = {
 		params => {

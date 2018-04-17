@@ -35,7 +35,7 @@ sub get{
 	my $condition=shift;
 
     my $date_range_include=0;
-    $date_range_include=1 if $condition->{date_range_include}==1;
+    $date_range_include=1 if (defined $condition->{date_range_include}) && ($condition->{date_range_include}==1);
 
 	my $dbh=db::connect($config);
 

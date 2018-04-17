@@ -52,3 +52,6 @@ msgstr "Help"
 msgid "images"
 msgstr "Images"
 
+msgid "schedule"
+msgstr "roster"
+
