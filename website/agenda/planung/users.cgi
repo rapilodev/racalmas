@@ -13,6 +13,7 @@ use roles;
 use studios;
 use params;
 use localization;
+use password_requests;
 
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
@@ -200,13 +201,15 @@ sub update_user {
 			return;
 		}
 
-        my $users= uac::get_users($config, {email => $params->{email}});
+        #print Dumper($params);
+        my $users= uac::get_users($config, {email => $params->{user_email}});
         if (scalar (@$users) > 0){
+            #print Dumper($users);
 			error('There is already a user registered for the given email address');
 			return;
         }
 
-		return unless password_request::checkPassword( $params->{user_password} ) ;
+		return unless password_requests::checkPassword( $params->{user_password} ) ;
 
 		if ( $params->{user_password} ne $params->{user_password2} ) {
 			error('password mismatch');
