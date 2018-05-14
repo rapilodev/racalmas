@@ -1,11 +1,13 @@
-# racalmas
-radio calendar management system
+#radio calendar management system
 
 public view
 ![public calendar](docs/screenshots/web-view.png)
 
 management view
 ![management calendar](docs/screenshots/calcms-calendar.png)
+
+show series
+![series](docs/screenshots/calcms-show-series.png)
 
 edit series 
 ![series](docs/screenshots/calcms-series.png)
