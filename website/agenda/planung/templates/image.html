@@ -1,6 +1,21 @@
+<!-- 
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="js/admin.js" type="text/javascript"></script>
+<script src="js/history.js" type="text/javascript"></script>
+<script src="js/localization.js" type="text/javascript"></script>
+<script src="js/localization-datetime.js" type="text/javascript"></script>
+<script src="js/event.js" type="text/javascript"></script>
+<script src="js/datetime.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="css/admin.css" type="text/css" /> 
+<link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css" /> 
+<link rel="stylesheet" href="css/series.css" type="text/css" /> 
+ -->
 
 <link type="text/css" href="css/image_manager.css" rel="stylesheet"/>
 <link type="text/css" href="css/fileUploader.css" rel="stylesheet"/>
+
 <script src="js/fileUploader.js" type="text/javascript"></script>
 <script src="js/image.js" type="text/javascript"></script>
 <TMPL_IF .allow.create_image>
@@ -23,15 +38,16 @@
                     selectedImageTab = getSelectedTab('image-tabs');
 
                     <TMPL_IF .allow.create_image>
-                    if(selectedImageTab=="upload"){
-                        initUploadDialog();
-                        $('#imageList').hide();
-                        return 
-                    }else{
-                        closeImageUpload();
-                        $('#imageList').show();
-                    }
+                        if(selectedImageTab=="upload"){
+                            initUploadDialog();
+                            $('#imageList').hide();
+                            return;
+                        }
                     </TMPL_IF>
+
+                    // show images by default
+                    closeImageUpload();
+                    $('#imageList').show();
                 }
             });
             // get initially selected tab
@@ -45,41 +61,38 @@
 
 <div id="image-tabs">
     <ul>
-        <li><a href="#image-tabs-select" value="select"><TMPL_VAR .loc.tab_select></a></li>
-        <TMPL_IF .allow.update_image>
-            <li><a href="#image-tabs-edit" value="edit"><TMPL_VAR .loc.tab_edit></a></li>
-        </TMPL_IF>
+        <li>
+            <a href="#image-tabs-select" value="select"> 
+                <TMPL_VAR .loc.tab_select> 
+                <TMPL_IF .allow.update_image> / <TMPL_VAR .loc.tab_edit> </TMPL_IF> 
+            </a>
+        </li>
+
         <TMPL_IF .allow.create_image>
-            <li><a href="#image-tabs-upload" value="upload"><TMPL_VAR .loc.tab_upload></a></li>
+        <li>
+            <a href="#image-tabs-upload" value="upload"><TMPL_VAR .loc.tab_upload></a>
+        </li>
         </TMPL_IF>
     </ul>
 
-<!-- select image -->
-<div id="image-tabs-select">
-</div>
+    <!-- select image -->
+    <div id="image-tabs-select">
+    </div>
 
-<!-- edit image -->
-<TMPL_IF .allow.update_image>
-<div id="image-tabs-edit">
-</div>
-</TMPL_IF>
-
-<!-- upload images -->
-<TMPL_IF .allow.create_image>
-<div id="image-tabs-upload">
-        <div id="img_upload">
-	        <div id="img_upload_result"></div>
-	        <form id="image_upload" method="post" action="imageUpload.cgi" enctype="multipart/form-data">
-	            <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-	            <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
-		        <input id="uploader" type="file" name="image" value="<TMPL_VAR image escape=0>" accept="text/*" maxlength="1000000" size="10"/>  </td>
-		        <button type="submit" name="action" value="upload" id="pxUpload" ><TMPL_VAR .loc.button_upload></button>
-	        </form>
-        </div>
-</div>
-</TMPL_IF>    
-
-<!-- tabs -->
+    <!-- upload images -->
+    <TMPL_IF .allow.create_image>
+    <div id="image-tabs-upload">
+            <div id="img_upload">
+	            <div id="img_upload_result"></div>
+	            <form id="image_upload" method="post" action="imageUpload.cgi" enctype="multipart/form-data">
+	                <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+	                <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+		            <input id="uploader" type="file" name="image" value="<TMPL_VAR image escape=0>" accept="text/*" maxlength="1000000" size="10"/>  </td>
+		            <button type="submit" name="action" value="upload" id="pxUpload" ><TMPL_VAR .loc.button_upload></button>
+	            </form>
+            </div>
+    </div>
+    </TMPL_IF>    
 </div>
 
 <div id="imageList">
@@ -87,6 +100,7 @@
 	    <button onclick="decreaseImageSize();return false;" title="<TMPL_VAR .loc.button_zoom_out>">-</button>
 	    <button onclick="increaseImageSize();return false;" title="<TMPL_VAR .loc.button_zoom_in>">+</button>
     </div>
+
 	<form id="image_manager" action="image.cgi">
 		<input name="search" value="<TMPL_VAR search escape=0>" style="width:20em;">
 		<input type="hidden" name="filename" value="<TMPL_VAR filename escape=0>">
@@ -94,25 +108,27 @@
 	    <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
 		<button onclick="searchImage();return false;"><TMPL_VAR .loc.button_search></button>
 	</form>
-    <div style="clear:both;">
-        <TMPL_VAR count> <TMPL_VAR .loc.label_search_hits><br />
-        <div class="images">
+    <TMPL_VAR count> <TMPL_VAR .loc.label_search_hits><br />
+
+    <div style="clear:both;display: flex; flex-direction: row;">
+
+        <div class="images" style="height:1000px;overflow-y:scroll">
             <TMPL_LOOP images>
 	            <div class="image" 
 		            id="img_<TMPL_VAR id>" 
 		            style="background-image:url('showImage.cgi?project_id=<TMPL_VAR project_id>&studioId=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR filename>')"
 		            title="<TMPL_VAR description>"
-		            onclick="imageAction('<TMPL_VAR filename>');return false;"
+		            onclick="updateImageEditor('<TMPL_VAR filename>', this);return false;"
 	            >
 		            <div class="label"><TMPL_VAR name></div>
 	            </div>
             </TMPL_LOOP>
         </div>
+
+        <div id="img_editor" >
+        </div>
     </div>
 </div>
-
-<div id="img_editor" style="display:none"></div>
-<div id="img_image" style="display:none"></div>
 
 </TMPL_IF>
 <!-- content -->

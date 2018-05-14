@@ -1,25 +1,6 @@
-function editImage(filename){
-	$("#img_editor").load('image.cgi?show='+filename+'&template=image_edit.html',
-		function(){
-			$('#img_editor').dialog({
-				width:920,
-				height:330
-			});
-		}
-	);
-}
-
-function showImage(url){
-	$("#img_image").html('<img src="'+url+'" onclick="$(\'#img_image\').dialog(\'close\');return false;"/>');
-	$("#img_image").dialog({
-		width:640,
-		height:640
-	});
-}
-
+/*
 function hideImageDetails(id,filename){
 	try{$('#img_editor').dialog('close');}catch(e){}
-	try{$('#img_image').dialog("close");}catch(e){}
 
 	$("#"+id).load('image.cgi?show='+filename+'&template=image_single.html');
 	return false;
@@ -61,4 +42,4 @@ function showImageUrl(id){
 	return false;
 }
 
-
+*/

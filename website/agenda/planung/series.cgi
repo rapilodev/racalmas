@@ -1091,6 +1091,7 @@ sub show_series {
 			series_id  => $serie->{series_id}
 		}
 	);
+    uac::print_warn( "There is no user assigned, yet. Please assign a user!" ) if scalar @{$serie->{series_users}} ==0;
 
 	#add events
 	$serie->{events} = series::get_events(

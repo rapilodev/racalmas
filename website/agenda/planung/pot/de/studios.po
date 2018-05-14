@@ -34,6 +34,9 @@ msgstr "Beschreibung"
 msgid "label_location"
 msgstr "ID"
 
+msgid "label_image"
+msgstr "Logo"
+
 msgid "label_stream"
 msgstr "Stream-URL"
 

@@ -632,7 +632,7 @@ sub get_query {
 		$bind_values = [ $params->{event_id} ];
 
 		#filter by published, default=1 to see published only, set published='all' to see all
-		my $published = $params->{published} || 1;
+		my $published = $params->{published} || '1';
 		if ( ( $published eq '0' ) || ( $published eq '1' ) ) {
 			push @$where_cond,  'published=?';
 			push @$bind_values, $published;
@@ -945,7 +945,7 @@ sub get_query {
 
 	#filter by published, default =1, set to 'all' to see all
 	my $published_cond = '';
-	my $published = $params->{published} || 1;
+	my $published = $params->{published} || '1';
 	if ( ( $published eq '0' ) || ( $published eq '1' ) ) {
 		$published_cond = 'published=?';
 		push @$bind_values, $published;

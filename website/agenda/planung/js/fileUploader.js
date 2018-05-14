@@ -115,18 +115,30 @@
 				var formId = "pxupload" + itr;
 				var iframeId = "pxupload" + itr + "_frame";
 				var inputId = "pxupload" + itr + "_input";
-				var contents = 
-				'<form method="post" id="'+ formId +'" action="'+ px.formAction +'" enctype="multipart/form-data" target="'+ iframeId +'">' 
-				+'<br/>'+loc['label_name']+'<br /><input name="name" />'
-				+'<br/>'+loc['label_description']+'<br /><textarea name="description" rows="3" cols="40"></textarea>'
-				;
+				var contents = ''
+				contents += '<form method="post" id="'+ formId +'" action="'+ px.formAction +'" enctype="multipart/form-data" target="'+ iframeId +'">' 
+
 				if (studio_id != null) contents+='<input type="hidden" name="studio_id" value="'+studio_id+'">';
 				if (project_id != null) contents+='<input type="hidden" name="project_id" value="'+project_id+'">';
-				contents+=
-				'<input type="file" name="'+ config.inputName +'" id="'+ inputId +'" class="pxupload" size="'+ config.inputSize +'" onchange="$.fileUploader.change(this);" />' 
-				+'<input name="action" value="upload" type="hidden"/>'
-				+'</form>'
-				+'<iframe id="'+ iframeId +'" name="'+ iframeId +'" src="about:blank" style="display:none"></iframe>';
+
+				contents += '<label>'+loc['label_name']+'</label><br>'
+                contents += '<input name="name" /><br />'
+
+				contents += '<label>'+loc['label_description']+'</label><br>'
+                contents += '<textarea name="description" rows="3" cols="40"></textarea><br />'
+
+				contents += '<label>'+loc['label_author']+'/'+loc['label_licence']+'</label><br>'
+                contents += '<input name="licence" /><br />'
+
+				contents += '<label>'+loc['label_public']+'</label><br>'
+                contents += '<input type="checkbox" name="public"><br />'
+				
+				contents += '<label>'+loc['label_file']+'</label><br>'
+				contents += '<input type="file" name="'+ config.inputName +'" id="'+ inputId +'" class="pxupload" size="'+ config.inputSize +'" onchange="$.fileUploader.change(this);" />' 
+				contents += '<input name="action" value="upload" type="hidden"/>'
+				contents += '</form>'
+
+				contents += '<iframe id="'+ iframeId +'" name="'+ iframeId +'" src="about:blank" style="display:none"></iframe>';
 				
 				$("#pxupload_form").append( contents );
 			},

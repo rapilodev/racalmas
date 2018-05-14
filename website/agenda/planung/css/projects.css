@@ -17,11 +17,6 @@
     clear:both;
 }
 
-#content div.view img{
-    max-width:50px;
-    max-height:50px;
-}
-
 #content div.editor div.right{
 	float:right;
 	padding:0;

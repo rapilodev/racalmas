@@ -677,35 +677,30 @@ var calcms = (function($) {
 	my.showCommentForm = function showCommentForm(id, parent_id, event_id,
 			event_start) {
 		var response = '<div>';
-		if (parent_id != '')
-			response += 'Deine Anwort:';
-		document.getElementById(id).innerHTML = response
-				+ '<form    id="add_comment_'
-				+ parent_id
-				+ '"                        '
-				+ '    action="/agenda/kommentar_neu/?" method="post"                 '
-				+ '    onsubmit="calcms.addComment(\'add_comment_'
-				+ parent_id
-				+ '\',this);return false;"    '
-				+ '>'
-				+ '    Name: *<br />                                '
-				+ '    <input name="author" maxlength="40" /><br />                '
-				+ '    Was ich sagen will, ist: *<br />                     '
-				+ '    <textarea name="content" cols="60" rows="10"                '
-				+ '        onkeyup="javascript:if (this.value.length>1000) this.value=this.value.substr(0,1000)"        '
-				+ '    ></textarea><br />'
+		if (parent_id != '') response += 'Deine Anwort:';
+		var html = response
+		html += '<form id="add_comment_' + parent_id +'"'
+		html += ' action="/agenda/kommentar_neu/?" method="post"'
+		html += ' onsubmit="calcms.addComment(\'add_comment_'+parent_id+'\',this);return false;"'
+		html += '>'
+        html += 'Mit dem Absenden Ihres Kommentars erklären Sie sich mit der Veröffentlichung der Daten einverstanden.<br> ';
+        html += 'Die Email-Addresse ist optional, dient privaten Antworten und wird nicht veröffentlicht.<br> '
+        html += 'Details siehe <a href="/datenschutzerklaerung/">Datenschutzerklärung und Widerrufshinweise</a>.<br>'
+		html += '<input name="author" maxlength="40" placeholder="Nickname"/><br />'
+		html += '<textarea name="content" cols="60" rows="10"'
+		html += ' onkeyup="javascript:if (this.value.length>1000) this.value=this.value.substr(0,1000)"'
+        html += ' placeholder="Was ich sagen will, ist..."'
+		html += ' ></textarea><br />'
+		html += '<input name="email" maxlength="40" placeholder="Email-Addresse f&uuml;r R&uuml;ckmeldungen"/><br />'
+        html += '<input type="submit" value="absenden!" style="color:#000"/>'
+		html += '<input name="event_id"    value="' + event_id + '" type="hidden" />'
+		html += '<input name="parent_id"    value="' + parent_id + '" type="hidden" />'
+		html += '<input name="event_start" value="' + event_start + '" type="hidden" />'
+        html += '</form>'
+        html += '</div>';
 
-				+ '    Email: (f&uuml;r R&uuml;ckmeldungen, wird nicht angezeigt)<br />    '
-				+ '    <input name="email" maxlength="40" /><br />                '
+        document.getElementById(id).innerHTML = html
 
-				+ '    <input type="submit"    value="abschicken!" />                '
-				+ '    <input name="event_id"    value="' + event_id
-				+ '"    type="hidden" />    '
-				+ '    <input name="parent_id"    value="' + parent_id
-				+ '"    type="hidden" />    '
-				+ '    <input name="event_start" value="' + event_start
-				+ '" type="hidden" />    ' + '</form>' + '</div>';
-		// $("#"+id).show("drop");
 		my.show(id);
 	}
 	// end of Comment actions

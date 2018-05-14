@@ -188,7 +188,7 @@ sub show_image {
 
 	if ( $params->{template} =~ /edit/ ) {
 	    my $result = $results->[0];
-        $result->{missing_licence}=1 unless $result->{licence}=~/\S/;
+        $result->{missing_licence}=1 if (! defined $result->{licence} ) || ( $result->{licence}!~/\S/);
 		$results = [ $result ] ;
 	}
 

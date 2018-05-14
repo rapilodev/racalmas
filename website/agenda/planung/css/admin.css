@@ -235,25 +235,26 @@ li.ui-menu-item{
 	color:green;
 }
 
+#content div.ok,
+#content div.warn,
+#content div.error{
+    font-weight:bold;
+    margin:0.5rem;
+    padding:1rem;
+}
+
 div.ok{
-    border:2px solid #aca;
-	background:#cfc;
-	background: linear-gradient(to right, #cfc, white);
-	opacity:0.8;
+    color:white;
+	background:#0c0;
 }
 
 div.warn{
-    border:2px solid #ff0;
 	background:#ff0;
-	background: linear-gradient(to right, #ff3, white);
-	opacity:0.8;
 }
 
 div.error{
-    border:2px solid #f99;
-	background:#fcc;
-	background: linear-gradient(to right, #fcc, white);
-	opacity:0.8;
+    color:white;
+	background:#d00;
 }
 
 #content button,
@@ -435,3 +436,6 @@ input[type='checkbox']{
     clear:both;
 }
 
+#content input[readonly] {
+    border: 0;
+}

@@ -43,15 +43,22 @@
                         );
                     }
                 });
+            <TMPL_IF edit_lock>
+            $( "#edit_event input" ).prop( "disabled", true );
+            $( "#edit_event textarea" ).prop( "disabled", true );
+            $( "#edit_event select" ).prop( "disabled", true );
+            </TMPL_IF>
+    
             }
         );
+
     </script>
 
 </head>
 <body>
 
 <TMPL_IF edit_lock>
-<div class="ok head"><TMPL_VAR loc.label_edit_lock></div>
+<div class="warn head"><TMPL_VAR loc.label_edit_lock></div>
 </TMPL_IF>
 
 <!-- edit -->
@@ -208,6 +215,7 @@
     </TMPL_UNLESS>
 
     <!-- header buttons -->
+    <TMPL_UNLESS edit_lock>
     <div class="buttons" style="text-align:center;clear:both">
         <TMPL_IF show_new_event_from_schedule>
             <TMPL_IF .allow.create_event_from_schedule>
@@ -236,7 +244,7 @@
             </TMPL_UNLESS>
         </TMPL_IF>
     </div>
-
+    </TMPL_UNLESS>
     <!-- download output -->
     <TMPL_IF download>
         <textarea type="hidden" name="event_id" ><TMPL_VAR download></textarea>
@@ -490,6 +498,7 @@
     </table>
 
     <!-- buttons -->
+    <TMPL_UNLESS edit_lock>
     <table>
         <tr> 
             <td colspan="2">
@@ -524,6 +533,7 @@
             </td>
         </tr>
     </table>
+    </TMPL_UNLESS>
 
     </form>
 </div>

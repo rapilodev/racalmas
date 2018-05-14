@@ -1,3 +1,6 @@
+<script src="js/image.js" type="text/javascript"></script>
+<link href="css/image-manager.css" type="text/css" rel="stylesheet" /> 
+
 <h2><TMPL_VAR .loc.title></h2>
 
 <TMPL_IF .allow.update_studio>
@@ -12,7 +15,6 @@
 		        <tr><td class="label"><TMPL_VAR .loc.label_description></td> 	 <td><input name="description" ></td></tr>
 		        <tr><td class="label"><TMPL_VAR .loc.label_location></td> 	     <td><input name="location"    ></td></tr>
 		        <tr><td class="label"><TMPL_VAR .loc.label_stream></td> 	     <td><input name="stream"      ></td></tr>
-<!--		        <tr><td class="label"><TMPL_VAR .loc.label_google_calendar></td> <td><input name="google_calendar" ></td></tr> -->
 		        <tr>
 			        <td></td>
 			        <td class="buttons">
@@ -45,11 +47,11 @@
 	<!-- view studio -->
 	<div id="view_<TMPL_VAR id>" class="view">
 		<table>
+			<tr><td class="label"><TMPL_VAR .loc.label_image></td> 	         <td><img src="showImage.cgi?project_id=<TMPL_VAR .project_id>&studioId=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=thumbs"> &nbsp;</td></tr>
 			<tr><td class="label"><TMPL_VAR .loc.label_name></td> 	         <td><TMPL_VAR name> &nbsp;</td></tr>
 			<tr><td class="label"><TMPL_VAR .loc.label_description></td> 	 <td><TMPL_VAR description> &nbsp;</td></tr>
 			<tr><td class="label"><TMPL_VAR .loc.label_location></td> 	     <td><TMPL_VAR location> &nbsp;</td></tr>
 			<tr><td class="label"><TMPL_VAR .loc.label_stream></td> 	     <td><TMPL_VAR stream> &nbsp;</td></tr>
-			<!--<tr><td class="label"><TMPL_VAR .loc.label_google_calendar></td> <td><TMPL_VAR google_calendar> &nbsp;</td></tr>-->
 		</table>
 	</div>
 
@@ -65,7 +67,17 @@
 			    <tr><td class="label"><TMPL_VAR .loc.label_description></td>     <td><input name="description" value="<TMPL_VAR description>"></td></tr>
 			    <tr><td class="label"><TMPL_VAR .loc.label_location></td> 	     <td><input name="location" value="<TMPL_VAR location>"></td></tr>
 			    <tr><td class="label"><TMPL_VAR .loc.label_stream></td> 	     <td><input name="stream" value="<TMPL_VAR stream>"></td></tr>
-			    <!--<tr><td class="label"><TMPL_VAR .loc.label_>google calendar</td> <td><input name="google_calendar" value="<TMPL_VAR google_calendar>"></td></tr>		-->
+                <tr><td class="label">
+                    <TMPL_VAR .loc.label_image></td>      
+                    <td>
+                        <button onclick="selectImage('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','image_<TMPL_VAR id>','<TMPL_VAR series_name escape=HTML>','<TMPL_VAR image escape=URL>','<TMPL_VAR series_id>');return false;"
+                            style="padding:0;float:left"
+                        >
+                            <img id="imagePreview" src="showImage.cgi?project_id=<TMPL_VAR .project_id>&studioId=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=thumbs">
+                        </button>
+                        <input id="image_<TMPL_VAR id>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.template_image>">
+                    </td>
+                </tr>
 			    <tr>
 				    <td></td>
 				    <td class="buttons">

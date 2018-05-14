@@ -222,7 +222,7 @@ sub check_params {
 		}
 	}
 
-	for my $param ( 'name', 'description', 'location', 'stream', 'google_calendar' ) {
+	for my $param ( 'name', 'description', 'location', 'stream', 'google_calendar', 'image' ) {
 		if ( defined $params->{$param} ) {
 			$checked->{$param} = $params->{$param};
 		}

@@ -399,7 +399,9 @@ sub showCalendar {
 			$date->{title} .= $format if defined $format;
 			$date->{title} .= '<b>library</b>: ' . ( $date->{writing_library} || '' ) . '<br>' if defined $date->{'writing_library'};
 			$date->{title} .= '<b>path</b>: ' . ( $date->{file} || '' ) . '<br>' if defined $date->{file};
-
+            $date->{title} .= '<b>updated_at</b>: ' . ( $date->{updated_at} || '' ) . '<br>' if defined $date->{updated_at};
+            $date->{title} .= '<b>modified_at</b>: ' . ( $date->{modified_at} || '' ) . '<br>' if defined $date->{modified_at};
+            #print STDERR Dumper($date) if $date->{file}=~/180503/;
 			#$date->{title}.= '<b>rms_image</b>: '    .($date->{rms_image}||'').'<br>' if defined $date->{rms_image};
 
 			$date->{rms_image} = uri_unescape( $date->{rms_image} ) if defined $date->{rms_image};
@@ -496,9 +498,9 @@ sub showCalendar {
 
     for my $event (@$events){
         next unless defined $event->{uploaded_at};
-        #print STDERR "uploadAt=$event->{uploaded_at}, playoutModified:$event->{playout_modified_at}, playoutUpdatedAt:$event->{playout_updated_at}\n";
+        print STDERR "uploadAt=$event->{uploaded_at}, playoutModified:$event->{playout_modified_at}, playoutUpdatedAt:$event->{playout_updated_at}\n";
         next if (defined $event->{playout_updated_at}) && ( $event->{uploaded_at} lt $event->{playout_updated_at} );
-        #print STDERR Dumper($event);
+        print STDERR Dumper($event);
         $event->{upload} ='pending' ;
         #$event->{title}.='<br>pending';
     }

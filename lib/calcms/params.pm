@@ -21,8 +21,8 @@ sub get{
     #get the Apache2::RequestRec
 	my $r=shift;
 
-	my $tmp_dir     ='/var/tmp/';
-	my $upload_limit=1000*1024;
+	my $tmp_dir      = '/var/tmp/';
+	my $upload_limit = 1000*1024;
 
 	my $cgi    = undef;
 	my $status = undef;

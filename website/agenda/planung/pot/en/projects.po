@@ -43,8 +43,11 @@ msgstr "assign studio"
 msgid "button_edit"
 msgstr "edit"
 
+msgid "button_change"
+msgstr "change"
+
 msgid "button_show_changes"
-msgstr "changes"
+msgstr "show changes"
 
 msgid "label_name"
 msgstr "name"

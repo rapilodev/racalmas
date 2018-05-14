@@ -282,9 +282,15 @@ sub show_login_form{
 <meta charset="UTF-8"> 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style type="text/css">
+    *{
+        font-family:Roboto,sans-serif;
+        margin:0;
+        padding:0;
+        border:0;
+    }
+
     html,body{
         height: 100%;
-        font-family:helvetica,arial,sans-serif;
     }
 
     body{
@@ -293,7 +299,7 @@ sub show_login_form{
     }
 
     input, .row, .field{
-        padding:0.5em;
+        padding:0.5rem;
     }
 
     .container{
@@ -302,27 +308,42 @@ sub show_login_form{
         vertical-align: middle;    
     }
 
+    input{
+        border:0;
+        border-bottom: 1px solid #39a1f4;
+        margin-right:1rem;
+    }
+
 	#login_form{
 		background:#ddd;
-        box-shadow: 1em 1em 1em #888;
-		margin:1em;
-		padding:1em;
+        box-shadow: 6px 6px 6px #ccc;
+		margin:1rem;
+		padding:1rem;
         text-align:center;
 	}
 
 	#login_form .field{
-		width:8em;
+		width:8rem;
 		float:left;
 	}
 
 	#login_form .message{
-		background:#ccc;
+        color:white;
+		background:#666;
 		text-align:left;
 		font-weight:bold;
-        padding:1em;
-        margin:-1em;
+        padding:1rem;
+        margin:-1rem;
         margin-bottom:0;
 	}
+    input.button{
+        padding:1rem;        
+        color:#fff;
+        background:#39a1f4;
+        border:0;
+        font-weight:bold;
+    }
+
 </style>
 </head>
 <body>
@@ -340,8 +361,8 @@ sub show_login_form{
 		        <input type="password" name="password"><br/>
             </div>
             <div class="row">
-		        <input type="submit" name="action" value="login">
-		        <input type="submit" name="action" value="logout">
+		        <input class="button" type="submit" name="action" value="login">
+		        <input class="button" type="submit" name="action" value="logout">
             </div>
 		    <input type="hidden" name="uri" value="$uri">
 	    </form>

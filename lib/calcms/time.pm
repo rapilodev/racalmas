@@ -339,9 +339,27 @@ sub get_duration_seconds{
 	my $start   = shift;
 	my $end     = shift;
 	my $timezone= shift||'UTC';
-	$start=time::get_datetime($start, $timezone);
-	$end  =time::get_datetime($end,   $timezone);
-	my $duration=$end->epoch()-$start->epoch();
+
+    unless (defined $start){
+        print STDERR "time::get_duration_seconds(): start is missing\n";
+        return 0;
+    }
+    unless (defined $end){
+        print STDERR "time::get_duration_seconds(): end is missing\n";
+        return 0;
+    }
+
+	$start= time::get_datetime($start, $timezone);
+	$end  = time::get_datetime($end,   $timezone);
+    unless (defined $start){
+        print STDERR "time::get_duration_seconds(): invalid start\n";
+        return 0;
+    }
+    unless (defined $end){
+        print STDERR "time::get_duration_seconds(): invalid end\n";
+        return 0;
+    }
+	my $duration=$end->epoch() - $start->epoch();
 	return $duration;
 }
 

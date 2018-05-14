@@ -49,7 +49,7 @@ if ( $0 =~ /upload_playout.*?\.cgi$/ ) {
 	#print Dumper($content)."\n";
 	#print Dumper($r);
 	#print Dumper($json);
-	print "result:" . Dumper($result);
+	print "upload playout result:" . Dumper($result);
 }
 
 1;

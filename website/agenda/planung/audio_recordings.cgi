@@ -298,6 +298,7 @@ sub showAudioRecordings {
 			event_id   => $params->{event_id},
 		}
 	);
+	#print Dumper($audioRecordings);
 	for my $recording (@$audioRecordings) {
 		$recording->{size} =~ s/(\d)(\d\d\d)$/$1\.$2/g;
 		$recording->{size} =~ s/(\d)(\d\d\d\.\d\d\d)$/$1\.$2/g;
@@ -531,6 +532,7 @@ sub getEventDuration{
 		},
 		config      => $config
 	};
+	$request->{params}->{checked}->{published}='all';
 	my $events   = events::get( $config, $request );
 	if (scalar @$events == 0){
 	    print STDERR "getEventDuration: no event found with event_id=$eventId\n";

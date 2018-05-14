@@ -31,6 +31,14 @@
 			        <td><textarea name="description" cols="50" rows=5><TMPL_VAR description escape=0></textarea></td>
 		        </tr>
 		        <tr>
+                    <td><label><TMPL_VAR .loc.label_author>/<TMPL_VAR .loc.label_licence></label></td>
+                    <td><input name="licence" value="<TMPL_VAR licence>" placeholder="<TMPL_VAR .loc.label_licence_missing>"/></td>
+		        </tr>
+		        <tr>
+                    <td><label><TMPL_VAR .loc.label_public></label></td>
+                    <td><input type="checkbox" name="public"/></td>
+		        </tr>
+		        <tr>
 			        <td colspan="2" style="text-align:right">
 				        <input type="submit" name="action" value="Hochladen!" />
 			        </td>

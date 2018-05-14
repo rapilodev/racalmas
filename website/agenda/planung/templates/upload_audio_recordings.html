@@ -58,6 +58,8 @@
     <tr>
         <th>action</th>
         <th>name</th>
+        <th>uploaded by</th>
+        <th>uploaded at</th>
         <th>size in bytes</th>
         <th>event duration in seconds</th>
         <th>audio duration in seconds</th>
@@ -65,13 +67,14 @@
         <th>RMS R</th>
         <th>processed</th>
         <th>mastered</th>
-        <th>uploaded by</th>
-        <th>uploaded at</th>
+        <th>modified at</th>
     </tr>
     <TMPL_LOOP audio_recordings>
         <tr>
             <td><button onclick="playAudio('<TMPL_VAR path>');return false">play</button></td>
             <td><TMPL_VAR path></td>
+            <td><TMPL_VAR created_by></td>
+            <td><TMPL_VAR created_at></td>
             <td><TMPL_VAR size></td>
             <td><TMPL_VAR eventDuration></td>
             <td><TMPL_VAR audioDuration></td>
@@ -79,8 +82,7 @@
             <td><TMPL_VAR rmsRight></td>
             <td><TMPL_VAR processed></td>
             <td><TMPL_VAR mastered></td>
-            <td><TMPL_VAR created_by></td>
-            <td><TMPL_VAR created_at></td>
+            <td><TMPL_VAR modified_at></td>
             <TMPL_IF .allow.delete_audio_recordings>
             <td>
                 <form method="post">

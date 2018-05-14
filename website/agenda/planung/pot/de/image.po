@@ -61,6 +61,12 @@ msgstr "Lizenz"
 msgid "label_public"
 msgstr "veröffentlicht"
 
+msgid "label_file"
+msgstr "Datei"
+
 msgid "label_licence_missing"
 msgstr "bitte eintragen"
+
+msgid "select_image"
+msgstr "Dieses Bild zuweisen"
 

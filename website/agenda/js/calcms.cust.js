@@ -392,13 +392,12 @@ var calcms_settings = new Array();
         $('header.entry-header').each( function(){
             var elem=$(this);
             $(this).find("h1").each( function(){
-                if ( $(this).text() == "calcms" ){
+                if ( $(this).text() == "Programm" ){
                     isCalcms=true;
                     $(this).text("Programm");
                 }
             });
         });
-
         $('div.site-info').remove();
         
         if (isCalcms==false){

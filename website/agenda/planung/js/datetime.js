@@ -135,6 +135,11 @@ function showYearPicker(selector, options){
 
 
 function parseDateTime(datetime){
+    if (! datetime){
+        console.log("datetime.js parseDateTime() is undefined or null");
+        return null;
+    }
+    
     var dateTime = datetime.split(/[ T]+/);
 
     var date = dateTime[0].split("-");
@@ -207,6 +212,8 @@ function addDays(datetime, days){
 var weekdays=['Mo','Di','Mi','Do','Fr','Sa','So'];
 
 function getWeekday(date){
+    if (!date) return '?';
+
     if (loc['weekday_Mo']!=null) weekdays[0]=loc['weekday_Mo'];
     if (loc['weekday_Tu']!=null) weekdays[1]=loc['weekday_Tu'];
     if (loc['weekday_We']!=null) weekdays[2]=loc['weekday_We'];

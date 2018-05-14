@@ -61,6 +61,12 @@ msgstr "author"
 msgid "label_public"
 msgstr "published"
 
+msgid "label_file"
+msgstr "file"
+
 msgid "label_licence_missing"
 msgstr "please fill in"
+
+msgid "select_image"
+msgstr "select this image"
 

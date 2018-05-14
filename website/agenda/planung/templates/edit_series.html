@@ -138,7 +138,7 @@
                         >
                             <img id="imagePreview" src="showImage.cgi?project_id=<TMPL_VAR .project_id>&studioId=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=icon">
                         </button>
-                        <input id="image_<TMPL_VAR .series_id>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.template_image>">
+                        <input id="image_<TMPL_VAR .series_id>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.template_image>" readonly="readonly">
                     </TMPL_IF>
                 </td></tr>
 			    <tr> <td class="label"><TMPL_VAR .loc.template_duration></td>	  
