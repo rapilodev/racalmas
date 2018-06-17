@@ -157,6 +157,31 @@ var calcms_settings = new Array();
 		return false;
 	}
 
+
+	calcms.insertEditors = function insertEditors() {
+        var url=document.location.href;
+
+        var mapping={
+            "studio\-ansage"    : "/agenda/redaktionen-studio-ansage",
+            "studio\-pi\-radio" : "/agenda/redaktionen-piradio",
+            "studio\-frb"       : "/agenda/redaktionen-frb",
+            "studio\-colabo"    : "/agenda/redaktionen-colabo-radio",
+            "studio\-frrapo"    : "/agenda/redaktionen-frrapo"
+        };
+        
+        for (var key in mapping){
+            var editorsUrl     = mapping[key];
+		    var pattern = new RegExp(key);
+		    var matchs  = pattern.exec(url);
+		    if ((matchs != null) && (matchs.length > 0) ) {
+		        console.log("matchs "+url)
+		        $('div.entry-content').append('<div id="result"> </div>')
+                $("#result").load(editorsUrl)
+            }
+        }
+
+    }
+
     /*
 	function insertDeskDetails() {
 		var pattern = new RegExp(/redaktion\/(.*)$/);

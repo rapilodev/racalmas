@@ -50,6 +50,11 @@ sub get{
 		push @bind_values, $condition->{name};
 	}
 
+	if ((defined $condition->{location}) && ($condition->{location} ne '')){
+		push @conditions, 's.location=?';
+		push @bind_values, $condition->{location};
+	}
+
     my $limit='';
 	if ((defined $condition->{limit}) && ($condition->{limit} ne '')){
         $limit= 'limit '.$condition->{limit};

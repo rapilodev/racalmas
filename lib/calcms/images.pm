@@ -269,7 +269,7 @@ sub delete_files{
 
     return undef;
     
-	print log::error($config, 'missing permissions on writing into local media dir ' .$local_media_dir)unless(-w $local_media_dir);
+	print log::error($config, 'missing permissions on writing into local media dir')unless(-w $local_media_dir);
 
 	if ($filename=~/[^a-zA-Z0-9\.\_\-]/){
 		log::error($config, "invalid filename: '$filename'");

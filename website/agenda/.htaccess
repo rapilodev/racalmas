@@ -79,6 +79,13 @@ RewriteRule ^future$					events.cgi?template=event_list_image.html&limit=20
 RewriteRule ^dt64-festival.html$        events.cgi?location=dt64&template=event_dt64&archive=all
 RewriteRule ^frrapo-programm.html$      events.cgi?location=potsdam&template=event_frrapo
 RewriteRule ^upload_playout_piradio$    upload_playout.cgi?project_id=1&studio_id=1
+
+RewriteRule ^redaktionen-piradio$       series.cgi?project_id=1&location=piradio
+RewriteRule ^redaktionen-studio-ansage$ series.cgi?project_id=1&location=ansage
+RewriteRule ^redaktionen-frrapo$        series.cgi?project_id=1&location=potsdam
+RewriteRule ^redaktionen-colabo-radio$  series.cgi?project_id=1&location=colabo
+RewriteRule ^redaktionen-frb$           series.cgi?project_id=1&location=frb
+
 </IfModule>
 
 #  MOD_PERL

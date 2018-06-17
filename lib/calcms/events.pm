@@ -911,19 +911,19 @@ sub get_query {
 	my $search_cond = '';
 	if ( ( defined $params->{search} ) && ( $params->{search} ne '' ) ) {
 		my $search = lc $params->{search};
-		$search =~ s/[^a-z0-9\_\.\-\:\!öäüßÖÄÜ \&]/%/;
-		$search =~ s/\%+/\%/;
+        $search =~ s/(?=[\\%_])/\\/g;
 		$search =~ s/^[\%\s]+//;
 		$search =~ s/[\%\s]+$//;
 		if ( $search ne '' ) {
 			$search = '%' . $search . '%';
 			my @attr = ( 'title', 'series_name', 'excerpt', 'category', 'content', 'topic' );
-			$search_cond = "(" . join( " or ", map { 'lower(' . $_ . ') like ?' } @attr ) . ")";
+			$search_cond = "(" . join( " or ", map { 'lower(' . $_ . ') like ?' } @attr ) . ")";            
 			for my $attr (@attr) {
 				push @$bind_values, $search;
 			}
 		}
 	}
+    #print STDERR $search_cond."\n";
 
 	my $project_cond = '';
 

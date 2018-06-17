@@ -37,10 +37,13 @@ var region='<TMPL_VAR loc.region>';
 
 <div id="newSeries">
 <TMPL_LOOP newSeries>
-	<div onclick="view_series_details('<TMPL_VAR series_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .project_id>')">
+	<a 
+        onclick="view_series_details('<TMPL_VAR series_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .project_id>')"
+        href="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>&action=show"
+    >
 		<b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b> 
         <TMPL_IF TITLE> <br> <TMPL_VAR title></TMPL_IF>
-	</div>
+	</a>
 </TMPL_LOOP>
 </div>
 
@@ -50,10 +53,12 @@ var region='<TMPL_VAR loc.region>';
 
 <div id="oldSeries" style="display:none;">
 <TMPL_LOOP oldSeries>
-	<div onclick="view_series_details('<TMPL_VAR series_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .project_id>')">
+	<a onclick="view_series_details('<TMPL_VAR series_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .project_id>')"
+        href="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>&action=show"
+    >
 		<b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b> 
         <TMPL_IF TITLE> <br> <TMPL_VAR title></TMPL_IF>
-	</div>
+	</a>
 </TMPL_LOOP>
 </div>
 

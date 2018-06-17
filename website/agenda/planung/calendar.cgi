@@ -500,7 +500,7 @@ sub showCalendar {
         next unless defined $event->{uploaded_at};
         print STDERR "uploadAt=$event->{uploaded_at}, playoutModified:$event->{playout_modified_at}, playoutUpdatedAt:$event->{playout_updated_at}\n";
         next if (defined $event->{playout_updated_at}) && ( $event->{uploaded_at} lt $event->{playout_updated_at} );
-        print STDERR Dumper($event);
+        #print STDERR Dumper($event);
         $event->{upload} ='pending' ;
         #$event->{title}.='<br>pending';
     }

@@ -10,15 +10,16 @@ div#oldSeries{
     clear:both;
 }
 
-div#newSeries, div#oldSeries{
+div#newSeries, 
+div#oldSeries{
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
 }
 
-div#newSeries div,
-div#oldSeries div{
+div#newSeries a,
+div#oldSeries a{
     color:#fff;
     background:#1abc9c;
     padding:6px;
@@ -35,12 +36,11 @@ div#oldSeries div{
     height:3rem;
     line-height:2em;
 }
-/*
 
-*/
-div#newSeries div:hover,
-div#oldSeries div:hover{
+div#newSeries a:hover,
+div#oldSeries a:hover{
     background:#1dd2af;
+    text-decoration:none;
 }
 
 div#search{

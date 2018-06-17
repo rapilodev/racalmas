@@ -22,18 +22,18 @@
 		<div class="date<TMPL_IF is_running> running</TMPL_IF>">
 			<TMPL_IF is_running> ... Diese Sendung l&auml;uft gerade ...<p></TMPL_IF>
 			
-				<h1 class="summary title">
-				    <TMPL_IF series_name>
-					<a href="#" onclick="calcms.showPrevSeriesEvent(<TMPL_VAR event_id>)" title="vorherige Sendung">&laquo;</a><TMPL_VAR series_name><a href="#" onclick="calcms.showNextSeriesEvent(<TMPL_VAR event_id>)" title="n&auml;chste Sendung">&raquo;</a>
-					</TMPL_IF>
-				    <TMPL_VAR full_title_no_series>
+			<h1 class="summary title">
+			    <TMPL_IF series_name>
+				<a href="#" onclick="calcms.showPrevSeriesEvent(<TMPL_VAR event_id>)" title="vorherige Sendung">&laquo;</a><TMPL_VAR series_name><a href="#" onclick="calcms.showNextSeriesEvent(<TMPL_VAR event_id>)" title="n&auml;chste Sendung">&raquo;</a>
+				</TMPL_IF>
+			    <TMPL_VAR full_title_no_series>
 
 			    <div style="font-size:1rem">
 			    <TMPL_VAR weekday_name>, <TMPL_VAR start_date_name>, 
 			    <span style="font-size:1.5rem"><TMPL_VAR start_time_name></span> bis <TMPL_VAR end_time_name> Uhr
 			    </div>
 
-				</h1>
+			</h1>
 
 			<TMPL_IF program> (<TMPL_VAR program>)</TMPL_IF>
 		</div>
@@ -44,7 +44,7 @@
             <TMPL_IF no_image_in_text>
                 <TMPL_IF .hide_event_images>
                     <a href="<TMPL_VAR series_image_url>">
-                    <figure>
+                        <figure>
                             <TMPL_IF series_thumb_url>
                                 <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR series_thumb_url>">
                                 <TMPL_IF series_image_label><figcaption>Bild:<TMPL_VAR series_image_label></figcaption></TMPL_IF>
@@ -56,9 +56,9 @@
                         <figure>
                             <TMPL_IF thumb_url>
                                 <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR thumb_url>">
-                        <TMPL_IF image_label><figcaption>Bild:<TMPL_VAR image_label></figcaption></TMPL_IF>
+                                <TMPL_IF image_label><figcaption>Bild:<TMPL_VAR image_label></figcaption></TMPL_IF>
                             </TMPL_IF>
-                    </figure>
+                        </figure>
                     </a>
                 </TMPL_IF>
             </TMPL_IF>
@@ -66,7 +66,7 @@
 			<TMPL_VAR topic ESCAPE=0><TMPL_VAR content ESCAPE=0>
 			<TMPL_IF recurrence_date><a href="<TMPL_VAR recurrence>.html">Wiederholung vom <TMPL_VAR recurrence_date></a></TMPL_IF>
 		</div>
-
+		
 	</div>
 
 	<div id="icon_bar">

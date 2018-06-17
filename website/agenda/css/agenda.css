@@ -4,44 +4,44 @@
 
 /* main structure */
 /*
-	body		   {
+body		   {
 
-				font-size:12px
-	}
+			font-size:12px
+}
 */
-	#nav		   {
-				text-align:center;
-				margin:0;
-				height:3em;
-				z-index:3;
-				text-align:left;
-				background:white;
-				width:100%;
-				font-size:10px;
-	}
+#nav		   {
+			text-align:center;
+			margin:0;
+			height:3em;
+			z-index:3;
+			text-align:left;
+			background:white;
+			width:100%;
+			font-size:10px;
+}
 
-	#calcms_body	    {
+#calcms_body	    {
 /*
-				font-size:10px;
+			font-size:10px;
 */
-				overflow:auto;
-				background:white;
-				padding-top:3px;padding-right:5px;
-				margin:bottom:1px;
-				text-align:left;
-				padding:3px;
-	}
+			overflow:auto;
+			background:white;
+			padding-top:3px;padding-right:5px;
+			margin:bottom:1px;
+			text-align:left;
+			padding:3px;
+}
 
-	pre		   {
-		text-align:left;
+pre		   {
+	text-align:left;
 /*
-		font-size:0.7em;
+	font-size:0.7em;
 */
-		font-family:Courier;
-		padding:1em;margin:1em;
-		border:1px solid black;
-		background-color:#eee;
-	}
+	font-family:Courier;
+	padding:1em;margin:1em;
+	border:1px solid black;
+	background-color:#eee;
+}
 
 
 /* end of main structure */
@@ -49,27 +49,27 @@
 
 /* search field */
 
-	#nav form		{float:left;}
-	#nav form input		{
+#nav form		{float:left;}
+#nav form input		{
 /*
-		font-size:12px;
+	font-size:12px;
 */
-		padding:0;margin:1;border:1px solid gray
-	}
+	padding:0;margin:1;border:1px solid gray
+}
 
-	#nav form select	{
+#nav form select	{
 /*
-		font-size:12px;
+	font-size:12px;
 */
-		padding:0;margin:1;border:1px solid gray;width:130px;
-	}
+	padding:0;margin:1;border:1px solid gray;width:130px;
+}
 
-	#nav form option	{
+#nav form option	{
 /*
-		font-size:12px;
+	font-size:12px;
 */
-		padding:0;margin:0
-	}
+	padding:0;margin:0
+}
 
 /* end of search field */
 
@@ -77,34 +77,34 @@
 /* event fields */
 
 
-	.calcms_date        {
-		background: #ccccff;
-		padding:6px;margin:0px;
-		font-weight:bold;
-		margin-top:1em;
-		-moz-border-radius-topleft:6px;
-		-moz-border-radius-topright:6px;
-		-webkit-border-top-right-radius: 6px; 
-		-webkit-border-top-left-radius: 6px;
-		text-align:left
-	}
+.calcms_date        {
+	background: #ccccff;
+	padding:6px;margin:0px;
+	font-weight:bold;
+	margin-top:1em;
+	-moz-border-radius-topleft:6px;
+	-moz-border-radius-topright:6px;
+	-webkit-border-top-right-radius: 6px; 
+	-webkit-border-top-left-radius: 6px;
+	text-align:left
+}
 
-	.calcms_title       {padding:3px;margin:0px;font-weight:bold;text-align:left;}
-	.calcms_excerpt     {padding:3px;margin:0px;background-color:#eee;}
-	.calcms_content     {padding:3px;margin:0px;clear:left;margin:0}
-	.calcms_content p   {margin-top:10px}
-	.calcms_content h1  {text-align:left;font-size:1.5em;clear:left;margin-top:16px}	
-	.calcms_content h2  {text-align:left;font-size:1.5em;clear:left;margin-top:16px}
-	.calcms_content h3  {text-align:left;font-size:1.5em;clear:left;margin-top:16px}
-	.calcms_content h4  {text-align:left;font-size:1.5em;clear:left;margin-top:16px}
-	.calcms_content li  {clear:left;}
-	.calcms_content img {text-align:left;font-size:1.5em;float:left;margin-right:10px;}/*width:50;height:50px;*/
-	.calcms_event	   {text-align:left}
-	.calcms_day         {padding:1px;margin:0px;clear:left;text-align:left}
-	
-	/* hide microformats */
-	.dtstart          {display:none;visibility:hidden;}
-	.dtend            {display:none;visibility:hidden;}
+.calcms_title       {padding:3px;margin:0px;font-weight:bold;text-align:left;}
+.calcms_excerpt     {padding:3px;margin:0px;background-color:#eee;}
+.calcms_content     {padding:3px;margin:0px;clear:left;margin:0}
+.calcms_content p   {margin-top:10px}
+.calcms_content h1  {text-align:left;font-size:1.5em;clear:left;margin-top:16px}	
+.calcms_content h2  {text-align:left;font-size:1.5em;clear:left;margin-top:16px}
+.calcms_content h3  {text-align:left;font-size:1.5em;clear:left;margin-top:16px}
+.calcms_content h4  {text-align:left;font-size:1.5em;clear:left;margin-top:16px}
+.calcms_content li  {clear:left;}
+.calcms_content img {text-align:left;font-size:1.5em;float:left;margin-right:10px;}/*width:50;height:50px;*/
+.calcms_event	   {text-align:left}
+.calcms_day         {padding:1px;margin:0px;clear:left;text-align:left}
+
+/* hide microformats */
+.dtstart          {display:none;visibility:hidden;}
+.dtend            {display:none;visibility:hidden;}
 
 /* end of event fields */
 
@@ -112,140 +112,140 @@
 
 /* navigation bar */
 
-	table#nav{
-		padding:0;margin:0;width:100%;
-		border-left:1px solid #88f;
-		border-top: 1px solid #88f;
-		text-align:left;
-	}
-	table#nav  table{
-		padding:0;margin:0;
-		border-left:0;border-top:0;
-		text-align:left;width:100%
-	}
-	table#nav table td{
-		margin:0;text-align:center;
-		border-bottom:1px solid #88f;
-		border-right: 1px solid #88f;
-	}
-	table#nav  table td,
-	table#nav  table a{	
-		padding:1px;
+table#nav{
+	padding:0;margin:0;width:100%;
+	border-left:1px solid #88f;
+	border-top: 1px solid #88f;
+	text-align:left;
+}
+table#nav  table{
+	padding:0;margin:0;
+	border-left:0;border-top:0;
+	text-align:left;width:100%
+}
+table#nav table td{
+	margin:0;text-align:center;
+	border-bottom:1px solid #88f;
+	border-right: 1px solid #88f;
+}
+table#nav  table td,
+table#nav  table a{	
+	padding:1px;
 /*
-		font-size:10px;
+	font-size:10px;
 */
-	}
+}
 
 
-	/* hover effects */
+/* hover effects */
 
-	table#nav table td:hover{
-		border-bottom:1px solid #88f;
-		border-right :1px solid #88f;
-		background-color:#f0f0f0;
-	}
+table#nav table td:hover{
+	border-bottom:1px solid #88f;
+	border-right :1px solid #88f;
+	background-color:#f0f0f0;
+}
 
-	table#nav  table td.selected:hover{
-		background-color:#eee;
-		border-bottom:1px solid #88f;
-		border-right: 1px solid #88f;
-	}
+table#nav  table td.selected:hover{
+	background-color:#eee;
+	border-bottom:1px solid #88f;
+	border-right: 1px solid #88f;
+}
 
-	table#nav  table a:hover{
-	}
-
-
-	/* not selectable columns */
-
-	table#nav table td.row_type:hover{
-		border-bottom:1px solid #88f;
-		border-right: 1px solid #88f;
-		background-color:#ffffff;
-	}
-
-	.row_type{
-		width:100px
-	}
+table#nav  table a:hover{
+}
 
 
-	/* selected fields */
-	#nav .selected, .night, .morning, .noon, .afternoon, .evening{
-		background:#ddd;
-		border-bottom:1px solid #88f;
-		border-right: 1px solid #88f; 
-		-moz-border-radius-topleft:5px;
-		-moz-border-radius-topright:5px;
-		-webkit-border-top-right-radius: 5px; 
-		-webkit-border-top-left-radius: 5px;
-	}
+/* not selectable columns */
+
+table#nav table td.row_type:hover{
+	border-bottom:1px solid #88f;
+	border-right: 1px solid #88f;
+	background-color:#ffffff;
+}
+
+.row_type{
+	width:100px
+}
+
+
+/* selected fields */
+#nav .selected, .night, .morning, .noon, .afternoon, .evening{
+	background:#ddd;
+	border-bottom:1px solid #88f;
+	border-right: 1px solid #88f; 
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	-webkit-border-top-right-radius: 5px; 
+	-webkit-border-top-left-radius: 5px;
+}
 
 
 /* end of navigation bar */
 
 /* calendar weeks */
 
-	#nav td.week_1, 
-	#nav td.week_2, 
-	#nav td.week_3,			
-	#nav td.week_4,			
-	#nav td.week_5	{		
-		border-right:1px solid #88f  ;
-	}
+#nav td.week_1, 
+#nav td.week_2, 
+#nav td.week_3,			
+#nav td.week_4,			
+#nav td.week_5	{		
+	border-right:1px solid #88f  ;
+}
 /* end of calendar weeks */
-		
+	
 
 /* calendar days */
 
-	/* replaces the original wp css*/
+/* replaces the original wp css*/
 
-	#wp-calendar     	{}
-	#wp-calendar a   	{padding:2px}
-	#wp-calendar table	{padding:2px}		
+#wp-calendar     	{}
+#wp-calendar a   	{padding:2px}
+#wp-calendar table	{padding:2px}		
 
-	#wp-calendar td	{
+#wp-calendar td	{
 /*
-		font-size:8px;
+	font-size:8px;
 */
-		text-align:center;
-		background-color:#fefeff;
-	}
-	#wp-calendar td a	{
-		padding:2px;
+	text-align:center;
+	background-color:#fefeff;
+}
+#wp-calendar td a	{
+	padding:2px;
 /*
-		font-size:8px;
+	font-size:8px;
 */
-		font-weight:normal;
-	}
+	font-weight:normal;
+}
 
-	#wp-calendar a:hover {
-		background:#eeeeff;
-	}
+#wp-calendar a:hover {
+	background:#eeeeff;
+}
 
 
-	/* additional css to mark today and all dates matching to the request */
+/* additional css to mark today and all dates matching to the request */
 
-	#wp-calendar .calcms_today			{
-		padding:2px;margin:0px;background:#eeeeee;
-	}
+#wp-calendar .calcms_today			{
+	padding:2px;margin:0px;background:#eeeeee;
+}
 
-	#wp-calendar td.calcms_match 			{
-		background:#ccffcc;
-	}
-	#wp-calendar td .selected .calcms_match 	{
-		background:#ddeedd;
-	}
+#wp-calendar td.calcms_match 			{
+	background:#ccffcc;
+}
+#wp-calendar td .selected .calcms_match 	{
+	background:#ddeedd;
+}
 
 /* end of calendar days */
 
-	div.update {
-		position:absolute;
-		bottom:0px;
-	}
+div.update {
+	position:absolute;
+	bottom:0px;
+}
 
-	div.update , div.update a{
-		text-align:left;
-		font-size:6px;
-		color:#bbb;
-	}
+div.update , div.update a{
+	text-align:left;
+	font-size:6px;
+	color:#bbb;
+}
 
 
