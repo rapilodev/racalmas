@@ -5,11 +5,11 @@ use strict;
 
 use Data::Dumper;
 
-use params;
-use config;
-use db;
-use auth;
-use password_requests;
+use params();
+use config();
+use db();
+use auth();
+use password_requests();
 
 binmode STDOUT, ":utf8";
 

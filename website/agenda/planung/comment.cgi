@@ -2,33 +2,27 @@
 
 use warnings "all";
 use strict;
-use URI::Escape;
-use Encode;
+
+use URI::Escape();
+use Encode();
 use Data::Dumper;
-use MIME::Base64;
-use Encode::Locale;
+use MIME::Base64();
+use Encode::Locale();
 
-use params;
-use config;
-use log;
-use template;
-use db;
-use auth;
-use uac;
+use params();
+use config();
+use log();
+use template();
+use db();
+use auth();
+use uac();
 
-#use roles;
-use time;
-use markup;
-use project;
-use studios;
-use comments;
-
-#use events;
-#use series;
-#use series_dates;
-#use series_events;
-#use user_stats;
-use localization;
+use time();
+use markup();
+use project();
+use studios();
+use comments();
+use localization();
 
 binmode STDOUT, ":utf8";
 

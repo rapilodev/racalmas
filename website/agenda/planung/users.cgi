@@ -4,16 +4,16 @@ use warnings "all";
 use strict;
 use Data::Dumper;
 
-use config;
-use log;
-use template;
-use auth;
-use uac;
-use roles;
-use studios;
-use params;
-use localization;
-use password_requests;
+use config();
+use log();
+use template();
+use auth();
+use uac();
+use roles();
+use studios();
+use params();
+use localization();
+use password_requests();
 
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);

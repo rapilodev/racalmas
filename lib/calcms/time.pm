@@ -185,6 +185,7 @@ sub datetime_to_utc_datetime{
 sub add_hours_to_datetime{
 	my $datetime=shift;
 	my $hours=shift;
+	$hours=0 unless defined $hours;
 	return time_to_datetime(datetime_to_time($datetime)+(3600*$hours));
 };
 
@@ -192,6 +193,7 @@ sub add_hours_to_datetime{
 sub add_minutes_to_datetime{
 	my $datetime=shift;
 	my $minutes=shift;
+    $minutes=0 unless defined $minutes;
 	return time_to_datetime(datetime_to_time($datetime)+(60*$minutes));
 };
 
@@ -199,6 +201,7 @@ sub add_minutes_to_datetime{
 sub add_days_to_datetime{
 	my $datetime=shift;
 	my $days=shift;
+	$days=0 unless defined $days;
 	my $time=datetime_to_array($datetime);
 	#print STDERR Dumper($time);
 	($time->[0], $time->[1], $time->[2]) =Date::Calc::Add_Delta_Days($time->[0]+0, $time->[1]+0, $time->[2]+0, $days);
@@ -208,6 +211,7 @@ sub add_days_to_datetime{
 sub add_days_to_date{
 	my $datetime=shift;
 	my $days=shift;
+    $days=0 unless defined $days;
     my $date=date_to_array($datetime);
 	($date->[0], $date->[1], $date->[2]) =Date::Calc::Add_Delta_Days($date->[0]+0, $date->[1]+0, $date->[2]+0, $days);
 	return array_to_date($date);

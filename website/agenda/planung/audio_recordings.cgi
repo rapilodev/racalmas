@@ -6,25 +6,23 @@ use warnings;
 use strict;
 
 use Data::Dumper;
-
 use CGI::Simple ();
 use ModPerl::Util ();
+use Date::Calc();
+use Time::Local();
+use File::Temp();
 
-use Date::Calc;
-use Time::Local;
-use File::Temp;
-
-use config;
-use log;
-use localization;
-use auth;
-use uac;
-use studios;
-use series;
-use template;
-use audio_recordings;
-use events;
-use time;
+use config();
+use log();
+use localization();
+use auth();
+use uac();
+use studios();
+use series();
+use template();
+use audio_recordings();
+use events();
+use time();
 
 #$|=1;
 binmode STDOUT, ":utf8";

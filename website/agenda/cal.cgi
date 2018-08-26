@@ -9,10 +9,10 @@ $CGI::POST_MAX        = 1000;
 $CGI::DISABLE_UPLOADS = 1;
 
 use Data::Dumper;
-use params;
-use config;
-use log;
-use calendar;
+use params();
+use config();
+use log();
+use calendar();
 
 my $r = shift;
 

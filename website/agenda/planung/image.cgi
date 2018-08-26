@@ -1,29 +1,31 @@
 #! /usr/bin/perl -w
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
+
 use Data::Dumper;
 
-use File::stat;
-use Time::localtime;
+use File::stat();
+use Time::localtime();
 use CGI::Simple;# qw(header param Vars escapeHTML uploadInfo cgi_error);
-use URI::Escape;
+use URI::Escape();
 
-use time;
-use images;
-use params;
-use config;
-use log;
-use template;
-use db;
-use auth;
-use uac;
-use project;
-use time;
-use markup;
-use studios;
-use series;
-use localization;
+use time();
+use images();
+use params();
+use config();
+use log();
+use template();
+use db();
+use auth();
+use uac();
+use project();
+use time();
+use markup();
+use studios();
+use series();
+use localization();
 
 binmode STDOUT, ":utf8";
 
@@ -175,7 +177,7 @@ sub show_image {
 		# put selected image first
 		$selectedFilename = 'not-found';
 		if ( defined $selectedImage ) {
-			$finalResults = [ $selectedImage ];
+			push @$finalResults, $selectedImage;
 			$selectedFilename = $selectedImage->{filename};
 		}
 
@@ -186,13 +188,13 @@ sub show_image {
 		$results = $finalResults;
 	}
 
-	if ( $params->{template} =~ /edit/ ) {
-	    my $result = $results->[0];
-        $result->{missing_licence}=1 if (! defined $result->{licence} ) || ( $result->{licence}!~/\S/);
-		$results = [ $result ] ;
-	}
+	if ( scalar @$results !=0 ) {
+	    if ( $params->{template} =~ /edit/ ) {
+	        my $result = $results->[0];
+            $result->{missing_licence}=1 if (! defined $result->{licence} ) || ( $result->{licence}!~/\S/);
+		    $results = [ $result ] ;
+	    }
 
-	if ( defined $results ) {
 		$results = modify_results( $results, $permissions, $user, $local_media_url );
 	}
 
@@ -202,7 +204,7 @@ sub show_image {
 	my $template_params = {
 		'search'     => $search,
 		'images'     => $results,
-		'count'      => @$results . '',
+		'count'      => scalar @$results,
 		'projects'   => project::get_with_dates($config),
 		'project_id' => $params->{project_id},
 		'studio_id'  => $params->{studio_id},
@@ -211,8 +213,8 @@ sub show_image {
 
 	#    print STDERR
 	$template_params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'image' } );
-	$template_params = uac::set_template_permissions( $permissions, $template_params );
-
+	$template_params= uac::set_template_permissions( $permissions, $template_params );
+    $template_params->{no_results}=1 if scalar @$results==0;
 	#set global values for update and delete, per image values are evaluated later
 	$template_params->{allow}->{update_image} =
 	  $template_params->{allow}->{update_image_own} || $template_params->{allow}->{seriesupdate_image_others};
@@ -266,7 +268,7 @@ sub save_image {
 	my $dbh = db::connect($config);
 
 	print STDERR "going to save\n";
-	print STDERR Dumper($image);
+	#print STDERR Dumper($image);
 
 	my $entries = images::get(
 		$config,
@@ -321,7 +323,7 @@ sub delete_image {
 		filename   => $params->{delete_image},
 	};
 	my $result = images::delete( $dbh, $image );
-	print STDERR "delete result=" . Dumper($result);
+	#print STDERR "delete result=" . Dumper($result);
 
 	return;
 	my $action_result = '';

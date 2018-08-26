@@ -273,6 +273,10 @@ a{
 #calcms_list .submitted{
 }
 
+#calcms_list h2{
+    clear:none !important;
+}
+
 #calcms_list .content img{
 	border:0;
 }
@@ -286,6 +290,7 @@ a{
 #calcms_list .content figcaption{
     font-size:12px;
 	margin-left: 1em;
+    max-width:12em;
 }
 
 
@@ -740,7 +745,7 @@ a#calcms_search_show_details #plus{
 #player{
     border:0;
     padding:0;
-    height:3rem;
+    height:5rem;
 }
 #player:hover{
     opacity:0.9;
@@ -842,6 +847,7 @@ div.update, div.update a{
 }
 #listen_radio iframe{
     margin-top:1em;
+    max-width:none;
 }
 #listen_radio td{
     border:0;

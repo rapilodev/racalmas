@@ -4,14 +4,14 @@ use warnings "all";
 use strict;
 use Data::Dumper;
 
-use params;
-use config;
-use log;
-use template;
-use auth;
-use uac;
-use series;
-use localization;
+use params();
+use config();
+use log();
+use template();
+use auth();
+use uac();
+use series();
+use localization();
 
 binmode STDOUT, ":utf8";
 

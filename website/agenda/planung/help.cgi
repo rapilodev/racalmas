@@ -2,20 +2,21 @@
 
 use warnings "all";
 use strict;
-use Data::Dumper;
 
-use params;
-use config;
-use log;
-use template;
-use auth;
-use uac;
-use roles;
-use studios;
-use markup;
-use URI::Escape;
-use Encode;
-use localization;
+use Data::Dumper;
+use URI::Escape();
+use Encode();
+
+use params();
+use config();
+use log();
+use template();
+use auth();
+use uac();
+use roles();
+use studios();
+use markup();
+use localization();
 
 #binmode STDOUT, ":utf8";
 

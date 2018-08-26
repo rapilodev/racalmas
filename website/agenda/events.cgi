@@ -1,10 +1,9 @@
 #! /usr/bin/perl -w
 
-use warnings "all";
-
-#no warnings 'redefine';
-#use diagnostics;
 use strict;
+use warnings;
+no warnings 'redefine';
+
 use Data::Dumper;
 
 #use utf8;
@@ -13,11 +12,11 @@ use CGI qw(header param Vars);
 $CGI::POST_MAX        = 1000;
 $CGI::DISABLE_UPLOADS = 1;
 
-use params;
-use config;
-use log;
-use events;
-use time;
+use params();
+use config();
+use log();
+use events();
+use time();
 
 #binmode STDOUT, ":utf8";
 binmode STDOUT, ":encoding(UTF-8)";

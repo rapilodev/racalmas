@@ -1,30 +1,19 @@
 #! /usr/bin/perl -w 
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
+
 use Data::Dumper;
 
-use params;
-use config;
-use log;
-use template;
-use auth;
-use uac;
-
-#use roles;
-#use project;
-#use studios;
-#use events;
-#use series;
-use images;
-
-#use series_schedule;
-#use series_events;
-#use series_dates;
-#use markup;
-#use URI::Escape;
-#use Encode;
-use localization;
+use params();
+use config();
+use log();
+use template();
+use auth();
+use uac();
+use images();
+use localization();
 
 binmode STDOUT, ":utf8";
 

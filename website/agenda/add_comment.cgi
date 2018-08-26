@@ -8,15 +8,15 @@ use Data::Dumper;
 use CGI qw(header param Vars escapeHTML uploadInfo cgi_error);
 $CGI::POST_MAX=1024 * 100;
 
-use params;
-use config;
-use db;
-use markup;
-use cache;
-use comments;
-use template;
-use log;
-use time;
+use params();
+use config();
+use db();
+use markup();
+use cache();
+use comments();
+use template();
+use log();
+use time();
 
 binmode STDOUT, ":utf8";
 

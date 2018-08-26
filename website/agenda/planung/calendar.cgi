@@ -3,32 +3,32 @@
 use warnings "all";
 use strict;
 use Data::Dumper;
-use URI::Escape;
-use Encode;
-use utf8;
+use URI::Escape();
+use Encode();
+use utf8();
 
-use params;
-use config;
-use log;
-use template;
-use calendar;
-use auth;
-use uac;
-use roles;
-use project;
-use studios;
-use events;
-use series;
-use markup;
-use series_dates;
-use studio_timeslot_dates;
-use work_dates;
-use playout;
-use markup;
-use user_settings;
-use localization;
-use DateTime;
-use audio_recordings;
+use params();
+use config();
+use log();
+use template();
+use calendar();
+use auth();
+use uac();
+use roles();
+use project();
+use studios();
+use events();
+use series();
+use markup();
+use series_dates();
+use studio_timeslot_dates();
+use work_dates();
+use playout();
+use markup();
+use user_settings();
+use localization();
+use DateTime();
+use audio_recordings();
 
 binmode STDOUT, ":utf8";
 
@@ -404,7 +404,7 @@ sub showCalendar {
             #print STDERR Dumper($date) if $date->{file}=~/180503/;
 			#$date->{title}.= '<b>rms_image</b>: '    .($date->{rms_image}||'').'<br>' if defined $date->{rms_image};
 
-			$date->{rms_image} = uri_unescape( $date->{rms_image} ) if defined $date->{rms_image};
+			$date->{rms_image} = URI::Escape::uri_unescape( $date->{rms_image} ) if defined $date->{rms_image};
 
 			$date->{origStart} = $date->{start};
 
@@ -490,18 +490,17 @@ sub showCalendar {
 
 	# calculate positions and find schedule errors (depending on position)
 	for my $date ( sort ( keys %$events_by_day ) ) {
-		for my $events ( $events_by_day->{$date} ) {
-			calc_positions( $events, $cal_options );
-			find_errors($events);
-		}
+		my $events = $events_by_day->{$date} ;
+		calc_positions( $events, $cal_options );
+		find_errors($events);
 	}
 
     for my $event (@$events){
         next unless defined $event->{uploaded_at};
-        print STDERR "uploadAt=$event->{uploaded_at}, playoutModified:$event->{playout_modified_at}, playoutUpdatedAt:$event->{playout_updated_at}\n";
+        #print STDERR "uploadAt=$event->{uploaded_at}, playoutModified:$event->{playout_modified_at}, playoutUpdatedAt:$event->{playout_updated_at}\n";
         next if (defined $event->{playout_updated_at}) && ( $event->{uploaded_at} lt $event->{playout_updated_at} );
         #print STDERR Dumper($event);
-        $event->{upload} ='pending' ;
+        #$event->{upload} ='pending' ;
         #$event->{title}.='<br>pending';
     }
 
@@ -904,7 +903,7 @@ sub calcCalendarTable {
 			project_id => $project_id,
 			studio_id  => $studio_id,
 			class      => 'time',
-			time       => sprintf( '%02d',    $hour % 24 )
+			'time'     => sprintf( '%02d',    $hour % 24 )
 		  };
 	}
 
@@ -927,7 +926,7 @@ sub calcCalendarTable {
 		project_id => -1,
 		studio_id  => -1,
 		class      => 'time now',
-		time       => $time,
+		'time'     => $time,
 	  };
 	calc_positions( $events_by_day->{0}, $cal_options );
 
@@ -1404,9 +1403,7 @@ sub print_event {
 		$height = '';
 	}
 
-	my $date = $event->{origStart} || $event->{start} || '';
-	$date = $event->{time} if defined $event->{time};
-	$date = $event->{date} if defined $event->{date};
+#	my $date = $event->{origStart} || $event->{start} || '';
 	my $content = $event->{content} || '';
 
 	if ( $class =~ /schedule/ ) {
@@ -1428,14 +1425,18 @@ sub print_event {
 		$content = '<div class="text">' . $content . '</div><div class="icons"></div>';
 	}
 
-	return
-	    q{<div }
-	  . qq{class="$class" id="$id" style="}
-	  . $height . q{top:}
-	  . $ystart . q{px;"}
-	  . qq{ date="$date"}
-	  . qq{ $attr}
-	  . qq{>$content</div>} . "\n";
+    my $time='';
+    $time= qq{ time="$event->{time}"} if $class=~m/time/;
+
+    my $date='';
+    $date= qq{ date="$event->{date}"} if $class=~m/date/;
+
+	my $line=	    q{<div }	  . qq{class="$class" id="$id"};
+    $line.= qq{ style="}. $height . q{top:}. $ystart . q{px;"};
+    $line.=	$time . $date . qq{ $attr} ;
+	$line.= qq{>$content</div>} ;
+    $line.= "\n";
+    return $line;
 }
 
 sub getFrequency {
@@ -1470,7 +1471,7 @@ sub calc_positions {
 		my ( $end_hour,   $end_min )   = getTime( $event->{end_time} );
 
 		$start_hour += 24 if $start_hour < $start_of_day;
-		$end_hour   += 24 if $end_hour <= $start_of_day;
+		$end_hour   += 24 if $end_hour < $start_of_day;
 		$event->{ystart} = $start_hour * 60 + $start_min;
 		$event->{yend}   = $end_hour * 60 + $end_min;
 	}
@@ -1881,4 +1882,5 @@ sub check_params {
 
 	return $checked;
 }
+
 

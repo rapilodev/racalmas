@@ -2,22 +2,23 @@
 
 use warnings "all";
 use strict;
-use Data::Dumper;
 
-use params;
-use config;
-use log;
-use template;
-use auth;
-use uac;
-use roles;
-use project;
-use studios;
-use work_schedule;
-use work_dates;
-use URI::Escape;
-use Encode;
-use localization;
+use Data::Dumper;
+use URI::Escape();
+use Encode();
+
+use params();
+use config();
+use log();
+use template();
+use auth();
+use uac();
+use roles();
+use project();
+use studios();
+use work_schedule();
+use work_dates();
+use localization();
 
 binmode STDOUT, ":utf8";
 

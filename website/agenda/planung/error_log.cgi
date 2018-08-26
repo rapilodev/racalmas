@@ -3,19 +3,17 @@
 use warnings "all";
 use strict;
 use Data::Dumper;
-use HTML::Template;
+use HTML::Template();
 
-#use URI::Escape;
-#use Encode;
+use config();
+use log();
+use template();
+use params();
+use config();
+use auth();
+use localization();
+use studios();
 
-use config;
-use log;
-use template;
-use params;
-use config;
-use auth;
-use localization;
-use studios;
 binmode STDOUT, ":utf8";
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);

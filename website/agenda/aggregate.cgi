@@ -12,13 +12,13 @@ use CGI qw(header param Vars);
 #use Benchmark;
 #use Devel::Profiler;
 
-use db;
-use events;
-use time;
-use aggregator;
-use markup;
-use log;
-use config;
+use db();
+use events();
+use time();
+use aggregator();
+use markup();
+use log();
+use config();
 
 #use params;
 #my $r=shift;

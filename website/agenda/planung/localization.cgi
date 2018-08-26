@@ -1,15 +1,17 @@
 #! /usr/bin/perl -w 
 
-use warnings "all";
 use strict;
-use Data::Dumper;
+use warnings;
+no warnings 'redefine';
 
-use config;
-use params;
-use log;
-use JSON;
-use auth;
-use localization;
+use Data::Dumper;
+use JSON();
+
+use config();
+use params();
+use log();
+use auth();
+use localization();
 
 binmode STDOUT, ":utf8";
 

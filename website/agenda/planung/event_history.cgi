@@ -2,33 +2,28 @@
 
 use warnings "all";
 use strict;
-use URI::Escape;
-use Encode;
+
+use URI::Escape();
+use Encode();
 use Data::Dumper;
-use MIME::Base64;
+use MIME::Base64();
+use Text::Diff::FormattedHTML();
 
-#use Text::Diff ();
-use Text::Diff::FormattedHTML;
+use params();
+use config();
+use log();
+use template();
+use db();
+use auth();
+use uac();
+use time();
+use markup();
+use studios();
+use event_history();
+use events();
+use series_events();
+use localization();
 
-use params;
-use config;
-use log;
-use template;
-use db;
-use auth;
-use uac;
-
-#use roles;
-use time;
-use markup;
-use studios;
-use event_history;
-use events;
-
-#use series;
-#use series_dates;
-use series_events;
-use localization;
 binmode STDOUT, ":utf8";
 
 my $r = shift;

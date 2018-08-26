@@ -183,6 +183,7 @@ sub modify_results {
 
         $result->{rerun} = '' unless defined $result->{rerun};
 
+        $result->{title} = '' unless defined $result->{title};
         if ( $result->{title} =~ /\#(\d+)([a-z])?\s*$/ ) {
             $result->{episode} = $1 unless defined $result->{episode};
             $result->{rerun} = $2 || '' unless ( $result->{rerun} =~ /\d/ );
@@ -221,7 +222,7 @@ sub modify_results {
             $result->{event_uri} .= $result->{series_name};
             $result->{event_uri} .= '-' if ( $result->{title} ne '' );
         }
-        $result->{event_uri} .= $result->{title} if ( $result->{title} ne '' );
+        $result->{event_uri} .= $result->{title} if $result->{title} ne '';
         $result->{event_uri} =~ s/\#/Nr./g;
         $result->{event_uri} =~ s/\&/und/g;
         $result->{event_uri} =~ s/\//\%2f/g;
@@ -611,11 +612,6 @@ sub add_recordings {
     return $events;
 }
 
-sub getDateRange {
-    my $config = shift;
-    $config->{date}->{day_starting_hour};
-}
-
 sub getDateQueryConditions {
     my $config      = shift;
     my $params      = shift;
@@ -626,28 +622,76 @@ sub getDateQueryConditions {
 
     #date, today, tomorrow, yesterday
     my $date = '';
-    $date = time::date_cond( $params->{date} ) if ( $params->{date} ne '' );
+    $date = time::date_cond( $params->{date} ) if $params->{date} ne '';
 
     my $from_date = '';
-    $from_date = time::date_cond( $params->{from_date} )
-      if ( $params->{from_date} ne '' );
+    $from_date = time::date_cond( $params->{from_date} ) if $params->{from_date} ne '';
 
     my $till_date = '';
-    $till_date = time::date_cond( $params->{till_date} )
-      if ( $params->{till_date} ne '' );
+    $till_date = time::date_cond( $params->{till_date} ) if $params->{till_date} ne '';
 
     my $from_time = '';
-    $from_time = time::time_cond( $params->{from_time} )
-      if ( $params->{from_time} ne '' );
+    $from_time = time::time_cond( $params->{from_time} ) if $params->{from_time} ne '';
 
     my $till_time = '';
-    $till_time = time::time_cond( $params->{till_time} )
-      if ( $params->{till_time} ne '' );
+    $till_time = time::time_cond( $params->{till_time} ) if $params->{till_time} ne '';
+
+    my $time = $params->{time};
+    $time = '' unless defined $time;
 
     my $date_range_include = $params->{date_range_include};
+    my $day_starting_hour  = $config->{date}->{day_starting_hour};
 
-    #from_time is defined
-    if ( ( $params->{from_date} ne '' ) && ( $params->{from_time} ne '' ) ) {
+    if ( $date eq 'today' ) {
+        my $date = time::get_event_date($config);
+        push @$date_conds,  ' ( start_date = ? ) ';
+        push @$bind_values, $date;
+        return $date_conds;
+    }
+
+    # given date
+    my $start = time::datetime_cond( $date . 'T00:00:00' );
+    if ( $start ne '' ) {
+        $start = time::add_hours_to_datetime( $start, $day_starting_hour );
+        my $end = time::add_hours_to_datetime( $start, 24 );
+
+        if ( $date_range_include eq '1' ) {
+            push @$date_conds,  ' end > ? ';
+            push @$bind_values, $start;
+        } else {
+            push @$date_conds,  ' start >= ? ';
+            push @$bind_values, $start;
+        }
+
+        push @$date_conds,  ' start < ? ';
+        push @$bind_values, $end;
+        return $date_conds;
+    }
+
+    if ( $time eq 'now' ) {
+        push @$date_conds, qq{
+                 (
+                 ( unix_timestamp(end)   >  unix_timestamp(now() ) )
+                 and
+                 ( unix_timestamp(start) <= unix_timestamp(now() ) )
+                 )
+             };
+        return $date_conds;
+    }
+
+    if ( $time eq 'future' ) {
+        push @$date_conds, qq{
+                    (
+                    ( unix_timestamp(end)   >  unix_timestamp(now() ) )
+                    and
+                    ( unix_timestamp(end) - unix_timestamp(now() ) ) < 7*24*3600
+                    )
+                };
+        return $date_conds;
+    }
+
+    #from_date and from_time is defined
+    if ( ( $from_date ne '' ) && ( $from_time ne '' ) ) {
         my $datetime = time::datetime_cond( $from_date . 'T' . $from_time );
         if ( $datetime ne '' ) {
             if ( $date_range_include eq '1' ) {
@@ -662,8 +706,8 @@ sub getDateQueryConditions {
         }
     }
 
-    #till_time is defined
-    if ( ( $params->{till_date} ne '' ) && ( $params->{till_time} ne '' ) ) {
+    #till_date and till_time is defined
+    if ( ( $till_date ne '' ) && ( $till_time ne '' ) ) {
         my $datetime = time::datetime_cond( $till_date . 'T' . $till_time );
         if ( $datetime ne '' ) {
             push @$date_conds,  ' start < ? ';
@@ -672,119 +716,59 @@ sub getDateQueryConditions {
         }
     }
 
-    #time is defined
-    if (   ( defined $params->{time} )
-        && ( $params->{time} ne '' )
-        && ( $params->{time} ne 'now' )
-        && ( $params->{time} ne 'future' ) )
-    {
-        my $time = time::time_cond( $params->{time} );
-        if ( $time ne '' ) {
-            push @$date_conds,  ' time(start) = ? ';
-            push @$bind_values, $time;
+    # after start of daily broadcast
+    if ( ( $from_date ne '' ) && ( $from_time eq '' ) ) {
+        my $start = time::datetime_cond( $from_date . 'T00:00:00' );
+        $start = time::add_hours_to_datetime( $start, $day_starting_hour );
+
+        if ( $date_range_include eq '1' ) {
+
+            # end is after start
+            push @$date_conds,  ' ( end >= ? )';
+            push @$bind_values, $start;
+        } else {
+            push @$date_conds,  ' ( start >= ? ) ';
+            push @$bind_values, $start;
         }
-        return $date_conds;
     }
 
-    #event is not over
-    elsif ( ( defined $params->{time} ) && ( $params->{time} eq 'now' ) ) {
-        push @$date_conds, qq{
-                (
-                ( unix_timestamp(end)   >  unix_timestamp(now() ) )
-                and
-                ( unix_timestamp(start) <= unix_timestamp(now() ) )
-                )
-            };
-        return $date_conds;
-    } elsif ( ( defined $params->{time} ) && ( $params->{time} eq 'future' ) ) {
-        push @$date_conds, qq{
-                (
-                ( unix_timestamp(end)   >  unix_timestamp(now() ) )
-                and
-                ( unix_timestamp(end) - unix_timestamp(now() ) ) < 7*24*3600
-                )
-            };
-        return $date_conds;
-    } elsif ( $date ne '' ) {
-        if ( $date eq 'today' ) {
-            my $date = time::get_event_date($config);
-            if ( $date ne '' ) {
-                push @$date_conds,  ' ( start_date = ? ) ';
-                push @$bind_values, $date;
-            }
+    # before end of daily broadcast
+    if ( ( $till_date ne '' ) && ( $till_time eq '' ) ) {
+        my $end = time::datetime_cond( $till_date . 'T00:00:00' );
+        $end = time::add_hours_to_datetime( $end, $day_starting_hour );
+        if ( $date_range_include eq '1' ) {
 
+            # start is before end
+            push @$date_conds,  ' ( start <= ? )';
+            push @$bind_values, $end;
         } else {
-
-            #push @$date_conds,  ' ( start_date = ? ) ';
-            #push @$bind_values, $date;
-            my $start = time::datetime_cond( $date . 'T00:00:00' );
-            if ( $start ne '' ) {
-                $start = time::add_hours_to_datetime( $start, $config->{date}->{day_starting_hour} );
-                my $end = time::add_hours_to_datetime( $start, 24 );
-
-                if ( $date_range_include eq '1' ) {
-                    push @$date_conds,  ' end > ? ';
-                    push @$bind_values, $start;
-                } else {
-                    push @$date_conds,  ' start >= ? ';
-                    push @$bind_values, $start;
-                }
-
-                if ( $end ne '' ) {
-                    push @$date_conds,  ' start < ? ';
-                    push @$bind_values, $end;
-                }
-            }
+            push @$date_conds,  ' ( end <= ? ) ';
+            push @$bind_values, $end;
         }
-        return $date_conds;
-    } else {
-        if ( $from_date ne '' ) {
-            if ( $date_range_include eq '1' ) {
+    }
 
-                # end is after start
-                push @$date_conds,  ' ( end_date >= ? )';
-                push @$bind_values, $from_date;
-            } else {
-                push @$date_conds,  ' ( start_date >= ? ) ';
-                push @$bind_values, $from_date;
-            }
+    if ( $params->{weekday} ne '' ) {
+        my $weekday = $params->{weekday};
+        $weekday += 1;
+        $weekday -= 7 if ( $weekday > 7 );
+        push @$date_conds,  ' (dayofweek(start)= ?) ';
+        push @$bind_values, $weekday;
+    }
+
+    if ( $params->{archive} eq 'past' ) {
+        my $date = time::get_event_date($config);
+        if ( $date ne '' ) {
+            push @$date_conds,  ' ( start < ? ) ';
+            push @$bind_values, $date;
         }
 
-        if ( $till_date ne '' ) {
-            if ( $date_range_include eq '1' ) {
-
-                # start is before end
-                push @$date_conds,  ' ( start_date <= ? )';
-                push @$bind_values, $till_date;
-            } else {
-                push @$date_conds,  ' ( end_date <= ? ) ';
-                push @$bind_values, $till_date;
-            }
+    }
+    if ( $params->{archive} eq 'future' ) {
+        my $date = time::get_event_date($config);
+        if ( $date ne '' ) {
+            push @$date_conds,  ' ( end >= ? ) ';
+            push @$bind_values, $date;
         }
-
-        if ( $params->{weekday} ne '' ) {
-            my $weekday = $params->{weekday};
-            $weekday += 1;
-            $weekday -= 7 if ( $weekday > 7 );
-            push @$date_conds,  ' (dayofweek(start_date)= ?) ';
-            push @$bind_values, $weekday;
-        }
-
-        if ( $params->{archive} eq 'past' ) {
-            my $date = time::get_event_date($config);
-            if ( $date ne '' ) {
-                push @$date_conds,  ' ( start_date < ? ) ';
-                push @$bind_values, $date;
-            }
-
-        } elsif ( $params->{archive} eq 'future' ) {
-            my $date = time::get_event_date($config);
-            if ( $date ne '' ) {
-                push @$date_conds,  ' ( start_date >= ? ) ';
-                push @$bind_values, $date;
-            }
-        }
-
     }
 
     return $date_conds;
@@ -1430,20 +1414,32 @@ sub get_by_date_range {
     my $end_date   = shift;
     my $options    = shift;
 
+    my $day_starting_hour = $config->{date}->{day_starting_hour};
+
+    my $start = time::datetime_cond( $start_date . 'T00:00:00' );
+    $start = time::add_hours_to_datetime( $start, $day_starting_hour );
+
+    my $end = time::datetime_cond( $end_date . 'T00:00:00' );
+    $end = time::add_hours_to_datetime( $end, $day_starting_hour );
+
     my $conditions = [];
-    push @$conditions, 'start_date between ? and ?';
-    my $bind_values = [ $start_date, $end_date ];
+    push @$conditions, 'start between ? and ?';
+    my $bind_values = [ $start, $end ];
 
     setDefaultEventConditions( $config, $conditions, $bind_values, $options );
 
     $conditions = join( ' and ', @$conditions );
 
+    my $select = qq{distinct date(start) 'start_date'};
+    $select = qq{distinct date(DATE_SUB(start, INTERVAL $day_starting_hour HOUR)) 'start_date'} if defined $day_starting_hour;
+
     my $query = qq{
-        select   start_date 
+        select   $select
         from     calcms_events 
         where    $conditions
-        group by start_date
     };
+
+    #print STDERR Dumper($query);
 
     my $events = db::get( $dbh, $query, $bind_values );
 

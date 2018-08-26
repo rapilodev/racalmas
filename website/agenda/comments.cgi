@@ -8,14 +8,15 @@ $CGI::POST_MAX        = 1000;
 $CGI::DISABLE_UPLOADS = 1;
 
 use Data::Dumper;
-use params;
-use config;
-use comments;
-use db;
-use markup;
-use time;
-use cache;
-use log;
+
+use params();
+use config();
+use comments();
+use db();
+use markup();
+use time();
+use cache();
+use log();
 
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);

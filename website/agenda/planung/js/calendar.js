@@ -320,7 +320,7 @@ function getNearestDatetime(){
             var distance=Math.abs(delta);
             if (distance<yMin){
                 yMin=delta;
-                hour= $(this).attr('date');
+                hour= $(this).attr('time');
                 minute='30';
                 if(delta<0) minute='00';
             }
@@ -346,7 +346,7 @@ function getNearestDatetime(){
             var distance=Math.abs(delta);
             if (distance<yMin){
                 yMin=delta;
-                hour= $(this).attr('date');
+                hour= $(this).attr('time');
                 var height=$(this).height()+14;
                 var m=((delta+height*1.5)-8) % height;
                 m=m*60/height;
@@ -790,7 +790,7 @@ function updateTable(){
 
     $(baseElement).on("mousedown", ".schedule", function(event){
         if ( $('.ui-draggable-dragging').length>0 ) return;
-        handleSchedule($(this).attr("id"), $(this).attr("date"), event);
+        handleSchedule($(this).attr("id"), $(this).attr("start"), event);
     });
 
     //create schedule within studio timeslots
@@ -1031,7 +1031,7 @@ function handleWorktime(id, event){
     if (project_id<0)   return;
     if (studio_id<0)    return;
     if (schedule_id<0)  return;
-    var start_date=$(this).attr("date");
+    var start_date=$(this).attr("start");
 
     var url="work_time.cgi?action=show_new_event_from_schedule&project_id="+project_id+"&studio_id="+studio_id+"&schedule_id="+schedule_id+"&start_date="+start_date;
     if(event.which==1){

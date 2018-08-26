@@ -4,15 +4,16 @@ use warnings "all";
 use strict;
 use Data::Dumper;
 
-use config;
-use params;
-use log;
-use template;
-use auth;
-use roles;
-use uac;
-use studios;
-use localization;
+use config();
+use params();
+use log();
+use template();
+use auth();
+use roles();
+use uac();
+use studios();
+use localization();
+
 binmode STDOUT, ":utf8";
 
 my $r = shift;

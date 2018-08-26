@@ -11,11 +11,11 @@ $CGI::DISABLE_UPLOADS = 1;
 use Data::Dumper;
 
 #use Apache2::Request;
-use JSON;
-use params;
-use config;
-use log;
-use playout;
+use JSON();
+use params();
+use config();
+use log();
+use playout();
 
 my $r = shift;
 
@@ -39,7 +39,7 @@ if ( $0 =~ /upload_playout.*?\.cgi$/ ) {
 	my $len    = $r->headers_in()->get('Content-Length');
 	print "Content-type:text/plain\n\n";
 
-	my $json = decode_json($content);
+	my $json = JSON::decode_json($content);
 	$json->{project_id} = $params->{project_id} if defined $params->{project_id};
 	$json->{studio_id}  = $params->{studio_id}  if defined $params->{studio_id};
 	$config->{access}->{write} = 1;

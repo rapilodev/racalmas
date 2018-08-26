@@ -1,8 +1,5 @@
-<head>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <link type="text/css" href="css/admin.css" rel="stylesheet"/>
     <link type="text/css" href="css/image_manager.css" rel="stylesheet"/>
-</head>
 
 <script>
 function updateCheckBox(selector, value){
@@ -41,6 +38,10 @@ $(document).ready(
 );
 
 </script>
+
+<TMPL_IF no_results>
+found no image
+</TMPL_IF>
 
 <TMPL_LOOP images>
 <TMPL_IF filename>

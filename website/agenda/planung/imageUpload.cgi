@@ -9,17 +9,18 @@ use Apache2::Upload;
 
 delete $INC{CGI};
 require 'CGI.pm';
-use Date::Calc;
-use Time::Local;
-use Image::Magick;
-use Image::Magick::Square;
 
-use config;
-use auth;
-use uac;
-use studios;
-use template;
-use images;
+use Date::Calc();
+use Time::Local();
+use Image::Magick();
+use Image::Magick::Square();
+
+use config();
+use auth();
+use uac();
+use studios();
+use template();
+use images();
 
 binmode STDOUT, ":utf8";
 

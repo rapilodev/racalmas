@@ -8,14 +8,14 @@ use CGI qw(header param Vars);
 $CGI::POST_MAX        = 1000;
 $CGI::DISABLE_UPLOADS = 1;
 
-use params;
-use db;
-use markup;
-use cache;
-use log;
-use config;
-use template;
-use project;
+use params();
+use db();
+use markup();
+use cache();
+use log();
+use config();
+use template();
+use project();
 
 binmode STDOUT, ":utf8";
 
