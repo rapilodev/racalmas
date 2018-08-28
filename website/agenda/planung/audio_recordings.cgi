@@ -81,11 +81,7 @@ my $request = {
 	},
 };
 
-#delete $params->{presets};
-#print Dumper($request->{params}->{checked});
-
 $request = uac::prepare_request( $request, $user_presets );
-log::init($request);
 
 $params = $request->{params}->{checked};
 
@@ -534,12 +530,11 @@ sub getEventDuration{
 	my $events   = events::get( $config, $request );
 	if (scalar @$events == 0){
 	    print STDERR "getEventDuration: no event found with event_id=$eventId\n";
-	};
+	}
 	my $event    = $events->[0];
     my $duration = time::get_duration_seconds( $event->{start}, $event->{end}, $config->{date}->{time_zone} );
     return $duration;
 }
-
 
 sub check_params {
 	my $params = shift;

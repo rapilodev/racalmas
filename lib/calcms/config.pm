@@ -1,17 +1,17 @@
 package config;
 
 require Exporter;
-my @ISA = qw(Exporter);
-my @EXPORT_OK = qw(get $config);
-my %EXPORT_TAGS = ( 'all'  => [ @EXPORT_OK ] );
+my @ISA         = qw(Exporter);
+my @EXPORT_OK   = qw(get $config);
+my %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
-use Config::General;
+use Config::General();
 
-our $modified_at=-999;
-our $config= undef;
+our $modified_at = -999;
+our $config      = undef;
 
-sub get{
-	my $filename=shift;
+sub get {
+	my $filename = shift;
 
 	#return config if known
 	#my $age=(-M $filename);
@@ -19,11 +19,12 @@ sub get{
 
 	#reload config if changed
 	my $configuration = new Config::General(
-		-ConfigFile=>$filename, 
-		-UTF8=>1
+		-ConfigFile => $filename,
+		-UTF8       => 1
 	);
-	$config::config=$configuration->{DefaultConfig}->{config};
-	$config::modified_at=$age;
+	$config::config      = $configuration->{DefaultConfig}->{config};
+	$config::modified_at = $age;
+
 	#print STDERR "reload $filename\n";
 
 	return $config::config;

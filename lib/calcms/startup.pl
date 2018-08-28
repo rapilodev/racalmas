@@ -1,32 +1,19 @@
-use lib qw(/home/calcms/lib/calcms/);
+use lib qw(/home/radio/calcms/calcms/);
 
-return 1;
-#use B::TerseSize
-
-#load mod_perl modules
-#use Apache2;
-#use ModPerl::RegistryPrefork;
-#use Apache::compat;
-
-#on upload CGI open of tmpfile: Permission denied
-#use CGI;	
-
-#load common used modules
-#use Data::Dumper;
-#use DBI;
-use Apache::DBI;
+use Data::Dumper;
+use Apache::DBI();
 #$Apache::DBI::DEBUG = 2;
 
-use Time::Local;
-use Date::Calc;
+use Time::Local();
+use Date::Calc();
 use Calendar::Simple qw(date_span);
 
-use config;
-use log;
-use time;
-use db;
-use cache;
-use template;
+use config();
+use log();
+use time();
+use db();
+use cache();
+use template();
 
 #do not delete last line!
-1;
+return 1;

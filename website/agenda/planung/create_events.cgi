@@ -52,7 +52,6 @@ my $request = {
 	},
 };
 $request = uac::prepare_request( $request, $user_presets );
-log::init($request);
 
 $params = $request->{params}->{checked};
 
@@ -75,13 +74,13 @@ unless ( $permissions->{create_event_from_schedule} == 1 ) {
 	return;
 }
 
-if ( $params->{action} eq 'create_events') {
-    create_events( $config, $request );
-}else{
-    show_events( $config, $request );
+if ( $params->{action} eq 'create_events' ) {
+	create_events( $config, $request );
+} else {
+	show_events( $config, $request );
 }
 
-sub show_events{
+sub show_events {
 	my $config  = shift;
 	my $request = shift;
 
@@ -91,11 +90,11 @@ sub show_events{
 		uac::permissions_denied('assign_series_events');
 		return;
 	}
-    template::process( 'print', $params->{template}, $params );
-    
+	template::process( 'print', $params->{template}, $params );
+
 }
 
-sub create_events{
+sub create_events {
 	my $config  = shift;
 	my $request = shift;
 
@@ -106,56 +105,58 @@ sub create_events{
 		return;
 	}
 
-    print STDERR "create events\n";
+	print STDERR "create events\n";
 
-    my $project_id = $params->{project_id};
-    my $studio_id  = $params->{studio_id};
-    my $from_date  = $params->{from_date};
-    my $till_date  = $params->{till_date};
-    my $duration   = $params->{duration};
+	my $project_id = $params->{project_id};
+	my $studio_id  = $params->{studio_id};
+	my $from_date  = $params->{from_date};
+	my $till_date  = $params->{till_date};
+	my $duration   = $params->{duration};
 
-    $from_date = time::time_to_datetime();
-    if ($from_date=~/(\d\d\d\d\-\d\d\-\d\d \d\d)/){
-        $from_date = $1.':00';
-    }
-    $till_date = time::add_days_to_datetime($from_date, $duration);
-    if ($from_date=~/(\d\d\d\d\-\d\d\-\d\d)/){
-        $from_date = $1;
-    }
-    if ($till_date=~/(\d\d\d\d\-\d\d\-\d\d)/){
-        $till_date = $1;
-    }
-    $params->{from_date}=$from_date;
-    $params->{till_date}=$till_date;
+	$from_date = time::time_to_datetime();
+	if ( $from_date =~ /(\d\d\d\d\-\d\d\-\d\d \d\d)/ ) {
+		$from_date = $1 . ':00';
+	}
+	$till_date = time::add_days_to_datetime( $from_date, $duration );
+	if ( $from_date =~ /(\d\d\d\d\-\d\d\-\d\d)/ ) {
+		$from_date = $1;
+	}
+	if ( $till_date =~ /(\d\d\d\d\-\d\d\-\d\d)/ ) {
+		$till_date = $1;
+	}
+	$params->{from_date} = $from_date;
+	$params->{till_date} = $till_date;
 
-    print STDERR "create events from $from_date to $till_date\n";
+	print STDERR "create events from $from_date to $till_date\n";
 
-    my $dates = series_dates::getDatesWithoutEvent(
-        $config, {
-            project_id => $project_id,
-            studio_id  => $studio_id,
-            from       => $from_date,
-            till       => $till_date
-        }
-    );
-    print STDERR "<pre>found ".(scalar @$dates)." dates\n";
-    my $events=[];
-    for my $date (@$dates){
-        #print STDERR $date->{start}."\n";
-        push @$events, createEvent($config, $request, $date);
-    }
-    $params->{created_events} = $events;
-    $params->{created_total} = scalar(@$events);
-    template::process( 'print', $params->{template}, $params );
+	my $dates = series_dates::getDatesWithoutEvent(
+		$config,
+		{
+			project_id => $project_id,
+			studio_id  => $studio_id,
+			from       => $from_date,
+			till       => $till_date
+		}
+	);
+	print STDERR "<pre>found " . ( scalar @$dates ) . " dates\n";
+	my $events = [];
+	for my $date (@$dates) {
+
+		#print STDERR $date->{start}."\n";
+		push @$events, createEvent( $config, $request, $date );
+	}
+	$params->{created_events} = $events;
+	$params->{created_total}  = scalar(@$events);
+	template::process( 'print', $params->{template}, $params );
 }
 
-sub createEvent{
-    my $config      = shift;
-	my $request     = shift;
-    my $date        = shift;
+sub createEvent {
+	my $config  = shift;
+	my $request = shift;
+	my $date    = shift;
 
 	my $permissions = $request->{permissions};
-    my $user        = $request->{user};
+	my $user        = $request->{user};
 
 	$date->{show_new_event_from_schedule} = 1;
 	unless ( $permissions->{create_event_from_schedule} == 1 ) {
@@ -163,15 +164,15 @@ sub createEvent{
 		return;
 	}
 
-    $date->{start_date} = $date->{start};
-    my $event = eventOps::getNewEvent($config, $date, 'show_new_event_from_schedule');
+	$date->{start_date} = $date->{start};
+	my $event = eventOps::getNewEvent( $config, $date, 'show_new_event_from_schedule' );
 
-    return undef unless defined $event;
+	return undef unless defined $event;
 
-    $event->{start_date} = $event->{start};
-    eventOps::createEvent($request, $event, 'create_event_from_schedule');
-    print STDERR Dumper($date);
-    return $event;
+	$event->{start_date} = $event->{start};
+	eventOps::createEvent( $request, $event, 'create_event_from_schedule' );
+	print STDERR Dumper($date);
+	return $event;
 
 }
 
@@ -195,7 +196,7 @@ sub check_params {
 	}
 
 	#numeric values
-	$checked->{exclude} = 0;
+	$checked->{exclude}  = 0;
 	$checked->{duration} = 28;
 	for my $param ( 'id', 'project_id', 'studio_id', 'duration' ) {
 		if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
@@ -213,5 +214,4 @@ sub check_params {
 
 	return $checked;
 }
-
 

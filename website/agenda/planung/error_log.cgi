@@ -34,7 +34,6 @@ my $request = {
 	},
 };
 $request = uac::prepare_request( $request, $user_presets );
-log::init($request);
 
 #process header
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );

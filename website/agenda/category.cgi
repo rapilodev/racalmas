@@ -2,7 +2,6 @@
 
 use strict;
 use warnings;
-
 use Data::Dumper;
 use CGI qw(header param Vars);
 $CGI::POST_MAX        = 1000;
@@ -33,9 +32,6 @@ my $request = {
 		checked  => check_params( $config, $params ),
 	},
 };
-
-log::init($request);
-
 $params = $request->{params}->{checked};
 
 my $cache = {};

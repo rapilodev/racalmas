@@ -2,7 +2,6 @@
 
 #use utf8;
 use warnings "all";
-
 #use diagnostics;
 use strict;
 use Data::Dumper;
@@ -36,7 +35,6 @@ my $request = {
 		checked  => check_params( $config, $params )
 	},
 };
-log::init($request);
 
 $params = $request->{params}->{checked};
 
@@ -44,7 +42,6 @@ $params = $request->{params}->{checked};
 my $cache = {};
 if ( $config->{cache}->{use_cache} eq '1' ) {
 	cache::configure('series_names.html');
-	log::write( $config, 'cache_files', cache::get_map() ) if ($debug);
 	$cache = cache::load( $config, $params );
 	if ( defined $cache->{content} ) {
 		print $cache->{content};

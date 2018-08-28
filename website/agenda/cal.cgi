@@ -34,8 +34,6 @@ if ( $0 =~ /cal.*?\.cgi$/ ) {
 	};
 	$params = $request->{params}->{checked};
 
-	log::init($request);
-
 	my $out = '';
 	calendar::get_cached_or_render( $out, $config, $request );
 	print $out. "\n";

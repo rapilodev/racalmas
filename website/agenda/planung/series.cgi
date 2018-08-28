@@ -60,8 +60,6 @@ my $request = {
 	},
 };
 $request = uac::prepare_request( $request, $user_presets );
-log::init($request);
-
 $params = $request->{params}->{checked};
 
 #process header
@@ -429,13 +427,16 @@ sub save_series {
 		#print STDERR Dumper($entry);
 		$config->{access}->{write} = 1;
 		my $result = series::update( $config, $entry );
-		
-		series_events::update_series_images($config,{
-				project_id => $entry->{project_id},
-				studio_id  => $entry->{studio_id},
-				series_id  => $entry->{series_id},
+
+		series_events::update_series_images(
+			$config,
+			{
+				project_id   => $entry->{project_id},
+				studio_id    => $entry->{studio_id},
+				series_id    => $entry->{series_id},
 				series_image => $params->{image}
-		});
+			}
+		);
 
 		user_stats::increase(
 			$config,
@@ -590,7 +591,7 @@ sub assign_event {
 	my $config  = shift;
 	my $request = shift;
 
-    print STDERR "assign event\n";
+	print STDERR "assign event\n";
 
 	my $params      = $request->{params}->{checked};
 	my $permissions = $request->{permissions};
@@ -608,7 +609,8 @@ sub assign_event {
 			return undef;
 		}
 	}
-    #print STDERR "found all parameters:\n".Dumper($entry);
+
+	#print STDERR "found all parameters:\n".Dumper($entry);
 
 	# check if event exists,
 	# this has to use events::get, since it cannot check for series_id
@@ -618,11 +620,12 @@ sub assign_event {
 			checked => events::check_params(
 				$config,
 				{
-					event_id   => $entry->{event_id},
-					template   => 'no',
-					limit      => 1,
-					archive    => 'all',
-#                    no_exclude => 1
+					event_id => $entry->{event_id},
+					template => 'no',
+					limit    => 1,
+					archive  => 'all',
+
+					#                    no_exclude => 1
 				}
 			)
 		},
@@ -632,11 +635,12 @@ sub assign_event {
 	$request2->{params}->{checked}->{published} = 'all';
 
 	my $events = events::get( $config, $request2 );
+
 	#print STDERR "found events:".Dumper($events);
-    if (scalar (@$events) != 1){
-        uac::print_error("no event found for event_id=$entry->{event_id}, archive=all");
-        return undef;
-    }
+	if ( scalar(@$events) != 1 ) {
+		uac::print_error("no event found for event_id=$entry->{event_id}, archive=all");
+		return undef;
+	}
 
 	my $event = $events->[0];
 
@@ -837,19 +841,19 @@ sub reassign_event {
 
 	$request->{params}->{checked}->{series_id} = $new_series_id;
 	my $result = assign_event( $config, $request );
-    unless (defined $result){
-        uac::print_error("could not assign event");
-        return undef;
-    }
+	unless ( defined $result ) {
+		uac::print_error("could not assign event");
+		return undef;
+	}
 
 	$request->{params}->{checked}->{series_id} = $series_id;
 	$result = unassign_event( $config, $request );
-    unless (defined $result){
-        uac::print_error("could not unassign event");
-        return undef;
-    }
+	unless ( defined $result ) {
+		uac::print_error("could not unassign event");
+		return undef;
+	}
 
-    #print STDERR " event\n";
+	#print STDERR " event\n";
 	my $url =
 	  'event.cgi?project_id=' . $project_id . '&studio_id=' . $studio_id . '&series_id=' . $new_series_id . '&event_id=' . $event_id;
 	print qq{<meta http-equiv="refresh" content="0; url=$url" />} . "\n";
@@ -944,8 +948,8 @@ sub list_series {
 		return;
 	}
 
-	my $project_id        = $params->{project_id};
-	my $studio_id         = $params->{studio_id};
+	my $project_id = $params->{project_id};
+	my $studio_id  = $params->{studio_id};
 
 	my $studios = studios::get(
 		$config,
@@ -959,13 +963,13 @@ sub list_series {
 	for my $studio (@$studios) {
 		$studio_by_id->{ $studio->{id} } = $studio;
 	}
-	my $studio = $studio_by_id->{ $studio_id };
+	my $studio = $studio_by_id->{$studio_id};
 
 	my $series_conditions = {
 		project_id => $project_id,
 		studio_id  => $studio_id
 	};
-	my $series    = series::get_event_age( $config, $series_conditions );
+	my $series = series::get_event_age( $config, $series_conditions );
 
 	my $newSeries = [];
 	my $oldSeries = [];
@@ -980,9 +984,12 @@ sub list_series {
 	$params->{newSeries} = $newSeries;
 	$params->{oldSeries} = $oldSeries;
 
-    $params->{image} = studios::getImageById($config, {project_id => $project_id, studio_id => $studio_id} ) if ( (!defined $params->{image}) || ($params->{image} eq '') );
-    $params->{image} = project::getImageById($config, {project_id => $project_id} ) if ( (!defined $params->{image}) || ($params->{image} eq '') );
-    #print STDERR Dumper $params->{image};
+	$params->{image} = studios::getImageById( $config, { project_id => $project_id, studio_id => $studio_id } )
+	  if ( ( !defined $params->{image} ) || ( $params->{image} eq '' ) );
+	$params->{image} = project::getImageById( $config, { project_id => $project_id } )
+	  if ( ( !defined $params->{image} ) || ( $params->{image} eq '' ) );
+
+	#print STDERR Dumper $params->{image};
 
 	$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'all,series' } );
 	template::process( 'print', $params->{template}, $params );
@@ -1079,10 +1086,13 @@ sub show_series {
 
 	my $location = $studio->{location};
 
-    # set default image from studio
-    $serie->{image} = studios::getImageById($config, {project_id => $project_id, studio_id => $studio_id} ) if ( (!defined $serie->{image}) || ($serie->{image} eq '') );
-    $serie->{image} = project::getImageById($config, {project_id => $project_id} ) if ( (!defined $serie->{image}) || ($serie->{image} eq '') );
-    #print STDERR Dumper $serie->{image};
+	# set default image from studio
+	$serie->{image} = studios::getImageById( $config, { project_id => $project_id, studio_id => $studio_id } )
+	  if ( ( !defined $serie->{image} ) || ( $serie->{image} eq '' ) );
+	$serie->{image} = project::getImageById( $config, { project_id => $project_id } )
+	  if ( ( !defined $serie->{image} ) || ( $serie->{image} eq '' ) );
+
+	#print STDERR Dumper $serie->{image};
 
 	#add users
 	$serie->{series_users} = series::get_users(
@@ -1093,7 +1103,7 @@ sub show_series {
 			series_id  => $serie->{series_id}
 		}
 	);
-    uac::print_warn( "There is no user assigned, yet. Please assign a user!" ) if scalar @{$serie->{series_users}} ==0;
+	uac::print_warn("There is no user assigned, yet. Please assign a user!") if scalar @{ $serie->{series_users} } == 0;
 
 	#add events
 	$serie->{events} = series::get_events(

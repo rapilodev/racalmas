@@ -58,7 +58,6 @@ my $request = {
 	},
 };
 $request = uac::prepare_request( $request, $user_presets );
-log::init($request);
 
 $params = $request->{params}->{checked};
 
@@ -224,10 +223,10 @@ sub assign_events {
 				checked => events::check_params(
 					$config,
 					{
-						event_id   => $entry->{event_id},
-						template   => 'no',
-						limit      => 1,
-						archive    => 'all',
+						event_id => $entry->{event_id},
+						template => 'no',
+						limit    => 1,
+						archive  => 'all',
 					}
 				)
 			},

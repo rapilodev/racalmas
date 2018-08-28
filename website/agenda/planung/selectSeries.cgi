@@ -45,7 +45,6 @@ my $request = {
 	},
 };
 $request = uac::prepare_request( $request, $user_presets );
-log::init($request);
 
 $params = $request->{params}->{checked};
 $params = uac::set_template_permissions( $request->{permissions}, $params );

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
-use URI::Escape();
+#use URI::Escape();
 use Encode();
 use Data::Dumper;
 use MIME::Base64();
@@ -68,7 +68,6 @@ my $request = {
 
 #set user at params->presets->user
 $request = uac::prepare_request( $request, $user_presets );
-log::init($request);
 
 $params = $request->{params}->{checked};
 
@@ -169,6 +168,7 @@ sub show_event {
 	unless ( defined $event ) {
 		uac::print_error("event not found");
 	}
+
 	#print STDERR "show:".Dumper($event->{draft});
 	#print STDERR "show event".Dumper($event);
 
@@ -201,15 +201,16 @@ sub show_event {
 				#project_id => $params->{project_id},
 				#studio_id  => $params->{studio_id},
 				#series_id  => $params->{series_id},
-				event_id    => $params->{source_event_id},
-				draft       => 0,
+				event_id => $params->{source_event_id},
+				draft    => 0,
 			}
 		);
 		if ( defined $event2 ) {
 			for my $attr (
-				'title', 'user_title',         'excerpt',     'user_excerpt', 'content', 'topic',
-				'image', 'image_label', 'series_image', 'series_image_label', 
-				'live no_event_sync', 'podcast_url', 'archive_url'
+				'title',        'user_title',         'excerpt',            'user_excerpt',
+				'content',      'topic',              'image',              'image_label',
+				'series_image', 'series_image_label', 'live no_event_sync', 'podcast_url',
+				'archive_url'
 			  )
 			{
 				$event->{$attr} = $event2->{$attr};
@@ -222,7 +223,7 @@ sub show_event {
 	$event->{rerun} = 1 if ( $event->{rerun} =~ /a-z/ );
 	$event->{series_id} = $params->{series_id};
 
-	$event->{duration}  = events::get_duration( $config, $event );
+	$event->{duration} = events::get_duration( $config, $event );
 	$event->{durations} = \@durations;
 	if ( defined $event->{duration} ) {
 		for my $duration ( @{ $event->{durations} } ) {
@@ -231,7 +232,7 @@ sub show_event {
 	}
 	$event->{start} =~ s/(\d\d:\d\d)\:\d\d/$1/;
 	$event->{end} =~ s/(\d\d:\d\d)\:\d\d/$1/;
-	
+
 	# overwrite event with old one
 	#my $series_events=get_series_events($config,{
 	#    project_id => $params->{project_id},
@@ -421,7 +422,7 @@ sub show_new_event {
 		return 1;
 	}
 
-    my $event = eventOps::getNewEvent($config, $params, $params->{action});
+	my $event = eventOps::getNewEvent( $config, $params, $params->{action} );
 
 	#copy event to template params
 	for my $key ( keys %$event ) {
@@ -559,24 +560,26 @@ sub save_event {
 	my $found = 0;
 
 	#content fields
-	for my $key ( 'content', 'topic', 'title', 'excerpt', 'episode', 
-	    'image', 'series_image', 'image_label', 'series_image_label',
-	    'podcast_url', 'archive_url' ) {
+	for my $key (
+		'content',      'topic',       'title',              'excerpt',     'episode', 'image',
+		'series_image', 'image_label', 'series_image_label', 'podcast_url', 'archive_url'
+	  )
+	{
 		next unless defined $permissions->{ 'update_event_field_' . $key };
 		if ( $permissions->{ 'update_event_field_' . $key } eq '1' ) {
-		    next unless defined $params->{$key};
+			next unless defined $params->{$key};
 			$entry->{$key} = $params->{$key};
 			$found++;
 		}
 	}
 
-    #print STDERR "event to update1: ".Dumper($entry);
+	#print STDERR "event to update1: ".Dumper($entry);
 
 	#user extension fields
 	for my $key ( 'title', 'excerpt' ) {
 		next unless defined $permissions->{ 'update_event_field_' . $key . '_extension' };
 		if ( $permissions->{ 'update_event_field_' . $key . '_extension' } eq '1' ) {
-		    next unless defined $params->{ 'user_' . $key };
+			next unless defined $params->{ 'user_' . $key };
 			$entry->{ 'user_' . $key } = $params->{ 'user_' . $key };
 			$found++;
 		}
@@ -607,10 +610,11 @@ sub save_event {
 		uac::print_error("event not found");
 		return;
 	}
-    
-    $entry->{image}        = images::normalizeName($entry->{image});
-    $entry->{series_image} = images::normalizeName($entry->{series_image});
-    #print STDERR "event to update2: ".Dumper($entry);
+
+	$entry->{image}        = images::normalizeName( $entry->{image} );
+	$entry->{series_image} = images::normalizeName( $entry->{series_image} );
+
+	#print STDERR "event to update2: ".Dumper($entry);
 
 	$config->{access}->{write} = 1;
 
@@ -669,10 +673,10 @@ sub create_event {
 	my $config  = shift;
 	my $request = shift;
 
-	my $params     = $request->{params}->{checked};
-	my $event      = $request->{params}->{checked};
-    my $action     = $params->{action};
-    return eventOps::createEvent($request, $event, $action);
+	my $params = $request->{params}->{checked};
+	my $event  = $request->{params}->{checked};
+	my $action = $params->{action};
+	return eventOps::createEvent( $request, $event, $action );
 
 }
 
@@ -709,7 +713,8 @@ sub download {
 					event_id => $params->{event_id},
 					template => 'no',
 					limit    => 1,
-                    #no_exclude => 1
+
+					#no_exclude => 1
 				}
 			)
 		},
@@ -738,7 +743,7 @@ sub download {
 	if ( @files > 0 ) {
 		my $file = $files[0];
 		my $key  = int( rand(99999999999999999) );
-		$key = encode_base64($key);
+		$key = MIME::Base64::encode_base64($key);
 		$key =~ s/[^a-zA-Z0-9]//g;
 
 		#decode filename
@@ -810,14 +815,15 @@ sub check_params {
 	for my $param ( 'live', 'published', 'playout', 'archived', 'rerun', 'draft', 'disable_event_sync', 'get_rerun' ) {
 		if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /([01])/ ) ) {
 			$checked->{$param} = $1;
+
 			# print STDERR "check $param = $1\n";
 		}
 	}
 
 	#strings
 	for my $param (
-		'series_name',  'title',      'excerpt',      'content',     'topic', 'program', 'category', 'image', 'series_image',
-		'user_content', 'user_title', 'user_excerpt', 'podcast_url', 'archive_url'
+		'series_name',  'title',        'excerpt',    'content',      'topic',       'program', 'category', 'image',
+		'series_image', 'user_content', 'user_title', 'user_excerpt', 'podcast_url', 'archive_url'
 	  )
 	{
 		if ( defined $params->{$param} ) {

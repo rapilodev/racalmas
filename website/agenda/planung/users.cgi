@@ -17,7 +17,6 @@ use password_requests();
 
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
-
 my $config = config::get('../config/config.cgi');
 my $debug  = $config->{system}->{debug};
 my ( $user, $expires ) = auth::get_user( $cgi, $config );
@@ -44,8 +43,6 @@ my $request = {
 	},
 };
 $request = uac::prepare_request( $request, $user_presets );
-log::init($request);
-
 $params = $request->{params}->{checked};
 
 #process header
@@ -201,15 +198,16 @@ sub update_user {
 			return;
 		}
 
-        #print Dumper($params);
-        my $users= uac::get_users($config, {email => $params->{user_email}});
-        if (scalar (@$users) > 0){
-            #print Dumper($users);
+		#print Dumper($params);
+		my $users = uac::get_users( $config, { email => $params->{user_email} } );
+		if ( scalar(@$users) > 0 ) {
+
+			#print Dumper($users);
 			error('There is already a user registered for the given email address');
 			return;
-        }
+		}
 
-		return unless password_requests::checkPassword( $params->{user_password} ) ;
+		return unless password_requests::checkPassword( $params->{user_password} );
 
 		if ( $params->{user_password} ne $params->{user_password2} ) {
 			error('password mismatch');
@@ -245,17 +243,16 @@ sub change_password {
 	my $params      = $request->{params}->{checked};
 	my $permissions = $request->{permissions};
 
-    my $result = password_requests::changePassword($config, $request, $userName);
+	my $result = password_requests::changePassword( $config, $request, $userName );
 
 	$params->{errors} = $result->{error}   if defined $result->{error};
-    $params->{info}   = $result->{success} if defined $result->{success};
-	$params->{loc}    = localization::get( $config, { user => $params->{presets}->{user}, file => 'users' } );
+	$params->{info}   = $result->{success} if defined $result->{success};
+	$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'users' } );
 	uac::set_template_permissions( $permissions, $params );
 
 	#print Dumper($permissions);
 	template::process( 'print', template::check('change_password'), $params );
 }
-
 
 sub delete_user {
 	my $config  = shift;
@@ -423,16 +420,16 @@ sub check_params {
 		$checked->{studio_id} = -1;
 	}
 
-	for my $param ( 'user_name', 'user_full_name', 'user_email') {
+	for my $param ( 'user_name', 'user_full_name', 'user_email' ) {
 		if ( defined $params->{$param} ) {
 			my $value = $params->{$param};
-            $value =~s/^\s+//g;
-            $value =~s/\s+$//g;
-            $checked->{$param} = $value;
+			$value =~ s/^\s+//g;
+			$value =~ s/\s+$//g;
+			$checked->{$param} = $value;
 		}
 	}
 
-	for my $param (  'user_password', 'user_password2' ) {
+	for my $param ( 'user_password', 'user_password2' ) {
 		if ( defined $params->{$param} ) {
 			$checked->{$param} = $params->{$param};
 		}

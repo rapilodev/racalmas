@@ -54,8 +54,6 @@ my $request = {
 	},
 };
 $request = uac::prepare_request( $request, $user_presets );
-log::init($request);
-
 $params = $request->{params}->{checked};
 
 #process header

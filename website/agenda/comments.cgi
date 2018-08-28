@@ -2,7 +2,6 @@
 
 use warnings "all";
 use strict;
-
 use CGI qw(header param Vars);
 $CGI::POST_MAX        = 1000;
 $CGI::DISABLE_UPLOADS = 1;
@@ -17,7 +16,6 @@ use markup();
 use time();
 use cache();
 use log();
-
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
 
@@ -34,7 +32,6 @@ if ( $0 =~ /comments.*?\.cgi$/ ) {
 			checked  => comments::check_params( $config, $params ),
 		},
 	};
-	log::init($request);
 
 	my $output = '';
 	comments::get_cached_or_render( $output, $config, $request, 'filter_locked' );

@@ -6,7 +6,6 @@ use Data::Dumper;
 use URI::Escape();
 use Encode();
 use utf8();
-
 use params();
 use config();
 use log();
@@ -81,7 +80,6 @@ my $request = {
 };
 
 $request = uac::prepare_request( $request, $user_presets );
-log::init($request);
 
 $params = $request->{params}->{checked};
 
@@ -245,8 +243,8 @@ sub showCalendar {
 			delete $options->{till_date}          if ( $params->{list} == 1 );
 			delete $options->{date_range_include} if ( $params->{list} == 1 );
 		}
-		
-		$options->{draft}=0 unless $params->{list}==1;
+
+		$options->{draft} = 0 unless $params->{list} == 1;
 
 		#get events sorted by date
 		$events = getSeriesEvents( $config, $request, $options, $params );
@@ -397,11 +395,12 @@ sub showCalendar {
 			$date->{title} .= ( $date->{channels} || '' ) . ' channels<br>' if defined $date->{channels};
 			$date->{title} .= int( ( $date->{'stream_size'} || '0' ) / ( 1024 * 1024 ) ) . 'MB<br>' if defined $date->{'stream_size'};
 			$date->{title} .= $format if defined $format;
-			$date->{title} .= '<b>library</b>: ' . ( $date->{writing_library} || '' ) . '<br>' if defined $date->{'writing_library'};
-			$date->{title} .= '<b>path</b>: ' . ( $date->{file} || '' ) . '<br>' if defined $date->{file};
-            $date->{title} .= '<b>updated_at</b>: ' . ( $date->{updated_at} || '' ) . '<br>' if defined $date->{updated_at};
-            $date->{title} .= '<b>modified_at</b>: ' . ( $date->{modified_at} || '' ) . '<br>' if defined $date->{modified_at};
-            #print STDERR Dumper($date) if $date->{file}=~/180503/;
+			$date->{title} .= '<b>library</b>: ' .     ( $date->{writing_library} || '' ) . '<br>' if defined $date->{'writing_library'};
+			$date->{title} .= '<b>path</b>: ' .        ( $date->{file}            || '' ) . '<br>' if defined $date->{file};
+			$date->{title} .= '<b>updated_at</b>: ' .  ( $date->{updated_at}      || '' ) . '<br>' if defined $date->{updated_at};
+			$date->{title} .= '<b>modified_at</b>: ' . ( $date->{modified_at}     || '' ) . '<br>' if defined $date->{modified_at};
+
+			#print STDERR Dumper($date) if $date->{file}=~/180503/;
 			#$date->{title}.= '<b>rms_image</b>: '    .($date->{rms_image}||'').'<br>' if defined $date->{rms_image};
 
 			$date->{rms_image} = URI::Escape::uri_unescape( $date->{rms_image} ) if defined $date->{rms_image};
@@ -426,8 +425,8 @@ sub showCalendar {
 				$events_by_start->{ $date->{start} }->{duration}  = $date->{duration}  || 0;
 				$events_by_start->{ $date->{start} }->{rms_left}  = $date->{rms_left}  || 0;
 				$events_by_start->{ $date->{start} }->{rms_right} = $date->{rms_right} || 0;
-                $events_by_start->{ $date->{start} }->{playout_modified_at} = $date->{modified_at};
-                $events_by_start->{ $date->{start} }->{playout_updated_at}  = $date->{updated_at} ;
+				$events_by_start->{ $date->{start} }->{playout_modified_at} = $date->{modified_at};
+				$events_by_start->{ $date->{start} }->{playout_updated_at}  = $date->{updated_at};
 			}
 			push @$events, $date;
 		}
@@ -490,19 +489,21 @@ sub showCalendar {
 
 	# calculate positions and find schedule errors (depending on position)
 	for my $date ( sort ( keys %$events_by_day ) ) {
-		my $events = $events_by_day->{$date} ;
+		my $events = $events_by_day->{$date};
 		calc_positions( $events, $cal_options );
 		find_errors($events);
 	}
 
-    for my $event (@$events){
-        next unless defined $event->{uploaded_at};
-        #print STDERR "uploadAt=$event->{uploaded_at}, playoutModified:$event->{playout_modified_at}, playoutUpdatedAt:$event->{playout_updated_at}\n";
-        next if (defined $event->{playout_updated_at}) && ( $event->{uploaded_at} lt $event->{playout_updated_at} );
-        #print STDERR Dumper($event);
-        #$event->{upload} ='pending' ;
-        #$event->{title}.='<br>pending';
-    }
+	for my $event (@$events) {
+		next unless defined $event->{uploaded_at};
+
+#print STDERR "uploadAt=$event->{uploaded_at}, playoutModified:$event->{playout_modified_at}, playoutUpdatedAt:$event->{playout_updated_at}\n";
+		next if ( defined $event->{playout_updated_at} ) && ( $event->{uploaded_at} lt $event->{playout_updated_at} );
+
+		#print STDERR Dumper($event);
+		#$event->{upload} ='pending' ;
+		#$event->{title}.='<br>pending';
+	}
 
 	if ( $params->{list} == 1 ) {
 		showEventList( $config, $permissions, $params, $events_by_day );
@@ -557,7 +558,7 @@ sub formatDuration {
 	my $duration = shift;
 	return '' unless defined $duration;
 	return '' if $duration eq '';
-	my $result = int( ( $duration + 3600 ) * 10  + 0.5) % 600;
+	my $result = int( ( $duration + 3600 ) * 10 + 0.5 ) % 600;
 	my $class = "ok";
 	$class = "warn"  if $result > 1;
 	$class = "error" if $result > 10;
@@ -788,8 +789,8 @@ sub showEventList {
 			$event->{user_title}         ||= '';
 			$event->{episode}            ||= '';
 			$event->{rerun}              ||= '';
-	        $event->{draft}              ||= '';
-	    	$id                          ||= '';
+			$event->{draft}              ||= '';
+			$id                          ||= '';
 			$class                       ||= '';
 
 			my $archived = $event->{archived} || '-';
@@ -807,10 +808,9 @@ sub showEventList {
 			$rerun = " [" . markup::base26( $event->{recurrence_count} + 1 ) . "]"
 			  if ( defined $event->{recurrence_count} ) && ( $event->{recurrence_count} ne '' ) && ( $event->{recurrence_count} > 0 );
 
-
-            my $draft = $event->{draft} || '0';
-			$draft='-' if $draft eq '0';
-			$draft='x' if $draft eq '1';
+			my $draft = $event->{draft} || '0';
+			$draft = '-' if $draft eq '0';
+			$draft = 'x' if $draft eq '1';
 
 			my $title = $event->{title};
 			$title .= ': ' . $event->{user_title} if $event->{user_title} ne '';
@@ -1320,8 +1320,7 @@ sub addEventsToSeries {
                     <tr><td></td>
                         <td>
                             <button type="submit" name="action" value="assign_event">}
-	  . $params->{loc}->{button_assign_event_series}
-	  . q{</button>
+	  . $params->{loc}->{button_assign_event_series} . q{</button>
                         </td>
                     </tr>
                 </table>
@@ -1403,7 +1402,7 @@ sub print_event {
 		$height = '';
 	}
 
-#	my $date = $event->{origStart} || $event->{start} || '';
+	#	my $date = $event->{origStart} || $event->{start} || '';
 	my $content = $event->{content} || '';
 
 	if ( $class =~ /schedule/ ) {
@@ -1417,26 +1416,26 @@ sub print_event {
 		$attr .= ' start="' . $event->{start} . '"'   if defined $event->{start};
 	}
 
-    if (defined $event->{upload}){
-        $content.='<br>uploading <progress max="10" ></progress> ';
-    }
+	if ( defined $event->{upload} ) {
+		$content .= '<br>uploading <progress max="10" ></progress> ';
+	}
 
 	if ($showIcons) {
 		$content = '<div class="text">' . $content . '</div><div class="icons"></div>';
 	}
 
-    my $time='';
-    $time= qq{ time="$event->{time}"} if $class=~m/time/;
+	my $time = '';
+	$time = qq{ time="$event->{time}"} if $class =~ m/time/;
 
-    my $date='';
-    $date= qq{ date="$event->{date}"} if $class=~m/date/;
+	my $date = '';
+	$date = qq{ date="$event->{date}"} if $class =~ m/date/;
 
-	my $line=	    q{<div }	  . qq{class="$class" id="$id"};
-    $line.= qq{ style="}. $height . q{top:}. $ystart . q{px;"};
-    $line.=	$time . $date . qq{ $attr} ;
-	$line.= qq{>$content</div>} ;
-    $line.= "\n";
-    return $line;
+	my $line = q{<div } . qq{class="$class" id="$id"};
+	$line .= qq{ style="} . $height . q{top:} . $ystart . q{px;"};
+	$line .= $time . $date . qq{ $attr};
+	$line .= qq{>$content</div>};
+	$line .= "\n";
+	return $line;
 }
 
 sub getFrequency {
@@ -1484,7 +1483,7 @@ sub find_errors {
 		next if defined $event->{grid};
 		next if defined $event->{work};
 		next if defined $event->{play};
-		next if (defined $event->{draft}) && ($event->{draft} == 1);
+		next if ( defined $event->{draft} ) && ( $event->{draft} == 1 );
 		next unless defined $event->{ystart};
 		next unless defined $event->{yend};
 		$event->{check_errors} = 1;
@@ -1754,7 +1753,7 @@ sub getSeriesEvents {
 	#get events (directly from database to get the ones, not assigned, yet)
 	delete $options->{studio_id};
 	delete $options->{project_id};
-    $options->{recordings}=1;
+	$options->{recordings} = 1;
 
 	my $request2 = {
 		params => {
@@ -1764,7 +1763,7 @@ sub getSeriesEvents {
 		permissions => $request->{permissions}
 	};
 	$request2->{params}->{checked}->{published} = 'all';
-    $request2->{params}->{checked}->{draft} = '1' if $params->{list}==1;
+	$request2->{params}->{checked}->{draft} = '1' if $params->{list} == 1;
 
 	#delete $request2->{params}->{checked}->{locations_to_exclude}
 	#  if ( ( $params->{studio_id} == -1 ) && ( defined $request2->{params}->{checked}->{locations_to_exclude} ) );
@@ -1882,5 +1881,4 @@ sub check_params {
 
 	return $checked;
 }
-
 

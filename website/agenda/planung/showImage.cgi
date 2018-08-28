@@ -47,8 +47,6 @@ my $request = {
 	},
 };
 $request = uac::prepare_request( $request, $user_presets );
-log::init($request);
-
 $params = $request->{params}->{checked};
 
 #process header
@@ -68,26 +66,26 @@ sub showImage {
 		return;
 	}
 
-    unless (defined $params->{filename}){
+	unless ( defined $params->{filename} ) {
 		uac::permissions_denied('missing filename');
-        return;
-    }
+		return;
+	}
 
-	my $filename = images::getInternalPath($config, $params);
-    unless (-e $filename){
+	my $filename = images::getInternalPath( $config, $params );
+	unless ( -e $filename ) {
 		uac::permissions_denied("read $filename");
-        return;
-    }
+		return;
+	}
 
-    my $image=images::readFile($filename);
-    if (defined $image->{error}){
+	my $image = images::readFile($filename);
+	if ( defined $image->{error} ) {
 		uac::permissions_denied("read $filename, $image->{error}");
-        return;
-    }
+		return;
+	}
 
-    binmode STDOUT;
-    print "Content-type:image/jpeg; charset=UTF-8;\n\n";
-    print $image->{content};
+	binmode STDOUT;
+	print "Content-type:image/jpeg; charset=UTF-8;\n\n";
+	print $image->{content};
 	return;
 }
 
@@ -103,22 +101,22 @@ sub check_params {
 	$checked->{debug} = $debug;
 
 	#numeric values
-	for my $param ( 'filename') {
+	for my $param ('filename') {
 		if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^[A-Za-z\_\-\.\d\/]+$/ ) ) {
 			$checked->{$param} = $params->{$param};
-			$checked->{$param} =~s/^.*\///g;
+			$checked->{$param} =~ s/^.*\///g;
 		}
 	}
 
-    $checked->{type}='thumbs';
-	for my $param ( 'type') {
+	$checked->{type} = 'thumbs';
+	for my $param ('type') {
 		if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^(thumbs|images|icons)$/ ) ) {
 			$checked->{$param} = $params->{$param};
 		}
 	}
 
 	#numeric values
-	for my $param ( 'project_id', 'studio_id', 'series_id', 'event_id') {
+	for my $param ( 'project_id', 'studio_id', 'series_id', 'event_id' ) {
 		if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^[\-\d]+$/ ) ) {
 			$checked->{$param} = $params->{$param};
 		}

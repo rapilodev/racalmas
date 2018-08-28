@@ -37,7 +37,6 @@ my $request={
 	config	=> $config,
 };
 $params=$request->{params}->{checked};
-log::init($request);
 
 print $cgi->header('text/plain')."\n";
 

@@ -55,10 +55,8 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 		},
 	};
 	$params = $request->{params}->{checked};
-	#print STDERR Dumper($params);
 
 	my $mem = 0;
-	log::init($request);
 
 	#get result from cache
 	my $cache = aggregator::get_cache( $config, $request );
@@ -159,18 +157,14 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 	print $output_header;
 	print $content;
 
-	#    $r->print("done");
-
 	if ( $config->{cache}->{use_cache} eq '1' ) {
 		$cache->{content} = $content;
-		log::write( $config, 'cache_file', $cache->{filename} ) if ($debug);
 		cache::save($cache);
 	}
 
 	#    $config=undef;
 	$content = undef;
 	$cache   = undef;
-	log::mem( $config, 'aggregate done', $mem ) if ( $mem_debug > 0 );
 }
 
 sub load_file {

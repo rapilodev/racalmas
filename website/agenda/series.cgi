@@ -71,7 +71,6 @@ sub list_series {
 	template::process( 'print', 'templates/series.html', $params );
 }
 
-
 sub check_params {
 	my $params = shift;
 

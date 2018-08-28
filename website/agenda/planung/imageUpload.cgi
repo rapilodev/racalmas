@@ -320,13 +320,13 @@ sub process_image {
 	my $md5_filename = shift;
 	my $content      = shift;
 
-	my $upload_path = images::getInternalPath($config, {type=>'upload', filename=> $md5_filename . '.' . $extension});
-	my $thumb_path  = images::getInternalPath($config, {type=>'thumbs', filename=> $md5_filename . '.jpg'});
-	my $icon_path   = images::getInternalPath($config, {type=>'icons',  filename=> $md5_filename . '.jpg'});
-	my $image_path  = images::getInternalPath($config, {type=>'images', filename=> $md5_filename . '.jpg'});
+	my $upload_path = images::getInternalPath( $config, { type => 'upload', filename => $md5_filename . '.' . $extension } );
+	my $thumb_path  = images::getInternalPath( $config, { type => 'thumbs', filename => $md5_filename . '.jpg' } );
+	my $icon_path   = images::getInternalPath( $config, { type => 'icons',  filename => $md5_filename . '.jpg' } );
+	my $image_path  = images::getInternalPath( $config, { type => 'images', filename => $md5_filename . '.jpg' } );
 
 	#copy file to upload space
-	my $result=images::writeFile($upload_path, $content);
+	my $result = images::writeFile( $upload_path, $content );
 	return $result if defined $result->{error};
 
 	#write image
@@ -350,7 +350,6 @@ sub process_image {
 
 	#$image->Normalize();
 	$image->Write( 'jpg:' . $image_path );
-
 	#write thumb
 	my $thumb = $image;
 	$thumb->Trim2Square;

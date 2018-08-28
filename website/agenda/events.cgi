@@ -45,9 +45,6 @@ if ( $0 =~ /events.*?\.cgi$/ ) {
 		},
 	};
 
-	#events::init($request);
-	log::init($request);
-
 	my $output = '';
 	events::get_cached_or_render( $output, $config, $request );
 	print $output. "\n";

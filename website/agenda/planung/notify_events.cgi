@@ -56,12 +56,11 @@ my $request = {
 
 #set user at params->presets->user
 $request = uac::prepare_request( $request, $user_presets );
-log::init($request);
 
 $params = $request->{params}->{checked};
 
 #show header
-unless ( params::isJson() || ( $params->{template}=~/\.txt/ ) ) {
+unless ( params::isJson() || ( $params->{template} =~ /\.txt/ ) ) {
 	my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 	$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
 	template::process( 'print', template::check('default.html'), $headerParams );
@@ -124,7 +123,7 @@ sub show_events {
 
 	$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'notify_events' } );
 	template::process( 'print', $params->{template}, $params );
-	
+
 }
 
 sub sendMail {

@@ -34,7 +34,7 @@ $params = $request->{params}->{checked};
 my $loc = localization::get( $config, { user => $user, file => $params->{usecase} } );
 my $header = "Content-type:application/json; charset=UTF-8;\n\n";
 $loc->{usecase} = $params->{usecase};
-my $json = to_json( $loc, { pretty => 1 } );
+my $json = JSON::to_json( $loc, { pretty => 1 } );
 my @json_lines = ();
 
 for my $line ( split /\n/, $json ) {
