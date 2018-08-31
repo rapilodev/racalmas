@@ -6,7 +6,7 @@ use warnings;
 use strict;
 
 use Data::Dumper;
-use CGI::Simple ();
+use CGI::Simple   ();
 use ModPerl::Util ();
 use Date::Calc();
 use Time::Local();
@@ -141,8 +141,9 @@ sub uploadRecording {
 		#print STDERR Dumper($fh)."<br>";
 		my $fileInfo = uploadFile( $config, $fh, $params->{event_id}, $user, $params->{upload} );
 		$params->{error} .= $fileInfo->{error} if defined $fileInfo->{error};
-		$params->{path}     = $fileInfo->{path};
-		$params->{size}     = $fileInfo->{size};
+		$params->{path} = $fileInfo->{path};
+		$params->{size} = $fileInfo->{size};
+
 		#$params->{duration} = $fileInfo->{duration};
 		$params = updateDatabase( $config, $params, $user ) if $params->{error} eq '';
 	} else {
@@ -292,18 +293,19 @@ sub showAudioRecordings {
 			event_id   => $params->{event_id},
 		}
 	);
+
 	#print Dumper($audioRecordings);
 	for my $recording (@$audioRecordings) {
 		$recording->{size} =~ s/(\d)(\d\d\d)$/$1\.$2/g;
 		$recording->{size} =~ s/(\d)(\d\d\d\.\d\d\d)$/$1\.$2/g;
 
 		$recording->{processed} = $recording->{processed} ? 'yes' : 'no';
-		$recording->{mastered} = $recording->{mastered} ? 'yes' : 'no';
+		$recording->{mastered}  = $recording->{mastered}  ? 'yes' : 'no';
 
 		$recording->{eventDuration} = getDuration( $recording->{eventDuration} );
 		$recording->{audioDuration} = getDuration( $recording->{audioDuration} );
 
-		$recording->{rmsLeft} ||= '-';
+		$recording->{rmsLeft}  ||= '-';
 		$recording->{rmsRight} ||= '-';
 	}
 
@@ -323,19 +325,19 @@ sub showAudioRecordings {
 
 }
 
-sub getDuration{
-    my $duration=shift;
-    my $hour = int($duration / 3600);
-    $duration -= $hour * 3600;
+sub getDuration {
+	my $duration = shift;
+	my $hour     = int( $duration / 3600 );
+	$duration -= $hour * 3600;
 
-    my $minutes = int($duration / 60);
-    $duration -= $minutes * 60;
+	my $minutes = int( $duration / 60 );
+	$duration -= $minutes * 60;
 
-    my $seconds = int($duration);
-    $duration -= $seconds;
+	my $seconds = int($duration);
+	$duration -= $seconds;
 
-    my $milli= int(100 * $duration);
-    return sprintf("%02d:%02d:%02d.%02d",$hour, $minutes, $seconds, $milli);
+	my $milli = int( 100 * $duration );
+	return sprintf( "%02d:%02d:%02d.%02d", $hour, $minutes, $seconds, $milli );
 }
 
 sub uploadFile {
@@ -391,7 +393,7 @@ sub updateDatabase {
 	my $params = shift;
 	my $user   = shift;
 
-    my $eventDuration = getEventDuration($config, $params->{event_id});
+	my $eventDuration = getEventDuration( $config, $params->{event_id} );
 
 	my $entry = {
 		project_id    => $params->{project_id},
@@ -402,6 +404,7 @@ sub updateDatabase {
 		created_by    => $user,
 		eventDuration => $eventDuration
 	};
+
 	#print STDERR "updateDatabase:" . Dumper($entry);
 
 	#connect
@@ -425,14 +428,14 @@ sub updateDatabase {
 		$params->{id} = $entry->{id};
 	} else {
 		print STDERR "insert\n";
-		$entry->{created_by} = $user;
-        $entry->{processed} = 0;
-        $entry->{mastered} = 0;
-        $entry->{rmsLeft} = 0.0;
-        $entry->{rmsRight} = 0.0;
-        $entry->{audioDuration} = 0.0;
-        $entry->{modified_at} = time();
-		$params->{id} = audio_recordings::insert( $config, $dbh, $entry );
+		$entry->{created_by}    = $user;
+		$entry->{processed}     = 0;
+		$entry->{mastered}      = 0;
+		$entry->{rmsLeft}       = 0.0;
+		$entry->{rmsRight}      = 0.0;
+		$entry->{audioDuration} = 0.0;
+		$entry->{modified_at}   = time();
+		$params->{id}           = audio_recordings::insert( $config, $dbh, $entry );
 	}
 	$config->{access}->{write} = 0;
 	$params->{action_result} = 'done!';
@@ -504,15 +507,15 @@ sub checkFilename {
 }
 
 # return event duration in seconds
-sub getEventDuration{
-    my $config = shift;
-    my $eventId = shift;
+sub getEventDuration {
+	my $config  = shift;
+	my $eventId = shift;
 
-    if ($eventId<1){
-        print STDERR "invalid eventId $eventId\n";
-        return 0;
-    }
-	
+	if ( $eventId < 1 ) {
+		print STDERR "invalid eventId $eventId\n";
+		return 0;
+	}
+
 	my $request = {
 		params => {
 			checked => events::check_params(
@@ -524,16 +527,16 @@ sub getEventDuration{
 				}
 			)
 		},
-		config      => $config
+		config => $config
 	};
-	$request->{params}->{checked}->{published}='all';
-	my $events   = events::get( $config, $request );
-	if (scalar @$events == 0){
-	    print STDERR "getEventDuration: no event found with event_id=$eventId\n";
+	$request->{params}->{checked}->{published} = 'all';
+	my $events = events::get( $config, $request );
+	if ( scalar @$events == 0 ) {
+		print STDERR "getEventDuration: no event found with event_id=$eventId\n";
 	}
-	my $event    = $events->[0];
-    my $duration = time::get_duration_seconds( $event->{start}, $event->{end}, $config->{date}->{time_zone} );
-    return $duration;
+	my $event = $events->[0];
+	my $duration = time::get_duration_seconds( $event->{start}, $event->{end}, $config->{date}->{time_zone} );
+	return $duration;
 }
 
 sub check_params {

@@ -14,11 +14,7 @@ sub send {
 		'Data'     => $mail->{'Data'},
 	);
 
-	#print '<pre>';
 	$msg->print( \*STDERR );
-
-	#print '</pre>';
-
 	$msg->send;
 }
 

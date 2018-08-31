@@ -12,20 +12,13 @@ our $config      = undef;
 
 sub get {
 	my $filename = shift;
-
-	#return config if known
-	#my $age=(-M $filename);
-	#return $config::config if ((defined $config::config) && ($age <= $config::modified_at));
-
-	#reload config if changed
+	
 	my $configuration = new Config::General(
 		-ConfigFile => $filename,
 		-UTF8       => 1
 	);
 	$config::config      = $configuration->{DefaultConfig}->{config};
 	$config::modified_at = $age;
-
-	#print STDERR "reload $filename\n";
 
 	return $config::config;
 }

@@ -373,7 +373,7 @@ sub getJson {
 		}
 	);
 
-	if ( @$series == 1 ) {
+	if ( scalar @$series == 1 ) {
 		my $serie = $series->[0];
 		$event->{has_single_events} = $serie->{has_single_events};
 		if ( $event->{has_single_events} eq '1' ) {

@@ -32,7 +32,7 @@ sub connect {
 	my $options = shift;
 	my $request = shift;
 
-	return $request->{connection} if ( ( defined $request ) && ( defined $request->{connection} ) );
+    return $request->{connection} if ( defined $request ) && ( defined $request->{connection} );
 
 	my $access_options = $options->{access};
 

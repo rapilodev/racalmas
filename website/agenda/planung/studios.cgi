@@ -106,7 +106,7 @@ sub delete_studio {
 			}
 		);
 
-		unless ( @$studio_assignments == 0 ) {
+		unless ( scalar @$studio_assignments == 0 ) {
 			uac::print_info("Studio unassigned from project");
 			uac::print_warn("Studio is assigned to other projects, so it will not be deleted");
 			return undef;
@@ -141,7 +141,7 @@ sub save_studio {
 		studios::update( $config, $entry );
 	} else {
 		my $studios = studios::get( $config, { name => $entry->{name} } );
-		if ( @$studios > 0 ) {
+		if ( scalar @$studios > 0 ) {
 			uac::print_error("studio with name '$entry->{name}' already exists");
 			return;
 		}
@@ -166,7 +166,7 @@ sub save_studio {
 			has_single_events => 1
 		}
 	);
-	if ( @$single_series == 0 ) {
+	if ( scalar @$single_series == 0 ) {
 		series::insert(
 			$config,
 			{

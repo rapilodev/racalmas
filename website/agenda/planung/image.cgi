@@ -71,7 +71,7 @@ return unless defined uac::check( $config, $params, $user_presets );
 my $local_media_dir = $config->{locations}->{local_media_dir};
 my $local_media_url = $config->{locations}->{local_media_url};
 
-log::error( $config, 'cannot locate media dir' . $local_media_dir ) unless -e $local_media_dir;
+log::error( $config, 'cannot locate media dir ' . $local_media_dir ) unless -e $local_media_dir;
 uac::permissions_denied('reading from local media dir') unless -r $local_media_dir;
 uac::permissions_denied('writing to local media dir')   unless -w $local_media_dir;
 
@@ -179,7 +179,7 @@ sub show_image {
 			);
 
 			#print STDERR Dumper($imagesByNames);
-			$selectedImage = $imagesByNames->[0] if scalar(@$imagesByNames) > 0;
+			$selectedImage = $imagesByNames->[0] if scalar @$imagesByNames > 0;
 		}
 
 		my $finalResults = [];

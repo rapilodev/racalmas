@@ -145,9 +145,6 @@ sub sync {
 	my $studio_id  = $options->{studio_id};
 	my $updates    = $options->{events};
 
-	#print STDERR "sync\n";
-	#print STDERR Dumper($updates);
-
 	# get new entries by date
 	my $update_by_date = {};
 	for my $entry (@$updates) {

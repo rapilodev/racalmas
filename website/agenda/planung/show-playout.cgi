@@ -18,7 +18,6 @@ use studios;
 use series;
 use template;
 use playout;
-
 binmode STDOUT, ":utf8";
 
 my $r = shift;

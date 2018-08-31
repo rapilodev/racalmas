@@ -51,10 +51,6 @@
 
 <div> <a href="user_settings.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.profile></a> </div>
 
-<TMPL_IF .allow.is_admin>
-<div> <a href="error_log.cgi"><TMPL_VAR .loc.errors></a> </div>
-</TMPL_IF>
-
 <div> <a href="help.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.help></a> </div>
 
 <select id="studio_id" name="studio_id" onchange="set_studio($(this).val())">

@@ -115,9 +115,9 @@ sub get_calendar {
 
 	#set query string for caching
 	my $options = [];
-	push( @$options, 'date=' . $params->{date} )           if ( $params->{date} ne '' );
-	push( @$options, 'from_date=' . $params->{from_date} ) if ( $params->{from_date} ne '' );
-	push( @$options, 'till_date=' . $params->{till_date} ) if ( $params->{till_date} ne '' );
+    push @$options, 'date=' . $params->{date}           if $params->{date} ne '';
+    push @$options, 'from_date=' . $params->{from_date} if $params->{from_date} ne '';
+    push @$options, 'till_date=' . $params->{till_date} if $params->{till_date} ne '';
 	$ENV{QUERY_STRING} = '' . join( "&", @$options );
 
 	my $content = '';
@@ -270,10 +270,10 @@ sub check_params {
 	#set query string for caching
 	if ( ( !exists $ENV{QUERY_STRING} ) || ( $ENV{QUERY_STRING} eq '' ) ) {
 		my $options = [];
-		push( @$options, 'date=' . $date )           if $date ne '';
-		push( @$options, 'from_date=' . $from_date ) if $from_date ne '';
-		push( @$options, 'till_date=' . $till_date ) if $till_date ne '';
-		push( @$options, 'event_id=' . $event_id )   if $event_id ne '';
+        push @$options, 'date=' . $date           if $date ne '';
+        push @$options, 'from_date=' . $from_date if $from_date ne '';
+        push @$options, 'till_date=' . $till_date if $till_date ne '';
+        push @$options, 'event_id=' . $event_id   if $event_id ne '';
 		$ENV{QUERY_STRING} = '' . join( "&", @$options );
 	}
 

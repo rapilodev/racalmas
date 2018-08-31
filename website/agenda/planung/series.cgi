@@ -361,9 +361,6 @@ sub save_series {
 		}
 	);
 
-	#print STDERR "done\n";
-	#my @series_ids=@$series_ids;
-
 	if ( $params->{action} eq 'create' ) {
 
 		unless ( $permissions->{create_series} == 1 ) {

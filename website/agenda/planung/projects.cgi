@@ -137,7 +137,7 @@ sub save_project {
 			return;
 		}
 		my $projects = project::get( $config, { name => $entry->{name} } );
-		if ( @$projects > 0 ) {
+		if ( scalar @$projects > 0 ) {
 			uac::print_error("project with name '$entry->{name}' already exists");
 			return;
 		}

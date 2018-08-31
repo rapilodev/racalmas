@@ -72,6 +72,11 @@ sub showImage {
 	}
 
 	my $filename = images::getInternalPath( $config, $params );
+	unless ( defined $filename ) {
+		uac::permissions_denied("could not find path");
+		return;
+	}
+	
 	unless ( -e $filename ) {
 		uac::permissions_denied("read $filename");
 		return;

@@ -264,8 +264,8 @@ sub get {
 				};
 
 				$week_result->{class} .= ' selected'
-				  if ( ( ( defined $params->{from_date} ) && ( $start_date eq $params->{from_date} ) )
-					|| ( ( defined $params->{till_date} ) && ( $end_date eq $params->{till_date} ) ) );
+                  if ( ( defined $params->{from_date} ) && ( $start_date eq $params->{from_date} ) )
+                  || ( ( defined $params->{till_date} ) && ( $end_date eq $params->{till_date} ) );
 				$week_result->{class} .= " week_$weekCounter";
 				$week_result->{class} =~ s/^\s+//g;
 

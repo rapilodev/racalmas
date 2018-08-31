@@ -147,8 +147,8 @@ sub set {
 sub save {
 	my $cache = shift;
 
-	return if ( $cache->{action} ne 'save' );
-	return if ( ( !defined $cache->{filename} ) || ( $cache->{filename} eq '' ) );
+    return if $cache->{action} ne 'save';
+    return if ( !defined $cache->{filename} ) || ( $cache->{filename} eq '' );
 
 	log::save_file( $cache->{filename}, $cache->{content} );
 	chmod 0664, $cache->{filename};

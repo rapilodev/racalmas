@@ -37,7 +37,7 @@ sub setAttributesFromSeriesTemplate {
 			series_id  => $params->{series_id},
 		}
 	);
-	if ( @$series != 1 ) {
+	if ( scalar @$series != 1 ) {
 		uac::print_error("series not found");
 		return undef;
 	}
@@ -261,7 +261,7 @@ sub createEvent {
 			series_id  => $event->{series_id},
 		}
 	);
-	if ( @$series != 1 ) {
+	if ( scalar @$series != 1 ) {
 		uac::print_error("series not found");
 		return undef;
 	}
@@ -279,7 +279,7 @@ sub createEvent {
 		uac::print_error("studio not found");
 		return undef;
 	}
-	unless ( @$studios == 1 ) {
+	unless ( scalar @$studios == 1 ) {
 		uac::print_error("studio not found");
 		return undef;
 	}

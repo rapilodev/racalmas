@@ -350,6 +350,7 @@ sub process_image {
 
 	#$image->Normalize();
 	$image->Write( 'jpg:' . $image_path );
+
 	#write thumb
 	my $thumb = $image;
 	$thumb->Trim2Square;

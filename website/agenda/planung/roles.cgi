@@ -334,12 +334,6 @@ sub show_roles {
 	#add permission rows
 	$columns = sort_columns($columns);
 
-	#    print '<pre>';
-	#    for my $key (@$columns){
-	#         printf ("        %-40s => '',\n", "'".$key."'");
-	#    }
-	#    print '</pre>';
-
 	for my $key (@$columns) {
 		next
 		  if ( $key eq 'level'

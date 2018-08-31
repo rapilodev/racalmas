@@ -56,8 +56,8 @@ my $dbh = db::connect($config);
 my $template_parameters = {};
 $template_parameters->{projects}         = getProjects( $dbh, $config, $params );
 $template_parameters->{debug}            = $config->{system}->{debug};
-$template_parameters->{server_cache}     = $config->{cache}->{server_cache} if ( $config->{cache}->{server_cache} );
-$template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache} if ( $config->{cache}->{use_client_cache} );
+$template_parameters->{server_cache}     = $config->{cache}->{server_cache} if  $config->{cache}->{server_cache} ;
+$template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache} if  $config->{cache}->{use_client_cache} ;
 
 #output template
 my $template = $params->{template};
@@ -103,9 +103,9 @@ sub getProjects {
 		$project->{js_name} =~ s/\_+/\_/g;
 
 		#mark last series_name entry of all non empty projects
-		if ( ( defined $series_names ) && ( @$series_names > 0 ) ) {
+		if ( ( defined $series_names ) && ( scalar @$series_names > 0 ) ) {
 			$series_names->[-1]->{last}      = 1;
-			$prev_series_names->[-1]->{last} = 0 if ( ( defined $prev_series_names ) && ( @$prev_series_names > 0 ) );
+			$prev_series_names->[-1]->{last} = 0 if ( defined $prev_series_names ) && ( sclar @$prev_series_names > 0 ) ;
 			$prev_series_names               = $series_names;
 		}
 		push @$results, $project;
