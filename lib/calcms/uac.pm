@@ -1,10 +1,10 @@
-use CGI();
-use CGI::Session qw(-ip-match);
-use CGI::Cookie();
-
 package uac;
 use warnings "all";
 use strict;
+
+use CGI();
+use CGI::Session qw(-ip-match);
+use CGI::Cookie();
 use Data::Dumper;
 use auth();
 use db();
@@ -12,8 +12,7 @@ use template();
 use project();
 use studios();
 
-require Exporter;
-our @ISA       = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK = qw(
   get_user get_users update_user insert_user delete_user
   get_roles insert_role update_role  get_role_columns
@@ -25,7 +24,6 @@ our @EXPORT_OK = qw(
   prepare_request set_template_permissions
   permission_denied
 );
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub debug;
 

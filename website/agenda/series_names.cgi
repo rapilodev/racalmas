@@ -62,7 +62,7 @@ $template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache} 
 #output template
 my $template = $params->{template};
 my $out      = '';
-template::process( $out, $params->{template}, $template_parameters );
+template::process($config,  $out, $params->{template}, $template_parameters );
 print $out;
 
 #write to cache
@@ -184,7 +184,7 @@ sub check_params {
 	my $config = shift;
 	my $params = shift;
 
-	my $template = template::check( $params->{template}, 'series_names.html' );
+	my $template = template::check($config,  $params->{template}, 'series_names.html' );
 
 	my $debug = $params->{debug} || '';
 	if ( $debug =~ /([a-z\_\,]+)/ ) {

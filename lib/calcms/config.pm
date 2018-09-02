@@ -1,26 +1,32 @@
 package config;
 
-require Exporter;
-my @ISA         = qw(Exporter);
-my @EXPORT_OK   = qw(get $config);
-my %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
+use warnings;
+use strict;
 
 use Config::General();
 
-our $modified_at = -999;
-our $config      = undef;
+use base 'Exporter';
+our @EXPORT_OK = qw(get set);
+
+my $config = undef;
+
+sub set {
+    my $value = shift;
+    $config = $value;
+    return;
+}
 
 sub get {
-	my $filename = shift;
-	
-	my $configuration = new Config::General(
-		-ConfigFile => $filename,
-		-UTF8       => 1
-	);
-	$config::config      = $configuration->{DefaultConfig}->{config};
-	$config::modified_at = $age;
+    my $filename = shift;
 
-	return $config::config;
+    return $config if defined $config;;
+
+    my $configuration = Config::General->new(
+        -ConfigFile => $filename,
+        -UTF8       => 1
+    );
+    config::set( $configuration->{DefaultConfig}->{config} );
+    return $config;
 }
 
 #do not delete last line

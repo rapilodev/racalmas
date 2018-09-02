@@ -8,8 +8,7 @@ use Data::Dumper;
 use events();
 use images();
 
-require Exporter;
-our @ISA       = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK = qw(
   get_columns get insert update delete
   get_users add_user remove_user
@@ -22,7 +21,6 @@ our @EXPORT_OK = qw(
   is_series_assigned_to_user is_event_assigned_to_user
   update_recurring_events update_recurring_event
 );
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 #TODO: remove studio_id
 #TODO: get project_id, studio_id by join with project_series

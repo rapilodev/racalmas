@@ -87,7 +87,7 @@ $params = $request->{params}->{checked};
 
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( 'print', template::check('default.html'), $headerParams );
+template::process( $config, 'print', template::check($config, 'default.html'), $headerParams );
 
 exit unless defined uac::check( $config, $params, $user_presets );
 
@@ -112,7 +112,7 @@ showAudioRecordings( $config, $request );
 
 print STDERR "$0 ERROR: " . $params->{error} . "\n" if $params->{error} ne '';
 $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event,comment' } );
-template::process( 'print', $params->{template}, $params );
+template::process($config,  'print', $params->{template}, $params );
 
 exit;
 
@@ -544,7 +544,7 @@ sub check_params {
 
 	my $checked = {};
 	$checked->{error} = '';
-	$checked->{template} = template::check( $params->{template}, 'upload_audio_recordings' );
+	$checked->{template} = template::check($config,  $params->{template}, 'upload_audio_recordings' );
 
 	#print Dumper($params);
 	#numeric values

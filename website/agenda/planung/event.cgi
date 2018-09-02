@@ -75,7 +75,7 @@ $params = $request->{params}->{checked};
 unless ( params::isJson() ) {
 	my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 	$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-	template::process( 'print', template::check('default.html'), $headerParams );
+	template::process($config,  'print', template::check($config, 'default.html'), $headerParams );
 }
 return unless defined uac::check( $config, $params, $user_presets );
 
@@ -148,7 +148,7 @@ sub show_event {
 
 	#TODO: move to JS
 	my @durations = ();
-	for my $duration ( @{ time::get_durations() } ) {
+	for my $duration ( @{ time::getDurations() } ) {
 		my $entry = {
 			name  => sprintf( "%02d:%02d", $duration / 60, $duration % 60 ),
 			value => $duration
@@ -311,7 +311,7 @@ sub show_event {
 
 	#print STDERR Dumper($params);
 	$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event' } );
-	template::process( 'print', template::check('edit_event'), $params );
+	template::process($config,  'print', template::check($config, 'edit_event'), $params );
 }
 
 sub getJson {
@@ -394,7 +394,7 @@ sub getJson {
 	}
 
 	#print to_json($event);
-	template::process( 'print', 'json-p', $event );
+	template::process($config,  'print', 'json-p', $event );
 }
 
 #show new event from schedule
@@ -432,7 +432,7 @@ sub show_new_event {
 	#add duration selectbox
 	#TODO: move to javascript
 	my @durations = ();
-	for my $duration ( @{ time::get_durations() } ) {
+	for my $duration ( @{ time::getDurations() } ) {
 		my $entry = {
 			name  => sprintf( "%02d:%02d", $duration / 60, $duration % 60 ),
 			value => $duration
@@ -455,7 +455,7 @@ sub show_new_event {
 	}
 
 	$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event,comment' } );
-	template::process( 'print', template::check('edit_event'), $params );
+	template::process( $config, 'print', template::check($config, 'edit_event'), $params );
 
 	#print '<pre>'.Dumper($params).'</pre>';
 }
@@ -773,7 +773,7 @@ sub check_params {
 
 	my $checked  = {};
 	my $template = '';
-	$checked->{template} = template::check( $params->{template}, 'series' );
+	$checked->{template} = template::check($config,  $params->{template}, 'series' );
 
 	my $debug = $params->{debug} || '';
 	if ( $debug =~ /([a-z\_\,]+)/ ) {

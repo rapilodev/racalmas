@@ -2,6 +2,7 @@ package work_dates;
 
 use warnings "all";
 use strict;
+
 use Data::Dumper;
 use Date::Calc();
 use time();
@@ -14,10 +15,8 @@ use work_schedule();
 # table:   calcms_work_dates
 # columns: id, studio_id, schedule_id, start(datetime), end(datetime)
 # TODO: delete column schedule_id
-require Exporter;
-our @ISA         = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK   = qw(get_columns get insert update delete get_dates);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub debug;
 

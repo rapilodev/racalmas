@@ -26,8 +26,6 @@ my $r=shift;
 my $config = config::get('./config/config.cgi');
 my $debug  = $config->{system}->{debug};
 
-$cache::debug=$debug;
-
 my $request={
 	url	=> $ENV{QUERY_STRING},
 	params	=> {
@@ -174,7 +172,7 @@ sub check_params{
     my $config=shift;
 	my $params=shift;
 
-	my $template=template::check($params->{'template'}, 'comments.html');
+	my $template = template::check($config,  $params->{'template'}, 'comments.html' );
 	
 	my $comment={};
 

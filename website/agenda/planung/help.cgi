@@ -56,7 +56,7 @@ $params = $request->{params}->{checked};
 #process header
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( 'print', template::check('default.html'), $headerParams );
+template::process($config,  'print', template::check($config, 'default.html'), $headerParams );
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
 my $toc = $headerParams->{loc}->{toc};

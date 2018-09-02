@@ -1,24 +1,18 @@
+package markup;
+
 use warnings "all";
 use strict;
 use Data::Dumper;
 use Text::WikiCreole();
-
 use HTML::Parse();
 use HTML::FormatText();
+use Encode();
 
-use log;
+use log();
 
-package markup;
-
-use Encode;
-
-require Exporter;
-our @ISA = qw(Exporter);
-
-#our @EXPORT = qw(all);
+use base 'Exporter';
 our @EXPORT_OK =
   qw(fix_line_ends html_to_creole creole_to_html creole_to_plain plain_to_ical ical_to_plain ical_to_xml html_to_plain fix_utf8 uri_encode compress base26);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub fix_line_ends {
 	my $s = shift;

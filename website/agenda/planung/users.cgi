@@ -48,7 +48,7 @@ $params = $request->{params}->{checked};
 #process header
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( 'print', template::check('default.html'), $headerParams );
+template::process($config,  'print', template::check($config, 'default.html'), $headerParams );
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
 our $errors = [];
@@ -168,9 +168,9 @@ sub show_users {
 	uac::set_template_permissions( $permissions, $params );
 
 	#print Dumper($permissions);
-	template::process( 'print', $params->{template}, $params );
+	template::process($config,  'print', $params->{template}, $params );
 
-	#	template::process('print', template::check('users'), $params);
+	#	template::process($config, 'print', template::check($config, 'users'), $params);
 
 }
 
@@ -251,7 +251,7 @@ sub change_password {
 	uac::set_template_permissions( $permissions, $params );
 
 	#print Dumper($permissions);
-	template::process( 'print', template::check('change_password'), $params );
+	template::process( $config, 'print', template::check($config, 'change_password'), $params );
 }
 
 sub delete_user {
@@ -405,7 +405,7 @@ sub check_params {
 
 	#template
 	my $template = '';
-	$template = template::check( $params->{template}, 'users' );
+	$template = template::check($config,  $params->{template}, 'users' );
 	$checked->{template} = $template;
 
 	#numeric values

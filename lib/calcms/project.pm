@@ -1,5 +1,3 @@
-#!/bin/perl
-
 package project;
 
 use warnings "all";
@@ -13,8 +11,7 @@ use log();
 use template();
 use images();
 
-require Exporter;
-our @ISA       = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK = qw(
   check get_columns get insert delete get_date_range
   get_studios assign_studio unassign_studio is_studio_assigned get_studio_assignments
@@ -23,8 +20,6 @@ our @EXPORT_OK = qw(
 );
 
 #TODO: globally replace get_studios by get_studio_assignments
-
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub debug;
 
@@ -409,7 +404,7 @@ sub get_with_dates {
     foreach my $project ( reverse sort { $a->{end_date} cmp $b->{end_date} } (@$projects) ) {
         $project->{months}  = get_months( $config, $project, $language );
         $project->{user}    = $ENV{REMOTE_USER};
-        $project->{current} = 1 if ( $project->{name} eq $config::config->{project} );
+        $project->{current} = 1 if ( $project->{name} eq $config->{project} );
     }
 
     return $projects;
@@ -451,7 +446,8 @@ sub get_months {
     $end_day = 1         if ( $end_day < 1 );
     $end_day = $last_day if ( $end_day gt $last_day );
 
-    my @months = ();
+    my $monthNamesShort = time::getMonthNamesShort($language);
+    my @months          = ();
     for my $year ( $start_year .. $end_year ) {
         my $m1 = 1;
         my $m2 = 12;
@@ -469,7 +465,7 @@ sub get_months {
                 end        => time::array_to_date( $year, $month, $d2 ),
                 year       => $year,
                 month      => $month,
-                month_name => $time::names->{$language}->{months_abbr}->[ $month - 1 ],
+                month_name => $monthNamesShort->[ $month - 1 ],
                 title      => $project->{title},
                 user       => $ENV{REMOTE_USER}
               };

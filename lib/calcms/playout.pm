@@ -1,18 +1,16 @@
-#!/bin/perl
-
 package playout;
+
 use warnings "all";
 use strict;
+
 use Data::Dumper;
 use Date::Calc();
 use db();
 use time();
 use series_events();
 
-require Exporter;
-our @ISA         = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK   = qw(get_columns get sync);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub debug;
 

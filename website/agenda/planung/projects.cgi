@@ -24,7 +24,7 @@ my $debug  = $config->{system}->{debug};
 my ( $user, $expires ) = auth::get_user( $cgi, $config );
 return if ( $user eq '' );
 
-my $permissions  = roles::get_user_permissions();
+my $permissions  = roles::get_user_permissions($config);
 my $user_presets = uac::get_user_presets(
 	$config,
 	{
@@ -53,7 +53,7 @@ $params = $request->{params}->{checked};
 #process header
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( 'print', template::check('default.html'), $headerParams );
+template::process($config,  'print', template::check($config, 'default.html'), $headerParams );
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
 print q{
@@ -262,7 +262,7 @@ sub show_projects {
 	$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'projects' } );
 	uac::set_template_permissions( $permissions, $params );
 
-	template::process( 'print', $params->{template}, $params );
+	template::process($config,  'print', $params->{template}, $params );
 }
 
 sub check_params {
@@ -272,7 +272,7 @@ sub check_params {
 
 	#template
 	my $template = '';
-	$template = template::check( $params->{template}, 'projects' );
+	$template = template::check($config,  $params->{template}, 'projects' );
 	$checked->{template} = $template;
 
 	#actions

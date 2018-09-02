@@ -1,7 +1,8 @@
+package template;
+
 use warnings "all";
 use strict;
 
-package template;
 use Data::Dumper;
 use HTML::Template::Compiled();
 use HTML::Template::Compiled::Plugin::XMLEscape();
@@ -14,22 +15,20 @@ use project();
 use log();
 use roles();
 
-require Exporter;
-our @ISA = qw(Exporter);
-
-#our @EXPORT = qw(all);
+use base 'Exporter';
 our @EXPORT_OK = qw(check process exit_on_missing_permission clear_cache);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
+# TODO:config
 sub process {
+    my $config = $_[0];
 
-    #	my $output=$_[0];
-    my $filename = $_[1];
-    my $params   = $_[2];
+    #	my $output=$_[1];
+    my $filename = $_[2];
+    my $params   = $_[3];
 
-    my $config = $config::config;
-    for my $key ( keys %{ $config::config->{locations} } ) {
-        $params->{$key} = $config::config->{locations}->{$key} if ( $key =~ /\_url$/ );
+    #TODO: get config
+    for my $key ( keys %{ $config->{locations} } ) {
+        $params->{$key} = $config->{locations}->{$key} if ( $key =~ /\_url$/ );
     }
 
     # add current project
@@ -45,22 +44,22 @@ sub process {
 
     $params->{user} = $ENV{REMOTE_USER} unless defined $params->{user};
 
-    my $user_permissions = roles::get_user_permissions();
+    my $user_permissions = roles::get_user_permissions($config);
     for my $permission ( keys %$user_permissions ) {
         $params->{$permission} = $user_permissions->{$permission} if ( $user_permissions->{$permission} eq '1' );
     }
 
-    $params->{jobs} = roles::get_user_jobs();
+    $params->{jobs} = roles::get_user_jobs($config);
     if ( ( $filename =~ /json\-p/ ) || (params::isJson) ) {
         my $header = "Content-type:application/json; charset=utf-8\n\n";
         my $json = JSON::to_json( $params, { pretty => 1 } );
 
         #		$json=$header.$params->{json_callback}.'['.$json.']';
         $json = $header . $params->{json_callback} . $json;
-        if ( ( defined $_[0] ) && ( $_[0] eq 'print' ) ) {
+        if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
             print $json. "\n";
         } else {
-            $_[0] = $json . "\n";
+            $_[1] = $json . "\n";
         }
         return;
     }
@@ -107,10 +106,10 @@ sub process {
 
     #		 HTML::Template::Compiled->preload($cache_dir);
     $html_template->param($params);
-    if ( ( defined $_[0] ) && ( $_[0] eq 'print' ) ) {
+    if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
         print $html_template->output;
     } else {
-        $_[0] = $html_template->output;
+        $_[1] = $html_template->output;
     }
 }
 
@@ -162,9 +161,11 @@ sub setRelativeUrls {
 }
 
 #requires read config
+#TODO:add config
 sub check {
+    my $config   = shift;
     my $template = shift || '';
-    my $default = shift;
+    my $default  = shift;
 
     if ( $template =~ /json\-p/ ) {
         $template =~ s/[^a-zA-Z0-9\-\_\.]//g;
@@ -172,7 +173,6 @@ sub check {
         return $template;
     }
 
-    my $config = $config::config;
     if ( $template eq '' ) {
         $template = $default;
     } else {
@@ -185,12 +185,12 @@ sub check {
         log::error( $config, 'invalid template!' ) if ( $template =~ /\.\./ );
     }
 
-    #print STDERR $config::config->{cache}->{compress}."<.compres default:$template\n";
+    #print STDERR $config->{cache}->{compress}."<.compres default:$template\n";
     $template = ( split( /\//, $template ) )[-1];
     my $cwd = Cwd::getcwd();
 
     $template .= '.html' unless ( $template =~ /\./ );
-    if ( ( $config::config->{cache}->{compress} eq '1' ) && ( -e $cwd . '/templates/compressed/' . $template ) ) {
+    if ( ( $config->{cache}->{compress} eq '1' ) && ( -e $cwd . '/templates/compressed/' . $template ) ) {
         $template = $cwd . '/templates/compressed/' . $template;
     } elsif ( -e $cwd . '/templates/' . $template ) {
         $template = $cwd . '/templates/' . $template;
@@ -205,14 +205,13 @@ sub check {
 
 #deprecated (for old admin only)
 sub exit_on_missing_permission {
+    my $config           = shift;
     my $permission       = shift;
-    my $user_permissions = roles::get_user_permissions();
+    my $user_permissions = roles::get_user_permissions($config);
     if ( $user_permissions->{$permission} ne '1' ) {
         print STDERR "missing permission to $permission\n";
-        template::process( 'print', template::check('default.html'), { error => 'sorry, missing permission!' } );
+        template::process( $config, 'print', template::check( $config, 'default.html' ), { error => 'sorry, missing permission!' } );
         die();
-
-        #exit;
     }
 }
 

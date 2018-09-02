@@ -1,14 +1,14 @@
 package params;
+
 use warnings "all";
 use strict;
+
 use Data::Dumper;
 use CGI();
 use Apache2::Request();
 
-require Exporter;
-our @ISA         = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK   = qw(get isJson);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub debug;
 my $isJson = 0;

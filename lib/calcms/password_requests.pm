@@ -7,10 +7,8 @@ use Data::Dumper;
 use Session::Token();
 
 # table:   calcms_password_requests
-require Exporter;
-our @ISA         = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK   = qw(get insert delete get_columns);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 use mail;
 use uac;

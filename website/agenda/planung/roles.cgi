@@ -62,7 +62,7 @@ $params = $request->{params}->{checked};
 #process header
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( 'print', template::check('roles.html'), $headerParams );
+template::process($config,  'print', template::check($config, 'roles.html'), $headerParams );
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
 if ( defined $params->{action} ) {
@@ -431,7 +431,7 @@ sub check_params {
 
 	#template
 	my $template = '';
-	$template = template::check( $params->{template}, 'roles.html' );
+	$template = template::check($config,  $params->{template}, 'roles.html' );
 	$checked->{template} = $template;
 
 	#actions

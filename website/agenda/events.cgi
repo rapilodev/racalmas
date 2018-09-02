@@ -23,7 +23,6 @@ binmode STDOUT, ":encoding(UTF-8)";
 
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
-
 if ( $0 =~ /events.*?\.cgi$/ ) {
 
 	#my $cgi=new CGI();

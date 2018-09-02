@@ -1,22 +1,19 @@
+package comments;
+
 use warnings "all";
 use strict;
 use Data::Dumper;
+
+use db();
 use config();
+use markup();
 use template();
 use time();
 
-package comments;
-use warnings "all";
-use strict;
-use Data::Dumper;
-
-require Exporter;
-our @ISA = qw(Exporter);
-
-#our @EXPORT = qw(all);
+use base 'Exporter';
 our @EXPORT_OK =
-  qw(init get_cached_or_render get modify_results render configure_cache get_query get_by_event get_level get_events check insert set_lock_status set_news_status lock update_comment_count sort);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
+  qw(init get_cached_or_render get modify_results render configure_cache get_query get_by_event get_level get_events check insert set_lock_status set_news_status lock update_comment_count sort)
+  ;
 
 sub init {
 }
@@ -188,7 +185,7 @@ sub modify_results {
 
     for my $result (@$results) {
         $result->{allow}->{new_comments} = 1 if ( $params->{allow}->{new_comments} );
-        $result->{start_date_name} = time::date_format( $result->{created_at}, $language );
+        $result->{start_date_name} = time::date_format( $config, $result->{created_at}, $language );
         $result->{start_time_name} = time::time_format( $result->{created_at} );
         my $comment_limit = 100;
         if ( length( $result->{content} ) > $comment_limit ) {
@@ -250,7 +247,7 @@ sub render {
     $template_parameters->{server_cache}     = $config->{cache}->{server_cache}     if ( $config->{cache}->{server_cache} );
     $template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache} if ( $config->{cache}->{use_client_cache} );
     $template_parameters->{controllers}      = $config->{controllers};
-    template::process( $_[0], $params->{template}, $template_parameters );
+    template::process( $config, $_[0], $params->{template}, $template_parameters );
 }
 
 #check if comment exists already
@@ -614,14 +611,11 @@ sub configure_cache {
     my $config = shift;
 
     cache::init();
-
-    my $date_pattern     = $cache::date_pattern;
-    my $datetime_pattern = $cache::datetime_pattern;
-    my $controllers      = $config->{controllers};
+    my $controllers = $config->{controllers};
 
     cache::add_map( 'template=comments_newest&limit=3&type=list', $controllers->{comments} . '/neueste.html' );
     cache::add_map( 'template=comments_atom.xml&limit=20',        $controllers->{comments} . '/feed.xml' );
-    cache::add_map( 'template=comments.html&event_id=(\d+)&event_start=' . $datetime_pattern,
+    cache::add_map( 'template=comments.html&event_id=(\d+)&event_start=' . cache::get_datetime_pattern(),
         $controllers->{comments} . '/$1_$2-$3-$4_$5-$6.html' );
 }
 
@@ -689,7 +683,7 @@ sub check_params {
         $comment->{allow}->{new_comments} = 1;
     }
 
-    $comment->{template} = template::check( $params->{template}, 'comments.html' );
+    $comment->{template} = template::check( $config, $params->{template}, 'comments.html' );
 
     return $comment;
 }

@@ -64,7 +64,7 @@ if ( $action eq 'show_dates' ) {
 
 	#print "Content-type:text/html\n\n";
 } else {
-	template::process( 'print', template::check('default.html'), $headerParams );
+	template::process($config,  'print', template::check($config, 'default.html'), $headerParams );
 }
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
@@ -259,7 +259,7 @@ sub showTimeslotSchedule {
 	}
 
 	#print '<pre>'.Dumper($params).'</pre>';
-	template::process( 'print', $params->{template}, $params );
+	template::process($config,  'print', $params->{template}, $params );
 }
 
 sub showDates {
@@ -350,8 +350,8 @@ sub showDates {
 		$params->{$key} = $result->{$key};
 	}
 
-	my $template = template::check('studio_timeslot_dates');
-	template::process( 'print', $template, $params );
+	my $template = template::check($config, 'studio_timeslot_dates');
+	template::process($config,  'print', $template, $params );
 }
 
 sub check_params {
@@ -393,7 +393,7 @@ sub check_params {
 		$checked->{studio_id} = -1;
 	}
 
-	$checked->{template} = template::check( $params->{template}, 'studio_timeslots' );
+	$checked->{template} = template::check($config,  $params->{template}, 'studio_timeslots' );
 
 	for my $param ('frequency') {
 		if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /(\d+)/ ) ) {

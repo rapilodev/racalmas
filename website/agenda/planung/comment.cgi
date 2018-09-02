@@ -32,7 +32,7 @@ my $r = shift;
 my $config = config::get('../config/config.cgi');
 my $debug  = $config->{system}->{debug};
 my ( $user, $expires ) = auth::get_user( $cgi, $config );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+return if  ( !defined $user ) || ( $user eq '' ) ;
 
 my $user_presets = uac::get_user_presets(
     $config,
@@ -68,7 +68,7 @@ if ( ( params::isJson() ) || ( defined $params->{action} ) ) {
 } else {
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( 'print', template::check('default.html'), $headerParams );
+    template::process($config,  'print', template::check($config, 'default.html'), $headerParams );
     print q{
         <script src="js/datetime.js" type="text/javascript"></script>
     } unless (params::isJson);
@@ -132,16 +132,16 @@ sub showComments {
     my $events        = [];
     my $comment_count = 0;
     if ( scalar(@$results) > 0 ) {
-        my $comments = modify_comments( $request, $results );
+        my $comments = modify_comments( $config, $request, $results );
 
         $comments = comments::sort( $config, $comments );
 
         $events = comments::get_events( $dbh, $config, $request, $comments );
-        my $language = $config::config->{date}->{language} || 'en';
+        my $language = $config->{date}->{language} || 'en';
         for my $event (@$events) {
-            $event->{start} = time::date_time_format( $event->{start}, $language );
+            $event->{start} = time::date_time_format($config, $event->{start}, $language );
             $comment_count += $event->{comment_count} if ( defined $event->{comment_count} );
-            $event->{cache_base_url} = $config::config->{cache}->{base_url};
+            $event->{cache_base_url} = $config->{cache}->{base_url};
         }
     }
     for my $param (%$comment) {
@@ -160,16 +160,17 @@ sub showComments {
     $template_parameters->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'comment' } );
 
     #fill and output template
-    template::process( 'print', $params->{template}, $template_parameters );
+    template::process($config,  'print', $params->{template}, $template_parameters );
 }
 
 sub modify_comments {
+    my $config = shift;
     my $request = shift;
     my $results = shift;
 
-    my $language = $config::config->{date}->{language} || 'en';
+    my $language = $config->{date}->{language} || 'en';
     for my $result (@$results) {
-        $result->{start_date_name}          = time::date_format( $result->{created_at}, $language );
+        $result->{start_date_name}          = time::date_format($config,  $result->{created_at}, $language );
         $result->{start_time_name}          = time::time_format( $result->{created_at} );
         $result->{ $result->{lock_status} } = 1;
         $result->{ $result->{news_status} } = 1;
@@ -252,9 +253,9 @@ sub check_params {
     #template
     my $template = '';
     if ( defined $checked->{action} ) {
-        $template = template::check( $params->{template}, 'edit_comment' ) if $checked->{action} eq 'showComment';
+        $template = template::check($config,  $params->{template}, 'edit_comment' ) if $checked->{action} eq 'showComment';
     } else {
-        $template = template::check( $params->{template}, 'comments' );
+        $template = template::check($config,  $params->{template}, 'comments' );
     }
     $checked->{template} = $template;
 

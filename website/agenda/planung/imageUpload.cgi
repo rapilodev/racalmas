@@ -142,7 +142,7 @@ if ( $error ne '' ) {
 }
 print STDERR $params->{error} . "\n" if defined $params->{error};
 my $out = '';
-template::process( 'print', $params->{template}, $params );
+template::process( $config, 'print', $params->{template}, $params );
 
 print $cgi->cgi_error() if defined $cgi;
 
@@ -388,7 +388,7 @@ sub check_params {
 	my $params = shift;
 
 	my $checked = {};
-	$checked->{template} = template::check( $params->{template}, 'imageUpload' );
+	$checked->{template} = template::check($config,  $params->{template}, 'imageUpload' );
 
 	#numeric values
 	for my $param ( 'project_id', 'studio_id', 'default_studio_id' ) {

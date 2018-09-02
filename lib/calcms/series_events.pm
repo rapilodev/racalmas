@@ -21,8 +21,7 @@ use images();
 
 # check permissions, insert and update events related to series
 
-require Exporter;
-our @ISA       = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK = qw(
   check_permission
   save_content
@@ -31,7 +30,6 @@ our @EXPORT_OK = qw(
   delete_event
   set_playout_status
 );
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub debug;
 

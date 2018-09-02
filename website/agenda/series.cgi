@@ -68,7 +68,7 @@ sub list_series {
     $params->{info}.="no results found" if scalar(@$series)==0;
     $params->{info}='';
 
-	template::process( 'print', 'templates/series.html', $params );
+	template::process($config,  'print', 'templates/series.html', $params );
 }
 
 sub check_params {

@@ -1,19 +1,14 @@
+package images;
+
 use warnings "all";
 use strict;
+
 use config();
 use template();
-
-package images;
-use warnings "all";
-use strict;
 use Data::Dumper;
 
-require Exporter;
-our @ISA = qw(Exporter);
-
-#our @EXPORT = qw(all);
+use base 'Exporter';
 our @EXPORT_OK = qw(get insert update insert_or_update delete delete_files);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 #column 'created_at' will be set at insert
 #column 'modified_at' will be set by default (do not update)

@@ -65,7 +65,7 @@ $params = $request->{params}->{checked};
 #show header
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( 'print', template::check('ajax_header.html'), $headerParams );
+template::process($config,  'print', template::check($config, 'ajax_header.html'), $headerParams );
 return unless defined uac::check( $config, $params, $user_presets );
 
 my $local_media_dir = $config->{locations}->{local_media_dir};
@@ -231,7 +231,7 @@ sub show_image {
 	  $template_params->{allow}->{update_image_own} || $template_params->{allow}->{seriesupdate_image_others};
 	$template_params->{allow}->{delete_image} =
 	  $template_params->{allow}->{delete_image_own} || $template_params->{allow}->{delete_image_others};
-	template::process( 'print', $params->{template}, $template_params );
+	template::process($config,  'print', $params->{template}, $template_params );
 }
 
 sub print_js_error {
@@ -408,7 +408,7 @@ sub modify_results {
 sub check_params {
 	my $params = shift;
 
-	my $checked = { template => template::check( $params->{template}, 'image.html' ) };
+	my $checked = { template => template::check($config,  $params->{template}, 'image.html' ) };
 
 	#numeric values
 	$checked->{limit} = 100;

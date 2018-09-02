@@ -3,14 +3,7 @@
 use warnings "all";
 use strict;
 
-#use Data::Dumper;
-
-#use DBI;
 use CGI qw(header param Vars);
-
-#use Time::Local qw(timelocal);
-#use Benchmark;
-#use Devel::Profiler;
 
 use db();
 use events();
@@ -19,9 +12,6 @@ use aggregator();
 use markup();
 use log();
 use config();
-
-#use params;
-#my $r=shift;
 
 if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 	binmode STDOUT, ":encoding(UTF-8)";

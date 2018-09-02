@@ -2,14 +2,13 @@ package localization;
 
 use warnings "all";
 use strict;
+
 use Data::Dumper;
 use uac();
 use user_settings();
 
-require Exporter;
-our @ISA         = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK   = qw(get getJavascript);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub debug;
 
@@ -81,6 +80,7 @@ sub read_po_file {
 
 	my $key = '';
 	open my $file, '<:encoding(UTF-8)', $po_file;
+	return $loc unless defined $file;
 	while (<$file>) {
 		my $line = $_;
 
@@ -97,6 +97,7 @@ sub read_po_file {
 			$loc->{$key} = $val;
 		}
 	}
+	close $file;
 	return $loc;
 }
 

@@ -63,7 +63,7 @@ $params = $request->{params}->{checked};
 #process header
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( 'print', template::check('default.html'), $headerParams );
+template::process( $config, 'print', template::check($config, 'default.html'), $headerParams );
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
 print q{
@@ -142,7 +142,7 @@ sub show_events {
     $params->{project_name} = $project_name;
     $params->{studio_name}  = $studio_name;
 
-    template::process( 'print', $params->{template}, $params );
+    template::process($config,  'print', $params->{template}, $params );
 }
 
 sub assign_series {
@@ -201,6 +201,7 @@ sub assign_series {
 
     $config->{access}->{write} = 0;
     uac::print_info("event successfully assigned to series");
+    return;
 }
 
 sub check_params {
@@ -236,7 +237,7 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
-    $checked->{template} = template::check( $params->{template}, 'assign_series' );
+    $checked->{template} = template::check($config,  $params->{template}, 'assign_series' );
 
     return $checked;
 }

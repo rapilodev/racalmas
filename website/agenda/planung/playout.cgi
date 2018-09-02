@@ -70,7 +70,7 @@ $params = $request->{params}->{checked};
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
 
-#template::process('print', template::check('default.html'), $headerParams);
+#template::process($config, 'print', template::check($config, 'default.html'), $headerParams);
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
 if ( defined $params->{action} ) {
@@ -154,7 +154,7 @@ sub check_params {
 		$checked->{studio_id} = -1;
 	}
 
-	#$checked->{template}=template::check($params->{template},'playout');
+	#$checked->{template}=template::check($config, $params->{template},'playout');
 
 	return $checked;
 }

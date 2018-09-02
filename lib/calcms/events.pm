@@ -1,6 +1,9 @@
+package events;
+
 use warnings "all";
 use strict;
 
+use Data::Dumper;
 use DBI();
 use template();
 
@@ -10,14 +13,10 @@ use db();
 use cache();
 use markup();
 use log();
+use project();
+use studios();
 
-package events;
-use Data::Dumper;
-use project;
-use studios;
-
-require Exporter;
-our @ISA       = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK = qw(
   init
   get_cached_or_render
@@ -34,7 +33,6 @@ our @EXPORT_OK = qw(
   get_keys
   add_recordings
 );
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub init {
 }
@@ -535,9 +533,9 @@ sub calc_dates {
     }
 
     $result->{start_date_name} =
-      time::date_format( $result->{start_date}, $language );
+      time::date_format( $config, $result->{start_date}, $language );
     $result->{end_date_name} =
-      time::date_format( $result->{end_date}, $language );
+      time::date_format( $config, $result->{end_date}, $language );
 
     if ( $result->{start} =~ /(\d\d\:\d\d)\:\d\d/ ) {
         $result->{start_time_name} = $1;
@@ -550,14 +548,12 @@ sub calc_dates {
     }
 
     if ( defined $result->{weekday} ) {
-        my $language = $config::config->{date}->{language} || 'en';
+        my $language = $config->{date}->{language} || 'en';
 
-        #my $weekdays=time::get_weekdays();
-        my $weekday_index = $time::weekday_index->{ $result->{weekday} . '' } || 0;
-        $result->{weekday_name} =
-          $time::names->{$language}->{weekdays}->[$weekday_index];
-        $result->{weekday_short_name} =
-          $time::names->{$language}->{weekdays_abbr}->[$weekday_index];
+        my $weekdayIndex = time::getWeekdayIndex($result->{weekday}) || 0;
+        
+        $result->{weekday_name} = time::getWeekdayNames($language)->[$weekdayIndex];
+        $result->{weekday_short_name} = time::getWeekdayNamesShort($language)->[$weekdayIndex];
     }
     return $result;
 }
@@ -1227,7 +1223,7 @@ sub render {
       if ( defined $config->{permissions}->{hide_event_images} ) && ( $config->{permissions}->{hide_event_images} == 1 );
 
     #    use Data::Dumper;print STDERR Dumper($template_parameters)."\n";
-    template::process( $_[0], $params->{template}, $template_parameters );
+    template::process( $config, $_[0], $params->{template}, $template_parameters );
 
     return $_[0];
 }
@@ -1464,6 +1460,7 @@ sub get_by_image {
     return $events->[0];
 }
 
+# deleting an event is currently disabled
 sub delete {
     return;
     my $request  = shift;
@@ -1494,7 +1491,7 @@ sub configure_cache {
     my $config = shift;
     my $debug  = $config->{system}->{debug};
 
-    my $date_pattern = $cache::date_pattern;
+    my $date_pattern = cache::get_date_pattern();
     my $controllers  = $config->{controllers};
 
     cache::init();
@@ -1728,7 +1725,7 @@ sub check_params {
     if ( ( defined $params->{template} ) && ( $params->{template} eq 'no' ) ) {
         $template = 'no';
     } else {
-        $template = template::check( $params->{template}, 'event_list.html' );
+        $template = template::check( $config, $params->{template}, 'event_list.html' );
     }
 
     my $limit_config = $config->{permissions}->{result_limit} || 100;

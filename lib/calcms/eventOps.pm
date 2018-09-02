@@ -11,8 +11,7 @@ use studios();
 use series_events();
 use user_stats();
 
-require Exporter;
-our @ISA       = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK = qw(
   setAttributesFromSeriesTemplate
   setAttributesFromSchedule
@@ -20,7 +19,6 @@ our @EXPORT_OK = qw(
   setAttributesForCurrentTime
   getRecurrenceBaseId
 );
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 # functions: to be separated
 sub setAttributesFromSeriesTemplate {

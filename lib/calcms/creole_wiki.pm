@@ -1,14 +1,13 @@
+package creole_wiki;
+
 use warnings;
 use strict;
+
 use Data::Dumper;
 use markup();
 
-package creole_wiki;
-
-require Exporter;
-our @ISA         = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK   = qw(extractEventFromWikiText removeMeta eventToWikiText extractMeta removeMeta metaToWiki);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 #convert creole wiki text to event
 sub extractEventFromWikiText {

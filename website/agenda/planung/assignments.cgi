@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w 
+#! /usr/bin/perl -w
 
 use warnings "all";
 use strict;
@@ -64,7 +64,7 @@ $params = $request->{params}->{checked};
 #process header
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( 'print', template::check('default.html'), $headerParams );
+template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
 print q{
@@ -167,6 +167,7 @@ sub show_events {
     $results = db::get( $dbh, $query, $bind_values );
 
     # detect title and episode
+    my $weekdayNamesShort = time::getWeekdayNamesShort('de');
     for my $result (@$results) {
         $result->{rerun} .= '';
         if ( $result->{title} =~ /\#(\d+)([a-z])?\s*$/ ) {
@@ -179,7 +180,7 @@ sub show_events {
 
         #print STDERR "($a->[0],$a->[1],$a->[2])\n";
         $result->{weekday} = time::weekday( $a->[0], $a->[1], $a->[2] );
-        $result->{weekday} = $time::names->{de}->{weekdays_abbr}->[ $result->{weekday} - 1 ];
+        $result->{weekday} = $weekdayNamesShort->[ $result->{weekday} - 1 ];
     }
 
     #fill template
@@ -188,7 +189,7 @@ sub show_events {
     $params->{project_name}      = $project_name;
     $params->{studio_name}       = $studio_name;
 
-    template::process( 'print', $params->{template}, $params );
+    template::process( $config, 'print', $params->{template}, $params );
 }
 
 sub assign_events {
@@ -385,7 +386,7 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
-    $checked->{template} = template::check( $params->{template}, 'assignments' );
+    $checked->{template} = template::check( $config, $params->{template}, 'assignments' );
 
     if ( ( defined $checked->{action} ) && ( $checked->{action} eq 'save_schedule' ) ) {
 

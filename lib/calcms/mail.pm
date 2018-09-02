@@ -1,4 +1,6 @@
 package mail;
+use warnings;
+use strict;
 
 use MIME::Lite();
 

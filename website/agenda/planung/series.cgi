@@ -66,7 +66,7 @@ $params = $request->{params}->{checked};
 unless ( params::isJson() ) {
 	my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 	$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-	template::process( 'print', template::check('default.html'), $headerParams );
+	template::process($config,  'print', template::check($config, 'default.html'), $headerParams );
 }
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
@@ -989,7 +989,7 @@ sub list_series {
 	#print STDERR Dumper $params->{image};
 
 	$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'all,series' } );
-	template::process( 'print', $params->{template}, $params );
+	template::process($config,  'print', $params->{template}, $params );
 }
 
 sub show_series {
@@ -1207,7 +1207,7 @@ sub show_series {
 
 	#print STDERR '<pre>'.Dumper($params).'</pre>';
 	$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'all,series' } );
-	template::process( 'print', $params->{template}, $params );
+	template::process($config,  'print', $params->{template}, $params );
 }
 
 sub check_params {
@@ -1252,9 +1252,9 @@ sub check_params {
 	}
 
 	if ( defined $checked->{series_id} ) {
-		$checked->{template} = template::check( $params->{template}, 'edit_series' );
+		$checked->{template} = template::check($config,  $params->{template}, 'edit_series' );
 	} else {
-		$checked->{template} = template::check( $params->{template}, 'series' );
+		$checked->{template} = template::check($config,  $params->{template}, 'series' );
 	}
 
 	if ( ( defined $checked->{action} ) && ( $checked->{action} eq 'save_schedule' ) ) {

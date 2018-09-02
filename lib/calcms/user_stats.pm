@@ -1,14 +1,11 @@
-#!/bin/perl
-
 package user_stats;
+
 use warnings "all";
 use strict;
 use Data::Dumper;
 
-require Exporter;
-our @ISA         = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK   = qw(get_columns get update insert get_stats increase);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub debug;
 

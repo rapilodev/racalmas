@@ -104,7 +104,7 @@ sub show_series {
 	$params->{studios} = $user_studios;
 	$params->{series}  = $series;
 
-	template::process( 'print', $params->{template}, $params );
+	template::process( $config, 'print', $params->{template}, $params );
 	return;
 }
 
@@ -148,7 +148,7 @@ sub check_params {
 		$checked->{studio_id} = -1;
 	}
 
-	$checked->{template} = template::check( $params->{template}, 'selectSeries' );
+	$checked->{template} = template::check($config,  $params->{template}, 'selectSeries' );
 
 	return $checked;
 }

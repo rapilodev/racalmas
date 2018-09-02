@@ -98,7 +98,7 @@ if (
     #process header
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( 'print', template::check('default.html'), $headerParams );
+    template::process( $config, 'print', template::check($config, 'default.html'), $headerParams );
     print q{
         <link href="css/jquery-ui-timepicker.css" type="text/css" rel="stylesheet" /> 
         <link rel="stylesheet" href="css/calendar.css" type="text/css" /> 
@@ -1682,14 +1682,14 @@ sub getCalendar {
         $next = time::get_datetime( $from_date, $config->{date}->{time_zone} )->add( days => $range )->date();
     }
     my ( $year, $month, $day ) = split( /\-/, $from_date );
-    $month = $time::names->{$language}->{months_abbr}->[ $month - 1 ] || '';
+    my $monthName = time::getMonthNamesShort($language)->[ $month - 1 ] || '';
 
     return {
         from_date     => $from_date,
         till_date     => $till_date,
         next_date     => $next,
         previous_date => $previous,
-        month         => $month,
+        month         => $monthName,
         year          => $year
     };
 
@@ -1807,7 +1807,7 @@ sub check_params {
 
     my $checked  = {};
     my $template = '';
-    $checked->{template} = template::check( $params->{template}, 'series' );
+	$checked->{template} = template::check($config,  $params->{template}, 'series' );
 
     my $debug = $params->{debug} || '';
     if ( $debug =~ /([a-z\_\,]+)/ ) {

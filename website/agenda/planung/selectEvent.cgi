@@ -117,7 +117,7 @@ sub show_events {
 	$params->{years}   = $years;
 
 	#print STDERR Dumper($params);
-	template::process( 'print', $params->{template}, $params );
+	template::process($config,  'print', $params->{template}, $params );
 	return;
 }
 
@@ -171,7 +171,7 @@ sub check_params {
 		$checked->{studio_id} = -1;
 	}
 
-	$checked->{template} = template::check( $params->{template}, 'selectEvent' );
+	$checked->{template} = template::check($config,  $params->{template}, 'selectEvent' );
 
 	return $checked;
 }

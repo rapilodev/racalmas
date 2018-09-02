@@ -1,16 +1,16 @@
 package studio_timeslot_schedule;
+
 use warnings "all";
 use strict;
+
 use Data::Dumper;
 use studio_timeslot_dates();
 
 # table:   calcms_studio_timeslot_schedule
 # columns: id, project_id, studio_id, start(datetime), end(datetime), end_date(date),
 #          frequency(days), duration(minutes), create_events(days), publish_events(days)
-require Exporter;
-our @ISA         = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK   = qw(get_columns get insert update delete);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub debug;
 

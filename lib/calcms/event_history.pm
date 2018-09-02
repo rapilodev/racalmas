@@ -1,14 +1,12 @@
-#!/bin/perl
-
 package event_history;
+
 use warnings "all";
 use strict;
+
 use Data::Dumper;
 
-require Exporter;
-our @ISA         = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK   = qw(get_columns get get_by_id insert insert_by_event_id delete);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub debug;
 

@@ -1,19 +1,19 @@
+package time;
+
 use warnings "all";
 use strict;
+use utf8;
+
 use Time::Local();
 use DateTime();
 use Date::Calc();
 use Date::Manip();
 use POSIX qw(strftime);
+use Data::Dumper;
 
 use config();
 
-package time;
-use Data::Dumper;
-use utf8;
-
-require Exporter;
-our @ISA       = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK = qw(
   format_datetime format_time
   date_format time_format
@@ -25,13 +25,10 @@ our @EXPORT_OK = qw(
   date_cond time_cond check_date check_time check_datetime check_year_month
   datetime_to_rfc822 get_datetime datetime_to_utc datetime_to_utc_datetime
   get_duration get_duration_seconds
-  get_durations get_names get_all_names weekday_index
-  $names
+  getDurations getWeekdayIndex getWeekdayNames getWeekdayNamesShort getMonthNames getMonthNamesShort
 );
 
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
-
-our $names = {
+my $NAMES = {
     'de' => {
         months =>
           [ 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember' ],
@@ -48,26 +45,9 @@ our $names = {
     },
 };
 
-our $durations = [
-    0,   5,   10,  15,  20,  30,  40,  45,  50,  60,  70,  75,  80,  90,  100, 105, 110, 115,
-    120, 135, 150, 165, 180, 195, 210, 225, 240, 300, 360, 420, 480, 540, 600, 660, 720, 1440
-];
 
-sub get_names {
-    my $language = shift || 'en';
-    return $time::names->{$language};
-}
-
-sub get_all_names {
-    return $time::names;
-}
-
-sub get_durations {
-    return $time::durations;
-}
-
-#TODO: build from datenames
-our $weekday_index = {
+# map starting with monday=0
+my $WEEKDAY_INDEX = {
     '0'  => 0,
     '1'  => 1,
     '2'  => 2,
@@ -88,7 +68,43 @@ our $weekday_index = {
     'So' => 6
 };
 
-sub get_weekdays {
+my $DURATIONS = [
+    0,   5,   10,  15,  20,  30,  40,  45,  50,  60,  70,  75,  80,  90,  100, 105, 110, 115,
+    120, 135, 150, 165, 180, 195, 210, 225, 240, 300, 360, 420, 480, 540, 600, 660, 720, 1440
+];
+
+sub getDurations {
+    return $DURATIONS;
+}
+
+sub getWeekdayNames {
+    my $language = shift || 'en';
+    return $NAMES->{$language}->{weekdays};
+}
+
+sub getWeekdayNamesShort {
+    my $language = shift || 'en';
+    return $NAMES->{$language}->{weekdays_abbr};
+}
+
+sub getMonthNames {
+    my $language = shift || 'en';
+    return $NAMES->{$language}->{months};
+}
+
+sub getMonthNamesShort {
+    my $language = shift || 'en';
+    return $NAMES->{$language}->{months_abbr};
+}
+
+
+sub getWeekdayIndex($) {
+    my $weekday = shift || '';
+    return $WEEKDAY_INDEX->{$weekday};
+}
+
+# map starting with monday=1
+sub getWeekdays {
     return {
         1    => 1,
         2    => 2,
@@ -150,10 +166,11 @@ sub datetime_to_time {
         my $hour   = $4;
         my $minute = $5;
         my $second = $8 || 0;
-        return Time::Local::timelocal( $second, $minute, $hour, $day, $month, $year );
+        return Time::Local::timelocal( $second, $minute, $hour, $day, $month, $year ) || print STDERR "datetime_to_time: no valid date time found! ($datetime)\n";
+        ;
 
     } else {
-        print STDERR "datetime_to_time: no valid date time found! ($datetime	)\n";
+        print STDERR "datetime_to_time: no valid date time found! ($datetime)\n";
         return -1;
     }
 }
@@ -475,15 +492,16 @@ sub check_year_month {
 
 #TODO: remove config dependency
 sub date_time_format {
+    my $config   = shift;
     my $datetime = shift;
-    my $language = shift || $config::config->{date}->{language} || 'en';
+    my $language = shift || $config->{date}->{language} || 'en';
     if ( defined $datetime && $datetime =~ /(\d\d\d\d)\-(\d\d?)\-(\d\d?)[\sT](\d\d?\:\d\d?)/ ) {
         my $time  = $4;
         my $day   = $3;
         my $month = $2;
         my $year  = $1;
 
-        $month = $time::names->{$language}->{months_abbr}->[ $month - 1 ] || '';
+        $month = time::getMonthNamesShort($language)->[ $month - 1 ] || '';
         return "$day. $month $year $time";
     }
     return $datetime;
@@ -492,14 +510,15 @@ sub date_time_format {
 #format datetime to date string
 #TODO: remove config dependency
 sub date_format {
+    my $config   = shift;
     my $datetime = shift;
-    my $language = shift || $config::config->{date}->{language} || 'en';
+    my $language = shift || $config->{date}->{language} || 'en';
 
     if ( defined $datetime && $datetime =~ /(\d\d\d\d)\-(\d\d?)\-(\d\d?)/ ) {
         my $day   = $3;
         my $month = $2;
         my $year  = $1;
-        $month = $time::names->{$language}->{months_abbr}->[ $month - 1 ] || '';
+        $month = time::getMonthNamesShort($language)->[ $month - 1 ] || '';
         return "$day. $month $year";
     }
     return $datetime;
@@ -518,9 +537,9 @@ sub time_format {
 sub utc_offset {
     my $time_zone = shift;
 
-    $a = DateTime->now();
-    $a->set_time_zone($time_zone);
-    return $a->strftime("%z");
+    my $datetime = DateTime->now();
+    $datetime->set_time_zone($time_zone);
+    return $datetime->strftime("%z");
 }
 
 #get weekday from (yyyy,mm,dd)
@@ -534,7 +553,6 @@ sub weekday {
 #TODO: remove config dependency
 sub get_event_date {
     my $config = shift;
-    $config = $config::config unless defined $config;
 
     my $datetime = time::time_to_datetime( time() );
     my $hour     = ( time::datetime_to_array($datetime) )->[3];
@@ -592,7 +610,7 @@ sub get_nth_weekday_in_month {
     return [] unless defined $nth;
     return [] unless defined $weekday;
 
-    my $weekdays = time::get_weekdays();
+    my $weekdays = time::getWeekdays();
     return [] unless defined $weekdays->{$weekday};
     $weekday = $weekdays->{$weekday};
 

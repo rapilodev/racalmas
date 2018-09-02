@@ -1,4 +1,5 @@
 package series_schedule;
+
 use warnings "all";
 use strict;
 use Data::Dumper;
@@ -15,10 +16,8 @@ use series_dates();
 # month
 # nextDay (add 24 hours to start)
 
-require Exporter;
-our @ISA         = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK   = qw(get_columns get insert update delete);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub debug;
 

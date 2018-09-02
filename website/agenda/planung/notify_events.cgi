@@ -63,7 +63,7 @@ $params = $request->{params}->{checked};
 unless ( params::isJson() || ( $params->{template} =~ /\.txt/ ) ) {
 	my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 	$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-	template::process( 'print', template::check('default.html'), $headerParams );
+	template::process( $config, 'print', template::check($config, 'default.html'), $headerParams );
 }
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
@@ -122,7 +122,7 @@ sub show_events {
 	}
 
 	$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'notify_events' } );
-	template::process( 'print', $params->{template}, $params );
+	template::process($config,  'print', $params->{template}, $params );
 
 }
 
@@ -241,7 +241,7 @@ sub check_params {
 
 	my $checked  = {};
 	my $template = '';
-	$checked->{template} = template::check( $params->{template}, 'notify_events' );
+	$checked->{template} = template::check($config,  $params->{template}, 'notify_events' );
 
 	my $debug = $params->{debug} || '';
 	if ( $debug =~ /([a-z\_\,]+)/ ) {

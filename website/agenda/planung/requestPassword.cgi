@@ -141,7 +141,7 @@ sub check_params {
 	my $checked = {};
 
 	#my $template = '';
-	#$checked->{template} = template::check( $params->{template}, 'requestPassword' );
+	#$checked->{template} = template::check($config,  $params->{template}, 'requestPassword' );
 
 	my $debug = $params->{debug} || '';
 	if ( $debug =~ /([a-z\_\,]+)/ ) {

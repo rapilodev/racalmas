@@ -1,15 +1,15 @@
 package user_settings;
+
 use warnings "all";
 use strict;
+
 use Data::Dumper;
 use series_dates();
 
 # table:   calcms_user_settings
 # columns: user, colors
-require Exporter;
-our @ISA         = qw(Exporter);
+use base 'Exporter';
 our @EXPORT_OK   = qw(getColors getColorCss get insert update delete get_columns defaultColors);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 sub debug;
 

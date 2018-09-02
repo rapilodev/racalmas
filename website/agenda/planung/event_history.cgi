@@ -57,7 +57,7 @@ $params = $request->{params}->{checked};
 #show header
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( 'print', template::check('default.html'), $headerParams );
+template::process( $config, 'print', template::check($config, 'default.html'), $headerParams );
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
 print q{
@@ -113,7 +113,7 @@ sub show_history {
 	#print STDERR Dumper($params);
 	$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event_history' } );
 
-	template::process( 'print', template::check('event_history'), $params );
+	template::process($config,  'print', template::check($config, 'event_history'), $params );
 }
 
 #show existing event history
@@ -200,7 +200,7 @@ sub check_params {
 
 	my $checked  = {};
 	my $template = '';
-	$checked->{template} = template::check( $params->{template}, 'event_history' );
+	$checked->{template} = template::check($config,  $params->{template}, 'event_history' );
 
 	my $debug = $params->{debug} || '';
 	if ( $debug =~ /([a-z\_\,]+)/ ) {

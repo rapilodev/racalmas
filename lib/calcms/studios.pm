@@ -1,17 +1,13 @@
-#!/bin/perl
-
 package studios;
+
 use warnings "all";
 use strict;
 
 use Data::Dumper;
-
 use images();
 
-require Exporter;
-our @ISA         = qw(Exporter);
-our @EXPORT_OK   = qw(get_columns get get_by_id insert update delete check check_studio);
-our %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
+use base 'Exporter';
+our @EXPORT_OK = qw(get_columns get get_by_id insert update delete check check_studio);
 
 sub debug;
 
@@ -69,7 +65,8 @@ sub get {
 
         push @conditions,  'ps.project_id=?';
         push @bind_values, $condition->{project_id};
-        my $conditions = " where " . join( " and ", @conditions ) if ( @conditions > 0 );
+        my $conditions = '';
+        $condition .= " where " . join( " and ", @conditions ) if ( scalar @conditions > 0 );
         $query = qq{
 		    select	*
 		    from 	calcms_studios s, calcms_project_studios ps
