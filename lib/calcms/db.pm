@@ -18,8 +18,8 @@ our @EXPORT_OK = qw(
 );
 
 #debug settings
-our $debug_read  = 0;
-our $debug_write = 0;
+my $debug_read  = 0;
+my $debug_write = 0;
 
 #database control
 our $read  = 1;
@@ -84,7 +84,6 @@ sub get {
     my $sth = $dbh->prepare($sql);
     if ( ( defined $bind_values ) && ( ref($bind_values) eq 'ARRAY' ) ) {
 
-        #		print STDERR Dumper($bind_values)."\n";
         my $result = $sth->execute(@$bind_values);
         unless ($result) {
             print STDERR $sql . "\n";
@@ -94,22 +93,15 @@ sub get {
         $sth->execute() || die "db: $DBI::errstr $sql" if ( $read == 1 );
     }
 
-    my @results = ();
-    while ( my $row = $sth->fetchrow_hashref ) {
-        my $result = {};
-        foreach my $key ( keys %$row ) {
-            $result->{$key} = $row->{$key};
-        }
-        push @results, $result;
-    }
+    my $results = $sth->fetchall_arrayref({});
 
     if ( $debug_read == 1 ) {
-        print STDERR Dumper( $results[0] ) . "\n" if ( @results == 1 );
-        print STDERR @results . "\n" if ( @results != 1 );
+        print STDERR Dumper( $results->[0] ) . "\n" if ( scalar @$results == 1 );
+        print STDERR @$results . "\n" if ( scalar @$results != 1 );
     }
 
     $sth->finish;
-    return \@results;
+    return $results;
 }
 
 # get list of table columns
