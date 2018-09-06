@@ -39,7 +39,7 @@ my $request = {
 	url => $ENV{QUERY_STRING} || '',
 	params => {
 		original => $params,
-		checked  => check_params($params),
+		checked  => check_params($config, $params),
 	},
 };
 $request = uac::prepare_request( $request, $user_presets );
@@ -399,6 +399,7 @@ sub update_user_roles {
 }
 
 sub check_params {
+    my $config = shift;
 	my $params = shift;
 
 	my $checked = {};

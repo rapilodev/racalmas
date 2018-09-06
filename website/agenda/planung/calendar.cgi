@@ -4,7 +4,7 @@ use warnings "all";
 use strict;
 use Data::Dumper;
 use URI::Escape();
-use Encode();
+#use Encode();
 use utf8();
 use params();
 use config();
@@ -52,8 +52,6 @@ $params->{project_id}        = $user_presets->{project_id}
   if ( ( !( defined $params->{action} ) ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' ) );
 $params->{expires} = $expires;
 
-#print STDERR Dumper($params);
-
 my $scriptName = 'calendar.cgi';
 
 #add "all" studio to select box
@@ -75,7 +73,7 @@ my $request = {
     url => $ENV{QUERY_STRING} || '',
     params => {
         original => $params,
-        checked  => check_params( $params, $config ),
+        checked  => check_params( $config, $params ),
     },
 };
 
@@ -83,7 +81,6 @@ $request = uac::prepare_request( $request, $user_presets );
 
 $params = $request->{params}->{checked};
 
-#print STDERR Dumper($request);
 if (
     (
         ( defined $params->{action} ) && ( ( $params->{action} eq 'show' )
@@ -1802,8 +1799,8 @@ sub getSeriesEvents {
 }
 
 sub check_params {
-    my $params = shift;
     my $config = shift;
+    my $params = shift;
 
     my $checked  = {};
     my $template = '';

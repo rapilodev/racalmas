@@ -204,7 +204,7 @@ sub update {
 		set	   $set
 		where  $conditions
 	};
-	print STDERR Dumper($query) . Dumper($bind_values);
+	#print STDERR Dumper($query) . Dumper($bind_values);
 	my $result = db::put( $dbh, $query, $bind_values );
 
 	images::setSeriesLabels( $dbh, $image );
@@ -491,10 +491,10 @@ sub setEventLabels {
         where  image=?
     };
 	my $bind_values = [ $image->{licence}, $image->{filename} ];
-	print STDERR Dumper($query) . Dumper($bind_values);
+	#print STDERR Dumper($query) . Dumper($bind_values);
 
 	my $results = db::put( $dbh, $query, $bind_values );
-	print STDERR Dumper($results) . " changes\n";
+	#print STDERR Dumper($results) . " changes\n";
 	return $results;
 }
 
@@ -521,10 +521,10 @@ sub setSeriesLabels {
         where  series_image=?
     };
 	my $bind_values = [ $image->{licence}, $image->{filename} ];
-	print STDERR Dumper($query) . Dumper($bind_values);
+	#print STDERR Dumper($query) . Dumper($bind_values);
 
 	my $results = db::put( $dbh, $query, $bind_values );
-	print STDERR Dumper($results) . " changes\n";
+	#print STDERR Dumper($results) . " changes\n";
 	return $results;
 }
 

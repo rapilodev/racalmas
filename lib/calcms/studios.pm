@@ -53,7 +53,7 @@ sub get {
     my $query = '';
     unless ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
         my $conditions = '';
-        $conditions = " where " . join( " and ", @conditions ) if ( @conditions > 0 );
+        $conditions = " where " . join( " and ", @conditions ) if ( scalar @conditions > 0 );
         $query = qq{
 		    select	*
 		    from 	calcms_studios s
@@ -62,11 +62,10 @@ sub get {
 	    };
     } else {
         push @conditions, 's.id=ps.studio_id';
-
         push @conditions,  'ps.project_id=?';
         push @bind_values, $condition->{project_id};
-        my $conditions = '';
-        $condition .= " where " . join( " and ", @conditions ) if ( scalar @conditions > 0 );
+
+        my $conditions = " where " . join( " and ", @conditions );
         $query = qq{
 		    select	*
 		    from 	calcms_studios s, calcms_project_studios ps

@@ -48,7 +48,7 @@ my $request = {
     url => $ENV{QUERY_STRING} || '',
     params => {
         original => $params,
-        checked  => check_params($params),
+        checked  => check_params( $config, $params ),
     },
 };
 $request = uac::prepare_request( $request, $user_presets );
@@ -58,7 +58,7 @@ $params = $request->{params}->{checked};
 unless ( params::isJson() ) {
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process($config,  'print', template::check($config, 'default.html'), $headerParams );
+    template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
 }
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
@@ -75,7 +75,7 @@ showPlayout( $config, $request );
 
 print STDERR "$0 ERROR: " . $params->{error} . "\n" if $params->{error} ne '';
 $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event,comment' } );
-template::process($config,  'print', $params->{template}, $params );
+template::process( $config, 'print', $params->{template}, $params );
 
 exit;
 
@@ -170,11 +170,12 @@ sub formatLoudness {
 }
 
 sub check_params {
+    my $config = shift;
     my $params = shift;
 
     my $checked = {};
     $checked->{error} = '';
-    $checked->{template} = template::check($config,  $params->{template}, 'show_playout' );
+    $checked->{template} = template::check( $config, $params->{template}, 'show_playout' );
 
     #numeric values
     for my $param ( 'project_id', 'studio_id', 'default_studio_id', 'series_id', 'event_id', 'id' ) {

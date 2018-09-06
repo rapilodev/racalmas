@@ -77,7 +77,7 @@ my $request = {
 	url => $ENV{QUERY_STRING} || '',
 	params => {
 		original => $params,
-		checked  => check_params($params),
+		checked  => check_params($config, $params),
 	},
 };
 
@@ -540,6 +540,7 @@ sub getEventDuration {
 }
 
 sub check_params {
+    my $config = shift;
 	my $params = shift;
 
 	my $checked = {};

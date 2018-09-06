@@ -24,11 +24,11 @@ my ( $user, $expires ) = auth::get_user( $cgi, $config );
 return if ( $user eq '' );
 
 my $request = {
-	url => $ENV{QUERY_STRING} || '',
-	params => {
-		original => $params,
-		checked  => check_params($params),
-	}
+    url => $ENV{QUERY_STRING} || '',
+    params => {
+        original => $params,
+        checked  => check_params( $config, $params ),
+    }
 };
 $params = $request->{params}->{checked};
 my $loc = localization::get( $config, { user => $user, file => $params->{usecase} } );
@@ -38,25 +38,23 @@ my $json = JSON::to_json( $loc, { pretty => 1 } );
 my @json_lines = ();
 
 for my $line ( split /\n/, $json ) {
-	push @json_lines, "'" . $line . "'\n";
+    push @json_lines, "'" . $line . "'\n";
 }
 
 $json = $header . $json;
-
-#    .'var loc_text='.join('+',@json_lines).";\n"
-#    .'var loc = JQuery.parseJSON(loc_text)';
 print $json;
 
 sub check_params {
-	my $params = shift;
+    my $config = shift;
+    my $params = shift;
 
-	my $checked = { usecase => '' };
+    my $checked = { usecase => '' };
 
-	if ( defined $params->{usecase} ) {
-		if ( $params->{usecase} =~ /^([a-z\-\_\,]+)$/ ) {
-			$checked->{usecase} = $1;
-		}
-	}
-	return $checked;
+    if ( defined $params->{usecase} ) {
+        if ( $params->{usecase} =~ /^([a-z\-\_\,]+)$/ ) {
+            $checked->{usecase} = $1;
+        }
+    }
+    return $checked;
 }
 

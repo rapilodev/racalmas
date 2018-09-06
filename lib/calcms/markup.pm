@@ -307,7 +307,7 @@ sub plain_to_xml {
 }
 
 sub fix_utf8 {
-	$_[0] = decode( 'cp1252', $_[0] );
+	$_[0] = Encode::decode( 'cp1252', $_[0] );
 	return $_[0];
 }
 
