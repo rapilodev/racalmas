@@ -21,7 +21,8 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 	my %params = $cgi->Vars();
 	my $params = \%params;
 
-	my $config    = config::get('config/config.cgi');
+	my $config = config::getFromScriptLocation();
+
 	my $debug     = $config->{system}->{debug};
 	my $mem_debug = $config->{system}->{debug_memory};
 	my $base_dir  = $config->{locations}->{base_dir};
@@ -32,9 +33,9 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 		$output_header .= "Content-type:text/html; charset=UTF-8;\n\n";
 	}
 
-    $params->{exclude_locations} = 1;
-    $params->{exclude_projects} = 1;
-    $params->{exclude_event_images} = 1;
+	$params->{exclude_locations}    = 1;
+	$params->{exclude_projects}     = 1;
+	$params->{exclude_event_images} = 1;
 
 	#    $output_header.='<!DOCTYPE html>'."\n";
 	my $request = {
@@ -71,9 +72,9 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 	my $menu = { content => '' };
 
 	$list->{day} = '' unless defined $list->{day};
-    $list->{day} = $params->{date}      if (defined $params->{date})      && ($params->{date} ne '');
-    $list->{day} = $params->{from_date} if (defined $params->{from_date}) && ($params->{from_date} ne '');
-    $list->{day} = 'today'              if $list->{day} eq '';
+	$list->{day} = $params->{date}      if ( defined $params->{date} )      && ( $params->{date} ne '' );
+	$list->{day} = $params->{from_date} if ( defined $params->{from_date} ) && ( $params->{from_date} ne '' );
+	$list->{day} = 'today'              if $list->{day} eq '';
 
 	$menu = aggregator::get_menu( $config, $request, $list->{day}, $list->{results} );
 
@@ -121,15 +122,15 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 	$content =~ s/(<(div|span)\s+id="calcms_title".*?>).*?(<\/(div|span)>)/$list->{project_title}/g;
 
 	my $values = [];
-	for my $value ($list->{'program'}, $list->{'series_name'}, $list->{'title'}, $list->{'location'}, $list->{'project_title'}){
-	    next unless defined $value;
-	    next if $value eq '';
-	    push @$values, $value;
+	for my $value ( $list->{'program'}, $list->{'series_name'}, $list->{'title'}, $list->{'location'}, $list->{'project_title'} ) {
+		next unless defined $value;
+		next if $value eq '';
+		push @$values, $value;
 	}
 
-	my $title = join (' - ', @$values);
+	my $title = join( ' - ', @$values );
 
-	$content=~s/(<title>)(.*?)(<\/title>)/$1$title$3/;
+	$content =~ s/(<title>)(.*?)(<\/title>)/$1$title$3/;
 
 	$js = '';
 	if ( ( defined $list->{event_id} ) && ( $list->{event_id} ne '' ) ) {

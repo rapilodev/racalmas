@@ -39,9 +39,9 @@ my $user_presets = uac::get_user_presets(
 );
 $params->{default_studio_id} = $user_presets->{studio_id};
 $params->{studio_id}         = $params->{default_studio_id}
-  if ( ( !( defined $params->{action} ) ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' ) );
+  if ( !defined $params->{action} ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' );
 $params->{project_id} = $user_presets->{project_id}
-  if ( ( !( defined $params->{action} ) ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' ) );
+  if ( !defined $params->{action} ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' );
 
 #print STDERR $params->{project_id}."\n";
 my $request = {
@@ -87,9 +87,14 @@ sub show_events {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{assign_series_events} == 1 ) {
-        uac::permissions_denied('assign_series_events');
+        uac::permissions_denied('read_events');
         return;
     }
+
+    my $events = getDates( $config, $request );
+    $params->{events} = $events;
+    $params->{total}  = scalar(@$events);
+    $params->{action} = 'show';
     template::process( $config, 'print', $params->{template}, $params );
 
 }
@@ -106,6 +111,31 @@ sub create_events {
     }
 
     print STDERR "create events\n";
+    my $dates = getDates( $config, $request );
+
+    print STDERR "<pre>found " . ( scalar @$dates ) . " dates\n";
+    my $events = [];
+    for my $date (@$dates) {
+
+        #print STDERR $date->{start}."\n";
+        push @$events, createEvent( $config, $request, $date );
+    }
+    $params->{events} = $events;
+    $params->{total}  = scalar(@$events);
+    $params->{action} = 'created';
+    template::process( $config, 'print', $params->{template}, $params );
+}
+
+sub getDates {
+    my $config  = shift;
+    my $request = shift;
+
+    my $params      = $request->{params}->{checked};
+    my $permissions = $request->{permissions};
+    unless ( $permissions->{read_event} == 1 ) {
+        uac::permissions_denied('read_event');
+        return;
+    }
 
     my $project_id = $params->{project_id};
     my $studio_id  = $params->{studio_id};
@@ -126,8 +156,7 @@ sub create_events {
     }
     $params->{from_date} = $from_date;
     $params->{till_date} = $till_date;
-
-    print STDERR "create events from $from_date to $till_date\n";
+    print STDERR "$0: get events from $from_date to $till_date\n";
 
     my $dates = series_dates::getDatesWithoutEvent(
         $config,
@@ -138,16 +167,8 @@ sub create_events {
             till       => $till_date
         }
     );
-    print STDERR "<pre>found " . ( scalar @$dates ) . " dates\n";
-    my $events = [];
-    for my $date (@$dates) {
 
-        #print STDERR $date->{start}."\n";
-        push @$events, createEvent( $config, $request, $date );
-    }
-    $params->{created_events} = $events;
-    $params->{created_total}  = scalar(@$events);
-    template::process( $config, 'print', $params->{template}, $params );
+    return $dates;
 }
 
 sub createEvent {
@@ -191,7 +212,7 @@ sub check_params {
     #actions and roles
     $checked->{action} = '';
     if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(create_events)$/ ) {
+        if ( $params->{action} =~ /^(create_events|show_events)$/ ) {
             $checked->{action} = $params->{action};
         }
     }

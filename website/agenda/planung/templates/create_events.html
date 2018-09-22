@@ -1,33 +1,17 @@
-<TMPL_IF .allow.scan_series_events>
-
-<script type="text/javascript">
-<TMPL_IF .getBack>
-    $(document).ready(
-        function(){
-            getBack()
-        }
-    );
-</TMPL_IF>
-
-function assign_series(project_id, studio_id){
-    if (project_id == '') return false;
-    if (studio_id  == '')  return false;
-
-    var url="create_events.cgi?project_id="+project_id+'&studio_id='+studio_id+'&action=create_events';
-    $('#create_event_form').submit();
-    return false;
-}
+<TMPL_IF .allow.read_event> <script type="text/javascript">
+    <TMPL_IF .getBack>
+    $(document).ready(function() {
+        getBack()
+    });
+    </TMPL_IF>
 </script>
-
 
 <h1>create events from schedule</h1>
 
-<form id="create_event_form">
-    <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-    <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
-    <input type="hidden" name="action" value="create_events">
-
-    duration
+<form id="create_event_form" method="post">
+    <input type="hidden" name="project_id"
+        value="<TMPL_VAR .project_id>"> <input type="hidden"
+        name="studio_id" value="<TMPL_VAR .studio_id>"> duration
     <select name="duration">
         <option value="7">1 week</option>
         <option value="14">2 weeks</option>
@@ -35,20 +19,25 @@ function assign_series(project_id, studio_id){
         <option value="28">4 weeks</option>
     </select>
 
-    <button target="_blank"
-        onclick="assign_series('<TMPL_VAR .project_id>', '<TMPL_VAR .studio_id>');return false;"
-    >create</button>
+    <TMPL_IF .allow.read_event>
+    <button target="_blank" type='submit' name="action" value="show">show</button>
+    </TMPL_IF>
+    <TMPL_IF .allow.assign_series_events>
+    <button target="_blank" type='submit' name="action"
+        value="create_events">create</button>
+    </TMPL_IF>
 </form>
 
-<div class="view" style="clear:both">
-created <TMPL_VAR created_total> events from <TMPL_VAR from_date> till <TMPL_VAR till_date><br>
-<TMPL_LOOP created_events> events created
-    <TMPL_var start><TMPL_var full_title><br>
-</TMPL_LOOP>
+<div class="view" style="clear: both">
+    <TMPL_VAR action> <TMPL_VAR created_total>
+    events from <TMPL_VAR from_date> till <TMPL_VAR till_date>
+    <br>
 
-</view>
+    <TMPL_LOOP events> <TMPL_var start> <TMPL_var
+        full_title> <br></TMPL_LOOP> </view>
 
-</body>
-</html>
+    </body>
+    </html>
 
+    <TMPL_ELSE> missing permission to read events 
 </TMPL_IF>

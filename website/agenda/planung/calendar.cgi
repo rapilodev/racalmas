@@ -1417,6 +1417,7 @@ sub print_event {
 
     my $attr = '';
     if ( $class =~ /play/ ) {
+        #$event->{rms_image}=~s/\.png/.svg/;
         $attr .= ' rms="' . $event->{rms_image} . '"' if defined $event->{rms_image};
         $attr .= ' start="' . $event->{start} . '"'   if defined $event->{start};
     }

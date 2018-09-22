@@ -23,7 +23,7 @@ binmode STDOUT, ":utf8";
 my $r=shift;
 (my $cgi, my $params, my $error)=params::get($r);
 
-my $config = config::get('./config/config.cgi');
+my $config = config::getFromScriptLocation();
 my $debug  = $config->{system}->{debug};
 
 my $request={

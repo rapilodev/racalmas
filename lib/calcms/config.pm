@@ -3,6 +3,7 @@ package config;
 use warnings;
 use strict;
 
+use FindBin();
 use Config::General();
 
 use base 'Exporter';
@@ -19,7 +20,7 @@ sub set {
 sub get {
     my $filename = shift;
 
-    return $config if defined $config;;
+    return $config if ( defined $config ) && ( $config->{cache}->{cache_config} == 1 );
 
     my $configuration = Config::General->new(
         -ConfigFile => $filename,
@@ -27,6 +28,12 @@ sub get {
     );
     config::set( $configuration->{DefaultConfig}->{config} );
     return $config;
+}
+
+sub getFromScriptLocation() {
+    FindBin::again();
+    my $configFile = $FindBin::Bin . '/config/config.cgi';
+    return config::get($configFile);
 }
 
 #do not delete last line

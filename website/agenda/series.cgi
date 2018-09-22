@@ -16,8 +16,7 @@ print "Content-Type: text/html; charset=utf-8\n\n";
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
 
-my $config = config::get('config/config.cgi');
-
+my $config = config::getFromScriptLocation();
 $params = check_params( $config, $params );
 
 list_series( $config, $params );
