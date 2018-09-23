@@ -3,7 +3,7 @@ package auth;
 use warnings "all";
 use strict;
 
-use CGI;
+use CGI::Simple();
 use CGI::Session qw(-ip-match);
 use CGI::Cookie();
 
@@ -21,22 +21,24 @@ my $debug             = 0;
 
 sub debug;
 
+#TODO: remove CGI
 sub get_user {
-    my $cgi    = shift;
     my $config = shift;
-
-    my %parms = $cgi->Vars();
-    my $parms = \%parms;
+    my $params = shift;
+    my $cgi    = shift;
 
     debug("get_user") if ($debug);
 
     # login or logout on action
-    if ( defined $parms->{action} ) {
-        if ( $parms->{action} eq 'login' ) {
-            my $user = login( $cgi, $config, $parms->{user}, $parms->{password} );
+    if ( defined $params->{action} ) {
+        if ( $params->{action} eq 'login' ) {
+            my $user = login( $config, $params->{user}, $params->{password} );
+            $cgi = new CGI::Simple() unless defined $cgi;
+
             $cgi->delete( 'user', 'password', 'uri', 'action' );
             return $user;
-        } elsif ( $parms->{action} eq 'logout' ) {
+        } elsif ( $params->{action} eq 'logout' ) {
+            $cgi = new CGI::Simple() unless defined $cgi;
             logout($cgi);
             $cgi->delete( 'user', 'password', 'uri', 'action' );
             return undef;
@@ -44,20 +46,20 @@ sub get_user {
     }
 
     # read session id from cookie
-    my $session_id = read_cookie($cgi);
+    my $session_id = read_cookie();
 
     # login if no cookie found
-    return show_login_form( $parms->{user}, 'Please login' ) unless defined $session_id;
+    return show_login_form( $params->{user}, 'Please login' ) unless defined $session_id;
 
     # read session
     my $session = read_session($session_id);
 
     # login if user not found
-    return show_login_form( $parms->{user}, 'unknown User' ) unless defined $session;
+    return show_login_form( $params->{user}, 'unknown User' ) unless defined $session;
 
-    $parms->{user}    = $session->{user};
-    $parms->{expires} = $session->{expires};
-    debug( $parms->{expires} );
+    $params->{user}    = $session->{user};
+    $params->{expires} = $session->{expires};
+    debug( $params->{expires} );
     return $session->{user}, $session->{expires};
 }
 
@@ -76,7 +78,6 @@ sub crypt_password {
 }
 
 sub login {
-    my $cgi      = shift;
     my $config   = shift;
     my $user     = shift;
     my $password = shift;
@@ -94,13 +95,14 @@ sub login {
     $timeout = '+' . $timeout . 'm';
 
     my $session_id = create_session( $user, $password, $timeout );
-    return $user if ( create_cookie( $cgi, $session_id, $timeout ) );
+    return $user if create_cookie( $session_id, $timeout );
     return undef;
 }
 
+#TODO: remove cgi
 sub logout {
     my $cgi        = shift;
-    my $session_id = read_cookie($cgi);
+    my $session_id = read_cookie();
     debug("logout") if ($debug);
     unless ( delete_session($session_id) ) {
         return show_login_form( 'Cant delete session', 'logged out' );
@@ -116,44 +118,34 @@ sub logout {
 
 #read and write data from browser, http://perldoc.perl.org/CGI/Cookie.html
 sub create_cookie {
-    my $cgi        = shift;
     my $session_id = shift;
     my $timeout    = shift;
-
-    #debug("create_cookie")if ($debug);
 
     my $cookie = CGI::Cookie->new(
         -name    => 'sessionID',
         -value   => $session_id,
         -expires => $timeout,
-
-        #		-domain  =>  '.capricorn.com',
-        #		-path    =>  '/agenda/admin/',
-        -secure => 1
+        -secure  => 1
     );
     print "Set-Cookie: ", $cookie->as_string, "\n";
     print STDERR "#Set-Cookie: ", $cookie->as_string, "\n";
 
-    #	print $cgi->header( -cookie => $cookie );
     return 1;
 }
 
 sub read_cookie {
-    my $cgi = shift;
-
     debug("read_cookie") if ($debug);
     my %cookie = CGI::Cookie->fetch;
     debug( "cookies: " . Dumper( \%cookie ) ) if ($debug);
     my $cookie = $cookie{'sessionID'};
     debug( "cookie: " . $cookie ) if ($debug);
-    return undef unless defined $cookie ;
+    return undef unless defined $cookie;
     my $session_id = $cookie->value || undef;
     debug( "sid: " . $session_id ) if ($debug);
     return $session_id;
-
-    #return $cgi->cookie('sessionID') || undef;
 }
 
+#TODO: remove CGI
 sub delete_cookie {
     my $cgi = shift;
 
@@ -179,7 +171,6 @@ sub create_session {
     $session->param( "user", $user );
     $session->param( "pid",  $$ );
 
-    #	$session->param("password", $password);
     return $session->id();
 }
 

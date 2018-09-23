@@ -21,7 +21,7 @@ my $r = shift;
 my $config = config::get('../config/config.cgi');
 my $debug  = $config->{system}->{debug};
 
-my ( $user, $expires ) = auth::get_user( $cgi, $config );
+my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( $user eq '' );
 
 my $permissions  = roles::get_user_permissions($config);

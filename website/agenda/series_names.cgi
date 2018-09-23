@@ -7,10 +7,6 @@ use warnings "all";
 use strict;
 use Data::Dumper;
 
-use CGI qw(header param Vars);
-$CGI::POST_MAX        = 1000;
-$CGI::DISABLE_UPLOADS = 1;
-
 use params();
 use db();
 use markup();

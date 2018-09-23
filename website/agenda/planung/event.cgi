@@ -39,7 +39,7 @@ my $r = shift;
 
 my $config = config::get('../config/config.cgi');
 my $debug  = $config->{system}->{debug};
-my ( $user, $expires ) = auth::get_user( $cgi, $config );
+my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( ( !defined $user ) || ( $user eq '' ) );
 
 my $user_presets = uac::get_user_presets(

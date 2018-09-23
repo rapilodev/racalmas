@@ -5,9 +5,6 @@ use diagnostics;
 use strict;
 use Data::Dumper;
 
-use CGI qw(header param Vars escapeHTML uploadInfo cgi_error);
-$CGI::POST_MAX=1024 * 100;
-
 use params();
 use config();
 use db();
@@ -242,7 +239,7 @@ sub escape_text{
 	$s=~s/<[a-z\!\?\[\/][^\>]+?\>//gi;
 	$s=~s/<[a-z\!\?\[\/]\>//gi;
 
-	$s=CGI::escapeHTML($s);
+    $s = markup::escapeHTML($s);
 	$s=~s/[\n\r]+/\<br \/\>/g;
 	$s=~s/\<br \/\>/\<br \/\>\n/g;
 	$s=~s/\<br \/\>\s*$//g;

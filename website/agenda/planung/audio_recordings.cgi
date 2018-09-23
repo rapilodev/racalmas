@@ -45,7 +45,7 @@ my $fh     = undef;
 $CGI::Simple::POST_MAX        = $uploadLimit;
 $CGI::Simple::DISABLE_UPLOADS = 0;
 
-$cgi = $cgi = CGI::Simple->new;
+$cgi = CGI::Simple->new;
 my $filename = $cgi->param('upload');
 $fh     = $cgi->upload($filename);
 $error  = $cgi->cgi_error() || '';
@@ -55,7 +55,7 @@ my $params = \%params;
 binmode $fh if defined $fh;
 
 #print "Content-type:text/html; charset=UTF-8;\n\n";
-my ( $user, $expires ) = auth::get_user( $cgi, $config );
+my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 exit if ( !defined $user ) || ( $user eq '' );
 
 my $user_presets = uac::get_user_presets(

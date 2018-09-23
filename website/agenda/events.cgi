@@ -6,11 +6,6 @@ no warnings 'redefine';
 
 use Data::Dumper;
 
-use DBI;
-use CGI qw(header param Vars);
-$CGI::POST_MAX        = 1000;
-$CGI::DISABLE_UPLOADS = 1;
-
 use params();
 use config();
 use log();

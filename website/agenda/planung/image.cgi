@@ -8,7 +8,6 @@ use Data::Dumper;
 
 use File::stat();
 use Time::localtime();
-use CGI::Simple();
 use URI::Escape();
 
 use time();
@@ -31,11 +30,10 @@ binmode STDOUT, ":utf8";
 
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
-$CGI::POST_MAX = 1024 * 10;
 
 my $config = config::get('../config/config.cgi');
 my $debug  = $config->{system}->{debug};
-my ( $user, $expires ) = auth::get_user( $cgi, $config );
+my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( ( !defined $user ) || ( $user eq '' ) );
 
 my $user_presets = uac::get_user_presets(

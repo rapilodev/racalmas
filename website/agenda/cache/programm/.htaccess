@@ -1,21 +1,19 @@
 <IfModule mod_rewrite.c>
-RewriteBase /programm
+    RewriteBase /programm
 
-RewriteEngine on
-RewriteCond  %{REQUEST_FILENAME} -f
-RewriteRule (.*) $1 [L]
-RewriteCond  %{REQUEST_FILENAME} -d
-RewriteRule (.*) $1 [L]
+    RewriteEngine on
+    RewriteCond  %{REQUEST_FILENAME} -f
+    RewriteRule (.*) $1 [L]
+    RewriteCond  %{REQUEST_FILENAME} -d
+    RewriteRule (.*) $1 [L]
 
-#controller
-  RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$	/agenda/aggregate.cgi?from_date=$1&till_date=$2&$3 [L]
-  RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$          		/agenda/aggregate.cgi?date=$1&$2 [L]
-  RewriteRule ^sendungen/(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$         		/agenda/aggregate.cgi?date=$1&$2 [L]
-# RewriteRule ^sendung/(\d+)\.html/[^&]*(&.*)?$                  		/agenda/aggregate.cgi?event_id=$1&$2 [L]
-  RewriteRule ^sendung/(\d+)\.html[\?]?(.*)$                                 	/agenda/aggregate.cgi?event_id=$1&$2 [L]
-  RewriteRule ^sendung/serie_plus/(\d+)\.html[\?]?(.*)$                         /agenda/aggregate.cgi?next_series=$1&$2 [L]
-  RewriteRule ^sendung/serie_minus/(\d+)\.html[\?]?(.*)$                        /agenda/aggregate.cgi?previous_series=$1&$2 [L]
-#controller end
+    RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$	/agenda/aggregate.cgi?from_date=$1&till_date=$2&$3 [L]
+    RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$          		/agenda/aggregate.cgi?date=$1&$2 [L]
+    RewriteRule ^sendungen/(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$         		/agenda/aggregate.cgi?date=$1&$2 [L]
+    #  RewriteRule ^sendung/(\d+)\.html/[^&]*(&.*)?$                  		/agenda/aggregate.cgi?event_id=$1&$2 [L]
+    RewriteRule ^sendung/(\d+)\.html[\?]?(.*)$                                 	/agenda/aggregate.cgi?event_id=$1&$2 [L]
+    RewriteRule ^sendung/serie_plus/(\d+)\.html[\?]?(.*)$                         /agenda/aggregate.cgi?next_series=$1&$2 [L]
+    RewriteRule ^sendung/serie_minus/(\d+)\.html[\?]?(.*)$                        /agenda/aggregate.cgi?previous_series=$1&$2 [L]
 </IfModule>
 
 Options -Indexes +FollowSymLinks +MultiViews +ExecCGI
@@ -30,9 +28,8 @@ Options -Indexes +FollowSymLinks +MultiViews +ExecCGI
 </IfModule>
 
 <IfModule !mod_perl.c>
-    AddHandler cgi-script .cgi .pl
+	AddHandler cgi-script .cgi .pl
 </IfModule>
 
-#Order allow,deny
-#allow from all
 Require all granted
+

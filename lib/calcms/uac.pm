@@ -2,7 +2,6 @@ package uac;
 use warnings "all";
 use strict;
 
-use CGI();
 use CGI::Session qw(-ip-match);
 use CGI::Cookie();
 use Data::Dumper;

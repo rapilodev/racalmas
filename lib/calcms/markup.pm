@@ -7,6 +7,7 @@ use Text::WikiCreole();
 use HTML::Parse();
 use HTML::FormatText();
 use Encode();
+use HTML::Entities();
 
 use log();
 
@@ -496,6 +497,11 @@ sub encode_xml_element_text {
 	$text =~ s/\>/\&gt\;/g;
 
 	return $text;
+}
+
+sub escapeHtml{
+    my $s=shift;
+    return HTML::Entities::encode_entities($s,q{&<>"'});
 }
 
 #do not delete last line!

@@ -74,7 +74,7 @@ if ( defined $r ) {
     $params = \%params;
 }
 print "Content-type:text/html; charset=UTF-8;\n\n";
-my ( $user, $expires ) = auth::get_user( $cgi, $config );
+my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( ( !defined $user ) || ( $user eq '' ) );
 
 my $user_presets = uac::get_user_presets(
