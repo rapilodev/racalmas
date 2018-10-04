@@ -11,7 +11,7 @@ body{
 body #content{
 	margin:0;
 	padding:1em;
-	max-width:980px;
+	max-width:1200px;
 	color:#000;
 	background:#fff;
 	text-align:left;
@@ -29,9 +29,8 @@ body,
 #content select,
 #content option,
 #content li{
-    font-size:14px;
     font-size:0.75rem;
- 	font-family:Roboto,sans-serif;
+    font-family:Roboto,sans-serif;
 }
 
 #content textarea{
@@ -90,24 +89,24 @@ body,
 #calcms_admin_menu select{
     font-size:14px;
 	padding:6px;
-	padding-top:1em;
-	padding-bottom:1em;
+	padding-top:1rem;
+	padding-bottom:1rem;
 	line-height:3em;
 }
 
-#calcms_admin_menu div:hover,
+#calcms_admin_menu a:hover,
 #calcms_admin_menu select:hover{
-    background:#888;
+    background:#666;
 }
 
 #calcms_admin_menu div {
-    transition: all 0.2s;
+    transition: background 0.2s;
 }
 
 #calcms_admin_menu select,
 #calcms_admin_menu option{
     font-size:0.8rem;
-	width:8em;
+	max-width:8em;
 	border:0;
 	padding-left:0;
 	padding-right:0;
@@ -167,6 +166,7 @@ a{
 
 #content .button{
 	width:10em;
+    cursor:pointer;
 }
 
 *:focus {outline: none;}
@@ -335,6 +335,7 @@ tr.tablesorter-filter-row input{
 #content a.ui-button:active,
 #content .ui-button:active{
     background-color:#2196f3;
+    cursor:pointer;
 }
 
 #content input[type="submit"]:hover,
@@ -439,3 +440,56 @@ input[type='checkbox']{
 #content input[readonly] {
     border: 0;
 }
+
+
+/* new */
+
+#calcms_admin_menu{
+    font-size:0.9375rem;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    justify-content:end;
+}
+
+#calcms_admin_menu div a, 
+#calcms_admin_menu select,
+#calcms_admin_menu option{
+    font-size:0.9375rem;
+}
+
+#calcms_admin_menu select,
+#calcms_admin_menu option{
+    border:0;
+    text-align:left;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+}
+
+body #content{
+    margin-top:0;
+}
+
+body,
+#content input,
+#content textarea,
+#content td,
+#content div,
+#content select,
+#content option,
+#content li,
+#content input[type="submit"],
+#content input[type="file"],
+#content button{
+    font-size:0.85rem;
+}
+
+#calcms_admin_menu .fa,
+#calcms_admin_menu .far,
+#calcms_admin_menu .fas{
+    opacity:0.5;
+}
+

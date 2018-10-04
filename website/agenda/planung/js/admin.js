@@ -207,12 +207,13 @@ function getUrlParameter(name){
 
 // will be overridden by calendar.js
 function setupMenuHeight(){
-    //$('#content').css("position", "absolute");
+    var menu=$('#calcms_admin_menu');
 
-    /*
-    var top = $('#calcms_admin_menu').height();
+    $('#content').css("position", "absolute");
+    var top = menu.height();
     $('#content').css("top", top);
 
+    
     var left=0;
     if( $(window).width() >= $(document).width() ){
         left=$(document).width()-$('#content').width();
@@ -220,7 +221,7 @@ function setupMenuHeight(){
         if (left<40)left=0;
     }
     $('#content').css("left", left);    
-    */
+    
     return top;
 }
 
@@ -326,10 +327,11 @@ $(document).ready(
             });
         }
         initLabels();
-        //setupMenuHeight();
-	    //$(window).resize(function() {
-		    //setupMenuHeight();
-	    //});
+
+        setupMenuHeight();
+	    $(window).resize(function() {
+		    setupMenuHeight();
+	    });
         
     }
 );

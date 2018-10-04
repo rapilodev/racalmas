@@ -1,72 +1,85 @@
 <TMPL_INCLUDE header.html>
 
 <center>
-<div id="calcms_admin_menu">
+<nav id="calcms_admin_menu">
 
-<div><a href="/"><img width="20px" height="20px" src="<TMPL_VAR static_files_url>/image/logo.jpg" alt="Hauptseite"/></a></div>
+<div><a href="/"><i class="fas fa-rocket"></i>&nbsp;<TMPL_VAR .loc.preview></a></div>
 
 <TMPL_IF .allow.read_event>
-<div> <a id="menu_calendar" href="calendar.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>"><TMPL_VAR .loc.calendar></a> </div>
+<div><a id="menu_calendar" href="calendar.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>"><i class="fas fa-calendar-alt"></i>&nbsp;<TMPL_VAR .loc.calendar></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_series>
-<div> <a href="series.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.series></a> </div>
+<div><a href="series.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-list-alt"></i>&nbsp;<TMPL_VAR .loc.series></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_playout>
-<div> <a href="show-playout.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.playout></a> </div>
+<div><a href="show-playout.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-play"></i>&nbsp;<TMPL_VAR .loc.playout></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_user>
-<div> <a href="users.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.users></a> </div>
+<div><a href="users.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-users"></i>&nbsp;<TMPL_VAR .loc.users></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_role>
-<div> <a href="roles.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.roles></a> </div>
+<div><a href="roles.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-tasks"></i>&nbsp;<TMPL_VAR .loc.roles></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_studio>
-<div> <a href="studios.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.studios></a> </div>
+<div><a href="studios.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-project-diagram"></i>&nbsp;<TMPL_VAR .loc.studios></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_studio_timeslot_schedule>
-<div> <a href="studio_timeslots.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.timeslots></a> </div>
+<div><a href="studio_timeslots.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-clock"></i>&nbsp;<TMPL_VAR .loc.timeslots></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_project>
-<div> <a href="projects.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.projects></a> </div>
+<div><a href="projects.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-broadcast-tower"></i>&nbsp;<TMPL_VAR .loc.projects></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_schedule>
-<div> <a href="work_time.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.schedule></a> </div>
+<div><a href="work_time.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-clock"></i>&nbsp;<TMPL_VAR .loc.schedule></a></div>
 </TMPL_IF>
 
+<!--
 <TMPL_IF .allow.update_image_others>
-<div> <a href="image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.images></a> </div>
+<div><a href="image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-images"></i>&nbsp;<TMPL_VAR .loc.images></a></div>
 </TMPL_IF>
+-->
 
 <TMPL_IF .allow.scan_series_events>
-<div> <a href="assignments.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.import></a> </div>
+<!--
+<div><a href="assignments.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.import></a></div>
+-->
 </TMPL_IF>
 
-<div> <a href="user_settings.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.profile></a> </div>
+<div title="<TMPL_VAR .loc.profile>"><a href="user_settings.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-cog"></i>&nbsp;<TMPL_VAR .loc.profile></a></div>
 
-<div> <a href="help.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.help></a> </div>
+<div title="<TMPL_VAR .loc.help>"><a href="help.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-info"></i>&nbsp;<TMPL_VAR .loc.help></a></div>
 
+<div>
+<i class="fas fa-home"></i>
 <select id="studio_id" name="studio_id" onchange="set_studio($(this).val())">
 <TMPL_LOOP .presets.studios>
-<option value="<TMPL_VAR id>" <TMPL_IF selected> selected="selected"</TMPL_IF> ><TMPL_VAR .loc.studio> <TMPL_VAR name></option>
+<option value="<TMPL_VAR id>" <TMPL_IF selected> selected="selected"</TMPL_IF> ><TMPL_VAR name></option>
 </TMPL_LOOP>
 </select>
-
-<select id="project_id" name="project_id" onchange="set_project($(this).val())">
-<TMPL_LOOP .presets.projects>
-<option value="<TMPL_VAR project_id>" <TMPL_IF selected> selected="selected"</TMPL_IF> ><TMPL_VAR .loc.project> <TMPL_VAR name></option>
-</TMPL_LOOP>
-</select>
-
-<div><a id="logout" href="<TMPL_VAR .presets.logout_url>?action=logout" expires="<TMPL_VAR .expires>"><TMPL_VAR .loc.logout></a> <TMPL_VAR .presets.user></div>
+<i class="fas fa-caret-down"></i>
 </div>
 
-<div id="content">
+<div>
+<i class="fas fa-broadcast-tower"></i>
+<select id="project_id" name="project_id" onchange="set_project($(this).val())">
+<TMPL_LOOP .presets.projects>
+<option value="<TMPL_VAR project_id>" <TMPL_IF selected> selected="selected"</TMPL_IF> ><TMPL_VAR name></option>
+</TMPL_LOOP>
+</select>
+<i class="fas fa-caret-down"></i>
+</div>
+
+<div><a id="logout" href="<TMPL_VAR .presets.logout_url>?action=logout" expires="<TMPL_VAR .expires>"><i class="fas fa-sign-out-alt"></i>&nbsp;<TMPL_VAR .presets.user> <TMPL_VAR .loc.logout></a></div>
+
+</nav>
+
+<main id="content">
 

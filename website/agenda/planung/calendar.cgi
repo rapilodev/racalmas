@@ -520,8 +520,7 @@ sub showCalendar {
         if ( $params->{part} == 0 ) {
             printSeries( $config, $permissions, $params, $cal_options );
             print qq{
-                    </div><!--content-->
-                </center>
+                    </main>
             };
         }
 
@@ -724,6 +723,11 @@ sub showEventList {
     my $events_by_day = shift;
     my $language      = $params->{language};
 
+    my $rerunIcon='<i class="fas fa-redo" title="$params->{loc}->{label_rerun}"></i>';
+    my $liveIcon='<i class="fas fa-microphone-alt" title="$params->{loc}->{label_live}"></i>';
+    my $draftIcon='<i class="fas fa-drafting-compass" title="$params->{loc}->{label_draft}"></i>';
+    my $archiveIcon='<i class="fas fa-archive" title="$params->{loc}->{label_archived}"></i>';
+
     my $out = '';
     $out = qq{
         <div id="event_list">
@@ -737,10 +741,10 @@ sub showEventList {
                     <th class="series_name">$params->{loc}->{label_series}</th>
                     <th class="title">$params->{loc}->{label_title}</th>
                     <th class="episode">$params->{loc}->{label_episode}</th>
-                    <th class="rerun" title="$params->{loc}->{label_rerun}"><img src="image/32/rerun.png"></th>
-                    <th class="live" title="$params->{loc}->{label_live}"><img src="image/32/live.png"></th>
-                    <th class="draft" title="$params->{loc}->{label_draft}"><img src="image/32/draft.png"></th>
-                    <th class="archive" title="$params->{loc}->{label_archived}"><img src="image/32/archived.png"></th>
+                    <th class="rerun">$rerunIcon</th>
+                    <th class="draft">$draftIcon</th>
+                    <th class="live">$liveIcon</th>
+                    <th class="archive">$archiveIcon</th>
                  </tr>
             </thead>
             <tbody>
@@ -795,11 +799,11 @@ sub showEventList {
 
             my $archived = $event->{archived} || '-';
             $archived = '-' if $archived eq '0';
-            $archived = 'x' if $archived eq '1';
+            $archived = $archiveIcon if $archived eq '1';
 
             my $live = $event->{live} || '-';
             $live = '-' if $live eq '0';
-            $live = 'x' if $live eq '1';
+            $live = $liveIcon if $live eq '1';
 
             my $rerun = $event->{rerun} || '-';
 
@@ -808,7 +812,7 @@ sub showEventList {
 
             my $draft = $event->{draft} || '0';
             $draft = '-' if $draft eq '0';
-            $draft = 'x' if $draft eq '1';
+            $draft = $draftIcon if $draft eq '1';
 
             my $title = $event->{title};
             $title .= ': ' . $event->{user_title} if $event->{user_title} ne '';
@@ -862,8 +866,7 @@ sub showEventList {
     }
 
     $out .= qq{
-                </div><!--content-->
-            </center>
+            </main>
             <script>
                 var region='} . $params->{loc}->{region} . q{';
                 var calendarTable=0;

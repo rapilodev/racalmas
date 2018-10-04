@@ -407,19 +407,24 @@ function checkStudio(){
 function setIcons(){
     var img='';
     
-    img='<img class="img_live" src="image/live.png" title="live">'
+    //img='<img class="img_live" src="image/live.png" title="live">'
+    img='<i class="fas fa-microphone-alt" title="live"></i>';
     $('#calendar div.event.live.no_rerun div.icons').append(img);
 
-    img='<img class="img_preproduced" src="image/preproduced.png" title="preproduced">'
+    img='<i class="fas fa-microphone-slash" title="preproduced"></i>';
+    //img='<img class="img_preproduced" src="image/preproduced.png" title="preproduced">'
     $('#calendar div.event.preproduced.no_rerun div.icons').append(img);
 
-    img='<img class="img_rerun" src="image/rerun.png" title="rerun">'
+    img='<i class="fas fa-redo" title="rerun"></i>';
+    //img='<img class="img_rerun" src="image/rerun.png" title="rerun">'
     $('#calendar div.event.rerun div.icons').append(img);
 
-    img='<img class="img_playout" src="image/playout.png" title="playout">'
+    img='<i class="fas fa-play" title="playout"></i>';
+    //img='<img class="img_playout" src="image/playout.png" title="playout">'
     $('#calendar div.event.playout div.icons').append(img);
 
-    img='<img class="img_archived" src="image/archived.png" title="archived">'
+    img='<i class="fas fa-archive" title="archived"></i>';
+    //img='<img class="img_archived" src="image/archived.png" title="archived">'
     $('#calendar div.event.archived div.icons').append(img);
 }
 

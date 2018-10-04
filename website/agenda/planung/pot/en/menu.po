@@ -53,5 +53,8 @@ msgid "images"
 msgstr "Images"
 
 msgid "schedule"
-msgstr "roster"
+msgstr "Schedule"
+
+msgid "preview"
+msgstr "Preview"
 

@@ -75,14 +75,6 @@ button:hover{
     }
 }
 
-#calendar div.event img{
-    width:16px;
-    height:16px;
-    border:0;
-    margin:-2px;
-    padding:0px;
-}
-
 #event_list tr{
     border-bottom:1px solid #999;
 }
@@ -99,9 +91,13 @@ button:hover{
 
 #calendar div.event div.icons{
     position:absolute;
-    top:-5px;
-    right:-7px;
+    top:0px;
+    right:0px;
+    margin:0;
     width:16px;
+    font-size:16px;
+    opacity:0.8;
+    line-height:1.5;
 }
 
 #calendar div.time.now {

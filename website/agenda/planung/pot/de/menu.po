@@ -32,7 +32,7 @@ msgid "errors"
 msgstr "Fehler"
 
 msgid "logout"
-msgstr "Abmelden"
+msgstr "abmelden"
 
 msgid "studio"
 msgstr "Studio"
@@ -54,4 +54,7 @@ msgstr "Bilder"
 
 msgid "schedule"
 msgstr "Dienstplan"
+
+msgid "preview"
+msgstr "Vorschau"
 
