@@ -27,15 +27,13 @@ sub get_user {
     my $params = shift;
     my $cgi    = shift;
 
-    debug("get_user") if ($debug);
+    debug("get_user") if $debug;
 
     # login or logout on action
     if ( defined $params->{action} ) {
         if ( $params->{action} eq 'login' ) {
             my $user = login( $config, $params->{user}, $params->{password} );
-            $cgi = new CGI::Simple() unless defined $cgi;
-
-            $cgi->delete( 'user', 'password', 'uri', 'action' );
+            $cgi->delete( 'user', 'password', 'uri', 'action' ) if defined $cgi;
             return $user;
         } elsif ( $params->{action} eq 'logout' ) {
             $cgi = new CGI::Simple() unless defined $cgi;
@@ -81,7 +79,7 @@ sub login {
     my $config   = shift;
     my $user     = shift;
     my $password = shift;
-    debug("login") if ($debug);
+    debug("login") if $debug;
 
     #print STDERR "login $user $password\n";
     my $result = authenticate( $config, $user, $password );
@@ -103,7 +101,7 @@ sub login {
 sub logout {
     my $cgi        = shift;
     my $session_id = read_cookie();
-    debug("logout") if ($debug);
+    debug("logout") if $debug;
     unless ( delete_session($session_id) ) {
         return show_login_form( 'Cant delete session', 'logged out' );
     }
@@ -134,14 +132,14 @@ sub create_cookie {
 }
 
 sub read_cookie {
-    debug("read_cookie") if ($debug);
+    debug("read_cookie") if $debug;
     my %cookie = CGI::Cookie->fetch;
-    debug( "cookies: " . Dumper( \%cookie ) ) if ($debug);
+    debug( "cookies: " . Dumper( \%cookie ) ) if $debug;
     my $cookie = $cookie{'sessionID'};
-    debug( "cookie: " . $cookie ) if ($debug);
+    debug( "cookie: " . $cookie ) if $debug;
     return undef unless defined $cookie;
     my $session_id = $cookie->value || undef;
-    debug( "sid: " . $session_id ) if ($debug);
+    debug( "sid: " . $session_id ) if $debug;
     return $session_id;
 }
 
@@ -149,7 +147,7 @@ sub read_cookie {
 sub delete_cookie {
     my $cgi = shift;
 
-    debug("delete_cookie") if ($debug);
+    debug("delete_cookie") if $debug;
     my $cookie = $cgi->cookie(
         -name    => 'sessionID',
         -value   => '',
@@ -165,7 +163,7 @@ sub create_session {
     my $password   = shift;
     my $expiration = shift;
 
-    debug("create_session") if ($debug);
+    debug("create_session") if $debug;
     my $session = CGI::Session->new( undef, undef, { Directory => $tmp_dir } );
     $session->expire($expiration);
     $session->param( "user", $user );
@@ -197,7 +195,7 @@ sub read_session {
 sub delete_session {
     my $session_id = shift;
 
-    debug("delete_session") if ($debug);
+    debug("delete_session") if $debug;
     return undef unless ( defined $session_id );
     my $session = CGI::Session->new( undef, $session_id, { Directory => $tmp_dir } );
     $session->delete();
@@ -263,7 +261,7 @@ sub show_login_form {
         };
     }
 
-    debug("show_login_form") if ($debug);
+    debug("show_login_form") if $debug;
     print qq{Content-type:text/html
 
 <!DOCTYPE HTML>        

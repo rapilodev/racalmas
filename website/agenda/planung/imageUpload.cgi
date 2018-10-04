@@ -61,8 +61,6 @@ if ( defined $r ) {
     } else {
         $upload = $apr->upload('image') if ( defined $params->{image} );
     }
-
-    $cgi = new CGI();
 } else {
 
     #CGI fallback
@@ -129,7 +127,7 @@ print STDERR "upload error: $params->{error}\n" if $params->{error} ne '';
 my $out = '';
 template::process( $config, 'print', $params->{template}, $params );
 
-print $cgi->cgi_error() if (defined $cgi) && (defined $cgi->cgi_error());
+print $cgi->cgi_error() if ( defined $cgi ) && ( defined $cgi->cgi_error() );
 return if $params->{action} eq '';
 
 $params->{action_result} ||= '';
@@ -171,6 +169,7 @@ sub upload_file {
     my $filename = $result->{filename};
 
     $result = check_filename($filename);
+
     #print STDERR $result . "\n";
     return $result if ( $result->{error} ne '' );
 
@@ -179,6 +178,7 @@ sub upload_file {
     #read file from handle
     my $data;
     my $content = '';
+
     #print STDERR $file . "\n";
 
     binmode $file;

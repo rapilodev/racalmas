@@ -322,9 +322,6 @@ sub delete_image {
         return 0;
     }
 
-    #print $cgi->header();
-    #print "Content-type:text/html; charset=UTF-8;\n\n";
-
     $config->{access}->{write} = 1;
     my $dbh   = db::connect($config);
     my $image = {
@@ -334,15 +331,11 @@ sub delete_image {
     };
     my $result = images::delete( $dbh, $image );
 
-    #print STDERR "delete result=" . Dumper($result);
-
     return;
-    my $action_result = '';
-    my $errors        = '';
-    $result = images::delete_files( $config, $local_media_dir, $params->{delete_image}, $action_result, $errors );
-
-    #use Data::Dumper;print STDERR "delete\n".Dumper($params);
-    print "deleted<br />$action_result<br />$errors\n";
+    #my $action_result = '';
+    #my $errors        = '';
+    #$result = images::delete_files( $config, $local_media_dir, $params->{delete_image}, $action_result, $errors );
+    #print "deleted<br />$action_result<br />$errors\n";
 }
 
 sub check_permission {
