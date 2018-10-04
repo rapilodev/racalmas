@@ -101,7 +101,7 @@ sub getProjects {
         #mark last series_name entry of all non empty projects
         if ( ( defined $series_names ) && ( scalar @$series_names > 0 ) ) {
             $series_names->[-1]->{last}      = 1;
-            $prev_series_names->[-1]->{last} = 0 if ( defined $prev_series_names ) && ( sclar @$prev_series_names > 0 );
+            $prev_series_names->[-1]->{last} = 0 if ( defined $prev_series_names ) && ( scalar @$prev_series_names > 0 );
             $prev_series_names               = $series_names;
         }
         push @$results, $project;
@@ -152,7 +152,7 @@ sub getSeriesNames {
     }
 
     my $where = '';
-    if ( @conds > 0 ) {
+    if ( scalar @conds > 0 ) {
         $where = 'where ' . join( ' and ', @conds );
     }
 
