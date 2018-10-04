@@ -44,8 +44,8 @@ function searchEvents(){
     }else{
         $('#clearSearch').show();
     };
-    searchEventsAt('#newSeries div', searchValue);
-    searchEventsAt('#oldSeries div', searchValue);
+    searchEventsAt('#newSeries a', searchValue);
+    searchEventsAt('#oldSeries a', searchValue);
 }
 
 function clearSearch(){
