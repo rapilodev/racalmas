@@ -18,9 +18,10 @@ binmode STDOUT, ":encoding(UTF-8)";
 if ( $0 =~ /upload_playout.*?\.cgi$/ ) {
 
     # read POST content
-    my ( $buf, $content );
-    while ( $r->read( $buf, 8192 ) ) {
-        $content .= $buf;
+    my $buffer     = '';
+    my $content = '';
+    while ( $r->read( $buffer, 65536 ) ) {
+        $content .= $buffer;
     }
     $content = "{}" unless $content;
 
@@ -29,7 +30,6 @@ if ( $0 =~ /upload_playout.*?\.cgi$/ ) {
 
     my $config = config::getFromScriptLocation();
     my $debug  = $config->{system}->{debug};
-    my $len    = $r->headers_in()->get('Content-Length');
     print "Content-type:text/plain\n\n";
 
     my $json = JSON::decode_json($content);
@@ -39,9 +39,6 @@ if ( $0 =~ /upload_playout.*?\.cgi$/ ) {
     my $result = playout::sync( $config, $json );
     $config->{access}->{write} = 0;
 
-    #print Dumper($content)."\n";
-    #print Dumper($r);
-    #print Dumper($json);
     print "upload playout result:" . Dumper($result);
 }
 

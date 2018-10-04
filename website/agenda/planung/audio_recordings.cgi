@@ -34,7 +34,7 @@ our $debug  = $config->{system}->{debug};
 my $base_dir = $config->{locations}->{base_dir};
 
 my $tempDir     = '/var/tmp';
-my $uploadLimit = 200_000_000;
+my $uploadLimit = 300_000_000;
 
 my %params = ();
 my $error  = '';
