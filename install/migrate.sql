@@ -243,3 +243,7 @@ ALTER TABLE `calcms`.`calcms_user_stats`
 ADD COLUMN `upload_file` INT(10) UNSIGNED NULL DEFAULT 0 AFTER `delete_series`,
 ADD COLUMN `download_file` INT(10) UNSIGNED NULL DEFAULT 0 AFTER `upload_file`;
  
+ALTER TABLE `calcms`.`calcms_user_settings` 
+ADD COLUMN `project_id` INT(10) UNSIGNED NULL AFTER `calendar_fontsize`,
+ADD COLUMN `studio_id` INT(10) UNSIGNED NULL AFTER `project_id`;
+

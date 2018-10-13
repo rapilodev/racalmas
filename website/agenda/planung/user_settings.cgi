@@ -56,6 +56,7 @@ our $errors = [];
 
 if ( defined $params->{action} ) {
     update_settings( $config, $request ) if ( $params->{action} eq 'save' );
+    updateDefaultProjectStudio( $config, $request ) if ( $params->{action} eq 'updateDefaultProjectStudio' );
 }
 $config->{access}->{write} = 0;
 show_settings( $config, $request );
@@ -103,17 +104,39 @@ sub show_settings {
 
     $params->{loc} = localization::get( $config, { language => $language, file => 'user_settings' } );
 
-    #print STDERR Dumper($params->{loc});
-
     for my $color ( @{ $params->{colors} } ) {
         $color->{title} = $params->{loc}->{ $color->{title} };
     }
+
     uac::set_template_permissions( $permissions, $params );
 
-    #print Dumper($permissions);
     template::process( $config, 'print', $params->{template}, $params );
+}
 
-    #print '<pre>'.Dumper($user_settings);
+sub updateDefaultProjectStudio {
+    my $config  = shift;
+    my $request = shift;
+
+    my $params      = $request->{params}->{checked};
+    my $permissions = $request->{permissions};
+    my $user        = $params->{presets}->{user};
+
+    my $settings = {
+        user       => $user,
+        project_id => $params->{project_id},
+        studio_id  => $params->{studio_id},
+    };
+
+    my $results = user_settings::get( $config, { user => $user } );
+    if ( defined $results ) {
+        uac::print_info("update project and studio settings");
+        $config->{access}->{write} = 1;
+        user_settings::update( $config, $settings );
+    } else {
+        uac::print_info("insert user settings, as missing on updating default project and studio");
+        update_settings($config, $request);
+    }
+    $config->{access}->{write} = 0;
 }
 
 sub update_settings {
@@ -137,20 +160,22 @@ sub update_settings {
     }
 
     my $settings = {
-        user     => $user,
-        colors   => join( "\n", @colors ),
-        language => $params->{language},
-        period   => $params->{period}
+        user       => $user,
+        colors     => join( "\n", @colors ),
+        language   => $params->{language},
+        period     => $params->{period},
     };
 
     my $results = user_settings::get( $config, { user => $user } );
-    if ( defined $results ) {
-        uac::print_info("update");
+    if ( defined $results ) { 
+        uac::print_info("update user settings");
         $config->{access}->{write} = 1;
         user_settings::update( $config, $settings );
     } else {
         $config->{access}->{write} = 1;
-        uac::print_info("insert");
+        uac::print_info("insert user settings");
+        $settings->{project_id} = $params->{project_id};
+        $settings->{studio_id}  = $params->{studio_id};
         user_settings::insert( $config, $settings );
     }
     $config->{access}->{write} = 0;
@@ -168,7 +193,7 @@ sub check_params {
     $checked->{template} = $template;
 
     #numeric values
-    for my $param ( 'project_id', 'default_studio_id', 'studio_id' ) {
+    for my $param ( 'project_id', 'default_studio_id', 'studio_id', 'default_studio', 'default_project' ) {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
             $checked->{$param} = $params->{$param};
         }
@@ -198,7 +223,7 @@ sub check_params {
 
     #actions
     if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(save)$/ ) {
+        if ( $params->{action} =~ /^(save|updateDefaultProjectStudio)$/ ) {
             $checked->{action} = $params->{action};
         }
     }

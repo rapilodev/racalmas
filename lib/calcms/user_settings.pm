@@ -166,9 +166,6 @@ sub get {
 		$conditions
 	};
 
-    #print $query."\n";
-    #print Dumper(\@bind_values);
-
     my $entries = db::get( $dbh, $query, \@bind_values );
     return $entries->[0] || undef;
 }
@@ -178,7 +175,6 @@ sub insert {
     my $entry  = shift;
 
     return unless ( defined $entry->{user} );
-    return unless ( defined $entry->{colors} );
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_user_settings', $entry );
 }
@@ -188,7 +184,6 @@ sub update {
     my $entry  = shift;
 
     return unless ( defined $entry->{user} );
-    return unless ( defined $entry->{colors} );
 
     my $dbh         = db::connect($config);
     my $values      = join( ",", map { $_ . '=?' } ( keys %$entry ) );
@@ -200,6 +195,7 @@ sub update {
 		set    $values
 		where  user=?
 	};
+	#print STDERR Dumper($query).Dumper(\@bind_values);
     db::put( $dbh, $query, \@bind_values );
     print "done\n";
 }
@@ -219,7 +215,6 @@ sub delete {
 	};
     my $bind_values = [ $entry->{user} ];
 
-    #print '<pre>$query'.$query.Dumper($bind_values).'</pre>';
     db::put( $dbh, $query, $bind_values );
 }
 

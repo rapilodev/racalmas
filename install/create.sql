@@ -1020,6 +1020,8 @@ CREATE TABLE `calcms_user_settings` (
   `language` varchar(3) DEFAULT 'de',
   `period` varchar(16) DEFAULT 'month',
   `calendar_fontsize` smallint(5) unsigned DEFAULT '12',
+  `project_id` INT(10) UNSIGNED NULL,
+  `studio_id` INT(10) UNSIGNED NULL,
   PRIMARY KEY (`id`,`user`) USING BTREE,
   KEY `user` (`user`)
 ) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;

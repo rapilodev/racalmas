@@ -664,6 +664,10 @@ sub get_user_presets {
     my $studio_id  = $options->{studio_id}  || '';
     $config->{access}->{write} = 0;
 
+    my $user_settings = user_settings::get( $config, { user => $user } );
+    $project_id = $user_settings->{project_id} if $project_id eq '';
+    $studio_id  = $user_settings->{studio_id}  if $studio_id eq '';
+
     #get
     my $admin_roles = get_admin_user_roles( $config, { user => $user } );
 
@@ -688,8 +692,6 @@ sub get_user_presets {
         $project_id = $projects->[0]->{project_id};
     }
 
-    #print STDERR "project:$project_id\n";
-
     #check if studios are assigned to project
     my $studios = project::get_studios( $config, { project_id => $project_id } );
     $error = "no studio is assigned to project" if scalar @$studios == 0;
@@ -709,7 +711,7 @@ sub get_user_presets {
             }
             $error = "studio is not assigned to user" if ( $studioFound == 0 );
         } else {
-            $studio_id = $studios->[0]->{id};
+            $studio_id = $studios->[0]->{id} unless defined $studio_id;
         }
     } else {
 
@@ -725,7 +727,7 @@ sub get_user_presets {
             }
             $error = "studio is not assigned to project" if ( $studioFound == 0 );
         } else {
-            $studio_id = $studios->[0]->{id};
+            $studio_id = $studios->[0]->{id} unless defined $studio_id;
         }
     }
 

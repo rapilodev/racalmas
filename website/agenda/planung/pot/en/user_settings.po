@@ -7,6 +7,12 @@ msgstr "user settings"
 msgid  "label_language"
 msgstr "language"
 
+msgid "label_studio"
+msgstr "Studio"
+
+msgid "label_project"
+msgstr "Project"
+
 msgid  "label_color"
 msgstr "color"
 
@@ -75,3 +81,6 @@ msgstr "Password (repeat)"
 
 msgid "password_hint"
 msgstr "at least 8 characters (small and big characters, numbers and special characters)"
+
+msgid "setDefaultProjectStudio"
+msgstr "set project and studio for default"
