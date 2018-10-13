@@ -30,15 +30,15 @@ sub get_user {
     debug("get_user") if $debug;
 
     # login or logout on action
-    if ( defined $params->{action} ) {
-        if ( $params->{action} eq 'login' ) {
+    if ( defined $params->{authAction} ) {
+        if ( $params->{authAction} eq 'login' ) {
             my $user = login( $config, $params->{user}, $params->{password} );
-            $cgi->delete( 'user', 'password', 'uri', 'action' ) if defined $cgi;
+            $cgi->delete( 'user', 'password', 'uri', 'authAction' ) if defined $cgi;
             return $user;
-        } elsif ( $params->{action} eq 'logout' ) {
+        } elsif ( $params->{authAction} eq 'logout' ) {
             $cgi = new CGI::Simple() unless defined $cgi;
             logout($cgi);
-            $cgi->delete( 'user', 'password', 'uri', 'action' );
+            $cgi->delete( 'user', 'password', 'uri', 'authAction' );
             return undef;
         }
     }
@@ -109,7 +109,7 @@ sub logout {
         return show_login_form( 'Cant remove cookie', 'logged out' );
     }
     my $uri = $ENV{HTTP_REFERER} || '';
-    $uri =~ s/action=logout//g;
+    $uri =~ s/authAction=logout//g;
     print $cgi->redirect($uri);
     return;
 }
@@ -349,8 +349,8 @@ sub show_login_form {
 		        <input type="password" name="password"><br/>
             </div>
             <div class="row">
-		        <input class="button" type="submit" name="action" value="login">
-		        <input class="button" type="submit" name="action" value="logout">
+		        <input class="button" type="submit" name="authAction" value="login">
+		        <input class="button" type="submit" name="authAction" value="logout">
             </div>
 		    <input type="hidden" name="uri" value="$uri">
 	    </form>
