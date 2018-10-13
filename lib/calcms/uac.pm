@@ -777,6 +777,24 @@ sub get_user_presets {
     return $result;
 }
 
+sub setDefaultProject {
+    my $params       = shift;
+    my $user_presets = shift;
+
+    $params->{project_id} = $user_presets->{project_id}
+      if ( !defined $params->{authAction} ) || ( $params->{authAction} eq '' ) || ( $params->{authAction} eq 'login' );
+    return $params;
+}
+
+sub setDefaultStudio {
+    my $params       = shift;
+    my $user_presets = shift;
+
+    $params->{studio_id} = $user_presets->{studio_id}
+      if ( !defined $params->{authAction} ) || ( $params->{authAction} eq '' ) || ( $params->{authAction} eq 'login' );
+    return $params;
+}
+
 #set user preset properties to request
 sub prepare_request {
     my $request      = shift;

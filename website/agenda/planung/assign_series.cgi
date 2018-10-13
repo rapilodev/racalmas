@@ -43,10 +43,8 @@ my $user_presets = uac::get_user_presets(
     }
 );
 $params->{default_studio_id} = $user_presets->{studio_id};
-$params->{studio_id}         = $params->{default_studio_id}
-  if ( !( defined $params->{action} ) ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' );
-$params->{project_id} = $user_presets->{project_id}
-  if ( !( defined $params->{action} ) ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' );
+$params = uac::setDefaultStudio( $params, $user_presets );
+$params = uac::setDefaultProject( $params, $user_presets );
 
 #print STDERR $params->{project_id}."\n";
 my $request = {

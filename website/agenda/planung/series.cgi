@@ -1,13 +1,15 @@
 #! /usr/bin/perl -w 
 
+use warnings "all";
 use strict;
-use warnings;
-no warnings 'redefine';
+
+#no warnings 'redefine';
 
 use Data::Dumper;
-use URI::Escape;
+use URI::Escape();
 use Encode();
 
+use utf8();
 use params();
 use config();
 use log();
@@ -19,12 +21,12 @@ use project();
 use studios();
 use events();
 use series();
-use series_schedule();
-use series_events();
 use series_dates();
-use user_stats();
 use markup();
 use localization();
+use series_schedule();
+use series_events();
+use user_stats();
 
 binmode STDOUT, ":utf8";
 
@@ -34,22 +36,20 @@ my $r = shift;
 my $config = config::get('../config/config.cgi');
 my $debug  = $config->{system}->{debug};
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+print STDERR Dumper($user);
+return if ( !defined $user ) || ( $user eq '' );
 
-#print STDERR $params->{project_id}."\n";
 my $user_presets = uac::get_user_presets(
     $config,
     {
+        user       => $user,
         project_id => $params->{project_id},
-        studio_id  => $params->{studio_id},
-        user       => $user
+        studio_id  => $params->{studio_id}
     }
 );
 $params->{default_studio_id} = $user_presets->{studio_id};
-$params->{studio_id}         = $params->{default_studio_id}
-  if ( ( !( defined $params->{action} ) ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' ) );
-$params->{project_id} = $user_presets->{project_id}
-  if ( ( !( defined $params->{action} ) ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' ) );
+$params = uac::setDefaultStudio( $params, $user_presets );
+$params = uac::setDefaultProject( $params, $user_presets );
 
 #print STDERR $params->{project_id}."\n";
 my $request = {

@@ -2,9 +2,11 @@
 
 use warnings "all";
 use strict;
+
 use Data::Dumper;
 use URI::Escape();
-#use Encode();
+use DateTime();
+
 use utf8();
 use params();
 use config();
@@ -18,15 +20,13 @@ use project();
 use studios();
 use events();
 use series();
-use markup();
 use series_dates();
+use markup();
+use localization();
 use studio_timeslot_dates();
 use work_dates();
 use playout();
-use markup();
 use user_settings();
-use localization();
-use DateTime();
 use audio_recordings();
 
 binmode STDOUT, ":utf8";
@@ -48,8 +48,7 @@ my $user_presets = uac::get_user_presets(
     }
 );
 $params->{default_studio_id} = $user_presets->{studio_id};
-$params->{project_id}        = $user_presets->{project_id}
-  if ( ( !( defined $params->{action} ) ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' ) );
+$params = uac::setDefaultStudio( $params, $user_presets );
 $params->{expires} = $expires;
 
 my $scriptName = 'calendar.cgi';
@@ -76,9 +75,7 @@ my $request = {
         checked  => check_params( $config, $params ),
     },
 };
-
 $request = uac::prepare_request( $request, $user_presets );
-
 $params = $request->{params}->{checked};
 
 if (
@@ -387,9 +384,9 @@ sub showCalendar {
             $date->{event_id}  = $id;
             $date->{title}     = '';
             $date->{title} .= '<b>errors</b>: ' . $date->{errors} . '<br>'  if defined $date->{errors};
-            $date->{title} .= formatDuration( $date->{duration} ) . "s<br>" if defined $date->{duration};
-            $date->{title} .= formatLoudness( "L:", $date->{rms_left} ) . ' dB, '    if defined $date->{rms_left};
-            $date->{title} .= formatLoudness( "R:", $date->{rms_right} ) . ' dB<br>' if defined $date->{rms_right};
+            $date->{title} .= formatDuration( $date->{duration} ) . "<br>" if defined $date->{duration};
+            $date->{title} .= formatLoudness( "L:", $date->{rms_left} ) . ', '    if defined $date->{rms_left};
+            $date->{title} .= formatLoudness( "R:", $date->{rms_right} ) . '<br>' if defined $date->{rms_right};
             $date->{title} .= formatBitrate( $date->{bitrate} ) . ' ' . $date->{bitrate_mode} . '<br>' if defined $date->{bitrate};
             $date->{title} .= '<b>replay gain</b> ' . sprintf( "%.1f", $date->{replay_gain} ) . '<br>' if defined $date->{replay_gain};
             $date->{title} .= ( ( $date->{sampling_rate} || '0' ) / 1000 ) . ' kHz<br>' if defined $date->{sampling_rate};
@@ -543,24 +540,24 @@ sub formatLoudness {
     return '' if $value eq '';
 
     #print STDERR "'$value'\n";
-    $value = sprintf( "%.1f", $value );
+    $value = sprintf( "%d", $value+0.5 );
     my $class = 'ok';
     $class = 'warn'  if $value > -18.5;
     $class = 'error' if $value > -16.0;
     $class = 'warn'  if $value < -24.0;
     $class = 'error' if $value < -27.0;
-    return qq{$label<span class="$class">} . $value . qq{</span>};
+    return qq{<span class="$class">$label} . $value . qq{dB</span>};
 }
 
 sub formatDuration {
     my $duration = shift;
     return '' unless defined $duration;
     return '' if $duration eq '';
-    my $result = int( ( $duration + 3600 ) * 10 + 0.5 ) % 600;
+    my $result =  int( ( $duration +30.5 ) % 60)-30;
     my $class = "ok";
-    $class = "warn"  if $result > 1;
-    $class = "error" if $result > 10;
-    return sprintf( qq{<span class="%s">%.01f</span>}, $class, $duration );
+    $class = "warn"  if abs($result) > 1;
+    $class = "error" if abs($result) > 2;
+    return sprintf( qq{<span class="%s">%ds</span>}, $class, $duration );
 }
 
 sub formatBitrate {
@@ -1133,9 +1130,10 @@ sub printTableBody {
 
             if ( $event->{class} eq 'event' ) {
                 $event->{content} .= '<br><span class="weak">';
-                $event->{content} .= formatDuration( $event->{duration} ) . 's ' if defined $event->{duration};
+                $event->{content} .= formatDuration( $event->{duration} ) . ' ' if defined $event->{duration};
                 $event->{content} .= formatLoudness( 'L', $event->{rms_left} ) . ' ' if defined $event->{rms_left};
                 $event->{content} .= formatLoudness( 'R', $event->{rms_right} ) if defined $event->{rms_right};
+                #$event->{content} .= formatBitrate( $event->{bitrate} ) if defined $event->{bitrate};
                 $event->{content} .= '</span>';
             }
 
@@ -1402,7 +1400,7 @@ sub print_event {
 
     $ystart = int( $ystart * $yzoom );
     $yend   = int( $yend * $yzoom );
-    my $height = $yend - $ystart + 2;
+    my $height = $yend - $ystart +1;
 
     if ( $ypos > 0 ) {
         $height = q{height:} . ($height) . 'px;';

@@ -35,8 +35,7 @@ return if ( ( !defined $user ) || ( $user eq '' ) );
 
 my $user_presets = uac::get_user_presets( $config, { user => $user, studio_id => $params->{studio_id} } );
 $params->{default_studio_id} = $user_presets->{studio_id};
-$params->{studio_id}         = $params->{default_studio_id}
-  if ( ( !( defined $params->{action} ) ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' ) );
+$params = uac::setDefaultStudio( $params, $user_presets );
 
 my $request = {
     url => $ENV{QUERY_STRING} || '',

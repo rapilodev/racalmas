@@ -25,9 +25,8 @@ my $r = shift;
 my $config = config::get('../config/config.cgi');
 my $debug  = $config->{system}->{debug};
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+return if ( !defined $user ) || ( $user eq '' );
 
-#print STDERR $params->{project_id}."\n";
 my $user_presets = uac::get_user_presets(
     $config,
     {
@@ -37,12 +36,9 @@ my $user_presets = uac::get_user_presets(
     }
 );
 $params->{default_studio_id} = $user_presets->{studio_id};
-$params->{studio_id}         = $params->{default_studio_id}
-  if ( ( !( defined $params->{action} ) ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' ) );
-$params->{project_id} = $user_presets->{project_id}
-  if ( ( !( defined $params->{action} ) ) || ( $params->{action} eq '' ) || ( $params->{action} eq 'login' ) );
+$params = uac::setDefaultStudio( $params, $user_presets );
+$params = uac::setDefaultProject( $params, $user_presets );
 
-#print STDERR $params->{project_id}."\n";
 my $request = {
     url => $ENV{QUERY_STRING} || '',
     params => {
@@ -92,36 +88,39 @@ sub showPlayout {
         }
     }
 
+    my $today=time::time_to_date(time());
+    my $startDate=time::add_days_to_date( $today, -14 );
     my $events = playout::get(
         $config,
-        {
+           {
             project_id => $params->{project_id},
             studio_id  => $params->{studio_id},
-            order      => 'modified_at desc, start desc',
-            limit      => 500
+            order      => 'modified_at asc, start asc',
+            from => $startDate
         }
     );
 
-    #    print '<pre>'.Dumper($events).'</pre>';
     unless ( defined $events ) {
         uac::print_error("not found");
         return;
     }
 
+    
     for my $event (@$events) {
         $event->{stream_size} =~ s/(\d)(\d\d\d)$/$1\.$2/g;
         $event->{stream_size} =~ s/(\d)(\d\d\d\.\d\d\d)$/$1\.$2/g;
-        $event->{duration} =~ s/(\d\.\d)(\d+)$/$1/g;
-        $event->{duration} =~ s/(\d)\.0/$1/g;
+        $event->{duration}  =~ s/(\d\.\d)(\d+)$/$1/g;
+        $event->{duration}  =~ s/(\d)\.0/$1/g;
         $event->{rms_left}  = formatLoudness( $event->{rms_left} );
         $event->{rms_right} = formatLoudness( $event->{rms_right} );
         $event->{bitrate}   = formatBitrate($event);
         $event->{duration}  = formatDuration($event);
+        if ($event->{start} lt $today){
+            $event->{class} = "past";
+        }
     }
 
     $params->{events} = $events;
-
-    #print Dumper($events);
 }
 
 sub formatDuration {
@@ -129,10 +128,10 @@ sub formatDuration {
     my $duration = $event->{duration};
     return '' unless defined $duration;
     return '' if $duration eq '';
-    my $result = int( ( $duration + 3600 ) * 10 ) % 600;
+    my $result =  ( ( $duration +30 ) % 60)-30;
     my $class = "ok";
-    $class = "warn"  if $result > 1;
-    $class = "error" if $result > 10;
+    $class = "warn"  if abs($result) > 1;
+    $class = "error" if abs($result) > 2;
     return sprintf( qq{<div class="%s">%.01f</div>}, $class, $duration );
 }
 
