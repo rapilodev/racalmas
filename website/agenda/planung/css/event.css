@@ -27,7 +27,6 @@ pre{
     height:24px;
 }
 
-
 #content .edit_event input,
 #content .edit_event select,
 #content .edit_event textarea{
@@ -36,15 +35,18 @@ pre{
 
 #content .excerpt{
     width:100%;
+    max-width:40rem;
     height:3em;
 }
 
 #content textarea{
     width:100%;
+    max-width:40rem;
 }
 
 #content .edit_event input.url{
     width:100%;
+    max-width:40rem;
 }
 
 #content .panel{
@@ -63,4 +65,5 @@ pre{
 .episode{
     width:3em;
 }
+
 

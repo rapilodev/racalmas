@@ -10,11 +10,16 @@ body{
 
 body #content{
 	margin:0;
-	padding:1em;
-	max-width:1200px;
 	color:#000;
 	background:#fff;
 	text-align:left;
+	max-width:1200px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+div{
+    transition: background-color 0.5s linead;
 }
 
 #selectImage #content{
@@ -30,7 +35,7 @@ body,
 #content option,
 #content li{
     font-size:0.75rem;
-    font-family:Roboto,sans-serif;
+ 	font-family:Roboto,sans-serif;
 }
 
 #content textarea{
@@ -67,17 +72,10 @@ body,
 #calcms_admin_menu div, 
 #calcms_admin_menu input,
 #calcms_admin_menu select,
-#calcms_admin_menu option,
-#calcms_admin_menu img
-{
+#calcms_admin_menu option{
 	margin:0;
 	padding:0;
 	color:#fff;
-}
-
-#calcms_admin_menu img{
-	border:0;
-	vertical-align:middle;
 }
 
 #calcms_admin_menu,
@@ -151,7 +149,7 @@ a{
 
 
 #content div{
-	padding:6px;
+	padding:1rem;
 }
 
 #content div.header{
@@ -239,8 +237,20 @@ li.ui-menu-item{
 #content div.warn,
 #content div.error{
     font-weight:bold;
-    margin:0.5rem;
+    margin:0;
     padding:1rem;
+}
+
+#content span.ok,
+#content span.warn,
+#content span.error{
+    font-weight:bold;
+    padding:1px;
+}
+
+#content span.ok,
+#content span.error{
+    color:white;
 }
 
 div.ok{
@@ -354,7 +364,7 @@ tr.tablesorter-filter-row input{
     padding:8px;
     margin-top:0px;
     margin-bottom:0px;
-    margin-left:6px;
+    margin-left:0.5rem;
     text-align: center;
     text-decoration: none;
     font-size: 12px;
@@ -375,7 +385,7 @@ tr.tablesorter-filter-row input{
 #content input[type="file"]:hover,
 #content button:focus{
     outline:0;
-    transition:all 0.5s cubic-bezier(.64,.09,.08,1)
+    transition:background 0.5s cubic-bezier(.64,.09,.08,1)
 }
 
 #content input[type="submit"]:hover,
@@ -392,7 +402,7 @@ tr.tablesorter-filter-row input{
     padding:8px;
     margin-top:0px;
     margin-bottom:0px;
-    margin-left:6px;
+    margin-left:0.5rem;
     text-decoration: none;
 }
 
@@ -416,7 +426,7 @@ tr.tablesorter-filter-row input{
     border:none;
     border-bottom:solid 1px #9e9e9e;
     cursor:pointer;
-    margin-left:6px;
+    margin-left:0.5rem;
 }
 
 #content select,
@@ -425,7 +435,7 @@ input[type='checkbox']{
 }
 
 #content div.buttons button{
-    margin-bottom:6px;
+    margin-bottom:1rem;
 }
 
 #content div.formField div.label{
@@ -493,3 +503,7 @@ body,
     opacity:0.5;
 }
 
+#content div.buttons{
+    margin-top:-1rem;
+    margin-bottom:-1rem;
+}

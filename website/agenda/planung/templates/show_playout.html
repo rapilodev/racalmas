@@ -12,6 +12,7 @@
 
 
 <table id="playout-table" class="table">
+
 <thead>
 <tr>
     <th>start</th>
@@ -22,11 +23,12 @@
     <th>image</th>
     <th>bytes</th>
     <th>modified at</th>
-</thead>
 </tr>
+</thead>
+
 <tbody>
 <TMPL_LOOP events>
-<tr>
+<tr class="<TMPL_VAR class>">
     <td><TMPL_VAR start></td>
     <td><TMPL_VAR file></td>
     <td><TMPL_VAR duration escape="text"></td>

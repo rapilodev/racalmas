@@ -557,17 +557,6 @@ function initCalendarMenu(){
     resizeCalendarMenu();
 }
 
-$(document).ready(function(){
-    //    $('#calendar').hide();
-    initCalendarMenu();
-
-    if(calendarTable==1){
-        loadCalendar();
-    }else{
-        loadCalendarList();
-    }
-});
-
 function createId(prefix) {
   function s4() {
     return Math.floor((1 + Math.random()) * 0x10000)
@@ -694,6 +683,7 @@ function loadCalendar(url, mouseButton){
 	    $('#current_date').html(current_date);
 	    updateUrls(url);
 	    initRmsPlot();
+        adjustColors();
 	});
 }
 
@@ -1046,4 +1036,36 @@ function handleWorktime(id, event){
         openNewTab(url)
     }
 }
+
+
+function hexToRgbA(hex){
+    var c;
+    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+        c= hex.substring(1).split('');
+        if(c.length== 3){
+            c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+        }
+        c= '0x'+c.join('');
+        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',1)';
+    }
+    throw new Error('Bad Hex');
+}
+
+function adjustColors(){
+    var elem = $('.schedule').get(0);
+    var color1=window.getComputedStyle(elem).backgroundColor;
+    var color2=color1.replace('rgb','rgba').replace(')',', 0.4)')
+    $('.schedule').css('background', 'repeating-linear-gradient(to right, '+color1+', '+color1+' 1px, '+color2+' 1px, '+color2+' 2px) ');
+}
+
+$(document).ready(function(){
+    //    $('#calendar').hide();
+    initCalendarMenu();
+
+    if(calendarTable==1){
+        loadCalendar();
+    }else{
+        loadCalendarList();
+    }
+    });
 

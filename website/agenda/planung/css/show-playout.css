@@ -24,6 +24,10 @@ table{
 	border-top:1px solid #666;
 }
 
+#content tr.past{
+    background:#ccc;
+}
+
 
 #content td{
 	padding:3px;

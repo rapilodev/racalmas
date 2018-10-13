@@ -1,183 +1,201 @@
 <script type="text/javascript">
-var selectedId;
+    var selectedId;
 
-$(document).ready(
-    function(){
-        $('input.color').click(
-            function(){
-                selectedId=($(this).attr('id'));
-                showColors();
-            }
-        );
+    $(document).ready(function() {
+        $('input.color').click(function() {
+            selectedId = ($(this).attr('id'));
+            showColors();
+        });
         //$("#content").append(getColor(8));
-    }
-);
+    });
 
-/*
-function getColor(noOfColors) {
-    var html = "";
-    var frequency = 5 / noOfColors; 
-    for (var i = 0; i < noOfColors;++i) {
-        r = Math.sin(frequency * i + 0) * (127) + 128;
-        g = Math.sin(frequency * i + 1) * (127) + 128;
-        b = Math.sin(frequency * i + 3) * (127) + 128;
-        li = '<li class="color" style="background-color:rgb({r},{g},{b});">  </li>';
-        li = li.replace("{r}", Math.floor(r));
-        li = li.replace("{g}", Math.floor(g));
-        li = li.replace("{b}", Math.floor(b));
-        html = html + li;
-    }
-    return html;
-}
+    /*
+     function getColor(noOfColors) {
+     var html = "";
+     var frequency = 5 / noOfColors; 
+     for (var i = 0; i < noOfColors;++i) {
+     r = Math.sin(frequency * i + 0) * (127) + 128;
+     g = Math.sin(frequency * i + 1) * (127) + 128;
+     b = Math.sin(frequency * i + 3) * (127) + 128;
+     li = '<li class="color" style="background-color:rgb({r},{g},{b});">  </li>';
+     li = li.replace("{r}", Math.floor(r));
+     li = li.replace("{g}", Math.floor(g));
+     li = li.replace("{b}", Math.floor(b));
+     html = html + li;
+     }
+     return html;
+     }
 
-function showColors(){
-    var colors=['00','22','44','66','88','aa','cc','ee','ff'];
-    var content='';
+     function showColors(){
+     var colors=['00','22','44','66','88','aa','cc','ee','ff'];
+     var content='';
 
-    for (var i in colors){
-        for (var j in colors){
-            var r=colors[i];
-            var g=colors[colors.length-j-1];
-            var b   =Math.round((i-j))% colors.length;
-            if(b<0)b=Math.round((j-i))% colors.length;
-            b=colors[b]
-            var value='#'+r+g+b;
-            content+='<div class="col" value="'+value+'" style="background:'+value+';"> </div>';
+     for (var i in colors){
+     for (var j in colors){
+     var r=colors[i];
+     var g=colors[colors.length-j-1];
+     var b   =Math.round((i-j))% colors.length;
+     if(b<0)b=Math.round((j-i))% colors.length;
+     b=colors[b]
+     var value='#'+r+g+b;
+     content+='<div class="col" value="'+value+'" style="background:'+value+';"> </div>';
+     }
+     content+='<br style="clear:both">'
+     }
+
+     for (var i in colors){
+     var gray=colors[colors.length-i-1];
+     var value='#'+gray+gray+gray;
+     content+='<div class="col" value="'+value+'" style="background:'+value+';"> </div>';
+     }
+     content+='<br style="clear:both">'
+
+     $("#colors").html(content);
+     $("#colors div.col").click(
+     function(){
+     var color=$(this).attr("value");
+     $('#'+selectedId).css('background',color);
+     $('#'+selectedId).attr('value',color);
+     }
+     );
+     }
+     */
+
+    function showColors() {
+        var colors = [ '#ef9a9a', '#f48fb1', '#ce93d8', '#b39ddb', '#9fa8da',
+                '#90caf9', '#81d4fa', '#80deea', '#80cbc4', '#a5d6a7',
+                '#c5e1a5', '#e6ee9c', '#fff59d', '#ffe082', '#ffcc80',
+                '#ffab91', '#bcaaa4', '#b0bec5', '#bdc3c7', '#dde4e6',
+                '#eeeeee', ];
+
+        var content = '';
+        for ( var c in colors) {
+            var value = colors[c];
+            content += '<div class="col" value="'+value+'" style="background:'+value+';"> </div>';
         }
-        content+='<br style="clear:both">'
+        content += '<br style="clear:both">'
+
+        $("#colors").html(content);
+        $("#colors div.col").click(function() {
+            var color = $(this).attr("value");
+            $('#' + selectedId).css('background', color);
+            $('#' + selectedId).attr('value', color);
+        });
     }
-
-    for (var i in colors){
-        var gray=colors[colors.length-i-1];
-        var value='#'+gray+gray+gray;
-        content+='<div class="col" value="'+value+'" style="background:'+value+';"> </div>';
-    }
-    content+='<br style="clear:both">'
-
-    $("#colors").html(content);
-    $("#colors div.col").click(
-        function(){
-            var color=$(this).attr("value");
-            $('#'+selectedId).css('background',color);
-            $('#'+selectedId).attr('value',color);
-        }
-    );
-}
-*/
-
-function showColors(){
-    var colors=[
-     '#ef9a9a',
-     '#f48fb1',
-     '#ce93d8',	
-     '#b39ddb',
-     '#9fa8da',
-     '#90caf9',
-     '#81d4fa',
-     '#80deea',
-     '#80cbc4',
-     '#a5d6a7',
-     '#c5e1a5',
-     '#e6ee9c',
-     '#fff59d',
-     '#ffe082',
-     '#ffcc80',
-     '#ffab91',
-     '#bcaaa4',
-     '#b0bec5',
-     '#bdc3c7',
-     '#dde4e6',
-     '#eeeeee',
-    ];
-
-    var content='';
-    for (var c in colors){
-        var value=colors[c];
-        content+='<div class="col" value="'+value+'" style="background:'+value+';"> </div>';
-    }
-    content+='<br style="clear:both">'
-
-    $("#colors").html(content);
-    $("#colors div.col").click(
-        function(){
-            var color=$(this).attr("value");
-            $('#'+selectedId).css('background',color);
-            $('#'+selectedId).attr('value',color);
-        }
-    );
-}
 </script>
 
 <style>
 div.col {
-    float:left;
-    width:10px;
-    height:10px;
+    float: left;
+    width: 10px;
+    height: 10px;
 }
 </style>
 
-<h2><TMPL_VAR loc.title></h2>
+<h2>
+    <TMPL_VAR loc.title>
+</h2>
 <TMPL_INCLUDE status.html>
 
-    <form method="post">
-        <input type="hidden" name="project_id" value="<TMPL_VAR project_id>">
-        <input type="hidden" name="studio_id" value="<TMPL_VAR studio_id>">
+<form method="post">
+    <input type="hidden" name="action" value="save">
+    <button onclick="$(this).submit()">
+        <TMPL_VAR loc.button_colors_save>
+    </button>
 
-        <table>
-            <tr>
-                <td style="max-width:10em;"><TMPL_VAR loc.label_language></td>
-                <td>
-                    <select name="language">
-                        <option value="de" <TMPL_IF language_de>selected="selected"</TMPL_IF> >Deutsch</option>
-                        <option value="en" <TMPL_IF language_en>selected="selected"</TMPL_IF> >English</option>
-                    </select>
-                </td>        
-            </tr>
-            <tr>
-                <td style="max-width:10em;"><TMPL_VAR loc.label_period></td>
-                <td>
-                    <select name="period">
-                        <option value="7"      <TMPL_IF period_7>selected="selected"</TMPL_IF> ><TMPL_VAR .loc.label_period_7></option>
-                        <option value="14"      <TMPL_IF period_14>selected="selected"</TMPL_IF> ><TMPL_VAR .loc.label_period_14></option>
-                        <option value="month"   <TMPL_IF period_month>selected="selected"</TMPL_IF> ><TMPL_VAR .loc.label_period_month></option>
-                        <option value="28"      <TMPL_IF period_28>selected="selected"</TMPL_IF> ><TMPL_VAR .loc.label_period_28></option>
-                    </select>
-                </td>        
-            </tr>
-            <TMPL_LOOP colors>
-            <tr>
-                <td><TMPL_VAR .loc.label_color>: <TMPL_VAR title></td>
-                <td><input id="<TMPL_VAR name>" style="background:<TMPL_VAR value>" name="<TMPL_VAR name>" class="color" value="<TMPL_VAR value>"></td>
-            </tr>
-            </TMPL_LOOP>
-        </table>
+    <input type="hidden" name="project_id" value="<TMPL_VAR project_id>">
+    <input type="hidden" name="studio_id" value="<TMPL_VAR studio_id>">
+
+    <table>
+        <tr>
+            <td style="max-width: 10em;"><TMPL_VAR
+                    loc.label_language></td>
+            <td><select name="language">
+                    <option value="de"<TMPL_IF language_de>selected="selected"</TMPL_IF>
+                        >Deutsch
+                    </option>
+                    <option value="en"<TMPL_IF language_en>selected="selected"</TMPL_IF>
+                        >English
+                    </option>
+            </select></td>
+        </tr>
+        <tr>
+            <td style="max-width: 10em;"><TMPL_VAR loc.label_period></td>
+            <td><select name="period">
+                    <option value="7"<TMPL_IF period_7>selected="selected"</TMPL_IF>
+                        >
+                        <TMPL_VAR .loc.label_period_7></option>
+                    <option value="14"<TMPL_IF period_14>selected="selected"</TMPL_IF>
+                        >
+                        <TMPL_VAR .loc.label_period_14></option>
+                    <option value="month"<TMPL_IF period_month>selected="selected"</TMPL_IF>
+                        >
+                        <TMPL_VAR .loc.label_period_month></option>
+                    <option value="28"<TMPL_IF period_28>selected="selected"</TMPL_IF>
+                        >
+                        <TMPL_VAR .loc.label_period_28></option>
+            </select></td>
+        </tr>
+
+        <TMPL_LOOP colors>
+        <tr>
+            <td><TMPL_VAR .loc.label_color>: <TMPL_VAR
+                    title></td>
+            <td><input id="<TMPL_VAR name>"
+                style="background: &lt;TMPL_VAR value&gt;"
+                name="<TMPL_VAR name>" class="color"
+                value="<TMPL_VAR value>"></td>
+        </tr>
+        </TMPL_LOOP>
+    </table>
 
     <div id="colors"></div>
 
-        <input type="hidden" name="action" value="save">
-        <button onclick="$(this).submit()"><TMPL_VAR loc.button_colors_save></button>
-    </form>
+</form>
 
-    <form method="post" style="margin-top:2px">
-        <input type="hidden" name="project_id" value="<TMPL_VAR project_id>">
-        <input type="hidden" name="studio_id" value="<TMPL_VAR studio_id>">
-        <input type="hidden" name="action" value="save">
-        <button onclick="$(this).submit()"><TMPL_VAR loc.button_colors_reset></button>
-    </form>
+<form method="post" style="margin-top: 2px;float:left">
+    <input type="hidden" name="project_id" value="<TMPL_VAR project_id>">
+    <input type="hidden" name="studio_id" value="<TMPL_VAR studio_id>">
+    <input type="hidden" name="action" value="updateDefaultProjectStudio">
+    <button onclick="$(this).submit()">
+        <TMPL_VAR loc.setDefaultProjectStudio>
+    </button>
+</form>
+
+<form method="post" style="margin-top: 2px">
+    <input type="hidden" name="project_id" value="<TMPL_VAR project_id>">
+    <input type="hidden" name="studio_id" value="<TMPL_VAR studio_id>">
+    <input type="hidden" name="action" value="save">
+    <button onclick="$(this).submit()">
+        <TMPL_VAR loc.button_colors_reset>
+    </button>
+</form>
 
 
-    <h3 style="clear:both"><TMPL_VAR .loc.label_change_password></h3>
-    <TMPL_VAR .loc.password_hint>
-    <form action="users.cgi" method="post">
-        <input type="hidden" name="project_id" value="<TMPL_VAR project_id>">
-        <input type="hidden" name="studio_id" value="<TMPL_VAR studio_id>">
-        <input type="hidden" name="action" value="change_password">
-        <table>
-		<tr>	<td><TMPL_VAR .loc.label_password></td>	<td><input name="user_password" value="<TMPL_VAR password>"></td>	</tr>
-		<tr>	<td><TMPL_VAR .loc.label_password2></td><td><input name="user_password2" value="<TMPL_VAR password2>"></td>	</tr>
-        </table>
-        <button onclick="$(this).submit()"><TMPL_VAR loc.button_change_password></button>
-    </form>
+<h3 style="clear: both">
+    <TMPL_VAR .loc.label_change_password>
+</h3>
+<TMPL_VAR .loc.password_hint>
+<form action="users.cgi" method="post">
+    <input type="hidden" name="project_id" value="<TMPL_VAR project_id>">
+    <input type="hidden" name="studio_id" value="<TMPL_VAR studio_id>">
+    <input type="hidden" name="action" value="change_password">
+    <table>
+        <tr>
+            <td><TMPL_VAR .loc.label_password></td>
+            <td><input name="user_password"
+                value="<TMPL_VAR password>"></td>
+        </tr>
+        <tr>
+            <td><TMPL_VAR .loc.label_password2></td>
+            <td><input name="user_password2"
+                value="<TMPL_VAR password2>"></td>
+        </tr>
+    </table>
+    <button onclick="$(this).submit()">
+        <TMPL_VAR loc.button_change_password>
+    </button>
+</form>
 
 </body>
 </html>

@@ -120,11 +120,6 @@ button:hover{
     background:#ccf;
 }
 
-#calendar div.grid{
-	overflow:hidden;
-	position:absolute;
-	background:white;
-}
 
 #calendar_weekdays td.week,
 #calendar td.week{
@@ -139,8 +134,7 @@ button:hover{
     padding:0;
     min-width:1px;
     height:100%;
-    background:#666;
-    background-image:url(../image/chess.gif);
+    background:repeating-linear-gradient(to right, #fff, #fff 1px, #999 1px, #999 2px);
 }
 
 #calendar td.week div{
@@ -154,14 +148,12 @@ button:hover{
 #calendar div.schedule,
 #calendar div.work,
 #calendar div.play{
-	overflow:hidden;
-	font-size:12px;
-	border-right:0;
 	position:absolute;
-	margin-left:0px;
+	overflow:hidden;
+	margin-left:0;
 	border:0;
-	border-bottom:1px solid #666;
-	border-top:1px solid #666;
+	border-bottom:1px solid #fff;
+	border-top:1px solid #fff;
 }
 
 #calendar div.time,
@@ -171,7 +163,7 @@ button:hover{
 
 #calendar div.time,
 #calendar_weekdays div.time{
-	border-top:1px solid #666;
+	border-top:1px solid #fff;
 }
 
 /* calendar list*/
@@ -204,8 +196,11 @@ button:hover{
 
 #content div.grid{
     z-index:1;
-    margin-left:0px;
     background:white;
+	overflow:hidden;
+	position:absolute;
+    background: repeating-linear-gradient( 45deg, #fff, #fff 1rem ,#eee 1rem, #eee 2rem);
+    cursor:pointer;
 }
 
 #event_list tr th:hover{
@@ -359,12 +354,12 @@ div#toolbar{
     padding:0;
 	width:100%;
     background:#ddd;
-
     display: flex;
     flex-wrap: wrap;
     align-items: center;
 	vertical-align:middle;
 	z-index:99;
+    left:0;
 }
 
 div#toolbar div{
@@ -422,11 +417,6 @@ div#toolbar input.search{
     padding:6px;
 }
 
-#calendar div {
-    transition: all 0.1s;
-    transition-delay: 0s;
-}
-
 #calendar td div.play:hover {
     min-height: 180px!important;
     min-width: 420px!important;
@@ -459,18 +449,6 @@ div#toolbar input.search{
 
 #calendar div.intersect{
     background:#fcc;
-}
-
-#calendar div.event.error,
-#calendar div.event.schedule{
-/*    width:50%; */
-}
-
-#calendar div.event.error.x2,
-#calendar div.event.schedule.x2{
-    /*
-    margin-left:50%;
-    */
 }
 
 div.rms_detail{
@@ -510,4 +488,11 @@ div.play .error{
     background:#f44336;
 }
 
+#content div.event,
+#content div.scheduled,
+#content div.grid,
+#content div.playout{
+    padding-top:0.4rem;
+    padding-bottom:1rem;
+}
 
