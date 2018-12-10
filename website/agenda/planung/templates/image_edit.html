@@ -46,8 +46,9 @@ found no image
 <TMPL_LOOP images>
 <TMPL_IF filename>
 <div id="imageEditor">
-    <button onclick="selectThisImage('<TMPL_VAR filename escape=0>'); return false"><TMPL_VAR .loc.select_image></button/>
-    <hr>
+    <button onclick="assignImage('<TMPL_VAR filename escape=0>', '<TMPL_VAR .target>', '<TMPL_VAR .project_id>', '<TMPL_VAR .studio_id>', '<TMPL_VAR .series_id>', '<TMPL_VAR .event_id>', '<TMPL_VAR .pid>'); return false"><TMPL_VAR .loc.select_image></button/>
+
+    <div class="panel-body">
 
     <form id="save_img_<TMPL_VAR id>"
 	    method="post" 
@@ -85,6 +86,8 @@ found no image
         <TMPL_VAR .loc.label_link>: {{<TMPL_VAR filename escape=0>|<TMPL_VAR name>}}<br>
 
     </form>
+
+    </div>
 </div>
 </TMPL_IF>
 </TMPL_LOOP>

@@ -25,7 +25,7 @@
     </script>
 
 <style>
-	#editor div p a img {
+	#editor button img {
 		float:right;
 	}
 </style>
@@ -57,9 +57,7 @@
 	    </TMPL_IF>
     </div>
 
-	<table>	
-		<tr><td colspan="2">
-			<div class="header">
+	<div class="panel-header">
             <TMPL_IF has_single_events>
                 <TMPL_VAR .loc.single_events> <TMPL_IF title><TMPL_VAR title></TMPL_IF>
             <TMPL_ELSE>
@@ -67,8 +65,6 @@
     			<TMPL_IF series_name> <TMPL_VAR series_name></TMPL_IF><TMPL_IF title> - <TMPL_VAR title></TMPL_IF>
             </TMPL_IF>
             </div>
-		</td></tr>
-	</table>
 
 </div>
 
@@ -95,22 +91,13 @@
     <!-- edit template-->
     <TMPL_IF .allow.update_series_template>
     <div id="tabs-template">
-        <!--
-	    <div class="header">Template</div>
-        <div class="buttons">
-    		<button onclick="edit_series('<TMPL_VAR .series_id>');return false;">edit</button>
-        </div>
-        -->
         
-	    <div id="edit_<TMPL_VAR .series_id>" class="editor"> <!--style="display:none;"-->
+	    <div id="edit_<TMPL_VAR .series_id>" class="editor"> 
 	    <form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-template">
             <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
 		    <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
 		    <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">	
 		    <table>
-                <!--
-			    <tr> <td class="label">program</td>	<td><input name="program" value="<TMPL_VAR program>"></td></tr>
-                -->
                 <TMPL_UNLESS has_single_events>
 			    <tr> <td class="label"><TMPL_VAR .loc.template_series></td> 	      
                      <td><input name="series_name" value="<TMPL_VAR series_name>" placeholder="<TMPL_VAR .loc.template_series>"></td></tr>
@@ -133,11 +120,13 @@
 			    <tr> <td class="label"><TMPL_VAR .loc.template_image></td>
 			         <td>
                     <TMPL_IF .allow.read_image>
-                        <button onclick="selectImage('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','image_<TMPL_VAR .series_id>','<TMPL_VAR series_name escape=HTML>','<TMPL_VAR image escape=URL>','<TMPL_VAR series_id>');return false;"
-                            style="padding:0;float:left"
+                        <button class="selectImage" 
+                            onclick="selectImage('<TMPL_VAR series_name escape=HTML>', '<TMPL_VAR image ESCAPE=url>', 'series', '<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR series_id>'); return false;"
                         >
                             <img id="imagePreview" src="showImage.cgi?project_id=<TMPL_VAR .project_id>&studioId=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=icon">
                         </button>
+
+                        <input type="hidden" name="series_image" value="<TMPL_VAR series_image>" > 
                         <input id="image_<TMPL_VAR .series_id>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.template_image>" readonly="readonly">
                     </TMPL_IF>
                 </td></tr>
@@ -453,7 +442,6 @@
 				<td class="time"><TMPL_VAR end_time></td>
 				<td class="title"><TMPL_VAR full_title></td>
 				<TMPL_IF .allow.update_event>
-
 				<td>
 					<button onclick="edit_event('<TMPL_VAR event_id>','<TMPL_VAR .series_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .project_id>','hide_series')"
 					><TMPL_VAR .loc.button_edit></button>
@@ -475,10 +463,6 @@
 <TMPL_UNLESS has_single_events>
 	<!-- series members -->
 	<div id="tabs-members">
-	    <!--
-		<div class="header">Members</div>
-        -->
-        
 		<table>
 
 		<!-- add members -->

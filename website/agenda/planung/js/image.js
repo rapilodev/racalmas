@@ -1,6 +1,6 @@
 
-var windowOffsetX=32;
-var windowOffsetY=32;
+var windowOffsetX=0;
+var windowOffsetY=0;
 
 // get current selected tab by tabs-id
 function getSelectedTab(id){
@@ -11,16 +11,25 @@ function getSelectedTab(id){
 
 function setActiveImage(elem){
     $('div.image').removeClass("active");
+
     if (elem){
         $(elem).addClass("active");
     }else{
-        $('div.image').first().addClass("active");
+        $('div.images div.image').first().addClass("active");
     }
 }
 
 // open dialog to show or edit image properties
-function updateImageEditor(filename, elem){
-	var url='image.cgi?show='+filename+'&template=image_edit.html&project_id='+project_id+'&studio_id='+studio_id
+function updateImageEditor(elem, filename, target, project_id, studio_id, series_id, event_id, pid){
+	var url='image.cgi?show='+filename;
+    url += '&template=image_edit.html';
+    url += '&target=' + target;
+    url += '&project_id='+project_id;
+    url += '&studio_id='+studio_id;
+    if ( (series_id != null) && (series_id != '') ) url += '&series_id='+series_id;
+    if ( (event_id != null)  && (event_id != '')  ) url += '&event_id='+event_id;
+    if ( (pid != null)  && (pid != '')  ) url += '&pid='+pid;
+
     console.log("updateImageEditor "+url);
 
 	$("#img_editor").load(
@@ -31,21 +40,9 @@ function updateImageEditor(filename, elem){
 	);
 }
 
-// set editor image and image url to selected image
-function selectThisImage(filename){
-    $('#'+selectImageId).val(filename);
-
-    var url = 'showImage.cgi?project_id='+project_id+'&studio_id='+studio_id+'&filename=' + filename;
-    console.log("select image "+url);
-    $('#imagePreview').prop('src',url);
-
-    showContent(); 
-    return false;
-}
-
-// update selectImage container by images matching to search
-function searchImage(){
-    var url='image.cgi?project_id='+project_id+'&studio_id='+studio_id;
+// build search url and load
+function searchImage(target, project_id, studio_id, series_id, event_id, pid){
+    var url='image.cgi?';
 
     var value=$('#image_manager input[name=search]').val();
     value=value.replace(/[^a-zA-Z0-9]/g,'%');
@@ -55,51 +52,18 @@ function searchImage(){
     var filename = filename.replace(/^.*[\\\/]/, '')
     if (filename!=null) url+='&filename='+encodeURIComponent(filename);
 
-    if(selectedImageTab!='upload'){
-        url+='#image-tabs-select'
-    }
+    url += '&target=' + target;
+    url += '&project_id='+project_id;
+    url += '&studio_id='+studio_id;
+    if ( (series_id != null) && (series_id != '') ) url += '&series_id='+series_id;
+    if ( (event_id != null)  && (event_id != '')  ) url += '&event_id='+event_id;
+    if ( (pid != null)  && (pid != '')  ) url += '&pid='+pid;
 
-    console.log("searchImage(), load url="+url)
-    updateContainer('selectImage', url, function(){
-        $( "#image-tabs" ).tabs();
-        if (filename!=null) updateImageEditor(encodeURIComponent(filename));
-    });
-    return false;
+
+    load(url);
 }    
 
-function hideContent(){
 
-    $(window).resize(function () {
-       $('.ui-dialog').css({
-            'width':  $(window).width()  - windowOffsetX,
-            'height': $(window).height() - windowOffsetY,
-            'left':   windowOffsetX/2+'px',
-            'top':    windowOffsetY/2+'px',
-            modal: true
-       });
-    }).resize();
-
-    /*
-    $('.editor').each(
-        function(){
-            $(this).hide();
-        }
-    );
-    */
-    return false;
-}
-
-function showContent(){
-    /*
-    $('.editor').each(
-        function(){
-            $(this).show();
-        }
-    );
-    */
-    $('#selectImage').remove();
-    return false;
-}
 
 // save image 
 function saveImage(id, filename) {
@@ -188,9 +152,96 @@ function decreaseImageSize(){
     $('#content div.image').css('background-size', value+'px');
 }
 
+function selectImage( searchValue, imageUrl, target, project_id, studio_id, series_id, event_id, pid){
+    searchValue = searchValue.replace(/[^a-zA-Z0-9]/g,'%');
+
+    var url="image.cgi";
+    url += "?target="+target;
+    url += '&project_id='+project_id
+    url += '&studio_id='+studio_id;
+
+    if( (series_id!=null) && (series_id != '') ){
+        url+='&series_id='+series_id;
+    }
+    if( (event_id!=null) && (event_id != '') ){
+        url+='&event_id='+event_id;
+    }
+    if( (pid!=null) && (pid != '') ){
+        url+='&pid='+pid;
+    }
+
+   url += "&search="+encodeURIComponent(searchValue)
+ 
+    if(imageUrl!=null){
+        var filename=imageUrl.split('%2F').pop();
+        url+='&filename='+filename;
+    }
+    load(url);
+}
+
+function assignImage(filename, target, project_id, studio_id, series_id, event_id, pid){
+    var url = target +".cgi";
+    url += "?setImage=" + filename;
+    url += '&project_id=' + project_id;
+    url += '&studio_id=' + studio_id;
+
+    if( (series_id != null) && (series_id != '') ){
+        url += '&series_id=' + series_id;
+    }
+
+    if( (event_id != null) && (event_id != '') ){
+        url += '&event_id=' + event_id;
+    }
+
+    if( (pid!=null) && (pid != '') ){
+        url+='&pid='+pid;
+    }
+
+    load(url);
+}
+
+$(document).ready(
+    function(){
+        if ( window.location.href.indexOf("&filename=") > 0)
+            setActiveImage();
+    }
+);
+
+
+/*
+function hideContent(){
+    $('.editor').hide();
+
+    $(window).resize(function () {
+       $('.ui-dialog').css({
+            'width':  $(window).width()  - windowOffsetX,
+            'height': $(window).height() - windowOffsetY,
+            'position': 'absolute',
+            'left':   0,
+            'top':    0,
+            modal: true
+       });
+
+       var imagesPos= $('div.images').position();
+       var height = ( $(window).height() - imagesPos.top );
+       if(height<64) height = 64;
+       console.log("windowHeight="+$(window).height()+" div.images.pos.top="+imagesPos.top)
+       $('div.images').css("height", height +"px");
+
+    }).resize();
+
+    return false;
+}
+
+function showContent(){
+    $('.editor').show();
+    $('#selectImage').remove();
+    return false;
+}
+
 
 //select image load into selectImage box
-function selectImage(project_id, studio_id, imageId, searchValue, imageUrl, series_id){
+function selectImageOld(project_id, studio_id, imageId, searchValue, imageUrl, series_id){
     selectImageId = imageId;
     searchValue = searchValue.replace(/[^a-zA-Z0-9]/g,'%');
 
@@ -205,26 +256,28 @@ function selectImage(project_id, studio_id, imageId, searchValue, imageUrl, seri
         url+='&filename='+filename;
     }
 
-    var x=$(window).width()  - windowOffsetX;
-    var y=$(window).height() - windowOffsetY;
-    console.log("selectImage(), load url="+url)
+    var x = $(window).width()  - windowOffsetX;
+    var y = $(window).height() - windowOffsetY;
+    console.log("selectImage(), load url="+url);
+
 
     $('#selectImage').remove();
     $('body').append('<div id="selectImage"></div>');
-    
+
     $('#selectImage').load(
         url, 
         function(){
             hideContent();
-
             $('#selectImage').dialog({
                 appendTo: "#content",
-		        title:"select image",
-		        width:x,
-		        height:y,
-		        close: function( event, ui ) { 
+		        title: "select image",
+                top: 0,
+                left: 0,
+		        width: x,
+		        height: y,
+		        close: function( event, ui ) {
 		            showContent();
-                    $('.ui-dialog').remove();
+                    $('#selectImage').remove();
 		        }
             });
             updateImageEditor(filename);
@@ -234,4 +287,17 @@ function selectImage(project_id, studio_id, imageId, searchValue, imageUrl, seri
     return false;    
 }
 
+// set editor image and image url to selected image
+function selectThisImage(filename){
+    $('#'+selectImageId).val(filename);
+
+    var url = 'showImage.cgi?project_id='+project_id+'&studio_id='+studio_id+'&filename=' + filename;
+    console.log("select image "+url);
+    $('#imagePreview').prop('src',url);
+
+    showContent(); 
+    return false;
+}
+
+*/
 

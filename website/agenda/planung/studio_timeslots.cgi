@@ -74,6 +74,11 @@ if ( $action eq 'show_dates' ) {
 	    <script src="js/jquery-ui-timepicker.js" type="text/javascript"></script>
 	    <link href="css/jquery-ui-timepicker.css" type="text/css" rel="stylesheet" /> 
 	    <link href="css/theme.default.css" rel="stylesheet">
+
+	<script src="js/jquery.tablesorter.min.js"></script>
+	<script src="js/jquery.tablesorter.widgets.min.js"></script>
+	<script src="js/jquery.tablesorter.scroller.js"></script>
+
         <script src="js/studio_timeslots.js" type="text/javascript"></script>
 	    <script src="js/datetime.js" type="text/javascript"></script>
 	    <link rel="stylesheet" href="css/studio_timeslots.css" type="text/css" /> 

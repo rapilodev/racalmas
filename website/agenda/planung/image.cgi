@@ -61,7 +61,13 @@ $params = $request->{params}->{checked};
 #show header
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
+
+if ($params->{search}){
+template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
+}else{
 template::process( $config, 'print', template::check( $config, 'ajax_header.html' ), $headerParams );
+}
+
 return unless defined uac::check( $config, $params, $user_presets );
 
 my $local_media_dir = $config->{locations}->{local_media_dir};
@@ -214,6 +220,10 @@ sub show_image {
         'projects'   => project::get_with_dates($config),
         'project_id' => $params->{project_id},
         'studio_id'  => $params->{studio_id},
+        'series_id' => $params->{series_id},
+        'event_id'  => $params->{event_id},
+        'pid'  => $params->{pid},
+        'target'    => $params->{target},
         'filename'   => $params->{filename}
     };
 
@@ -402,7 +412,7 @@ sub check_params {
 
     #numeric values
     $checked->{limit} = 100;
-    for my $param ( 'project_id', 'studio_id', 'series_id', 'default_studio_id', 'limit' ) {
+    for my $param ( 'project_id', 'studio_id', 'series_id', 'event_id', 'pid', 'default_studio_id', 'limit' ) {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
             $checked->{$param} = $params->{$param};
         }
@@ -432,7 +442,7 @@ sub check_params {
     #Words
     $checked->{delete_image} = '';
     $checked->{save_image}   = '';
-    for my $attr ( 'save_image', 'delete_image', 'show', 'filename' ) {
+    for my $attr ( 'save_image', 'delete_image', 'show', 'filename', 'target' ) {
         $checked->{$attr} = '';
         if ( ( defined $params->{$attr} ) && ( $params->{$attr} =~ /(\S+)/ ) ) {
             $checked->{$attr} = $params->{$attr};

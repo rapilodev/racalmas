@@ -1,7 +1,6 @@
 <link href="css/jquery-ui-timepicker.css" type="text/css" rel="stylesheet" /> 
 <script src="js/jquery-ui-timepicker.js" type="text/javascript"></script>
 <script src="js/image.js" type="text/javascript"></script>
-<link href="css/image-manager.css" type="text/css" rel="stylesheet" /> 
 
 <script type="text/javascript">
     var region='<TMPL_VAR loc.region>';
@@ -13,7 +12,7 @@
 <div style="clear:both" class="newproject">
     <button onclick="add_project('<TMPL_VAR name>')"><TMPL_VAR .loc.button_add_project></button><br/>
 
-    <div id="edit_new" class="card project editor" style="clear:both;display:none">
+    <div id="edit_new" class="panel project editor" style="clear:both;display:none">
         <form method="post">
             <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
             <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
@@ -40,9 +39,9 @@
 <div style="clear:both" class="flex">
 <TMPL_LOOP projects>
 
-<div class="card project">
+<div class="panel project">
     <!-- buttons -->
-    <div>
+    <div class="panel-header">
         <div class="title"><TMPL_VAR title></div>
         <TMPL_IF .allow.update_project>
             <button onclick="edit_project('<TMPL_VAR project_id>')"
@@ -51,7 +50,7 @@
     </div>
 
     <!-- view project -->
-    <div id="view_<TMPL_VAR project_id>" class="view">
+    <div id="view_<TMPL_VAR project_id>" class="panel-body">
         <table>
             <tr><td class="label"><TMPL_VAR .loc.label_image></td>      <td colspan="2"><img src="showImage.cgi?project_id=<TMPL_VAR .project_id>&studioId=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=thumbs"> &nbsp;</td></tr>
             <tr><td class="label"><TMPL_VAR .loc.label_name></td>       <td colspan="2"><TMPL_VAR name> &nbsp;</td></tr>
@@ -79,7 +78,7 @@
 
     <TMPL_IF .allow.update_project>
     <!-- update project -->
-    <div id="edit_<TMPL_VAR project_id>" class="editor"  style="display:none">
+    <div id="edit_<TMPL_VAR project_id>" class="panel-body"  style="display:none">
         <form method="post" action="projects.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>"
             id="project_<TMPL_VAR project_id>"
         >
@@ -96,12 +95,12 @@
                 <tr><td class="label">
                     <TMPL_VAR .loc.label_image></td>      
                     <td>
-                        <button onclick="selectImage('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','image_<TMPL_VAR pid>','<TMPL_VAR series_name escape=HTML>','<TMPL_VAR image escape=URL>','<TMPL_VAR series_id>');return false;"
-                            style="padding:0;float:left"
+                        <button 
+                            class="selectImage"
+                            onclick="selectImage('<TMPL_VAR name escape=HTML>', '<TMPL_VAR image ESCAPE=url>', 'projects', '<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>', null, null, '<TMPL_VAR pid>'); return false;"
                         >
-                            <img id="imagePreview" src="showImage.cgi?project_id=<TMPL_VAR .project_id>&studioId=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=thumbs">
+                            <img id="imagePreview" src="showImage.cgi?project_id=<TMPL_VAR .project_id>&studioId=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=icon">
                         </button>
-                        <!-- <input name="image">-->
                         <input id="image_<TMPL_VAR pid>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.template_image>">
                     </td>
                 </tr>
@@ -176,8 +175,6 @@
 </div>
 </TMPL_LOOP>
 </div>
-
-<div id="selectImage"> </div>
 
 </main>	    
 </body>

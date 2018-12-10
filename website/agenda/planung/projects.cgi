@@ -254,6 +254,10 @@ sub show_projects {
         }
         $project->{assigned_studios}   = $assigned_studios;
         $project->{unassigned_studios} = $unassigned_studios;
+
+        if ( (defined $params->{setImage}) && ($project->{pid} eq $params->{pid}) ){
+            $project->{image} = $params->{setImage};          
+        }
     }
 
     $params->{projects} = $projects;
@@ -282,7 +286,7 @@ sub check_params {
         }
     }
 
-    for my $param ( 'name', 'title', 'subtitle', 'start_date', 'end_date', 'image', 'email' ) {
+    for my $param ( 'name', 'title', 'subtitle', 'start_date', 'end_date', 'image', 'email', 'setImage' ) {
         if ( defined $params->{$param} ) {
             $checked->{$param} = $params->{$param};
         }

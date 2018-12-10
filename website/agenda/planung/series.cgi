@@ -1198,6 +1198,7 @@ sub show_series {
     $serie->{series_dates} = $series_dates;
 
     $serie->{show_hint_to_add_schedule} = $params->{show_hint_to_add_schedule};
+    $serie->{image} = $params->{setImage} if $params->{setImage};
 
     #copy series to params
     #$params->{series}=[$serie];
@@ -1280,7 +1281,7 @@ sub check_params {
     }
 
     for my $param ( 'series_name', 'title', 'excerpt', 'content', 'topic', 'image', 'image_label',
-        'assign_event_series_name', 'assign_event_title', 'comment', 'podcast_url', 'archive_url' )
+        'assign_event_series_name', 'assign_event_title', 'comment', 'podcast_url', 'archive_url', 'setImage' )
     {
         if ( defined $params->{$param} ) {
 

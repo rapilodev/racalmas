@@ -231,6 +231,8 @@ sub show_event {
     $event->{start} =~ s/(\d\d:\d\d)\:\d\d/$1/;
     $event->{end} =~ s/(\d\d:\d\d)\:\d\d/$1/;
 
+    $event->{image} = $params->{setImage} if defined $params->{setImage};
+
     # overwrite event with old one
     #my $series_events=get_series_events($config,{
     #    project_id => $params->{project_id},
@@ -814,15 +816,13 @@ sub check_params {
     for my $param ( 'live', 'published', 'playout', 'archived', 'rerun', 'draft', 'disable_event_sync', 'get_rerun' ) {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /([01])/ ) ) {
             $checked->{$param} = $1;
-
-            # print STDERR "check $param = $1\n";
         }
     }
 
     #strings
     for my $param (
         'series_name',  'title',        'excerpt',    'content',      'topic',       'program', 'category', 'image',
-        'series_image', 'user_content', 'user_title', 'user_excerpt', 'podcast_url', 'archive_url'
+        'series_image', 'user_content', 'user_title', 'user_excerpt', 'podcast_url', 'archive_url', 'setImage'
       )
     {
         if ( defined $params->{$param} ) {

@@ -152,54 +152,53 @@
 
 </div>
 
-<!-- header -->
-<!--
-<TMPL_IF series_id>
-    <div class="header">
-        <TMPL_VAR series_name> <TMPL_IF title>- <TMPL_VAR title></TMPL_IF>
-    </div>
-</TMPL_IF>
--->
-
 <div>
 
     <!-- import rerun from old event of series or any event of any project -->
     <TMPL_IF .allow.update_event>
-        <div id="selectRerun" style="display:none;" class="panel">
-            <TMPL_VAR .loc.label_rerun>
+        <div id="selectRerun" style="display:none;" class="select panel">
             
-            <div onclick="selectOldEventFromSeries('rerunEventId','<TMPL_VAR start_date>'); updateCheckBox($(this).find('input:radio'),true);">
+            <div class="panel-header">
+                
+                <b><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time_name></b>,
+                <TMPL_VAR .loc.label_overwrite_event> <TMPL_VAR .loc.label_rerun>
+            </div>
+
+            <div class="panel-body">
+                <div onclick="selectOldEventFromSeries('rerunEventId','<TMPL_VAR start_date>'); updateCheckBox($(this).find('input:radio'),true);"
+                    class="option"
+                >
                 <input type="radio" name="group" class="default"> 
                 <TMPL_VAR .loc.label_rerun_select_old>
             </div>
 
-            <div onclick="selectOtherEvent('rerunEventId'); updateCheckBox($(this).find('input:radio'),true);">
+                <div onclick="selectOtherEvent('rerunEventId'); updateCheckBox($(this).find('input:radio'),true);"
+                    class="option"
+                >
                 <input type="radio" name="group">
                 <TMPL_VAR .loc.label_rerun_select_other>
             </div>
             
-            <div>
+            <input id="rerunEventId" value="-1" style="display:none" onchange="copyFromEvent('rerunEventId')">
+
+            <div id="import_rerun" class="active" style="display:none;"></div>
                 <button onclick="hideSelectRerun('rerunEventId')"><TMPL_VAR .loc.button_cancel></button>
             </div>
-            
-            <input id="rerunEventId" value="-1" style="display:none" onchange="copyFromEvent('rerunEventId')">
-        </div>
-
-        <div id="import_rerun_header" style="display:none;">
-            <b><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time_name></b>,
-            <TMPL_VAR .loc.label_overwrite_event>
-            <div id="import_rerun" class="active" style="display:none;"></div>
         </div>
     </TMPL_IF>
 
     <!-- move to other series -->
     <TMPL_IF .allow.assign_series_events>
         <div id="selectChangeSeries" class="active" style="display:none" class="panel">
+            <div class="panel-header">
             <TMPL_VAR .loc.button_assign_series>
+            </div>
+            <div class="panel-body">
             <div id="changeSeriesContainer"> </div>
             <input id="changeSeriesId" value="-1" style="display:none">
             <button onclick="hideChangeSeries()"><TMPL_VAR .loc.button_cancel></button>
             <button onclick="changeSeries()"><TMPL_VAR .loc.button_assign></button>
+        </div>
         </div>
     </TMPL_IF>
 
@@ -457,14 +456,13 @@
             </td> 
             <td>
                 <TMPL_IF .allow.update_event_field_image>
-                    <button onclick="selectImage('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','image_<TMPL_VAR event_id>','<TMPL_VAR series_name escape=HTML>','<TMPL_VAR image ESCAPE=url>','<TMPL_VAR series_id>');return false;"
-                        style="padding:0;"
+                    <button onclick="selectImage('<TMPL_VAR series_name escape=HTML>', '<TMPL_VAR image ESCAPE=url>', 'event', '<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR series_id>','<TMPL_VAR event_id>'); return false;"
+                        class="selectImage"
                     >
                         <img id="imagePreview" src="showImage.cgi?project_id=<TMPL_VAR project_id>&studioId=<TMPL_VAR studio_id>&filename=<TMPL_VAR image>&type=icon">
                     </button>
-                    <input id="image_<TMPL_VAR event_id>" name="image" value="<TMPL_VAR image>" class="image" style="float:right" placeholder="<TMPL_VAR .loc.label_image>">
+                    <input id="image_<TMPL_VAR event_id>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.label_image>">
                     <input type="hidden" name="series_image" value="<TMPL_VAR series_image>" > 
-					<!--(series_image:<TMPL_VAR series_image>,image=<TMPL_VAR image>)-->
                 </TMPL_IF>
             </td>
         </tr>
@@ -499,9 +497,8 @@
 
     <!-- buttons -->
     <TMPL_UNLESS edit_lock>
-    <table>
-        <tr> 
-            <td colspan="2">
+
+    
                 <div class="buttons" style="text-align:center">
                     <TMPL_IF show_new_event_from_schedule>
                         <TMPL_IF .allow.create_event_from_schedule>
@@ -530,9 +527,7 @@
                         </TMPL_UNLESS>
                     </TMPL_IF>
                 </div>
-            </td>
-        </tr>
-    </table>
+
     </TMPL_UNLESS>
 
     </form>
@@ -549,8 +544,6 @@
 <TMPL_IF modified_at>
     <div class="label right"><TMPL_VAR .loc.label_modified_at> <TMPL_VAR modified_at> <TMPL_VAR .loc.label_modified_by> <TMPL_VAR modified_by>.</div>
 </TMPL_IF>
-
-<div id="selectImage"></div>
 
 </main>	    
 

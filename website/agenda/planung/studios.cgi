@@ -193,6 +193,14 @@ sub show_studios {
             project_id => $params->{project_id}
         }
     );
+
+    if ($params->{setImage}){
+        for my $studio (@$studios){
+            next unless $studio->{id} eq $params->{studio_id};
+            $studio->{image}=$params->{setImage};
+        }
+    }
+
     $params->{studios} = $studios;
     $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'studios' } );
     uac::set_template_permissions( $permissions, $params );
@@ -219,7 +227,7 @@ sub check_params {
         }
     }
 
-    for my $param ( 'name', 'description', 'location', 'stream', 'google_calendar', 'image' ) {
+    for my $param ( 'name', 'description', 'location', 'stream', 'google_calendar', 'image', 'setImage' ) {
         if ( defined $params->{$param} ) {
             $checked->{$param} = $params->{$param};
         }
