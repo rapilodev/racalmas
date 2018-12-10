@@ -1,7 +1,6 @@
 #! /usr/bin/perl -w
 
-use warnings "all";
-use diagnostics;
+use warnings;
 use strict;
 use Data::Dumper;
 
@@ -33,7 +32,7 @@ my $request={
 };
 $params=$request->{params}->{checked};
 
-print $cgi->header('text/plain')."\n";
+print "Content-Type:text/plain\n\n";
 
 print STDERR "add comment: ".Dumper($params);
 my $comment	=$params->{comment};
@@ -239,7 +238,7 @@ sub escape_text{
 	$s=~s/<[a-z\!\?\[\/][^\>]+?\>//gi;
 	$s=~s/<[a-z\!\?\[\/]\>//gi;
 
-    $s = markup::escapeHTML($s);
+    $s = markup::escapeHtml($s);
 	$s=~s/[\n\r]+/\<br \/\>/g;
 	$s=~s/\<br \/\>/\<br \/\>\n/g;
 	$s=~s/\<br \/\>\s*$//g;
