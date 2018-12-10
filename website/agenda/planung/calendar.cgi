@@ -1476,8 +1476,12 @@ sub calc_positions {
         my ( $start_hour, $start_min ) = getTime( $event->{start_time} );
         my ( $end_hour,   $end_min )   = getTime( $event->{end_time} );
 
-        $start_hour += 24 if $start_hour < $start_of_day;
-        $end_hour   += 24 if $end_hour < $start_of_day;
+        $start_hour += 24 if $start_hour  < $start_of_day;
+        $end_hour   += 24 if $end_hour    < $start_of_day;
+        $end_hour   += 24 if $start_hour  > $end_hour;
+        $end_hour   += 24 if ($start_hour == $end_hour) && ($start_min == $end_min);
+
+
         $event->{ystart} = $start_hour * 60 + $start_min;
         $event->{yend}   = $end_hour * 60 + $end_min;
     }
