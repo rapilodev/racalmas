@@ -2,6 +2,8 @@
 
 <nav id="calcms_admin_menu">
 
+<div id="bars" class="mobile" onclick="handleBars();return false;"> <a><i class="fas fa-bars"></i> Menu</div>
+
 <div><a href="/"><i class="fas fa-rocket"></i>&nbsp;<TMPL_VAR .loc.preview></a></div>
 
 <TMPL_IF .allow.read_event>
@@ -40,11 +42,9 @@
 <div><a href="work_time.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-clock"></i>&nbsp;<TMPL_VAR .loc.schedule></a></div>
 </TMPL_IF>
 
-<!--
 <TMPL_IF .allow.update_image_others>
-<div><a href="image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-images"></i>&nbsp;<TMPL_VAR .loc.images></a></div>
+<div><a href="image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>&search=<TMPL_VAR .presets.user>"><i class="fas fa-images"></i>&nbsp;<TMPL_VAR .loc.images></a></div>
 </TMPL_IF>
--->
 
 <TMPL_IF .allow.scan_series_events>
 <!--
@@ -56,7 +56,7 @@
 
 <div title="<TMPL_VAR .loc.help>"><a href="help.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-info"></i>&nbsp;<TMPL_VAR .loc.help></a></div>
 
-<div>
+<div class="mobile">
 <i class="fas fa-home"></i>
 <select id="studio_id" name="studio_id" onchange="set_studio($(this).val())">
 <TMPL_LOOP .presets.studios>
@@ -66,7 +66,7 @@
 <i class="fas fa-caret-down"></i>
 </div>
 
-<div>
+<div class="mobile">
 <i class="fas fa-broadcast-tower"></i>
 <select id="project_id" name="project_id" onchange="set_project($(this).val())">
 <TMPL_LOOP .presets.projects>
@@ -76,7 +76,7 @@
 <i class="fas fa-caret-down"></i>
 </div>
 
-<div><a id="logout" href="<TMPL_VAR .presets.logout_url>?authAction=logout" expires="<TMPL_VAR .expires>"><i class="fas fa-sign-out-alt"></i>&nbsp;<TMPL_VAR .presets.user> <TMPL_VAR .loc.logout></a></div>
+<div class="mobile"><a id="logout" href="<TMPL_VAR .presets.logout_url>?authAction=logout" expires="<TMPL_VAR .expires>"><i class="fas fa-sign-out-alt"></i>&nbsp;<TMPL_VAR .presets.user> <TMPL_VAR .loc.logout></a></div>
 
 </nav>
 
