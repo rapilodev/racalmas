@@ -15,10 +15,6 @@ pre{
     width:11em;
 }
 
-#content div.editor input.image{
-    width:90%;
-}
-
 #content .editor img{
     padding:0;
     margin:0;
@@ -47,11 +43,6 @@ pre{
 #content .edit_event input.url{
     width:100%;
     max-width:40rem;
-}
-
-#content .panel{
-    margin:1em;
-    border:1px solid #ccc;
 }
 
 .date{

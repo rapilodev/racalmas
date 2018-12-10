@@ -81,9 +81,9 @@ $(document).ready(
 
        	initTextWidth();
 
-        setTextWidth('.datetimepicker.start',     120);
-        setTextWidth('.datetimepicker.end',       120);
-        setTextWidth('.datetimepicker.end_date',  80);
+    setTextWidth('.datetimepicker.start',     130);
+    setTextWidth('.datetimepicker.end',       130);
+    setTextWidth('.datetimepicker.end_date',  90);
         setTextWidth('.datetimepicker.weekday',   20);
         setTextWidth('.datetimepicker.frequency', 20);
 

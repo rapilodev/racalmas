@@ -1,3 +1,7 @@
+#comments table{
+     border-collapse: collapse;    
+}
+
 #comments td,th,input {
 	line-height:100%;
 	ffont-size:10px;
@@ -5,7 +9,7 @@
 #comments td,th{
 	display:table-cell;
 	font-weight:normal;
-	padding:6px;
+	padding:1rem;
 }
 
 #comments td.level0, td.level1, td.level2, td.level3, td.level4, td.level5{ 
@@ -86,10 +90,6 @@
 }
 
 
-#comments table.event_comments{
-	/*width:800px;*/
-}
-
 #comments table.event_comments td{
 	padding:3px;
 	background-color:#ccc;
@@ -97,10 +97,6 @@
 
 #comments .event th{
 	text-align:left;
-}
-#comments .event td{
-	padding:3px;
-	border-right:1px solid #fff;
 }
 
 #comments .event button{

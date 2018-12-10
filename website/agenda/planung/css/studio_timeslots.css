@@ -66,6 +66,7 @@
 
 #content div.show_schedule{
     clear:both;
+    padding:0;
 }
 
 #content div.show_schedule table{

@@ -334,6 +334,10 @@ input.tablesorter-filter{
     font-weight:300;
 }
 
+#content .weak span{
+    border-radius:4px;
+}
+
 #content .schedule,
 #content .event{
 	cursor:pointer;
@@ -459,9 +463,6 @@ div.rms_detail div.image{
     width:100%;
     float:right;
 }
-div.rms_detail div.image img{
-    
-}
 
 div.rms_detail div.text{
     width:100%;
@@ -489,10 +490,13 @@ div.play .error{
 }
 
 #content div.event,
-#content div.scheduled,
+#content div.schedule,
 #content div.grid,
-#content div.playout{
-    padding-top:0.4rem;
-    padding-bottom:1rem;
+#content div.play,
+#content div.error{
+    padding-left:0px;
+    padding-top:0px;
+    padding-bottom:12px;
+    padding-right:32px;
 }
 

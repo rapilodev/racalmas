@@ -22,18 +22,14 @@ div#newSeries a,
 div#oldSeries a{
     color:#fff;
     background:#1abc9c;
-    padding:6px;
-    padding-top:6px;
-    margin:6px;
-    margin-left:6px;
-    margin-right:6px;
-    /*float:left;*/
+    padding:8px;
+    margin:8px;
     cursor:pointer;
     text-align:center;
     display:table-cell;
     vertical-align:middle;
     width:10rem;
-    height:3rem;
+    height:4rem;
     line-height:2em;
 }
 

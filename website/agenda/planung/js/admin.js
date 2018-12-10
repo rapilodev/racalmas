@@ -205,23 +205,63 @@ function getUrlParameter(name){
     return results[1];
 }
 
+function handleBars(){
+    var menu=$('#calcms_admin_menu');
+    menu.toggleClass('mobile');
+    if (menu.hasClass('mobile')){
+        $('#calcms_admin_menu div').show();
+        $('#content').hide();
+    }else{
+        $('#content').show();
+        setupMenu(1);
+    }
+}
+
+var oldWidth=0;
+function setupMenu(update){
+    var xmax=960;
+
+    var menu = $('#calcms_admin_menu');
+    var width = menu.width();
+
+    if ( (width < xmax)  && (oldWidth >= xmax) ) update=1;
+    if ( (width >= xmax) && (oldWidth <  xmax) ) update=1;
+    if (oldWidth==0) update=1;
+
+    if (update == 1){
+        if (menu.width() < 960){
+            $('#calcms_admin_menu div').hide();
+            $('#calcms_admin_menu div.mobile').show();
+        }else{
+            $('#calcms_admin_menu div').show();
+            $('#calcms_admin_menu #bars').hide();
+            menu.removeClass('mobile');
+        }
+    }
+
+    oldWidth = width;
+}
+
 // will be overridden by calendar.js
 function setupMenuHeight(){
+
+    var content=$('#content');
+    content.css("position", "relative");
+
     var menu=$('#calcms_admin_menu');
-
-    $('#content').css("position", "absolute");
     var top = menu.height();
-    $('#content').css("top", top);
+    content.css("top", top);
 
-    
+    /*    
+    console.log($(window).width()+" "+$(document).width()+" "+$('#content').width());
     var left=0;
     if( $(window).width() >= $(document).width() ){
-        left=$(document).width()-$('#content').width();
+        left=$(document).width() - $('#content').width();
         left/=2;
         if (left<40)left=0;
     }
     $('#content').css("left", left);    
-    
+    */
     return top;
 }
 
@@ -311,9 +351,18 @@ function initLabels(){
 
 $(document).ready(
     function(){
+        setupMenu();
         checkSession();
 
         setMissingUrlParameters();
+
+        // will be done implicitely on adding back button
+        //setupMenuHeight();
+
+	    $(window).resize(function() {
+		    setupMenuHeight();
+            setupMenu();
+	    });
 
         if(getController()=='calendar'){
             //use build-in localization
@@ -327,12 +376,6 @@ $(document).ready(
             });
         }
         initLabels();
-
-        setupMenuHeight();
-	    $(window).resize(function() {
-		    setupMenuHeight();
-	    });
-        
     }
 );
 

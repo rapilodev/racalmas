@@ -720,6 +720,7 @@ function updateTable(){
 
 	    $(window).resize(function() {
 		    resizeCalendarMenu();
+            setupMenu()
 	    });
     }
 

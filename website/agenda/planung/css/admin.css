@@ -1,4 +1,32 @@
 
+/* roboto-regular - latin_latin-ext */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/roboto-v18-latin_latin-ext-regular.eot'); /* IE9 Compat Modes */
+  src: local('Roboto'), local('Roboto-Regular'),
+       url('../fonts/roboto-v18-latin_latin-ext-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/roboto-v18-latin_latin-ext-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/roboto-v18-latin_latin-ext-regular.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/roboto-v18-latin_latin-ext-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/roboto-v18-latin_latin-ext-regular.svg#Roboto') format('svg'); /* Legacy iOS */
+}
+
+/* open-sans-regular - latin_latin-ext */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/open-sans-v15-latin_latin-ext-regular.eot'); /* IE9 Compat Modes */
+  src: local('Open Sans Regular'), local('OpenSans-Regular'),
+       url('../fonts/open-sans-v15-latin_latin-ext-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/open-sans-v15-latin_latin-ext-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/open-sans-v15-latin_latin-ext-regular.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/open-sans-v15-latin_latin-ext-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/open-sans-v15-latin_latin-ext-regular.svg#OpenSans') format('svg'); /* Legacy iOS */
+}
+
 body{
 	margin:0;
 	padding:0;
@@ -13,6 +41,7 @@ body #content{
 	color:#000;
 	background:#fff;
 	text-align:left;
+    min-width:500px;
 	max-width:1200px;
     margin-left:auto;
     margin-right:auto;
@@ -33,10 +62,22 @@ body,
 #content div,
 #content select,
 #content option,
-#content li{
-    font-size:0.75rem;
+#content li,
+#content input[type="submit"],
+#content input[type="file"],
+#content .label{
  	font-family:Roboto,sans-serif;
+    font-size:0.937rem;
 }
+
+
+#content div.panel-header,
+#content button{
+    font-size:1rem;
+ 	font-family:Roboto,sans-serif;
+    font-weight:600;
+}
+
 
 #content textarea{
     padding:6px;
@@ -85,7 +126,6 @@ body,
 
 #calcms_admin_menu div a,
 #calcms_admin_menu select{
-    font-size:14px;
 	padding:6px;
 	padding-top:1rem;
 	padding-bottom:1rem;
@@ -103,7 +143,6 @@ body,
 
 #calcms_admin_menu select,
 #calcms_admin_menu option{
-    font-size:0.8rem;
 	max-width:8em;
 	border:0;
 	padding-left:0;
@@ -121,9 +160,12 @@ a{
 }
 
 #content table{
-	margin:1;
 	border-collapse:collapse;
 	width:100%
+}
+
+#content table.data tr{
+    border-bottom:1px solid rgba(0,0,0,0.12);
 }
 
 #content table td{
@@ -148,23 +190,35 @@ a{
 }
 
 
-#content div{
-	padding:1rem;
+div.editor{
+	padding-left:1rem;
+    padding-right:1rem;
 }
 
-#content div.header{
-    font-size:16px;
+#content .panel{
+    border: 1px solid rgba(0,0,0,.03);
+    box-shadow: 0 2px 2px rgba(0,0,0,.24),0 0 2px rgba(0,0,0,.12);
+    margin: 4px;
+}
+
+#content div.panel-header{
 	text-align:left;
 	padding-left:0;
+    align-content: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    padding: 8px 20px;
+    color: rgba(0,0,0,.54);
+    background: rgba(0,0,0,.03);
+}
+
+#content div.panel-body{
+    padding:1rem;
 }
 
 #content .field{
 	width:30em;
-}
-
-#content .button{
-	width:10em;
-    cursor:pointer;
 }
 
 *:focus {outline: none;}
@@ -287,13 +341,6 @@ div.error{
 	border-radius:3px;
 }
 
-#content div.card div.title{
-    font-size:16px;
-}
-
-#content table.table tr{
-    border-bottom:solid 1px #ebebeb;    
-}
 #content table.table tr:hover{
     background:#ebebeb
 }
@@ -337,6 +384,18 @@ tr.tablesorter-filter-row input{
     color:#000;
 }
 
+table.table tr,
+table.tablesorter tr{
+    border-bottom:solid 1px #ebebeb;    
+}
+
+#content table.tablesorter td,
+#content table.table td{
+    padding:0.8rem 0.4rem;
+    text-align:left;
+    vertical-align:middle;
+}
+
 /*colors*/    
 #content input[type="submit"],
 #content input[type="file"],
@@ -355,30 +414,29 @@ tr.tablesorter-filter-row input{
     background-color:#39a1f4;
 }
 
+#content .button{
+    cursor:pointer;
+}
+
 /*colors end */
 #content input[type="submit"],
 #content input[type="file"],
 #content button{
-    border:none;
-    color:#fff;
-    padding:8px;
-    margin-top:0px;
-    margin-bottom:0px;
-    margin-left:0.5rem;
+    display:inline-block;
+    border:0;
+    padding-left:16px;
+    padding-right:16px;
+    margin:0.5rem;
     text-align: center;
     text-decoration: none;
-    font-size: 12px;
-}
-
-#content input[type="submit"],
-#content input[type="file"],
-#content button{
-    box-shadow:0 2px 5px 0 rgba(0,0,0,.16),0 2px 10px 0 rgba(0,0,0,.12);
+    min-width:64px;
+    font-weight:500;
+    border-radius:4px;
+    color:#fff;
+    height:36px;
     position:relative;
+    box-shadow:0 2px 5px 0 rgba(0,0,0,.16),0 2px 10px 0 rgba(0,0,0,.12);
     transition:background-color .3s cubic-bezier(.64,.09,.08,1),box-shadow .3s cubic-bezier(.64,.09,.08,1);
-    padding:10px 20px;
-    display:inline-block;
-    border:0
 }
 
 #content input[type="submit"]:hover,
@@ -434,10 +492,6 @@ input[type='checkbox']{
     margin-top:0px;
 }
 
-#content div.buttons button{
-    margin-bottom:1rem;
-}
-
 #content div.formField div.label{
     display:hide;
     padding-left:1em;
@@ -455,7 +509,6 @@ input[type='checkbox']{
 /* new */
 
 #calcms_admin_menu{
-    font-size:0.9375rem;
     position:fixed;
     top:0;
     left:0;
@@ -479,31 +532,51 @@ input[type='checkbox']{
     border: none;
 }
 
-body #content{
-    margin-top:0;
-}
-
-body,
-#content input,
-#content textarea,
-#content td,
-#content div,
-#content select,
-#content option,
-#content li,
-#content input[type="submit"],
-#content input[type="file"],
-#content button{
-    font-size:0.85rem;
-}
-
 #calcms_admin_menu .fa,
 #calcms_admin_menu .far,
 #calcms_admin_menu .fas{
-    opacity:0.5;
+    color:#777;
 }
 
-#content div.buttons{
-    margin-top:-1rem;
-    margin-bottom:-1rem;
+#content button.selectImage{
+    padding:0!important;
+    float:left;
+    min-width:32px;
 }
+
+#content button.selectImage,
+#content button.selectImage img{
+    width:32px;
+    height:32px;
+}
+input.image{
+    width:16rem;
+}
+
+#content .ui-widget.ui-widget-content{
+    border:0;
+}
+
+#content .select .option{
+    font-size:1rem;
+    line-height:2rem;
+}
+
+#content #imageList div.images{
+    max-height:650px;
+    overflow-y:scroll
+}
+
+#calcms_admin_menu #bars{
+    cursor:pointer;
+}
+
+#calcms_admin_menu.mobile{
+    flex-direction:column;
+    position:absolute;
+}
+
+#calcms_admin_menu.mobile div{
+    text-align:left;
+}
+
