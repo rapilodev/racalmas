@@ -56,7 +56,7 @@ function uploadFile(uploadButton){
     hideFinished();
     hideError();
     showProgress();
-    $.ajax({
+    var request=$.ajax({
         url: 'audio_recordings.cgi',
         type: 'POST',
         data: new FormData($('#audio_recordings_upload')[0]),
@@ -65,11 +65,12 @@ function uploadFile(uploadButton){
         processData: false,
         xhr: function() {
             var start = new Date();
-            var myXhr = $.ajaxSettings.xhr();
-            if (myXhr.upload) {
+            //var myXhr = $.ajaxSettings.xhr();
+            var xhr = new window.XMLHttpRequest();
+            if (xhr.upload) {
                 var c=0;
                 var oldRemaining=0;
-                myXhr.upload.addEventListener(
+                xhr.upload.addEventListener(
                     'progress', 
                     function(data) {
                         if (!data.lengthComputable) return;
@@ -102,15 +103,19 @@ function uploadFile(uploadButton){
                     false
                 );
             }
-            return myXhr;
-        },
-    }).error(
+            return xhr;
+        }
+    });
+    
+    request.fail(
         function(jqXHR, textStatus, errorThrown ){
             showError("error: "+errorThrown);
             hideProgress();
             hideFinished();
         }
-    ).done(
+    );
+
+    request.done(
         function(data){
             showFinished();
             hideProgress();
