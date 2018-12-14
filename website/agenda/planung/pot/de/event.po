@@ -143,7 +143,7 @@ msgid "label_select_event"
 msgstr "aktuelle Sendung mit"
 
 msgid "label_overwrite_event"
-msgstr "Sendung überschreiben mit folgender Sendung"
+msgstr "Sendung überschreiben mit "
 
 msgid "button_copy_event"
 msgstr "überschreiben"

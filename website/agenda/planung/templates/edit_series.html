@@ -58,13 +58,13 @@
     </div>
 
 	<div class="panel-header">
-            <TMPL_IF has_single_events>
-                <TMPL_VAR .loc.single_events> <TMPL_IF title><TMPL_VAR title></TMPL_IF>
-            <TMPL_ELSE>
-                <TMPL_VAR .loc.title>
-    			<TMPL_IF series_name> <TMPL_VAR series_name></TMPL_IF><TMPL_IF title> - <TMPL_VAR title></TMPL_IF>
-            </TMPL_IF>
-            </div>
+        <TMPL_IF has_single_events>
+            <TMPL_VAR .loc.single_events> <TMPL_IF title><TMPL_VAR title></TMPL_IF>
+        <TMPL_ELSE>
+            <TMPL_VAR .loc.title>
+			<TMPL_IF series_name> <TMPL_VAR series_name></TMPL_IF><TMPL_IF title> - <TMPL_VAR title></TMPL_IF>
+        </TMPL_IF>
+    </div>
 
 </div>
 
@@ -450,8 +450,8 @@
 			</tr>
 			<tr id="event_container_<TMPL_VAR event_id>" style="display:none">
 				<td colspan="5">
-				<div id="event_details_<TMPL_VAR event_id>">
-				</div>
+				    <div id="event_details_<TMPL_VAR event_id>">
+				    </div>
 				</td>
 			</tr>
 
@@ -601,8 +601,6 @@
     </TMPL_IF>
 
 </TMPL_UNLESS> <!-- has single events-->
-
-    <div id="selectImage"></div>
 	<div class="label right"><TMPL_VAR .loc.modified> <TMPL_VAR .loc.at> <TMPL_VAR modified_at> <TMPL_VAR .loc.by> <TMPL_VAR modified_by>.</div>
 
 </main>	    

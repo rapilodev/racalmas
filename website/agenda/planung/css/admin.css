@@ -48,7 +48,7 @@ body #content{
 }
 
 div{
-    transition: background-color 0.5s linead;
+    transition: background-color 0.5s linear;
 }
 
 #selectImage #content{

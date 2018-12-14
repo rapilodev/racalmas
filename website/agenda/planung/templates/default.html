@@ -2,9 +2,9 @@
 
 <nav id="calcms_admin_menu">
 
-<div id="bars" class="mobile" onclick="handleBars();return false;"> <a><i class="fas fa-bars"></i> Menu</div>
+<div id="bars" class="mobile" onclick="handleBars();return false;"> <a><i class="fas fa-bars"></i> Menu</a></div>
 
-<div><a href="/"><i class="fas fa-rocket"></i>&nbsp;<TMPL_VAR .loc.preview></a></div>
+<div><a href="/" ><i class="fas fa-rocket"></i>&nbsp;<TMPL_VAR .loc.preview></a></div>
 
 <TMPL_IF .allow.read_event>
 <div><a id="menu_calendar" href="calendar.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>"><i class="fas fa-calendar-alt"></i>&nbsp;<TMPL_VAR .loc.calendar></a></div>
