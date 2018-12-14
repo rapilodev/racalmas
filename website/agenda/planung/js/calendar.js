@@ -566,10 +566,11 @@ function createId(prefix) {
   return prefix+'_'+s4() + s4();
 }
 
-function showRmsPlot(id){
+function showRmsPlot(id, project_id, studio_id, start){
+    console.log(id+" "+project_id+" "+studio_id+" "+start)
     $('#'+id).dialog({
         width:940, 
-        height:400,
+        height:560,
         open: function () {
             $(this).scrollTop(0);
         }        
@@ -584,14 +585,8 @@ function deleteFromPlayout(id, projectId, studioId, start){
     url+='&studio_id='+escape(studioId);
     url+='&start_date='+escape(start);
     //console.log(url);
-    $('#'+id).dialog({
-        width:940, 
-        height:440,
-        open: function () {
-            $(this).scrollTop(0);
-            $(this).load(url);
-        }        
-    });
+    //console.log(id)
+    $('#'+id).load(url);
     return false;
 }
 
@@ -602,44 +597,43 @@ function quoteAttr(attr){
 function initRmsPlot(){
     $( "#calendar div.play" ).hover(
         function() {
-            var plot=$(this).attr("rms");
-
-            var id=$(this).attr("id");
-            var field=id.split('_');
-            var classname   =field.shift();
-            var project_id	=field.shift();
-            var studio_id	=field.shift();
-            var start=$(this).attr("start")
-            var html='';
+            var plot        = $(this).attr("rms");
+            var id          = $(this).attr("id");
+            var field       = id.split('_');
+            var classname   = field.shift();
+            var project_id	= field.shift();
+            var studio_id	= field.shift();
+            var start       = $(this).attr("start")
             
             if (project_id==null) return;
             if (studio_id==null) return;
             if (start==null) return;
 
+            if ( !$(this).hasClass("clickHandler") ){
+                $(this).addClass("clickHandler");
+                $(this).click( function(event){
+                     event.stopImmediatePropagation();
+                     showRmsPlot( id , project_id , studio_id , start );
+                });
+            }
+
             if ( (!$(this).hasClass("rms_image")) && (plot!=null)){
                 $(this).addClass("rms_image");
 
-                var id=createId("rms_img");
+                var content = $(this).html();
+                var id      = createId("rms_img");
                 var url     = '/agenda_files/playout/'+plot;
-                var handler = 'onclick="showRmsPlot('+quoteAttr(id)+')"';
-                var img     = '<img src="'+url+'" '+handler+'></img>';
-
-                html += '<button '+handler+'>details</button>';
-                html += img;
-                html += '<div id="'+id+'" class="rms_detail" style="display:none">';
-                html += '<div class="image">'+img+'</div>';
-                html += '<div class="text">'+$(this).html()+'</div>';
-                html += "</div>";
-            }
-
-            if (!$(this).hasClass("deleteHandler")){
-                $(this).addClass("deleteHandler");
+                var img     = '<img src="'+url+'" ></img>';
                 var deleteHandler = 'onclick="deleteFromPlayout(' + quoteAttr(id) + ", " + quoteAttr(project_id) + ", " + quoteAttr(studio_id) + ", "+ quoteAttr(start) + ')"';
-                if (start!=null) html += '<button '+deleteHandler+'>delete</button>';
-            }
 
-            $(this).append(html);
-            
+                var details='';
+                details += '<div id="'+id+'" class="rms_detail" style="display:none">';
+                details += '<div class="image">'+img+'</div>';
+                details += '<div class="text">'+content+'</div>';
+                if (start!=null) details += '<button '+deleteHandler+'>delete</button>';
+                details += "</div>";
+                $(this).append(img + details);
+            }
 
             $(this).find('img').each(function(){
                 $(this).show();
