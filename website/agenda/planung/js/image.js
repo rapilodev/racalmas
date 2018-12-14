@@ -202,102 +202,27 @@ function assignImage(filename, target, project_id, studio_id, series_id, event_i
 
 $(document).ready(
     function(){
+
+        $('div.images').on( 'click', 'div.image', function(){
+            var elem      = $(this);
+            console.log(elem)
+            var filename  = elem.attr("filename");
+            elem = elem.parent();
+            console.log(elem)
+            var target    = elem.attr("target");
+            var projectId = elem.attr("projectId");
+            var studioId  = elem.attr("studioId");
+            var seriesId  = elem.attr("seriesId");
+            var eventId   = elem.attr("eventId");
+            var pid       = elem.attr("pid");
+ 
+            updateImageEditor($(this), filename, target, projectId, studioId, seriesId, eventId, pid); 
+            return false;
+        });
+
         if ( window.location.href.indexOf("&filename=") > 0)
             setActiveImage();
     }
 );
 
-
-/*
-function hideContent(){
-    $('.editor').hide();
-
-    $(window).resize(function () {
-       $('.ui-dialog').css({
-            'width':  $(window).width()  - windowOffsetX,
-            'height': $(window).height() - windowOffsetY,
-            'position': 'absolute',
-            'left':   0,
-            'top':    0,
-            modal: true
-       });
-
-       var imagesPos= $('div.images').position();
-       var height = ( $(window).height() - imagesPos.top );
-       if(height<64) height = 64;
-       console.log("windowHeight="+$(window).height()+" div.images.pos.top="+imagesPos.top)
-       $('div.images').css("height", height +"px");
-
-    }).resize();
-
-    return false;
-}
-
-function showContent(){
-    $('.editor').show();
-    $('#selectImage').remove();
-    return false;
-}
-
-
-//select image load into selectImage box
-function selectImageOld(project_id, studio_id, imageId, searchValue, imageUrl, series_id){
-    selectImageId = imageId;
-    searchValue = searchValue.replace(/[^a-zA-Z0-9]/g,'%');
-
-    var url="image.cgi?search="+encodeURIComponent(searchValue)+'&project_id='+project_id+'&studio_id='+studio_id;
-
-    if( (series_id!=null) && (series_id != '') ){
-        url+='&series_id='+series_id;
-    }
-
-    if(imageUrl!=null){
-        var filename=imageUrl.split('%2F').pop();
-        url+='&filename='+filename;
-    }
-
-    var x = $(window).width()  - windowOffsetX;
-    var y = $(window).height() - windowOffsetY;
-    console.log("selectImage(), load url="+url);
-
-
-    $('#selectImage').remove();
-    $('body').append('<div id="selectImage"></div>');
-
-    $('#selectImage').load(
-        url, 
-        function(){
-            hideContent();
-            $('#selectImage').dialog({
-                appendTo: "#content",
-		        title: "select image",
-                top: 0,
-                left: 0,
-		        width: x,
-		        height: y,
-		        close: function( event, ui ) {
-		            showContent();
-                    $('#selectImage').remove();
-		        }
-            });
-            updateImageEditor(filename);
-        }
-    );
-
-    return false;    
-}
-
-// set editor image and image url to selected image
-function selectThisImage(filename){
-    $('#'+selectImageId).val(filename);
-
-    var url = 'showImage.cgi?project_id='+project_id+'&studio_id='+studio_id+'&filename=' + filename;
-    console.log("select image "+url);
-    $('#imagePreview').prop('src',url);
-
-    showContent(); 
-    return false;
-}
-
-*/
 

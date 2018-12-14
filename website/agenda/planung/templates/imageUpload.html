@@ -1,30 +1,42 @@
     <div>
-        <form name="img_upload" id="img_upload" method="post" action="imageUpload.cgi" enctype="multipart/form-data">
+        <TMPL_IF action>
+            <TMPL_IF error>
+	            <div class="error">failed</div>
+	            <div id="message"><TMPL_VAR error></div>
+            <TMPL_ELSE>
+	            <div class="ok">success</div>
+                <div style="display:none">
+	                <div id="upload_image_id"><TMPL_VAR image_id></div>
+	                <div id="upload_image_filename"><TMPL_VAR filename></div>
+	                <div id="upload_image_title"><TMPL_VAR title></div>
+	                <div id="upload_image_link">{{thumbs//<TMPL_VAR filename>}}</div>
+                </div>
+            </TMPL_IF>
+        </TMPL_IF>
+
+        <form name="img_upload" id="img_upload" method="POST" action="imageUpload.cgi" enctype="multipart/form-data">
+            <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+            <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+            <input type="hidden" name="action" value="upload">
 	        <table>
 		        <tr>	
 			        <td>
 				        <TMPL_IF filename>
-				        <a href="<TMPL_VAR local_media_url>images/<TMPL_VAR filename escape=0>" >
-					        <img src="<TMPL_VAR local_media_url>thumbs/<TMPL_VAR filename escape=0>" />
-					        <img src="<TMPL_VAR local_media_url>icons/<TMPL_VAR filename escape=0>" />
-				        </a>
+				        <div class="image" style="background-image:url('showImage.cgi?project_id=<TMPL_VAR .project_id>&studioId=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR filename>')" >
+                        </div>
 				        </TMPL_IF>
 			        </td>
 
 			        <td>
 				        <TMPL_IF filename>
-				        <input value="{{thumbs/<TMPL_VAR filename escape=0>|<TMPL_VAR name escape=0>}}" size="40" />
+				        <input value="{{thumbs/<TMPL_VAR filename escape=0>|<TMPL_VAR name escape=0>}}" size="50" />
 				        </TMPL_IF>
 			        </td>
-		        </tr>
-		        <tr>	
-			        <td>Datei</td>
-			        <td><input type="file" name="image" accept="image/*" maxlength="2000000" size="10"/>  </td>
 		        </tr>
 
 		        <tr>
 			        <td>Name:		</td>
-			        <td><input value="<TMPL_VAR name escape=0>" name="name" size="40" maxlength="100"> </td>
+			        <td><input value="<TMPL_VAR name escape=0>" name="name" size="40" maxlength="100" required> </td>
 		        </tr>
 		        <tr>
 			        <td>Beschreibung:	</td>
@@ -32,15 +44,20 @@
 		        </tr>
 		        <tr>
                     <td><label><TMPL_VAR .loc.label_author>/<TMPL_VAR .loc.label_licence></label></td>
-                    <td><input name="licence" value="<TMPL_VAR licence>" placeholder="<TMPL_VAR .loc.label_licence_missing>"/></td>
+                    <td><input name="licence" value="<TMPL_VAR licence>" placeholder="<TMPL_VAR .loc.label_licence_missing>" required /></td>
 		        </tr>
 		        <tr>
                     <td><label><TMPL_VAR .loc.label_public></label></td>
-                    <td><input type="checkbox" name="public"/></td>
+                    <td><input type="checkbox" name="public" <TMPL_IF public>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF> /></td>
+		        </tr>
+		        <tr>	
+			        <td>Datei</td>
+			        <td><input type="file" name="image" accept="image/*" maxlength="2000000" size="10" required/>  </td>
 		        </tr>
 		        <tr>
-			        <td colspan="2" style="text-align:right">
-				        <input type="submit" name="action" value="Hochladen!" />
+			        <td></td>
+                    <td>
+				        <button onclick="uploadImage();return false">Hochladen</button>
 			        </td>
 		        </tr>
 	        </table>
@@ -48,22 +65,4 @@
     </div>
 </body>
 </html>
-
-<TMPL_IF action>
-    <TMPL_IF error>
-	    <div id="output">failed</div>
-	    <div id="message"><TMPL_VAR error></div>
-    <TMPL_ELSE>
-	    <div id="output">success</div>
-	    <div id="message">
-		    <TMPL_VAR action_result>
-		    {{thumbs//<TMPL_VAR filename>}}
-            <button onclick="selectThisImage('<TMPL_VAR filename>')">assign to event</button>
-	    </div>
-	    <div id="upload_image_id"><TMPL_VAR image_id></div>
-	    <div id="upload_image_filename"><TMPL_VAR filename></div>
-	    <div id="upload_image_title"><TMPL_VAR title></div>
-	    <div id="upload_image_link">{{thumbs//<TMPL_VAR filename>}}</div>
-    </TMPL_IF>
-</TMPL_IF>
 

@@ -1,67 +1,55 @@
-// init upload
 function initUploadDialog(){
-    //console.log("init upload dialog")
-    if(!$('#uploader').hasClass("init")){
-        $('#uploader').fileUploader();
-        $('#uploader').addClass("init");
-        //remove multiple buttons
-        var c=0;
-        $('#img_upload #px_button').each(
-            function(){
-                if (c>0){
-                    $(this).remove();
-                }
-                c++;
-            }
-        );
-    }
-	return false;
+    var url='imageUpload.cgi?project_id='+ getProjectId()+"&studio_id="+getStudioId();
+    updateContainer("image-tabs-upload", url);
 }
 
-// prepare for new init
-function closeImageUpload(){
-    $('#uploader').removeClass("init");
-    $('#pxupload_form').remove();
-    $('#pxupload1_frame').remove();
-    $('#px_display').remove();
-}
+function uploadImage(){
+    console.log("upload")
+    var form=$("#img_upload");
+    var fd = new FormData(form[0]);
+    var rq = $.ajax({
+        url: 'imageUpload.cgi',  
+        type: 'POST',
+        data: fd,
+        cache: false,
+        contentType: false,
+        processData: false
+    });
 
+    rq.done( function(data){
+        $("#image-tabs-upload").html(data);
 
-function insertPicture(name, description, filename) {
-	try {
-		markup='{{ thumbs//'+filename;
-		if (description !=''){
-			markup+=' | '+description;
-		}else{
-			if (name !='') markup+=' | '+name
-		}
-		markup+=' }}'
-		markup+="\n"
-		parent.$.markItUp( { replaceWith:markup } );
-		parent.$('#images').dialog("close");
-	} catch(e) {
-		alert("No markItUp! Editor found");
-	}
-}
+        var image_id = $("#upload_image_id").html();
+        var filename = $("#upload_image_filename").html();
+        var title    = $("#upload_image_title").html();
+        var quote    = "'";
+        
+        //remove existing image from list
+        $('#imageList div.images #img_'+image_id).remove();
 
-function image_upload_dialog(){
-	$('#img_upload').dialog({
-		title:"image upload",
-		width:600,
-		height:320
-	});
-	return false;
-}
+        var url='showImage.cgi?project_id='+getProjectId()+'&studioId='+getStudioId()+'&type=icon&filename='+filename;
 
-function image_upload_callback(result){
-	result.contents().find("#message").html();
-    var output = '<br />' + $(this).contents().find("#message").html();
-	$(id + "_text .status").html(output);
-}
+        var html = '<div';
+        html += ' id="img_' + image_id + '"';
+        html += ' class="image" ';
+        html += ' title="' + title + '" ';
+        html += ' style="background-image:url(' + url + ')"';
+        html += ' filename="' + filename + '"';
+        html += '>';
+        html += '    <div class="label">'+title+'</div>';
+        html += '</div>';
 
-$(document).ready(
-	function() {
-		//$('#uploader').fileUploader();
-	}
-)
+        //add image to list
+        $('#imageList div.images').prepend(html);
+
+        console.log("done")
+        return false;
+    });
+
+    rq.fail( function(){
+        console.log("Fail")
+    });
+
+    return false;
+};
 

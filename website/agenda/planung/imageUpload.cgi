@@ -21,6 +21,7 @@ use uac();
 use studios();
 use template();
 use images();
+use localization();
 
 binmode STDOUT, ":utf8";
 
@@ -121,8 +122,9 @@ if ( $error ne '' ) {
     $params = update_database( $config, $params, $file_info, $user ) if $params->{error} eq '';
 }
 
-print STDERR "upload error: $params->{error}\n" if $params->{error} ne '';
+print STDERR "upload error: $params->{error}\n" if $params->{error} ;
 my $out = '';
+$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'image' } );
 template::process( $config, 'print', $params->{template}, $params );
 
 print $cgi->cgi_error() if ( defined $cgi ) && ( defined $cgi->cgi_error() );
@@ -133,26 +135,6 @@ $params->{filename}      ||= '';
 $params->{image_id}      ||= '';
 $params->{name}          ||= '';
 
-if ( $params->{error} eq '' ) {
-    print qq{
-    <div id="output">success</div>
-    <div id="message">
-        $params->{action_result}
-        {{thumbs//$params->{filename}}}
-        <button onclick="selectThisImage('$params->{filename}')">assign to event</button>
-    </div>
-    <div id="upload_image_id">$params->{image_id}</div>
-    <div id="upload_image_filename">$params->{filename}</div>
-    <div id="upload_image_title">$params->{name}</div>
-    <div id="upload_image_link">{{thumbs//$params->{filename}}}</div>
-    
-    };
-} else {
-    print qq{
-    <div id="output">failed</div>
-    <div id="message">$params->{error}</div>
-    };
-}
 
 sub upload_file {
     my $config = shift;
@@ -388,6 +370,14 @@ sub check_params {
             $checked->{$attr} = $params->{$attr};
         }
     }
+
+    #checkboxes
+    for my $param ('public') {
+        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /([01])/ ) ) {
+            $checked->{$param} = $1;
+        }
+    }
     return $checked;
 }
+
 
