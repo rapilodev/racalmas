@@ -10,6 +10,7 @@ use db();
 use template();
 use project();
 use studios();
+use user_settings();
 
 use base 'Exporter';
 our @EXPORT_OK = qw(
