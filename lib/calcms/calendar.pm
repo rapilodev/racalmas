@@ -8,6 +8,7 @@ use Date::Calc();
 
 use template();
 use cache();
+use events();
 
 use base 'Exporter';
 our @EXPORT_OK = qw(init get_cached_or_render get render get_calendar_weeks configure_cache);
@@ -203,7 +204,7 @@ sub get {
                 my $woy_year     = undef;
 
                 for my $date (@$week) {
-                    my ( $year, $month, $day ) = split( /\-/, $date );
+                    my ( $year, $month, $day ) = split( /\-/, $date, 3 );
                     my $weekday    = 0;
                     my $day_result = undef;
 

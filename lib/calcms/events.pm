@@ -1414,6 +1414,7 @@ sub get_by_date_range {
     $end = time::add_hours_to_datetime( $end, $day_starting_hour );
 
     my $conditions = [];
+    push @$conditions, 'published = 1';
     push @$conditions, 'start between ? and ?';
     my $bind_values = [ $start, $end ];
 
@@ -1430,7 +1431,7 @@ sub get_by_date_range {
         where    $conditions
     };
 
-    #print STDERR Dumper($query);
+    #print STDERR Dumper($query) . Dumper($bind_values);
 
     my $events = db::get( $dbh, $query, $bind_values );
 
