@@ -1,6 +1,6 @@
 function initUploadDialog(){
     var url='imageUpload.cgi?project_id='+ getProjectId()+"&studio_id="+getStudioId();
-    updateContainer("image-tabs-upload", url);
+    updateContainer("image-tabs-upload", url, pageLeaveHandler);
 }
 
 function uploadImage(){

@@ -2,8 +2,15 @@ var pageHasChangedCounter=0;
 var pageIsLoaded=0;
 
 function pageHasChanged(){
+    console.log("pageHasChanged="+pageHasChangedCounter)
     if (pageIsLoaded==0) return;
     pageHasChangedCounter++;
+    console.log("pageHasChanged="+pageHasChangedCounter)
+}
+
+function confirmPageLeave(){
+     if(pageHasChangedCounter==0) return null;
+     return "Unsaved changed! Continue?";
 }
 
 function pageLeaveHandler(){
@@ -12,14 +19,17 @@ function pageLeaveHandler(){
     $('div.editor select'  ).change(function(){pageHasChanged()});
  
     window.onbeforeunload = function() {
-         if(pageHasChangedCounter==0)return null;
-         return "Unsaved changed! Continue?";
+        return confirmPageLeave();
     };
+
     //$(window).unload(function(){});
     pageIsLoaded=1;
+    console.log("pageLeaveHandler=initialized")
+
 }
 
 function leavePage(){
     pageHasChangedCounter=0;
+    console.log("leavePage")
     return 1;
 }

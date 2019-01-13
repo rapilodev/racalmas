@@ -1,0 +1,61 @@
+
+<script src="js/edit_image.js" type="text/javascript"></script>
+<script src="js/page_leave_handler.js" type="text/javascript"></script>
+
+<TMPL_IF no_results>
+found no image
+</TMPL_IF>
+
+<TMPL_LOOP images>
+<TMPL_IF filename>
+<div id="imageEditor" class="editor">
+    <button onclick="assignImage('<TMPL_VAR filename escape=0>', '<TMPL_VAR .target>', '<TMPL_VAR .project_id>', '<TMPL_VAR .studio_id>', '<TMPL_VAR .series_id>', '<TMPL_VAR .event_id>', '<TMPL_VAR .pid>'); return false"><TMPL_VAR .loc.select_image></button/>
+
+    <div class="panel-body">
+
+    <form id="save_img_<TMPL_VAR id>"
+	    method="post" 
+	    action="image.cgi" 
+	    onsubmit="saveImage('<TMPL_VAR id>','<TMPL_VAR filename>');return false;"
+    >   
+
+        <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+        <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+
+        <label><TMPL_VAR .loc.label_name></label><br>
+        <input value="<TMPL_VAR name escape=0>" name="update_name" class="field" placeholder="<TMPL_VAR .loc.label_name>"><br>
+
+        <label><TMPL_VAR .loc.label_description></label><br>
+        <textarea class="field" name="update_description" cols="50" rows=5 placeholder="<TMPL_VAR .loc.label_description>"><TMPL_VAR description escape=0></textarea><br>
+
+        <label><TMPL_VAR .loc.label_author>/<TMPL_VAR .loc.label_licence></label><br>
+        <input name="licence" value="<TMPL_VAR licence>" class="field<TMPL_IF missing_licence> error</TMPL_IF>" placeholder="<TMPL_VAR .loc.label_licence_missing>"/><br>
+
+        <label><TMPL_VAR .loc.label_public></label>
+        <input type="checkbox" name="public" <TMPL_IF public>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF> /><br>
+
+        <TMPL_IF name="update_image">
+            <input type="hidden" name="save_image" value="<TMPL_VAR filename escape=0>" />
+            <button onclick="this.submit"><TMPL_VAR .loc.button_save></button/>
+        </TMPL_IF>
+
+        <TMPL_IF name="delete_image">
+            <button onclick="askDeleteImage('img_<TMPL_VAR id escape=0>','<TMPL_VAR filename escape=0>');return false;"><TMPL_VAR .loc.button_delete></button>
+        </TMPL_IF>
+
+        <div id="status" ></div>
+        <TMPL_VAR .loc.label_created_at> <TMPL_VAR created_at> <TMPL_VAR .loc.label_created_by> <TMPL_VAR created_by><br>
+        <TMPL_VAR .loc.label_modified_at> <TMPL_VAR modified_at> <TMPL_VAR .loc.label_modified_by> <TMPL_VAR modified_by><br>
+        <TMPL_VAR .loc.label_link>: {{<TMPL_VAR filename escape=0>|<TMPL_VAR name>}}<br>
+
+    </form>
+
+    </div>
+</div>
+</TMPL_IF>
+</TMPL_LOOP>
+
+</main>	    
+</body>
+</html>
+
