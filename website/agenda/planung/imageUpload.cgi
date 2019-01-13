@@ -43,9 +43,15 @@ my $error  = '';
 
 #get image from multiform before anything else
 if ( defined $r ) {
-
+    #$cgi               = new CGI();
+    
     #Apache2::Request
     my $apr = Apache2::Request->new( $r, POST_MAX => $upload_limit, TEMP_DIR => $tmp_dir );
+
+    $params = {
+        studio_id  => $apr->param('studio_id'),
+        project_id  => $apr->param('project_id'),
+    };
 
     #copy params to hash
     my $body = $apr->body();
@@ -62,6 +68,7 @@ if ( defined $r ) {
     } else {
         $upload = $apr->upload('image') if ( defined $params->{image} );
     }
+    print STDERR "apr\n";
 } else {
 
     #CGI fallback
@@ -71,7 +78,10 @@ if ( defined $r ) {
     $error             = $cgi->cgi_error() || $error;
     my %params = $cgi->Vars();
     $params = \%params;
+    print STDERR "fallback\n";
 }
+
+print STDERR Dumper($params);
 print "Content-type:text/html; charset=UTF-8;\n\n";
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( ( !defined $user ) || ( $user eq '' ) );
@@ -199,17 +209,24 @@ sub update_database {
         studio_id   => $params->{studio_id},
         licence     => $params->{licence}
     };
+    print STDERR Dumper($image);
 
     #connect
     $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
 
-    my $entries = images::get( $config, { filename => $image->{filename} } );
+    my $entries = images::get( $config, { 
+        filename   => $image->{filename},
+        project_id => $image->{project_id} ,
+        studio_id  => $image->{studio_id}
+    } );
     if ( ( defined $entries ) && ( scalar(@$entries) > 0 ) ) {
+        print STDERR "update image\n";
         images::update( $dbh, $image );
         my $entry = $entries->[0];
         $params->{image_id} = $entry->{id};
     } else {
+        print STDERR "insert image\n";
         $image->{created_by} = $user;
         $params->{image_id} = images::insert( $dbh, $image );
     }
