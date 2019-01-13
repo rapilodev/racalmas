@@ -1,45 +1,36 @@
-/*
-function hideImageDetails(id,filename){
-	try{$('#img_editor').dialog('close');}catch(e){}
-
-	$("#"+id).load('image.cgi?show='+filename+'&template=image_single.html');
-	return false;
+function updateCheckBox(selector, value){
+    $(selector).attr('value', value)
+    if (value==1){
+        $(selector).prop( "checked", true );
+    } else {
+        $(selector).prop( "checked", false );
+    }
 }
 
-function saveImage(id, filename) {
-	var url='image.cgi?save_image='+filename;
-	if (url!='') $.post(
-		url, 
-		$("#save_img_"+id).serialize(), 
-		function(data){
-			hideImageDetails('img_'+id, filename);
-			
-		} 
-	);
-	return false;
+function updatePublicCheckbox(elem){
+    console.log(elem.prop('checked'))
+    if (elem.prop('checked')){
+        console.log( 'set public' );
+        updateCheckBox(elem, 1);
+    }else{
+        console.log( 'unset public' );
+        updateCheckBox(elem, 0);
+    }
 }
 
-function deleteImage(id, filename) {
-	$("#"+id).load('image.cgi?delete_image='+filename);
-	hideImageDetails('img_'+id, filename);
-	$("#"+id).hide('drop');
-	return false;
-}
 
-function showImageUrl(id){
-	var el=document.getElementById(id);
-	var input_id=id+'_input';
-	var text='<input id="'+input_id+'" value="{{thumbs/'+id+'|title}}" title="3fach-Klick zum Markieren!">';
-	if (el.innerHTML==text){
-		el.innerHTML='';
-	}else{
-		el.innerHTML=text;
-		var input=document.getElementById(input_id);
-		input.focus();
-		input.select();
-		input.createTextRange().execCommand("Copy");
-	}
-	return false;
-}
+$(document).ready(
+    function(){
+        var publicCheckbox=$("#img_editor input[name='public']");
 
-*/
+        updatePublicCheckbox( publicCheckbox );
+        publicCheckbox.change(
+            function(){
+                updatePublicCheckbox($(this));
+            }
+        )        
+        console.log("image handler initialized");
+        pageLeaveHandler();
+    }
+);
+

@@ -22,7 +22,7 @@ function setActiveImage(elem){
 // open dialog to show or edit image properties
 function updateImageEditor(elem, filename, target, project_id, studio_id, series_id, event_id, pid){
 	var url='image.cgi?show='+filename;
-    url += '&template=image_edit.html';
+    url += '&template=edit_image.html';
     url += '&target=' + target;
     url += '&project_id='+project_id;
     url += '&studio_id='+studio_id;
