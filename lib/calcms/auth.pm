@@ -16,7 +16,7 @@ use time();
 use base 'Exporter';
 our @EXPORT_OK = qw(get_user login logout crypt_password);
 my $defaultExpiration = 60;
-my $tmp_dir           = '/var/tmp/';
+my $tmp_dir           = '/var/tmp/calcms-session';
 my $debug             = 0;
 
 sub debug;
@@ -158,12 +158,14 @@ sub delete_cookie {
 }
 
 #read and write server-side session data
+# expiration is in seconds
 sub create_session {
     my $user       = shift;
     my $password   = shift;
     my $expiration = shift;
 
     debug("create_session") if $debug;
+    mkdir $tmp_dir unless -e $tmp_dir;
     my $session = CGI::Session->new( undef, undef, { Directory => $tmp_dir } );
     $session->expire($expiration);
     $session->param( "user", $user );
@@ -176,7 +178,7 @@ sub read_session {
     my $session_id = shift;
 
     debug("read_session") if $debug;
-    return undef unless ( defined $session_id );
+    return undef unless defined $session_id;
 
     debug("read_session2") if $debug;
     my $session = CGI::Session->new( undef, $session_id, { Directory => $tmp_dir } );
@@ -217,18 +219,12 @@ sub authenticate {
 	};
     my $bind_values = [$user];
 
-    #print STDERR "query:".Dumper($query).Dumper($bind_values);
-
     my $users = db::get( $dbh, $query, $bind_values );
-
-    #print STDERR "result:".Dumper($users);
 
     if ( scalar(@$users) != 1 ) {
         print STDERR "auth: did not find user '$user'\n";
         return undef;
     }
-
-    #print STDERR Dumper($users);
 
     my $salt = $users->[0]->{salt};
     my $ppr = Authen::Passphrase::BlowfishCrypt->from_crypt( $users->[0]->{pass}, $users->[0]->{salt} );
@@ -239,9 +235,9 @@ sub authenticate {
         return undef;
     }
 
+    # timeout in seconds
     my $timeout = $users->[0]->{session_timeout} || 120;
-    $timeout = 10      if $timeout < 10;
-    $timeout = 12 * 60 if $timeout > 12 * 60;
+    $timeout = 60      if $timeout < 60;
 
     return {
         timeout => $timeout,
