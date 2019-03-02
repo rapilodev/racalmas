@@ -34,9 +34,9 @@
 		<div class="comment level<TMPL_VAR level>" style="float:clear;" >
 			<a name="comment_<TMPL_VAR id>" />
 			<div class="w1"><div class="w2"><div class="w3"><div class="w4">
-				<span class="author"><TMPL_VAR author escape=0></span>, 
+				<span class="author"><TMPL_VAR author escape=none></span>, 
 				<span class="date"><TMPL_VAR start_date_name> - <TMPL_VAR start_time_name></span>
-				<div class="content"><TMPL_VAR content escape=0></div>
+				<div class="content"><TMPL_VAR content escape=none></div>
 				<TMPL_IF allow.new_comments>
 					<span >
 						<a href="#calcms_add_comment_<TMPL_VAR id>_anchor"

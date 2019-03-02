@@ -78,8 +78,8 @@
     </div>
 
 	<form id="image_manager" action="image.cgi">
-		<input name="search" value="<TMPL_VAR search escape=0>" style="width:20em;">
-		<input type="hidden" name="filename" value="<TMPL_VAR filename escape=0>">
+		<input name="search" value="<TMPL_VAR search escape=none>" style="width:20em;">
+		<input type="hidden" name="filename" value="<TMPL_VAR filename escape=none>">
 		<button onclick="searchImage('<TMPL_VAR target>', '<TMPL_VAR .project_id>', '<TMPL_VAR .studio_id>', '<TMPL_VAR .series_id>', '<TMPL_VAR .event_id>', '<TMPL_VAR .pid>'); return false;"><TMPL_VAR .loc.button_search></button>
 	</form>
     <TMPL_VAR count> <TMPL_VAR .loc.label_search_hits><br />

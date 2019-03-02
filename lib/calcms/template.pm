@@ -6,6 +6,7 @@ use strict;
 use Data::Dumper;
 use HTML::Template::Compiled();
 use HTML::Template::Compiled::Plugin::XMLEscape();
+#use HTML::Template::JIT();
 use JSON();
 use Cwd();
 
@@ -64,53 +65,56 @@ sub process {
         return;
     }
 
-    #print STDERR $filename."\n";
-    log::error( $config, "cannot find template $filename " ) unless -e $filename;
-    log::error( $config, "cannot read template $filename " ) unless -r $filename;
-
-    my $default_escape = '0';
-    $default_escape = 'JS'       if ( $filename =~ /\.js$/ );
-    $default_escape = 'JS'       if ( $filename =~ /\.json$/ );
-    $default_escape = 'HTML_ALL' if ( $filename =~ /\.html$/ );
-
-    my $html_template = undef;
-
-    unless ( $filename =~ /\.xml$/ ) {
-        $html_template = HTML::Template::Compiled->new(
-            filename          => $filename,
-            die_on_bad_params => 0,
-            case_sensitive    => 0,
-            loop_context_vars => 0,
-            global_vars       => 0,
-            tagstyle          => '-asp -comment',
-            default_escape    => $default_escape,
-            cache             => 0,
-            utf8              => 1,
-        );
-    } else {
-        $html_template = HTML::Template::Compiled->new(
-            filename          => $filename,
-            die_on_bad_params => 0,
-            case_sensitive    => 1,
-            loop_context_vars => 0,
-            global_vars       => 0,
-            tagstyle          => '-asp -comment',
-            default_escape    => 'XML',
-            plugin            => [qw(HTML::Template::Compiled::Plugin::XMLEscape)],
-            utf8              => 1
-        );
+    unless (-r $filename){
+        log::error($config, qq{template "$filename" does not exist}) unless -e $filename;
+        log::error($config, qq{missing permissions to read "$filename"});
     }
+    my $html_template = initTemplate($filename);
 
-    #$params=
     setRelativeUrls( $params, 0 ) unless ( defined $params->{extern} ) && ( $params->{extern} eq '1' );
 
-    #		 HTML::Template::Compiled->preload($cache_dir);
     $html_template->param($params);
     if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
         print $html_template->output;
     } else {
         $_[1] = $html_template->output;
     }
+}
+
+sub initTemplate{
+    my $filename=shift;
+
+    my $default_escape = 'none';
+    $default_escape = 'js'       if ( $filename =~ /\.js$/ );
+    $default_escape = 'js'       if ( $filename =~ /\.json$/ );
+    $default_escape = 'html_all' if ( $filename =~ /\.html$/ );
+
+    if ( $filename =~ /\.xml$/ ) {
+        return HTML::Template::Compiled->new(
+            filename          => $filename,
+            die_on_bad_params => 1,
+            case_sensitive    => 1,
+            loop_context_vars => 0,
+            global_vars       => 0,
+            tagstyle          => '-asp -comment --comment --tt',
+            default_escape    => 'XML',
+            cache             => 1,
+            utf8              => 1,
+            plugin            => [qw(HTML::Template::Compiled::Plugin::XMLEscape)],
+        );
+    } 
+
+    return HTML::Template::Compiled->new(
+            filename          => $filename,
+        die_on_bad_params => 1,
+            case_sensitive    => 1,
+            loop_context_vars => 0,
+            global_vars       => 0,
+        tagstyle          => '-asp -comment --comment --tt',
+        default_escape    => $default_escape,
+        cache             => 1,
+        utf8              => 1,
+        );
 }
 
 # set relative urls in nested params structure

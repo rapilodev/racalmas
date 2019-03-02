@@ -11,15 +11,15 @@
 <TMPL_LOOP projects>
 <TMPL_UNLESS isEmpty>
 <select 
-    id="calcms_series_name_<TMPL_VAR js_name escape=0>" 
-    name="series_name_<TMPL_VAR js_name escape=0>" 
+    id="calcms_series_name_<TMPL_VAR js_name escape=none>" 
+    name="series_name_<TMPL_VAR js_name escape=none>" 
     title="Sendereihen durchsuchen" 
     onchange="calcms.selectSeries('<TMPL_VAR name>', jQuery(this).val())" 
     style="display:none;"
 >
 
 <option value="">- Sendereihe -</option>
-<TMPL_LOOP series_names><option value="<TMPL_VAR series_name escape=0>"<TMPL_VAR selected escape=0>><TMPL_VAR series_name> (<TMPL_VAR sum>)</option>
+<TMPL_LOOP series_names><option value="<TMPL_VAR series_name escape=none>"<TMPL_VAR selected escape=none>><TMPL_VAR series_name> (<TMPL_VAR sum>)</option>
 </TMPL_LOOP>
 
 </select>

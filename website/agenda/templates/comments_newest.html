@@ -12,8 +12,8 @@
 <TMPL_LOOP comments>
 	<a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#comments">
 	<div class="comments level<TMPL_VAR level>">
-		<span class="author"><TMPL_VAR author escape=0></span>:
-		<span class="content"><TMPL_VAR short_content escape=0></span>
+		<span class="author"><TMPL_VAR author escape=none></span>:
+		<span class="content"><TMPL_VAR short_content escape=none></span>
 	</a>
     </div>
 </TMPL_LOOP>
