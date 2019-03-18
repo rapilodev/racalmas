@@ -246,7 +246,7 @@
     </TMPL_UNLESS>
     <!-- download output -->
     <TMPL_IF download>
-        <textarea type="hidden" name="event_id" ><TMPL_VAR download></textarea>
+        <div type="hidden" name="event_id" ><TMPL_VAR download escape=none></div>
     </TMPL_IF>
 
 

@@ -755,16 +755,15 @@ sub download {
         #print $cmd."\n";
         print `$cmd`;
 
-        $request->{params}->{checked}->{download} =
-            "Hallo,\n\n"
-          . "anbei der Mitschnitt fuer\n"
+        $request->{params}->{checked}->{download} = ''
+          . qq{<a href="$url" style="padding:8px;background:#39a1f4;color:white;border-radius:4px;" download="$event->{series_name}#$event->{episode}.mp3">}
+          . q{Download: }
           . $event->{start_date_name} . ", "
           . $event->{start_time_name} . " - "
-          . $event->{series_name} . ' - '
-          . $event->{title} . ":\n"
-          . $url . "\n"
-          . "\nDer Link wird nach 7 Tagen geloescht. (bitte nicht weitergeben)\n"
-          . "Gruss, Peter\n";
+          . $event->{full_title}
+          . qq{</a>\n}
+          . qq{<pre>$url</pre>\n}
+          . qq{\nDer Link wird nach 7 Tagen geloescht.};
     }
 }
 
