@@ -74,10 +74,21 @@ sub process {
     setRelativeUrls( $params, 0 ) unless ( defined $params->{extern} ) && ( $params->{extern} eq '1' );
 
     $html_template->param($params);
+    my $output = $html_template->output();
+	if ($filename=~/html/){
+		my ($header, $content) = split(/\n\n/, $output, 2);
+		if ($content){
+			#$content =~s/\s+/ /g;
+			$output = $header."\n\n".$content;
+		}else{
+			#$output =~s/[ \t]+/ /g;
+		}
+	}
+
     if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
-        print $html_template->output;
+        print $output;
     } else {
-        $_[1] = $html_template->output;
+        $_[1] = $output;
     }
 }
 
@@ -105,16 +116,18 @@ sub initTemplate{
     } 
 
     return HTML::Template::Compiled->new(
-            filename          => $filename,
+        filename          => $filename,
         die_on_bad_params => 1,
-            case_sensitive    => 1,
-            loop_context_vars => 0,
-            global_vars       => 0,
+        case_sensitive    => 1,
+        loop_context_vars => 0,
+        global_vars       => 0,
         tagstyle          => '-asp -comment --comment --tt',
         default_escape    => $default_escape,
         cache             => 1,
         utf8              => 1,
-        );
+#pre_chomp => 1,
+#post_chomp => 1,
+    );
 }
 
 # set relative urls in nested params structure

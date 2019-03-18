@@ -54,11 +54,13 @@
 				<TMPL_VAR start_time_name> bis <TMPL_VAR end_time_name> Uhr <TMPL_IF program>(<TMPL_VAR program>)</TMPL_IF></span><br />
 			</div>
 			<div class="content" > 
+				<TMPL_COMMENT>
 				<div class="image-attach-teaser" style="width: 150px;">
 					<a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
 						<img class="image image-thumbnail" src="<TMPL_VAR image>" width="150" height="150" />
 					</a>
 				</div>
+				</TMPL_COMMENT>
 				<TMPL_VAR excerpt >
 			</div>
 				<a 	href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#comments">

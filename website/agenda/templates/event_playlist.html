@@ -13,9 +13,11 @@
 <a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>" 
 > 
     <div id="event_playlist_<TMPL_VAR event_id>" class="event"  title="<TMPL_VAR full_title><TMPL_IF excerpt>. <TMPL_VAR excerpt></TMPL_IF>">
+		<TMPL_COMMENT>
         <div class="icon">
             <img src="<TMPL_VAR icon>"></img>
         </div>
+		</TMPL_COMMENT>
         <div class="title">
             <TMPL_VAR weekday_short_name> <TMPL_VAR start_time_name><br />
             <TMPL_IF series_name><TMPL_VAR series_name><TMPL_ELSE><TMPL_VAR title></TMPL_IF>
