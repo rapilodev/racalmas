@@ -2,6 +2,7 @@
 
 use warnings "all";
 use strict;
+use utf8;
 
 #use CGI qw(header param Vars);
 
@@ -129,7 +130,7 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
     $content =~ s/(<(div|span)\s+id="calcms_title".*?>).*?(<\/(div|span)>)/$list->{project_title}/g;
 
     my $values = [];
-    for my $value ( $list->{'program'}, $list->{'series_name'}, $list->{'title'}, $list->{'location'}, $list->{'project_title'} ) {
+    for my $value ( $list->{'series_name'}, $list->{'title'}, $list->{'location'}, 'Programm '. $list->{project_title} ) {
         next unless defined $value;
         next if $value eq '';
         push @$values, $value;
