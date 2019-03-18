@@ -178,15 +178,13 @@ a{
 	border-bottom:1px solid rgba(100,100,100,0.24);
     hyphens: none;
     cursor:pointer;
-    background:rgba(200, 200, 200, 0.2);
-    color:#666;
     overflow:hidden;
   	text-overflow: ellipsis;
     transition: all .1s ease-in-out;
 }
 
 #calcms_list .event:hover{
-    background:rgba(200, 200, 200, 0.3);
+    background:rgba(200, 200, 200, 0.2);
 }
 
 #calcms_list .date{
@@ -223,7 +221,6 @@ a{
     padding:1rem;
 	font-weight:100;
     text-align:center;
-    color:rgba(0, 0, 0, 0.7);
 }
 
 @media all and (max-width: 959px) {
@@ -245,13 +242,6 @@ a{
     	width:0;
         display:none;
     }
-}
-
-#calcms_list .excerpt{
-	max-height:3.9rem;
-    overflow: hidden; 
-	text-overflow: ellipsis;
-    color:rgba(0, 0, 0, 0.7);
 }
 
 #calcms_list .event.running:hover{
@@ -291,29 +281,6 @@ a{
     font-size:12px;
 	margin-left: 1em;
     max-width:12em;
-}
-
-
-#calcms_list .piradio,
-#calcms_list .dt64,
-#calcms_list .galerie,
-#calcms_list .studiolottumstrasse,
-#calcms_list .ansage,
-#calcms_list .potsdam,
-#calcms_list .colabo{
-    color:#333;
-}
-
-#calcms_list .blnfm,
-#calcms_list .multicultfm,
-#calcms_list .ohrfunk,
-#calcms_list .twenfm,
-#calcms_list .offenerkanalberlin,
-#calcms_list .studioansage,
-#calcms_list .studiorebootfm,
-#calcms_list .frrapo,
-#calcms_list .klubradio{
-    color:#666;
 }
 
 #calcms_list hr{
