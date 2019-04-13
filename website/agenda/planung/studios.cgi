@@ -1,7 +1,9 @@
-#! /usr/bin/perl -w 
+#!/usr/bin/perl
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
+
 use Data::Dumper;
 
 use config();
@@ -194,10 +196,10 @@ sub show_studios {
         }
     );
 
-    if ($params->{setImage}){
-        for my $studio (@$studios){
+    if ( $params->{setImage} ) {
+        for my $studio (@$studios) {
             next unless $studio->{id} eq $params->{studio_id};
-            $studio->{image}=$params->{setImage};
+            $studio->{image} = $params->{setImage};
         }
     }
 

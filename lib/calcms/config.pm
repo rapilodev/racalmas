@@ -1,7 +1,8 @@
 package config;
 
-use warnings;
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use FindBin();
 use Config::General();
@@ -11,13 +12,13 @@ our @EXPORT_OK = qw(get set);
 
 my $config = undef;
 
-sub set {
+sub set($) {
     my $value = shift;
     $config = $value;
     return;
 }
 
-sub get {
+sub get($) {
     my $filename = shift;
 
     return $config if ( defined $config ) && ( $config->{cache}->{cache_config} == 1 );

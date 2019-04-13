@@ -1,9 +1,8 @@
-#! /usr/bin/perl -w 
+#!/usr/bin/perl
 
-use warnings "all";
 use strict;
-
-#no warnings 'redefine';
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use URI::Escape();
@@ -137,8 +136,9 @@ sub save_schedule {
 
     my $entry = {};
     for my $attr (
-        'project_id', 'studio_id', 'series_id',     'start', 'duration', 'exclude', 'period_type', 'end',
-        'frequency',  'weekday',   'week_of_month', 'month', 'nextDay'
+        'project_id',  'studio_id', 'series_id', 'start',   'duration',      'exclude',
+        'period_type', 'end',       'frequency', 'weekday', 'week_of_month', 'month',
+        'nextDay'
       )
     {
         $entry->{$attr} = $params->{$attr} if ( defined $params->{$attr} );
@@ -723,7 +723,8 @@ sub assign_event {
             #            print STDERR "ok\n";
         }
     } else {
-        print STDERR "no series title found for studio $entry->{studio_id} series $entry->{series_id}, event $entry->{event_id}\n";
+        print STDERR
+          "no series title found for studio $entry->{studio_id} series $entry->{series_id}, event $entry->{event_id}\n";
     }
 
     $config->{access}->{write} = 0;
@@ -852,7 +853,14 @@ sub reassign_event {
 
     #print STDERR " event\n";
     my $url =
-      'event.cgi?project_id=' . $project_id . '&studio_id=' . $studio_id . '&series_id=' . $new_series_id . '&event_id=' . $event_id;
+        'event.cgi?project_id='
+      . $project_id
+      . '&studio_id='
+      . $studio_id
+      . '&series_id='
+      . $new_series_id
+      . '&event_id='
+      . $event_id;
     print qq{<meta http-equiv="refresh" content="0; url=$url" />} . "\n";
     delete $params->{getBack};
     return 1;
@@ -1265,7 +1273,9 @@ sub check_params {
         $checked->{create_events}  = 0;
         $checked->{publish_events} = 0;
     }
-    for my $param ( 'frequency', 'duration', 'default_duration', 'create_events', 'publish_events', 'live', 'count_episodes' ) {
+    for my $param ( 'frequency', 'duration', 'default_duration', 'create_events', 'publish_events', 'live',
+        'count_episodes' )
+    {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /(\d+)/ ) ) {
             $checked->{$param} = $1;
         }

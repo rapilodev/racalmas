@@ -1,7 +1,9 @@
-#! /usr/bin/perl
+#!/usr/bin/perl
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
+
 use Data::Dumper;
 
 use Apache2::Request;
@@ -43,14 +45,15 @@ my $error  = '';
 
 #get image from multiform before anything else
 if ( defined $r ) {
+
     #$cgi               = new CGI();
-    
+
     #Apache2::Request
     my $apr = Apache2::Request->new( $r, POST_MAX => $upload_limit, TEMP_DIR => $tmp_dir );
 
     $params = {
         studio_id  => $apr->param('studio_id'),
-        project_id  => $apr->param('project_id'),
+        project_id => $apr->param('project_id'),
     };
 
     #copy params to hash
@@ -108,7 +111,7 @@ my $request = {
 
 $request = uac::prepare_request( $request, $user_presets );
 $params = $request->{params}->{checked};
-return unless defined uac::check( $config, $params, $user_presets );
+return unless uac::check( $config, $params, $user_presets ) == 1;
 
 my $permissions = $request->{permissions};
 
@@ -122,7 +125,10 @@ if ( $permissions->{create_image} ne '1' ) {
 my $file_info = undef;
 if ( $error ne '' ) {
     if ( $error =~ /limit/ ) {
-        $params->{error} .= "Image size is limited to " . int( $upload_limit / 1000000 ) . " MB!" . "Please make it smaller and try again!";
+        $params->{error} .=
+            "Image size is limited to "
+          . int( $upload_limit / 1000000 ) . " MB!"
+          . "Please make it smaller and try again!";
     } else {
         $params->{error} .= "Error:'$error'";
     }
@@ -132,7 +138,7 @@ if ( $error ne '' ) {
     $params = update_database( $config, $params, $file_info, $user ) if $params->{error} eq '';
 }
 
-print STDERR "upload error: $params->{error}\n" if $params->{error} ;
+print STDERR "upload error: $params->{error}\n" if $params->{error};
 my $out = '';
 $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'image' } );
 template::process( $config, 'print', $params->{template}, $params );
@@ -144,7 +150,6 @@ $params->{action_result} ||= '';
 $params->{filename}      ||= '';
 $params->{image_id}      ||= '';
 $params->{name}          ||= '';
-
 
 sub upload_file {
     my $config = shift;
@@ -215,11 +220,14 @@ sub update_database {
     $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
 
-    my $entries = images::get( $config, { 
-        filename   => $image->{filename},
-        project_id => $image->{project_id} ,
-        studio_id  => $image->{studio_id}
-    } );
+    my $entries = images::get(
+        $config,
+        {
+            filename   => $image->{filename},
+            project_id => $image->{project_id},
+            studio_id  => $image->{studio_id}
+        }
+    );
     if ( ( defined $entries ) && ( scalar(@$entries) > 0 ) ) {
         print STDERR "update image\n";
         images::update( $dbh, $image );
@@ -300,10 +308,11 @@ sub process_image {
     my $md5_filename = shift;
     my $content      = shift;
 
-    my $upload_path = images::getInternalPath( $config, { type => 'upload', filename => $md5_filename . '.' . $extension } );
-    my $thumb_path  = images::getInternalPath( $config, { type => 'thumbs', filename => $md5_filename . '.jpg' } );
-    my $icon_path   = images::getInternalPath( $config, { type => 'icons',  filename => $md5_filename . '.jpg' } );
-    my $image_path  = images::getInternalPath( $config, { type => 'images', filename => $md5_filename . '.jpg' } );
+    my $upload_path =
+      images::getInternalPath( $config, { type => 'upload', filename => $md5_filename . '.' . $extension } );
+    my $thumb_path = images::getInternalPath( $config, { type => 'thumbs', filename => $md5_filename . '.jpg' } );
+    my $icon_path  = images::getInternalPath( $config, { type => 'icons',  filename => $md5_filename . '.jpg' } );
+    my $image_path = images::getInternalPath( $config, { type => 'images', filename => $md5_filename . '.jpg' } );
 
     #copy file to upload space
     my $result = images::writeFile( $upload_path, $content );
@@ -396,5 +405,4 @@ sub check_params {
     }
     return $checked;
 }
-
 

@@ -1,12 +1,15 @@
-#! /usr/bin/perl -w 
+#!/usr/bin/perl
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use URI::Escape();
 use Data::Dumper;
 use MIME::Base64();
-use Text::Diff::FormattedHTML();
+
+#use Text::Diff::FormattedHTML();
+use Text::Diff::Unified::XS;
 
 use params();
 use config();
@@ -23,7 +26,7 @@ use events();
 use series_events();
 use localization();
 
-binmode STDOUT, ":utf8";
+#binmode STDOUT, ":utf8";
 
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
@@ -61,7 +64,10 @@ return unless uac::check( $config, $params, $user_presets ) == 1;
 print q{
     <script src="js/datetime.js" type="text/javascript"></script>
     <script src="js/event.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="css/event.css" type="text/css" /> 
+    <link rel="stylesheet" href="css/event.css" type="text/css" />
+
+    <script src="js/diff2html.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="css/diff2html.min.css" type="text/css" />
 };
 
 $config->{access}->{write} = 0;
@@ -167,14 +173,59 @@ sub compare {
         return;
     }
 
+    print '<textarea>' . $t1 . '</textarea>';
+    print '<textarea>' . $t2 . '</textarea>';
+
+    #log::save_file('/tmp/diff-a.txt', $t1);
+    #log::save_file('/tmp/diff-b.txt', $t2);
+    #my $diff=`/usr/bin/diff /tmp/diff-a.txt /tmp/diff-b.txt`;
+
+    my $diff = diff( \$t1, \$t2 );
+
+    #$diff=~s/\&/\&amp;/g;
+    #$diff=~s/\</\&lt;/g;
+    #$diff=~s/\>/\&gt;/g;
+    #$diff=~s/\"/\&quot;/g;
+    #$diff=~s/\'/\&#039;/g;
+    $diff =~ s/\'/\\\'/g;
+
+    #$diff=~s/\n/\'+\'/g;
+    $diff = join( qq{\\n' + '}, split( /\r?\n/, $diff ) );
+
+    #<pre id="diff">$diff</pre>
+    print qq!
+        <div id="result"></div>
+        <script>
+        var diff='$diff';
+        \$(document).ready(function(){
+            //var diff=\$('#diff').html();
+            console.log(diff)
+            var diffHtml = Diff2Html.getPrettyHtml(
+                  diff,
+                  {
+                    inputFormat: 'diff', 
+                    showFiles: true, 
+                    matching: 'words', 
+                    outputFormat: 'side-by-side'
+                }
+            );
+            document.getElementById("result").innerHTML = diffHtml;
+        });
+        </script>
+    </div>
+    </body>    
+    !;
+
+    #print '<script>var a="'.$diff.'";</script>';
+
     #print "<style>".diff_css."</style>";
     #print '<pre>';
     #my $diff=diff_strings( { vertical => 1 }, $t1, $t2);
-    my $diff = diff_strings( {}, $t1, $t2 );
+    #my $diff = Text::Diff::FormattedHTML::diff_strings( {}, $t1, $t2 );
 
     #print Text::Diff::diff(\$t1, \$t2, { STYLE => "Table" });
     #print Text::Diff::diff($v1, $v2, { STYLE => "Table" });
-    print $diff;
+    #print $diff;
 
     #print '</pre>';
 }
@@ -208,7 +259,9 @@ sub check_params {
     $checked->{debug} = $debug;
 
     #numeric values
-    for my $param ( 'id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'event_id', 'v1', 'v2' ) {
+    for
+      my $param ( 'id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'event_id', 'v1', 'v2' )
+    {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
             $checked->{$param} = $params->{$param};
         }

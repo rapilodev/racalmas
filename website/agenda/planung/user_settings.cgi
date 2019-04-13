@@ -1,7 +1,9 @@
-#! /usr/bin/perl -w 
+#! /usr/bin/perl
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
+
 use Data::Dumper;
 
 use config();
@@ -92,7 +94,7 @@ sub show_settings {
     $params->{colors}      = \@colors;
     $params->{css}         = user_settings::getColorCss( $config, { user => $user } );
     $params->{permissions} = $permissions;
-    $params->{errors}      = $errors;
+    $params->{errors}      = $errors if scalar @$errors > 0;
 
     my $user_settings = user_settings::get( $config, { user => $user } );
     my $language = $user_settings->{language} || 'en';
@@ -134,7 +136,7 @@ sub updateDefaultProjectStudio {
         user_settings::update( $config, $settings );
     } else {
         uac::print_info("insert user settings, as missing on updating default project and studio");
-        update_settings($config, $request);
+        update_settings( $config, $request );
     }
     $config->{access}->{write} = 0;
 }
@@ -160,14 +162,14 @@ sub update_settings {
     }
 
     my $settings = {
-        user       => $user,
-        colors     => join( "\n", @colors ),
-        language   => $params->{language},
-        period     => $params->{period},
+        user     => $user,
+        colors   => join( "\n", @colors ),
+        language => $params->{language},
+        period   => $params->{period},
     };
 
     my $results = user_settings::get( $config, { user => $user } );
-    if ( defined $results ) { 
+    if ( defined $results ) {
         uac::print_info("update user settings");
         $config->{access}->{write} = 1;
         user_settings::update( $config, $settings );

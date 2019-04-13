@@ -1,7 +1,8 @@
 package series_events;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc;
@@ -36,7 +37,7 @@ sub debug;
 # update main fields of the event by id
 # do not check for project,studio,series
 # all changed columns are returned for history handling
-sub save_content {
+sub save_content($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -114,7 +115,7 @@ sub save_content {
 # save event time by id
 # do not check project, studio, series
 # for history handling all changed columns are returned
-sub save_event_time {
+sub save_event_time($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -165,7 +166,7 @@ sub save_event_time {
     return $event;
 }
 
-sub set_playout_status {
+sub set_playout_status ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -208,7 +209,7 @@ sub set_playout_status {
 }
 
 # is event assigned to project, studio and series?
-sub is_event_assigned {
+sub is_event_assigned($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -230,7 +231,7 @@ sub is_event_assigned {
     return 0;
 }
 
-sub delete_event {
+sub delete_event ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -269,7 +270,7 @@ sub delete_event {
 # key permission:    permissions to be checked (one of)
 # key check_for:     user, studio, series, events, schedule
 # return error text or 1 if okay
-sub check_permission {
+sub check_permission($$) {
     my $request = shift;
     my $options = shift;
 
@@ -294,7 +295,7 @@ sub check_permission {
     #check if permissions are set (like create_event)
     my $found = 0;
     for my $permission ( split /\,/, $options->{permission} ) {
-        $found = 1 if (  defined $permissions->{$permission} ) && ( $permissions->{$permission} ) eq '1' ;
+        $found = 1 if ( defined $permissions->{$permission} ) && ( $permissions->{$permission} ) eq '1';
     }
     return 'missing permission to ' . $options->{permission} if $found == 0;
     delete $options->{permission};
@@ -343,7 +344,8 @@ sub check_permission {
     }
 
     if ( ( defined $check->{studio} ) && ( project::is_series_assigned( $config, $options ) == 0 ) ) {
-        return "Series '$series_name' ($options->{series_id}) is not assigned to studio '$studio_name' ($options->{studio_id})";
+        return
+"Series '$series_name' ($options->{series_id}) is not assigned to studio '$studio_name' ($options->{studio_id})";
     }
 
     # check series and can user update events
@@ -412,7 +414,7 @@ sub check_permission {
 # category, time_of_day,
 
 #insert event
-sub insert_event {
+sub insert_event ($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -443,7 +445,11 @@ sub insert_event {
     $event = series_events::add_event_dates( $config, $event, $params );
 
     #get event content from series
-    for my $attr ( 'program', 'series_name', 'title', 'excerpt', 'content', 'topic', 'image', 'episode', 'podcast_url', 'archive_url' ) {
+    for my $attr (
+        'program', 'series_name', 'title',       'excerpt', 'content', 'topic',
+        'image',   'episode',     'podcast_url', 'archive_url'
+      )
+    {
         $event->{$attr} = $serie->{$attr} if defined $serie->{$attr};
     }
     $event->{series_image}       = $serie->{image}   if defined $serie->{image};
@@ -488,7 +494,7 @@ sub insert_event {
 }
 
 #set start, end, start-date, end_date to an event
-sub add_event_dates {
+sub add_event_dates($$$) {
     my $config = shift;
     my $event  = shift;
     my $params = shift;
@@ -504,7 +510,7 @@ sub add_event_dates {
     return $event;
 }
 
-sub update_series_images {
+sub update_series_images ($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -530,7 +536,7 @@ sub update_series_images {
     }
 }
 
-sub error {
+sub error ($) {
     my $msg = shift;
     print "ERROR: $msg<br/>\n";
 }

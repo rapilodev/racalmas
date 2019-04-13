@@ -1,9 +1,8 @@
 #!/usr/bin/perl
 
-local $| = 0;
-
-use warnings;
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use ModPerl::Util ();
@@ -88,15 +87,15 @@ sub showPlayout {
         }
     }
 
-    my $today=time::time_to_date(time());
-    my $startDate=time::add_days_to_date( $today, -14 );
-    my $events = playout::get(
+    my $today     = time::time_to_date( time() );
+    my $startDate = time::add_days_to_date( $today, -14 );
+    my $events    = playout::get(
         $config,
-           {
+        {
             project_id => $params->{project_id},
             studio_id  => $params->{studio_id},
             order      => 'modified_at asc, start asc',
-            from => $startDate
+            from       => $startDate
         }
     );
 
@@ -105,17 +104,17 @@ sub showPlayout {
         return;
     }
 
-    
     for my $event (@$events) {
+        $event->{stream_size} ||= '';
         $event->{stream_size} =~ s/(\d)(\d\d\d)$/$1\.$2/g;
         $event->{stream_size} =~ s/(\d)(\d\d\d\.\d\d\d)$/$1\.$2/g;
-        $event->{duration}  =~ s/(\d\.\d)(\d+)$/$1/g;
-        $event->{duration}  =~ s/(\d)\.0/$1/g;
+        $event->{duration} =~ s/(\d\.\d)(\d+)$/$1/g;
+        $event->{duration} =~ s/(\d)\.0/$1/g;
         $event->{rms_left}  = formatLoudness( $event->{rms_left} );
         $event->{rms_right} = formatLoudness( $event->{rms_right} );
         $event->{bitrate}   = formatBitrate($event);
         $event->{duration}  = formatDuration($event);
-        if ($event->{start} lt $today){
+        if ( $event->{start} lt $today ) {
             $event->{class} = "past";
         }
     }
@@ -128,7 +127,7 @@ sub formatDuration {
     my $duration = $event->{duration};
     return '' unless defined $duration;
     return '' if $duration eq '';
-    my $result =  ( ( $duration +30 ) % 60)-30;
+    my $result = ( ( $duration + 30 ) % 60 ) - 30;
     my $class = "ok";
     $class = "warn"  if abs($result) > 1;
     $class = "error" if abs($result) > 2;
@@ -137,8 +136,8 @@ sub formatDuration {
 
 sub formatBitrate {
     my $event   = $_[0];
-    my $bitrate = $event->{bitrate};
-    my $mode    = $event->{bitrate_mode};
+    my $bitrate = $event->{bitrate} || '';
+    my $mode    = $event->{bitrate_mode} || '';
     if ( $bitrate ne '' ) {
         if ( $bitrate >= 200 ) {
             $bitrate = '<div class="warn">' . $bitrate . ' ' . $mode . '</div>';

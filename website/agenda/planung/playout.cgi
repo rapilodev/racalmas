@@ -1,14 +1,13 @@
-#! /usr/bin/perl -w 
+#!/usr/bin/perl 
 
-use warnings "all";
 use strict;
-use Data::Dumper;
+use warnings;
+no warnings 'redefine';
 
+use Data::Dumper;
 use URI::Escape();
 
-#use Encode();
 use localization();
-
 use params();
 use config();
 use log();

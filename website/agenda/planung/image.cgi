@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -62,13 +62,13 @@ $params = $request->{params}->{checked};
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
 
-if ($params->{search}){
-template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
-}else{
-template::process( $config, 'print', template::check( $config, 'ajax_header.html' ), $headerParams );
+if ( $params->{search} ) {
+    template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
+} else {
+    template::process( $config, 'print', template::check( $config, 'ajax_header.html' ), $headerParams );
 }
 
-return unless defined uac::check( $config, $params, $user_presets );
+return unless uac::check( $config, $params, $user_presets ) == 1;
 
 my $local_media_dir = $config->{locations}->{local_media_dir};
 my $local_media_url = $config->{locations}->{local_media_url};
@@ -220,10 +220,10 @@ sub show_image {
         'projects'   => project::get_with_dates($config),
         'project_id' => $params->{project_id},
         'studio_id'  => $params->{studio_id},
-        'series_id' => $params->{series_id},
-        'event_id'  => $params->{event_id},
-        'pid'  => $params->{pid},
-        'target'    => $params->{target},
+        'series_id'  => $params->{series_id},
+        'event_id'   => $params->{event_id},
+        'pid'        => $params->{pid},
+        'target'     => $params->{target},
         'filename'   => $params->{filename}
     };
 
@@ -340,6 +340,7 @@ sub delete_image {
     my $result = images::delete( $dbh, $image );
 
     return;
+
     #my $action_result = '';
     #my $errors        = '';
     #$result = images::delete_files( $config, $local_media_dir, $params->{delete_image}, $action_result, $errors );
@@ -393,9 +394,13 @@ sub modify_results {
 
         #reduce
         for my $permission ( 'update_image', 'delete_image' ) {
-            if ( ( defined $permissions->{ $permission . '_others' } ) && ( $permissions->{ $permission . '_others' } eq '1' ) ) {
+            if (   ( defined $permissions->{ $permission . '_others' } )
+                && ( $permissions->{ $permission . '_others' } eq '1' ) )
+            {
                 $result->{$permission} = 1;
-            } elsif ( ( defined $permissions->{ $permission . '_own' } ) && ( $permissions->{ $permission . '_own' } eq '1' ) ) {
+            } elsif ( ( defined $permissions->{ $permission . '_own' } )
+                && ( $permissions->{ $permission . '_own' } eq '1' ) )
+            {
                 next if ( $user eq '' );
                 $result->{$permission} = 1 if ( $user eq $result->{created_by} );
             }

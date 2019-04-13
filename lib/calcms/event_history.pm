@@ -1,7 +1,8 @@
 package event_history;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 
@@ -10,7 +11,7 @@ our @EXPORT_OK   = qw(get_columns get get_by_id insert insert_by_event_id delete
 
 sub debug;
 
-sub get_columns {
+sub get_columns ($){
     my $config = shift;
 
     my $dbh     = db::connect($config);
@@ -22,7 +23,7 @@ sub get_columns {
     return $columns;
 }
 
-sub get {
+sub get ($$){
     my $config    = shift;
     my $condition = shift;
 
@@ -85,7 +86,7 @@ sub get {
     return $changes;
 }
 
-sub get_by_id {
+sub get_by_id($$) {
     my $config = shift;
     my $id     = shift;
 
@@ -102,7 +103,7 @@ sub get_by_id {
     return $studios->[0];
 }
 
-sub insert {
+sub insert($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -124,7 +125,7 @@ sub insert {
 }
 
 # insert event
-sub insert_by_event_id {
+sub insert_by_event_id ($$){
     my $config  = shift;
     my $options = shift;
 
@@ -157,7 +158,7 @@ sub insert_by_event_id {
     event_history::insert( $config, $event );
 }
 
-sub delete {
+sub delete ($$){
     my $config = shift;
     my $entry  = shift;
 
@@ -165,7 +166,7 @@ sub delete {
     db::put( $dbh, 'delete from calcms_event_history where event_id=?', [ $entry->{id} ] );
 }
 
-sub error {
+sub error ($){
     my $msg = shift;
     print "ERROR: $msg<br/>\n";
 }

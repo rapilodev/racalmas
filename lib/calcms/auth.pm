@@ -1,7 +1,8 @@
 package auth;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use CGI::Simple();
 use CGI::Session qw(-ip-match);
@@ -22,7 +23,7 @@ my $debug             = 0;
 sub debug;
 
 #TODO: remove CGI
-sub get_user {
+sub get_user($$$) {
     my $config = shift;
     my $params = shift;
     my $cgi    = shift;
@@ -61,7 +62,7 @@ sub get_user {
     return $session->{user}, $session->{expires};
 }
 
-sub crypt_password {
+sub crypt_password($) {
     my $password = shift;
 
     my $ppr = Authen::Passphrase::BlowfishCrypt->new(
@@ -75,7 +76,7 @@ sub crypt_password {
     };
 }
 
-sub login {
+sub login($$$) {
     my $config   = shift;
     my $user     = shift;
     my $password = shift;
@@ -98,8 +99,9 @@ sub login {
 }
 
 #TODO: remove cgi
-sub logout {
-    my $cgi        = shift;
+sub logout($) {
+    my $cgi = shift;
+
     my $session_id = read_cookie();
     debug("logout") if $debug;
     unless ( delete_session($session_id) ) {
@@ -115,7 +117,7 @@ sub logout {
 }
 
 #read and write data from browser, http://perldoc.perl.org/CGI/Cookie.html
-sub create_cookie {
+sub create_cookie($$) {
     my $session_id = shift;
     my $timeout    = shift;
 
@@ -131,7 +133,7 @@ sub create_cookie {
     return 1;
 }
 
-sub read_cookie {
+sub read_cookie() {
     debug("read_cookie") if $debug;
     my %cookie = CGI::Cookie->fetch;
     debug( "cookies: " . Dumper( \%cookie ) ) if $debug;
@@ -144,7 +146,7 @@ sub read_cookie {
 }
 
 #TODO: remove CGI
-sub delete_cookie {
+sub delete_cookie($) {
     my $cgi = shift;
 
     debug("delete_cookie") if $debug;
@@ -157,9 +159,9 @@ sub delete_cookie {
     return 1;
 }
 
-#read and write server-side session data
+# read and write server-side session data
 # expiration is in seconds
-sub create_session {
+sub create_session ($$$) {
     my $user       = shift;
     my $password   = shift;
     my $expiration = shift;
@@ -174,7 +176,7 @@ sub create_session {
     return $session->id();
 }
 
-sub read_session {
+sub read_session($) {
     my $session_id = shift;
 
     debug("read_session") if $debug;
@@ -194,7 +196,7 @@ sub read_session {
     };
 }
 
-sub delete_session {
+sub delete_session($) {
     my $session_id = shift;
 
     debug("delete_session") if $debug;
@@ -205,7 +207,7 @@ sub delete_session {
 }
 
 #check user authentication
-sub authenticate {
+sub authenticate($$$) {
     my $config   = shift;
     my $user     = shift;
     my $password = shift;
@@ -237,7 +239,7 @@ sub authenticate {
 
     # timeout in seconds
     my $timeout = $users->[0]->{session_timeout} || 120;
-    $timeout = 60      if $timeout < 60;
+    $timeout = 60 if $timeout < 60;
 
     return {
         timeout => $timeout,
@@ -245,7 +247,7 @@ sub authenticate {
     };
 }
 
-sub show_login_form {
+sub show_login_form ($$) {
     my $user    = shift              || '';
     my $uri     = $ENV{HTTP_REFERER} || '';
     my $message = shift              || '';
@@ -359,7 +361,7 @@ sub show_login_form {
     return undef;
 }
 
-sub debug {
+sub debug ($) {
     my $message = shift;
     print STDERR "$message\n" if $debug > 0;
     return;

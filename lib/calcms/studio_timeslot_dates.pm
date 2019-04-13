@@ -1,7 +1,8 @@
 package studio_timeslot_dates;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc();
@@ -16,7 +17,7 @@ our @EXPORT_OK   = qw(get_columns get insert update delete get_dates);
 
 sub debug;
 
-sub get_columns {
+sub get_columns ($){
     my $config = shift;
 
     my $dbh     = db::connect($config);
@@ -30,7 +31,7 @@ sub get_columns {
 
 # get all studio_timeslot_dates for studio_id within given time range
 # calculate start_date, end_date, weeday, day from start and end(datetime)
-sub get {
+sub get ($$){
     my $config    = shift;
     my $condition = shift;
 

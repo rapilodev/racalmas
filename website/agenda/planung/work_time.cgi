@@ -1,13 +1,11 @@
-#! /usr/bin/perl -w 
+#!/usr/bin/perl
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use URI::Escape();
-
-#use Encode();
-
 use params();
 use config();
 use log();
@@ -20,7 +18,6 @@ use studios();
 use work_schedule();
 use work_dates();
 use localization();
-
 binmode STDOUT, ":utf8";
 
 my $r = shift;
@@ -93,8 +90,9 @@ sub save_schedule {
 
     my $entry = {};
     for my $attr (
-        'project_id', 'studio_id',     'start', 'duration', 'exclude', 'period_type', 'end', 'frequency',
-        'weekday',    'week_of_month', 'month', 'title',    'type'
+        'project_id', 'studio_id', 'start',   'duration',      'exclude', 'period_type',
+        'end',        'frequency', 'weekday', 'week_of_month', 'month',   'title',
+        'type'
       )
     {
         $entry->{$attr} = $params->{$attr} if ( defined $params->{$attr} );

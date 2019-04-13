@@ -1,7 +1,8 @@
 package params;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use Apache2::Request();
@@ -12,11 +13,11 @@ our @EXPORT_OK = qw(get isJson);
 sub debug;
 my $isJson = 0;
 
-sub isJson {
+sub isJson () {
     return $isJson;
 }
 
-sub get {
+sub get ($) {
     my $r = shift;
 
     my $tmp_dir      = '/var/tmp/';
@@ -50,18 +51,18 @@ sub get {
     $isJson = 1 if ( defined $params->{json} ) && ( $params->{json} eq '1' );
 
     if ( defined $status ) {
-        $status = '' if  $status eq 'Success' ;
-        $status = '' if  $status eq 'Missing input data' ;
-        if  ($status ne ''){
-            $cgi=new CGI::Simple() unless defined $cgi;
+        $status = '' if $status eq 'Success';
+        $status = '' if $status eq 'Missing input data';
+        if ( $status ne '' ) {
+            $cgi = new CGI::Simple() unless defined $cgi;
             print $cgi->header . $status . "\n";
-        } ;
+        }
     }
 
     return ( $cgi, $params, $status );
 }
 
-sub debug {
+sub debug ($) {
     my $message = shift;
 }
 

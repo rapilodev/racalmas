@@ -1,7 +1,9 @@
-#! /usr/bin/perl -w 
+#!/usr/bin/perl
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
+
 use Data::Dumper;
 
 use config();
@@ -230,7 +232,8 @@ sub show_projects {
     for my $project (@$projects) {
 
         # get assigned studios
-        my $project_studio_assignements = project::get_studio_assignments( $config, { project_id => $project->{project_id} } );
+        my $project_studio_assignements =
+          project::get_studio_assignments( $config, { project_id => $project->{project_id} } );
         $project->{pid} = $project->{project_id};
 
         # get assigned studios by id
@@ -255,8 +258,8 @@ sub show_projects {
         $project->{assigned_studios}   = $assigned_studios;
         $project->{unassigned_studios} = $unassigned_studios;
 
-        if ( (defined $params->{setImage}) && ($project->{pid} eq $params->{pid}) ){
-            $project->{image} = $params->{setImage};          
+        if ( ( defined $params->{setImage} ) && ( $project->{pid} eq $params->{pid} ) ) {
+            $project->{image} = $params->{setImage};
         }
     }
 

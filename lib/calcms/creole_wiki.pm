@@ -1,7 +1,8 @@
 package creole_wiki;
 
-use warnings;
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use markup();
@@ -10,7 +11,7 @@ use base 'Exporter';
 our @EXPORT_OK   = qw(extractEventFromWikiText removeMeta eventToWikiText extractMeta removeMeta metaToWiki);
 
 #convert creole wiki text to event
-sub extractEventFromWikiText {
+sub extractEventFromWikiText($;$) {
     my $params = shift;
     my $event  = shift;
     $event = {} unless ( defined $event );
@@ -134,7 +135,7 @@ sub extractEventFromWikiText {
     return $event;
 }
 
-sub eventToWikiText {
+sub eventToWikiText($$) {
     my $event = shift;
     my $local_media_url = $event->{local_media_url} || '';
 
@@ -195,7 +196,7 @@ sub eventToWikiText {
 }
 
 #extrace meta tags from comment text
-sub extractMeta {
+sub extractMeta ($$){
     my $comments = shift;
     my $meta     = shift;
 
@@ -236,7 +237,7 @@ sub extractMeta {
 }
 
 #remove meta tags from comment text
-sub removeMeta {
+sub removeMeta($) {
     my $comments = shift || '';
 
     my $result = '';

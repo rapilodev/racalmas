@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -75,7 +75,7 @@ unless ( params::isJson() ) {
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
     template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
 }
-return unless defined uac::check( $config, $params, $user_presets );
+return unless uac::check( $config, $params, $user_presets ) == 1;
 
 print q{
     <script src="js/datetime.js" type="text/javascript"></script>
@@ -296,7 +296,8 @@ sub show_event {
     $params->{event_edited} = 1 if ( ( $params->{action} eq 'save' ) && ( !( defined $params->{error} ) ) );
     $params->{event_edited} = 1 if ( $params->{action} eq 'delete' );
     $params->{event_edited} = 1 if ( ( $params->{action} eq 'create_event' ) && ( !( defined $params->{error} ) ) );
-    $params->{event_edited} = 1 if ( ( $params->{action} eq 'create_event_from_schedule' ) && ( !( defined $params->{error} ) ) );
+    $params->{event_edited} = 1
+      if ( ( $params->{action} eq 'create_event_from_schedule' ) && ( !( defined $params->{error} ) ) );
     $params->{user} = $params->{presets}->{user};
 
     # remove all edit permissions if event is over for more than 2 weeks
@@ -782,7 +783,10 @@ sub check_params {
     $checked->{debug} = $debug;
 
     #numeric values
-    for my $param ( 'id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'event_id', 'source_event_id', 'episode' )
+    for my $param (
+        'id',       'project_id',      'studio_id', 'default_studio_id', 'user_id', 'series_id',
+        'event_id', 'source_event_id', 'episode'
+      )
     {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
             $checked->{$param} = $params->{$param};
@@ -820,8 +824,9 @@ sub check_params {
 
     #strings
     for my $param (
-        'series_name',  'title',        'excerpt',    'content',      'topic',       'program', 'category', 'image',
-        'series_image', 'user_content', 'user_title', 'user_excerpt', 'podcast_url', 'archive_url', 'setImage'
+        'series_name', 'title',       'excerpt',      'content',      'topic',      'program',
+        'category',    'image',       'series_image', 'user_content', 'user_title', 'user_excerpt',
+        'podcast_url', 'archive_url', 'setImage'
       )
     {
         if ( defined $params->{$param} ) {
@@ -844,7 +849,8 @@ sub check_params {
     $checked->{action} = '';
     if ( defined $params->{action} ) {
         if ( $params->{action} =~
-            /^(save|delete|download|show_new_event|show_new_event_from_schedule|create_event|create_event_from_schedule|get_json)$/ )
+/^(save|delete|download|show_new_event|show_new_event_from_schedule|create_event|create_event_from_schedule|get_json)$/
+          )
         {
             $checked->{action} = $params->{action};
         }

@@ -1,7 +1,8 @@
 package series_dates;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc();
@@ -16,11 +17,11 @@ use series_schedule();
 # columns: id, studio_id, series_id, start(datetime), end(datetime)
 # TODO: delete column schedule_id
 use base 'Exporter';
-our @EXPORT_OK   = qw(get_columns get insert update delete get_dates get_series);
+our @EXPORT_OK = qw(get_columns get insert update delete get_dates get_series);
 
 sub debug;
 
-sub get_columns {
+sub get_columns ($) {
     my $config = shift;
 
     my $dbh     = db::connect($config);
@@ -34,7 +35,7 @@ sub get_columns {
 
 # get all series_dates for studio_id and series_id within given time range
 # calculate start_date, end_date, weeday, day from start and end(datetime)
-sub get {
+sub get ($;$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -47,7 +48,6 @@ sub get {
         push @conditions,  'project_id=?';
         push @bind_values, $condition->{project_id};
     }
-
     if ( ( defined $condition->{studio_id} ) && ( $condition->{studio_id} ne '' ) ) {
         push @conditions,  'studio_id=?';
         push @bind_values, $condition->{studio_id};
@@ -116,7 +116,7 @@ sub get {
 }
 
 #check if event is scheduled (on permission check)
-sub is_event_scheduled {
+sub is_event_scheduled($$) {
     my $request = shift;
     my $options = shift;
 
@@ -140,12 +140,13 @@ sub is_event_scheduled {
 }
 
 #get all series for given studio_id, time range and search
-sub get_series {
+sub get_series($;$) {
     my $config    = shift;
     my $condition = shift;
 
     my $date_range_include = 0;
-    $date_range_include = 1 if ( defined $condition->{date_range_include} ) && ( $condition->{date_range_include} == 1 );
+    $date_range_include = 1
+      if ( defined $condition->{date_range_include} ) && ( $condition->{date_range_include} == 1 );
 
     my $dbh = db::connect($config);
 
@@ -259,7 +260,7 @@ sub get_series {
     return $entries;
 }
 
-sub addSeriesScheduleAttributes {
+sub addSeriesScheduleAttributes ($$) {
     my $config  = shift;
     my $entries = shift;
 
@@ -295,7 +296,7 @@ sub addSeriesScheduleAttributes {
 }
 
 #update series dates for all schedules of a series and studio_id
-sub update {
+sub update($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -383,7 +384,7 @@ sub update {
     return $j . " dates out of studio times, " . $i;
 }
 
-sub get_schedule_dates {
+sub get_schedule_dates($$) {
     my $schedule = shift;
     my $options  = shift;
 
@@ -412,7 +413,7 @@ sub get_schedule_dates {
     return $dates;
 }
 
-sub get_week_of_month_dates {
+sub get_week_of_month_dates ($$$$$$$) {
     my $start     = shift;    # datetime string
     my $end       = shift;    # datetime string
     my $duration  = shift;    # in minutes
@@ -463,7 +464,7 @@ sub get_week_of_month_dates {
 }
 
 #add duration to a single date
-sub get_single_date {
+sub get_single_date ($$) {
     my $start_datetime = shift;
     my $duration       = shift;
 
@@ -483,12 +484,12 @@ sub get_single_date {
 }
 
 #calculate all dates between start_datetime and end_date with duration(minutes) and frequency(days)
-sub get_dates {
+sub get_dates($$$$) {
     my $start_datetime = shift;
     my $end_date       = shift;
     my $duration       = shift;    # in minutes
     my $frequency      = shift;    # in days
-                                   #print "start_datetime:$start_datetime end_date:$end_date duration:$duration frequency:$frequency\n";
+         #print "start_datetime:$start_datetime end_date:$end_date duration:$duration frequency:$frequency\n";
 
     my @start = @{ time::datetime_to_array($start_datetime) };
     return unless @start >= 6;
@@ -540,7 +541,7 @@ sub get_dates {
 }
 
 #remove all series_dates for studio_id and series_id
-sub delete {
+sub delete ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -562,7 +563,7 @@ sub delete {
 }
 
 # get all series dates where no event has been created for
-sub getDatesWithoutEvent {
+sub getDatesWithoutEvent ($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -592,7 +593,7 @@ sub getDatesWithoutEvent {
 
 }
 
-sub error {
+sub error($) {
     my $msg = shift;
     print "ERROR: $msg<br/>\n";
 }

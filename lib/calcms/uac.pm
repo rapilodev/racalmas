@@ -1,6 +1,8 @@
 package uac;
-use warnings "all";
+
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use CGI::Session qw(-ip-match);
 use CGI::Cookie();
@@ -28,7 +30,7 @@ our @EXPORT_OK = qw(
 sub debug;
 
 # get user by name
-sub get_user {
+sub get_user($$) {
     my $config = shift;
     my $user   = shift;
 
@@ -49,7 +51,7 @@ sub get_user {
 }
 
 # get all users
-sub get_users {
+sub get_users($;$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -82,7 +84,7 @@ sub get_users {
 
 # get all users of a given studio id
 # used at series (previously named get_studio_users)
-sub get_users_by_studio {
+sub get_users_by_studio ($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -117,7 +119,7 @@ sub get_users_by_studio {
 }
 
 # get projects a user is assigned by name
-sub get_projects_by_user {
+sub get_projects_by_user ($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -156,7 +158,7 @@ sub get_projects_by_user {
 
 # get all studios a user is assigned to by role
 # used at series (previously named get_user_studios)
-sub get_studios_by_user {
+sub get_studios_by_user ($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -192,7 +194,7 @@ sub get_studios_by_user {
     return $users;
 }
 
-sub insert_user {
+sub insert_user($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -203,7 +205,7 @@ sub insert_user {
     db::insert( $dbh, 'calcms_users', $entry );
 }
 
-sub update_user {
+sub update_user($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -223,7 +225,7 @@ sub update_user {
     db::put( $dbh, $query, \@bind_values );
 }
 
-sub delete_user {
+sub delete_user($$) {
     my $config = shift;
     my $id     = shift;
     return unless ( defined $id && ( $id =~ /^\d+$/ ) );
@@ -238,7 +240,7 @@ sub delete_user {
 
 # get all roles used by all users of a studio
 # available conditions: project_id, studio_id
-sub get_studio_roles {
+sub get_studio_roles($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -273,7 +275,7 @@ sub get_studio_roles {
 }
 
 # get role columns (for external use only)
-sub get_role_columns {
+sub get_role_columns($) {
     my $config  = shift;
     my $dbh     = db::connect($config);
     my $columns = db::get_columns_hash( $dbh, 'calcms_roles' );
@@ -282,7 +284,7 @@ sub get_role_columns {
 
 # get roles
 # filter: studio_id project_id
-sub get_roles {
+sub get_roles($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -313,7 +315,7 @@ sub get_roles {
 }
 
 #insert role to database, set created_at and modified_at
-sub insert_role {
+sub insert_role ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -330,7 +332,7 @@ sub insert_role {
 }
 
 #update role, set modified_at
-sub update_role {
+sub update_role($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -354,7 +356,7 @@ sub update_role {
 }
 
 # delete role from database
-sub delete_role {
+sub delete_role($$) {
     my $config = shift;
     my $id     = shift;
 
@@ -370,7 +372,7 @@ sub delete_role {
 
 # get all roles for given conditions: project_id, studio_id, user_id, name
 # includes global admin user role
-sub get_user_roles {
+sub get_user_roles($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -425,7 +427,7 @@ sub get_user_roles {
 }
 
 #return admin user roles for given conditions: project_id, studio_id, user, user_id
-sub get_admin_user_roles {
+sub get_admin_user_roles ($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -468,7 +470,7 @@ sub get_admin_user_roles {
 # read permissions for given conditions and add to user_permissions
 # return user_permissions
 # studio_id, user_id, name
-sub get_user_permissions {
+sub get_user_permissions ($$;$) {
     my $config           = shift;
     my $conditions       = shift;
     my $user_permissions = shift;
@@ -478,8 +480,8 @@ sub get_user_permissions {
     my @user_roles = ( @$admin_roles, @$user_roles );
 
     #set default permissions
-    $user_permissions = {} unless ( defined $user_permissions );
-    $user_permissions->{is_admin} = 1 if ( scalar @$admin_roles > 0 );
+    $user_permissions = {} unless defined $user_permissions;
+    $user_permissions->{is_admin} = 1 if scalar @$admin_roles > 0;
 
     my $max_level = 0;
 
@@ -501,7 +503,8 @@ sub get_user_permissions {
                 && ( $permission ne 'studio_id' )
                 && ( $permission ne 'project_id' ) )
             {
-                $user_permissions->{$permission} = 1 if ( defined $user_role->{$permission} ) && ( $user_role->{$permission} ne '0' );
+                $user_permissions->{$permission} = 1
+                  if ( defined $user_role->{$permission} ) && ( $user_role->{$permission} ne '0' );
             }
         }
     }
@@ -509,7 +512,7 @@ sub get_user_permissions {
 }
 
 #get user id by user name
-sub get_user_id {
+sub get_user_id ($$) {
     my $config = shift;
     my $user   = shift;
 
@@ -527,7 +530,7 @@ sub get_user_id {
 }
 
 #get role id by role name
-sub get_role_id {
+sub get_role_id ($$) {
     my $config = shift;
     my $role   = shift;
 
@@ -545,7 +548,7 @@ sub get_role_id {
 }
 
 # assign a role to an user (for a studio)
-sub assign_user_role {
+sub assign_user_role($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -561,8 +564,9 @@ sub assign_user_role {
 		from 	calcms_user_roles
 		where 	project_id=? and studio_id=? and user_id=? and role_id=?
 	};
-    my $dbh = db::connect($config);
-    my $user_roles = db::get( $dbh, $query, [ $options->{project_id}, $options->{studio_id}, $options->{user_id}, $options->{role_id} ] );
+    my $dbh        = db::connect($config);
+    my $user_roles = db::get( $dbh, $query,
+        [ $options->{project_id}, $options->{studio_id}, $options->{user_id}, $options->{role_id} ] );
     return undef if scalar @$user_roles > 0;
 
     #insert entry
@@ -578,7 +582,7 @@ sub assign_user_role {
 }
 
 # unassign a user from a role of (for a studio)
-sub remove_user_role {
+sub remove_user_role($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -603,7 +607,7 @@ sub remove_user_role {
 }
 
 #checks
-sub is_user_assigned_to_studio {
+sub is_user_assigned_to_studio ($$) {
     my $request = shift;
     my $options = shift;
 
@@ -626,26 +630,26 @@ sub is_user_assigned_to_studio {
 
 # print errors at get_user_presets and check for project id and studio id
 # call after header is printed
-sub check {
+sub check($$$) {
     my $config       = shift;
     my $params       = shift;
     my $user_presets = shift;
 
     if ( defined $user_presets->{error} ) {
         uac::print_error( $user_presets->{error} );
-        return undef;
+        return 0;
     }
 
     my $project_check = project::check( $config, { project_id => $params->{project_id} } );
     if ( $project_check ne '1' ) {
         uac::print_error($project_check);
-        return undef;
+        return 0;
     }
 
     my $studio_check = studios::check( $config, { studio_id => $params->{studio_id} } );
     if ( $studio_check ne '1' ) {
         uac::print_error($studio_check);
-        return undef;
+        return 0;
     }
     return 1;
 }
@@ -653,7 +657,7 @@ sub check {
 # get user, projects and studios user is assigned to for selected values from params
 # set permissions for selected project and studio
 # return request
-sub get_user_presets {
+sub get_user_presets($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -666,8 +670,8 @@ sub get_user_presets {
     $config->{access}->{write} = 0;
 
     my $user_settings = user_settings::get( $config, { user => $user } );
-    $project_id = $user_settings->{project_id} if $project_id eq '';
-    $studio_id  = $user_settings->{studio_id}  if $studio_id eq '';
+    $project_id = $user_settings->{project_id} || '' if $project_id eq '';
+    $studio_id  = $user_settings->{studio_id}  || '' if $studio_id eq '';
 
     #get
     my $admin_roles = get_admin_user_roles( $config, { user => $user } );
@@ -732,7 +736,8 @@ sub get_user_presets {
         }
     }
 
-    my $permissions = uac::get_user_permissions( $config, { user => $user, project_id => $project_id, studio_id => $studio_id } );
+    my $permissions =
+      uac::get_user_permissions( $config, { user => $user, project_id => $project_id, studio_id => $studio_id } );
 
     #only admin is allowed to select all projects
     #    if($permissions->{is_admin}==1){
@@ -780,7 +785,7 @@ sub get_user_presets {
     return $result;
 }
 
-sub setDefaultProject {
+sub setDefaultProject ($$) {
     my $params       = shift;
     my $user_presets = shift;
 
@@ -789,7 +794,7 @@ sub setDefaultProject {
     return $params;
 }
 
-sub setDefaultStudio {
+sub setDefaultStudio($$) {
     my $params       = shift;
     my $user_presets = shift;
 
@@ -799,7 +804,7 @@ sub setDefaultStudio {
 }
 
 #set user preset properties to request
-sub prepare_request {
+sub prepare_request ($$) {
     my $request      = shift;
     my $user_presets = shift;
 
@@ -815,7 +820,7 @@ sub prepare_request {
 }
 
 #TODO: shift to permissions sub entry
-sub set_template_permissions {
+sub set_template_permissions ($$) {
     my $permissions = shift;
     my $params      = shift;
 
@@ -826,25 +831,34 @@ sub set_template_permissions {
 }
 
 #print error message
-sub permissions_denied {
+sub permissions_denied($) {
     my $message = shift;
     $message =~ s/_/ /g;
     print '<div class="error">Sorry! Missing permissions to ' . $message . '</div>' . "\n";
     print STDERR 'Sorry! Missing permissions to ' . $message . "\n";
 }
 
-sub print_info {
-    print '<div class="ok head">' . '<span class="ui-icon ui-icon-check" style="float:left"></span>&nbsp;' . $_[0] . '</div>' . "\n";
+sub print_info($) {
+    print '<div class="ok head">'
+      . '<span class="ui-icon ui-icon-check" style="float:left"></span>&nbsp;'
+      . $_[0]
+      . '</div>' . "\n";
 }
 
-sub print_warn {
-    print '<div class="warn head">' . '<span class="ui-icon ui-icon-info" style="float:left"></span>&nbsp;' . $_[0] . '</div>' . "\n";
+sub print_warn($) {
+    print '<div class="warn head">'
+      . '<span class="ui-icon ui-icon-info" style="float:left"></span>&nbsp;'
+      . $_[0]
+      . '</div>' . "\n";
 }
 
-sub print_error {
+sub print_error ($) {
     my $message = shift;
     print STDERR "ERROR:" . $message . "\n";
-    print '<div class="error" head>' . '<span class="ui-icon ui-icon-alert" style="float:left"></span>&nbsp;' . $message . '</div>' . "\n";
+    print '<div class="error" head>'
+      . '<span class="ui-icon ui-icon-alert" style="float:left"></span>&nbsp;'
+      . $message
+      . '</div>' . "\n";
 }
 
 #do not delete last line!

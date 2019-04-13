@@ -1,8 +1,8 @@
-#! /usr/bin/perl -w
+#!/usr/bin/perl
 
-use warnings "all";
 use strict;
-use Data::Dumper;
+use warnings;
+no warnings 'redefine';
 
 use URI::Escape();
 use Encode();
@@ -240,7 +240,11 @@ sub assign_events {
 "event not found for project $entry->{project_id}, studio $entry->{studio_id}, series $entry->{series_id}, event $entry->{event_id}\n";
             next;
         }
-        print STDERR "'" . $event->{event_id} . "' '" . $event->{series_name} . "' '" . $event->{title} . "' '" . $event->{episode} . "'\n";
+        print STDERR "'"
+          . $event->{event_id} . "' '"
+          . $event->{series_name} . "' '"
+          . $event->{title} . "' '"
+          . $event->{episode} . "'\n";
 
         #next;
 
@@ -318,7 +322,8 @@ sub assign_events {
                 #            print STDERR "ok\n";
             }
         } else {
-            print STDERR "no series title found for studio $entry->{studio_id} series $entry->{series_id}, event $entry->{event_id}\n";
+            print STDERR
+"no series title found for studio $entry->{studio_id} series $entry->{series_id}, event $entry->{event_id}\n";
             next;
         }
 
@@ -392,7 +397,9 @@ sub check_params {
         $checked->{create_events}  = 0;
         $checked->{publish_events} = 0;
     }
-    for my $param ( 'frequency', 'duration', 'default_duration', 'create_events', 'publish_events', 'live', 'count_episodes' ) {
+    for my $param ( 'frequency', 'duration', 'default_duration', 'create_events', 'publish_events', 'live',
+        'count_episodes' )
+    {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /(\d+)/ ) ) {
             $checked->{$param} = $1;
         }

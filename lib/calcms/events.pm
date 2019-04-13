@@ -1,7 +1,8 @@
 package events;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use DBI();
@@ -10,7 +11,7 @@ use template();
 use config();
 use time();
 use db();
-use cache();
+
 use markup();
 use log();
 use project();
@@ -37,7 +38,7 @@ our @EXPORT_OK = qw(
 sub init {
 }
 
-sub get_cached_or_render {
+sub get_cached_or_render($$$) {
 
     #    my $response=$_[0];
     my $config  = $_[1];
@@ -46,31 +47,13 @@ sub get_cached_or_render {
     my $params = $request->{params}->{checked};
     my $debug  = $config->{system}->{debug};
 
-    my $cache = {};
-    if ( $config->{cache}->{use_cache} == 1 ) {
-        events::configure_cache($config);
-        $cache = cache::load( $config, $params );
-        if ( defined $cache->{content} ) {
-            $_[0] = $cache->{content};
-            return;
-        }
-    }
-
     my $results = events::get( $config, $request );
     events::render( $_[0], $config, $request, $results );
-
-    #write to cache
-    if ( $config->{cache}->{use_cache} == 1 ) {
-
-        #todo:put out reference only
-        $cache->{content} = $_[0];
-        cache::save($cache);
-    }
 
     return $_[0];
 }
 
-sub get {
+sub get($$) {
     my $config  = shift;
     my $request = shift;
 
@@ -92,7 +75,7 @@ sub get {
     return $results;
 }
 
-sub modify_results {
+sub modify_results ($$$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $request = shift;
@@ -242,14 +225,14 @@ sub modify_results {
         $result->{one_comment} = 1 if ( $result->{comment_count} == 1 );
         $result->{no_comment}  = 1 if ( $result->{comment_count} == 0 );
 
-        #fix image url
-        #$params->{exclude_event_images}=0 unless defined $params->{exclude_event_images};
-        #if ($params->{exclude_event_images}==1){
-        #    if ( (defined $config->{permissions}->{hide_event_images}) && ($config->{permissions}->{hide_event_images} eq '1') ){
-        #        $result->{image}       = $result->{series_image};
-        #        $result->{image_label} = $result->{series_image_label};
-        #    }
-        #}
+#fix image url
+#$params->{exclude_event_images}=0 unless defined $params->{exclude_event_images};
+#if ($params->{exclude_event_images}==1){
+#    if ( (defined $config->{permissions}->{hide_event_images}) && ($config->{permissions}->{hide_event_images} eq '1') ){
+#        $result->{image}       = $result->{series_image};
+#        $result->{image_label} = $result->{series_image_label};
+#    }
+#}
 
         if ( defined $result->{image} ) {
             my $url = $config->{locations}->{local_media_url} || '';
@@ -504,7 +487,8 @@ sub calc_dates {
     if (   ( defined $params->{template} )
         && ( $params->{template} =~ /(\.xml)/ ) )
     {
-        $result->{start_datetime_utc} = time::datetime_to_utc_datetime( $result->{start_datetime}, $config->{date}->{time_zone} );
+        $result->{start_datetime_utc} =
+          time::datetime_to_utc_datetime( $result->{start_datetime}, $config->{date}->{time_zone} );
     }
 
     $result->{end_datetime} = $result->{end};
@@ -521,7 +505,8 @@ sub calc_dates {
     if (   ( defined $params->{template} )
         && ( $params->{template} =~ /(\.xml)/ ) )
     {
-        $result->{end_datetime_utc} = time::datetime_to_utc_datetime( $result->{end_datetime}, $config->{date}->{time_zone} );
+        $result->{end_datetime_utc} =
+          time::datetime_to_utc_datetime( $result->{end_datetime}, $config->{date}->{time_zone} );
     }
 
     if (   ( defined $previous_result )
@@ -550,15 +535,15 @@ sub calc_dates {
     if ( defined $result->{weekday} ) {
         my $language = $config->{date}->{language} || 'en';
 
-        my $weekdayIndex = time::getWeekdayIndex($result->{weekday}) || 0;
-        
-        $result->{weekday_name} = time::getWeekdayNames($language)->[$weekdayIndex];
+        my $weekdayIndex = time::getWeekdayIndex( $result->{weekday} ) || 0;
+
+        $result->{weekday_name}       = time::getWeekdayNames($language)->[$weekdayIndex];
         $result->{weekday_short_name} = time::getWeekdayNamesShort($language)->[$weekdayIndex];
     }
     return $result;
 }
 
-sub add_recordings {
+sub add_recordings($$$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $request = shift;
@@ -606,7 +591,7 @@ sub add_recordings {
     return $events;
 }
 
-sub getDateQueryConditions {
+sub getDateQueryConditions ($$$) {
     my $config      = shift;
     my $params      = shift;
     my $bind_values = shift;
@@ -770,7 +755,7 @@ sub getDateQueryConditions {
 }
 
 # if recordings is set in params, recordings date and path will be included
-sub get_query {
+sub get_query($$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $request = shift;
@@ -1130,7 +1115,7 @@ sub get_query {
     return ( \$query, $bind_values );
 }
 
-sub render {
+sub render($$$$;$) {
 
     #    my $response    = $_[0];
     my $config      = $_[1];
@@ -1220,7 +1205,8 @@ sub render {
 
     $template_parameters->{controllers}       = $config->{controllers};
     $template_parameters->{hide_event_images} = 1
-      if ( defined $config->{permissions}->{hide_event_images} ) && ( $config->{permissions}->{hide_event_images} == 1 );
+      if ( defined $config->{permissions}->{hide_event_images} )
+      && ( $config->{permissions}->{hide_event_images} == 1 );
 
     #    use Data::Dumper;print STDERR Dumper($template_parameters)."\n";
     template::process( $config, $_[0], $params->{template}, $template_parameters );
@@ -1228,7 +1214,7 @@ sub render {
     return $_[0];
 }
 
-sub get_running_event_id {
+sub get_running_event_id($) {
     my $dbh = shift;
 
     my $query = qq{
@@ -1255,7 +1241,7 @@ sub get_running_event_id {
 }
 
 # add filters to query
-sub setDefaultEventConditions {
+sub setDefaultEventConditions ($$$$) {
     my $config      = shift;
     my $conditions  = $_[0];
     my $bind_values = $_[1];
@@ -1293,7 +1279,7 @@ sub setDefaultEventConditions {
 }
 
 # for local use only or add support for exclude_projects and exclude_locations
-sub getEventById {
+sub getEventById ($$$$) {
     my $dbh      = shift;
     my $config   = shift;
     my $event_id = shift;
@@ -1320,7 +1306,7 @@ sub getEventById {
     return $events;
 }
 
-sub get_next_event_of_series {
+sub get_next_event_of_series ($$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $options = shift;
@@ -1360,7 +1346,7 @@ sub get_next_event_of_series {
     return $events->[0]->{id};
 }
 
-sub get_previous_event_of_series {
+sub get_previous_event_of_series($$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $options = shift;
@@ -1398,7 +1384,7 @@ sub get_previous_event_of_series {
 }
 
 # used by calendar
-sub get_by_date_range {
+sub get_by_date_range ($$$$$) {
     my $dbh        = shift;
     my $config     = shift;
     my $start_date = shift;
@@ -1423,7 +1409,8 @@ sub get_by_date_range {
     $conditions = join( ' and ', @$conditions );
 
     my $select = qq{distinct date(start) 'start_date'};
-    $select = qq{distinct date(DATE_SUB(start, INTERVAL $day_starting_hour HOUR)) 'start_date'} if defined $day_starting_hour;
+    $select = qq{distinct date(DATE_SUB(start, INTERVAL $day_starting_hour HOUR)) 'start_date'}
+      if defined $day_starting_hour;
 
     my $query = qq{
         select   $select
@@ -1438,7 +1425,7 @@ sub get_by_date_range {
     return $events;
 }
 
-sub get_by_image {
+sub get_by_image ($$$) {
     my $dbh      = shift;
     my $config   = shift;
     my $filename = shift;
@@ -1462,7 +1449,7 @@ sub get_by_image {
 }
 
 # deleting an event is currently disabled
-sub delete {
+sub delete ($$$) {
     return;
     my $request  = shift;
     my $config   = shift;
@@ -1487,51 +1474,7 @@ sub delete {
 
 }
 
-#TODO: add location to cache map
-sub configure_cache {
-    my $config = shift;
-    my $debug  = $config->{system}->{debug};
-
-    my $date_pattern = cache::get_date_pattern();
-    my $controllers  = $config->{controllers};
-
-    cache::init();
-    cache::add_map( '', 'index.html' );
-
-    my $name      = '';
-    my $extension = '';
-    my $templates = $config->{templates}->{events};
-
-    for my $template (@$templates) {
-        if ( $template =~ /^(.+)\.([^\.]+)$/ ) {
-            $name      = $1;
-            $extension = $2;
-        }
-        cache::add_map( 'template=' . $template,                 $controllers->{events} . '/' . $name . '.' . $extension );
-        cache::add_map( 'template=' . $template . '&date=today', $controllers->{events} . '/' . $template . '_today.' . $extension );
-        cache::add_map( 'template=' . $template . '&date=' . $date_pattern,
-            $controllers->{events} . '/' . $name . '_date_$1-$2-$3.' . $extension );
-        cache::add_map( 'template=' . $template . '&time=now', $controllers->{events} . '/' . $template . '_now.html' );
-        cache::add_map( 'template=' . $template . '&time=now&limit=(\d+)',
-            $controllers->{events} . '/' . $name . '_now_limit_$1.' . $extension );
-        cache::add_map(
-            'template=' . $template . '&from_date=' . $date_pattern . '&till_date=' . $date_pattern,
-            $controllers->{events} . '/' . $name . '_from_$1-$2-$3_till_$4_$5_$6.' . $extension
-        );
-        cache::add_map(
-            'template=' . $template . '&from_date=' . $date_pattern . '&till_date=' . $date_pattern . '&weekday=(\d)',
-            $controllers->{events} . '/' . $template . '_from_$1-$2-$3_till_$4_$5_$6_weekday_$7.' . $extension
-        );
-        cache::add_map(
-            'template=' . $template . '&from_date=' . $date_pattern . '&till_date=' . $date_pattern . '&limit=(\d)',
-            $controllers->{events} . '/' . $template . '_from_$1-$2-$3_till_$4_$5_$6_limit_$7.' . $extension
-        );
-        cache::add_map( 'template=' . $template . '&weekday=(\d)',   $controllers->{events} . '/' . $name . '_weekday_$1.' . $extension );
-        cache::add_map( 'template=' . $template . '&event_id=(\d+)', $controllers->{event} . '/' . $name . '_page_$1.' . $extension );
-    }
-}
-
-sub get_duration {
+sub get_duration ($$) {
     my $config   = shift;
     my $event    = shift;
     my $timezone = $config->{date}->{time_zone};
@@ -1548,7 +1491,7 @@ sub get_duration {
     return $duration / 60;
 }
 
-sub check_params {
+sub check_params ($$) {
     my $config = shift;
     my $params = shift;
 
@@ -1679,7 +1622,8 @@ sub check_params {
     $exclude_projects = 1 if ( defined $params->{exclude_projects} ) && ( $params->{exclude_projects} eq '1' );
 
     my $exclude_event_images = 0;
-    $exclude_event_images = 1 if ( defined $params->{exclude_event_images} ) && ( $params->{exclude_event_images} eq '1' );
+    $exclude_event_images = 1
+      if ( defined $params->{exclude_event_images} ) && ( $params->{exclude_event_images} eq '1' );
 
     #show future events by default
     my $archive = 'future';
@@ -1826,7 +1770,7 @@ sub check_params {
     return $checked;
 }
 
-sub get_keys {
+sub get_keys($) {
     my $event = shift;
 
     my $program                = $event->{program}                || '';

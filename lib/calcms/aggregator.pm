@@ -1,18 +1,18 @@
 package aggregator;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use events();
 use comments();
 use calendar();
 use project();
-use cache();
 
 use base 'Exporter';
-our @EXPORT_OK   = qw(get_cache configure_cache put_cache get_list check_params);
+our @EXPORT_OK = qw(get_cache configure_cache put_cache get_list check_params);
 
-sub get_list {
+sub get_list($$) {
     my $config  = shift;
     my $request = shift;
 
@@ -54,8 +54,6 @@ sub get_list {
     my @used_projects = reverse sort { $used_projects->{$a} <=> $used_projects->{$b} } ( keys %$used_projects );
     my $most_used_project = $used_projects[0];
 
-    #use Data::Dumper;print STDERR Dumper(\@used_projects);
-
     return {
         day            => $results->[0]->{day},
         start_datetime => $results->[0]->{start_datetime},
@@ -70,7 +68,7 @@ sub get_list {
     };
 }
 
-sub get_menu {
+sub get_menu($$$$) {
     my $config  = shift;
     my $request = shift;
     my $date    = shift;
@@ -86,7 +84,7 @@ sub get_menu {
         $request->{params}->{checked} = events::check_params( $config, $request->{params}->{original} );
         $results = events::get( $config, $request );
     } else {
-        $request->{params}->{checked}->{template} = template::check($config, 'event_menu.html');
+        $request->{params}->{checked}->{template} = template::check( $config, 'event_menu.html' );
     }
 
     #events menu
@@ -96,7 +94,7 @@ sub get_menu {
     return { content => $output };
 }
 
-sub get_calendar {
+sub get_calendar($$$) {
     my $config  = shift;
     my $request = shift;
     my $date    = shift;
@@ -122,7 +120,7 @@ sub get_calendar {
     return { content => $content };
 }
 
-sub get_newest_comments {
+sub get_newest_comments($$) {
     my $config  = shift;
     my $request = shift;
 
@@ -146,49 +144,7 @@ sub get_newest_comments {
     return { content => $content };
 }
 
-sub get_cache {
-    my $config  = shift;
-    my $request = shift;
-
-    my $params = $request->{params}->{checked};
-    my $debug  = $config->{system}->{debug};
-
-    if ( $config->{cache}->{use_cache} == 1 ) {
-        configure_cache($config);
-        my $cache = cache::load( $config, $params );
-        return $cache;
-    }
-    return {};
-}
-
-sub configure_cache {
-    my $config = shift;
-
-    cache::init();
-    my $controllers = $config->{controllers};
-
-    my $date_pattern = cache::get_date_pattern();
-
-    #    cache::add_map(''                            ,'programm/index.html');
-    cache::add_map( 'date=today',            'programm/' . $controllers->{events} . '/today.html' );
-    cache::add_map( 'date=' . $date_pattern, 'programm/' . $controllers->{events} . '/$1-$2-$3.html' );
-    cache::add_map( 'from_date=' . $date_pattern . '&till_date=' . $date_pattern,
-        'programm/' . $controllers->{events} . '/$1-$2-$3_$4-$5-$6.html' );
-    cache::add_map( 'event_id=(\d+)', 'programm/' . $controllers->{event} . '/$1.html' );
-}
-
-sub put_cache {
-    my $config  = shift;
-    my $request = shift;
-    my $cache   = shift;
-
-    #write to cache
-    if ( $config->{cache}->{use_cache} == 1 ) {
-        cache::save($cache);
-    }
-}
-
-sub check_params {
+sub check_params($$) {
     my $config = shift;
     my $params = shift;
 
@@ -200,14 +156,8 @@ sub check_params {
     #filter for date
     my $date = time::check_date( $params->{date} );
 
-    #print STDERR $date."\n";
-    if ( $date eq '' ) {
-        $date = time::time_to_date( time() );
-    }
-    #
-    if ( $date eq 'today' ) {
-        $date = time::get_event_date($config);
-    }
+    $date = time::time_to_date( time() )  if $date eq '';
+    $date = time::get_event_date($config) if $date eq 'today';
 
     #    $date    =$config->{date}->{start_date}        if ($date lt $config->{date}->{start_date});
     #    $date    =$config->{date}->{end_date}        if ($date gt $config->{date}->{end_date});
@@ -279,8 +229,6 @@ sub check_params {
         from_date => $from_date,
         till_date => $till_date,
         event_id  => $event_id,
-
-        #        project  => $project,
         debug => $debug,
     };
 }

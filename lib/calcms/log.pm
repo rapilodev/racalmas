@@ -1,7 +1,8 @@
 package log;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use base 'Exporter';
 our @EXPORT_OK = qw(error load_file save_file append_file);
@@ -9,7 +10,7 @@ our @EXPORT_OK = qw(error load_file save_file append_file);
 use config();
 
 #TODO: check if config is given
-sub error {
+sub error($$) {
     my $config  = $_[0];
     my $message = "Error: $_[1]\n";
 
@@ -22,8 +23,8 @@ sub error {
     #do not call template::check to avoid deep recursion!
     if ( $config->{system}->{debug} ) {
 
-        template::process($config,
-            'print',
+        template::process(
+            $config, 'print',
             'templates/default.html',
             {
                 static_files_url => $config->{locations}->{static_files_url},
@@ -35,20 +36,20 @@ sub error {
     die();
 }
 
-sub load_file {
+sub load_file($) {
     my $filename = shift;
 
     my $content = '';
     if ( -e $filename ) {
         my $FILE = undef;
-        open ($FILE, "<:utf8", $filename) || warn "cant read file '$filename'";
+        open( $FILE, "<:utf8", $filename ) || warn "cant read file '$filename'";
         $content = join "", (<$FILE>);
         close $FILE;
         return $content;
     }
 }
 
-sub save_file {
+sub save_file($$) {
     my $filename = shift;
     my $content  = shift;
 
@@ -69,7 +70,7 @@ sub save_file {
 
 }
 
-sub append_file {
+sub append_file($$) {
     my $filename = shift;
     my $content  = shift;
 

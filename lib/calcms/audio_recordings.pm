@@ -1,13 +1,14 @@
 package audio_recordings;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use db();
 
 use base 'Exporter';
-our @EXPORT_OK   = qw(get_columns get);
+our @EXPORT_OK = qw(get_columns get);
 
 # columns:
 # id, project_id, studio_id, event_id
@@ -17,7 +18,7 @@ our @EXPORT_OK   = qw(get_columns get);
 
 sub debug;
 
-sub get_columns {
+sub get_columns($) {
     my $config = shift;
 
     my $dbh     = db::connect($config);
@@ -30,7 +31,7 @@ sub get_columns {
 }
 
 # get playout entries
-sub get {
+sub get($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -38,7 +39,8 @@ sub get {
     return undef unless defined $condition->{studio_id};
 
     my $date_range_include = 0;
-    $date_range_include = 1 if ( defined $condition->{date_range_include} ) && ( $condition->{date_range_include} == 1 );
+    $date_range_include = 1
+      if ( defined $condition->{date_range_include} ) && ( $condition->{date_range_include} == 1 );
 
     my $dbh = db::connect($config);
 
@@ -105,7 +107,7 @@ sub get {
 }
 
 # update playout entry if differs to old values
-sub update {
+sub update($$$) {
     my $config = shift;
     my $dbh    = shift;
     my $entry  = shift;
@@ -144,7 +146,7 @@ sub update {
 }
 
 # insert playout entry
-sub insert {
+sub insert ($$$) {
     my $config = shift;
     my $dbh    = shift;
     my $entry  = shift;
@@ -177,7 +179,7 @@ sub insert {
 }
 
 # delete playout entry
-sub delete {
+sub delete ($$$) {
     my $config = shift;
     my $dbh    = shift;
     my $entry  = shift;
@@ -196,7 +198,7 @@ sub delete {
     return db::put( $dbh, $query, $bind_values );
 }
 
-sub error {
+sub error($) {
     my $msg = shift;
     print "ERROR: $msg<br/>\n";
 }

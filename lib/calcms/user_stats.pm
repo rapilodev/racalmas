@@ -1,15 +1,16 @@
 package user_stats;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 use Data::Dumper;
 
 use base 'Exporter';
-our @EXPORT_OK   = qw(get_columns get update insert get_stats increase);
+our @EXPORT_OK = qw(get_columns get update insert get_stats increase);
 
 sub debug;
 
-sub get_columns {
+sub get_columns($) {
     my $config = shift;
 
     my $dbh     = db::connect($config);
@@ -21,7 +22,7 @@ sub get_columns {
     return $columns;
 }
 
-sub get {
+sub get ($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -72,7 +73,7 @@ sub get {
     return $results;
 }
 
-sub get_stats {
+sub get_stats($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -129,7 +130,9 @@ sub get_stats {
     my $results = db::get( $dbh, $query, \@bind_values );
     for my $result (@$results) {
         $result->{score} = 0;
-        for my $column ( 'create_events', 'update_events', 'delete_events', 'create_series', 'update_series', 'delete_series' ) {
+        for my $column ( 'create_events', 'update_events', 'delete_events', 'create_series', 'update_series',
+            'delete_series' )
+        {
             $result->{score} += $result->{$column};
         }
     }
@@ -137,7 +140,7 @@ sub get_stats {
     return \@results;
 }
 
-sub insert {
+sub insert($$) {
     my $config = shift;
     my $stats  = shift;
 
@@ -160,7 +163,7 @@ sub insert {
 }
 
 # update project
-sub update {
+sub update ($$) {
     my $config = shift;
     my $stats  = shift;
 
@@ -194,7 +197,7 @@ sub update {
     return db::put( $dbh, $query, \@bind_values );
 }
 
-sub increase {
+sub increase ($$$) {
     my $config  = shift;
     my $usecase = shift;
     my $options = shift;
@@ -241,7 +244,7 @@ sub increase {
 
 }
 
-sub error {
+sub error ($) {
     my $msg = shift;
     print "ERROR: $msg<br/>\n";
 }

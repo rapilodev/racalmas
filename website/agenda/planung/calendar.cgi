@@ -1,7 +1,8 @@
-#! /usr/bin/perl -w
+#!/usr/bin/perl
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use URI::Escape();
@@ -92,7 +93,7 @@ if (
     #process header
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check($config, 'default.html'), $headerParams );
+    template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
     print q{
         <link href="css/jquery-ui-timepicker.css" type="text/css" rel="stylesheet" /> 
         <link rel="stylesheet" href="css/calendar.css" type="text/css" /> 
@@ -167,7 +168,7 @@ sub showCalendar {
     my $end_of_day   = $cal_options->{end_of_day};
 
     my $params      = $request->{params}->{checked};
-    my $permissions = $request->{permissions};
+    my $permissions = $request->{permissions} || {};
     unless ( $permissions->{read_series} == 1 ) {
         uac::permissions_denied('read_series');
         return;
@@ -233,7 +234,7 @@ sub showCalendar {
 
         if ( $params->{search} =~ /\S/ ) {
             if ( $params->{list} == 1 ) {
-		$options->{search} = $params->{search};
+                $options->{search} = $params->{search};
                 delete $options->{from_date};
                 delete $options->{till_date};
                 delete $options->{date_range_include};
@@ -372,7 +373,9 @@ sub showCalendar {
             my $format = undef;
             if ( defined $date->{'format'} ) {
                 $format =
-                  ( $date->{'format'} || '' ) . " " . ( $date->{'format_version'} || '' ) . " " . ( $date->{'format_profile'} || '' );
+                    ( $date->{'format'}         || '' ) . " "
+                  . ( $date->{'format_version'} || '' ) . " "
+                  . ( $date->{'format_profile'} || '' );
                 $format =~ s/MPEG Audio Version 1 Layer 3/MP3/g;
                 $format .= ' ' . ( $date->{'format_settings'} || '' ) if defined $date->{'format_settings'};
                 $format .= '<br>';
@@ -383,20 +386,27 @@ sub showCalendar {
             $date->{series_id} = -1;
             $date->{event_id}  = $id;
             $date->{title}     = '';
-            $date->{title} .= '<b>errors</b>: ' . $date->{errors} . '<br>'  if defined $date->{errors};
+            $date->{title} .= '<b>errors</b>: ' . $date->{errors} . '<br>' if defined $date->{errors};
             $date->{title} .= formatDuration( $date->{duration} ) . "<br>" if defined $date->{duration};
             $date->{title} .= formatLoudness( "L:", $date->{rms_left} ) . ', '    if defined $date->{rms_left};
             $date->{title} .= formatLoudness( "R:", $date->{rms_right} ) . '<br>' if defined $date->{rms_right};
-            $date->{title} .= formatBitrate( $date->{bitrate} ) . ' ' . $date->{bitrate_mode} . '<br>' if defined $date->{bitrate};
-            $date->{title} .= '<b>replay gain</b> ' . sprintf( "%.1f", $date->{replay_gain} ) . '<br>' if defined $date->{replay_gain};
-            $date->{title} .= ( ( $date->{sampling_rate} || '0' ) / 1000 ) . ' kHz<br>' if defined $date->{sampling_rate};
+            $date->{title} .= formatBitrate( $date->{bitrate} ) . ' ' . $date->{bitrate_mode} . '<br>'
+              if defined $date->{bitrate};
+            $date->{title} .= '<b>replay gain</b> ' . sprintf( "%.1f", $date->{replay_gain} ) . '<br>'
+              if defined $date->{replay_gain};
+            $date->{title} .= ( ( $date->{sampling_rate} || '0' ) / 1000 ) . ' kHz<br>'
+              if defined $date->{sampling_rate};
             $date->{title} .= ( $date->{channels} || '' ) . ' channels<br>' if defined $date->{channels};
-            $date->{title} .= int( ( $date->{'stream_size'} || '0' ) / ( 1024 * 1024 ) ) . 'MB<br>' if defined $date->{'stream_size'};
+            $date->{title} .= int( ( $date->{'stream_size'} || '0' ) / ( 1024 * 1024 ) ) . 'MB<br>'
+              if defined $date->{'stream_size'};
             $date->{title} .= $format if defined $format;
-            $date->{title} .= '<b>library</b>: ' .     ( $date->{writing_library} || '' ) . '<br>' if defined $date->{'writing_library'};
-            $date->{title} .= '<b>path</b>: ' .        ( $date->{file}            || '' ) . '<br>' if defined $date->{file};
-            $date->{title} .= '<b>updated_at</b>: ' .  ( $date->{updated_at}      || '' ) . '<br>' if defined $date->{updated_at};
-            $date->{title} .= '<b>modified_at</b>: ' . ( $date->{modified_at}     || '' ) . '<br>' if defined $date->{modified_at};
+            $date->{title} .= '<b>library</b>: ' . ( $date->{writing_library} || '' ) . '<br>'
+              if defined $date->{'writing_library'};
+            $date->{title} .= '<b>path</b>: ' . ( $date->{file} || '' ) . '<br>' if defined $date->{file};
+            $date->{title} .= '<b>updated_at</b>: ' . ( $date->{updated_at} || '' ) . '<br>'
+              if defined $date->{updated_at};
+            $date->{title} .= '<b>modified_at</b>: ' . ( $date->{modified_at} || '' ) . '<br>'
+              if defined $date->{modified_at};
 
             #print STDERR Dumper($date) if $date->{file}=~/180503/;
             #$date->{title}.= '<b>rms_image</b>: '    .($date->{rms_image}||'').'<br>' if defined $date->{rms_image};
@@ -540,7 +550,7 @@ sub formatLoudness {
     return '' if $value eq '';
 
     #print STDERR "'$value'\n";
-    $value = sprintf( "%d", $value+0.5 );
+    $value = sprintf( "%d", $value + 0.5 );
     my $class = 'ok';
     $class = 'warn'  if $value > -18.5;
     $class = 'error' if $value > -16.0;
@@ -553,7 +563,7 @@ sub formatDuration {
     my $duration = shift;
     return '' unless defined $duration;
     return '' if $duration eq '';
-    my $result =  int( ( $duration +30.5 ) % 60)-30;
+    my $result = int( ( $duration + 30.5 ) % 60 ) - 30;
     my $class = "ok";
     $class = "warn"  if abs($result) > 1;
     $class = "error" if abs($result) > 2;
@@ -720,10 +730,10 @@ sub showEventList {
     my $events_by_day = shift;
     my $language      = $params->{language};
 
-    my $rerunIcon='<i class="fas fa-redo" title="$params->{loc}->{label_rerun}"></i>';
-    my $liveIcon='<i class="fas fa-microphone-alt" title="$params->{loc}->{label_live}"></i>';
-    my $draftIcon='<i class="fas fa-drafting-compass" title="$params->{loc}->{label_draft}"></i>';
-    my $archiveIcon='<i class="fas fa-archive" title="$params->{loc}->{label_archived}"></i>';
+    my $rerunIcon   = '<i class="fas fa-redo" title="$params->{loc}->{label_rerun}"></i>';
+    my $liveIcon    = '<i class="fas fa-microphone-alt" title="$params->{loc}->{label_live}"></i>';
+    my $draftIcon   = '<i class="fas fa-drafting-compass" title="$params->{loc}->{label_draft}"></i>';
+    my $archiveIcon = '<i class="fas fa-archive" title="$params->{loc}->{label_archived}"></i>';
 
     my $out = '';
     $out = qq{
@@ -762,7 +772,12 @@ sub showEventList {
             $event->{studio_id}  = $params->{studio_id};
             $event->{series_id}  = '-1' unless defined $event->{series_id};
             $event->{event_id}   = '-1' unless defined $event->{event_id};
-            my $id = 'event_' . $event->{project_id} . '_' . $event->{studio_id} . '_' . $event->{series_id} . '_' . $event->{event_id};
+            my $id =
+                'event_'
+              . $event->{project_id} . '_'
+              . $event->{studio_id} . '_'
+              . $event->{series_id} . '_'
+              . $event->{event_id};
 
             my $class = 'event';
             $class = $event->{class} if defined $event->{class};
@@ -795,20 +810,22 @@ sub showEventList {
             $class                       ||= '';
 
             my $archived = $event->{archived} || '-';
-            $archived = '-' if $archived eq '0';
+            $archived = '-'          if $archived eq '0';
             $archived = $archiveIcon if $archived eq '1';
 
             my $live = $event->{live} || '-';
-            $live = '-' if $live eq '0';
+            $live = '-'       if $live eq '0';
             $live = $liveIcon if $live eq '1';
 
             my $rerun = $event->{rerun} || '-';
 
             $rerun = " [" . markup::base26( $event->{recurrence_count} + 1 ) . "]"
-              if ( defined $event->{recurrence_count} ) && ( $event->{recurrence_count} ne '' ) && ( $event->{recurrence_count} > 0 );
+              if ( defined $event->{recurrence_count} )
+              && ( $event->{recurrence_count} ne '' )
+              && ( $event->{recurrence_count} > 0 );
 
             my $draft = $event->{draft} || '0';
-            $draft = '-' if $draft eq '0';
+            $draft = '-'        if $draft eq '0';
             $draft = $draftIcon if $draft eq '1';
 
             my $title = $event->{title};
@@ -858,7 +875,8 @@ sub showEventList {
         $out .= q{<div id="event_no_series" style="display:none">};
         $out .= addEventsToSeries( $series, $params )
           if ( defined $permissions->{assign_series_events} ) && ( $permissions->{assign_series_events} eq '1' );
-        $out .= createSeries($params) if ( defined $permissions->{create_series} ) && ( $permissions->{create_series} eq '1' );
+        $out .= createSeries($params)
+          if ( defined $permissions->{create_series} ) && ( $permissions->{create_series} eq '1' );
         $out .= q{</div>};
     }
 
@@ -1115,13 +1133,14 @@ sub printTableBody {
             if ( ( defined $event->{title} ) && ( defined $event->{title} ne '' ) ) {
                 $content .= $event->{title};
                 unless ( $event->{title} =~ /\#\d+/ ) {
-                    $content .= ' #' . $event->{episode} if ( ( defined $event->{episode} ) && ( $event->{episode} ne '' ) );
+                    $content .= ' #' . $event->{episode}
+                      if ( ( defined $event->{episode} ) && ( $event->{episode} ne '' ) );
                 }
             }
             $content = $event->{start} if $day eq '0';
             $event->{project_id} = $project_id unless defined $event->{project_id};
             $event->{studio_id}  = $studio_id  unless defined $event->{studio_id};
-            $event->{content}    = $content    unless ( ( defined $event->{class} ) && ( $event->{class} eq 'time now' ) );
+            $event->{content} = $content unless ( ( defined $event->{class} ) && ( $event->{class} eq 'time now' ) );
             $event->{class} = 'event'    if $day ne '0';
             $event->{class} = 'grid'     if ( ( defined $event->{grid} ) && ( $event->{grid} == 1 ) );
             $event->{class} = 'schedule' if ( ( defined $event->{schedule} ) && ( $event->{schedule} == 1 ) );
@@ -1133,6 +1152,7 @@ sub printTableBody {
                 $event->{content} .= formatDuration( $event->{duration} ) . ' ' if defined $event->{duration};
                 $event->{content} .= formatLoudness( 'L', $event->{rms_left} ) . ' ' if defined $event->{rms_left};
                 $event->{content} .= formatLoudness( 'R', $event->{rms_right} ) if defined $event->{rms_right};
+
                 #$event->{content} .= formatBitrate( $event->{bitrate} ) if defined $event->{bitrate};
                 $event->{content} .= '</span>';
             }
@@ -1173,7 +1193,10 @@ sub printSeries {
     my $out = '';
 
     #add schedule entry for series
-    if ( ( defined $permissions->{update_schedule} ) && ( $permissions->{update_schedule} eq '1' ) && ( scalar(@$series) > 0 ) ) {
+    if (   ( defined $permissions->{update_schedule} )
+        && ( $permissions->{update_schedule} eq '1' )
+        && ( scalar(@$series) > 0 ) )
+    {
         $out .= q{<div id="series" style="display:none">};
         $out .= addSeries( $series, $params );
         $out .= q{</div>};
@@ -1183,7 +1206,8 @@ sub printSeries {
         $out .= q{<div id="event_no_series" style="display:none">};
         $out .= addEventsToSeries( $series, $params )
           if ( ( defined $permissions->{assign_series_events} ) && ( $permissions->{assign_series_events} eq '1' ) );
-        $out .= createSeries($params) if ( ( defined $permissions->{create_series} ) && ( $permissions->{create_series} eq '1' ) );
+        $out .= createSeries($params)
+          if ( ( defined $permissions->{create_series} ) && ( $permissions->{create_series} eq '1' ) );
         $out .= q{</div>};
     }
 
@@ -1349,11 +1373,14 @@ sub createSeries {
                 <input type="hidden" name="project_id" value="$project_id">
                 <input type="hidden" name="studio_id"  value="$studio_id">
                 <table>
-                    <tr><td class="label">} . $params->{loc}->{label_name} . qq{</td>     <td><input name="series_name"></td></tr>
-                    <tr><td class="label">} . $params->{loc}->{label_title} . qq{</td>     <td><input name="title"></td></tr>
+                    <tr><td class="label">}
+      . $params->{loc}->{label_name} . qq{</td>     <td><input name="series_name"></td></tr>
+                    <tr><td class="label">}
+      . $params->{loc}->{label_title} . qq{</td>     <td><input name="title"></td></tr>
                     <tr><td></td>
                         <td>
-                            <button type="submit" name="action" value="create">} . $params->{loc}->{button_create_series} . qq{</button>
+                            <button type="submit" name="action" value="create">}
+      . $params->{loc}->{button_create_series} . qq{</button>
                         </td>
                     </tr>
                 </table>
@@ -1374,10 +1401,17 @@ sub print_event {
     $event->{series_id}  = '-1' unless defined $event->{series_id};
     $event->{event_id}   = '-1' unless defined $event->{event_id};
 
-    my $id = 'event_' . $event->{project_id} . '_' . $event->{studio_id} . '_' . $event->{series_id} . '_' . $event->{event_id};
-    $id = 'grid_' . $event->{project_id} . '_' . $event->{studio_id} . '_' . $event->{series_id}   if defined $event->{grid};
-    $id = 'work_' . $event->{project_id} . '_' . $event->{studio_id} . '_' . $event->{schedule_id} if defined $event->{work};
-    $id = 'play_' . $event->{project_id} . '_' . $event->{studio_id}                               if defined $event->{play};
+    my $id =
+        'event_'
+      . $event->{project_id} . '_'
+      . $event->{studio_id} . '_'
+      . $event->{series_id} . '_'
+      . $event->{event_id};
+    $id = 'grid_' . $event->{project_id} . '_' . $event->{studio_id} . '_' . $event->{series_id}
+      if defined $event->{grid};
+    $id = 'work_' . $event->{project_id} . '_' . $event->{studio_id} . '_' . $event->{schedule_id}
+      if defined $event->{work};
+    $id = 'play_' . $event->{project_id} . '_' . $event->{studio_id} if defined $event->{play};
 
     my $class = $event->{class} || '';
     my $showIcons = 0;
@@ -1400,7 +1434,7 @@ sub print_event {
 
     $ystart = int( $ystart * $yzoom );
     $yend   = int( $yend * $yzoom );
-    my $height = $yend - $ystart +1;
+    my $height = $yend - $ystart + 1;
 
     if ( $ypos > 0 ) {
         $height = q{height:} . ($height) . 'px;';
@@ -1418,6 +1452,7 @@ sub print_event {
 
     my $attr = '';
     if ( $class =~ /play/ ) {
+
         #$event->{rms_image}=~s/\.png/.svg/;
         $attr .= ' rms="' . $event->{rms_image} . '"' if defined $event->{rms_image};
         $attr .= ' start="' . $event->{start} . '"'   if defined $event->{start};
@@ -1476,11 +1511,10 @@ sub calc_positions {
         my ( $start_hour, $start_min ) = getTime( $event->{start_time} );
         my ( $end_hour,   $end_min )   = getTime( $event->{end_time} );
 
-        $start_hour += 24 if $start_hour  < $start_of_day;
-        $end_hour   += 24 if $end_hour    < $start_of_day;
-        $end_hour   += 24 if $start_hour  > $end_hour;
-        $end_hour   += 24 if ($start_hour == $end_hour) && ($start_min == $end_min);
-
+        $start_hour += 24 if $start_hour < $start_of_day;
+        $end_hour   += 24 if $end_hour < $start_of_day;
+        $end_hour   += 24 if $start_hour > $end_hour;
+        $end_hour   += 24 if ( $start_hour == $end_hour ) && ( $start_min == $end_min );
 
         $event->{ystart} = $start_hour * 60 + $start_min;
         $event->{yend}   = $end_hour * 60 + $end_min;
@@ -1623,7 +1657,10 @@ sub printToolbar {
         <select id="filter" name="filter" onchange="reloadCalendar()">
     };
 
-    for my $filter ( 'no markup', 'conflicts', 'rerun', 'archived', 'playout', 'published', 'live', 'disable_event_sync', 'draft' ) {
+    for
+      my $filter ( 'no markup', 'conflicts', 'rerun', 'archived', 'playout', 'published', 'live', 'disable_event_sync',
+        'draft' )
+    {
         my $key = $filter;
         $key =~ s/ /_/g;
 
@@ -1641,7 +1678,8 @@ sub printToolbar {
             <input type="hidden" name="studio_id" value="$params->{studio_id}">
             <input type="hidden" name="date"      value="$params->{date}">
             <input type="hidden" name="list"      value="1">
-            <input class="search" name="search" value="$params->{search}" placeholder="} . $params->{loc}->{button_search} . qq{">
+            <input class="search" name="search" value="$params->{search}" placeholder="}
+      . $params->{loc}->{button_search} . qq{">
             <button type="submit" name="action" value="search">} . $params->{loc}->{button_search} . qq{</button>
         </form>
     };
@@ -1678,7 +1716,8 @@ sub getCalendar {
     my $previous = '';
     my $next     = '';
     if ( $range eq 'month' ) {
-        $previous = time::get_datetime( $from_date, $config->{date}->{time_zone} )->subtract( months => 1 )->set_day(1)->date();
+        $previous =
+          time::get_datetime( $from_date, $config->{date}->{time_zone} )->subtract( months => 1 )->set_day(1)->date();
         $next = time::get_datetime( $from_date, $config->{date}->{time_zone} )->add( months => 1 )->set_day(1)->date();
     } else {
         $previous = time::get_datetime( $from_date, $config->{date}->{time_zone} )->subtract( days => $range )->date();
@@ -1741,7 +1780,8 @@ sub getTillDate {
     if ( $params->{range} eq 'month' ) {
 
         #get last day of month
-        return time::get_datetime( $date, $config->{date}->{time_zone} )->set_day(1)->add( months => 1 )->subtract( days => 1 )->date();
+        return time::get_datetime( $date, $config->{date}->{time_zone} )->set_day(1)->add( months => 1 )
+          ->subtract( days => 1 )->date();
     }
 
     #add range to date
@@ -1810,7 +1850,7 @@ sub check_params {
 
     my $checked  = {};
     my $template = '';
-	$checked->{template} = template::check($config,  $params->{template}, 'series' );
+    $checked->{template} = template::check( $config, $params->{template}, 'series' );
 
     my $debug = $params->{debug} || '';
     if ( $debug =~ /([a-z\_\,]+)/ ) {
@@ -1821,7 +1861,10 @@ sub check_params {
     #numeric values
     $checked->{part} = 0;
     $checked->{list} = 0;
-    for my $param ( 'id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'event_id', 'part', 'list', 'day_start' )
+    for my $param (
+        'id',       'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id',
+        'event_id', 'part',       'list',      'day_start'
+      )
     {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
             $checked->{$param} = $params->{$param};

@@ -1,7 +1,8 @@
 package work_dates;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc();
@@ -16,11 +17,11 @@ use work_schedule();
 # columns: id, studio_id, schedule_id, start(datetime), end(datetime)
 # TODO: delete column schedule_id
 use base 'Exporter';
-our @EXPORT_OK   = qw(get_columns get insert update delete get_dates);
+our @EXPORT_OK = qw(get_columns get insert update delete get_dates);
 
 sub debug;
 
-sub get_columns {
+sub get_columns($) {
     my $config = shift;
 
     my $dbh     = db::connect($config);
@@ -34,12 +35,13 @@ sub get_columns {
 
 # get all work_dates for studio_id and schedule_id within given time range
 # calculate start_date, end_date, weeday, day from start and end(datetime)
-sub get {
+sub get ($$) {
     my $config    = shift;
     my $condition = shift;
 
     my $date_range_include = 0;
-    $date_range_include = 1 if ( defined $condition->{date_range_include} ) && ( $condition->{date_range_include} == 1 );
+    $date_range_include = 1
+      if ( defined $condition->{date_range_include} ) && ( $condition->{date_range_include} == 1 );
 
     my $dbh = db::connect($config);
 
@@ -125,7 +127,7 @@ sub get {
 }
 
 #update work dates for all schedules of a work and studio_id
-sub update {
+sub update($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -215,7 +217,7 @@ sub update {
     return $j . " dates out of studio times, " . $i;
 }
 
-sub get_schedule_dates {
+sub get_schedule_dates($$) {
     my $schedule = shift;
     my $options  = shift;
 
@@ -239,7 +241,7 @@ sub get_schedule_dates {
     return $dates;
 }
 
-sub get_week_of_month_dates {
+sub get_week_of_month_dates($$$$$$) {
     my $start     = shift;    # datetime string
     my $end       = shift;    # datetime string
     my $duration  = shift;    # in minutes
@@ -283,7 +285,7 @@ sub get_week_of_month_dates {
 }
 
 #add duration to a single date
-sub get_single_date {
+sub get_single_date($$) {
     my $start_datetime = shift;
     my $duration       = shift;
 
@@ -303,12 +305,12 @@ sub get_single_date {
 }
 
 #calculate all dates between start_datetime and end_date with duration(minutes) and frequency(days)
-sub get_dates {
+sub get_dates($$$$) {
     my $start_datetime = shift;
     my $end_date       = shift;
     my $duration       = shift;    # in minutes
     my $frequency      = shift;    # in days
-                                   #print "start_datetime:$start_datetime end_date:$end_date duration:$duration frequency:$frequency\n";
+         #print "start_datetime:$start_datetime end_date:$end_date duration:$duration frequency:$frequency\n";
 
     my @start = @{ time::datetime_to_array($start_datetime) };
     return unless @start >= 6;
@@ -364,7 +366,7 @@ sub get_dates {
 }
 
 #remove all work_dates for studio_id and schedule_id
-sub delete {
+sub delete($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -385,7 +387,7 @@ sub delete {
     return db::put( $dbh, $query, $bind_values );
 }
 
-sub error {
+sub error($) {
     my $msg = shift;
     print "ERROR: $msg<br/>\n";
 }

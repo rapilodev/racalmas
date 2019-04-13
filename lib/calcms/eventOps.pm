@@ -1,6 +1,8 @@
 package eventOps;
-use warnings "all";
+
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use uac();
 use events();
@@ -21,7 +23,7 @@ our @EXPORT_OK = qw(
 );
 
 # functions: to be separated
-sub setAttributesFromSeriesTemplate {
+sub setAttributesFromSeriesTemplate($$$) {
 	my $config = shift;
 	my $params = shift;
 	my $event  = shift;
@@ -54,7 +56,7 @@ sub setAttributesFromSeriesTemplate {
 	return $serie;
 }
 
-sub setAttributesFromSchedule {
+sub setAttributesFromSchedule ($$$){
 	my $config = shift;
 	my $params = shift;
 	my $event  = shift;
@@ -87,7 +89,7 @@ sub setAttributesFromSchedule {
 	return $event;
 }
 
-sub setAttributesFromOtherEvent {
+sub setAttributesFromOtherEvent ($$$){
 	my $config = shift;
 	my $params = shift;
 	my $event  = shift;
@@ -119,7 +121,7 @@ sub setAttributesFromOtherEvent {
 	return $event;
 }
 
-sub setAttributesForCurrentTime {
+sub setAttributesForCurrentTime ($$){
 	my $serie = shift;
 	my $event = shift;
 
@@ -138,14 +140,14 @@ sub setAttributesForCurrentTime {
 }
 
 # get recurrence base id
-sub getRecurrenceBaseId {
+sub getRecurrenceBaseId ($){
 	my $event = shift;
 	return $event->{recurrence} if ( defined $event->{recurrence} ) && ( $event->{recurrence} ne '' ) && ( $event->{recurrence} ne '0' );
 	return $event->{event_id};
 }
 
 # get a new event for given series
-sub getNewEvent {
+sub getNewEvent($$$) {
 	my $config = shift;
 	my $params = shift;
 	my $action = shift;
@@ -205,7 +207,7 @@ sub getNewEvent {
 }
 
 # add user, action
-sub createEvent {
+sub createEvent($$$) {
 	my $request = shift;
 	my $event   = shift;
 	my $action  = shift;

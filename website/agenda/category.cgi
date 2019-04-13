@@ -1,13 +1,14 @@
-#! /usr/bin/perl -w 
+#!/usr/bin/perl 
 
 use strict;
 use warnings;
+no warnings 'redefine';
+
 use Data::Dumper;
 
 use params();
 use db();
 use markup();
-use cache();
 use log();
 use config();
 use template();
@@ -19,7 +20,7 @@ my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
 
 my $config = config::getFromScriptLocation();
-my $debug = $config->{system}->{debug};
+my $debug  = $config->{system}->{debug};
 
 my $request = {
     url    => $ENV{QUERY_STRING},
@@ -30,16 +31,6 @@ my $request = {
 };
 $params = $request->{params}->{checked};
 
-my $cache = {};
-if ( $config->{cache}->{use_cache} eq '1' ) {
-    cache::configure('categories.html');
-    $cache = cache::load( $config, $params );
-    if ( defined $cache->{content} ) {
-        print $cache->{content};
-        return;
-    }
-}
-
 my $dbh = db::connect($config);
 
 my $template_parameters = {};
@@ -48,18 +39,13 @@ $template_parameters->{projects} = getProjects( $dbh, $config );
 #$template_parameters->{categories}	= get_categories($dbh,$params->{project});
 $template_parameters->{debug}            = $config->{system}->{debug};
 $template_parameters->{server_cache}     = $config->{cache}->{server_cache} if ( $config->{cache}->{server_cache} );
-$template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache} if ( $config->{cache}->{use_client_cache} );
+$template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache}
+  if ( $config->{cache}->{use_client_cache} );
 
 my $template = $params->{template};
 my $out      = '';
 template::process( $config, $out, $params->{template}, $template_parameters );
 print $out;
-
-#write to cache
-if ( $config->{cache}->{use_cache} eq '1' ) {
-    $cache->{content} = $out;
-    cache::save($cache);
-}
 
 sub getProjects {
     my $dbh    = shift;

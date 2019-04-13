@@ -1,7 +1,8 @@
 package db;
 
-use warnings 'all';
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use DBD::mysql();
 use Data::Dumper;
@@ -26,7 +27,7 @@ our $read  = 1;
 our $write = 1;
 
 # connect to database
-sub connect {
+sub connect($;$) {
     my $options = shift;
     my $request = shift;
 
@@ -62,7 +63,7 @@ sub connect {
     return $dbh;
 }
 
-sub disconnect {
+sub disconnect ($){
     my $request = shift;
     my $dbh     = $request->{connection};
     $dbh->disconnect;
@@ -71,7 +72,7 @@ sub disconnect {
 }
 
 # get all database entries of an sql query (as list of hashs)
-sub get {
+sub get($$;$) {
     my $dbh         = shift;
     my $sql         = shift;
     my $bind_values = shift;
@@ -105,7 +106,7 @@ sub get {
 }
 
 # get list of table columns
-sub get_columns {
+sub get_columns($$) {
     my $dbh   = shift;
     my $table = shift;
 
@@ -115,7 +116,7 @@ sub get_columns {
 }
 
 # get hash with table columns as keys
-sub get_columns_hash {
+sub get_columns_hash($$) {
     my $dbh   = shift;
     my $table = shift;
 
@@ -128,7 +129,7 @@ sub get_columns_hash {
 }
 
 #returns last inserted id
-sub insert {
+sub insert ($$$){
     my $dbh       = shift;
     my $tablename = shift;
     my $entry     = shift;
@@ -151,7 +152,7 @@ sub insert {
 }
 
 # execute a modifying database command (update,insert,...)
-sub put {
+sub put($$$) {
     my $dbh         = shift;
     my $sql         = shift;
     my $bind_values = shift;
@@ -177,7 +178,7 @@ sub put {
     return undef;
 }
 
-sub quote {
+sub quote($$) {
     my $dbh = shift;
     my $sql = shift;
 
@@ -186,7 +187,7 @@ sub quote {
 }
 
 #subtract hours, deprecated(!)
-sub shift_date_by_hours {
+sub shift_date_by_hours($$$) {
     my $dbh    = shift;
     my $date   = shift;
     my $offset = shift;
@@ -198,7 +199,7 @@ sub shift_date_by_hours {
 }
 
 #add minutes, deprecated(!)
-sub shift_datetime_by_minutes {
+sub shift_datetime_by_minutes($$$) {
     my $dbh      = shift;
     my $datetime = shift;
     my $offset   = shift;
@@ -210,7 +211,7 @@ sub shift_datetime_by_minutes {
 }
 
 # get next free id of a database table
-sub next_id {
+sub next_id ($$){
     my $dbh   = shift;
     my $table = shift;
 
@@ -224,7 +225,7 @@ sub next_id {
 }
 
 # get max id from table
-sub get_max_id {
+sub get_max_id($$) {
     my $dbh   = shift;
     my $table = shift;
 

@@ -1,7 +1,9 @@
-#! /usr/bin/perl -w 
+#!/usr/bin/perl
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
+
 use Data::Dumper;
 
 use config();
@@ -123,7 +125,12 @@ sub save_roles {
     for my $id ( keys %$values ) {
         if ( update_allowed( $permissions, $role_by_id, $id ) ) {
             for my $column ( keys %$columns ) {
-                next if ( $column eq 'level' || $column eq 'role' || $column eq 'id' || $column eq 'project_id' || $column eq 'studio_id' );
+                next
+                  if ( $column eq 'level'
+                    || $column eq 'role'
+                    || $column eq 'id'
+                    || $column eq 'project_id'
+                    || $column eq 'studio_id' );
                 $values->{$id}->{$column} = 0;
             }
         }

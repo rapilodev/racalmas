@@ -1,7 +1,8 @@
 package studios;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use images();
@@ -11,7 +12,7 @@ our @EXPORT_OK = qw(get_columns get get_by_id insert update delete check check_s
 
 sub debug;
 
-sub get_columns {
+sub get_columns($) {
     my $config = shift;
 
     my $dbh     = db::connect($config);
@@ -22,8 +23,7 @@ sub get_columns {
     }
     return $columns;
 }
-
-sub get {
+sub get($;$) {
     my $config = shift;
     my $condition = shift || {};
 
@@ -61,7 +61,7 @@ sub get {
 		    $limit
 	    };
     } else {
-        push @conditions, 's.id=ps.studio_id';
+        push @conditions,  's.id=ps.studio_id';
         push @conditions,  'ps.project_id=?';
         push @bind_values, $condition->{project_id};
 
@@ -80,7 +80,7 @@ sub get {
     return $studios;
 }
 
-sub getImageById {
+sub getImageById($$) {
     my $config     = shift;
     my $conditions = shift;
 
@@ -91,7 +91,7 @@ sub getImageById {
     return $studios->[0]->{image};
 }
 
-sub insert {
+sub insert ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -104,7 +104,7 @@ sub insert {
     return $id;
 }
 
-sub update {
+sub update ($$) {
     my $config = shift;
     my $studio = shift;
 
@@ -133,7 +133,7 @@ sub update {
     db::put( $dbh, $query, \@bind_values );
 }
 
-sub delete {
+sub delete ($$) {
     my $config = shift;
     my $studio = shift;
 
@@ -142,13 +142,13 @@ sub delete {
 }
 
 #TODO rename to check
-sub check_studio {
+sub check_studio($$) {
     my $config  = shift;
     my $options = shift;
     return check( $config, $options );
 }
 
-sub check {
+sub check ($$) {
     my $config  = shift;
     my $options = shift;
     return "missing studio_id" unless defined $options->{studio_id};

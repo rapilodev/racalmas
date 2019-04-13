@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w
+#!/usr/bin/perl
 
 use warnings;
 use strict;
@@ -8,7 +8,6 @@ use params();
 use config();
 use db();
 use markup();
-use cache();
 use comments();
 use template();
 use log();

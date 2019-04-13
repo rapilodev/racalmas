@@ -1,16 +1,14 @@
-#! /usr/bin/perl -w
+#!/usr/bin/perl
 
-#use utf8;
-use warnings "all";
-
-#use diagnostics;
 use strict;
+use warnings;
+no warnings 'redefine';
+
 use Data::Dumper;
 
 use params();
 use db();
 use markup();
-use cache();
 use log();
 use config();
 use template();
@@ -21,7 +19,7 @@ binmode STDOUT, ":utf8";
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
 my $config = config::getFromScriptLocation();
-my $debug = $config->{system}->{debug};
+my $debug  = $config->{system}->{debug};
 
 #get request
 my $request = {
@@ -33,17 +31,6 @@ my $request = {
 };
 
 $params = $request->{params}->{checked};
-
-#read cache
-my $cache = {};
-if ( $config->{cache}->{use_cache} eq '1' ) {
-    cache::configure('series_names.html');
-    $cache = cache::load( $config, $params );
-    if ( defined $cache->{content} ) {
-        print $cache->{content};
-        return;
-    }
-}
 
 #connect
 my $dbh = db::connect($config);
@@ -61,13 +48,7 @@ my $out      = '';
 template::process( $config, $out, $params->{template}, $template_parameters );
 print $out;
 
-#write to cache
-if ( $config->{cache}->{use_cache} eq '1' ) {
-    $cache->{content} = $out;
-    cache::save($cache);
-}
-$cache = undef;
-$out   = undef;
+$out = undef;
 
 sub getProjects {
     my $dbh    = shift;
@@ -101,8 +82,9 @@ sub getProjects {
         #mark last series_name entry of all non empty projects
         if ( ( defined $series_names ) && ( scalar @$series_names > 0 ) ) {
             $series_names->[-1]->{last}      = 1;
-            $prev_series_names->[-1]->{last} = 0 if ( defined $prev_series_names ) && ( scalar @$prev_series_names > 0 );
-            $prev_series_names               = $series_names;
+            $prev_series_names->[-1]->{last} = 0
+              if ( defined $prev_series_names ) && ( scalar @$prev_series_names > 0 );
+            $prev_series_names = $series_names;
         }
         push @$results, $project;
     }

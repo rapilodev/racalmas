@@ -1,22 +1,22 @@
 package calendar;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc();
 
 use template();
-use cache();
 use events();
 
 use base 'Exporter';
 our @EXPORT_OK = qw(init get_cached_or_render get render get_calendar_weeks configure_cache);
 
-sub init {
+sub init() {
 }
 
-sub get_cached_or_render {
+sub get_cached_or_render($$$) {
 
     #   my $output  = $_[0]
     my $config  = $_[1];
@@ -25,30 +25,12 @@ sub get_cached_or_render {
     my $parms = $request->{params}->{checked};
     my $debug = $config->{system}->{debug};
 
-    my $cache = {};
-    if ( $config->{cache}->{use_cache} == 1 ) {
-        calendar::configure_cache($config);
-        $cache = cache::load( $config, $parms );
-        if ( defined $cache->{content} ) {
-            $_[0] = $cache->{content};
-            return;
-        }
-    }
-
     my $calendar = calendar::get( $config, $request );
 
     calendar::render( $_[0], $config, $request, $calendar );
-
-    #write to cache
-    if ( $config->{cache}->{use_cache} == 1 ) {
-
-        #todo:put out reference only
-        $cache->{content} = $_[0];
-        cache::save($cache);
-    }
 }
 
-sub get {
+sub get($$) {
     my $config  = shift;
     my $request = shift;
 
@@ -156,7 +138,7 @@ sub get {
         $start_year  = $1;
         $start_month = $2;
     }
-    my $monthNames=time::getMonthNamesShort($language);
+    my $monthNames       = time::getMonthNamesShort($language);
     my $start_month_name = $monthNames->[ $start_month - 1 ];
 
     if ( $params->{month_only} eq '1' ) {
@@ -208,7 +190,8 @@ sub get {
                     my $weekday    = 0;
                     my $day_result = undef;
 
-                    ( $week_of_year, $woy_year ) = Date::Calc::Week_of_Year( $year, $month, $day ) unless defined $week_of_year;
+                    ( $week_of_year, $woy_year ) = Date::Calc::Week_of_Year( $year, $month, $day )
+                      unless defined $week_of_year;
 
                     $day_result = {
                         date           => $date,
@@ -299,7 +282,7 @@ sub get {
 
 }
 
-sub render {
+sub render($$$$) {
 
     #    my $out     = $_[0];
     my $config   = $_[1];
@@ -314,12 +297,13 @@ sub render {
     $template_parameters->{base_url}         = $config->{locations}->{base_url};
     $template_parameters->{cache_base_url}   = $config->{cache}->{base_url};
     $template_parameters->{server_cache}     = $config->{cache}->{server_cache} if ( $config->{cache}->{server_cache} );
-    $template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache} if ( $config->{cache}->{use_client_cache} );
+    $template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache}
+      if ( $config->{cache}->{use_client_cache} );
 
     template::process( $config, $_[0], $parms->{template}, $template_parameters );
 }
 
-sub get_calendar_weeks {
+sub get_calendar_weeks($$$) {
     my $config = shift;
     my $start  = shift;
     my $end    = shift;
@@ -349,7 +333,7 @@ sub get_calendar_weeks {
     return $years;
 }
 
-sub getWeeksOfMonth {
+sub getWeeksOfMonth($$) {
     my $thisYear  = shift;
     my $thisMonth = shift;
     my $thisDay   = 1;
@@ -439,22 +423,7 @@ sub getWeeksOfMonth {
     return \@weeks;
 }
 
-sub configure_cache {
-    my $config = shift;
-    my $debug  = $config->{system}->{debug};
-
-    cache::init();
-
-    my $date_pattern = cache::get_date_pattern();
-    my $controllers  = $config->{controllers};
-
-    cache::add_map( '',                                                           $controllers->{calendar} . '/cal.html' );
-    cache::add_map( 'date=' . $date_pattern,                                      $controllers->{calendar} . '/$1-$2.html' );
-    cache::add_map( 'from_date=' . $date_pattern . '&till_date=' . $date_pattern, $controllers->{calendar} . '/$1-$2_$5-$6.html' );
-
-}
-
-sub check_params {
+sub check_params($$) {
     my $config = shift;
     my $params = shift;
 

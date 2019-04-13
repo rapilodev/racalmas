@@ -1,11 +1,13 @@
 package template;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use HTML::Template::Compiled();
 use HTML::Template::Compiled::Plugin::XMLEscape();
+
 #use HTML::Template::JIT();
 use JSON();
 use Cwd();
@@ -20,7 +22,7 @@ use base 'Exporter';
 our @EXPORT_OK = qw(check process exit_on_missing_permission clear_cache);
 
 # TODO:config
-sub process {
+sub process($$$$) {
     my $config = $_[0];
 
     #	my $output=$_[1];
@@ -47,7 +49,8 @@ sub process {
 
     my $user_permissions = roles::get_user_permissions($config);
     for my $permission ( keys %$user_permissions ) {
-        $params->{$permission} = $user_permissions->{$permission} if ( $user_permissions->{$permission} eq '1' );
+        $params->{$permission} = $user_permissions->{$permission}
+          if ( $user_permissions->{$permission} eq '1' );
     }
 
     $params->{jobs} = roles::get_user_jobs($config);
@@ -65,25 +68,28 @@ sub process {
         return;
     }
 
-    unless (-r $filename){
-        log::error($config, qq{template "$filename" does not exist}) unless -e $filename;
-        log::error($config, qq{missing permissions to read "$filename"});
+    unless ( -r $filename ) {
+        log::error( $config, qq{template "$filename" does not exist} ) unless -e $filename;
+        log::error( $config, qq{missing permissions to read "$filename"} );
     }
     my $html_template = initTemplate($filename);
 
-    setRelativeUrls( $params, 0 ) unless ( defined $params->{extern} ) && ( $params->{extern} eq '1' );
+    setRelativeUrls( $params, 0 )
+      unless ( defined $params->{extern} ) && ( $params->{extern} eq '1' );
 
     $html_template->param($params);
     my $output = $html_template->output();
-	if ($filename=~/html/){
-		my ($header, $content) = split(/\n\n/, $output, 2);
-		if ($content){
-			#$content =~s/\s+/ /g;
-			$output = $header."\n\n".$content;
-		}else{
-			#$output =~s/[ \t]+/ /g;
-		}
-	}
+    if ( $filename =~ /html/ ) {
+        my ( $header, $content ) = split( /\n\n/, $output, 2 );
+        if ($content) {
+
+            #$content =~s/\s+/ /g;
+            $output = $header . "\n\n" . $content;
+        } else {
+
+            #$output =~s/[ \t]+/ /g;
+        }
+    }
 
     if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
         print $output;
@@ -92,8 +98,8 @@ sub process {
     }
 }
 
-sub initTemplate{
-    my $filename=shift;
+sub initTemplate($) {
+    my $filename = shift;
 
     my $default_escape = 'none';
     $default_escape = 'js'       if ( $filename =~ /\.js$/ );
@@ -113,7 +119,7 @@ sub initTemplate{
             utf8              => 1,
             plugin            => [qw(HTML::Template::Compiled::Plugin::XMLEscape)],
         );
-    } 
+    }
 
     return HTML::Template::Compiled->new(
         filename          => $filename,
@@ -125,12 +131,15 @@ sub initTemplate{
         default_escape    => $default_escape,
         cache             => 1,
         utf8              => 1,
-#pre_chomp => 1,
-#post_chomp => 1,
+
+        #pre_chomp => 1,
+        #post_chomp => 1,
     );
 }
 
 # set relative urls in nested params structure
+sub setRelativeUrls;
+
 sub setRelativeUrls {
     my $params = shift;
     my $depth = shift || 0;
@@ -179,7 +188,7 @@ sub setRelativeUrls {
 
 #requires read config
 #TODO:add config
-sub check {
+sub check($;$$) {
     my $config   = shift;
     my $template = shift || '';
     my $default  = shift;
@@ -207,7 +216,9 @@ sub check {
     my $cwd = Cwd::getcwd();
 
     $template .= '.html' unless ( $template =~ /\./ );
-    if ( ( $config->{cache}->{compress} eq '1' ) && ( -e $cwd . '/templates/compressed/' . $template ) ) {
+    if (   ( $config->{cache}->{compress} eq '1' )
+        && ( -e $cwd . '/templates/compressed/' . $template ) )
+    {
         $template = $cwd . '/templates/compressed/' . $template;
     } elsif ( -e $cwd . '/templates/' . $template ) {
         $template = $cwd . '/templates/' . $template;
@@ -216,29 +227,36 @@ sub check {
 
     }
 
-    log::error( $config, "missing permission to read template '$template'" ) unless ( -r $template );
+    log::error( $config, "missing permission to read template '$template'" )
+      unless ( -r $template );
     return $template;
 }
 
 #deprecated (for old admin only)
-sub exit_on_missing_permission {
-    my $config           = shift;
-    my $permission       = shift;
+sub exit_on_missing_permission($$) {
+    my $config     = shift;
+    my $permission = shift;
+
     my $user_permissions = roles::get_user_permissions($config);
     if ( $user_permissions->{$permission} ne '1' ) {
         print STDERR "missing permission to $permission\n";
-        template::process( $config, 'print', template::check( $config, 'default.html' ), { error => 'sorry, missing permission!' } );
+        template::process(
+            $config, 'print',
+            template::check( $config, 'default.html' ),
+            { error => 'sorry, missing permission!' }
+        );
         die();
     }
 }
 
+#do not delete last line!
+1;
+
+__END__
 sub clear_cache {
     HTML::Template::Compiled->clear_cache();
 
-    #	return;
-    #	my $html_template = HTML::Template::Compiled->new();
-    # 	$html_template->clear_cache();
+    #   return;
+    #   my $html_template = HTML::Template::Compiled->new();
+    #   $html_template->clear_cache();
 }
-
-#do not delete last line!
-1;

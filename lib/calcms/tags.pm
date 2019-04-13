@@ -1,13 +1,14 @@
 package tags;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 use Data::Dumper;
 
 use base 'Exporter';
 our @EXPORT_OK   = qw(get_tags);
 
-sub get_tags {
+sub get_tags($) {
     my $dbh   = shift;
     my $query = qq{
 		select	name, count(name) sum from calcms_tags

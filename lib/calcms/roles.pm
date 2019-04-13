@@ -1,6 +1,8 @@
 package roles;
-use warnings;
+
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Apache2::Reload();
 
@@ -102,6 +104,7 @@ my $ROLES = {
 
 sub get_user($) {
     my $config = shift;
+
     my $user   = $ENV{REMOTE_USER};
     my $users  = $config->{users};
     return $user if ( defined $users->{$user} );
@@ -110,6 +113,7 @@ sub get_user($) {
 
 sub get_user_permissions($) {
     my $config = shift;
+
     my $user   = $ENV{REMOTE_USER} || '';
     my $roles  = $roles::ROLES;
     return $roles->{nobody} unless $user =~ /\S/;
@@ -121,8 +125,9 @@ sub get_user_permissions($) {
     return $roles->{nobody};
 }
 
-sub get_user_jobs {
+sub get_user_jobs ($;$) {
     my $config = shift;
+
     my $user = $ENV{REMOTE_USER} || '';
     return [] unless ( $user =~ /\S/ );
     my $result = [];
@@ -138,12 +143,14 @@ sub get_user_jobs {
 
 sub get_jobs($) {
     my $config = shift;
+
     return $config->{jobs}->{job};
 }
 
 sub get_template_parameters($$) {
     my $config           = shift;
     my $user_permissions = shift;
+
     $user_permissions = roles::get_user_permissions($config) unless defined $user_permissions;
     my @user_permissions = ();
     for my $usecase ( keys %$user_permissions ) {

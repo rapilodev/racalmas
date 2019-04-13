@@ -1,7 +1,8 @@
 package work_schedule;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use series_dates();
@@ -17,11 +18,11 @@ use series_dates();
 # month
 
 use base 'Exporter';
-our @EXPORT_OK   = qw(get_columns get insert update delete);
+our @EXPORT_OK = qw(get_columns get insert update delete);
 
 sub debug;
 
-sub get_columns {
+sub get_columns($) {
     my $config = shift;
 
     my $dbh     = db::connect($config);
@@ -34,7 +35,7 @@ sub get_columns {
 }
 
 #map schedule id to id
-sub get {
+sub get($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -89,7 +90,7 @@ sub get {
     return $entries;
 }
 
-sub insert {
+sub insert ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -101,7 +102,7 @@ sub insert {
 }
 
 #schedule id to id
-sub update {
+sub update ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -128,7 +129,7 @@ sub update {
 }
 
 #map schedule id to id
-sub delete {
+sub delete($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -149,7 +150,7 @@ sub delete {
     return db::put( $dbh, $query, $bind_values );
 }
 
-sub error {
+sub error($) {
     my $msg = shift;
     print "ERROR: $msg<br/>\n";
 }

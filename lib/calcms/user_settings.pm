@@ -1,7 +1,8 @@
 package user_settings;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use series_dates();
@@ -9,7 +10,7 @@ use series_dates();
 # table:   calcms_user_settings
 # columns: user, colors
 use base 'Exporter';
-our @EXPORT_OK   = qw(getColors getColorCss get insert update delete get_columns defaultColors);
+our @EXPORT_OK = qw(getColors getColorCss get insert update delete get_columns defaultColors);
 
 sub debug;
 
@@ -66,9 +67,10 @@ our $defaultColors = [
     }
 ];
 
-sub getColors {
+sub getColors($$) {
     my $config     = shift;
     my $conditions = shift;
+
     return unless defined $conditions->{user};
     my $user = $conditions->{user};
 
@@ -95,12 +97,12 @@ sub getColors {
         $key =~ s/\s+$//;
         $value =~ s/^\s+//;
         $value =~ s/\s+$//;
-        $colorMap->{$key}->{color} = $value if ( $key ne '' ) && ( $value ne '' ) && ( defined $colorMap->{$key} ) ;
+        $colorMap->{$key}->{color} = $value if ( $key ne '' ) && ( $value ne '' ) && ( defined $colorMap->{$key} );
     }
     return $colors;
 }
 
-sub getColorCss {
+sub getColorCss ($$) {
     my $config     = shift;
     my $conditions = shift;
     return unless defined $conditions->{user};
@@ -131,7 +133,7 @@ sub getColorCss {
     return $style;
 }
 
-sub get_columns {
+sub get_columns($) {
     my $config = shift;
 
     my $dbh     = db::connect($config);
@@ -143,7 +145,7 @@ sub get_columns {
     return $columns;
 }
 
-sub get {
+sub get ($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -170,7 +172,7 @@ sub get {
     return $entries->[0] || undef;
 }
 
-sub insert {
+sub insert ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -179,7 +181,7 @@ sub insert {
     return db::insert( $dbh, 'calcms_user_settings', $entry );
 }
 
-sub update {
+sub update($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -195,12 +197,13 @@ sub update {
 		set    $values
 		where  user=?
 	};
-	#print STDERR Dumper($query).Dumper(\@bind_values);
+
+    #print STDERR Dumper($query).Dumper(\@bind_values);
     db::put( $dbh, $query, \@bind_values );
     print "done\n";
 }
 
-sub delete {
+sub delete ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -218,7 +221,7 @@ sub delete {
     db::put( $dbh, $query, $bind_values );
 }
 
-sub error {
+sub error ($) {
     my $msg = shift;
     print "ERROR: $msg<br/>\n";
 }

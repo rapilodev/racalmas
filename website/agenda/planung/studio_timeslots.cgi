@@ -1,12 +1,11 @@
-#! /usr/bin/perl -w 
+#!/usr/bin/perl
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use URI::Escape();
-
-#use Encode();
 
 use params();
 use config();
@@ -208,7 +207,8 @@ sub showTimeslotSchedule {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
 
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'all,studio_timeslots' } );
+    $params->{loc} =
+      localization::get( $config, { user => $params->{presets}->{user}, file => 'all,studio_timeslots' } );
 
     my $studio_id  = $params->{studio_id};
     my $project_id = $params->{project_id};
@@ -309,7 +309,8 @@ sub showDates {
         }
     );
 
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'all,studio_timeslots' } );
+    $params->{loc} =
+      localization::get( $config, { user => $params->{presets}->{user}, file => 'all,studio_timeslots' } );
     my $language = $params->{loc}->{region};
 
     # translate weekday names to selected language

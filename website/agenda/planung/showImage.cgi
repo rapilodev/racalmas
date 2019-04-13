@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -37,7 +37,6 @@ $params->{default_studio_id} = $user_presets->{studio_id};
 $params = uac::setDefaultStudio( $params, $user_presets );
 $params = uac::setDefaultProject( $params, $user_presets );
 
-
 my $request = {
     url => $ENV{QUERY_STRING} || '',
     params => {
@@ -60,6 +59,7 @@ sub showImage {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
+
     unless ( $permissions->{read_event} == 1 ) {
         uac::permissions_denied('read_image');
         return;

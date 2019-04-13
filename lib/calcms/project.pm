@@ -1,7 +1,8 @@
 package project;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc;
@@ -24,7 +25,7 @@ our @EXPORT_OK = qw(
 sub debug;
 
 # get project columns
-sub get_columns {
+sub get_columns ($) {
     my $config = shift;
 
     my $dbh     = db::connect($config);
@@ -37,7 +38,7 @@ sub get_columns {
 }
 
 # get projects
-sub get {
+sub get ($;$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -79,7 +80,7 @@ sub get {
 }
 
 # requires at least project_id
-sub getImageById {
+sub getImageById($$) {
     my $config     = shift;
     my $conditions = shift;
 
@@ -89,9 +90,10 @@ sub getImageById {
     return $projects->[0]->{image};
 }
 
-sub get_date_range {
+sub get_date_range($) {
     my $config = shift;
-    my $query  = qq{
+
+    my $query = qq{
         select min(start_date) start_date, max(end_date) end_date 
         from   calcms_projects
 	};
@@ -102,7 +104,7 @@ sub get_date_range {
 }
 
 # insert project
-sub insert {
+sub insert($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -120,7 +122,7 @@ sub insert {
 }
 
 # update project
-sub update {
+sub update($$) {
     my $config  = shift;
     my $project = shift;
 
@@ -148,7 +150,7 @@ sub update {
 }
 
 # delete project
-sub delete {
+sub delete ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -157,7 +159,7 @@ sub delete {
 }
 
 # get studios of a project
-sub get_studios {
+sub get_studios($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -175,7 +177,7 @@ sub get_studios {
     return $project_studios;
 }
 
-sub get_studio_assignments {
+sub get_studio_assignments($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -208,7 +210,7 @@ sub get_studio_assignments {
 }
 
 # is studio assigned to project
-sub is_studio_assigned {
+sub is_studio_assigned ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -232,7 +234,7 @@ sub is_studio_assigned {
 }
 
 # assign studio to project
-sub assign_studio {
+sub assign_studio($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -241,7 +243,7 @@ sub assign_studio {
     my $project_id = $entry->{project_id};
     my $studio_id  = $entry->{studio_id};
 
-    if ( is_studio_assigned($entry) ) {
+    if ( is_studio_assigned( $config, $entry ) ) {
         print STDERR "studio $entry->{studio_id} already assigned to project $entry->{project_id}\n";
         return 1;
     }
@@ -251,7 +253,7 @@ sub assign_studio {
 }
 
 # unassign studio from project
-sub unassign_studio {
+sub unassign_studio($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -267,7 +269,7 @@ sub unassign_studio {
 }
 
 # get series by project and studio
-sub get_series {
+sub get_series ($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -288,7 +290,7 @@ sub get_series {
     return $project_series;
 }
 
-sub get_series_assignments {
+sub get_series_assignments ($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -326,7 +328,7 @@ sub get_series_assignments {
 }
 
 # is series assigned to project and studio
-sub is_series_assigned {
+sub is_series_assigned ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -352,7 +354,7 @@ sub is_series_assigned {
 }
 
 # assign series to project and studio
-sub assign_series {
+sub assign_series($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -364,7 +366,7 @@ sub assign_series {
     my $studio_id  = $entry->{studio_id};
     my $series_id  = $entry->{series_id};
 
-    if ( is_series_assigned($entry) ) {
+    if ( is_series_assigned( $config, $entry ) ) {
         print STDERR "series $series_id already assigned to project $project_id and studio $studio_id\n";
         return return undef;
     }
@@ -376,7 +378,7 @@ sub assign_series {
 
 # unassign series from project
 # TODO: remove series _single_ if no event is assigned to
-sub unassign_series {
+sub unassign_series ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -394,7 +396,7 @@ sub unassign_series {
     return db::put( $dbh, $sql, $bind_values );
 }
 
-sub get_with_dates {
+sub get_with_dates($;$) {
     my $config  = shift;
     my $options = shift;
 
@@ -411,7 +413,7 @@ sub get_with_dates {
 }
 
 #TODO: add config
-sub get_sorted {
+sub get_sorted($) {
     my $config   = shift;
     my $projects = project::get( $config, {} );
     my @projects = reverse sort { $a->{end_date} cmp $b->{end_date} } (@$projects);
@@ -428,7 +430,7 @@ sub get_sorted {
 }
 
 # internal
-sub get_months {
+sub get_months ($$;$) {
     my $config   = shift;
     my $project  = shift;
     my $language = shift || $config->{date}->{language} || 'en';
@@ -476,7 +478,7 @@ sub get_months {
 }
 
 # check project_id
-sub check {
+sub check ($$) {
     my $config  = shift;
     my $options = shift;
     return "missing project_id at checking project" unless defined $options->{project_id};
@@ -487,7 +489,7 @@ sub check {
     return 1;
 }
 
-sub error {
+sub error($) {
     my $msg = shift;
     print "ERROR: $msg<br/>\n";
 }

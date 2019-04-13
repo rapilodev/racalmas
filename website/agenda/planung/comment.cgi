@@ -1,7 +1,8 @@
 #! /usr/bin/perl -w 
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use URI::Escape();
 use Encode();
@@ -71,7 +72,7 @@ if ( ( params::isJson() ) || ( defined $params->{action} ) ) {
         <script src="js/datetime.js" type="text/javascript"></script>
     } unless (params::isJson);
 }
-return unless defined uac::check( $config, $params, $user_presets );
+return unless uac::check( $config, $params, $user_presets ) == 1;
 
 if ( defined $params->{action} ) {
     if ( $params->{action} eq 'get_json' ) {
@@ -155,7 +156,8 @@ sub showComments {
     $template_parameters->{projects}      = project::get_with_dates($config);
     $template_parameters->{controllers}   = $config->{controllers};
     $template_parameters->{allow}         = $permissions;
-    $template_parameters->{loc}           = localization::get( $config, { user => $params->{presets}->{user}, file => 'comment' } );
+    $template_parameters->{loc} =
+      localization::get( $config, { user => $params->{presets}->{user}, file => 'comment' } );
 
     #fill and output template
     template::process( $config, 'print', $params->{template}, $template_parameters );
@@ -252,7 +254,8 @@ sub check_params {
     #template
     my $template = '';
     if ( defined $checked->{action} ) {
-        $template = template::check( $config, $params->{template}, 'edit_comment' ) if $checked->{action} eq 'showComment';
+        $template = template::check( $config, $params->{template}, 'edit_comment' )
+          if $checked->{action} eq 'showComment';
     } else {
         $template = template::check( $config, $params->{template}, 'comments' );
     }

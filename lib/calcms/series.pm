@@ -1,7 +1,8 @@
 package series;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 
 use Data::Dumper;
 
@@ -28,7 +29,7 @@ our @EXPORT_OK = qw(
 sub debug;
 
 # get series columns
-sub get_columns {
+sub get_columns ($) {
     my $config = shift;
 
     my $dbh     = db::connect($config);
@@ -41,7 +42,7 @@ sub get_columns {
 }
 
 # get series content
-sub get {
+sub get ($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -132,7 +133,7 @@ sub get {
 }
 
 # insert series
-sub insert {
+sub insert ($$) {
     my $config = shift;
     my $series = shift;
 
@@ -174,7 +175,7 @@ sub insert {
 }
 
 # update series
-sub update {
+sub update ($$) {
     my $config = shift;
     my $series = shift;
 
@@ -210,7 +211,7 @@ sub update {
 
 # delete series, its schedules and series dates
 # unassign its users and events
-sub delete {
+sub delete($$) {
     my $config = shift;
     my $series = shift;
 
@@ -300,7 +301,7 @@ sub delete {
 }
 
 # get users directly assigned to project, studio, series (editors)
-sub get_users {
+sub get_users ($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -346,7 +347,7 @@ sub get_users {
 }
 
 # assign user to series
-sub add_user {
+sub add_user ($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -371,12 +372,13 @@ sub add_user {
 		insert calcms_user_series 
 		set    project_id=?, studio_id=?, series_id=?, user_id=?, modified_by=?, modified_at=now()
 	};
-    $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{user_id}, $entry->{user} ];
+    $bind_values =
+      [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{user_id}, $entry->{user} ];
     db::put( $dbh, $query, $bind_values );
 }
 
 # remove user(s) from series.
-sub remove_user {
+sub remove_user ($$) {
     my $config    = shift;
     my $condition = shift;
 
@@ -420,7 +422,7 @@ sub remove_user {
 
 #search events by series_name and title (for events not assigned yet)
 #TODO: add location
-sub search_events {
+sub search_events ($$$) {
     my $config  = shift;
     my $request = shift;
     my $options = shift;
@@ -469,7 +471,7 @@ sub search_events {
 }
 
 #get events (only assigned ones) by project_id,studio_id,series_id,
-sub get_events {
+sub get_events ($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -580,7 +582,7 @@ sub get_events {
 # load event given by studio_id, series_id and event_id
 # helper for gui - errors are written to gui output
 # return undef on error
-sub get_event {
+sub get_event ($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -645,7 +647,7 @@ sub get_event {
 }
 
 # get name and title of series and age in days ('days_over')
-sub get_event_age {
+sub get_event_age($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -702,7 +704,7 @@ sub get_event_age {
 }
 
 # is event older than max_age days
-sub is_event_older_than_days {
+sub is_event_older_than_days ($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -736,7 +738,7 @@ sub is_event_older_than_days {
     return 0;
 }
 
-sub get_next_episode {
+sub get_next_episode($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -778,7 +780,7 @@ sub get_next_episode {
     return $max + 1;
 }
 
-sub get_images {
+sub get_images ($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -842,7 +844,7 @@ sub get_images {
 
 #assign event to series
 #TODO: manual assign needs to update automatic one
-sub assign_event {
+sub assign_event($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -879,14 +881,15 @@ sub assign_event {
 		insert into calcms_series_events (project_id, studio_id, series_id, event_id, manual)
 		values (?,?,?,?,?)
 	};
-    $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id}, $entry->{manual} ];
+    $bind_values =
+      [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id}, $entry->{manual} ];
 
     #print STDERR '<pre>'.$query.Dumper($bind_values).'</pre>';
     return db::put( $dbh, $query, $bind_values );
 }
 
 #unassign event from series
-sub unassign_event {
+sub unassign_event($$) {
     my $config = shift;
     my $entry  = shift;
 
@@ -913,7 +916,7 @@ sub unassign_event {
 # put series id to given events (for legacy handling)
 # used by calendar
 # TODO: optionally add project_id and studio_id to conditions
-sub add_series_ids_to_events {
+sub add_series_ids_to_events ($$) {
     my $config = shift;
     my $events = shift;
 
@@ -961,7 +964,7 @@ sub add_series_ids_to_events {
 
 # add event_ids to series and remove all event ids from series, not given event_ids
 # for scan only, used at series
-sub set_event_ids {
+sub set_event_ids ($$$$$) {
     my $config     = shift;
     my $project_id = shift;
     my $studio_id  = shift;
@@ -1037,7 +1040,7 @@ sub set_event_ids {
 
 # check if user allowed to update series events
 # evaluate permissions and consider editors directly assigned to series
-sub can_user_update_events {
+sub can_user_update_events ($$) {
     my $request = shift;
     my $options = shift;
 
@@ -1058,7 +1061,7 @@ sub can_user_update_events {
 
 # check if user allowed to create series events
 # evaluate permissions and consider editors directly assigned to series
-sub can_user_create_events {
+sub can_user_create_events ($$) {
     my $request = shift;
     my $options = shift;
 
@@ -1077,7 +1080,7 @@ sub can_user_create_events {
     return is_series_assigned_to_user( $request, $options );
 }
 
-sub is_series_assigned_to_user {
+sub is_series_assigned_to_user ($$) {
     my $request = shift;
     my $options = shift;
 
@@ -1104,7 +1107,7 @@ sub is_series_assigned_to_user {
 
 # check if user is assigned to studio where location matchs to event
 # return 1 on success or error text
-sub is_event_assigned_to_user {
+sub is_event_assigned_to_user ($$) {
     my $request = shift;
     my $options = shift;
 
@@ -1157,7 +1160,7 @@ sub is_event_assigned_to_user {
 
 # to find multiple recurrences this does not include the recurrence_count
 # use events::get_key to add the recurrence
-sub get_event_key {
+sub get_event_key ($) {
     my $event = shift;
 
     my $program     = $event->{program}     || '';
@@ -1176,7 +1179,7 @@ sub get_event_key {
     return $key;
 }
 
-sub update_recurring_events {
+sub update_recurring_events ($$) {
     my $config  = shift;
     my $options = shift;
 
@@ -1217,7 +1220,7 @@ sub update_recurring_events {
             next if $event->{recurrence} == 0;
             next if $event->{recurrence_count} == 0;
             print STDERR
-              "remove recurrence\t'$event->{event_id}'\t'$event->{start}'\t'$event->{rerun}'\t'$event->{recurrence}'\t'$event->{key}'\n";
+"remove recurrence\t'$event->{event_id}'\t'$event->{start}'\t'$event->{rerun}'\t'$event->{recurrence}'\t'$event->{key}'\n";
             $event->{recurrence}       = 0;
             $event->{recurrence_count} = 0;
             $event->{rerun}            = 0;
@@ -1253,7 +1256,7 @@ sub update_recurring_events {
     }
 }
 
-sub update_recurring_event {
+sub update_recurring_event($$) {
     my $config = shift;
     my $event  = shift;
 
@@ -1284,7 +1287,7 @@ sub update_recurring_event {
     db::put( $dbh, $update_sql, $bind_values );
 }
 
-sub error {
+sub error($) {
     my $msg = shift;
     print "ERROR: $msg<br/>\n";
 }

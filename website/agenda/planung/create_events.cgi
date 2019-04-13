@@ -1,7 +1,9 @@
-#! /usr/bin/perl -w
+#!/usr/bin/perl
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
+
 use Data::Dumper;
 
 use params();

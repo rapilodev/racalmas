@@ -1,11 +1,8 @@
-#! /usr/bin/perl -w
+#!/usr/bin/perl
 
 use warnings "all";
 use strict;
 use utf8;
-
-#use CGI qw(header param Vars);
-
 use config();
 use params();
 use db();
@@ -20,7 +17,7 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 
     my $params = {};
     my $r      = shift;
-    #print STDERR ref($r)."\n";
+
     if ( ref($r) eq '' ) {
         for my $arg (@ARGV) {
             my ( $key, $value ) = split( /\=/, $arg, 2 );
@@ -56,22 +53,12 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
     $params = $request->{params}->{checked};
 
     my $mem = 0;
-
-    #get result from cache
-    my $cache = aggregator::get_cache( $config, $request );
-
-    if ( ( defined $cache->{content} ) && ( $cache->{content} ne '' ) ) {
-        my $content = $cache->{content};
-        print $output_header;
-        print $content;
-        return;
-    }
-
     my $content = load_file( $base_dir . './index.html' );
     $content = $$content || '';
 
     #replace HTML escaped calcms_title span by unescaped one
-    $content =~ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span id=\"calcms_title\" \>\<\/span\>/g;
+    $content =~
+s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span id=\"calcms_title\" \>\<\/span\>/g;
 
     #    print $content;
 
@@ -130,7 +117,9 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
     $content =~ s/(<(div|span)\s+id="calcms_title".*?>).*?(<\/(div|span)>)/$list->{project_title}/g;
 
     my $values = [];
-    for my $value ( $list->{'series_name'}, $list->{'title'}, $list->{'location'}, 'Programm '. $list->{project_title} ) {
+    for my $value ( $list->{'series_name'},
+        $list->{'title'}, $list->{'location'}, 'Programm ' . $list->{project_title} . ' | In Gedenken an AB✝' )
+    {
         next unless defined $value;
         next if $value eq '';
         push @$values, $value;
@@ -156,14 +145,8 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
     print $output_header;
     print $content;
 
-    if ( $config->{cache}->{use_cache} eq '1' ) {
-        $cache->{content} = $content;
-        cache::save($cache);
-    }
-
     #    $config=undef;
     $content = undef;
-    $cache   = undef;
 }
 
 sub load_file {

@@ -1,7 +1,8 @@
 package comments;
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 use Data::Dumper;
 
 use db();
@@ -12,13 +13,12 @@ use time();
 
 use base 'Exporter';
 our @EXPORT_OK =
-  qw(init get_cached_or_render get modify_results render configure_cache get_query get_by_event get_level get_events check insert set_lock_status set_news_status lock update_comment_count sort)
-  ;
+  qw(init get_cached_or_render get modify_results render configure_cache get_query get_by_event get_level get_events check insert set_lock_status set_news_status lock update_comment_count sort);
 
-sub init {
+sub init() {
 }
 
-sub get_cached_or_render {
+sub get_cached_or_render($$$;$) {
 
     #    my $response=$_[0];
     my $config      = $_[1];
@@ -33,7 +33,6 @@ sub get_cached_or_render {
     my $comment = $request->{params}->{checked};
 
     my $filename = '';
-    my $cache    = {};
 
     my $results = comments::get( $config, $request );
 
@@ -54,14 +53,7 @@ sub get_cached_or_render {
 
     comments::modify_results( $results, $config, $request );
 
-    #print STDERR Dumper($results);
     $results = comments::sort( $config, $results ) if ( $comment->{type} eq 'tree' );
-
-    #print STDERR Dumper($results);
-    #    if ($comment->{sort_order}eq'desc'){
-    #        my @results= reverse(@$results);
-    #        $results=\@results;
-    #    }
 
     if (   ( $params->{show_max} ne '' )
         && ( $params->{limit} ne '' )
@@ -81,7 +73,7 @@ sub get_cached_or_render {
 
 }
 
-sub get {
+sub get($$) {
     my $config  = shift;
     my $request = shift;
 
@@ -99,7 +91,7 @@ sub get {
     return $results;
 }
 
-sub get_query {
+sub get_query($$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $request = shift;
@@ -150,8 +142,9 @@ sub get_query {
     }
 
     my $dbcols = [
-        'id',         'event_start', 'event_id',  'content', 'ip',          'author', 'email', 'lock_status',
-        'created_at', 'title',       'parent_id', 'level',   'news_status', 'project'
+        'id',          'event_start', 'event_id',   'content', 'ip',        'author',
+        'email',       'lock_status', 'created_at', 'title',   'parent_id', 'level',
+        'news_status', 'project'
     ];
     my $cols = join( ', ', map { 'c.' . $_ } @$dbcols );
     my $query = qq{
@@ -168,7 +161,7 @@ sub get_query {
     return ( \$query, $bind_values );
 }
 
-sub modify_results {
+sub modify_results($$$) {
     my $results = $_[0];
     my $config  = $_[1];
     my $request = $_[2];
@@ -204,11 +197,12 @@ sub modify_results {
 
             $result->{content}       = markup::html_to_plain( $result->{html_content} );
             $result->{short_content} = markup::html_to_plain( $result->{short_content} );
-            $result->{excerpt}       = "lass dich ueberraschen" if ( defined $result->{excerpt} ) && ( $result->{excerpt} eq '' );
-            $result->{excerpt}       = markup::html_to_plain( $result->{excerpt} );
-            $result->{title}         = markup::html_to_plain( $result->{title} );
-            $result->{series_name}   = markup::html_to_plain( $result->{series_name} );
-            $result->{program}       = markup::html_to_plain( $result->{program} );
+            $result->{excerpt}       = "lass dich ueberraschen"
+              if ( defined $result->{excerpt} ) && ( $result->{excerpt} eq '' );
+            $result->{excerpt}     = markup::html_to_plain( $result->{excerpt} );
+            $result->{title}       = markup::html_to_plain( $result->{title} );
+            $result->{series_name} = markup::html_to_plain( $result->{series_name} );
+            $result->{program}     = markup::html_to_plain( $result->{program} );
 
             if ( defined $result->{created_at} ) {
                 $result->{created_at} =~ s/ /T/gi;
@@ -224,7 +218,7 @@ sub modify_results {
     return $results;
 }
 
-sub render {
+sub render($$$$) {
 
     #    my $response    =$_[0];
     my $config  = $_[1];
@@ -244,14 +238,15 @@ sub render {
     $template_parameters->{event_id}    = $params->{event_id};
     $template_parameters->{event_start} = $params->{event_start};
 
-    $template_parameters->{server_cache}     = $config->{cache}->{server_cache}     if ( $config->{cache}->{server_cache} );
-    $template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache} if ( $config->{cache}->{use_client_cache} );
-    $template_parameters->{controllers}      = $config->{controllers};
+    $template_parameters->{server_cache} = $config->{cache}->{server_cache} if ( $config->{cache}->{server_cache} );
+    $template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache}
+      if ( $config->{cache}->{use_client_cache} );
+    $template_parameters->{controllers} = $config->{controllers};
     template::process( $config, $_[0], $params->{template}, $template_parameters );
 }
 
 #check if comment exists already
-sub check {
+sub check ($$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $comment = shift;
@@ -268,8 +263,10 @@ sub check {
             and ip=?
             and content=?
     };
-    my $bind_values =
-      [ $comment->{event_start}, $comment->{event_id}, $comment->{parent_id}, $comment->{author}, $comment->{ip}, $comment->{content} ];
+    my $bind_values = [
+        $comment->{event_start}, $comment->{event_id}, $comment->{parent_id},
+        $comment->{author},      $comment->{ip},       $comment->{content}
+    ];
 
     my $comments = db::get( $dbh, $query, $bind_values );
 
@@ -279,7 +276,7 @@ sub check {
 }
 
 #used for insert
-sub get_level {
+sub get_level($$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $comment = shift;
@@ -314,7 +311,7 @@ sub get_level {
     return 0;
 }
 
-sub get_by_event {
+sub get_by_event($$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $request = $_[0];
@@ -359,7 +356,7 @@ sub get_by_event {
     return $comments;
 }
 
-sub get_by_time {
+sub get_by_time($$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $comment = shift;
@@ -398,7 +395,7 @@ sub get_by_time {
     return $comments;
 }
 
-sub get_events {
+sub get_events($$$$) {
     my $dbh      = shift;
     my $config   = shift;
     my $request  = shift;
@@ -465,7 +462,7 @@ sub get_events {
     return \@sorted_events;
 }
 
-sub insert {
+sub insert ($$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $comment = shift;
@@ -488,7 +485,7 @@ sub insert {
     return $comment_id;
 }
 
-sub set_lock_status {
+sub set_lock_status ($$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $comment = shift;
@@ -516,7 +513,7 @@ sub set_lock_status {
     }
 }
 
-sub set_news_status {
+sub set_news_status($$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $comment = shift;
@@ -532,7 +529,7 @@ sub set_news_status {
     db::put( $dbh, $query, $bind_values );
 }
 
-sub update_comment_count {
+sub update_comment_count ($$$) {
     my $dbh     = shift;
     my $config  = shift;
     my $comment = shift;
@@ -557,8 +554,26 @@ sub update_comment_count {
     db::put( $dbh, $query, $bind_values );
 }
 
+sub sort_childs {
+    my $node         = shift;
+    my $nodes        = shift;
+    my $sorted_nodes = shift;
+
+    #push node into list of sorted nodes
+    push @{$sorted_nodes}, $node;
+
+    #return if node is leaf
+    return $sorted_nodes unless ( defined $node->{childs} );
+
+    #process child nodes
+    for my $child ( @{ $node->{childs} } ) {
+        $sorted_nodes = sort_childs( $child, $nodes, $sorted_nodes );
+    }
+    return $sorted_nodes;
+}
+
 #precondition: results are presorted by creation date (by sql)
-sub sort {
+sub sort($$) {
     my $config  = shift;
     my $results = shift;
 
@@ -589,44 +604,15 @@ sub sort {
     return $sorted_nodes;
 }
 
-sub sort_childs {
-    my $node         = shift;
-    my $nodes        = shift;
-    my $sorted_nodes = shift;
-
-    #push node into list of sorted nodes
-    push @{$sorted_nodes}, $node;
-
-    #return if node is leaf
-    return $sorted_nodes unless ( defined $node->{childs} );
-
-    #process child nodes
-    for my $child ( @{ $node->{childs} } ) {
-        $sorted_nodes = sort_childs( $child, $nodes, $sorted_nodes );
-    }
-    return $sorted_nodes;
-}
-
-sub configure_cache {
-    my $config = shift;
-
-    cache::init();
-    my $controllers = $config->{controllers};
-
-    cache::add_map( 'template=comments_newest&limit=3&type=list', $controllers->{comments} . '/neueste.html' );
-    cache::add_map( 'template=comments_atom.xml&limit=20',        $controllers->{comments} . '/feed.xml' );
-    cache::add_map( 'template=comments.html&event_id=(\d+)&event_start=' . cache::get_datetime_pattern(),
-        $controllers->{comments} . '/$1_$2-$3-$4_$5-$6.html' );
-}
-
-sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+sub check_params ($$) {
+    my $config  = shift;
+    my $params  = shift;
     my $comment = {};
 
     $comment->{event_start} = '';
-    if ( ( defined $params->{event_start} ) && ( $params->{event_start} =~ /(\d\d\d\d\-\d\d\-\d\d[T ]\d\d\:\d\d)(\:\d\d)?/ ) ) {
+    if (   ( defined $params->{event_start} )
+        && ( $params->{event_start} =~ /(\d\d\d\d\-\d\d\-\d\d[T ]\d\d\:\d\d)(\:\d\d)?/ ) )
+    {
         $comment->{event_start} = $1;
     }
 
@@ -665,9 +651,10 @@ sub check_params {
         $comment->{debug} = $1;
     }
 
-    log::error( $config, 'missing parameter a' ) if ( defined $params->{limit} )       && ( $comment->{limit} eq '' );
-    log::error( $config, 'missing parameter b' ) if ( defined $params->{event_id} )    && ( $comment->{event_id} eq '' );
-    log::error( $config, 'missing parameter c' ) if ( defined $params->{event_start} ) && ( $comment->{event_start} eq '' );
+    log::error( $config, 'missing parameter a' ) if ( defined $params->{limit} )    && ( $comment->{limit} eq '' );
+    log::error( $config, 'missing parameter b' ) if ( defined $params->{event_id} ) && ( $comment->{event_id} eq '' );
+    log::error( $config, 'missing parameter c' )
+      if ( defined $params->{event_start} ) && ( $comment->{event_start} eq '' );
 
     my $delta_days = 1;
     if ( $comment->{event_start} ne '' ) {
@@ -690,3 +677,4 @@ sub check_params {
 
 #do not delete last line!
 1;
+
