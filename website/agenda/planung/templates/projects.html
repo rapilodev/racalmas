@@ -52,7 +52,7 @@
     <!-- view project -->
     <div id="view_<TMPL_VAR project_id>" class="panel-body">
         <table>
-            <tr><td class="label"><TMPL_VAR .loc.label_image></td>      <td colspan="2"><img src="showImage.cgi?project_id=<TMPL_VAR .project_id>&studioId=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=thumbs"> &nbsp;</td></tr>
+            <tr><td class="label"><TMPL_VAR .loc.label_image></td>      <td colspan="2"><img src="showImage.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=thumbs"> &nbsp;</td></tr>
             <tr><td class="label"><TMPL_VAR .loc.label_name></td>       <td colspan="2"><TMPL_VAR name> &nbsp;</td></tr>
             <tr><td class="label"><TMPL_VAR .loc.label_subtitle></td>   <td colspan="2"><TMPL_VAR subtitle> &nbsp;</td></tr>
             <tr><td class="label"><TMPL_VAR .loc.label_start_date></td> <td colspan="2"><TMPL_VAR start_date> &nbsp;</td></tr>
@@ -99,7 +99,7 @@
                             class="selectImage"
                             onclick="selectImage('<TMPL_VAR name escape=HTML>', '<TMPL_VAR image ESCAPE=url>', 'projects', '<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>', null, null, '<TMPL_VAR pid>'); return false;"
                         >
-                            <img id="imagePreview" src="showImage.cgi?project_id=<TMPL_VAR .project_id>&studioId=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=icon">
+                            <img id="imagePreview" src="showImage.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=icon">
                         </button>
                         <input id="image_<TMPL_VAR pid>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.template_image>">
                     </td>
