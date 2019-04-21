@@ -1,8 +1,10 @@
 #!/usr/bin/perl
 
-use warnings "all";
 use strict;
+use warnings;
+no warnings 'redefine';
 use utf8;
+
 use config();
 use params();
 use db();
@@ -17,8 +19,8 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 
     my $params = {};
     my $r      = shift;
-
     if ( ref($r) eq '' ) {
+        unshift @ARGV, $r;
         for my $arg (@ARGV) {
             my ( $key, $value ) = split( /\=/, $arg, 2 );
             $params->{$key} = $value;
@@ -29,9 +31,8 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
 
     my $config = config::getFromScriptLocation();
 
-    my $debug     = $config->{system}->{debug};
-    my $mem_debug = $config->{system}->{debug_memory};
-    my $base_dir  = $config->{locations}->{base_dir};
+    my $debug    = $config->{system}->{debug};
+    my $base_dir = $config->{locations}->{base_dir};
 
     my $output_header = '';
     if ( exists $ENV{REQUEST_URI} && $ENV{REQUEST_URI} ne '' ) {
@@ -42,7 +43,6 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
     $params->{exclude_projects}     = 1;
     $params->{exclude_event_images} = 1;
 
-    #    $output_header.='<!DOCTYPE html>'."\n";
     my $request = {
         url    => $ENV{QUERY_STRING},
         params => {
@@ -52,15 +52,12 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
     };
     $params = $request->{params}->{checked};
 
-    my $mem = 0;
     my $content = load_file( $base_dir . './index.html' );
     $content = $$content || '';
 
     #replace HTML escaped calcms_title span by unescaped one
     $content =~
 s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span id=\"calcms_title\" \>\<\/span\>/g;
-
-    #    print $content;
 
     my $list = aggregator::get_list( $config, $request );
 
@@ -76,20 +73,12 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
     my $calendar = aggregator::get_calendar( $config, $request, $list->{day} );
     my $newest_comments = aggregator::get_newest_comments( $config, $request );
 
-    #my $newest_comments={};
-    #db::disconnect($request) if (defined $request && defined $request->{connection});
-    #print STDERR "$list->{project_title}\n";
-
     #build results list
     my $output = {};
     $output->{calcms_menu}            = \$menu->{content};
     $output->{calcms_list}            = \$list->{content};
     $output->{calcms_calendar}        = \$calendar->{content};
     $output->{calcms_newest_comments} = \$newest_comments->{content};
-
-    #    $output->{calcms_categories}    = load_file($base_dir.'/cache/categories.html');
-    #    $output->{calcms_series_names}  = load_file($base_dir.'/cache/series_names.html');
-    #    $output->{calcms_programs}      = load_file($base_dir.'/cache/programs.html');
 
     my $url = $list->{url};
     my $js  = qq{
@@ -117,8 +106,8 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
     $content =~ s/(<(div|span)\s+id="calcms_title".*?>).*?(<\/(div|span)>)/$list->{project_title}/g;
 
     my $values = [];
-    for my $value ( $list->{'series_name'},
-        $list->{'title'}, $list->{'location'}, 'Programm ' . $list->{project_title} . ' | In Gedenken an AB✝' )
+    for
+      my $value ( $list->{'series_name'}, $list->{'title'}, $list->{'location'}, 'Programm ' . $list->{project_title} )
     {
         next unless defined $value;
         next if $value eq '';
@@ -137,15 +126,13 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
     $content =~ s/startCalcms\(\)\;/$js/gi;
 
     #replace link to uncompressed or compressed drupal (first link in <head>)
-    my @parts = split( /<\/head>/, $content );
-    $parts[0] =~ s|/misc/jquery.js|/agenda_files/js/jquery.js|;
-    $parts[0] =~ s|/sites/default/files/js/[a-z0-9\_]+\.js|/agenda_files/js/jquery.js|;
-    $content = join( '</head>', @parts );
+    #my @parts = split( /<\/head>/, $content );
+    #$parts[0] =~ s|/misc/jquery.js|/agenda_files/js/jquery.min.js|;
+    #$parts[0] =~ s|/sites/default/files/js/[a-z0-9\_]+\.js|/agenda_files/js/jquery.min.js|;
+    #$content = join( '</head>', @parts );
 
     print $output_header;
     print $content;
-
-    #    $config=undef;
     $content = undef;
 }
 
