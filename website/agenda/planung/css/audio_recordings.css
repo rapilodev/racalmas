@@ -26,3 +26,14 @@ th{
     border:0;
     box-shadow:#888 2px 2px 1px 1px;
 }
+
+
+#content div.ok,
+#content div.warn,
+#content div.error{
+    padding-top:3px;
+    padding-bottom:3px;
+    margin:1px;
+    border-radius:4px;
+    text-align:center;
+}

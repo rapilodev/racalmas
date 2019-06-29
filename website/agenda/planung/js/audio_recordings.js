@@ -18,9 +18,9 @@ function changeFile(fileInput){
     var file = fileInput.files[0];
     var size = file.size / (1000*1000);
     $('#uploadSize').html(size + " MB");
-    if (size > 300){
+    if (size > 400){
         $('#uploadButton').hide();
-        showError("file is too large. maximum size is 300 MB! Please use MP3, 192 kHz, CBR, 44100 Hz, 16bit");
+        showError("file is too large. maximum size is 400 MB! Please use MP3, 192 kHz, CBR, 44100 Hz, 16bit");
     }else{
         $('#uploadButton').show();
     }

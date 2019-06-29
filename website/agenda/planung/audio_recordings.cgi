@@ -21,6 +21,7 @@ use series();
 use template();
 use audio_recordings();
 use events();
+use audio();
 use time();
 
 #$|=1;
@@ -33,7 +34,7 @@ our $debug  = $config->{system}->{debug};
 my $base_dir = $config->{locations}->{base_dir};
 
 my $tempDir     = '/var/tmp';
-my $uploadLimit = 300_000_000;
+my $uploadLimit = 400_000_000;
 
 my %params = ();
 my $error  = '';
@@ -108,7 +109,8 @@ if ( $params->{action} eq 'upload' ) {
 showAudioRecordings( $config, $request );
 
 print STDERR "$0 ERROR: " . $params->{error} . "\n" if $params->{error} ne '';
-$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event,comment' } );
+$params->{loc} =
+  localization::get( $config, { user => $params->{presets}->{user}, file => 'event,comment' } );
 template::process( $config, 'print', $params->{template}, $params );
 
 exit;
@@ -302,10 +304,14 @@ sub showAudioRecordings {
         $recording->{mastered}  = $recording->{mastered}  ? 'yes' : 'no';
 
         $recording->{eventDuration} = getDuration( $recording->{eventDuration} );
-        $recording->{audioDuration} = getDuration( $recording->{audioDuration} );
+        $recording->{audioDuration} = audio::formatDuration(
+            $recording->{audioDuration},
+            $recording->{eventDuration},
+            getDuration( $recording->{audioDuration} )
+        );
 
-        $recording->{rmsLeft}  ||= '-';
-        $recording->{rmsRight} ||= '-';
+        $recording->{rmsLeft}  = audio::formatLoudness( $recording->{rmsLeft} );
+        $recording->{rmsRight} = audio::formatLoudness( $recording->{rmsRight} );
     }
 
     my $now      = time();
@@ -368,7 +374,8 @@ sub uploadFile {
     print STDERR "tempFile=$tempFile\n";
 
     my $start = time();
-    open DAT, '>', $tempFile or return { error => 'could not save upload. ' . $! . " " . $tempFile };
+    open DAT, '>', $tempFile
+      or return { error => 'could not save upload. ' . $! . " " . $tempFile };
     binmode DAT;
     my $size = 0;
     my $data = '';
@@ -495,14 +502,18 @@ sub checkFilename {
     if ( $filename =~ /\.([a-zA-Z]{3,5})$/ ) {
         my $extension = lc $1;
         unless ( grep( /$extension/, @validExtensions ) ) {
-            return { error => 'Following file formats are supported: ' . join( ",", @validExtensions ) . '!' };
+            return {error => 'Following file formats are supported: '
+                  . join( ",", @validExtensions )
+                  . '!' };
         }
         return {
             extension => $extension,
             error     => ''
         };
     }
-    return { error => 'Not matching file extension found! Supported are: ' . join( ",", @validExtensions ) . '!' };
+    return {error => 'Not matching file extension found! Supported are: '
+          . join( ",", @validExtensions )
+          . '!' };
 }
 
 # return event duration in seconds
@@ -534,7 +545,8 @@ sub getEventDuration {
         print STDERR "getEventDuration: no event found with event_id=$eventId\n";
     }
     my $event = $events->[0];
-    my $duration = time::get_duration_seconds( $event->{start}, $event->{end}, $config->{date}->{time_zone} );
+    my $duration =
+      time::get_duration_seconds( $event->{start}, $event->{end}, $config->{date}->{time_zone} );
     return $duration;
 }
 
@@ -544,11 +556,13 @@ sub check_params {
 
     my $checked = {};
     $checked->{error} = '';
-    $checked->{template} = template::check( $config, $params->{template}, 'upload_audio_recordings' );
+    $checked->{template} =
+      template::check( $config, $params->{template}, 'upload_audio_recordings' );
 
     #print Dumper($params);
     #numeric values
-    for my $param ( 'project_id', 'studio_id', 'default_studio_id', 'series_id', 'event_id', 'id' ) {
+    for my $param ( 'project_id', 'studio_id', 'default_studio_id', 'series_id', 'event_id', 'id' )
+    {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
             $checked->{$param} = $params->{$param};
         }

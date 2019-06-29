@@ -29,6 +29,7 @@ use work_dates();
 use playout();
 use user_settings();
 use audio_recordings();
+use audio();
 
 binmode STDOUT, ":utf8";
 
@@ -93,7 +94,8 @@ if (
     #process header
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
+    template::process( $config, 'print', template::check( $config, 'default.html' ),
+        $headerParams );
     print q{
         <link href="css/jquery-ui-timepicker.css" type="text/css" rel="stylesheet" /> 
         <link rel="stylesheet" href="css/calendar.css" type="text/css" /> 
@@ -167,7 +169,7 @@ sub showCalendar {
     my $start_of_day = $cal_options->{start_of_day};
     my $end_of_day   = $cal_options->{end_of_day};
 
-    my $params      = $request->{params}->{checked};
+    my $params = $request->{params}->{checked};
     my $permissions = $request->{permissions} || {};
     unless ( $permissions->{read_series} == 1 ) {
         uac::permissions_denied('read_series');
@@ -180,9 +182,11 @@ sub showCalendar {
     $params->{range} = 28 unless defined $params->{range};
 
     #get colors from user settings
-    print user_settings::getColorCss( $config, { user => $params->{presets}->{user} } ) if $params->{part} == 0;
+    print user_settings::getColorCss( $config, { user => $params->{presets}->{user} } )
+      if $params->{part} == 0;
 
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'all,calendar' } );
+    $params->{loc} =
+      localization::get( $config, { user => $params->{presets}->{user}, file => 'all,calendar' } );
     my $language = $user_settings->{language} || 'en';
     $params->{language} = $language;
     print localization::getJavascript( $params->{loc} ) if $params->{part} == 0;
@@ -367,7 +371,7 @@ sub showCalendar {
 
         #get playout
         delete $options->{exclude};
-        my $playout_dates = playout::get( $config, $options );
+        my $playout_dates = playout::get_scheduled( $config, $options );
         $id = 0;
         for my $date (@$playout_dates) {
             my $format = undef;
@@ -377,7 +381,8 @@ sub showCalendar {
                   . ( $date->{'format_version'} || '' ) . " "
                   . ( $date->{'format_profile'} || '' );
                 $format =~ s/MPEG Audio Version 1 Layer 3/MP3/g;
-                $format .= ' ' . ( $date->{'format_settings'} || '' ) if defined $date->{'format_settings'};
+                $format .= ' ' . ( $date->{'format_settings'} || '' )
+                  if defined $date->{'format_settings'};
                 $format .= '<br>';
             }
 
@@ -386,32 +391,44 @@ sub showCalendar {
             $date->{series_id} = -1;
             $date->{event_id}  = $id;
             $date->{title}     = '';
-            $date->{title} .= '<b>errors</b>: ' . $date->{errors} . '<br>' if defined $date->{errors};
-            $date->{title} .= formatDuration( $date->{duration} ) . "<br>" if defined $date->{duration};
-            $date->{title} .= formatLoudness( "L:", $date->{rms_left} ) . ', '    if defined $date->{rms_left};
-            $date->{title} .= formatLoudness( "R:", $date->{rms_right} ) . '<br>' if defined $date->{rms_right};
-            $date->{title} .= formatBitrate( $date->{bitrate} ) . ' ' . $date->{bitrate_mode} . '<br>'
-              if defined $date->{bitrate};
-            $date->{title} .= '<b>replay gain</b> ' . sprintf( "%.1f", $date->{replay_gain} ) . '<br>'
+            $date->{title} .= '<b>errors</b>: ' . $date->{errors} . '<br>'
+              if defined $date->{errors};
+            $date->{title} .= audio::formatDuration(
+                $date->{duration},
+                $date->{event_duration},
+                sprintf( "duration: %.1g h", $date->{duration} / 3600 ) . "<br>"
+            ) if defined $date->{duration};
+            $date->{title} .= "L:" . audio::formatLoudness( $date->{rms_left} ) . ', '
+              if defined $date->{rms_left};
+            $date->{title} .= "R:" . audio::formatLoudness( $date->{rms_right} ) . '<br>'
+              if defined $date->{rms_right};
+            $date->{title} .= audio::formatBitrate( $date->{bitrate} ) if defined $date->{bitrate};
+            $date->{title} .= ' ' . audio::formatBitrateMode( $date->{bitrate_mode} ) . '<br>'
+              if defined $date->{bitrate_mode};
+            $date->{title} .=
+              '<b>replay gain</b> ' . sprintf( "%.1f", $date->{replay_gain} ) . '<br>'
               if defined $date->{replay_gain};
-            $date->{title} .= ( ( $date->{sampling_rate} || '0' ) / 1000 ) . ' kHz<br>'
+            $date->{title} .= audio::formatSamplingRate( $date->{sampling_rate} )
               if defined $date->{sampling_rate};
-            $date->{title} .= ( $date->{channels} || '' ) . ' channels<br>' if defined $date->{channels};
+            $date->{title} .= audio::formatChannels( $date->{channels} ) . '<br>'
+              if defined $date->{channels};
             $date->{title} .= int( ( $date->{'stream_size'} || '0' ) / ( 1024 * 1024 ) ) . 'MB<br>'
               if defined $date->{'stream_size'};
             $date->{title} .= $format if defined $format;
             $date->{title} .= '<b>library</b>: ' . ( $date->{writing_library} || '' ) . '<br>'
               if defined $date->{'writing_library'};
-            $date->{title} .= '<b>path</b>: ' . ( $date->{file} || '' ) . '<br>' if defined $date->{file};
+            $date->{title} .= '<b>path</b>: ' . ( $date->{file} || '' ) . '<br>'
+              if defined $date->{file};
             $date->{title} .= '<b>updated_at</b>: ' . ( $date->{updated_at} || '' ) . '<br>'
               if defined $date->{updated_at};
             $date->{title} .= '<b>modified_at</b>: ' . ( $date->{modified_at} || '' ) . '<br>'
               if defined $date->{modified_at};
 
-            #print STDERR Dumper($date) if $date->{file}=~/180503/;
-            #$date->{title}.= '<b>rms_image</b>: '    .($date->{rms_image}||'').'<br>' if defined $date->{rms_image};
+#print STDERR Dumper($date) if $date->{file}=~/180503/;
+#$date->{title}.= '<b>rms_image</b>: '    .($date->{rms_image}||'').'<br>' if defined $date->{rms_image};
 
-            $date->{rms_image} = URI::Escape::uri_unescape( $date->{rms_image} ) if defined $date->{rms_image};
+            $date->{rms_image} = URI::Escape::uri_unescape( $date->{rms_image} )
+              if defined $date->{rms_image};
 
             $date->{origStart} = $date->{start};
 
@@ -431,6 +448,7 @@ sub showCalendar {
             $date = events::calc_dates( $config, $date );
             if ( defined $events_by_start->{ $date->{start} } ) {
                 $events_by_start->{ $date->{start} }->{duration}  = $date->{duration}  || 0;
+                $events_by_start->{ $date->{start} }->{event_duration}  = $date->{event_duration}  || 0;
                 $events_by_start->{ $date->{start} }->{rms_left}  = $date->{rms_left}  || 0;
                 $events_by_start->{ $date->{start} }->{rms_right} = $date->{rms_right} || 0;
                 $events_by_start->{ $date->{start} }->{playout_modified_at} = $date->{modified_at};
@@ -468,7 +486,8 @@ sub showCalendar {
     #separate by day (e.g. to 6 pm)
     my $events_by_day = {};
     for my $event (@$events) {
-        my $day = time::datetime_to_date( time::add_hours_to_datetime( $event->{start}, -$start_of_day ) );
+        my $day =
+          time::datetime_to_date( time::add_hours_to_datetime( $event->{start}, -$start_of_day ) );
         push @{ $events_by_day->{$day} }, $event;
     }
 
@@ -506,7 +525,9 @@ sub showCalendar {
         next unless defined $event->{uploaded_at};
 
 #print STDERR "uploadAt=$event->{uploaded_at}, playoutModified:$event->{playout_modified_at}, playoutUpdatedAt:$event->{playout_updated_at}\n";
-        next if ( defined $event->{playout_updated_at} ) && ( $event->{uploaded_at} lt $event->{playout_updated_at} );
+        next
+          if ( defined $event->{playout_updated_at} )
+          && ( $event->{uploaded_at} lt $event->{playout_updated_at} );
 
         #print STDERR Dumper($event);
         #$event->{upload} ='pending' ;
@@ -520,7 +541,8 @@ sub showCalendar {
             print qq{<div id="calendarTable"> </div>};
         }
         if ( $params->{part} == 1 ) {
-            calcCalendarTable( $config, $permissions, $params, $calendar, $events_by_day, $cal_options );
+            calcCalendarTable( $config, $permissions, $params, $calendar, $events_by_day,
+                $cal_options );
             printTableHeader( $config, $permissions, $params, $cal_options );
             printTableBody( $config, $permissions, $params, $cal_options );
         }
@@ -542,46 +564,6 @@ sub showCalendar {
     }
 }
 
-sub formatLoudness {
-    my $label = shift;
-    my $value = shift;
-    return '' unless defined $value;
-    return '' if $value == 0;
-    return '' if $value eq '';
-
-    #print STDERR "'$value'\n";
-    $value = sprintf( "%d", $value + 0.5 );
-    my $class = 'ok';
-    $class = 'warn'  if $value > -18.5;
-    $class = 'error' if $value > -16.0;
-    $class = 'warn'  if $value < -24.0;
-    $class = 'error' if $value < -27.0;
-    return qq{<span class="$class">$label} . $value . qq{dB</span>};
-}
-
-sub formatDuration {
-    my $duration = shift;
-    return '' unless defined $duration;
-    return '' if $duration eq '';
-    my $result = int( ( $duration + 30.5 ) % 60 ) - 30;
-    my $class = "ok";
-    $class = "warn"  if abs($result) > 1;
-    $class = "error" if abs($result) > 2;
-    return sprintf( qq{<span class="%s">%ds</span>}, $class, $duration );
-}
-
-sub formatBitrate {
-    my $bitrate = shift;
-    return '' if $bitrate eq '';
-    if ( $bitrate >= 200 ) {
-        return qq{<span class="warn">$bitrate</span>};
-    } elsif ( $bitrate < 190 ) {
-        return qq{<span class="error">$bitrate</span>};
-    } else {
-        return qq{<span class="ok">$bitrate</span>};
-    }
-}
-
 sub debugDate {
     my $date = shift;
     $date->{program}     = '' unless defined $date->{program};
@@ -592,7 +574,7 @@ sub debugDate {
     my $da = ( $date->{start_date} || '' ) . "    " . ( $date->{end_date} || '' );
     my $type = "schedule:" . ( $date->{schedule} || "" ) . " grid:" . ( $date->{grid} || "" );
 
-    #print STDERR "$dt  $da count:$date->{splitCount} $type  $date->{program}-$date->{series_name}-$date->{title}\n";
+#print STDERR "$dt  $da count:$date->{splitCount} $type  $date->{program}-$date->{series_name}-$date->{title}\n";
 }
 
 # break dates at start_of_day
@@ -730,9 +712,9 @@ sub showEventList {
     my $events_by_day = shift;
     my $language      = $params->{language};
 
-    my $rerunIcon   = '<i class="fas fa-redo" title="$params->{loc}->{label_rerun}"></i>';
-    my $liveIcon    = '<i class="fas fa-microphone-alt" title="$params->{loc}->{label_live}"></i>';
-    my $draftIcon   = '<i class="fas fa-drafting-compass" title="$params->{loc}->{label_draft}"></i>';
+    my $rerunIcon = '<i class="fas fa-redo" title="$params->{loc}->{label_rerun}"></i>';
+    my $liveIcon  = '<i class="fas fa-microphone-alt" title="$params->{loc}->{label_live}"></i>';
+    my $draftIcon = '<i class="fas fa-drafting-compass" title="$params->{loc}->{label_draft}"></i>';
     my $archiveIcon = '<i class="fas fa-archive" title="$params->{loc}->{label_archived}"></i>';
 
     my $out = '';
@@ -785,14 +767,23 @@ sub showEventList {
             if ( $class =~ /(event|schedule)/ ) {
                 $class .= ' scheduled' if defined $event->{scheduled};
                 $class .= ' error'     if defined $event->{error};
-                $class .= ' no_series' if ( ( $class eq 'event' ) && ( $event->{series_id} eq '-1' ) );
+                $class .= ' no_series'
+                  if ( ( $class eq 'event' ) && ( $event->{series_id} eq '-1' ) );
 
-                for my $filter ( 'rerun', 'archived', 'playout', 'published', 'live', 'disable_event_sync', 'draft' ) {
-                    $class .= ' ' . $filter if ( ( defined $event->{$filter} ) && ( $event->{$filter} eq '1' ) );
+                for my $filter (
+                    'rerun', 'archived',           'playout', 'published',
+                    'live',  'disable_event_sync', 'draft'
+                  )
+                {
+                    $class .= ' ' . $filter
+                      if ( ( defined $event->{$filter} ) && ( $event->{$filter} eq '1' ) );
                 }
-                $class .= ' preproduced' unless ( ( defined $event->{'live'} )    && ( $event->{'live'} eq '1' ) );
-                $class .= ' no_playout'  unless ( ( defined $event->{'playout'} ) && ( $event->{'playout'} eq '1' ) );
-                $class .= ' no_rerun'    unless ( ( defined $event->{'rerun'} )   && ( $event->{'rerun'} eq '1' ) );
+                $class .= ' preproduced'
+                  unless ( ( defined $event->{'live'} ) && ( $event->{'live'} eq '1' ) );
+                $class .= ' no_playout'
+                  unless ( ( defined $event->{'playout'} ) && ( $event->{'playout'} eq '1' ) );
+                $class .= ' no_rerun'
+                  unless ( ( defined $event->{'rerun'} ) && ( $event->{'rerun'} eq '1' ) );
             }
 
             $event->{start}              ||= '';
@@ -874,7 +865,8 @@ sub showEventList {
         );
         $out .= q{<div id="event_no_series" style="display:none">};
         $out .= addEventsToSeries( $series, $params )
-          if ( defined $permissions->{assign_series_events} ) && ( $permissions->{assign_series_events} eq '1' );
+          if ( defined $permissions->{assign_series_events} )
+          && ( $permissions->{assign_series_events} eq '1' );
         $out .= createSeries($params)
           if ( defined $permissions->{create_series} ) && ( $permissions->{create_series} eq '1' );
         $out .= q{</div>};
@@ -1140,20 +1132,29 @@ sub printTableBody {
             $content = $event->{start} if $day eq '0';
             $event->{project_id} = $project_id unless defined $event->{project_id};
             $event->{studio_id}  = $studio_id  unless defined $event->{studio_id};
-            $event->{content} = $content unless ( ( defined $event->{class} ) && ( $event->{class} eq 'time now' ) );
-            $event->{class} = 'event'    if $day ne '0';
-            $event->{class} = 'grid'     if ( ( defined $event->{grid} ) && ( $event->{grid} == 1 ) );
-            $event->{class} = 'schedule' if ( ( defined $event->{schedule} ) && ( $event->{schedule} == 1 ) );
-            $event->{class} = 'work'     if ( ( defined $event->{work} ) && ( $event->{work} == 1 ) );
-            $event->{class} = 'play'     if ( ( defined $event->{play} ) && ( $event->{play} == 1 ) );
+            $event->{content}    = $content
+              unless ( ( defined $event->{class} ) && ( $event->{class} eq 'time now' ) );
+            $event->{class} = 'event' if $day ne '0';
+            $event->{class} = 'grid' if ( ( defined $event->{grid} ) && ( $event->{grid} == 1 ) );
+            $event->{class} = 'schedule'
+              if ( ( defined $event->{schedule} ) && ( $event->{schedule} == 1 ) );
+            $event->{class} = 'work' if ( ( defined $event->{work} ) && ( $event->{work} == 1 ) );
+            $event->{class} = 'play' if ( ( defined $event->{play} ) && ( $event->{play} == 1 ) );
 
             if ( $event->{class} eq 'event' ) {
                 $event->{content} .= '<br><span class="weak">';
-                $event->{content} .= formatDuration( $event->{duration} ) . ' ' if defined $event->{duration};
-                $event->{content} .= formatLoudness( 'L', $event->{rms_left} ) . ' ' if defined $event->{rms_left};
-                $event->{content} .= formatLoudness( 'R', $event->{rms_right} ) if defined $event->{rms_right};
+                $event->{content} .=
+                  audio::formatDuration( $event->{duration}, $event->{event_duration},
+                    sprintf("%d min", (($event->{duration}+0.5)/60)) )
+                  . ' '
+                  if defined $event->{duration};
+                $event->{content} .= 'L' . audio::formatLoudness( $event->{rms_left} ) . ' '
+                  if defined $event->{rms_left};
+                $event->{content} .=
+                  'R' . audio::formatLoudness( $event->{rms_right} )
+                  if defined $event->{rms_right};
 
-                #$event->{content} .= formatBitrate( $event->{bitrate} ) if defined $event->{bitrate};
+              #$event->{content} .= formatBitrate( $event->{bitrate} ) if defined $event->{bitrate};
                 $event->{content} .= '</span>';
             }
 
@@ -1205,9 +1206,11 @@ sub printSeries {
     if ( ( $params->{studio_id} ne '' ) && ( $params->{studio_id} ne '-1' ) ) {
         $out .= q{<div id="event_no_series" style="display:none">};
         $out .= addEventsToSeries( $series, $params )
-          if ( ( defined $permissions->{assign_series_events} ) && ( $permissions->{assign_series_events} eq '1' ) );
+          if ( ( defined $permissions->{assign_series_events} )
+            && ( $permissions->{assign_series_events} eq '1' ) );
         $out .= createSeries($params)
-          if ( ( defined $permissions->{create_series} ) && ( $permissions->{create_series} eq '1' ) );
+          if ( ( defined $permissions->{create_series} )
+            && ( $permissions->{create_series} eq '1' ) );
         $out .= q{</div>};
     }
 
@@ -1283,7 +1286,14 @@ sub addSeries {
         $name = $params->{loc}->{single_events} if $serie->{has_single_events} eq '1';
         $title = ' - ' . $title if $title ne '';
 
-        $out .= '<option value="' . $id . '" duration="' . $duration . '">' . $name . $title . '</option>' . "\n";
+        $out .=
+            '<option value="'
+          . $id
+          . '" duration="'
+          . $duration . '">'
+          . $name
+          . $title
+          . '</option>' . "\n";
     }
 
     #print Dumper($series);
@@ -1338,7 +1348,14 @@ sub addEventsToSeries {
         my $title    = $serie->{title}       || '';
         $name = $params->{loc}->{single_events} if $serie->{has_single_events} == 1;
         $title = ' - ' . $title if $title ne '';
-        $out .= '<option value="' . $id . '" duration="' . $duration . '">' . $name . $title . '</option>' . "\n";
+        $out .=
+            '<option value="'
+          . $id
+          . '" duration="'
+          . $duration . '">'
+          . $name
+          . $title
+          . '</option>' . "\n";
     }
 
     #print Dumper($series);
@@ -1416,16 +1433,22 @@ sub print_event {
     my $class = $event->{class} || '';
     my $showIcons = 0;
     if ( $class =~ /(event|schedule)/ ) {
-        $class .= ' scheduled'              if defined $event->{scheduled};
-        $class .= ' no_series'              if ( ( $class eq 'event' ) && ( $event->{series_id} eq '-1' ) );
+        $class .= ' scheduled' if defined $event->{scheduled};
+        $class .= ' no_series' if ( ( $class eq 'event' ) && ( $event->{series_id} eq '-1' ) );
         $class .= " error x$event->{error}" if defined $event->{error};
 
-        for my $filter ( 'rerun', 'archived', 'playout', 'published', 'live', 'disable_event_sync', 'draft' ) {
-            $class .= ' ' . $filter if ( ( defined $event->{$filter} ) && ( $event->{$filter} eq '1' ) );
+        for my $filter ( 'rerun', 'archived', 'playout', 'published', 'live', 'disable_event_sync',
+            'draft' )
+        {
+            $class .= ' ' . $filter
+              if ( ( defined $event->{$filter} ) && ( $event->{$filter} eq '1' ) );
         }
-        $class .= ' preproduced' unless ( ( defined $event->{'live'} )    && ( $event->{'live'} eq '1' ) );
-        $class .= ' no_playout'  unless ( ( defined $event->{'playout'} ) && ( $event->{'playout'} eq '1' ) );
-        $class .= ' no_rerun'    unless ( ( defined $event->{'rerun'} )   && ( $event->{'rerun'} eq '1' ) );
+        $class .= ' preproduced'
+          unless ( ( defined $event->{'live'} ) && ( $event->{'live'} eq '1' ) );
+        $class .= ' no_playout'
+          unless ( ( defined $event->{'playout'} ) && ( $event->{'playout'} eq '1' ) );
+        $class .= ' no_rerun'
+          unless ( ( defined $event->{'rerun'} ) && ( $event->{'rerun'} eq '1' ) );
         $showIcons = 1;
     }
 
@@ -1626,8 +1649,9 @@ sub printToolbar {
 
     #    my $options=[];
     for my $range (
-        $params->{loc}->{label_month},  $params->{loc}->{label_4_weeks}, $params->{loc}->{label_2_weeks},
-        $params->{loc}->{label_1_week}, $params->{loc}->{label_day}
+        $params->{loc}->{label_month},   $params->{loc}->{label_4_weeks},
+        $params->{loc}->{label_2_weeks}, $params->{loc}->{label_1_week},
+        $params->{loc}->{label_day}
       )
     {
         my $value = $ranges->{$range} || '';
@@ -1657,14 +1681,17 @@ sub printToolbar {
         <select id="filter" name="filter" onchange="reloadCalendar()">
     };
 
-    for
-      my $filter ( 'no markup', 'conflicts', 'rerun', 'archived', 'playout', 'published', 'live', 'disable_event_sync',
-        'draft' )
+    for my $filter (
+        'no markup', 'conflicts', 'rerun', 'archived',
+        'playout',   'published', 'live',  'disable_event_sync',
+        'draft'
+      )
     {
         my $key = $filter;
         $key =~ s/ /_/g;
 
-        $toolbar .= qq{<option value="$filter">} . $params->{loc}->{ 'label_' . $key } . '</option>';
+        $toolbar .=
+          qq{<option value="$filter">} . $params->{loc}->{ 'label_' . $key } . '</option>';
     }
 
     $toolbar .= q{
@@ -1680,7 +1707,8 @@ sub printToolbar {
             <input type="hidden" name="list"      value="1">
             <input class="search" name="search" value="$params->{search}" placeholder="}
       . $params->{loc}->{button_search} . qq{">
-            <button type="submit" name="action" value="search">} . $params->{loc}->{button_search} . qq{</button>
+            <button type="submit" name="action" value="search">}
+      . $params->{loc}->{button_search} . qq{</button>
         </form>
     };
 
@@ -1717,11 +1745,16 @@ sub getCalendar {
     my $next     = '';
     if ( $range eq 'month' ) {
         $previous =
-          time::get_datetime( $from_date, $config->{date}->{time_zone} )->subtract( months => 1 )->set_day(1)->date();
-        $next = time::get_datetime( $from_date, $config->{date}->{time_zone} )->add( months => 1 )->set_day(1)->date();
+          time::get_datetime( $from_date, $config->{date}->{time_zone} )->subtract( months => 1 )
+          ->set_day(1)->date();
+        $next = time::get_datetime( $from_date, $config->{date}->{time_zone} )->add( months => 1 )
+          ->set_day(1)->date();
     } else {
-        $previous = time::get_datetime( $from_date, $config->{date}->{time_zone} )->subtract( days => $range )->date();
-        $next = time::get_datetime( $from_date, $config->{date}->{time_zone} )->add( days => $range )->date();
+        $previous = time::get_datetime( $from_date, $config->{date}->{time_zone} )
+          ->subtract( days => $range )->date();
+        $next =
+          time::get_datetime( $from_date, $config->{date}->{time_zone} )->add( days => $range )
+          ->date();
     }
     my ( $year, $month, $day ) = split( /\-/, $from_date );
     my $monthName = time::getMonthNamesShort($language)->[ $month - 1 ] || '';
@@ -1752,7 +1785,8 @@ sub getFromDate {
     if ( $params->{range} eq '28' ) {
 
         #get start of 4 week period
-        $date = time::get_datetime( $date, $config->{date}->{time_zone} )->truncate( to => 'week' )->ymd();
+        $date = time::get_datetime( $date, $config->{date}->{time_zone} )->truncate( to => 'week' )
+          ->ymd();
     }
     if ( $params->{range} eq 'month' ) {
 
@@ -1775,17 +1809,19 @@ sub getTillDate {
         $date = DateTime->now( time_zone => $config->{date}->{time_zone} )->date();
     }
     if ( $params->{range} eq '28' ) {
-        $date = time::get_datetime( $date, $config->{date}->{time_zone} )->truncate( to => 'week' )->ymd();
+        $date = time::get_datetime( $date, $config->{date}->{time_zone} )->truncate( to => 'week' )
+          ->ymd();
     }
     if ( $params->{range} eq 'month' ) {
 
         #get last day of month
-        return time::get_datetime( $date, $config->{date}->{time_zone} )->set_day(1)->add( months => 1 )
-          ->subtract( days => 1 )->date();
+        return time::get_datetime( $date, $config->{date}->{time_zone} )->set_day(1)
+          ->add( months => 1 )->subtract( days => 1 )->date();
     }
 
     #add range to date
-    return time::get_datetime( $date, $config->{date}->{time_zone} )->add( days => $params->{range} )->date();
+    return time::get_datetime( $date, $config->{date}->{time_zone} )
+      ->add( days => $params->{range} )->date();
 }
 
 sub getSeriesEvents {
@@ -1816,8 +1852,8 @@ sub getSeriesEvents {
     $request2->{params}->{checked}->{published} = 'all';
     $request2->{params}->{checked}->{draft} = '1' if $params->{list} == 1;
 
-    #delete $request2->{params}->{checked}->{locations_to_exclude}
-    #  if ( ( $params->{studio_id} == -1 ) && ( defined $request2->{params}->{checked}->{locations_to_exclude} ) );
+#delete $request2->{params}->{checked}->{locations_to_exclude}
+#  if ( ( $params->{studio_id} == -1 ) && ( defined $request2->{params}->{checked}->{locations_to_exclude} ) );
 
     my $events = events::get( $config, $request2 );
 
@@ -1838,7 +1874,8 @@ sub getSeriesEvents {
 
     for my $event (@$events) {
         $event->{project_id} = $options->{project_id} unless defined $event->{project_id};
-        $event->{studio_id} = $studio_id_by_location->{ $event->{location} } unless defined $event->{studio_id};
+        $event->{studio_id} = $studio_id_by_location->{ $event->{location} }
+          unless defined $event->{studio_id};
     }
 
     return $events;
@@ -1862,8 +1899,9 @@ sub check_params {
     $checked->{part} = 0;
     $checked->{list} = 0;
     for my $param (
-        'id',       'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id',
-        'event_id', 'part',       'list',      'day_start'
+        'id',      'project_id', 'studio_id', 'default_studio_id',
+        'user_id', 'series_id',  'event_id',  'part',
+        'list',    'day_start'
       )
     {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
@@ -1871,7 +1909,8 @@ sub check_params {
         }
     }
 
-    $checked->{day_start} = $config->{date}->{day_starting_hour} unless defined $checked->{day_start};
+    $checked->{day_start} = $config->{date}->{day_starting_hour}
+      unless defined $checked->{day_start};
     $checked->{day_start} %= 24;
 
     if ( defined $checked->{studio_id} ) {
@@ -1916,7 +1955,11 @@ sub check_params {
         $checked->{$param} = time::check_date( $params->{$param} );
     }
 
-    for my $param ( 'series_name', 'title', 'excerpt', 'content', 'program', 'category', 'image', 'user_content' ) {
+    for my $param (
+        'series_name', 'title',    'excerpt', 'content',
+        'program',     'category', 'image',   'user_content'
+      )
+    {
         if ( defined $params->{$param} ) {
 
             #$checked->{$param}=uri_unescape();
@@ -1928,7 +1971,9 @@ sub check_params {
 
     #actions and roles
     if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(add_user|remove_user|delete|save|details|show|edit_event|save_event)$/ ) {
+        if ( $params->{action} =~
+            /^(add_user|remove_user|delete|save|details|show|edit_event|save_event)$/ )
+        {
             $checked->{action} = $params->{action};
         }
     }
@@ -1936,3 +1981,43 @@ sub check_params {
     return $checked;
 }
 
+__DATA__
+sub formatLoudness {
+    my $label = shift;
+    my $value = shift;
+    return '' unless defined $value;
+    return '' if $value == 0;
+    return '' if $value eq '';
+
+    #print STDERR "'$value'\n";
+    $value = sprintf( "%d", $value + 0.5 );
+    my $class = 'ok';
+    $class = 'warn'  if $value > -18.5;
+    $class = 'error' if $value > -16.0;
+    $class = 'warn'  if $value < -24.0;
+    $class = 'error' if $value < -27.0;
+    return qq{<span class="$class">$label} . $value . qq{dB</span>};
+}
+
+sub formatDuration {
+    my $duration = shift;
+    return '' unless defined $duration;
+    return '' if $duration eq '';
+    my $result = int( ( $duration + 30.5 ) % 60 ) - 30;
+    my $class = "ok";
+    $class = "warn"  if abs($result) > 1;
+    $class = "error" if abs($result) > 2;
+    return sprintf( qq{<span class="%s">%ds</span>}, $class, $duration );
+}
+
+sub formatBitrate {
+    my $bitrate = shift;
+    return '' if $bitrate eq '';
+    if ( $bitrate >= 200 ) {
+        return qq{<span class="warn">$bitrate</span>};
+    } elsif ( $bitrate < 190 ) {
+        return qq{<span class="error">$bitrate</span>};
+    } else {
+        return qq{<span class="ok">$bitrate</span>};
+    }
+}

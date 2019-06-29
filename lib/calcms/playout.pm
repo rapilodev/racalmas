@@ -27,6 +27,111 @@ sub get_columns ($) {
     return $columns;
 }
 
+
+
+# get playout entries
+sub get_scheduled($$) {
+    my $config    = shift;
+    my $condition = shift;
+
+    return undef unless defined $condition->{studio_id};
+
+    my $date_range_include = 0;
+    $date_range_include = 1
+      if ( defined $condition->{date_range_include} ) && ( $condition->{date_range_include} == 1 );
+
+    my $dbh = db::connect($config);
+
+    my @conditions  = ();
+    my @bind_values = ();
+
+    if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
+        push @conditions,  'p.project_id=?';
+        push @bind_values, $condition->{project_id};
+    }
+
+    if ( ( defined $condition->{studio_id} ) && ( $condition->{studio_id} ne '' ) ) {
+        push @conditions,  'p.studio_id=?';
+        push @bind_values, $condition->{studio_id};
+    }
+
+    if ( ( defined $condition->{start_at} ) && ( $condition->{start_at} ne '' ) ) {
+        push @conditions,  'p.start=?';
+        push @bind_values, $condition->{start_at};
+    }
+
+    if ( ( defined $condition->{from} ) && ( $condition->{from} ne '' ) ) {
+        if ( $date_range_include == 1 ) {
+            push @conditions,  'p.end_date>=?';
+            push @bind_values, $condition->{from};
+        } else {
+            push @conditions,  'p.start_date>=?';
+            push @bind_values, $condition->{from};
+        }
+    }
+
+    if ( ( defined $condition->{till} ) && ( $condition->{till} ne '' ) ) {
+        if ( $date_range_include == 1 ) {
+            push @conditions,  'p.start_date<=?';
+            push @bind_values, $condition->{till};
+        } else {
+            push @conditions,  'p.end_date<=?';
+            push @bind_values, $condition->{till};
+        }
+    }
+
+    my $limit = '';
+    if ( ( defined $condition->{limit} ) && ( $condition->{limit} ne '' ) ) {
+        $limit = 'limit ' . $condition->{limit};
+    }
+
+    my $conditions = '';
+    $conditions = " where " . join( " and ", @conditions ) if scalar @conditions > 0;
+
+    my $order = 'start';
+    $order = $condition->{order} if ( defined $condition->{order} ) && ( $condition->{order} ne '' );
+
+    my $query = qq{
+		select	  date(p.start) 	start_date
+				, date(p.end) 		end_date
+				, dayname(p.start) 	weekday
+				, p.start_date      day
+				, p.start
+				, p.end
+				, p.studio_id
+				, p.project_id
+                , p.duration
+                , p.file
+                , p.errors
+                , p.channels
+                , p.format
+                , p.format_version
+                , p.format_profile
+                , p.format_settings
+                , p.stream_size
+                , p.bitrate
+                , p.bitrate_mode
+                , p.sampling_rate
+                , p.writing_library
+                , p.rms_left
+                , p.rms_right
+                , p.rms_image
+                , p.modified_at
+                , p.updated_at
+                , TIMESTAMPDIFF(SECOND,e.start,e.end) "event_duration"
+        from    calcms_playout p left join calcms_events e 
+        on      p.start = e.start
+		$conditions
+		order by $order
+        $limit
+	};
+
+    #print STDERR Dumper($query).Dumper(\@bind_values);
+    my $entries = db::get( $dbh, $query, \@bind_values );
+    return $entries;
+}
+
+
 # get playout entries
 sub get($$) {
     my $config    = shift;

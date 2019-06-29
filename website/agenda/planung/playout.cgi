@@ -37,7 +37,6 @@ return if ( ( !defined $user ) || ( $user eq '' ) );
 
 print "Content-type:text/html; charset=UTF-8;\n\n";
 
-#print STDERR $params->{project_id}."\n";
 my $user_presets = uac::get_user_presets(
     $config,
     {

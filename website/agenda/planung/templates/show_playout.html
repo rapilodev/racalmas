@@ -33,7 +33,7 @@
     <td><TMPL_VAR file></td>
     <td><TMPL_VAR duration escape="text"></td>
     <td><TMPL_VAR rms_left escape="text"> <TMPL_VAR rms_right escape="text"></td>
-    <td><TMPL_VAR bitrate escape="text"> <TMPL_VAR sampling_rate> <TMPL_VAR channels>&nbsp;ch.</td>
+    <td><TMPL_VAR bitrate escape="text"> <TMPL_VAR bitrate_mode escape="text"> <TMPL_VAR sampling_rate escape="text"> <TMPL_VAR channels escape="text"></td>
     <td><TMPL_IF rms_image><a href="/agenda_files/playout/<TMPL_VAR rms_image>"><img src="/agenda_files/playout/<TMPL_VAR rms_image>"></a></TMPL_IF></td>
     <td><TMPL_VAR stream_size></td>
     <td><TMPL_VAR modified_at></td>

@@ -443,6 +443,11 @@ div#toolbar input.search{
     display:none;
 }
 
+#calendar div.event:hover {
+    min-height: 4rem!important;
+    z-index:99;
+}
+
 #calendar div.ui-draggable-dragging{
     z-index:99;
     cursor:move;
@@ -497,3 +502,13 @@ div.play .error{
     padding-right:32px;
 }
 
+
+#content div.ok,
+#content div.warn,
+#content div.error{
+    padding-top:3px;
+    padding-bottom:3px;
+    margin:1px;
+    border-radius:4px;
+    text-align:center;
+}

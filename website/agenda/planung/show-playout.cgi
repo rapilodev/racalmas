@@ -16,6 +16,8 @@ use studios;
 use series;
 use template;
 use playout;
+use audio;
+
 binmode STDOUT, ":utf8";
 
 my $r = shift;
@@ -52,7 +54,8 @@ $params = $request->{params}->{checked};
 unless ( params::isJson() ) {
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
+    template::process( $config, 'print', template::check( $config, 'default.html' ),
+        $headerParams );
 }
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
@@ -68,7 +71,8 @@ $params->{error} = $error || '';
 showPlayout( $config, $request );
 
 print STDERR "$0 ERROR: " . $params->{error} . "\n" if $params->{error} ne '';
-$params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event,comment' } );
+$params->{loc} =
+  localization::get( $config, { user => $params->{presets}->{user}, file => 'event,comment' } );
 template::process( $config, 'print', $params->{template}, $params );
 
 exit;
@@ -89,7 +93,7 @@ sub showPlayout {
 
     my $today     = time::time_to_date( time() );
     my $startDate = time::add_days_to_date( $today, -14 );
-    my $events    = playout::get(
+    my $events    = playout::get_scheduled(
         $config,
         {
             project_id => $params->{project_id},
@@ -110,60 +114,24 @@ sub showPlayout {
         $event->{stream_size} =~ s/(\d)(\d\d\d\.\d\d\d)$/$1\.$2/g;
         $event->{duration} =~ s/(\d\.\d)(\d+)$/$1/g;
         $event->{duration} =~ s/(\d)\.0/$1/g;
-        $event->{rms_left}  = formatLoudness( $event->{rms_left} );
-        $event->{rms_right} = formatLoudness( $event->{rms_right} );
-        $event->{bitrate}   = formatBitrate($event);
-        $event->{duration}  = formatDuration($event);
+        $event->{rms_left}      = audio::formatLoudness( $event->{rms_left} );
+        $event->{rms_right}     = audio::formatLoudness( $event->{rms_right} );
+        $event->{bitrate}       = audio::formatBitrate( $event->{bitrate} );
+        $event->{bitrate_mode}  = audio::formatBitrateMode( $event->{bitrate_mode} );
+        $event->{sampling_rate} = audio::formatSamplingRate( $event->{sampling_rate} );
+        $event->{duration}      = audio::formatDuration(
+            $event->{duration},
+            $event->{event_duration},
+            sprintf( "%.1g h", $event->{duration} / 3600)
+        );
+        $event->{channels} = audio::formatChannels( $event->{channels} );
+
         if ( $event->{start} lt $today ) {
             $event->{class} = "past";
         }
     }
 
     $params->{events} = $events;
-}
-
-sub formatDuration {
-    my $event    = $_[0];
-    my $duration = $event->{duration};
-    return '' unless defined $duration;
-    return '' if $duration eq '';
-    my $result = ( ( $duration + 30 ) % 60 ) - 30;
-    my $class = "ok";
-    $class = "warn"  if abs($result) > 1;
-    $class = "error" if abs($result) > 2;
-    return sprintf( qq{<div class="%s">%.01f</div>}, $class, $duration );
-}
-
-sub formatBitrate {
-    my $event   = $_[0];
-    my $bitrate = $event->{bitrate} || '';
-    my $mode    = $event->{bitrate_mode} || '';
-    if ( $bitrate ne '' ) {
-        if ( $bitrate >= 200 ) {
-            $bitrate = '<div class="warn">' . $bitrate . ' ' . $mode . '</div>';
-        } elsif ( $bitrate < 190 ) {
-            $bitrate = '<div class="error">' . $bitrate . ' ' . $mode . '</div>';
-        } else {
-            $bitrate .= ' ' . $mode;
-        }
-    }
-    return $bitrate;
-}
-
-sub formatLoudness {
-    my $value = shift;
-    return '' unless defined $value;
-    return '' if $value == 0;
-    return '' if $value eq '';
-
-    $value = sprintf( "%.1f", $value );
-    my $class = 'ok';
-    $class = 'warn'  if $value > -18.5;
-    $class = 'error' if $value > -16.0;
-    $class = 'warn'  if $value < -24.0;
-    $class = 'error' if $value < -27.0;
-
-    return qq{<div class="$class">$value dB</div>};
 }
 
 sub check_params {
@@ -175,7 +143,8 @@ sub check_params {
     $checked->{template} = template::check( $config, $params->{template}, 'show_playout' );
 
     #numeric values
-    for my $param ( 'project_id', 'studio_id', 'default_studio_id', 'series_id', 'event_id', 'id' ) {
+    for my $param ( 'project_id', 'studio_id', 'default_studio_id', 'series_id', 'event_id', 'id' )
+    {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
             $checked->{$param} = $params->{$param};
         }
