@@ -10,19 +10,15 @@
 
 <script src="js/image.js" type="text/javascript"></script>
 
-
 <table id="playout-table" class="table">
 
 <thead>
 <tr>
     <th>start</th>
-    <th>playout path</th>
-    <th>seconds</th>
-    <th>loudness</th>
-    <th>format</th>
+    <th>path</th>
+    <th>more</th>
     <th>image</th>
     <th>bytes</th>
-    <th>modified at</th>
 </tr>
 </thead>
 
@@ -30,13 +26,18 @@
 <TMPL_LOOP events>
 <tr class="<TMPL_VAR class>">
     <td><TMPL_VAR start></td>
-    <td><TMPL_VAR file></td>
-    <td><TMPL_VAR duration escape="text"></td>
-    <td><TMPL_VAR rms_left escape="text"> <TMPL_VAR rms_right escape="text"></td>
-    <td><TMPL_VAR bitrate escape="text"> <TMPL_VAR bitrate_mode escape="text"> <TMPL_VAR sampling_rate escape="text"> <TMPL_VAR channels escape="text"></td>
+    <td class="path"><TMPL_VAR file></td>
+    <td>
+        <TMPL_VAR duration escape="text">
+        <TMPL_VAR rms_left escape="text"> 
+        <TMPL_VAR rms_right escape="text">
+        <TMPL_VAR bitrate escape="text"> 
+        <TMPL_VAR bitrate_mode escape="text"> 
+        <TMPL_VAR sampling_rate escape="text"> 
+        <TMPL_VAR channels escape="text">
+    </td>
     <td><TMPL_IF rms_image><a href="/agenda_files/playout/<TMPL_VAR rms_image>"><img src="/agenda_files/playout/<TMPL_VAR rms_image>"></a></TMPL_IF></td>
     <td><TMPL_VAR stream_size></td>
-    <td><TMPL_VAR modified_at></td>
 </tr>
 </TMPL_LOOP>
 </tbody>

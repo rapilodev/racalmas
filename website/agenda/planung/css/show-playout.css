@@ -24,6 +24,16 @@ table{
 	border-top:1px solid #666;
 }
 
+#content #playout-table td.path{
+    width:15rem;
+    word-break: break-word;
+}
+
+#content #playout-table td div{
+    float:left;
+    margin:3px;
+}
+
 #content tr.past{
     background:#ccc;
 }
@@ -36,15 +46,14 @@ table{
 }
 
 #content img{
-    width:100%;
+    width:60%;
     height:100%;
 }
 
 #content div.ok,
 #content div.warn,
 #content div.error{
-    padding-top:3px;
-    padding-bottom:3px;
+    padding:3px;
     margin:1px;
     border-radius:4px;
     text-align:center;

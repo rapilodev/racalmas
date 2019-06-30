@@ -98,7 +98,7 @@ sub showPlayout {
         {
             project_id => $params->{project_id},
             studio_id  => $params->{studio_id},
-            order      => 'modified_at asc, start asc',
+            order      => 'p.modified_at asc, p.start asc',
             from       => $startDate
         }
     );
@@ -114,8 +114,8 @@ sub showPlayout {
         $event->{stream_size} =~ s/(\d)(\d\d\d\.\d\d\d)$/$1\.$2/g;
         $event->{duration} =~ s/(\d\.\d)(\d+)$/$1/g;
         $event->{duration} =~ s/(\d)\.0/$1/g;
-        $event->{rms_left}      = audio::formatLoudness( $event->{rms_left} );
-        $event->{rms_right}     = audio::formatLoudness( $event->{rms_right} );
+        $event->{rms_left}      = audio::formatLoudness( $event->{rms_left}, 'L:' );
+        $event->{rms_right}     = audio::formatLoudness( $event->{rms_right}, 'R:' );
         $event->{bitrate}       = audio::formatBitrate( $event->{bitrate} );
         $event->{bitrate_mode}  = audio::formatBitrateMode( $event->{bitrate_mode} );
         $event->{sampling_rate} = audio::formatSamplingRate( $event->{sampling_rate} );
@@ -125,10 +125,7 @@ sub showPlayout {
             sprintf( "%.1g h", $event->{duration} / 3600)
         );
         $event->{channels} = audio::formatChannels( $event->{channels} );
-
-        if ( $event->{start} lt $today ) {
-            $event->{class} = "past";
-        }
+        $event->{class} = "past" if  $event->{start} lt $today;
     }
 
     $params->{events} = $events;

@@ -396,11 +396,12 @@ sub showCalendar {
             $date->{title} .= audio::formatDuration(
                 $date->{duration},
                 $date->{event_duration},
-                sprintf( "duration: %.1g h", $date->{duration} / 3600 ) . "<br>"
+                sprintf( "duration: %.1g h", $date->{duration} / 3600 ) . "<br>",
+                sprintf( "%d s",             $date->{duration} )
             ) if defined $date->{duration};
-            $date->{title} .= "L:" . audio::formatLoudness( $date->{rms_left} ) . ', '
+            $date->{title} .= audio::formatLoudness( $date->{rms_left}, 'L: ' ) . ', '
               if defined $date->{rms_left};
-            $date->{title} .= "R:" . audio::formatLoudness( $date->{rms_right} ) . '<br>'
+            $date->{title} .= audio::formatLoudness( $date->{rms_right}, 'R: ' ) . '<br>'
               if defined $date->{rms_right};
             $date->{title} .= audio::formatBitrate( $date->{bitrate} ) if defined $date->{bitrate};
             $date->{title} .= ' ' . audio::formatBitrateMode( $date->{bitrate_mode} ) . '<br>'
@@ -447,8 +448,9 @@ sub showCalendar {
         for my $date (@$playout_dates) {
             $date = events::calc_dates( $config, $date );
             if ( defined $events_by_start->{ $date->{start} } ) {
-                $events_by_start->{ $date->{start} }->{duration}  = $date->{duration}  || 0;
-                $events_by_start->{ $date->{start} }->{event_duration}  = $date->{event_duration}  || 0;
+                $events_by_start->{ $date->{start} }->{duration} = $date->{duration} || 0;
+                $events_by_start->{ $date->{start} }->{event_duration} =
+                  $date->{event_duration} || 0;
                 $events_by_start->{ $date->{start} }->{rms_left}  = $date->{rms_left}  || 0;
                 $events_by_start->{ $date->{start} }->{rms_right} = $date->{rms_right} || 0;
                 $events_by_start->{ $date->{start} }->{playout_modified_at} = $date->{modified_at};
@@ -1143,15 +1145,17 @@ sub printTableBody {
 
             if ( $event->{class} eq 'event' ) {
                 $event->{content} .= '<br><span class="weak">';
-                $event->{content} .=
-                  audio::formatDuration( $event->{duration}, $event->{event_duration},
-                    sprintf("%d min", (($event->{duration}+0.5)/60)) )
+                $event->{content} .= audio::formatDuration(
+                    $event->{duration},
+                    $event->{event_duration},
+                    sprintf( "%d min", ( $event->{duration} + 0.5 ) / 60 ),
+                    sprintf( "%d s", $event->{duration} )
+                  )
                   . ' '
                   if defined $event->{duration};
-                $event->{content} .= 'L' . audio::formatLoudness( $event->{rms_left} ) . ' '
+                $event->{content} .= audio::formatLoudness( $event->{rms_left}, 'L: ' ) . ' '
                   if defined $event->{rms_left};
-                $event->{content} .=
-                  'R' . audio::formatLoudness( $event->{rms_right} )
+                $event->{content} .= audio::formatLoudness( $event->{rms_right}, 'R: ' )
                   if defined $event->{rms_right};
 
               #$event->{content} .= formatBitrate( $event->{bitrate} ) if defined $event->{bitrate};
@@ -1981,43 +1985,3 @@ sub check_params {
     return $checked;
 }
 
-__DATA__
-sub formatLoudness {
-    my $label = shift;
-    my $value = shift;
-    return '' unless defined $value;
-    return '' if $value == 0;
-    return '' if $value eq '';
-
-    #print STDERR "'$value'\n";
-    $value = sprintf( "%d", $value + 0.5 );
-    my $class = 'ok';
-    $class = 'warn'  if $value > -18.5;
-    $class = 'error' if $value > -16.0;
-    $class = 'warn'  if $value < -24.0;
-    $class = 'error' if $value < -27.0;
-    return qq{<span class="$class">$label} . $value . qq{dB</span>};
-}
-
-sub formatDuration {
-    my $duration = shift;
-    return '' unless defined $duration;
-    return '' if $duration eq '';
-    my $result = int( ( $duration + 30.5 ) % 60 ) - 30;
-    my $class = "ok";
-    $class = "warn"  if abs($result) > 1;
-    $class = "error" if abs($result) > 2;
-    return sprintf( qq{<span class="%s">%ds</span>}, $class, $duration );
-}
-
-sub formatBitrate {
-    my $bitrate = shift;
-    return '' if $bitrate eq '';
-    if ( $bitrate >= 200 ) {
-        return qq{<span class="warn">$bitrate</span>};
-    } elsif ( $bitrate < 190 ) {
-        return qq{<span class="error">$bitrate</span>};
-    } else {
-        return qq{<span class="ok">$bitrate</span>};
-    }
-}

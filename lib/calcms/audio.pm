@@ -11,10 +11,11 @@ sub durationToSeconds($) {
     return $duration;
 }
 
-sub formatDuration($$$) {
+sub formatDuration($$$;$) {
     my $audioDuration = shift;
     my $eventDuration = shift;
     my $value         = shift;
+    my $mouseOver     = shift;
 
     return '' unless $audioDuration;
     return '' unless $eventDuration;
@@ -23,28 +24,31 @@ sub formatDuration($$$) {
     $audioDuration = durationToSeconds($audioDuration);
     $eventDuration = durationToSeconds($eventDuration);
 
-    my $delta = 100 * $audioDuration / $eventDuration;
     my $class = "ok";
-    my $title = '';
+    my $title = $mouseOver;
+
+    my $delta = 100 * $audioDuration / $eventDuration;
+
     if ( $delta > 101 ) {
         $class = "warn";
         $title = sprintf(
-            qq{ title="file is too long! It should be %d minutes, but is %d"},
-            $eventDuration / 60,
-            $audioDuration / 60
+            qq{file is too long! It should be %d minutes, but is %d},
+            ($eventDuration+0.5) / 60,
+            ($audioDuration+0.5) / 60
         );
     }
+
     if ( $delta < 99.99 ) {
         $class = "error";
         $title = sprintf(
-            qq{ title="file is too short! should be %d minutes, but is %d"},
-            $eventDuration / 60,
-            $audioDuration / 60
+            qq{file is too short! should be %d minutes, but is %d},
+            ($eventDuration+0.5) / 60,
+            ($audioDuration+0.5) / 60
         );
 
     }
 
-    return sprintf( qq{<div class="%s"%s>%s</div>}, $class, $title, $value );
+    return sprintf( qq{<div class="%s" title="%s">%s</div>}, $class, $title, $value );
 }
 
 sub formatChannels($) {
@@ -60,7 +64,7 @@ sub formatSamplingRate($) {
     return '' unless $samplingRate;
     my $class = "ok";
     $class = "error" if $samplingRate != 44100;
-    return sprintf( qq{<div class="%s">%s</div>}, $class, $samplingRate );
+    return sprintf( qq{<div class="%s">%s Hz</div>}, $class, $samplingRate );
 }
 
 sub formatBitrate($) {
@@ -82,16 +86,18 @@ sub formatBitrateMode($) {
 
 sub formatLoudness {
     my $value = shift;
+    my $prefix = shift || '';
     return '' unless $value;
 
     $value = sprintf( "%.1f", $value );
+
     my $class = 'ok';
     $class = 'warn'  if $value > -18.5;
     $class = 'error' if $value > -16.0;
     $class = 'warn'  if $value < -24.0;
     $class = 'error' if $value < -27.0;
 
-    return qq{<div class="$class">$value dB</div>};
+    return qq{<div class="$class">$prefix$value dB</div>};
 }
 
 # do not delete this line

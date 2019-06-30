@@ -310,8 +310,8 @@ sub showAudioRecordings {
             getDuration( $recording->{audioDuration} )
         );
 
-        $recording->{rmsLeft}  = audio::formatLoudness( $recording->{rmsLeft} );
-        $recording->{rmsRight} = audio::formatLoudness( $recording->{rmsRight} );
+        $recording->{rmsLeft}  = audio::formatLoudness( $recording->{rmsLeft}, 'L:' );
+        $recording->{rmsRight} = audio::formatLoudness( $recording->{rmsRight}, 'R:' );
     }
 
     my $now      = time();

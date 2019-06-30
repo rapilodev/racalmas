@@ -86,9 +86,9 @@ sub get_scheduled($$) {
     }
 
     my $conditions = '';
-    $conditions = " where " . join( " and ", @conditions ) if scalar @conditions > 0;
+    $conditions = " and " . join( " and ", @conditions ) if scalar @conditions > 0;
 
-    my $order = 'start';
+    my $order = 'p.start';
     $order = $condition->{order} if ( defined $condition->{order} ) && ( $condition->{order} ne '' );
 
     my $query = qq{
@@ -119,8 +119,11 @@ sub get_scheduled($$) {
                 , p.modified_at
                 , p.updated_at
                 , TIMESTAMPDIFF(SECOND,e.start,e.end) "event_duration"
-        from    calcms_playout p left join calcms_events e 
-        on      p.start = e.start
+        from    calcms_playout p, calcms_events e, calcms_series_events se
+		where   p.start=e.start
+		and     e.id=se.event_id
+        and     p.studio_id=se.studio_id
+        and     p.project_id=se.project_id 
 		$conditions
 		order by $order
         $limit

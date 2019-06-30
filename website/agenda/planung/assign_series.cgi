@@ -99,7 +99,8 @@ sub show_events {
     my $project = $projects->[0];
     return unless scalar @$projects == 1;
 
-    my $studios = studios::get( $config, { project_id => $params->{project_id}, studio_id => $params->{studio_id} } );
+    my $studios = studios::get( $config,
+        { project_id => $params->{project_id}, studio_id => $params->{studio_id} } );
     my $studio = $studios->[0];
     return unless scalar @$studios == 1;
 
