@@ -644,7 +644,7 @@ a#calcms_search_show_details #plus{
 
 #calcms_calendar table thead td:hover,
 #calcms_calendar table thead th:hover{
-	background-color:#ddd;
+	background-color:#1987d1;
 }
 
 /* header */
@@ -656,10 +656,11 @@ a#calcms_search_show_details #plus{
 /* month selector */
 #calcms_calendar table thead tr:first-child a{
     padding:6px;
+    color:white;
 }
 
 #calcms_calendar table thead tr:first-child{
-	background:#ccc;
+	background:#007acc;
 }
 
 /* weekdays */
@@ -675,7 +676,7 @@ a#calcms_search_show_details #plus{
 
 #calcms_calendar table tbody td:hover,
 #calcms_calendar table tbody th:hover{
-	background-color:#f0f0f0;
+	background-color:#4f7acc;
 }
 
 #calcms_calendar table tbody td.calcms_today,

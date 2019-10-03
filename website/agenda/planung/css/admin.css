@@ -122,7 +122,13 @@ body,
 
 #calcms_admin_menu,
 #calcms_admin_menu select{
-	background:#444;
+	background:#004f9b;
+}
+
+#calcms_admin_menu a:hover,
+#calcms_admin_menu select:hover{
+    background:#007acc;
+    transition: all 0.5s linear;
 }
 
 #calcms_admin_menu div a,
@@ -131,11 +137,6 @@ body,
 	padding-top:1rem;
 	padding-bottom:1rem;
 	line-height:3em;
-}
-
-#calcms_admin_menu a:hover,
-#calcms_admin_menu select:hover{
-    background:#666;
 }
 
 #calcms_admin_menu div {
@@ -536,7 +537,7 @@ input[type='checkbox']{
 #calcms_admin_menu .fa,
 #calcms_admin_menu .far,
 #calcms_admin_menu .fas{
-    color:#777;
+    opacity:0.4;
 }
 
 #content button.selectImage{
