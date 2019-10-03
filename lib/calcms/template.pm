@@ -211,24 +211,14 @@ sub check($;$$) {
         log::error( $config, 'invalid template!' ) if ( $template =~ /\.\./ );
     }
 
-    #print STDERR $config->{cache}->{compress}."<.compres default:$template\n";
     $template = ( split( /\//, $template ) )[-1];
     my $cwd = Cwd::getcwd();
 
     $template .= '.html' unless ( $template =~ /\./ );
-    if (   ( $config->{cache}->{compress} eq '1' )
-        && ( -e $cwd . '/templates/compressed/' . $template ) )
-    {
-        $template = $cwd . '/templates/compressed/' . $template;
-    } elsif ( -e $cwd . '/templates/' . $template ) {
-        $template = $cwd . '/templates/' . $template;
-    } else {
-        log::error( $config, "template not found: '$cwd/$template'" );
+    log::error( $config, "template not found: '$cwd/$template'" ) 
+        unless -e $cwd . '/templates/' . $template;
+    $template = $cwd . '/templates/' . $template;
 
-    }
-
-    log::error( $config, "missing permission to read template '$template'" )
-      unless ( -r $template );
     return $template;
 }
 
