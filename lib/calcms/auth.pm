@@ -288,6 +288,10 @@ sub show_login_form ($$) {
         padding:0.5rem;
     }
 
+    input:hover{
+        cursor:pointer;
+    }
+
     .container{
         height: 100%;
         display: table-cell;   
@@ -301,8 +305,8 @@ sub show_login_form ($$) {
     }
 
 	#login_form{
-		background:#ddd;
-        box-shadow: 6px 6px 6px #ccc;
+		background:#fff;
+        box-shadow: 1rem 1rem 1rem #eee;
 		margin:1rem;
 		padding:1rem;
         text-align:center;
@@ -315,7 +319,7 @@ sub show_login_form ($$) {
 
 	#login_form .message{
         color:white;
-		background:#666;
+		background:#004f9b;
 		text-align:left;
 		font-weight:bold;
         padding:1rem;
@@ -328,6 +332,10 @@ sub show_login_form ($$) {
         background:#39a1f4;
         border:0;
         font-weight:bold;
+    }
+    a{
+        text-decoration:none;
+        color:#ccf;
     }
 
 </style>
