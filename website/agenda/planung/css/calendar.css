@@ -354,7 +354,7 @@ input.tablesorter-filter{
 }
 
 div#toolbar{
-    z-index:999;
+    z-index:9;
     padding:0;
 	width:100%;
     background:#ddd;
@@ -362,7 +362,6 @@ div#toolbar{
     flex-wrap: wrap;
     align-items: center;
 	vertical-align:middle;
-	z-index:99;
     left:0;
 }
 

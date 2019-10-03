@@ -209,7 +209,7 @@ function handleBars(){
     var menu=$('#calcms_admin_menu');
     menu.toggleClass('mobile');
     if (menu.hasClass('mobile')){
-        $('#calcms_admin_menu div').show();
+        $('#calcms_admin_menu>div').show();
         $('#content').hide();
     }else{
         $('#content').show();
@@ -230,10 +230,10 @@ function setupMenu(update){
 
     if (update == 1){
         if (menu.width() < 960){
-            $('#calcms_admin_menu div').hide();
-            $('#calcms_admin_menu div.mobile').show();
+            $('#calcms_admin_menu>div').hide();
+            $('#calcms_admin_menu>div.mobile').show();
         }else{
-            $('#calcms_admin_menu div').show();
+            $('#calcms_admin_menu>div').show();
             $('#calcms_admin_menu #bars').hide();
             menu.removeClass('mobile');
         }

@@ -14,6 +14,11 @@
 <div><a href="series.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-list-alt"></i>&nbsp;<TMPL_VAR .loc.series></a></div>
 </TMPL_IF>
 
+<!-- start menu -->
+<div class="dropdown">
+<a href="#"><i class="fas fa-plus"></i>&nbsp;mehr...&nbsp;</a>
+<div class="dropdown-content">
+
 <TMPL_IF .allow.read_playout>
 <div><a href="show-playout.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-play"></i>&nbsp;<TMPL_VAR .loc.playout></a></div>
 </TMPL_IF>
@@ -26,12 +31,12 @@
 <div><a href="roles.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-tasks"></i>&nbsp;<TMPL_VAR .loc.roles></a></div>
 </TMPL_IF>
 
-<TMPL_IF .allow.read_studio>
-<div><a href="studios.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-project-diagram"></i>&nbsp;<TMPL_VAR .loc.studios></a></div>
-</TMPL_IF>
-
 <TMPL_IF .allow.read_studio_timeslot_schedule>
 <div><a href="studio_timeslots.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-clock"></i>&nbsp;<TMPL_VAR .loc.timeslots></a></div>
+</TMPL_IF>
+
+<TMPL_IF .allow.read_studio>
+<div><a href="studios.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-project-diagram"></i>&nbsp;<TMPL_VAR .loc.studios></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_project>
@@ -46,15 +51,13 @@
 <div><a href="image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>&search=<TMPL_VAR .presets.user>"><i class="fas fa-images"></i>&nbsp;<TMPL_VAR .loc.images></a></div>
 </TMPL_IF>
 
-<TMPL_IF .allow.scan_series_events>
-<!--
-<div><a href="assignments.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><TMPL_VAR .loc.import></a></div>
--->
-</TMPL_IF>
-
 <div title="<TMPL_VAR .loc.profile>"><a href="user_settings.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-cog"></i>&nbsp;<TMPL_VAR .loc.profile></a></div>
 
 <div title="<TMPL_VAR .loc.help>"><a href="help.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-info"></i>&nbsp;<TMPL_VAR .loc.help></a></div>
+
+<!--end menu -->
+</div>
+</div>
 
 <div class="mobile">
 <i class="fas fa-home"></i>

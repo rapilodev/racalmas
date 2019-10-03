@@ -539,7 +539,6 @@ input[type='checkbox']{
     top:0;
     left:0;
     right:0;
-    justify-content:end;
 }
 
 #calcms_admin_menu div a, 
@@ -605,4 +604,28 @@ input.image{
 #calcms_admin_menu.mobile div{
     text-align:left;
 }
+
+#calcms_admin_menu .dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+#calcms_admin_menu .dropdown-content {
+    display: none;
+    position: absolute;
+    z-index: 100;
+    text-align:left;
+    background:#004f9b;
+    min-width:10rem;
+}
+
+#calcms_admin_menu .dropdown-content  a{
+    width:20rem;
+}
+
+#calcms_admin_menu .dropdown:hover .dropdown-content {
+    display: block;
+    transition: all 1s linear;
+}
+
 
