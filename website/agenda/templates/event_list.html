@@ -51,19 +51,6 @@
 </TMPL_LOOP>
 </div>
 
-<TMPL_UNLESS no_result>
-<TMPL_UNLESS no_search_result>
-<!--onclick="calcms.selectListEventListener('<TMPL_VAR event_id>');return false;"-->
-<div id="icon_bar">
-    <a href="<TMPL_VAR .controllers.domain><TMPL_VAR .controllers.atom>/radio.atom.xml" title="Sendeplan abonnieren - Atom"><img width="16" height="16" alt="Atom Feed" src="<TMPL_VAR static_files_url>image/feed.png" /></a>
-    <a href="<TMPL_VAR .controllers.domain><TMPL_VAR .controllers.rss>/radio.rss.xml"  title="Sendeplan abonnieren - RSS"><img width="16" height="16" alt="RSS Feed" src="<TMPL_VAR static_files_url>image/feed.png" /></a>
-    <a href="<TMPL_VAR .controllers.domain><TMPL_VAR .controllers.ical>/<TMPL_VAR month>/" title="alle Sendungen des Monats merken"><img width="16" height="16" alt="Icalendar" src="<TMPL_VAR static_files_url>image/icals.png" /></a>
-    <a href="<TMPL_VAR .controllers.domain><TMPL_VAR .controllers.ical>/<TMPL_VAR month>/" onclick="calcms.selectICalEventListener();return false;" title="gewaehlte Sendungen merken"><img width="16" height="16"  alt="ICalendar" src="<TMPL_VAR static_files_url>image/ical.png"/></a>
-
-</div>
-</TMPL_UNLESS>
-</TMPL_UNLESS>
-
 </body>
 </html>
 
