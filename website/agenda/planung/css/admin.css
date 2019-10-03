@@ -323,6 +323,30 @@ div.error{
 	background:#d00;
 }
 
+/* badges */
+div.badge-ok,
+div.badge-warn,
+div.badge-error{
+    border-radius:4px;
+    display:inline;
+    margin:3px;
+    padding:3px;
+}
+
+div.badge-ok{
+    color:white;
+	background:#0c0;
+}
+
+div.badge-warn{
+	background:#ff0;
+}
+
+div.badge-error{
+    color:white;
+	background:#d00;
+}
+
 #content button,
 #content select,
 #content input{

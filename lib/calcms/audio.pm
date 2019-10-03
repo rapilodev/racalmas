@@ -48,7 +48,7 @@ sub formatDuration($$$;$) {
 
     }
 
-    return sprintf( qq{<div class="%s" title="%s">%s</div>}, $class, $title, $value );
+    return sprintf( qq{<div class="badge-%s" title="%s">%s</div>}, $class, $title, $value );
 }
 
 sub formatChannels($) {
@@ -56,7 +56,7 @@ sub formatChannels($) {
     return '' unless $channels;
     my $class = "ok";
     $class = "error" if $channels != 2;
-    return sprintf( qq{<div class="%s">%d ch.</div>}, $class, $channels );
+    return sprintf( qq{<div class="badge-%s">%d ch.</div>}, $class, $channels );
 }
 
 sub formatSamplingRate($) {
@@ -64,7 +64,7 @@ sub formatSamplingRate($) {
     return '' unless $samplingRate;
     my $class = "ok";
     $class = "error" if $samplingRate != 44100;
-    return sprintf( qq{<div class="%s">%s Hz</div>}, $class, $samplingRate );
+    return sprintf( qq{<div class="badge-%s">%s Hz</div>}, $class, $samplingRate );
 }
 
 sub formatBitrate($) {
@@ -73,7 +73,7 @@ sub formatBitrate($) {
     my $class = 'ok';
     $class = 'warn'  if $bitrate >= 200;
     $class = 'error' if $bitrate < 192;
-    return sprintf( qq{<div class="%s">%s kBit/s</div>}, $class, $bitrate );
+    return sprintf( qq{<div class="badge-%s">%s kBit/s</div>}, $class, $bitrate );
 }
 
 sub formatBitrateMode($) {
@@ -81,7 +81,7 @@ sub formatBitrateMode($) {
     return '' unless $mode;
     my $class = 'ok';
     $class = 'error' if $mode ne 'CBR';
-    return sprintf( qq{<div class="%s">%s</div>}, $class, $mode );
+    return sprintf( qq{<div class="badge-%s">%s</div>}, $class, $mode );
 }
 
 sub formatLoudness {
@@ -97,7 +97,7 @@ sub formatLoudness {
     $class = 'warn'  if $value < -24.0;
     $class = 'error' if $value < -27.0;
 
-    return qq{<div class="$class">$prefix$value dB</div>};
+    return qq{<div class="badge-$class">$prefix$value dB</div>};
 }
 
 # do not delete this line
