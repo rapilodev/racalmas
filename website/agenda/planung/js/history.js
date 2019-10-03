@@ -50,24 +50,28 @@ function isNewToHistory(url){
 
     var history = getHistory();
     //last page already in history
-    if (history[0] == url) return null;
+    if ( history[0] == url) return null;
 
+    
     //replace url in history by current one, if controller is the same
     var urlController=url.split('.cgi').shift();
     var historyController=history[0].split('.cgi').shift();
-
     //remove last entry on same controller
     if(urlController==historyController){
-        var ignore=0;
+	console.log("same controller\n"+url+"\n"+history[0])
+        //var ignore=0;
         //provide back to series from series details
-        if(contains(url,'series')){
+        //if(contains(url,'series')){
             //console.log(url);
             //console.log(history[0]);
-            if( (contains(url,'series_id')==true)  && (contains(history[0],'series_id')==false)) ignore=1;
+            //if( (contains(url,'series_id')==true)  && (contains(history[0],'series_id')==false)) ignore=1;
             //console.log(ignore);
-        }
-        if (ignore==0) history.shift();
+        //}
+        //if (ignore==0) 
+	//history.shift();
+	return null;
     }
+    
 
     return history;
 }
@@ -101,22 +105,22 @@ function appendHistory(url, rewrite){
 
 function showHistory(){
     var history=getHistory();
-    var s='<pre style="z-index:110;position:absolute;right:0;top:0">';
+    var s='<pre style="z-index:110;position:absolute;right:0;top:0;padding:0">';
     for (var i=5; i>=0;i--){
         if(history[i]!=null) s+=i+" "+history[i]+"\n";
     }
     s+='</pre>';
-    //alert(s)
     $('#content').prepend(s);
 }
 
 function getBack(){
     var history=getHistory();
-    //alert("getBack")
     if (history.length==0)return;
+
     //remove current page
-    history.shift();
+    var url=history.shift();
     if (history.length==0)return;
+
     //remove previous page
     var url=history.shift();
     setCookie("history", history.join("|"));
