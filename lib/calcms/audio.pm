@@ -38,7 +38,7 @@ sub formatDuration($$$;$) {
         );
     }
 
-    if ( $delta < 99.99 ) {
+    if ( $delta < 99.98 ) {
         $class = "error";
         $title = sprintf(
             qq{file is too short! should be %d minutes, but is %d},
