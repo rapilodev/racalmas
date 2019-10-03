@@ -537,10 +537,10 @@ function initCalendarMenu(){
     //add filters to header
     //var html='<div style="white-space: nowrap;">';
     var html='';
-    html += '<div><input id="show_events"   type="checkbox" checked="checked">'+label_events+'</div>';
-    html += '<div><input id="show_schedule" type="checkbox" checked="checked">'+label_schedule+'</div>';
-    html += '<div><input id="show_playout"  type="checkbox" checked="checked">'+label_playout+'</div>';
-    html += '<div><input id="show_worktime" type="checkbox" >'+label_worktime+'</div>';
+    html += '<div><input id="show_events"   type="checkbox" checked="checked">'+(label_events || "label") +'</div>';
+    html += '<div><input id="show_schedule" type="checkbox" checked="checked">'+(label_schedule || "schedule")+'</div>';
+    html += '<div><input id="show_playout"  type="checkbox" checked="checked">'+(label_playout || "playout")+'</div>';
+    html += '<div><input id="show_worktime" type="checkbox" >'+(label_worktime || "worktime")+'</div>';
     //html += '</div>';
     $('#toolbar').append(html);
 
@@ -1062,5 +1062,6 @@ $(document).ready(function(){
     }else{
         loadCalendarList();
     }
-    });
+
+});
 
