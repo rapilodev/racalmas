@@ -22,7 +22,7 @@ function updateSeriesSelection(resultElemId){
     if (studioId  == null) return;
     if (seriesId  == null) return;
 
-    var url="selectSeries.cgi";
+    var url="select-series.cgi";
     url+="?project_id="   + getProjectId();
     url+="&studio_id="    + getStudioId();
     url+="&p_id="         + projectId;

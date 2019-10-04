@@ -45,7 +45,7 @@ function selectOldEventFromSeries(resultSelector, tillDate){
     $('#import_rerun_header').show('slideUp');
     if ($('#import_rerun_header').css('display')=='none')return;
 
-    var url='selectEvent.cgi?'
+    var url='select-event.cgi?'
     url+='project_id='+getProjectId();
     url+='&studio_id='+getStudioId();
     url+='&series_id='+getUrlParameter('series_id');
@@ -63,7 +63,7 @@ function selectOtherEvent(resultSelector){
     $('#import_rerun_header').show('slideUp');
     if ($('#import_rerun_header').css('display')=='none')return;
 
-    var url='selectEvent.cgi?'
+    var url='select-event.cgi?'
     url+='project_id='+getProjectId();
     url+='&studio_id='+getStudioId();
     url+='&series_id='+getUrlParameter('series_id');
@@ -136,7 +136,7 @@ function loadEvent(projectId,studioId,seriesId,eventId, callback){
 
 // load series selection
 function selectChangeSeries(resultSelector){
-    var url='selectSeries.cgi?'
+    var url='select-series.cgi?'
     url+='project_id='+getProjectId();
     url+='&studio_id='+getStudioId();
     url+='&series_id='+getUrlParameter('series_id');

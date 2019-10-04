@@ -51,7 +51,7 @@ function updateEventSelection(resultElemId){
     if (seriesId  == null) return;
     if (year      == null) return;
 
-    var url="selectEvent.cgi";
+    var url="select-event.cgi";
     url+="?project_id="   + getProjectId();
     url+="&studio_id="    + getStudioId();
     url+="&p_id="         + projectId;
