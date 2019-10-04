@@ -7,7 +7,7 @@ button:hover{
 }
 
 @media print{
-	#calcms_admin_menu{
+	#calcms_nav{
 		display:none;
 	}
 	#toolbar{

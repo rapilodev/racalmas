@@ -39,7 +39,7 @@ function setupMenuHeight(){
     if ($('#calendar').length>0){
         // calendar table
         console.log('setupMenuHeight')
-        var top=$('#calcms_admin_menu').height();
+        var top=$('#calcms_nav').height();
 
         $('#toolbar').css("top", top);
         $('#toolbar').css("position", "absolute");
@@ -65,10 +65,10 @@ function setupMenuHeight(){
         // calendar list
         //console.log('found calendar list')
 
-        var top = $('#calcms_admin_menu').height();
+        var top = $('#calcms_nav').height();
         $('#content').css("top", top);
 
-        top = $('#calcms_admin_menu').height();
+        top = $('#calcms_nav').height();
         $('#content').css("top", top);
 
         return top;

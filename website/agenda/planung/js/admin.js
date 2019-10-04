@@ -206,10 +206,10 @@ function getUrlParameter(name){
 }
 
 function handleBars(){
-    var menu=$('#calcms_admin_menu');
+    var menu=$('#calcms_nav');
     menu.toggleClass('mobile');
     if (menu.hasClass('mobile')){
-        $('#calcms_admin_menu>div').show();
+        $('#calcms_nav>div').show();
         $('#content').hide();
     }else{
         $('#content').show();
@@ -221,7 +221,7 @@ var oldWidth=0;
 function setupMenu(update){
     var xmax=960;
 
-    var menu = $('#calcms_admin_menu');
+    var menu = $('#calcms_nav');
     var width = menu.width();
 
     if ( (width < xmax)  && (oldWidth >= xmax) ) update=1;
@@ -230,11 +230,11 @@ function setupMenu(update){
 
     if (update == 1){
         if (menu.width() < 960){
-            $('#calcms_admin_menu>div').hide();
-            $('#calcms_admin_menu>div.mobile').show();
+            $('#calcms_nav>div').hide();
+            $('#calcms_nav>div.mobile').show();
         }else{
-            $('#calcms_admin_menu>div').show();
-            $('#calcms_admin_menu #bars').hide();
+            $('#calcms_nav>div').show();
+            $('#calcms_nav #bars').hide();
             menu.removeClass('mobile');
         }
     }
@@ -248,7 +248,7 @@ function setupMenuHeight(){
     var content=$('#content');
     content.css("position", "relative");
 
-    var menu=$('#calcms_admin_menu');
+    var menu=$('#calcms_nav');
     var top = menu.height();
     content.css("top", top);
 

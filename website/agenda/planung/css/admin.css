@@ -94,13 +94,13 @@ body,
 		padding:16px;
 	}
 
-	#calcms_admin_menu{
+	#calcms_nav{
 		min-width:640px;
 		max-width:800px;
 	}
 }
 
-#calcms_admin_menu{
+#calcms_nav{
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -109,42 +109,42 @@ body,
 	z-index:99;
 }
 
-#calcms_admin_menu, 
-#calcms_admin_menu a, 
-#calcms_admin_menu div, 
-#calcms_admin_menu input,
-#calcms_admin_menu select,
-#calcms_admin_menu option{
+#calcms_nav, 
+#calcms_nav a, 
+#calcms_nav div, 
+#calcms_nav input,
+#calcms_nav select,
+#calcms_nav option{
 	margin:0;
 	padding:0;
 	color:#fff;
 }
 
-#calcms_admin_menu,
-#calcms_admin_menu select{
+#calcms_nav,
+#calcms_nav select{
 	background:#004f9b;
 }
 
-#calcms_admin_menu a:hover,
-#calcms_admin_menu select:hover{
+#calcms_nav a:hover,
+#calcms_nav select:hover{
     background:#007acc;
     transition: all 0.5s linear;
 }
 
-#calcms_admin_menu div a,
-#calcms_admin_menu select{
+#calcms_nav div a,
+#calcms_nav select{
 	padding:6px;
 	padding-top:1rem;
 	padding-bottom:1rem;
 	line-height:3em;
 }
 
-#calcms_admin_menu div {
+#calcms_nav div {
     transition: background 0.2s;
 }
 
-#calcms_admin_menu select,
-#calcms_admin_menu option{
+#calcms_nav select,
+#calcms_nav option{
 	max-width:8em;
 	border:0;
 	padding-left:0;
@@ -152,7 +152,7 @@ body,
 	border-left:1px solid #666;
 }
 
-#calcms_admin_menu a#logout{
+#calcms_nav a#logout{
     color:#ff4444;
 }
 
@@ -534,21 +534,21 @@ input[type='checkbox']{
 
 /* new */
 
-#calcms_admin_menu{
+#calcms_nav{
     position:fixed;
     top:0;
     left:0;
     right:0;
 }
 
-#calcms_admin_menu div a, 
-#calcms_admin_menu select,
-#calcms_admin_menu option{
+#calcms_nav div a, 
+#calcms_nav select,
+#calcms_nav option{
     font-size:0.9375rem;
 }
 
-#calcms_admin_menu select,
-#calcms_admin_menu option{
+#calcms_nav select,
+#calcms_nav option{
     border:0;
     text-align:left;
     -moz-appearance: none;
@@ -557,9 +557,9 @@ input[type='checkbox']{
     border: none;
 }
 
-#calcms_admin_menu .fa,
-#calcms_admin_menu .far,
-#calcms_admin_menu .fas{
+#calcms_nav .fa,
+#calcms_nav .far,
+#calcms_nav .fas{
     opacity:0.4;
 }
 
@@ -592,25 +592,25 @@ input.image{
     overflow-y:scroll
 }
 
-#calcms_admin_menu #bars{
+#calcms_nav #bars{
     cursor:pointer;
 }
 
-#calcms_admin_menu.mobile{
+#calcms_nav.mobile{
     flex-direction:column;
     position:absolute;
 }
 
-#calcms_admin_menu.mobile div{
+#calcms_nav.mobile div{
     text-align:left;
 }
 
-#calcms_admin_menu .dropdown {
+#calcms_nav .dropdown {
     position: relative;
     display: inline-block;
 }
 
-#calcms_admin_menu .dropdown-content {
+#calcms_nav .dropdown-content {
     display: none;
     position: absolute;
     z-index: 100;
@@ -619,11 +619,11 @@ input.image{
     min-width:10rem;
 }
 
-#calcms_admin_menu .dropdown-content  a{
+#calcms_nav .dropdown-content  a{
     width:20rem;
 }
 
-#calcms_admin_menu .dropdown:hover .dropdown-content {
+#calcms_nav .dropdown:hover .dropdown-content {
     display: block;
     transition: all 1s linear;
 }
