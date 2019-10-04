@@ -16,7 +16,7 @@
             </TMPL_IF>
         </TMPL_IF>
 
-        <form name="img_upload" id="img_upload" method="POST" action="imageUpload.cgi" enctype="multipart/form-data">
+        <form name="img_upload" id="img_upload" method="POST" action="image-upload.cgi" enctype="multipart/form-data">
             <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
             <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
             <input type="hidden" name="action" value="upload">
@@ -24,7 +24,7 @@
 		        <tr>	
 			        <td>
 				        <TMPL_IF filename>
-				        <div class="image" style="background-image:url('showImage.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR filename>')" >
+				        <div class="image" style="background-image:url('show-image.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR filename>')" >
                         </div>
 				        </TMPL_IF>
 			        </td>

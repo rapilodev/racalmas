@@ -391,7 +391,7 @@
         <tr> 
             <td class="label">description</td>
             <td>
-                <img style="float:right;padding-left:1em" src="showImage.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR image>">
+                <img style="float:right;padding-left:1em" src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR image>">
                    <div><TMPL_VAR topic</div>
                    <div><TMPL_VAR html_content escape=none></div>
             </td>
@@ -459,7 +459,7 @@
                     <button onclick="selectImage('<TMPL_VAR series_name escape=HTML>', '<TMPL_VAR image ESCAPE=url>', 'event', '<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR series_id>','<TMPL_VAR event_id>'); return false;"
                         class="selectImage"
                     >
-                        <img id="imagePreview" src="showImage.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&filename=<TMPL_VAR image>&type=icon">
+                        <img id="imagePreview" src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&filename=<TMPL_VAR image>&type=icon">
                     </button>
                     <input id="image_<TMPL_VAR event_id>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.label_image>">
                     <input type="hidden" name="series_image" value="<TMPL_VAR series_image>" > 

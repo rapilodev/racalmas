@@ -123,7 +123,7 @@
                         <button class="selectImage" 
                             onclick="selectImage('<TMPL_VAR series_name escape=HTML>', '<TMPL_VAR image ESCAPE=url>', 'series', '<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR series_id>'); return false;"
                         >
-                            <img id="imagePreview" src="showImage.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=icon">
+                            <img id="imagePreview" src="show-image.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=icon">
                         </button>
 
                         <input type="hidden" name="series_image" value="<TMPL_VAR series_image>" > 
@@ -433,7 +433,7 @@
 		<TMPL_LOOP events>
 			<tr id="event_<TMPL_VAR event_id>">
 			    <TMPL_IF .allow.read_image>
-				<td class="logo"><img width="33" height="33" src="showImage.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR image>"></td>
+				<td class="logo"><img width="33" height="33" src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR image>"></td>
 				</TMPL_IF>
 				<td class="weekday"><TMPL_VAR weekday_short_name></td>
 				<td class="date"><TMPL_VAR start_date></td>

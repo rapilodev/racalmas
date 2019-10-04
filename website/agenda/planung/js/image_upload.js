@@ -1,5 +1,5 @@
 function initUploadDialog(){
-    var url='imageUpload.cgi?project_id='+ getProjectId()+"&studio_id="+getStudioId();
+    var url='image-upload.cgi?project_id='+ getProjectId()+"&studio_id="+getStudioId();
     updateContainer("image-tabs-upload", url, pageLeaveHandler);
 }
 
@@ -8,7 +8,7 @@ function uploadImage(){
     var form=$("#img_upload");
     var fd = new FormData(form[0]);
     var rq = $.ajax({
-        url: 'imageUpload.cgi',  
+        url: 'image-upload.cgi',  
         type: 'POST',
         data: fd,
         cache: false,
@@ -27,7 +27,7 @@ function uploadImage(){
         //remove existing image from list
         $('#imageList div.images #img_'+image_id).remove();
 
-        var url='showImage.cgi?project_id='+getProjectId()+'&studioId='+getStudioId()+'&type=icon&filename='+filename;
+        var url='show-image.cgi?project_id='+getProjectId()+'&studioId='+getStudioId()+'&type=icon&filename='+filename;
 
         var html = '<div';
         html += ' id="img_' + image_id + '"';

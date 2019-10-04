@@ -370,7 +370,7 @@ sub check_params {
     my $params = shift;
 
     my $checked = {};
-    $checked->{template} = template::check( $config, $params->{template}, 'imageUpload' );
+    $checked->{template} = template::check( $config, $params->{template}, 'image-upload' );
 
     #numeric values
     for my $param ( 'project_id', 'studio_id', 'default_studio_id' ) {
