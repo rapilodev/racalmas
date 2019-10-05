@@ -1,5 +1,5 @@
 
-<link type="text/css" href="css/image_manager.css" rel="stylesheet"/>
+<link type="text/css" href="css/image.css" rel="stylesheet"/>
 <script src="js/image.js" type="text/javascript"></script>
 <script src="js/page_leave_handler.js" type="text/javascript"></script>
 
@@ -72,49 +72,43 @@
 </div>
 
 <div id="imageList">
-    <div style="float:right">
-	    <button onclick="decreaseImageSize();return false;" title="<TMPL_VAR .loc.button_zoom_out>">-</button>
-	    <button onclick="increaseImageSize();return false;" title="<TMPL_VAR .loc.button_zoom_in>">+</button>
-    </div>
 
-	<form id="image_manager" action="image.cgi">
-		<input name="search" value="<TMPL_VAR search escape=none>" style="width:20em;">
-		<input type="hidden" name="filename" value="<TMPL_VAR filename escape=none>">
-		<button onclick="searchImage('<TMPL_VAR target>', '<TMPL_VAR .project_id>', '<TMPL_VAR .studio_id>', '<TMPL_VAR .series_id>', '<TMPL_VAR .event_id>', '<TMPL_VAR .pid>'); return false;"><TMPL_VAR .loc.button_search></button>
-	</form>
-    <TMPL_VAR count> <TMPL_VAR .loc.label_search_hits><br />
-
-    <div style="clear:both;display: flex; flex-direction: row;">
-
-        <div class="images" 
-            style="overflow-y:scroll" 
-            target="<TMPL_VAR .target>" 
-            projectId="<TMPL_VAR .project_id>" 
-            studioId="<TMPL_VAR .studio_id>" 
-            seriesId="<TMPL_VAR .series_id>" 
-            eventId="<TMPL_VAR .event_id>"
-            pid="<TMPL_VAR .pid>"
-        >
-            <TMPL_LOOP images>
-	            <div class="image" 
-		            id="img_<TMPL_VAR id>" 
-		            style="background-image:url('show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR filename>')"
-		            title="<TMPL_VAR description>"
-                    filename="<TMPL_VAR filename>"
-	            >
-		            <div class="label"><TMPL_VAR name></div>
-	            </div>
-            </TMPL_LOOP>
+    <div style="clear:both; display:flex; flex-direction:row;">
+        <div>
+	        <form id="image_manager" action="image.cgi">
+		        <input name="search" value="<TMPL_VAR search escape=none>" style="width:20em;">
+		        <input type="hidden" name="filename" value="<TMPL_VAR filename escape=none>">
+		        <button onclick="searchImage('<TMPL_VAR target>', '<TMPL_VAR .project_id>', '<TMPL_VAR .studio_id>', '<TMPL_VAR .series_id>', '<TMPL_VAR .event_id>', '<TMPL_VAR .pid>'); return false;"><TMPL_VAR .loc.button_search></button>
+	        </form>
+            <TMPL_VAR count> <TMPL_VAR .loc.label_search_hits><br />
+            <div class="images" 
+                style="overflow-y:scroll" 
+                target="<TMPL_VAR .target>" 
+                projectId="<TMPL_VAR .project_id>" 
+                studioId="<TMPL_VAR .studio_id>" 
+                seriesId="<TMPL_VAR .series_id>" 
+                eventId="<TMPL_VAR .event_id>"
+                pid="<TMPL_VAR .pid>"
+            >
+                <TMPL_LOOP images>
+	                <div class="image" 
+		                id="img_<TMPL_VAR id>" 
+		                style="background-image:url('show-image.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR filename>')"
+		                title="<TMPL_VAR description>"
+                        filename="<TMPL_VAR filename>"
+	                >
+		                <div class="label"><TMPL_VAR name></div>
+	                </div>
+                </TMPL_LOOP>
+            </div>
         </div>
-
         <div id="img_editor" >
         </div>
     </div>
 </div>
 
 </TMPL_IF>
-
-</main>	    
+</main>
 </center>
 </body>
 

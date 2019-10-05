@@ -1,7 +1,4 @@
 
-var windowOffsetX=0;
-var windowOffsetY=0;
-
 // get current selected tab by tabs-id
 function getSelectedTab(id){
     var selector = '#'+id+" li.ui-tabs-active a";
@@ -10,13 +7,15 @@ function getSelectedTab(id){
 }
 
 function setActiveImage(elem){
+    if ( !elem ) elem = $('div.images div.image').first();
     $('div.image').removeClass("active");
+    $('div.image').addClass("inactive");
+    elem.addClass("active");
+    elem.removeClass("inactive");
+}
 
-    if (elem){
-        $(elem).addClass("active");
-    }else{
-        $('div.images div.image').first().addClass("active");
-    }
+function updateActiveImage(){
+    $('div.images div.image.active').click();
 }
 
 // open dialog to show or edit image properties
@@ -63,13 +62,23 @@ function searchImage(target, project_id, studio_id, series_id, event_id, pid){
     load(url);
 }    
 
+// disable public, save and update form on success
+function depublishImage(id, filename){
+    $('#save_img_'+id+' input[name="public"]').val("0");
+    saveImage(id, filename);
+}
 
+// enable public and save and update form on success
+function publishImage(id, filename){
+    $('#save_img_'+id+' input[name="public"]').val("1");
+    saveImage(id, filename);
+}
 
 // save image 
 function saveImage(id, filename) {
 
     $('#imageEditor #status').html('');
-    console.log("save image "+id);
+    console.log("save image "+id+" ");
 
 	var url='image.cgi?save_image='+filename+'&project_id='+project_id+'&studio_id='+studio_id;
 	$.post(
@@ -77,22 +86,21 @@ function saveImage(id, filename) {
 		$("#save_img_"+id).serialize(), 
 		function(data){
             var errorFound=0;
-
-            var lines=data.split(/\n/);
-            for (index in lines){
-                var line=lines[index];
-                if(contains(line,'ERROR:')){
-                    //add error field
-                    if( $('#imageEditor #status .error').length==0 ){
-                        $('#imageEditor #status').append('<div class="error"></div>');
+            data.split(/\n/).forEach(
+                function(line){
+                    if(contains(line, 'ERROR:')){
+                        //add error field
+                        if( $('#imageEditor #status .error').length==0 ){
+                            $('#imageEditor #status').append('<div class="error"></div>');
+                        }
+                        $('#imageEditor #status div.error').append(line);
+                        errorFound++;
                     }
-                    $('#imageEditor #status div.error').append(line);
-                    errorFound++;
-                }
-            };
-		    //console.log(data);
+               }
+            );
             if (errorFound==0){
                 $('#imageEditor #status').append('<div class="ok">saved</div>');
+                updateActiveImage();
             }
 			hideImageDetails('img_'+id, filename);
 		} 
@@ -126,30 +134,6 @@ function hideImageDetails(id, filename){
     console.log("hideImageDetails, load url="+url)
 	$("#"+id).load(url);
 	return false;
-}
-
-// zoom all images in
-function increaseImageSize(){
-    var value=$('#content div.image').css('width');
-    value=value.replace(/[^0-9]/g,'');
-    if(value>200)return;
-    value=parseInt(value*1.3);
-    $('#content div.image').css('width', value+'px');
-    $('#content div.image div').css('width', (value-12)+'px');
-    $('#content div.image').css('height', value+'px');
-    $('#content div.image').css('background-size', value+'px');
-}
-
-// zoom all images out
-function decreaseImageSize(){
-    var value=$('#content div.image').css('width');
-    value=value.replace(/[^0-9]/g,'');
-    if(value<50)return;
-    value=parseInt(value/1.3);
-    $('#content div.image').css('width', value+'px');
-    $('#content div.image div').css('width', (value-12)+'px');
-    $('#content div.image').css('height', value+'px');
-    $('#content div.image').css('background-size', value+'px');
 }
 
 function selectImage( searchValue, imageUrl, target, project_id, studio_id, series_id, event_id, pid){
@@ -205,10 +189,8 @@ $(document).ready(
 
         $('div.images').on( 'click', 'div.image', function(){
             var elem      = $(this);
-            console.log(elem)
             var filename  = elem.attr("filename");
             elem = elem.parent();
-            console.log(elem)
             var target    = elem.attr("target");
             var projectId = elem.attr("projectId");
             var studioId  = elem.attr("studioId");

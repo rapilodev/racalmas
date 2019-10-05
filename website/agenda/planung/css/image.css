@@ -53,6 +53,10 @@ input.field{
     box-shadow: 0 5px 11px 0 rgba(0,0,0,.18),0 4px 15px 0 rgba(0,0,0,.15);
 }
 
+#content div.image.inactive{
+    opacity:0.5;
+}
+
 #imageEditor{
     min-height:800px;
     height:100%;
@@ -67,7 +71,7 @@ input.field{
 }
 
 #content label{
-    margin-top:1rem;
+    margin-top: 1rem;
     text-transform: uppercase;
-    color:#333;
+    color:#999;
 }

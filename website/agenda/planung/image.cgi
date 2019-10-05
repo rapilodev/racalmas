@@ -229,6 +229,13 @@ sub show_image {
 
     #    print STDERR
     $template_params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'image' } );
+
+    my $label_key = 'label_assign_to_'.$params->{target};
+    $template_params->{label_assign_to_by_label} = $template_params->{loc}->{$label_key};
+
+    $label_key = 'label_warn_not_public_'.$params->{target};
+    $template_params->{label_warn_not_public_by_label} = $template_params->{loc}->{$label_key};
+
     $template_params = uac::set_template_permissions( $permissions, $template_params );
     $template_params->{no_results} = 1 if scalar @$results == 0;
 

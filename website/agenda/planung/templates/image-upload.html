@@ -37,29 +37,29 @@
 		        </tr>
 
 		        <tr>
-			        <td>Name:		</td>
-			        <td><input value="<TMPL_VAR name escape=none>" name="name" size="40" maxlength="100" required> </td>
+			        <td><label><TMPL_VAR .loc.label_name></label></td>
+			        <td><input value="<TMPL_VAR name escape=none>" name="name" size="40" maxlength="100" placeholder="<TMPL_VAR .loc.label_name_required>" required> </td>
 		        </tr>
-		        <tr>
-			        <td>Beschreibung:	</td>
-			        <td><textarea name="description" cols="50" rows=5><TMPL_VAR description escape=none></textarea></td>
-		        </tr>
+
 		        <tr>
                     <td><label><TMPL_VAR .loc.label_author>/<TMPL_VAR .loc.label_licence></label></td>
-                    <td><input name="licence" value="<TMPL_VAR licence>" placeholder="<TMPL_VAR .loc.label_licence_missing>" required /></td>
+                    <td><input name="licence" size="40" value="<TMPL_VAR licence>" placeholder="<TMPL_VAR .loc.label_licence_required>" required /></td>
 		        </tr>
-		        <tr>
-                    <td><label><TMPL_VAR .loc.label_public></label></td>
-                    <td><input type="checkbox" name="public" <TMPL_IF public>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF> /></td>
-		        </tr>
+
 		        <tr>	
-			        <td>Datei</td>
-			        <td><input type="file" name="image" accept="image/*" maxlength="2000000" size="10" required/>  </td>
+			        <td><label><TMPL_VAR .loc.label_file></label></td>
+			        <td><input type="file" name="image" accept="image/*" maxlength="2000000" size="10" required /></td>
 		        </tr>
+
+		        <tr>
+			        <td><label><TMPL_VAR .loc.label_description></label></td>
+			        <td><textarea name="description" cols="50" rows=5><TMPL_VAR description escape=none ></textarea></td>
+		        </tr>
+
 		        <tr>
 			        <td></td>
                     <td>
-				        <button onclick="uploadImage();return false">Hochladen</button>
+				        <button onclick="uploadImage();return false" ><TMPL_VAR .loc.button_upload></button>
 			        </td>
 		        </tr>
 	        </table>

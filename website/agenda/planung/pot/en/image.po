@@ -1,3 +1,4 @@
+
 msgid "region"
 msgstr "en"
 
@@ -16,17 +17,23 @@ msgstr "upload"
 msgid "button_search"
 msgstr "search"
 
-msgid "button_zoom_in"
-msgstr "zoom in"
-
-msgid "button_zoom_out"
-msgstr "zoom out"
-
 msgid "button_save"
 msgstr "save"
 
 msgid "button_delete"
 msgstr "delete"
+
+msgid "button_properties"
+msgstr "properties"
+
+msgid "button_publish"
+msgstr "publish"
+
+msgid "button_depublish"
+msgstr "hold back"
+
+msgid "label_warn_unknown_licence"
+msgstr "Cannot be pusblished without setting a licence"
 
 msgid "label_name"
 msgstr "name"
@@ -64,9 +71,36 @@ msgstr "published"
 msgid "label_file"
 msgstr "file"
 
-msgid "label_licence_missing"
+msgid "label_name_required"
 msgstr "please fill in"
 
-msgid "select_image"
-msgstr "select this image"
+msgid "label_licence_required"
+msgstr "image cannot be published without license"
+
+msgid "label_mandatory_field"
+msgstr "please fill in"
+
+msgid "label_assign_to_event"
+msgstr "use image for event"
+
+msgid "label_assign_to_series"
+msgstr "use image for series"
+
+msgid "label_assign_to_studio"
+msgstr "use image for studio"
+
+msgid "label_assign_to_project"
+msgstr "use image for project"
+
+msgid "label_warn_not_public_event"
+msgstr "Cannot be assigned to event without have been published"
+
+msgid "label_warn_not_public_series"
+msgstr "Cannot be assigned to series without have been published"
+
+msgid "label_warn_not_public_studio"
+msgstr "Cannot be assigned to studio without have been published"
+
+msgid "label_warn_not_public_project"
+msgstr "Cannot be assigned to project without have been published"
 
