@@ -1,513 +1,531 @@
-body #content{
-	padding:0;
+body #content {
+    padding: 0;
 }
 
-button:hover{
-    cursor:pointer;
+button:hover {
+    cursor: pointer;
 }
 
-@media print{
-	#calcms_nav{
-		display:none;
-	}
-	#toolbar{
-		display:none;
-	}
-	tr,td,div.event,div.schedule,div.work,div.play{
-	    border:1pt solid black;
-	}
-	#content{
-	    top:0;
-	}
-}
-
-#content #calendar_weekdays,
-#content #calendar_weekdays table,
-#content #calendar{
-	position:absolute;
-	padding:0;
-	left:0;
-}
-
-#content #calendar_weekdays{
-	font-size:12px;
-}
-
-@media screen{
-	#content #calendar{
-		overflow-x:hidden;
-		overflow-y:scroll;		
-	}
-}
-
-#calendar_weekdays table,
-#calendar table{
-	table-layout:fixed;
-}
-
-#calendar_weekdays table td,
-#calendar table td{
-	vertical-align:top;
-	padding:0;
-	min-width:100px;
-}
-
-#calendar_weekdays table td{
-    white-space:normal;
-}
-
-#calendar_weekdays table td:nth-child(1),
-#calendar table td:nth-child(1){
-	min-width:80px !important;
-}
-
-#calendar table td{
-	word-wrap:break-word;
-	hyphens:auto;
-}
-
-#calendar div.text{
-    padding-right:0;
-}
-@media (min-width: 720em) {
-    #calendar div.text{
-        padding-right:16px;
+@media print {
+    #calcms_nav {
+        display: none;
+    }
+    #toolbar {
+        display: none;
+    }
+    tr, 
+    td, 
+    div.event, 
+    div.schedule, 
+    div.work, 
+    div.play {
+        border: 1pt solid black;
+    }
+    #content {
+        top: 0;
     }
 }
 
-#event_list tr{
-    border-bottom:1px solid #999;
+#content #calendar_weekdays, 
+#content #calendar_weekdays table, 
+#content #calendar
+    {
+    position: absolute;
+    padding: 0;
+    left: 0;
 }
 
-#calendar div.schedule div.text,
-#calendar div.event div.text{
-    positions:absolute;
-    top:0;
-    left:0;
-    padding-left:0;
-    padding-top:0;
-    padding-bottom:0;
+#content #calendar_weekdays {
+    font-size: 12px;
 }
 
-#calendar div.event div.icons{
-    position:absolute;
-    top:0px;
-    right:0px;
-    margin:0;
-    width:16px;
-    font-size:16px;
-    opacity:0.8;
-    line-height:1.5;
+@media screen {
+    #content #calendar {
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+}
+
+#calendar_weekdays table, 
+#calendar table {
+    table-layout: fixed;
+}
+
+#calendar_weekdays table td, 
+#calendar table td {
+    vertical-align: top;
+    padding: 0;
+    min-width: 100px;
+}
+
+#calendar_weekdays table td {
+    white-space: normal;
+}
+
+#calendar_weekdays table td:nth-child(1), 
+#calendar table td:nth-child(1)
+    {
+    min-width: 80px !important;
+}
+
+#calendar table td {
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+#calendar div.text {
+    padding-right: 0;
+}
+
+@media ( min-width : 720em) {
+    #calendar div.text {
+        padding-right: 16px;
+    }
+}
+
+#event_list tr {
+    border-bottom: 1px solid #999;
+}
+
+#calendar div.schedule div.text, 
+#calendar div.event div.text {
+    positions: absolute;
+    top: 0;
+    left: 0;
+    padding-left: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+#calendar div.event div.icons {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    margin: 0;
+    width: 16px;
+    font-size: 16px;
+    opacity: 0.8;
+    line-height: 1.5;
 }
 
 #calendar div.time.now {
-    padding:0;
-    margin:0;
-	border:2px dashed #99f;
-    width:100%;
-    height:0px;
-    z-index:0;
+    padding: 0;
+    margin: 0;
+    border: 2px dashed #99f;
+    width: 100%;
+    height: 0px;
+    z-index: 0;
 }
 
-#calendar_weekdays div.date,
+#calendar_weekdays div.date, 
 #calendar div.time {
-	text-align:center;
-	vertical-align:middle;
-    z-index:5;
+    text-align: center;
+    vertical-align: middle;
+    z-index: 5;
 }
 
 #calendar_weekdays div.date.today {
-    background:#ccf;
+    background: #ccf;
 }
 
-
-#calendar_weekdays td.week,
-#calendar td.week{
-    padding:0;
-    width:0px;
-    min-width:0px;
-    max-width:0px;
+#calendar_weekdays td.week, 
+#calendar td.week {
+    padding: 0;
+    width: 0px;
+    min-width: 0px;
+    max-width: 0px;
 }
 
-#calendar_weekdays td.week div,
-#calendar td.week div{
-    padding:0;
-    min-width:1px;
-    height:100%;
-    background:repeating-linear-gradient(to right, #fff, #fff 1px, #999 1px, #999 2px);
+#calendar_weekdays td.week div, 
+#calendar td.week div {
+    padding: 0;
+    min-width: 1px;
+    height: 100%;
+    background: repeating-linear-gradient(to right, #fff, #fff 1px, #999 1px, #999 2px);
 }
 
-#calendar td.week div{
-    height:180em;
+#calendar td.week div {
+    height: 180em;
 }
 
-
-#calendar div.time,
-#calendar_weekdays div.date,
+#calendar div.time, 
+#calendar_weekdays div.date, 
 #calendar div.event,
-#calendar div.schedule,
-#calendar div.work,
-#calendar div.play{
-	position:absolute;
-	overflow:hidden;
-	margin-left:0;
-	border:0;
-	border-bottom:1px solid #fff;
-	border-top:1px solid #fff;
+#calendar div.schedule, 
+#calendar div.work, 
+#calendar div.play {
+    position: absolute;
+    overflow: hidden;
+    margin-left: 0;
+    border: 0;
+    border-bottom: 1px solid #fff;
+    border-top: 1px solid #fff;
 }
 
-#calendar div.time,
-#calendar_weekdays div.date{
-    border:0;
+#calendar div.time, 
+#calendar_weekdays div.date {
+    border: 0;
 }
 
-#calendar div.time,
-#calendar_weekdays div.time{
-	border-top:1px solid #fff;
+#calendar div.time, 
+#calendar_weekdays div.time {
+    border-top: 1px solid #fff;
 }
 
 /* calendar list*/
-
-
-#content div.event{
-    z-index:5;
+#content div.event {
+    z-index: 5;
 }
 
-#content div.schedule{
-	font-weight:normal;
-	z-index:4;
+#content div.schedule {
+    font-weight: normal;
+    z-index: 4;
 }
 
-#content .scheduled{
-	color:#000;
-	font-weight:normal;
-	z-index:4;
+#content .scheduled {
+    color: #000;
+    font-weight: normal;
+    z-index: 4;
 }
 
-#content div.work{
-	font-weight:normal;
-	z-index:3;
+#content div.work {
+    font-weight: normal;
+    z-index: 3;
 }
 
-#content div.play{
-	font-weight:normal;
-    z-index:1;
+#content div.play {
+    font-weight: normal;
+    z-index: 1;
 }
 
-#content div.grid{
-    z-index:1;
-    background:white;
-	overflow:hidden;
-	position:absolute;
-    background: repeating-linear-gradient( 45deg, #fff, #fff 1rem ,#eee 1rem, #eee 2rem);
-    cursor:pointer;
+#content div.grid {
+    z-index: 1;
+    background: white;
+    overflow: hidden;
+    position: absolute;
+    background: repeating-linear-gradient(45deg, #fff, #fff 1rem, #eee 1rem, #eee 2rem);
+    cursor: pointer;
 }
 
-#event_list tr th:hover{
-    cursor:pointer;
+#event_list tr th:hover {
+    cursor: pointer;
 }
 
-#event_list tr th,
-#event_list tr td,
+#event_list tr th, 
+#event_list tr td, 
 #event_list .tablesorter-header-inner{
-    padding:6px;
-    padding-left:6px;
-    padding-right:0px;
-}
-input.tablesorter-filter{
-    width:4em;
+    padding: 6px;
+    padding-left: 6px;
+    padding-right: 0px;
 }
 
-#event_list tr td.day_of_year{
+input.tablesorter-filter {
+    width: 4em;
+}
+
+#event_list tr td.day_of_year {
     white-space: nowrap;
 }
-#event_list td:nth-child(1),
-#event_list th:nth-child(1),
-#event_list td:nth-child(1) .tablesorter-filter{
+
+#event_list td:nth-child(1), 
+#event_list th:nth-child(1), 
+#event_list td:nth-child(1) .tablesorter-filter
+{
     white-space: nowrap;
-    padding:0;
-    width:3em;
-    text-align:center;
+    padding: 0;
+    width: 3em;
+    text-align: center;
 }
 
-#event_list tr td.weekday{
-    white-space: nowrap;
-}
-#event_list td:nth-child(2),
-#event_list th:nth-child(2),
-#event_list td:nth-child(2) .tablesorter-filter{
-    white-space: nowrap;
-    padding:0;
-    width:2em;
-    text-align:right;
-}
-
-
-#event_list tr td.start_date{
-    white-space: nowrap;
-    font-family:monospace;
-}
-#event_list tr .start_date{
-    text-align:left;
-}
-
-#event_list tr td.start_time{
+#event_list tr td.weekday {
     white-space: nowrap;
 }
-#event_list tr td.series_name{
-}
-#event_list tr td.title{
-    max-width:20em;
-}
-#event_list tr td.user_title{
+
+#event_list td:nth-child(2), 
+#event_list th:nth-child(2), 
+#event_list td:nth-child(2) .tablesorter-filter
+{
+    white-space: nowrap;
+    padding: 0;
+    width: 2em;
+    text-align: right;
 }
 
-#event_list tr td.episode{
+#event_list tr td.start_date {
+    white-space: nowrap;
+    font-family: monospace;
+}
+
+#event_list tr .start_date {
+    text-align: left;
+}
+
+#event_list tr td.start_time {
     white-space: nowrap;
 }
-#event_list td:nth-child(7),
-#event_list th:nth-child(7),
-#event_list td:nth-child(7) .tablesorter-filter{
+
+#event_list tr td.series_name {
+    
+}
+
+#event_list tr td.title {
+    max-width: 20em;
+}
+
+#event_list tr td.user_title {
+    
+}
+
+#event_list tr td.episode {
     white-space: nowrap;
-    padding:0;
-    width:2em;
-    text-align:right;
 }
 
-#event_list tr td.rerun{
+#event_list td:nth-child(7), 
+#event_list th:nth-child(7), 
+#event_list td:nth-child(7) .tablesorter-filter
+{
+    white-space: nowrap;
+    padding: 0;
+    width: 2em;
+    text-align: right;
+}
+
+#event_list tr td.rerun {
     white-space: nowrap;
 }
-#event_list tr .rerun{
-    width:1em;
-    text-align:center;
+
+#event_list tr .rerun {
+    width: 1em;
+    text-align: center;
 }
 
-#event_list tr th.draft,
-#event_list tr td.draft{
-    background:none;
+#event_list tr th.draft, 
+#event_list tr td.draft {
+    background: none;
 }
 
-#event_list tr th{
-    border-right:1px solid #ccc;
+#event_list tr th {
+    border-right: 1px solid #ccc;
 }
 
-#event_list td:nth-child(9),
-#event_list th:nth-child(9),
-#event_list td:nth-child(9) .tablesorter-filter{
+#event_list td:nth-child(9), 
+#event_list th:nth-child(9), 
+#event_list td:nth-child(9) .tablesorter-filter
+    {
     white-space: nowrap;
-    padding:0;
-    width:1em;
-    text-align:center;
+    padding: 0;
+    width: 1em;
+    text-align: center;
 }
 
-#event_list td:nth-child(10),
-#event_list th:nth-child(10),
-#event_list td:nth-child(10) .tablesorter-filter{
-    padding:0;
-    width:1em;
-    text-align:center;
+#event_list td:nth-child(10), 
+#event_list th:nth-child(10), 
+#event_list td:nth-child(10) .tablesorter-filter
+    {
+    padding: 0;
+    width: 1em;
+    text-align: center;
 }
 
-#event_list tr:hover{
-    border-left:1px solid #333;
-    border-right:1px solid #333;
-    cursor:pointer;
+#event_list tr:hover {
+    border-left: 1px solid #333;
+    border-right: 1px solid #333;
+    cursor: pointer;
 }
 
 /* calendar colors */
-
-#content div.event.no_series{
-	color:#000;
+#content div.event.no_series {
+    color: #000;
 }
 
-#content.conflicts .schedule.error{
-	color:#000;
+#content.conflicts .schedule.error {
+    color: #000;
 }
 
-#content.conflicts .error{
-	color:#000;
+#content.conflicts .error {
+    color: #000;
 }
 
 /* color end*/
-
-#content .weak{
-    font-weight:300;
+#content .weak {
+    font-weight: 300;
 }
 
-#content .weak span{
-    border-radius:4px;
+#content .weak span {
+    border-radius: 4px;
 }
 
-#content .schedule,
-#content .event{
-	cursor:pointer;
+#content .schedule, 
+#content .event {
+    cursor: pointer;
 }
 
-#content #calendar_weekdays td:nth-child(1) div.date a{
-	font-size:1.7em;
+#content #calendar_weekdays td:nth-child(1) div.date a {
+    font-size: 1.7em;
 }
 
-#content #position{
-	word-wrap:break-word;
-    word-break:normal;
-    text-align:center;
+#content #position {
+    word-wrap: break-word;
+    word-break: normal;
+    text-align: center;
 }
 
-div#toolbar{
-    z-index:9;
-    padding:0;
-	width:100%;
-    background:#ddd;
+div#toolbar {
+    z-index: 9;
+    padding: 0;
+    width: 100%;
+    background: #ddd;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-	vertical-align:middle;
-    left:0;
+    vertical-align: middle;
+    left: 0;
 }
 
-div#toolbar div{
-    display:table-cell;
-    vertical-align:middle;
+div#toolbar div {
+    display: table-cell;
+    vertical-align: middle;
 }
 
-div#toolbar select{
-    padding:8px;
-    margin-left:6px;
+div#toolbar select {
+    padding: 8px;
+    margin-left: 6px;
 }
 
-div#toolbar input.search{
-    padding:9px;
+div#toolbar input.search {
+    padding: 9px;
 }
 
-#content #toolbar div{
-    padding:0;
-    padding-left:6px;
+#content #toolbar div {
+    padding: 0;
+    padding-left: 6px;
 }
 
-#content #toolbar div:hover,
-#content #toolbar select:hover,
-#content #toolbar input:hover{
-    background:#ccc;
-    padding-top:6px;
-    padding-bottom:6px;
+#content #toolbar div:hover, 
+#content #toolbar select:hover, 
+#content #toolbar input:hover
+    {
+    background: #ccc;
+    padding-top: 6px;
+    padding-bottom: 6px;
 }
 
-#content #toolbar div#selectDate:hover{
-    padding-top:0;
-    padding-bottom:0;
+#content #toolbar div#selectDate:hover {
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
-#content #toolbar div#current_date{
-    cursor:pointer;
-    font-size:1.5em;
-    width:5em;
-    text-align:center;
-    padding:5px;
+#content #toolbar div#current_date {
+    cursor: pointer;
+    font-size: 1.5em;
+    width: 5em;
+    text-align: center;
+    padding: 5px;
 }
 
-#content #toolbar div#previous_month,
-#content #toolbar div#next_month{
-    cursor:pointer;
-    font-size:1.7em;
-    padding:6px;
+#content #toolbar div#previous_month, 
+#content #toolbar div#next_month {
+    cursor: pointer;
+    font-size: 1.7em;
+    padding: 6px;
 }
 
-#content #toolbar input#start_date{
-    display:none;
+#content #toolbar input#start_date {
+    display: none;
 }
 
-#series td{
-    padding:6px;
+#series td {
+    padding: 6px;
 }
 
 #calendar td div.play:hover {
-    min-height: 250px!important;
-    min-width: 420px!important;
-    z-index:99;
-	box-shadow:0 2px 5px 0 rgba(0,0,0,.12),0 2px 10px 0 rgba(0,0,0,.09);
-	border-radius:3px;
-    cursor:pointer;
+    min-height: 250px !important;
+    min-width: 420px !important;
+    z-index: 99;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .12), 0 2px 10px 0
+        rgba(0, 0, 0, .09);
+    border-radius: 3px;
+    cursor: pointer;
 }
 
-#calendar td div.play:hover img{
-    display:show;
+#calendar td div.play:hover img {
+    display: show;
 }
 
-#calendar td div.play img{
-    position:absolute;
-    top:1em;
-    right:1em;
-    width:40%;
-    height:40%;
-    display:none;
+#calendar td div.play img {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    width: 40%;
+    height: 40%;
+    display: none;
 }
 
 #calendar div.event:hover {
-    min-height: 4rem!important;
-    z-index:99;
+    min-height: 4rem !important;
+    z-index: 99;
 }
 
-#calendar div.ui-draggable-dragging{
-    z-index:99;
-    cursor:move;
+#calendar div.ui-draggable-dragging {
+    z-index: 99;
+    cursor: move;
 }
 
-#calendar div.intersect{
-    background:#fcc;
+#calendar div.intersect {
+    background: #fcc;
 }
 
-div.rms_detail{
-    width:100%
+div.rms_detail {
+    width: 100%
 }
 
-div.rms_detail div.image{
-    width:100%;
-    float:right;
+div.rms_detail div.image {
+    width: 100%;
+    float: right;
 }
 
-div.rms_detail div.text{
-    width:100%;
-    text-align:left;
-    float:left;
-    font-size:0.8rem;
+div.rms_detail div.text {
+    width: 100%;
+    text-align: left;
+    float: left;
+    font-size: 0.8rem;
 }
 
-div.event .ok,
-div.play .ok{
-    display:inline;
-    background:#4caf50;
+div.event .ok, 
+div.play .ok {
+    display: inline;
+    background: #4caf50;
 }
 
-div.event .warn,
-div.play .warn{
-    display:inline;
-    background:#ffeb3b;
+div.event .warn, 
+div.play .warn {
+    display: inline;
+    background: #ffeb3b;
 }
 
-div.event .error,
-div.play .error{
-    display:inline;
-    background:#f44336;
+div.event .error, 
+div.play .error {
+    display: inline;
+    background: #f44336;
 }
 
-#content div.event,
-#content div.schedule,
-#content div.grid,
+#content div.event, 
+#content div.schedule, 
+#content div.grid, 
 #content div.play,
-#content div.error{
-    padding-left:0px;
-    padding-top:0px;
-    padding-bottom:12px;
-    padding-right:32px;
+#content div.error {
+    padding-left: 0px;
+    padding-top: 0px;
+    padding-bottom: 12px;
+    padding-right: 32px;
 }
 
-
-#content div.ok,
-#content div.warn,
-#content div.error{
-    padding-top:3px;
-    padding-bottom:3px;
-    margin:1px;
-    border-radius:4px;
-    text-align:center;
+#content div.ok, 
+#content div.warn, 
+#content div.error {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin: 1px;
+    border-radius: 4px;
+    text-align: center;
 }

@@ -1,39 +1,38 @@
-#content .label{
-	width:10em;
-	padding:0;
-	margin:0;
-	color:#555;
+#content .label {
+    width: 10em;
+    padding: 0;
+    margin: 0;
+    color: #555;
 }
 
-#content div.project{
-	width:45%;
+#content div.project {
+    width: 45%;
 }
 
-#content div.editor{
-    clear:both;
+#content div.editor {
+    clear: both;
 }
 
-#content div.view{
-    clear:both;
+#content div.view {
+    clear: both;
 }
 
-#content div.editor div.right{
-	float:right;
-	padding:0;
-	margin:0;
+#content div.editor div.right {
+    float: right;
+    padding: 0;
+    margin: 0;
 }
 
-#content div.editor div.buttons{
-	text-align:center;
-	padding:0;
+#content div.editor div.buttons {
+    text-align: center;
+    padding: 0;
 }
 
-#content div.editor div.buttons button,
-#content div.editor div.buttons input{
-	margin-left:1em;
+#content div.editor div.buttons button, 
+#content div.editor div.buttons input {
+    margin-left: 1em;
 }
 
-#content div.view{
-	text-align:left;
+#content div.view {
+    text-align: left;
 }
-

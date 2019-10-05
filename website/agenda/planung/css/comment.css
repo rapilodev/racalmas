@@ -1,124 +1,131 @@
-#comments table{
-     border-collapse: collapse;    
+#comments table {
+    border-collapse: collapse;
 }
 
-#comments td,th,input {
-	line-height:100%;
-	ffont-size:10px;
-}
-#comments td,th{
-	display:table-cell;
-	font-weight:normal;
-	padding:1rem;
+#comments td, th, input {
+    line-height: 100%;
+    ffont-size: 10px;
 }
 
-#comments td.level0, td.level1, td.level2, td.level3, td.level4, td.level5{ 
-	border:0;
+#comments td, th {
+    display: table-cell;
+    font-weight: normal;
+    padding: 1rem;
 }
 
-#comments td.host{
-	color:gray;
+#comments td.level0, td.level1, td.level2, td.level3, td.level4, td.level5 {
+    border: 0;
 }
 
-#comments td.level0{
-	padding-left:0px;
-}
-#comments td.level1{
-	padding-left:20px;
-}
-#comments td.level2{
-	padding-left:40px;
-}
-#comments td.level3{
-	padding-left:60px;
-}
-#comments td.level4{
-	padding-left:80px;
-}
-#comments td.level5{
-	padding-left:100px;
+#comments td.host {
+    color: gray;
 }
 
-#comments img.level0{
-	margin-left:0px;
-}
-#comments img.level1{
-	margin-left:20px;
-}
-#comments img.level2{
-	margin-left:40px;
-}
-#comments img.level3{
-	margin-left:60px;
-}
-#comments img.level4{
-	margin-left:80px;
-}
-#comments img.level5{
-	margin-left:100px;
+#comments td.level0 {
+    padding-left: 0px;
 }
 
-#comments tr{
-	vertical-align:middle;
+#comments td.level1 {
+    padding-left: 20px;
 }
 
-#comments tr.show{
-	color:#030;
-	text-decoration:none;
+#comments td.level2 {
+    padding-left: 40px;
 }
 
-#content tr.show td{
-	padding-top:0px;
-	padding-bottom:0px;
+#comments td.level3 {
+    padding-left: 60px;
 }
 
-#comments tr.blocked{
-	color:#a33;
-	text-decoration:break-through;
+#comments td.level4 {
+    padding-left: 80px;
 }
 
-#comments textarea{
-    width:100%;
+#comments td.level5 {
+    padding-left: 100px;
 }
 
-#comments td.content.unread{
-	font-weight:bold;
+#comments img.level0 {
+    margin-left: 0px;
 }
 
-#comments td.content.received{
-	font-weight:normal;
+#comments img.level1 {
+    margin-left: 20px;
 }
 
-
-#comments table.event_comments td{
-	padding:3px;
-	background-color:#ccc;
+#comments img.level2 {
+    margin-left: 40px;
 }
 
-#comments .event th{
-	text-align:left;
+#comments img.level3 {
+    margin-left: 60px;
 }
 
-#comments .event button{
-	text-align:right;
+#comments img.level4 {
+    margin-left: 80px;
 }
 
-#comments .event_start{
-	width:200px;
-	text-align:center;
+#comments img.level5 {
+    margin-left: 100px;
 }
 
-#comments .event_title{
-	width:400px;
+#comments tr {
+    vertical-align: middle;
 }
 
-#comments .event_show_comments{
-	height:2em;
+#comments tr.show {
+    color: #030;
+    text-decoration: none;
 }
 
-#comments .event_excerpt{
+#content tr.show td {
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
-#content #comments td.content{
-    width:100%;
+#comments tr.blocked {
+    color: #a33;
+    text-decoration: break-through;
+}
+
+#comments textarea {
+    width: 100%;
+}
+
+#comments td.content.unread {
+    font-weight: bold;
+}
+
+#comments td.content.received {
+    font-weight: normal;
+}
+
+#comments table.event_comments td {
+    padding: 3px;
+    background-color: #ccc;
+}
+
+#comments .event th {
+    text-align: left;
+}
+
+#comments .event button {
+    text-align: right;
+}
+
+#comments .event_start {
+    width: 200px;
+    text-align: center;
+}
+
+#comments .event_title {
+    width: 400px;
+}
+
+#comments .event_show_comments {
+    height: 2em;
+}
+
+#content #comments td.content {
+    width: 100%;
 }

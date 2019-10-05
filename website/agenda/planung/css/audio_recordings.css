@@ -1,39 +1,38 @@
-img{
-    margin-right :1em;
-    margin-bottom :1em;
-    vertical-align:middle
+img {
+    margin-right: 1em;
+    margin-bottom: 1em;
+    vertical-align: middle
 }
 
-#content div.panel{
-    padding:1em;
+#content div.panel {
+    padding: 1em;
 }
 
 h2 {
-    line-height:1.5em;
+    line-height: 1.5em;
 }
 
-.thin{
-    font-weight:100;
+.thin {
+    font-weight: 100;
 }
 
-th{
-    text-align:center;
+th {
+    text-align: center;
 }
 
-#progressBar{
-    width:100%;
-    height:1rem;
-    border:0;
-    box-shadow:#888 2px 2px 1px 1px;
+#progressBar {
+    width: 100%;
+    height: 1rem;
+    border: 0;
+    box-shadow: #888 2px 2px 1px 1px;
 }
 
-
-#content div.ok,
-#content div.warn,
-#content div.error{
-    padding-top:3px;
-    padding-bottom:3px;
-    margin:1px;
-    border-radius:4px;
-    text-align:center;
+#content div.ok, 
+#content div.warn, 
+#content div.error {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin: 1px;
+    border-radius: 4px;
+    text-align: center;
 }

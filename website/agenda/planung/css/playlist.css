@@ -1,21 +1,19 @@
-table{
-	padding:0;
-	margin:1em;
-	border-collapse:collapse;
-	empty-cells:show;
+table {
+    padding: 0;
+    margin: 1em;
+    border-collapse: collapse;
+    empty-cells: show;
 }
 
-tr{
-	margin:0;
-	padding:0;
-	border-top:1px solid #666;
+tr {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid #666;
 }
 
-
-td{
-	min-width:10em;
-	padding:3px;
-	margin:0;
-	font-size:-2;
+td {
+    min-width: 10em;
+    padding: 3px;
+    margin: 0;
+    font-size: -2;
 }
-

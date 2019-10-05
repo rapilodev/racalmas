@@ -1,110 +1,108 @@
-
-#content{
-	margin-top:3em;
-	padding:1em;
-	max-width:1000px;
-	min-height:100%;
+#content {
+    margin-top: 3em;
+    padding: 1em;
+    max-width: 1000px;
+    min-height: 100%;
 }
 
-#content td.label{
-    max-width:3em;
+#content td.label {
+    max-width: 3em;
 }
 
-#content .label{
-	padding:0;
-	margin:0;
-	color:#555;
+#content .label {
+    padding: 0;
+    margin: 0;
+    color: #555;
 }
 
-#content div.header{
-	clear:both;
+#content div.header {
+    clear: both;
 }
 
-#content .right{
-	float:right;
-	padding:0;
-	margin:0;
+#content .right {
+    float: right;
+    padding: 0;
+    margin: 0;
 }
 
-#content .editor{
-	clear:both;
+#content .editor {
+    clear: both;
 }
 
-#content .editor div.buttons{
-	text-align:center;
-	padding:0;
+#content .editor div.buttons {
+    text-align: center;
+    padding: 0;
 }
 
 #content .editor div.buttons button,
-#content .editor div.buttons input{
-	margin-left:1em;
+#content .editor div.buttons input {
+    margin-left: 1em;
 }
 
 #content .editor input,
 #content .editor textarea,
-#content .editor button{
-    padding:6px;
+#content .editor button {
+    padding: 6px;
 }
 
-#context textarea{
-	width:600px;
-	height:100px;
+#context textarea {
+    width: 600px;
+    height: 100px;
 }
 
 #content table.series {
-	border:1px solid #ddd;
-	
+    border: 1px solid #ddd;
 }
 
-#content table.series table{
-	width:100%;
+#content table.series table {
+    width: 100%;
 }
 
-#content table.series tr:nth-child(4n+1){
-	background-color:#eee;
+#content table.series tr:nth-child(4n+1) {
+    background-color: #eee;
 }
 
-#content table.series tr.active td{
-	background-color: #aaa;
+#content table.series tr.active td {
+    background-color: #aaa;
 }
 
-#content .series table tr{
-	padding:0;
-	margin:0;
+#content .series table tr {
+    padding: 0;
+    margin: 0;
 }
 
-#content .series table td:nth-child(1){
-	width:10em;
+#content .series table td:nth-child(1) {
+    width: 10em;
 }
 
-#content .series table td{
-	padding:6px;
-	margin:0;
+#content .series table td {
+    padding: 6px;
+    margin: 0;
 }
 
-#content .series table tr:nth-child(odd){
-	background:#eee;
+#content .series table tr:nth-child(odd) {
+    background: #eee;
 }
 
-#content .editor .row{
-	clear:both;	
-    min-height:4em;
+#content .editor .row {
+    clear: both;
+    min-height: 4em;
 }
 
-#content .editor .cell{
-	float:left;
-	text-align:center;
-	white-space:nowrap;
+#content .editor .cell {
+    float: left;
+    text-align: center;
+    white-space: nowrap;
 }
 
-#content .editor .row.active{
-	background:#ff0;
-    min-height:4em;
+#content .editor .row.active {
+    background: #ff0;
+    min-height: 4em;
 }
 
-#content .editor div.row.schedule.selected{
-	background:#ff0;
-    min-height:4em;
+#content .editor div.row.schedule.selected {
+    background: #ff0;
+    min-height: 4em;
 }
 
 /*
@@ -115,156 +113,153 @@
 
 #content div.ui-tabs-panel,
 #content div.editor,
-#content div.row.schedule{
-    padding-left:0;
-    padding-right:0;
+#content div.row.schedule {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 /* start of schedule */
-#content div.cell{
-    margin-left:6px;
-    margin-right:0;
-    padding-left:0;
-    padding-right:0;
+#content div.cell {
+    margin-left: 6px;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 #content div.cell.exclude,
-#content div.cell.weekday{
-    margin-left:0;
+#content div.cell.weekday {
+    margin-left: 0;
 }
 
-#content div.cell.containsInput{
-    margin-right:16px;
+#content div.cell.containsInput {
+    margin-right: 16px;
 }
 
-#content div.cell.containsSelect{
-    margin-right:16px;
+#content div.cell.containsSelect {
+    margin-right: 16px;
 }
 
-#content div.cell.exclude{
-	width:1em;
+#content div.cell.exclude {
+    width: 1em;
 }
 
 #content div.cell.weekday,
 #content div.cell.weekday input,
 #content div.cell.weekday select{
-    width:2em;
-    padding-top:2em;
+    width: 2em;
+    padding-top: 2em;
 }
 
 #content div.cell.start,
 #content div.cell.start input,
 #content div.cell.start select{
-	width:9em;
+    width: 9em;
 }
 
 #content div.cell.duration,
 #content div.cell.duration input,
 #content div.cell.duration select{
-	width:7em;
+    width: 7em;
 }
 
 #content div.cell.title,
 #content div.cell.title input,
 #content div.cell.title select{
-	width:6em;
+    width: 6em;
 }
 
 #content div.cell.type,
 #content div.cell.type input,
 #content div.cell.type select{
-	width:6em;
+    width: 6em;
 }
 
 #content div.cell.period_type,
 #content div.cell.period_type input,
-#content div.cell.period_type select{
-	width:7em;
+    #content div.cell.period_type select {
+    width: 7em;
 }
 
 #content div.cell.period_type.isSingle,
 #content div.cell.period_type select.isSingle{
-	width:9em;
+    width: 9em;
 }
 
 #content div.cell.end,
 #content div.cell.end input,
 #content div.cell.end select{
-	width:6em;
+    width: 6em;
 }
 
 #content div.cell.frequency,
 #content div.cell.frequency input,
 #content div.cell.frequency select{
-	width:6em;
+    width: 6em;
 }
 
 
 #content div.cell.week_of_month,
 #content div.cell.week_of_month input,
-#content div.cell.week_of_month select{
-    width:6em;
+    #content div.cell.week_of_month select {
+    width: 6em;
 }
 
 #content div.cell.schedule_weekday,
 #content div.cell.schedule_weekday input,
-#content div.cell.schedule_weekday select{
-    width:4em;
+    #content div.cell.schedule_weekday select {
+    width: 4em;
 }
 
 #content div.cell.schedule_month,
 #content div.cell.schedule_month input,
-#content div.cell.schedule_month select{
-    width:6em;
+    #content div.cell.schedule_month select {
+    width: 6em;
 }
-
 
 /* end of schedule */
-
-#content div.show_schedule{
-    overflow:auto;
-    height:20em;
-    clear:both;
+#content div.show_schedule {
+    overflow: auto;
+    height: 20em;
+    clear: both;
 }
 
-
-#content div.show_schedule table{
-    width:50em;
+#content div.show_schedule table {
+    width: 50em;
 }
 
-#content div.show_schedule td{
-    width:10em;
-}
-#content div.show_schedule td:nth-child(1){
-    width:2em;
+#content div.show_schedule td {
+    width: 10em;
 }
 
-#content div.show_schedule tr.exclude td{
-    text-decoration:line-through;
+#content div.show_schedule td:nth-child(1) {
+    width: 2em;
 }
 
-#content div.buttons{
-    padding-left:12px;
+#content div.show_schedule tr.exclude td {
+    text-decoration: line-through;
 }
 
-#content div.editor input.image{
-    width:90%;
+#content div.buttons {
+    padding-left: 12px;
 }
 
-
-button{
-	cursor:pointer;
+#content div.editor input.image {
+    width: 90%;
 }
 
-form{
-	padding:0;
-	margin:0;
+button {
+    cursor: pointer;
+}
+
+form {
+    padding: 0;
+    margin: 0;
 }
 
 @media print {
-	input,button{
-		display:none;
-	}
+    input, button {
+        display: none;
+    }
 }
 
 /*
