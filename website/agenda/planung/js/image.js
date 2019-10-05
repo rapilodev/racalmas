@@ -20,7 +20,7 @@ function updateActiveImage(){
 
 // open dialog to show or edit image properties
 function updateImageEditor(elem, filename, target, project_id, studio_id, series_id, event_id, pid){
-	var url='image.cgi?show='+filename;
+    var url='image.cgi?show='+filename;
     url += '&template=edit_image.html';
     url += '&target=' + target;
     url += '&project_id='+project_id;
@@ -31,12 +31,12 @@ function updateImageEditor(elem, filename, target, project_id, studio_id, series
 
     console.log("updateImageEditor "+url);
 
-	$("#img_editor").load(
+    $("#img_editor").load(
         url,
         function(){
             setActiveImage(elem);
         }
-	);
+    );
 }
 
 // build search url and load
@@ -80,11 +80,11 @@ function saveImage(id, filename) {
     $('#imageEditor #status').html('');
     console.log("save image "+id+" ");
 
-	var url='image.cgi?save_image='+filename+'&project_id='+project_id+'&studio_id='+studio_id;
-	$.post(
-		url, 
-		$("#save_img_"+id).serialize(), 
-		function(data){
+    var url='image.cgi?save_image='+filename+'&project_id='+project_id+'&studio_id='+studio_id;
+    $.post(
+        url, 
+        $("#save_img_"+id).serialize(), 
+        function(data){
             var errorFound=0;
             data.split(/\n/).forEach(
                 function(line){
@@ -102,10 +102,10 @@ function saveImage(id, filename) {
                 $('#imageEditor #status').append('<div class="ok">saved</div>');
                 updateActiveImage();
             }
-			hideImageDetails('img_'+id, filename);
-		} 
-	);
-	return false;
+            hideImageDetails('img_'+id, filename);
+        } 
+    );
+    return false;
 }
 
 // delete image 
@@ -120,20 +120,20 @@ function askDeleteImage(id, filename) {
 // delete image 
 function deleteImage(id, filename) {
     //alert("deleteImage");return;
-	$("#"+id).load('image.cgi?delete_image='+filename+'&project_id='+project_id+'&studio_id='+studio_id);
-	hideImageDetails('img_'+id, filename);
-	$("#"+id).hide('drop');
-	return false;
+    $("#"+id).load('image.cgi?delete_image='+filename+'&project_id='+project_id+'&studio_id='+studio_id);
+    hideImageDetails('img_'+id, filename);
+    $("#"+id).hide('drop');
+    return false;
 }
 
 // close all open dialogs
 function hideImageDetails(id, filename){
-	try{$('#img_editor').dialog('close');}catch(e){}
+    try{$('#img_editor').dialog('close');}catch(e){}
 
     var url='image.cgi?show='+filename+'&template=image_single.html&project_id='+project_id+'&studio_id='+studio_id;
     console.log("hideImageDetails, load url="+url)
-	$("#"+id).load(url);
-	return false;
+    $("#"+id).load(url);
+    return false;
 }
 
 function selectImage( searchValue, imageUrl, target, project_id, studio_id, series_id, event_id, pid){

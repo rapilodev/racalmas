@@ -11,64 +11,64 @@ function getController(){
 
 
 function set_studio(id){
-	var url=window.location.href;
+    var url=window.location.href;
     //split by #
     var comment= url.split(/\#/);
     url=comment.shift();
     comment=comment.join('#');
-	//split by ?
-	var parts= url.split(/\?/);
-	url=parts.shift();
-	//split by &
-	parts=parts.join('?').split(/\&+/);
-	var params=[];
-	if (parts.length>0){
-		for (index in parts){
-			//add all name value pairs but studio id
-			var pair=parts[index];
-			if(! pair.match(/^studio_id=/)) params.push(pair);
-		}
-	}
-	//add studio id 
+    //split by ?
+    var parts= url.split(/\?/);
+    url=parts.shift();
+    //split by &
+    parts=parts.join('?').split(/\&+/);
+    var params=[];
+    if (parts.length>0){
+        for (index in parts){
+            //add all name value pairs but studio id
+            var pair=parts[index];
+            if(! pair.match(/^studio_id=/)) params.push(pair);
+        }
+    }
+    //add studio id 
     if(id==null)id=-1;
     if(id=='')id=-1;
-	params.push('studio_id='+id);
-	//append parameters to url
-	url+='?'+params.join('&');
+    params.push('studio_id='+id);
+    //append parameters to url
+    url+='?'+params.join('&');
     if ((comment!=null)&&(comment!='')) url+='#'+comment;
-	window.location.href=url;
+    window.location.href=url;
 }
 
 function set_project(id){
-	var url=window.location.href;
+    var url=window.location.href;
     //split by #
     var comment= url.split(/\#/);
     url=comment.shift();
     comment=comment.join('#');
-	//split by ?
-	var parts= url.split(/\?/);
-	url=parts.shift();
-	//split by &
-	parts=parts.join('?').split(/\&+/);
-	var params=[];
-	if (parts.length>0){
-		for (index in parts){
-			//add all name value pairs but project id
-			var pair=parts[index];
-			if(
+    //split by ?
+    var parts= url.split(/\?/);
+    url=parts.shift();
+    //split by &
+    parts=parts.join('?').split(/\&+/);
+    var params=[];
+    if (parts.length>0){
+        for (index in parts){
+            //add all name value pairs but project id
+            var pair=parts[index];
+            if(
                    (! pair.match(/^project_id=/))
                 && (! pair.match(/^studio_id=/))
             )params.push(pair);
-		}
-	}
-	//add project id
+        }
+    }
+    //add project id
     if(id==null)id=-1;
     if(id=='')id=-1;
-	params.push('project_id='+id);
-	//append parameters to url
-	url+='?'+params.join('&');
+    params.push('project_id='+id);
+    //append parameters to url
+    url+='?'+params.join('&');
     if ((comment!=null)&&(comment!='')) url+='#'+comment;
-	window.location.href=url;
+    window.location.href=url;
 }
 
 function contains(s,t){
@@ -78,23 +78,23 @@ function contains(s,t){
 }
 
 function updateContainer(id, url, callback){
-	//alert(id+":"+url);
-	if (id==null) return;
-	if ($("#"+id).length==0) return;
-	$("#"+id).load(url, callback);
+    //alert(id+":"+url);
+    if (id==null) return;
+    if ($("#"+id).length==0) return;
+    $("#"+id).load(url, callback);
 }
 
 function load(url){
     window.location=url;
-	//window.location.replace(url);
-	//document.location.href=url;
-	//$(window).load(url);
-	//$('html').load(url);
+    //window.location.replace(url);
+    //document.location.href=url;
+    //$(window).load(url);
+    //$('html').load(url);
 }
 
 
 function postContainer(url, parameters, callback){
-	if (url!='') $.post(url, parameters, callback);
+    if (url!='') $.post(url, parameters, callback);
 }
 
 // init getTextWidth
@@ -359,10 +359,10 @@ $(document).ready(
         // will be done implicitely on adding back button
         //setupMenuHeight();
 
-	    $(window).resize(function() {
-		    setupMenuHeight();
+        $(window).resize(function() {
+            setupMenuHeight();
             setupMenu();
-	    });
+        });
 
         if(getController()=='calendar'){
             //use build-in localization

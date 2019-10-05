@@ -1,22 +1,22 @@
 function add_series(){
-	$('#edit_new').toggle();
-	return false;
+    $('#edit_new').toggle();
+    return false;
 }
 
 function view_series_details(series_id, studio_id, project_id){
-	var elem=$('.series_details_'+series_id).prev();
-	if(elem.hasClass('active')){
-		elem.removeClass('active');
-		$('.series_details_'+series_id).slideToggle(
-			function(){
-				$('#series_details_'+series_id).html('');
-			}
-		);
-	}else{
-		elem.addClass('active');
-		var url="series.cgi?project_id="+project_id+"&studio_id="+studio_id+"&series_id="+series_id+"&action=show";
-		load(url);
-	}
+    var elem=$('.series_details_'+series_id).prev();
+    if(elem.hasClass('active')){
+        elem.removeClass('active');
+        $('.series_details_'+series_id).slideToggle(
+            function(){
+                $('#series_details_'+series_id).html('');
+            }
+        );
+    }else{
+        elem.addClass('active');
+        var url="series.cgi?project_id="+project_id+"&studio_id="+studio_id+"&series_id="+series_id+"&action=show";
+        load(url);
+    }
 }
 
 

@@ -53,7 +53,7 @@ function initTable(){
                 scroller_jumpToHeader: true,
                 scroller_idPrefix : 's_'
             },
-  	        usNumberFormat : false
+              usNumberFormat : false
     });
     $('.tablesorter-scroller-header').css('width','95%');
     $('.tablesorter-scroller-table').css('width','95%');
@@ -62,51 +62,51 @@ function initTable(){
 }
 
 $(document).ready(
-	function(){
-        setupLocalization(function(){
-            addBackButton();
-            updateWeekdays();
-        });
+    function(){
+    setupLocalization(function(){
+        addBackButton();
+        updateWeekdays();
+    });
 
-		$("#tabs").tabs({
-		    activate: function(){
-		        console.log("set style");
-                $('.tablesorter-scroller-header').css('width','95%');
-                $('.tablesorter-scroller-table').css('width','95%');
-                $('.tablesorter-scroller-header table').css('width','95%');
-                $('.tablesorter-scroller-table table').css('width','95%');
-		    }
-		});
-		$('#tabs').removeClass('ui-widget ui-widget-content ui-corner-all');
+    $("#tabs").tabs({
+        activate: function(){
+            console.log("set style");
+            $('.tablesorter-scroller-header').css('width','95%');
+            $('.tablesorter-scroller-table').css('width','95%');
+            $('.tablesorter-scroller-header table').css('width','95%');
+            $('.tablesorter-scroller-table table').css('width','95%');
+        }
+    });
+    $('#tabs').removeClass('ui-widget ui-widget-content ui-corner-all');
 
-       	initTextWidth();
+       initTextWidth();
 
     setTextWidth('.datetimepicker.start',     130);
     setTextWidth('.datetimepicker.end',       130);
     setTextWidth('.datetimepicker.end_date',  90);
-        setTextWidth('.datetimepicker.weekday',   20);
-        setTextWidth('.datetimepicker.frequency', 20);
+    setTextWidth('.datetimepicker.weekday',   20);
+    setTextWidth('.datetimepicker.frequency', 20);
 
-        initRegions(region);
+    initRegions(region);
 
-        showDateTimePicker('.datetimepicker.start', {
-            onSelect: function(){updateWeekdays();}
-        });
-        showDateTimePicker('.datetimepicker.end', {
-            onSelect: function(){updateWeekdays();}
-        });
-        showDatePicker('.datetimepicker.end_date', {
-            onSelect: function(){updateWeekdays();}
-        });
+    showDateTimePicker('.datetimepicker.start', {
+        onSelect: function(){updateWeekdays();}
+    });
+    showDateTimePicker('.datetimepicker.end', {
+        onSelect: function(){updateWeekdays();}
+    });
+    showDatePicker('.datetimepicker.end_date', {
+        onSelect: function(){updateWeekdays();}
+    });
 
-        setSelectedOptions();
+    setSelectedOptions();
 
-        showYearPicker('#show_date', {
-            onSelect: function(){
-                showDates();
-            }
-        });
-        showDates();                
+    showYearPicker('#show_date', {
+        onSelect: function(){
+            showDates();
+        }
+    });
+    showDates();                
 });
 
 

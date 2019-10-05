@@ -180,9 +180,9 @@ function changeSeries(seriesId){
     url += '&action=reassign_event';
     //alert(url);
     
-	$.post(
-		url, 
-		function(data){
+    $.post(
+        url, 
+        function(data){
             var url='event.cgi?';
             url += '&project_id='+projectId;
             url += '&studio_id='+studioId;
@@ -190,9 +190,9 @@ function changeSeries(seriesId){
             url += '&event_id='+eventId;
             url += '&action=edit';
             window.location.href = url;
-		} 
-	);
-	return false;
+        } 
+    );
+    return false;
 }
 
 // hide change series on abort
@@ -237,8 +237,8 @@ function updateCheckBox(selector, value){
 }
 
 function checkExcerptField(){
-	var elem=$('textarea[name="excerpt"]');
-	if (elem.length==0) return 0;
+    var elem=$('textarea[name="excerpt"]');
+    if (elem.length==0) return 0;
     var length = elem.val().length;
     console.log("length="+length);
     if (length > 250){
@@ -246,12 +246,12 @@ function checkExcerptField(){
     }else{
         $('#excerpt_too_long').hide();
     }
-	return 1;
+    return 1;
 }
 
 function checkExcerptExtensionField(){
-	var elem=$('textarea[name="user_excerpt"]');
-	if (elem.length==0) return 0;
+    var elem=$('textarea[name="user_excerpt"]');
+    if (elem.length==0) return 0;
     var length = elem.val().length;
     console.log("length="+length);
     if (length > 250){
@@ -259,21 +259,21 @@ function checkExcerptExtensionField(){
     }else{
         $('#excerpt_extension_too_long').hide();
     }
-	return 1;
+    return 1;
 }
 
 function checkFields(){
     if (checkExcerptField()){
-		$('textarea[name="excerpt"]').on("keyup", function(){
-		    checkExcerptField();
-		});
-	}
+        $('textarea[name="excerpt"]').on("keyup", function(){
+            checkExcerptField();
+        });
+    }
 
     if (checkExcerptExtensionField()){
-		$('textarea[name="user_excerpt"]').on("keyup", function(){
-		    checkExcerptExtensionField();
-		});
-	}
+        $('textarea[name="user_excerpt"]').on("keyup", function(){
+            checkExcerptExtensionField();
+        });
+    }
 }
 
 $(document).ready(
@@ -281,15 +281,15 @@ $(document).ready(
         initRegions(region);
         showDateTimePicker('#start_date');
 
-		$('input[type="checkbox"]').click(
-			function(){
-				if ($(this).attr('value')=='1'){
-					$(this).attr('value','0');
-				}else{
-					$(this).attr('value','1');
-				}
-			}
-		);	
+        $('input[type="checkbox"]').click(
+            function(){
+                if ($(this).attr('value')=='1'){
+                    $(this).attr('value','0');
+                }else{
+                    $(this).attr('value','1');
+                }
+            }
+        );    
 
         if($('#calendar').length==0){
             $('#back_to_calendar').hide();

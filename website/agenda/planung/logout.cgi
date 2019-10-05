@@ -1,4 +1,4 @@
-#! /usr/bin/perl
+#!/usr/bin/perl
 
 print qq{HTTP/1.0 401 Unauthorized
 Request Version: HTTP/1.0

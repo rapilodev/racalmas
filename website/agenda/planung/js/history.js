@@ -58,7 +58,7 @@ function isNewToHistory(url){
     var historyController=history[0].split('.cgi').shift();
     //remove last entry on same controller
     if(urlController==historyController){
-	console.log("same controller\n"+url+"\n"+history[0])
+    console.log("same controller\n"+url+"\n"+history[0])
         //var ignore=0;
         //provide back to series from series details
         //if(contains(url,'series')){
@@ -68,8 +68,8 @@ function isNewToHistory(url){
             //console.log(ignore);
         //}
         //if (ignore==0) 
-	//history.shift();
-	return null;
+    //history.shift();
+    return null;
     }
     
 
