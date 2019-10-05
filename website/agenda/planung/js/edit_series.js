@@ -208,7 +208,9 @@ function setInputWidth(){
 }
 
 function checkExcerptField(){
-    var length = $('textarea[name="excerpt"]').val().length;
+    var elem = $('textarea[name="excerpt"]');
+    if (elem.length==0) return;
+    var length = elem.val().length;
     console.log("length="+length);
     if (length > 250){
         $('#excerpt_too_long').show();
