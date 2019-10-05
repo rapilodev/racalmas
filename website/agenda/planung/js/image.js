@@ -204,6 +204,7 @@ $(document).ready(
 
         if ( window.location.href.indexOf("&filename=") > 0)
             setActiveImage();
+            updateActiveImage();
     }
 );
 
