@@ -80,6 +80,9 @@ msgstr "image cannot be published without license"
 msgid "label_mandatory_field"
 msgstr "please fill in"
 
+msgid "label_mandatory_field_licence"
+msgstr "fill in licence to allow publishing the image"
+
 msgid "label_assign_to_event"
 msgstr "use image for event"
 
@@ -93,14 +96,14 @@ msgid "label_assign_to_project"
 msgstr "use image for project"
 
 msgid "label_warn_not_public_event"
-msgstr "Cannot be assigned to event without have been published"
+msgstr "image must has been published before assigning to event"
 
 msgid "label_warn_not_public_series"
-msgstr "Cannot be assigned to series without have been published"
+msgstr "image must has been published before assigning to series"
 
 msgid "label_warn_not_public_studio"
-msgstr "Cannot be assigned to studio without have been published"
+msgstr "image must has been published before assigning to studio"
 
 msgid "label_warn_not_public_project"
-msgstr "Cannot be assigned to project without have been published"
+msgstr "image must has been published before assigning to project"
 

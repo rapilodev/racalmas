@@ -43,7 +43,7 @@ found no image
         <input value="<TMPL_VAR name escape=none>" name="update_name" class="field" placeholder="<TMPL_VAR .loc.label_mandatory_field>"><br>
 
         <label><TMPL_VAR .loc.label_author>/<TMPL_VAR .loc.label_licence></label><br>
-        <input name="licence" value="<TMPL_VAR licence>" class="field<TMPL_IF missing_licence> error</TMPL_IF>" placeholder="<TMPL_VAR .loc.label_mandatory_field>" required/><br>
+        <input name="licence" value="<TMPL_VAR licence>" class="field<TMPL_IF missing_licence> error</TMPL_IF>" placeholder="<TMPL_VAR .loc.label_mandatory_field_licence>" required/><br>
 
         <label><TMPL_VAR .loc.label_description></label><br>
         <textarea class="field" name="update_description" cols="50" rows="5" ><TMPL_VAR description escape=none></textarea><br>

@@ -32,7 +32,7 @@ msgid "button_depublish"
 msgstr "Depublizieren"
 
 msgid "label_warn_unknown_licence"
-msgstr "Kann nicht veröffentlicht werden, da keine Lizenz angegeben wurde"
+msgstr "Angabe der Lizenz ermöglicht Veröffentlichung des Bildes."
 
 msgid "label_name"
 msgstr "Name"
@@ -74,10 +74,13 @@ msgid "label_name_required"
 msgstr "Bitte Feld eintragen"
 
 msgid "label_licence_required"
-msgstr "Bild kann ohne Lizenzangabe nicht veröffentlicht werden"
+msgstr "Bild kann ohne Author/Lizenz nicht veröffentlicht werden"
 
 msgid "label_mandatory_field"
 msgstr "bitte füllen Sie dieses Feld aus"
+
+msgid "label_mandatory_field_licence"
+msgstr "Angabe der Lizenz ermöglicht Veröffentlichung des Bildes"
 
 msgid "label_assign_to_event"
 msgstr "Dieses Bild für Sendung nutzen"
@@ -92,15 +95,15 @@ msgid "label_assign_to_project"
 msgstr "Dieses Bild für Projekt nutzen"
 
 msgid "label_warn_not_public_event"
-msgstr "Kann Sendung nicht zugewiesen werden, da nicht veröffentlicht"
+msgstr "Bild muss veröffentlicht werden, um es in Sendebeschreibung zu nutzen."
 
 msgid "label_warn_not_public_series"
-msgstr "Kann Sendereihe nicht zugewiesen werden, da nicht veröffentlicht"
+msgstr "Bild muss veröffentlicht werden, um es in Sendebeschreibung zu nutzen."
 
 msgid "label_warn_not_public_studio"
-msgstr "Kann Studio nicht zugewiesen werden, da nicht veröffentlicht"
+msgstr "Bild muss veröffentlicht werden, um es für Studio zu nutzen."
 
 msgid "label_warn_not_public_project"
-msgstr "Kann Projekt nicht zugewiesen werden, da nicht veröffentlicht"
+msgstr "Bild muss veröffentlicht werden, um es in Projekt zu nutzen."
 
 
