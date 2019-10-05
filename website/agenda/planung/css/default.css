@@ -199,6 +199,7 @@ div.editor {
 }
 
 #content div.panel-header {
+    clear: both;
     text-align: left;
     padding-left: 0;
     align-content: center;
