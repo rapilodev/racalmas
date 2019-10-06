@@ -5,6 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use DBD::mysql();
+use Digest::MD5 qw();
 use Data::Dumper;
 
 use base 'Exporter';
@@ -46,10 +47,12 @@ sub connect($;$) {
         $password = $access_options->{password_write};
     }
 
-    my $dbh = undef;
     my $dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
 
-    $dbh = DBI->connect( $dsn, $username, $password, { mysql_enable_utf8 => 1 } )
+    my $key = Digest::MD5::md5($dsn.$username.$password);
+    return $options->{connections}->{$key} if defined $options->{connections}->{$key}; 
+
+    my $dbh = DBI->connect( $dsn, $username, $password, { mysql_enable_utf8 => 1 } )
       || die "could not connect to database: $DBI::errstr";
 
     $dbh->{RaiseError} = 1;
@@ -60,6 +63,7 @@ sub connect($;$) {
     put( $dbh, "set time_zone='" . $options->{date}->{time_zone} . "'" );
 
     $request->{connection} = $dbh;
+    $options->{connections}->{$key} = $dbh;
     return $dbh;
 }
 
