@@ -5,22 +5,19 @@ use warnings;
 no warnings 'redefine';
 
 use CGI::Simple();
-use CGI::Session qw(-ip-match);
 use CGI::Cookie();
 
-#$CGI::Session::IP_MATCH=1;
 use Data::Dumper;
 use Authen::Passphrase::BlowfishCrypt();
-
 use time();
+use user_sessions ();
 
 use base 'Exporter';
 our @EXPORT_OK = qw(get_user login logout crypt_password);
 my $defaultExpiration = 60;
-my $tmp_dir           = '/var/tmp/calcms-session';
-my $debug             = 0;
 
-sub debug;
+my $debug             = 0;
+sub debug($);
 
 #TODO: remove CGI
 sub get_user($$$) {
@@ -38,7 +35,7 @@ sub get_user($$$) {
             return $user;
         } elsif ( $params->{authAction} eq 'logout' ) {
             $cgi = new CGI::Simple() unless defined $cgi;
-            logout($cgi);
+            logout($config, $cgi);
             $cgi->delete( 'user', 'password', 'uri', 'authAction' );
             return undef;
         }
@@ -51,14 +48,13 @@ sub get_user($$$) {
     return show_login_form( $params->{user}, 'Please login' ) unless defined $session_id;
 
     # read session
-    my $session = read_session($session_id);
+    my $session = read_session($config, $session_id);
 
     # login if user not found
     return show_login_form( $params->{user}, 'unknown User' ) unless defined $session;
 
     $params->{user}    = $session->{user};
     $params->{expires} = $session->{expires};
-    debug( $params->{expires} );
     return $session->{user}, $session->{expires};
 }
 
@@ -82,29 +78,28 @@ sub login($$$) {
     my $password = shift;
     debug("login") if $debug;
 
-    #print STDERR "login $user $password\n";
     my $result = authenticate( $config, $user, $password );
-
-    #print STDERR Dumper($result);
 
     return show_login_form( $user, 'Could not authenticate you' ) unless defined $result;
     return unless defined $result->{login} eq '1';
 
     my $timeout = $result->{timeout} || $defaultExpiration;
-    $timeout = '+' . $timeout . 'm';
+    my $session_id = create_session( $config, $user, $timeout * 60 );
 
-    my $session_id = create_session( $user, $password, $timeout );
+    # here timeout is in minutes
+    $timeout = '+' . $timeout . 'm';
     return $user if create_cookie( $session_id, $timeout );
     return undef;
 }
 
 #TODO: remove cgi
-sub logout($) {
+sub logout($$) {
+    my $config = shift;
     my $cgi = shift;
 
     my $session_id = read_cookie();
     debug("logout") if $debug;
-    unless ( delete_session($session_id) ) {
+    unless ( delete_session($config, $session_id) ) {
         return show_login_form( 'Cant delete session', 'logged out' );
     }
     unless ( delete_cookie($cgi) ) {
@@ -127,8 +122,7 @@ sub create_cookie($$) {
         -expires => $timeout,
         -secure  => 1
     );
-    print "Set-Cookie: ", $cookie->as_string, "\n";
-    print STDERR "#Set-Cookie: ", $cookie->as_string, "\n";
+    print "Set-Cookie: " . $cookie->as_string . "\n";
 
     return 1;
 }
@@ -160,49 +154,46 @@ sub delete_cookie($) {
 }
 
 # read and write server-side session data
-# expiration is in seconds
+# timeout is in seconds
 sub create_session ($$$) {
+    my $config     = shift;
     my $user       = shift;
-    my $password   = shift;
-    my $expiration = shift;
+    my $timeout    = shift;
 
     debug("create_session") if $debug;
-    mkdir $tmp_dir unless -e $tmp_dir;
-    my $session = CGI::Session->new( undef, undef, { Directory => $tmp_dir } );
-    $session->expire($expiration);
-    $session->param( "user", $user );
-    $session->param( "pid",  $$ );
-
-    return $session->id();
+    
+    my $session_id = user_sessions::start( 
+        $config, {
+            user       => $user,
+            timeout    => $timeout,
+        }
+    );
+    return $session_id;
 }
 
-sub read_session($) {
+sub read_session($$) {
+    my $config     = shift;
     my $session_id = shift;
 
-    debug("read_session") if $debug;
     return undef unless defined $session_id;
 
-    debug("read_session2") if $debug;
-    my $session = CGI::Session->new( undef, $session_id, { Directory => $tmp_dir } );
+    my $session = user_sessions::check( $config, { session_id => $session_id } );
     return undef unless defined $session;
 
-    debug("read_session3") if $debug;
-    my $user = $session->param("user") || undef;
-    return undef unless defined $user;
-    my $expires = time::time_to_datetime( $session->param("_SESSION_ATIME") + $session->param("_SESSION_ETIME") );
     return {
-        user    => $user,
-        expires => $expires
+        user    => $session->{user},
+        expires => $session->{expires_at}
     };
 }
 
-sub delete_session($) {
+sub delete_session($$) {
+    my $config = shift;
     my $session_id = shift;
 
     debug("delete_session") if $debug;
-    return undef unless ( defined $session_id );
-    my $session = CGI::Session->new( undef, $session_id, { Directory => $tmp_dir } );
-    $session->delete();
+    return undef unless defined $session_id;
+    
+    user_sessions::stop( $config, { session_id => $session_id } );
     return 1;
 }
 

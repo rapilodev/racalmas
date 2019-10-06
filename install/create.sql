@@ -1179,6 +1179,28 @@ CREATE TABLE `calcms_work_schedule` (
 LOCK TABLES `calcms_work_schedule` WRITE;
 /*!40000 ALTER TABLE `calcms_work_schedule` DISABLE KEYS */;
 /*!40000 ALTER TABLE `calcms_work_schedule` ENABLE KEYS */;
+
+DROP TABLE IF EXISTS `calcms_user_sessions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `calcms_user_sessions` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `session_id` varchar(64) NOT NULL,
+  `user` varchar(30) NOT NULL,
+  `start` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `end` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `timeout` int(10) unsigned NOT NULL,
+  `pid` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `session_id_UNIQUE` (`session_id`),
+  KEY `user` (`user`),
+  KEY `session_id` (`session_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -1191,3 +1213,5 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2018-01-14 17:23:51
+
+    

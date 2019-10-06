@@ -176,7 +176,8 @@ sub insert ($$) {
     my $config = shift;
     my $entry  = shift;
 
-    return unless ( defined $entry->{user} );
+    return unless defined $entry->{user};
+   
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_user_settings', $entry );
 }
