@@ -509,7 +509,7 @@ sub set_lock_status ($$$) {
     my $comments = db::get( $dbh, $query, $bind_values );
     if ( scalar @$comments > 0 ) {
         $comment->{event_id} = $comments->[0]->{event_id};
-        update_comment_count( $dbh, $comment );
+        update_comment_count( $dbh, $config, $comment );
     }
 }
 
