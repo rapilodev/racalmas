@@ -65,7 +65,7 @@ $headerParams->{loc} = localization::get( $config, { user => $user, file => 'men
 if ( $params->{search} ) {
     template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
 } else {
-    template::process( $config, 'print', template::check( $config, 'ajax_header.html' ), $headerParams );
+    template::process( $config, 'print', template::check( $config, 'ajax-header.html' ), $headerParams );
 }
 
 return unless uac::check( $config, $params, $user_presets ) == 1;
@@ -241,7 +241,7 @@ sub show_image {
 
     #set global values for update and delete, per image values are evaluated later
     $template_params->{allow}->{update_image} =
-      $template_params->{allow}->{update_image_own} || $template_params->{allow}->{seriesupdate_image_others};
+      $template_params->{allow}->{update_image_own} || $template_params->{allow}->{update_image_others};
     $template_params->{allow}->{delete_image} =
       $template_params->{allow}->{delete_image_own} || $template_params->{allow}->{delete_image_others};
     template::process( $config, 'print', $params->{template}, $template_params );

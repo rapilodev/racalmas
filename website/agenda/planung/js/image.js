@@ -21,7 +21,7 @@ function updateActiveImage(){
 // open dialog to show or edit image properties
 function updateImageEditor(elem, filename, target, project_id, studio_id, series_id, event_id, pid){
     var url='image.cgi?show='+filename;
-    url += '&template=edit_image.html';
+    url += '&template=edit-image.html';
     url += '&target=' + target;
     url += '&project_id='+project_id;
     url += '&studio_id='+studio_id;
@@ -130,7 +130,7 @@ function deleteImage(id, filename) {
 function hideImageDetails(id, filename){
     try{$('#img_editor').dialog('close');}catch(e){}
 
-    var url='image.cgi?show='+filename+'&template=image_single.html&project_id='+project_id+'&studio_id='+studio_id;
+    var url='image.cgi?show='+filename+'&template=image-single.html&project_id='+project_id+'&studio_id='+studio_id;
     console.log("hideImageDetails, load url="+url)
     $("#"+id).load(url);
     return false;

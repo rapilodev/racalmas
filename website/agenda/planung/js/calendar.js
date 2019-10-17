@@ -1023,7 +1023,7 @@ function handleWorktime(id, event){
     if (schedule_id<0)  return;
     var start_date=$(this).attr("start");
 
-    var url="work_time.cgi?action=show_new_event_from_schedule&project_id="+project_id+"&studio_id="+studio_id+"&schedule_id="+schedule_id+"&start_date="+start_date;
+    var url="work-time.cgi?action=show_new_event_from_schedule&project_id="+project_id+"&studio_id="+studio_id+"&schedule_id="+schedule_id+"&start_date="+start_date;
     if(event.which==1){
         load(url);
     }

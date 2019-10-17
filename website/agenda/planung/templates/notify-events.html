@@ -3,7 +3,7 @@
 
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title><TMPL_VAR .doc.title></title>
-<script src="js/page_leave_handler.js" type="text/javascript"></script>
+<script src="js/page-leave-handler.js" type="text/javascript"></script>
 
 <style>
     .mailHeader{
@@ -62,7 +62,7 @@
                 function( event ) {
                     event.preventDefault();
                     var $form = $( this );
-                    var posting = $.post("notify_events.cgi", $form.serialize());    
+                    var posting = $.post("notify-events.cgi", $form.serialize());    
                     posting.done(
                         function( data ) {
                             var content = $( data ).find( "#content" );

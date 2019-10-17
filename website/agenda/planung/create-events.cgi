@@ -232,7 +232,7 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
-    $checked->{template} = template::check( $config, $params->{template}, 'create_events' );
+    $checked->{template} = template::check( $config, $params->{template}, 'create-events' );
 
     return $checked;
 }

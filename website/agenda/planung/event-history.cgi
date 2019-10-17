@@ -115,9 +115,9 @@ sub show_history {
     }
 
     #print STDERR Dumper($params);
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event_history' } );
+    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event-history' } );
 
-    template::process( $config, 'print', template::check( $config, 'event_history' ), $params );
+    template::process( $config, 'print', template::check( $config, 'event-history' ), $params );
 }
 
 #show existing event history
@@ -250,7 +250,7 @@ sub check_params {
 
     my $checked  = {};
     my $template = '';
-    $checked->{template} = template::check( $config, $params->{template}, 'event_history' );
+    $checked->{template} = template::check( $config, $params->{template}, 'event-history' );
 
     my $debug = $params->{debug} || '';
     if ( $debug =~ /([a-z\_\,]+)/ ) {

@@ -75,7 +75,7 @@ sub show_stats {
     $params->{permissions} = $permissions;
     $params->{errors}      = $errors;
 
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'user_stats' } );
+    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'user-stats' } );
     uac::set_template_permissions( $permissions, $params );
     template::process( $config, 'print', $params->{template}, $params );
 }
@@ -88,7 +88,7 @@ sub check_params {
 
     #template
     my $template = '';
-    $template = template::check( $config, $params->{template}, 'user_stats' );
+    $template = template::check( $config, $params->{template}, 'user-stats' );
     $checked->{template} = $template;
 
     #numeric values

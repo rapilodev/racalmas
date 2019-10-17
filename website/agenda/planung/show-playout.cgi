@@ -137,7 +137,7 @@ sub check_params {
 
     my $checked = {};
     $checked->{error} = '';
-    $checked->{template} = template::check( $config, $params->{template}, 'show_playout' );
+    $checked->{template} = template::check( $config, $params->{template}, 'show-playout' );
 
     #numeric values
     for my $param ( 'project_id', 'studio_id', 'default_studio_id', 'series_id', 'event_id', 'id' )

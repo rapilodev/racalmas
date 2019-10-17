@@ -238,7 +238,7 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
-    $checked->{template} = template::check( $config, $params->{template}, 'assign_series' );
+    $checked->{template} = template::check( $config, $params->{template}, 'assign-series' );
 
     return $checked;
 }

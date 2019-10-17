@@ -78,9 +78,9 @@ if ( $action eq 'show_dates' ) {
 	<script src="js/jquery.tablesorter.widgets.min.js"></script>
 	<script src="js/jquery.tablesorter.scroller.js"></script>
 
-        <script src="js/studio_timeslots.js" type="text/javascript"></script>
+        <script src="js/studio-timeslots.js" type="text/javascript"></script>
 	    <script src="js/datetime.js" type="text/javascript"></script>
-	    <link rel="stylesheet" href="css/studio_timeslots.css" type="text/css" /> 
+	    <link rel="stylesheet" href="css/studio-timeslots.css" type="text/css" /> 
     };
 }
 
@@ -208,7 +208,7 @@ sub showTimeslotSchedule {
     }
 
     $params->{loc} =
-      localization::get( $config, { user => $params->{presets}->{user}, file => 'all,studio_timeslots' } );
+      localization::get( $config, { user => $params->{presets}->{user}, file => 'all,studio-timeslots' } );
 
     my $studio_id  = $params->{studio_id};
     my $project_id = $params->{project_id};
@@ -310,7 +310,7 @@ sub showDates {
     );
 
     $params->{loc} =
-      localization::get( $config, { user => $params->{presets}->{user}, file => 'all,studio_timeslots' } );
+      localization::get( $config, { user => $params->{presets}->{user}, file => 'all,studio-timeslots' } );
     my $language = $params->{loc}->{region};
 
     # translate weekday names to selected language
@@ -355,7 +355,7 @@ sub showDates {
         $params->{$key} = $result->{$key};
     }
 
-    my $template = template::check( $config, 'studio_timeslot_dates' );
+    my $template = template::check( $config, 'studio-timeslot-dates' );
     template::process( $config, 'print', $template, $params );
 }
 
@@ -399,7 +399,7 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
-    $checked->{template} = template::check( $config, $params->{template}, 'studio_timeslots' );
+    $checked->{template} = template::check( $config, $params->{template}, 'studio-timeslots' );
 
     for my $param ('frequency') {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /(\d+)/ ) ) {

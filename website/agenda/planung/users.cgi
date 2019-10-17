@@ -251,7 +251,7 @@ sub change_password {
     uac::set_template_permissions( $permissions, $params );
 
     #print Dumper($permissions);
-    template::process( $config, 'print', template::check( $config, 'change_password' ), $params );
+    template::process( $config, 'print', template::check( $config, 'change-password' ), $params );
 }
 
 sub delete_user {

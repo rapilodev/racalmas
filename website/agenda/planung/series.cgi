@@ -102,12 +102,12 @@ $config->{access}->{write} = 0;
 #print STDERR "show_series\n";
 
 if ( defined $params->{series_id} ) {
-    print q{<script src="js/edit_series.js" type="text/javascript"></script>} unless params::isJson();
+    print q{<script src="js/edit-series.js" type="text/javascript"></script>} unless params::isJson();
     show_series( $config, $request );
 } else {
     print q{
-    	<link rel="stylesheet" href="css/list_series.css" type="text/css" /> 
-        <script src="js/list_series.js" type="text/javascript"></script>
+    	<link rel="stylesheet" href="css/list-series.css" type="text/css" /> 
+        <script src="js/list-series.js" type="text/javascript"></script>
     } unless params::isJson();
     list_series( $config, $request );
 }
@@ -1262,7 +1262,7 @@ sub check_params {
     }
 
     if ( defined $checked->{series_id} ) {
-        $checked->{template} = template::check( $config, $params->{template}, 'edit_series' );
+        $checked->{template} = template::check( $config, $params->{template}, 'edit-series' );
     } else {
         $checked->{template} = template::check( $config, $params->{template}, 'series' );
     }

@@ -32,7 +32,7 @@
 </TMPL_IF>
 
 <TMPL_IF .allow.read_studio_timeslot_schedule>
-<div><a href="studio_timeslots.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-clock"></i>&nbsp;<TMPL_VAR .loc.timeslots></a></div>
+<div><a href="studio-timeslots.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-clock"></i>&nbsp;<TMPL_VAR .loc.timeslots></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_studio>
@@ -44,14 +44,14 @@
 </TMPL_IF>
 
 <TMPL_IF .allow.read_schedule>
-<div><a href="work_time.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-clock"></i>&nbsp;<TMPL_VAR .loc.schedule></a></div>
+<div><a href="work-time.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-clock"></i>&nbsp;<TMPL_VAR .loc.schedule></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.update_image_others>
 <div><a href="image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>&search=<TMPL_VAR .presets.user>"><i class="fas fa-images"></i>&nbsp;<TMPL_VAR .loc.images></a></div>
 </TMPL_IF>
 
-<div title="<TMPL_VAR .loc.profile>"><a href="user_settings.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-cog"></i>&nbsp;<TMPL_VAR .loc.profile></a></div>
+<div title="<TMPL_VAR .loc.profile>"><a href="user-settings.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-cog"></i>&nbsp;<TMPL_VAR .loc.profile></a></div>
 
 <div title="<TMPL_VAR .loc.help>"><a href="help.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-info"></i>&nbsp;<TMPL_VAR .loc.help></a></div>
 

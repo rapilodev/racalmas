@@ -286,7 +286,7 @@ sub get_filename {
 sub check_filename {
     my $filename = shift;
 
-    my @valid_extensions = ( 'png', 'jpeg', 'jpg', 'gif', 'pdf', 'txt', 'bmp', 'ps', 'eps', 'wmf' );
+    my @valid_extensions = ( 'png', 'jpeg', 'jpg', 'gif', 'pdf', 'txt', 'bmp', 'ps', 'eps', 'wmf', 'svg' );
     if ( $filename =~ /\.([a-zA-Z]{3,5})$/ ) {
         my $extension = lc $1;
         unless ( grep( /$extension/, @valid_extensions ) ) {

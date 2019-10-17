@@ -312,7 +312,7 @@ sub show_event {
 
     #print STDERR Dumper($params);
     $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event' } );
-    template::process( $config, 'print', template::check( $config, 'edit_event' ), $params );
+    template::process( $config, 'print', template::check( $config, 'edit-event' ), $params );
 }
 
 sub getJson {
@@ -456,7 +456,7 @@ sub show_new_event {
     }
 
     $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event,comment' } );
-    template::process( $config, 'print', template::check( $config, 'edit_event' ), $params );
+    template::process( $config, 'print', template::check( $config, 'edit-event' ), $params );
 
     #print '<pre>'.Dumper($params).'</pre>';
 }

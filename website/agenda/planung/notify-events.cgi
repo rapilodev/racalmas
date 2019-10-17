@@ -120,7 +120,7 @@ sub show_events {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
 
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'notify_events' } );
+    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'notify-events' } );
     template::process( $config, 'print', $params->{template}, $params );
 
 }
@@ -242,7 +242,7 @@ sub check_params {
 
     my $checked  = {};
     my $template = '';
-    $checked->{template} = template::check( $config, $params->{template}, 'notify_events' );
+    $checked->{template} = template::check( $config, $params->{template}, 'notify-events' );
 
     my $debug = $params->{debug} || '';
     if ( $debug =~ /([a-z\_\,]+)/ ) {

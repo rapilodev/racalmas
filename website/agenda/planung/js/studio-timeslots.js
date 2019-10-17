@@ -27,7 +27,7 @@ function updateWeekdays(){
 function showDates(){
     var date=$('#show_date select').val();
 
-    var url='studio_timeslots.cgi?';
+    var url='studio-timeslots.cgi?';
     url+='project_id='+getProjectId();
     url+='&studio_id='+getStudioId();
     url+='&action=show_dates';

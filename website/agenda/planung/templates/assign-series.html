@@ -17,7 +17,7 @@
             $('#assignments_form input[name="series_id"]').val(series_id);
             //console.log(project_id+" "+studio_id+" "+series_id);
 
-            var url="assign_series.cgi?project_id="+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&action=assign_series';
+            var url="assign-series.cgi?project_id="+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&action=assign_series';
             //console.log(url);
             $('#assignments_form').submit();
             return false;
@@ -45,7 +45,7 @@
                 </TMPL_LOOP>
             </select>
 
-            <form action="assign_series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>" method="post" id="assignments_form">
+            <form action="assign-series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>" method="post" id="assignments_form">
                 <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
                 <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
                 <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">	

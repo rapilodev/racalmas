@@ -57,7 +57,7 @@ function uploadFile(uploadButton){
     hideError();
     showProgress();
     var request=$.ajax({
-        url: 'audio_recordings.cgi',
+        url: 'audio-recordings.cgi',
         type: 'POST',
         data: new FormData($('#audio_recordings_upload')[0]),
         cache: false,

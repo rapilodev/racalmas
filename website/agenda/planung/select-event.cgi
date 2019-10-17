@@ -49,7 +49,7 @@ $request = uac::prepare_request( $request, $user_presets );
 
 $params = $request->{params}->{checked};
 $params = uac::set_template_permissions( $request->{permissions}, $params );
-$params->{loc} = localization::get( $config, { user => $user, file => 'selectEvent' } );
+$params->{loc} = localization::get( $config, { user => $user, file => 'select-event' } );
 
 #process header
 print "Content-type:text/html; charset=UTF-8;\n\n";
@@ -172,7 +172,7 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
-    $checked->{template} = template::check( $config, $params->{template}, 'selectEvent' );
+    $checked->{template} = template::check( $config, $params->{template}, 'select-event' );
 
     return $checked;
 }

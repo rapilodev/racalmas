@@ -254,7 +254,7 @@ sub check_params {
     #template
     my $template = '';
     if ( defined $checked->{action} ) {
-        $template = template::check( $config, $params->{template}, 'edit_comment' )
+        $template = template::check( $config, $params->{template}, 'edit-comment' )
           if $checked->{action} eq 'showComment';
     } else {
         $template = template::check( $config, $params->{template}, 'comments' );

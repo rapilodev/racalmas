@@ -36,7 +36,7 @@
 
 			<TMPL_LOOP schedule>
 			<div class="row schedule" id="schedule_<TMPL_VAR schedule_id>">
-				<form method="post" action="studio_timeslots.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>" id="form_schedule_<TMPL_VAR schedule_id>">
+				<form method="post" action="studio-timeslots.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>" id="form_schedule_<TMPL_VAR schedule_id>">
 					<input type="hidden" name="project_id"      value="<TMPL_VAR .project_id>" />
 					<input type="hidden" name="studio_id"       value="<TMPL_VAR .studio_id>" />
 					<input type="hidden" name="schedule_id"     value="<TMPL_VAR schedule_id>" />
@@ -76,7 +76,7 @@
 			
 			<!-- add schedule-->
 			<div class="row">
-				<form method="post" action="studio_timeslots.cgi">
+				<form method="post" action="studio-timeslots.cgi">
 					<input type="hidden" name="project_id"     value="<TMPL_VAR .project_id>" />
 					<input type="hidden" name="studio_id"      value="<TMPL_VAR .studio_id>" />
 					<div class="cell weekday"></div>

@@ -155,7 +155,7 @@ sub sendToken ($$) {
     $entry->{token}        = Session::Token->new->get;
 
     my $baseUrl = $config->{locations}->{source_base_url} . $config->{locations}->{editor_base_url};
-    my $url     = $baseUrl . "/requestPassword.cgi?token=" . $entry->{token};
+    my $url     = $baseUrl . "/request-password.cgi?token=" . $entry->{token};
     my $content = "Hi,$user->{full_name}\n\n";
     $content .= "Someone just tried to reset your password for $baseUrl.\n\n";
     $content .= "If you like to set a new password, please follow the link below\n";

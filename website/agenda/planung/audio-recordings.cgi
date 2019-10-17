@@ -90,8 +90,8 @@ template::process( $config, 'print', template::check( $config, 'default.html' ),
 exit unless uac::check( $config, $params, $user_presets ) == 1;
 
 print q{
-    <script src="js/audio_recordings.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="css/audio_recordings.css" type="text/css" /> 
+    <script src="js/audio-recordings.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="css/audio-recordings.css" type="text/css" /> 
 } unless (params::isJson);
 
 my $permissions = $request->{permissions};
@@ -557,7 +557,7 @@ sub check_params {
     my $checked = {};
     $checked->{error} = '';
     $checked->{template} =
-      template::check( $config, $params->{template}, 'upload_audio_recordings' );
+      template::check( $config, $params->{template}, 'upload-audio-recordings' );
 
     #print Dumper($params);
     #numeric values

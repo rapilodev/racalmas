@@ -104,7 +104,7 @@ sub show_settings {
     my $period = $user_settings->{period} || 'month';
     $params->{ 'period_' . $period } = 1;
 
-    $params->{loc} = localization::get( $config, { language => $language, file => 'user_settings' } );
+    $params->{loc} = localization::get( $config, { language => $language, file => 'user-settings' } );
 
     for my $color ( @{ $params->{colors} } ) {
         $color->{title} = $params->{loc}->{ $color->{title} };
@@ -191,7 +191,7 @@ sub check_params {
 
     #template
     my $template = '';
-    $template = template::check( $config, $params->{template}, 'user_settings' );
+    $template = template::check( $config, $params->{template}, 'user-settings' );
     $checked->{template} = $template;
 
     #numeric values

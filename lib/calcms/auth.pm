@@ -246,7 +246,7 @@ sub show_login_form ($$) {
 
     if ( ( $user ne '' ) && ( $message ne '' ) ) {
         $requestReset = qq{
-            <a href="requestPassword.cgi?user=$user">Passwort vergessen?</a>
+            <a href="request-password.cgi?user=$user">Passwort vergessen?</a>
         };
     }
 

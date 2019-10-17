@@ -256,7 +256,7 @@ sub show_work_schedule {
     }
 
     #print STDERR '<pre>'.Dumper($params).'</pre>';
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'work_time' } );
+    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'work-time' } );
     template::process( $config, 'print', $params->{template}, $params );
 }
 
@@ -297,7 +297,7 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
-    $checked->{template} = template::check( $config, $params->{template}, 'edit_work_time' );
+    $checked->{template} = template::check( $config, $params->{template}, 'edit-work-time' );
 
     if ( ( defined $checked->{action} ) && ( $checked->{action} eq 'save_schedule' ) ) {
 
