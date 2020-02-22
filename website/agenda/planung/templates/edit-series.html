@@ -15,6 +15,7 @@
         var region='<TMPL_VAR loc.region>';
         var event_id='<TMPL_VAR event_id>';
         var selectImageId='';
+        <TMPL_IF .forced_change>pageHasChangedCounter=1;</TMPL_IF>
         <TMPL_IF .getBack>
             $(document).ready(
                 function(){

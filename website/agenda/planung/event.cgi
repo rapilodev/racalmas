@@ -231,7 +231,10 @@ sub show_event {
     $event->{start} =~ s/(\d\d:\d\d)\:\d\d/$1/;
     $event->{end} =~ s/(\d\d:\d\d)\:\d\d/$1/;
 
-    $event->{image} = $params->{setImage} if defined $params->{setImage};
+    if ( (defined $params->{setImage}) and ($params->{setImage} ne $event->{image}) ){
+        $event->{image} = $params->{setImage};
+        $params->{forced_change} = 1;
+    }
 
     # overwrite event with old one
     #my $series_events=get_series_events($config,{

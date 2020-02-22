@@ -1206,7 +1206,11 @@ sub show_series {
     $serie->{series_dates} = $series_dates;
 
     $serie->{show_hint_to_add_schedule} = $params->{show_hint_to_add_schedule};
-    $serie->{image} = $params->{setImage} if $params->{setImage};
+
+    if ( (defined $params->{setImage}) and ($params->{setImage} ne $serie->{image}) ){
+        $serie->{image} = $params->{setImage} ;
+        $params->{forced_change} = 1;
+    }
 
     #copy series to params
     #$params->{series}=[$serie];
