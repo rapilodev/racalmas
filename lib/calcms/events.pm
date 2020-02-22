@@ -749,7 +749,6 @@ sub getDateQueryConditions ($$$) {
             push @$bind_values, $date;
         }
     }
-
     return $date_conds;
 
 }
@@ -976,8 +975,6 @@ sub get_query($$$) {
     push @$where_cond, $disable_event_sync_cond
       if ( $disable_event_sync_cond ne '' );
 
-    #print STDERR Dumper($where_cond);
-
     #order is forced
     if ( $params->{order} eq 'asc' ) {
         $order_cond = 'order by start';
@@ -1110,8 +1107,6 @@ sub get_query($$$) {
     $query .= "\n" . $order_cond if ( $order_cond ne '' );
     $query .= "\n" . $limit_cond if ( $limit_cond ne '' );
 
-    #print STDERR Dumper($query).Dumper($bind_values)."\n";
-
     return ( \$query, $bind_values );
 }
 
@@ -1208,7 +1203,6 @@ sub render($$$$;$) {
       if ( defined $config->{permissions}->{hide_event_images} )
       && ( $config->{permissions}->{hide_event_images} == 1 );
 
-    #    use Data::Dumper;print STDERR Dumper($template_parameters)."\n";
     template::process( $config, $_[0], $params->{template}, $template_parameters );
 
     return $_[0];
@@ -1418,8 +1412,6 @@ sub get_by_date_range ($$$$$) {
         where    $conditions
     };
 
-    #print STDERR Dumper($query) . Dumper($bind_values);
-
     my $events = db::get( $dbh, $query, $bind_values );
 
     return $events;
@@ -1443,7 +1435,6 @@ sub get_by_image ($$$) {
 
     my $events = db::get( $dbh, $query, $bind_values );
 
-    #    print STDERR Dumper($events);
     return undef if scalar @$events == 0;
     return $events->[0];
 }
@@ -1766,7 +1757,6 @@ sub check_params ($$) {
         recordings           => $recordings,
     };
 
-    #print STDERR Dumper($checked);
     return $checked;
 }
 
