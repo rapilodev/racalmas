@@ -327,7 +327,6 @@ sub showCalendar {
         #get timeslot_dates
         my $studio_dates = studio_timeslot_dates::get( $config, $options );
 
-        #print STDERR Dumper($options);
         $id = 0;
         for my $date (@$studio_dates) {
             $date->{grid}      = 1;
@@ -387,7 +386,6 @@ sub showCalendar {
                 $format .= '<br>';
             }
 
-            #print STDERR Dumper($date);
             $date->{play}      = 1;
             $date->{series_id} = -1;
             $date->{event_id}  = $id;
@@ -425,9 +423,6 @@ sub showCalendar {
               if defined $date->{updated_at};
             $date->{title} .= '<b>modified_at</b>: ' . ( $date->{modified_at} || '' ) . '<br>'
               if defined $date->{modified_at};
-
-#print STDERR Dumper($date) if $date->{file}=~/180503/;
-#$date->{title}.= '<b>rms_image</b>: '    .($date->{rms_image}||'').'<br>' if defined $date->{rms_image};
 
             $date->{rms_image} = URI::Escape::uri_unescape( $date->{rms_image} )
               if defined $date->{rms_image};
@@ -526,15 +521,10 @@ sub showCalendar {
 
     for my $event (@$events) {
         next unless defined $event->{uploaded_at};
-
-#print STDERR "uploadAt=$event->{uploaded_at}, playoutModified:$event->{playout_modified_at}, playoutUpdatedAt:$event->{playout_updated_at}\n";
         next
           if ( defined $event->{playout_updated_at} )
           && ( $event->{uploaded_at} lt $event->{playout_updated_at} );
 
-        #print STDERR Dumper($event);
-        #$event->{upload} ='pending' ;
-        #$event->{title}.='<br>pending';
     }
 
     if ( $params->{list} == 1 ) {
@@ -948,7 +938,6 @@ sub calcCalendarTable {
       };
     calc_positions( $events_by_day->{0}, $cal_options );
 
-    #print Dumper($events_by_day);
     my $yoffset = $min_hour * $hour_height;
     my @days    = sort keys %$events_by_day;
 
@@ -1102,7 +1091,6 @@ sub printTableBody {
     my $dt       = undef;
     my $old_week = undef;
 
-    #print Dumper($days);
     for my $day (@$days) {
         my $events = $events_by_day->{$day};
 
@@ -1301,8 +1289,6 @@ sub addSeries {
           . '</option>' . "\n";
     }
 
-    #print Dumper($series);
-
     $out .= q{
                     </select>
                     </td>
@@ -1362,8 +1348,6 @@ sub addEventsToSeries {
           . $title
           . '</option>' . "\n";
     }
-
-    #print Dumper($series);
 
     $out .= q{
                         </select>
@@ -1630,13 +1614,10 @@ sub printToolbar {
     my $params   = shift;
     my $calendar = shift;
 
-    #print Dumper($params);
     my $today = time::time_to_date();
 
-    #setToday (TODO:javascript)
     my $toolbar = '<div id="toolbar">';
 
-    #$toolbar.='<div class="cal_nav">'.addCalendarButton($params, $calendar).'</div>';
     $toolbar .= addCalendarButton( $params, $calendar );
     $toolbar .= qq{<button id="setToday">} . $params->{loc}->{button_today} . qq{</button>};
 
@@ -1857,13 +1838,8 @@ sub getSeriesEvents {
     $request2->{params}->{checked}->{published} = 'all';
     $request2->{params}->{checked}->{draft} = '1' if $params->{list} == 1;
 
-#delete $request2->{params}->{checked}->{locations_to_exclude}
-#  if ( ( $params->{studio_id} == -1 ) && ( defined $request2->{params}->{checked}->{locations_to_exclude} ) );
-
     my $events = events::get( $config, $request2 );
 
-    #print STDERR Dumper($request2->{params}->{checked});
-    #print STDERR Dumper($events);
     series::add_series_ids_to_events( $request->{config}, $events );
 
     my $studios = studios::get(
