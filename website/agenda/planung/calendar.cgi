@@ -244,6 +244,7 @@ sub showCalendar {
                 delete $options->{date_range_include};
             }
         }
+        $options->{from_time} = '00:00' if defined $options->{from_date};
 
         $options->{draft} = 0 unless $params->{list} == 1;
 
