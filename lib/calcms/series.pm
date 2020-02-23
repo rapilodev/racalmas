@@ -54,12 +54,12 @@ sub get ($$) {
         push @bind_values, $condition->{series_id};
     }
 
-    if ( ( defined $condition->{series_name} ) && ( $condition->{series_name} ne '' ) ) {
+    if ( defined $condition->{series_name} ) {
         push @conditions,  'series_name=?';
         push @bind_values, $condition->{series_name};
     }
 
-    if ( ( defined $condition->{title} ) && ( $condition->{title} ne '' ) ) {
+    if ( defined $condition->{title} ) {
         push @conditions,  'title=?';
         push @bind_values, $condition->{title};
     }
