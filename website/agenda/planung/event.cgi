@@ -615,8 +615,20 @@ sub save_event {
         return;
     }
 
-    $entry->{image}        = images::normalizeName( $entry->{image} );
-    $entry->{series_image} = images::normalizeName( $entry->{series_image} );
+    my $series = series::get($config,
+        {
+            project_id => $params->{project_id},
+            studio_id  => $params->{studio_id},
+            series_id  => $params->{series_id},
+        }
+    );
+    my $serie = $series->[0];
+    unless ( defined $serie ) {
+        uac::print_error("series not found");
+        return;
+    }
+    $entry->{image}        = images::normalizeName( $serie->{image} );
+    $entry->{series_image} = images::normalizeName( $serie->{series_image} );
 
     #print STDERR "event to update2: ".Dumper($entry);
 
