@@ -410,12 +410,13 @@ sub get_events($$$$) {
         $event_ids->{$event_id} = 1;
     }
 
+    my @keys = keys %{$event_ids};
     #get events from comment's event ids
-    return [] if ( scalar keys %{$event_ids} ) == 0;
+    return [] if ( scalar @keys ) == 0;
 
-    #my $quoted_event_ids=join "," ,(map {$dbh->quote($_)}(keys %{$event_ids}));
-    my @bind_values = keys %{$event_ids};
-    my $event_id_values = join ",", ( map { '?' } ( keys %{$event_ids} ) );
+    #my $quoted_event_ids=join "," ,(map {$dbh->quote($_)}(@keys));
+    my @bind_values = @keys;
+    my $event_id_values = join ",", ( map { '?' } ( @keys ) );
 
     my $query = qq{
         select   id, start, program, series_name, title, excerpt
@@ -433,7 +434,7 @@ sub get_events($$$$) {
     }
 
     #add unassigned events
-    #    for my $event_id (keys %{$event_ids}){
+    #    for my $event_id (@keys){
     #        if ($events_by_id->{$event_id}eq''){
     #            my $event={
     #                title        => "not assigned",

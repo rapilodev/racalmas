@@ -117,8 +117,9 @@ sub update ($$) {
     }
     $entry->{image} = images::normalizeName( $entry->{image} ) if defined $entry->{image};
 
-    my $values = join( ",", map { $_ . '=?' } ( keys %$entry ) );
-    my @bind_values = map { $entry->{$_} } ( keys %$entry );
+    my @keys = sort keys %$entry;
+    my $values = join( ",", map { $_ . '=?' } @keys );
+    my @bind_values = map { $entry->{$_} } @keys;
     push @bind_values, $entry->{id};
 
     my $query = qq{

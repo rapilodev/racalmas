@@ -138,15 +138,16 @@ sub insert ($$$){
     my $tablename = shift;
     my $entry     = shift;
 
-    my $keys = join( ",", map { $_ } ( keys %$entry ) );
-    my $values = join( ",", map { '?' } ( keys %$entry ) );
-    my @bind_values = map { $entry->{$_} } ( keys %$entry );
+    my @keys = sort keys %$entry;
+    my $keys = join( ",", @keys );
+    my $values = join( ",", map { '?' } @keys );
+    my @bind_values = map { $entry->{$_} } @keys;
 
     my $sql = "insert into $tablename \n ($keys) \n values  ($values);\n";
 
     if ( $debug_write == 1 ) {
         print STDERR $sql . "\n";
-        print STDERR Dumper( \@bind_values ) . "\n" if (@bind_values);
+        print STDERR Dumper( \@bind_values ) . "\n" if scalar(@bind_values);
     }
 
     put( $dbh, $sql, \@bind_values );

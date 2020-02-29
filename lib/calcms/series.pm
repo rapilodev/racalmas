@@ -193,8 +193,9 @@ sub update ($$) {
     $entry->{id}          = $series->{series_id};
     $entry->{modified_at} = time::time_to_datetime( time() );
 
-    my $values = join( ",", map { $_ . '=?' } ( keys %$entry ) );
-    my @bind_values = map { $entry->{$_} } ( keys %$entry );
+    my @keys = keys %$entry;
+    my $values = join( ",", map { $_ . '=?' } @keys );
+    my @bind_values = map { $entry->{$_} } @keys;
     push @bind_values, $entry->{id};
 
     my $query = qq{

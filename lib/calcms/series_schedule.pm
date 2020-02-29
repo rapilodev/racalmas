@@ -137,8 +137,9 @@ sub update($$) {
     delete $entry->{schedule_id};
 
     my $dbh         = db::connect($config);
-    my $values      = join( ",", map { $_ . '=?' } ( keys %$entry ) );
-    my @bind_values = map { $entry->{$_} } ( keys %$entry );
+    my @keys        = sort keys %$entry;
+    my $values      = join( ",", map { $_ . '=?' } @keys );
+    my @bind_values = map { $entry->{$_} } @keys;
 
     push @bind_values, $entry->{project_id};
     push @bind_values, $entry->{studio_id};

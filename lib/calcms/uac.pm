@@ -211,8 +211,9 @@ sub update_user($$) {
 
     $entry->{modified_at} = time::time_to_datetime( time() );
 
-    my $values = join( ",", map { $_ . '=?' } ( keys %$entry ) );
-    my @bind_values = map { $entry->{$_} } ( keys %$entry );
+    my @keys = sort keys %$entry;
+    my $values = join( ",", map { $_ . '=?' } @keys );
+    my @bind_values = map { $entry->{$_} } @keys;
     push @bind_values, $entry->{id};
 
     my $query = qq{
@@ -294,7 +295,7 @@ sub get_roles($$) {
     my $dbh = db::connect($config);
     my $columns = db::get_columns_hash( $dbh, 'calcms_roles' );
 
-    for my $column ( keys %$columns ) {
+    for my $column ( sort keys %$columns ) {
         if ( defined $condition->{$column} ) {
             push @conditions,  $column . '=?';
             push @bind_values, $condition->{$column};
@@ -340,8 +341,9 @@ sub update_role($$) {
 
     my $dbh         = db::connect($config);
     my $columns     = db::get_columns_hash( $dbh, 'calcms_roles' );
-    my $values      = join( ",", map { $_ . '=?' } ( keys %$columns ) );
-    my @bind_values = map { $entry->{$_} } ( keys %$columns );
+    my @keys        = sort keys %$columns;
+    my $values      = join( ",", map { $_ . '=?' } @keys );
+    my @bind_values = map { $entry->{$_} } @keys;
     push @bind_values, $entry->{id};
 
     my $query = qq{
