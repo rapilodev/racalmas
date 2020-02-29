@@ -337,6 +337,7 @@ sub save_series {
     $entry->{series_id}      = $params->{series_id} || '';
     $entry->{live}           = $params->{live} || 0;
     $entry->{count_episodes} = $params->{count_episodes} || 0;
+    $entry->{predecessor_id} = $params->{predecessor_id} // 0;
 
     #$entry->{html_content} = Encode::decode( 'utf-8', $entry->{content} );
     $entry->{html_content} = markup::creole_to_html( $entry->{content} );
@@ -1252,9 +1253,8 @@ sub check_params {
         'id',            'project_id',                'studio_id', 'default_studio_id',
         'user_id',       'new_series_id',             'series_id', 'schedule_id',
         'exclude',       'show_hint_to_add_schedule', 'event_id',  'weekday',
-        'week_of_month', 'month',                     'nextDay'
-      )
-    {
+        'week_of_month', 'month',                     'nextDay',   'predecessor_id'
+    ){
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
             $checked->{$param} = $params->{$param};
         }

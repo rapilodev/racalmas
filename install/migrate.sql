@@ -247,3 +247,6 @@ ALTER TABLE `calcms`.`calcms_user_settings`
 ADD COLUMN `project_id` INT(10) UNSIGNED NULL AFTER `calendar_fontsize`,
 ADD COLUMN `studio_id` INT(10) UNSIGNED NULL AFTER `project_id`;
 
+ALTER TABLE `calcms`.`calcms_series` 
+ADD COLUMN `predecessor_id` INT(10) NULL AFTER `has_single_events`;
+

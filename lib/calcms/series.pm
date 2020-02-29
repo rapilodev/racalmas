@@ -1282,7 +1282,6 @@ sub update_recurring_event($$) {
 		where	id=?
 	};
 
-    #print STDERR $update_sql."\n".Dumper($bind_values)."\n";
     my $dbh = db::connect($config);
     db::put( $dbh, $update_sql, $bind_values );
 }

@@ -74,6 +74,9 @@ msgstr "interne Kommentare"
 msgid "template_podcast_url"
 msgstr "Podcast URL"
 
+msgid "template_predecessor_id"
+msgstr "ID der Vorgänger-Serie"
+
 msgid "template_archive_url"
 msgstr "Archiv URL"
 

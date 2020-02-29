@@ -77,6 +77,9 @@ msgstr "Podcast URL"
 msgid "template_archive_url"
 msgstr "Archive URL"
 
+msgid "template_predecessor_id"
+msgstr "Series Predecessor ID"
+
 msgid "tab_schedule"
 msgstr "Schedule"
 
