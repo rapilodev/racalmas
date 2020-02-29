@@ -41,8 +41,6 @@ sub save_content($$) {
     my $config = shift;
     my $entry  = shift;
 
-    my $dbh = db::connect($config);
-
     return undef unless ( defined $entry->{id} );
 
     for my $attr ( keys %$entry ) {
@@ -100,15 +98,35 @@ sub save_content($$) {
 		where  id=?
 	};
 
-    #print STDERR "update:".$query.Dumper(\@bind_values);
+    my $dbh = db::connect($config);
     my $result = db::put( $dbh, $query, \@bind_values );
     unless ( defined $result ) {
         print STDERR "error on updating event\n";
         return undef;
     }
 
-    #print STDERR "result=$result\n";
-    #print STDERR "entr after update".Dumper($entry);
+    return $entry;
+}
+
+sub set_episode{
+    my $config = shift;
+    my $entry  = shift;
+
+    return undef unless ( defined $entry->{id} );
+    return undef unless ( defined $entry->{episode} );
+
+    my $query = qq{
+		update calcms_events 
+		set    episode=?
+		where  id=?
+	};
+    my $bind_values= [ $entry->{episode}, $entry->{id} ];
+    my $dbh = db::connect($config);
+    my $result = db::put( $dbh, $query, $bind_values );
+    unless ( defined $result ) {
+        print STDERR "error on setting episode in event\n";
+        return undef;
+    }
     return $entry;
 }
 

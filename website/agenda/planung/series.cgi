@@ -93,13 +93,19 @@ if ( defined $params->{action} ) {
         my $result = reassign_event( $config, $request );
         return if defined $result;
     }
+    if ($params->{action} eq 'rebuild_episodes'){
+        rebuild_episodes($config, $request);
+        return;
+    };
+    if ($params->{action} eq 'set_rebuilt_episodes'){
+        set_rebuilt_episodes($config, $request);
+        return;
+    };
 
     #    save_scan    ($config, $request)    if ($params->{action} eq 'save_scan');
 }
 
 $config->{access}->{write} = 0;
-
-#print STDERR "show_series\n";
 
 if ( defined $params->{series_id} ) {
     print q{<script src="js/edit-series.js" type="text/javascript"></script>} unless params::isJson();
@@ -111,6 +117,7 @@ if ( defined $params->{series_id} ) {
     } unless params::isJson();
     list_series( $config, $request );
 }
+
 return;
 
 #insert or update a schedule and update all schedule dates
@@ -351,7 +358,6 @@ sub save_series {
         return;
     }
 
-    #print STDERR Dumper($entry);
     my $series_ids = series::get(
         $config,
         {
@@ -1224,6 +1230,160 @@ sub show_series {
     template::process( $config, 'print', $params->{template}, $params );
 }
 
+sub set_rebuilt_episodes{
+    my $config  = shift;
+    my $request = shift;
+
+    $config->{access}->{write} = 0;
+
+    my $params      = $request->{params}->{checked};
+    my $permissions = $request->{permissions};
+    unless ( $permissions->{read_series} == 1 ) {
+        uac::permissions_denied('read_series');
+        return;
+    }
+
+    for my $param ( 'project_id', 'studio_id', 'series_id' ) {
+        unless ( defined $params->{$param} ) {
+            uac::print_error("missing $param");
+            return;
+        }
+    }
+
+    unless ( project::is_series_assigned( $config, $params ) == 1 ) {
+        uac::print_error('series is not assigned to project!');
+        return undef;
+    }
+
+    #this will be updated later (especially allow_update_events)
+    for my $permission ( keys %{ $request->{permissions} } ) {
+        $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
+    }
+
+    my $project_id = $params->{project_id};
+    my $studio_id  = $params->{studio_id};
+    my $series_id  = $params->{series_id};
+    my $events = series::get_rebuilt_episodes( $config, {
+        project_id => $project_id,
+        studio_id  => $studio_id,
+        series_id  => $series_id
+    });
+
+    my $updates = 0;
+    for my $event (@$events){
+        next if $event->{project_id} ne $project_id;
+        next if $event->{studio_id} ne $studio_id;
+        next if $event->{old_episode} eq $event->{episode};
+        series_events::set_episode( $config, {
+            id       => $event->{id}, 
+            episode  => $event->{episode}
+        });
+        $updates++;
+    }
+    print "$updates changes done.\n";
+}
+
+sub rebuild_episodes{
+    my $config  = shift;
+    my $request = shift;
+
+    $config->{access}->{write} = 0;
+
+    my $params      = $request->{params}->{checked};
+    my $permissions = $request->{permissions};
+    unless ( $permissions->{read_series} == 1 ) {
+        uac::permissions_denied('read_series');
+        return;
+    }
+
+    for my $param ( 'project_id', 'studio_id', 'series_id' ) {
+        unless ( defined $params->{$param} ) {
+            uac::print_error("missing $param");
+            return;
+        }
+    }
+
+    unless ( project::is_series_assigned( $config, $params ) == 1 ) {
+        uac::print_error('series is not assigned to project!');
+        return undef;
+    }
+
+    #this will be updated later (especially allow_update_events)
+    for my $permission ( keys %{ $request->{permissions} } ) {
+        $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
+    }
+
+    my $project_id = $params->{project_id};
+    my $studio_id  = $params->{studio_id};
+    my $series_id  = $params->{series_id};
+    my $events = series::get_rebuilt_episodes( $config, {
+        project_id => $project_id,
+        studio_id  => $studio_id,
+        series_id  => $series_id
+    });
+
+    my $events_by_id={};
+    for my $event (@$events){
+        $events_by_id->{$event->{id}} = $event;
+    }
+
+    print "<style>
+        tr        {cursor:pointer}
+        td        {border:1px solid gray}
+        tr.error  {background:#f99}
+        tr.warn   {background:#ff9}
+        tr.ok     {background:#9f9}
+        </style>
+    ";
+
+    my $prev=undef;
+    my $max_episode=0;
+    my $changes=0;
+    my $errors=0;
+    for my $event (@$events){
+        $max_episode = $event->{episode} if $event->{episode} > $max_episode;
+        my $e1 = $event->{old_episode} //'';
+        my $e2 = $event->{episode}     //'';
+        my $o1 = $prev->{old_episode}  //'';
+        my $o2 = $prev->{episode}      //'';
+        if ($e1 eq $e2){
+            $event->{class} = 'ok';
+        }else{
+            $changes++;
+            $event->{class} = 'warn';
+        }
+        if ($e1 and $e2 and $o1 and $o2 and ( ($e2-$o2) != ($e1-$o1) ) ){
+            $event->{class} = "error" if $e1 ne $e2;
+            $prev->{class} = "error" if defined $prev and $o1 ne $o2;
+            $errors++;
+        }
+        if ($event->{episode} < $max_episode and !$event->{recurrence}){
+            $event->{class} = "error";
+            $errors++;
+        }
+        $event->{recurrence_start} = $events_by_id->{$event->{recurrence}}->{start};
+        $event->{recurrence} = '-' unless $event->{recurrence};
+        $prev = $event;
+    }
+    print "$errors errors, $changes changes\n";
+    if ( ($changes>0) and ($errors==0) ){
+        my $url = "series.cgi?action=set_rebuilt_episodes&project_id=$project_id&studio_id=$studio_id&series_id=$series_id";
+        print qq{<a class="button" href="$url"><button>apply changes</button></a>};
+    }
+    my @cols=qw(id start series_name title episode old_episode recurrence recurrence_start project_name studio_name);
+    print "<table>\n";
+    print "<tr>" . join ("", map { "<th>".($_ // '-')."</th>" } @cols) . "</tr>\n" ;
+        
+    for my $event (@$events){
+        print qq{<tr class="$event->{class}" onclick="window.location.href=\$(this).attr('href');"}
+            . qq{ href="event.cgi?action=edit&project_id=$event->{project_id}&studio_id=$event->{studio_id}&series_id=$series_id&event_id=$event->{id}"\n}
+            . qq{>}
+            . join ("", map { "<td>".($event->{$_}//'-')."</td>" } @cols) 
+            . "</tr>\n";
+    }
+    print "</table>\n";
+}
+
 sub check_params {
     my $config = shift;
     my $params = shift;
@@ -1239,16 +1399,14 @@ sub check_params {
     #actions and roles
     $checked->{action} = '';
     if ( defined $params->{action} ) {
-        if ( $params->{action} =~
-/^(add_user|remove_user|create|delete|save|details|show|save_schedule|delete_schedule|save_scan|scan_events|assign_event|unassign_event|reassign_event)$/
-          )
-        {
-            $checked->{action} = $params->{action};
-        }
+        $checked->{action} = $params->{action} if $params->{action} =~
+/^(add_user|remove_user|create|delete|save|details|show|save_schedule|delete_schedule|save_scan|scan_events|assign_event|unassign_event|reassign_event|rebuild_episodes|set_rebuilt_episodes)$/
+        ;
     }
 
     #numeric values
     $checked->{exclude} = 0;
+    $checked->{action} = $params->{action};
     for my $param (
         'id',            'project_id',                'studio_id', 'default_studio_id',
         'user_id',       'new_series_id',             'series_id', 'schedule_id',

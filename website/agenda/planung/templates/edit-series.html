@@ -56,6 +56,16 @@
 	            <button type="submit" name="action"     value="show_new_event"><TMPL_VAR .loc.button_create_event></button>
 	        </form>
 	    </TMPL_IF>
+
+	    <TMPL_IF .allow.update_event>
+	        <form action="series.cgi">
+	            <input  type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+	            <input  type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
+	            <input  type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
+	            <button type="submit" name="action"     value="rebuild_episodes"><TMPL_VAR .loc.button_rebuild_episodes></button>
+	        </form>
+	    </TMPL_IF>
+
     </div>
 
 	<div class="panel-header">

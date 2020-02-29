@@ -22,6 +22,9 @@ msgstr "Alte Sendereihen"
 msgid "button_show_changes"
 msgstr "Änderungen"
 
+msgid "button_rebuild_episodes"
+msgstr "Episoden neuzählen"
+
 msgid "label_name"
 msgstr "Name"
 

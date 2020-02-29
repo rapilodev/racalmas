@@ -1158,6 +1158,57 @@ sub is_event_assigned_to_user ($$) {
     return 1;
 }
 
+sub get_rebuilt_episodes ($$) {
+    my $config  = shift;
+    my $options = shift;
+
+    return "missing project_id" unless defined $options->{project_id};
+    return "missing studio_id"  unless defined $options->{studio_id};
+    return "missing series_id"  unless defined $options->{series_id};
+
+    # ignore project and studio as series can be used in multiple studios
+    my $events = series::get_events(
+        $config,
+        {
+            #project_id => $options->{project_id},
+            #studio_id  => $options->{studio_id},
+            series_id  => $options->{series_id},
+            draft      => 0
+        }
+    );
+    @$events = sort { $a->{start} cmp $b->{start} } @$events;
+
+    my $events_by_episode = {};
+    for my $event (@$events) {
+        next unless $event->{episode};
+        push @{ $events_by_episode->{$event->{episode}} }, $event;
+    }
+
+    my $done={};
+    my $episode = $events->[0]->{episode} // 0;
+    $episode-=1;
+
+    for my $i (0..$#$events){
+        my $event = $events->[$i];
+        next if $done->{$event->{id}};
+        $episode++;
+        # increase episode for not set values
+        if ( ($event->{episode}//'') eq ''){
+            $event->{old_episode} = $event->{episode};
+            $event->{episode} = $episode;
+            next;
+        }
+        # set new value to all episodes with same value
+        for my $event2 (@{$events_by_episode->{$event->{episode}}}){
+            $event2->{old_episode} = $event2->{episode};
+            $event2->{episode} = $episode;
+            $done->{$event2->{id}}=1;
+        };
+    }
+    #print STDERR Dumper($events);
+    return $events;
+}
+
 # to find multiple recurrences this does not include the recurrence_count
 # use events::get_key to add the recurrence
 sub get_event_key ($) {
@@ -1191,8 +1242,8 @@ sub update_recurring_events ($$) {
     my $events = series::get_events(
         $config,
         {
-            project_id => $options->{project_id},
-            studio_id  => $options->{studio_id},
+            #project_id => $options->{project_id},
+            #studio_id  => $options->{studio_id},
             series_id  => $options->{series_id},
             draft      => 0
         }
@@ -1209,7 +1260,7 @@ sub update_recurring_events ($$) {
     }
 
     # handle all events with the same key
-    for my $key ( keys %$events_by_key ) {
+    for my $key ( sort keys %$events_by_key ) {
         my $events = $events_by_key->{$key};
         next unless scalar @$events > 0;
 
@@ -1219,8 +1270,6 @@ sub update_recurring_events ($$) {
             my $event = $events->[0];
             next if $event->{recurrence} == 0;
             next if $event->{recurrence_count} == 0;
-            print STDERR
-"remove recurrence\t'$event->{event_id}'\t'$event->{start}'\t'$event->{rerun}'\t'$event->{recurrence}'\t'$event->{key}'\n";
             $event->{recurrence}       = 0;
             $event->{recurrence_count} = 0;
             $event->{rerun}            = 0;
@@ -1232,14 +1281,10 @@ sub update_recurring_events ($$) {
             # first event is the original
             my $event      = $events->[0];
             my $originalId = $event->{event_id};
-            print STDERR
-"0\t'$event->{recurrence_count}'\t'$event->{event_id}'\t'$event->{start}'\t'$event->{rerun}'\t'$event->{recurrence}'\t'$event->{key}'\n";
 
             # succeeding events are reruns
             for ( my $c = 1 ; $c < scalar(@$events) ; $c++ ) {
                 my $event = $events->[$c];
-                print STDERR
-"$c\t'$event->{recurrence_count}'\t'$event->{event_id}'\t'$event->{start}'\t'$event->{rerun}'\t'$event->{recurrence}'\t'$event->{key}'\n";
 
                 my $update = 0;
                 $update = 1 if $event->{recurrence} ne $originalId;
