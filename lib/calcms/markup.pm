@@ -48,6 +48,7 @@ sub html_to_creole($) {
     $s =~ s/<\/?option.*?//gi;
     $s =~ s/<\/?input.*?>//gi;
     $s =~ s/<\/?script.*?>//gi;
+
     #remove line breaks
     $s =~ s/[\r\n]+/ /gi;
 
@@ -78,7 +79,7 @@ sub html_to_creole($) {
     $s =~ s/(\[\[[^\]\n]*?)\n([^\]]*?\]\])/$1$2/g;
     $s =~ s/(\[\[[^\]\n]*?)\n([^\]]*?\]\])/$1$2/g;
     $s =~ s/(\[\[[^\]\n]*?)\n([^\]]*?\]\])/$1$2/g;
-    
+
     $s =~ s/[\s]+/ /gi;
 
     #line elements, increase head line level to avoid breaking single = chars

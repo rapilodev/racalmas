@@ -8,7 +8,8 @@ use Data::Dumper;
 use markup();
 
 use base 'Exporter';
-our @EXPORT_OK   = qw(extractEventFromWikiText removeMeta eventToWikiText extractMeta removeMeta metaToWiki);
+our @EXPORT_OK =
+  qw(extractEventFromWikiText removeMeta eventToWikiText extractMeta removeMeta metaToWiki);
 
 #convert creole wiki text to event
 sub extractEventFromWikiText($;$) {
@@ -111,7 +112,7 @@ sub extractEventFromWikiText($;$) {
 
         #replace "thumbs/xxx" link by link to local media URI
         $event->{content} =~
-          s/\{\{\s*thumbs\/+(.*?)\s*\|\s*(.*?)\s*\}\}/\[\[$local_media_url\/images\/$1\|\{\{$local_media_url\/thumbs\/$1\|$2\}\}\]\]/g;
+s/\{\{\s*thumbs\/+(.*?)\s*\|\s*(.*?)\s*\}\}/\[\[$local_media_url\/images\/$1\|\{\{$local_media_url\/thumbs\/$1\|$2\}\}\]\]/g;
 
         #extract image from content
         if ( $event->{content} =~ /\{\{(.*?)(\||\}\})/ ) {
@@ -157,16 +158,19 @@ sub eventToWikiText($$) {
     my $meta = extractMeta( $event->{comments}, $event->{meta} );
     $event->{comments}      = removeMeta( $event->{comments} );
     $event->{wiki_comments} = $event->{comments} . "\n\n" . metaToWiki($meta);
+
     #markup editors
     $event->{wiki_content} = $event->{content};
 
-    #	[[http://localhost/agenda_files/media/images/Vl8X7YmaWrmm9RMN_OMywA.jpg|{{http://localhost/agenda_files/media/thumbs/Vl8X7YmaWrmm9RMN_OMywA.jpg|}}]]
-    #replace "thumbs/xxx" link by link to local media URI
+#	[[http://localhost/agenda_files/media/images/Vl8X7YmaWrmm9RMN_OMywA.jpg|{{http://localhost/agenda_files/media/thumbs/Vl8X7YmaWrmm9RMN_OMywA.jpg|}}]]
+#replace "thumbs/xxx" link by link to local media URI
     $event->{wiki_content} =~
-      s/\[\[.*?\/+media\/+images\/+(.*?)\s*\|.*?\{\{.*?\/+media\/+thumbs\/+(.*?)\s*\|\s*(.*?)\s*\}\}\]\]/\{\{thumbs\/$1\|$3\}\}/g;
+s/\[\[.*?\/+media\/+images\/+(.*?)\s*\|.*?\{\{.*?\/+media\/+thumbs\/+(.*?)\s*\|\s*(.*?)\s*\}\}\]\]/\{\{thumbs\/$1\|$3\}\}/g;
 
-    my $wiki_content = join( "\n" . ( "-" x 20 ) . "\n", ( $event->{excerpt}, $event->{wiki_content} ) );
-    $wiki_content .= "\n" . ( "-" x 20 ) . "\n" . $event->{wiki_comments} if ( $event->{wiki_comments} =~ /\S/ );
+    my $wiki_content =
+      join( "\n" . ( "-" x 20 ) . "\n", ( $event->{excerpt}, $event->{wiki_content} ) );
+    $wiki_content .= "\n" . ( "-" x 20 ) . "\n" . $event->{wiki_comments}
+      if ( $event->{wiki_comments} =~ /\S/ );
 
     return {
         title        => $title,
@@ -177,7 +181,7 @@ sub eventToWikiText($$) {
 }
 
 #extrace meta tags from comment text
-sub extractMeta ($$){
+sub extractMeta ($$) {
     my $comments = shift;
     my $meta     = shift;
 
@@ -202,7 +206,10 @@ sub extractMeta ($$){
             $value =~ s/^\s+|\s+$//g;
 
             #insert into list, if not defined yet
-            unless ( ( $name eq '' ) || ( $value eq '' ) || ( exists $meta_keys->{ $name . '=' . $value } ) ) {
+            unless ( ( $name eq '' )
+                || ( $value eq '' )
+                || ( exists $meta_keys->{ $name . '=' . $value } ) )
+            {
                 push @$meta,
                   {
                     name  => $name,
