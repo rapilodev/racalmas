@@ -35,7 +35,6 @@ my $r = shift;
 my $config = config::get('../config/config.cgi');
 my $debug  = $config->{system}->{debug};
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-print STDERR Dumper($user);
 return if ( !defined $user ) || ( $user eq '' );
 
 my $user_presets = uac::get_user_presets(
@@ -65,7 +64,8 @@ $params = $request->{params}->{checked};
 unless ( params::isJson() ) {
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
+    template::process( $config, 'print', template::check( $config, 'default.html' ),
+        $headerParams );
 }
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
@@ -93,14 +93,14 @@ if ( defined $params->{action} ) {
         my $result = reassign_event( $config, $request );
         return if defined $result;
     }
-    if ($params->{action} eq 'rebuild_episodes'){
-        rebuild_episodes($config, $request);
+    if ( $params->{action} eq 'rebuild_episodes' ) {
+        rebuild_episodes( $config, $request );
         return;
-    };
-    if ($params->{action} eq 'set_rebuilt_episodes'){
-        set_rebuilt_episodes($config, $request);
+    }
+    if ( $params->{action} eq 'set_rebuilt_episodes' ) {
+        set_rebuilt_episodes( $config, $request );
         return;
-    };
+    }
 
     #    save_scan    ($config, $request)    if ($params->{action} eq 'save_scan');
 }
@@ -108,7 +108,8 @@ if ( defined $params->{action} ) {
 $config->{access}->{write} = 0;
 
 if ( defined $params->{series_id} ) {
-    print q{<script src="js/edit-series.js" type="text/javascript"></script>} unless params::isJson();
+    print q{<script src="js/edit-series.js" type="text/javascript"></script>}
+      unless params::isJson();
     show_series( $config, $request );
 } else {
     print q{
@@ -133,7 +134,6 @@ sub save_schedule {
         return;
     }
 
-    #print Dumper($params);
     for my $attr ( 'project_id', 'studio_id', 'series_id', 'start' ) {
         unless ( defined $params->{$attr} ) {
             uac::print_error( $attr . ' not given!' );
@@ -151,7 +151,6 @@ sub save_schedule {
         $entry->{$attr} = $params->{$attr} if ( defined $params->{$attr} );
     }
 
-    #print STDERR Dumper($entry);
     unless ( project::is_series_assigned( $config, $entry ) == 1 ) {
         uac::print_error('series is not assigned to project!');
         return undef;
@@ -290,7 +289,6 @@ sub delete_series {
     my $studio_id  = $params->{studio_id};
     my $series_id  = $entry->{series_id};
 
-    #print Dumper($entry);
     $config->{access}->{write} = 1;
     if ( $entry->{series_id} ne '' ) {
         my $result = series::delete( $config, $entry );
@@ -342,8 +340,8 @@ sub save_series {
     $entry->{project_id}     = $params->{project_id};
     $entry->{studio_id}      = $params->{studio_id};
     $entry->{series_id}      = $params->{series_id} || '';
-    $entry->{live}           = $params->{live} || 0;
-    $entry->{count_episodes} = $params->{count_episodes} || 0;
+    $entry->{live}           = $params->{live} // 0;
+    $entry->{count_episodes} = $params->{count_episodes} // 0;
     $entry->{predecessor_id} = $params->{predecessor_id} // 0;
 
     #$entry->{html_content} = Encode::decode( 'utf-8', $entry->{content} );
@@ -399,7 +397,6 @@ sub save_series {
 
         $config->{access}->{write} = 0;
 
-        #print STDERR Dumper($entry);
         unless ( defined $series_id ) {
             uac::print_error('could not insert series');
             return;
@@ -423,12 +420,13 @@ sub save_series {
             uac::permissions_denied('update due to entry already exists');
             return;
         }
-        if ( ( scalar(@$series_ids) == 1 ) && ( $series_ids->[0]->{series_id} ne $params->{series_id} ) ) {
+        if (   ( scalar(@$series_ids) == 1 )
+            && ( $series_ids->[0]->{series_id} ne $params->{series_id} ) )
+        {
             uac::permissions_denied('update due to series id does not match to existing entry');
             return;
         }
 
-        #print STDERR Dumper($entry);
         $config->{access}->{write} = 1;
         my $result = series::update( $config, $entry );
 
@@ -499,7 +497,6 @@ sub save_scan {
         assign_event_title       => $params->{assign_event_title},
     };
 
-    #print STDERR '<br>'.Dumper($entry)."\n";
     $config->{access}->{write} = 1;
     series::update( $config, $entry );
     $config->{access}->{write} = 0;
@@ -526,8 +523,6 @@ sub scan_events {
             'studio_id'  => $params->{studio_id}
         }
     );
-
-    #print STDERR Dumper($series);
 
     $params->{scan_results} = q{
         <table>
@@ -580,11 +575,8 @@ sub scan_events {
           . $title . '</td>' . '<td>'
           . scalar(@$event_ids) . '</td>' . '</tr>' . "\n";
 
-        #if($serie->{series_id}==66){
-        #print STDERR $serie->{series_name}.' - '.$serie->{title}.' '.Dumper($event_ids);
-        series::set_event_ids( $config, $params->{project_id}, $params->{studio_id}, $serie, $event_ids );
-
-        #}
+        series::set_event_ids( $config, $params->{project_id}, $params->{studio_id}, $serie,
+            $event_ids );
     }
     $params->{scan_results} .= "</table><hr>\n";
     $config->{access}->{write} = 0;
@@ -614,8 +606,6 @@ sub assign_event {
         }
     }
 
-    #print STDERR "found all parameters:\n".Dumper($entry);
-
     # check if event exists,
     # this has to use events::get, since it cannot check for series_id
     # TODO: check location of studio_id
@@ -640,7 +630,6 @@ sub assign_event {
 
     my $events = events::get( $config, $request2 );
 
-    #print STDERR "found events:".Dumper($events);
     if ( scalar(@$events) != 1 ) {
         uac::print_error("no event found for event_id=$entry->{event_id}, archive=all");
         return undef;
@@ -731,7 +720,7 @@ sub assign_event {
         }
     } else {
         print STDERR
-          "no series title found for studio $entry->{studio_id} series $entry->{series_id}, event $entry->{event_id}\n";
+"no series title found for studio $entry->{studio_id} series $entry->{series_id}, event $entry->{event_id}\n";
     }
 
     $config->{access}->{write} = 0;
@@ -777,8 +766,6 @@ sub unassign_event {
         );
         return undef;
     }
-
-    #print Dumper($event);
 
     #is series assigned to studio
     my $result = series_events::check_permission(
@@ -996,14 +983,14 @@ sub list_series {
     $params->{newSeries} = $newSeries;
     $params->{oldSeries} = $oldSeries;
 
-    $params->{image} = studios::getImageById( $config, { project_id => $project_id, studio_id => $studio_id } )
+    $params->{image} =
+      studios::getImageById( $config, { project_id => $project_id, studio_id => $studio_id } )
       if ( ( !defined $params->{image} ) || ( $params->{image} eq '' ) );
     $params->{image} = project::getImageById( $config, { project_id => $project_id } )
       if ( ( !defined $params->{image} ) || ( $params->{image} eq '' ) );
 
-    #print STDERR Dumper $params->{image};
-
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'all,series' } );
+    $params->{loc} =
+      localization::get( $config, { user => $params->{presets}->{user}, file => 'all,series' } );
     template::process( $config, 'print', $params->{template}, $params );
 }
 
@@ -1062,12 +1049,15 @@ sub show_series {
 
     my $series = series::get( $config, $series_conditions );
     if ( @$series > 1 ) {
-        uac::print_error( "too much series found for studio '" . $studio_by_id->{$studio_id}->{name} . "'" );
+        uac::print_error(
+            "too much series found for studio '" . $studio_by_id->{$studio_id}->{name} . "'" );
         return;
     }
 
     if ( @$series == 0 ) {
-        uac::print_error( "selected series not assigned to studio '" . $studio_by_id->{$studio_id}->{name} . "'" );
+        uac::print_error( "selected series not assigned to studio '"
+              . $studio_by_id->{$studio_id}->{name}
+              . "'" );
         return;
     }
     my $serie = $series->[0];
@@ -1078,9 +1068,11 @@ sub show_series {
     #}
 
     #get all users currently assigned to the user
-    my $user_studios = uac::get_studios_by_user( $config, { project_id => $project_id, user => $request->{user} } );
+    my $user_studios =
+      uac::get_studios_by_user( $config, { project_id => $project_id, user => $request->{user} } );
 
-    my $studio_users = uac::get_users_by_studio( $config, { project_id => $project_id, studio_id => $studio_id } );
+    my $studio_users =
+      uac::get_users_by_studio( $config, { project_id => $project_id, studio_id => $studio_id } );
     for my $studio_user (@$studio_users) {
         $studio_user->{user_id} = $studio_user->{id};
     }
@@ -1089,8 +1081,10 @@ sub show_series {
     $studio_users = \@users;
 
     #show events from last month until next 3 months
-    my $from = DateTime->now( time_zone => $config->{date}->{time_zone} )->subtract( months => 1 )->datetime();
-    my $till = DateTime->now( time_zone => $config->{date}->{time_zone} )->add( months => 3 )->datetime();
+    my $from = DateTime->now( time_zone => $config->{date}->{time_zone} )->subtract( months => 1 )
+      ->datetime();
+    my $till =
+      DateTime->now( time_zone => $config->{date}->{time_zone} )->add( months => 3 )->datetime();
 
     #add name of current studio
     my $studio = $studio_by_id->{ $serie->{studio_id} };
@@ -1099,12 +1093,11 @@ sub show_series {
     my $location = $studio->{location};
 
     # set default image from studio
-    $serie->{image} = studios::getImageById( $config, { project_id => $project_id, studio_id => $studio_id } )
+    $serie->{image} =
+      studios::getImageById( $config, { project_id => $project_id, studio_id => $studio_id } )
       if ( ( !defined $serie->{image} ) || ( $serie->{image} eq '' ) );
     $serie->{image} = project::getImageById( $config, { project_id => $project_id } )
       if ( ( !defined $serie->{image} ) || ( $serie->{image} eq '' ) );
-
-    #print STDERR Dumper $serie->{image};
 
     #add users
     $serie->{series_users} = series::get_users(
@@ -1115,7 +1108,8 @@ sub show_series {
             series_id  => $serie->{series_id}
         }
     );
-    uac::print_warn("There is no user assigned, yet. Please assign a user!") if scalar @{ $serie->{series_users} } == 0;
+    uac::print_warn("There is no user assigned, yet. Please assign a user!")
+      if scalar @{ $serie->{series_users} } == 0;
 
     #add events
     $serie->{events} = series::get_events(
@@ -1214,8 +1208,8 @@ sub show_series {
 
     $serie->{show_hint_to_add_schedule} = $params->{show_hint_to_add_schedule};
 
-    if ( (defined $params->{setImage}) and ($params->{setImage} ne $serie->{image}) ){
-        $serie->{image} = $params->{setImage} ;
+    if ( ( defined $params->{setImage} ) and ( $params->{setImage} ne $serie->{image} ) ) {
+        $serie->{image}          = $params->{setImage};
         $params->{forced_change} = 1;
     }
 
@@ -1225,12 +1219,12 @@ sub show_series {
         $params->{$key} = $serie->{$key};
     }
 
-    #print STDERR '<pre>'.Dumper($params).'</pre>';
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'all,series' } );
+    $params->{loc} =
+      localization::get( $config, { user => $params->{presets}->{user}, file => 'all,series' } );
     template::process( $config, 'print', $params->{template}, $params );
 }
 
-sub set_rebuilt_episodes{
+sub set_rebuilt_episodes {
     my $config  = shift;
     my $request = shift;
 
@@ -1263,27 +1257,33 @@ sub set_rebuilt_episodes{
     my $project_id = $params->{project_id};
     my $studio_id  = $params->{studio_id};
     my $series_id  = $params->{series_id};
-    my $events = series::get_rebuilt_episodes( $config, {
-        project_id => $project_id,
-        studio_id  => $studio_id,
-        series_id  => $series_id
-    });
+    my $events     = series::get_rebuilt_episodes(
+        $config,
+        {
+            project_id => $project_id,
+            studio_id  => $studio_id,
+            series_id  => $series_id
+        }
+    );
 
     my $updates = 0;
-    for my $event (@$events){
+    for my $event (@$events) {
         next if $event->{project_id} ne $project_id;
         next if $event->{studio_id} ne $studio_id;
         next if $event->{old_episode} eq $event->{episode};
-        series_events::set_episode( $config, {
-            id       => $event->{id}, 
-            episode  => $event->{episode}
-        });
+        series_events::set_episode(
+            $config,
+            {
+                id      => $event->{id},
+                episode => $event->{episode}
+            }
+        );
         $updates++;
     }
     print "$updates changes done.\n";
 }
 
-sub rebuild_episodes{
+sub rebuild_episodes {
     my $config  = shift;
     my $request = shift;
 
@@ -1316,15 +1316,18 @@ sub rebuild_episodes{
     my $project_id = $params->{project_id};
     my $studio_id  = $params->{studio_id};
     my $series_id  = $params->{series_id};
-    my $events = series::get_rebuilt_episodes( $config, {
-        project_id => $project_id,
-        studio_id  => $studio_id,
-        series_id  => $series_id
-    });
+    my $events     = series::get_rebuilt_episodes(
+        $config,
+        {
+            project_id => $project_id,
+            studio_id  => $studio_id,
+            series_id  => $series_id
+        }
+    );
 
-    my $events_by_id={};
-    for my $event (@$events){
-        $events_by_id->{$event->{id}} = $event;
+    my $events_by_id = {};
+    for my $event (@$events) {
+        $events_by_id->{ $event->{id} } = $event;
     }
 
     print "<style>
@@ -1336,50 +1339,52 @@ sub rebuild_episodes{
         </style>
     ";
 
-    my $prev=undef;
-    my $max_episode=0;
-    my $changes=0;
-    my $errors=0;
-    for my $event (@$events){
+    my $prev        = undef;
+    my $max_episode = 0;
+    my $changes     = 0;
+    my $errors      = 0;
+    for my $event (@$events) {
         $max_episode = $event->{episode} if $event->{episode} > $max_episode;
-        my $e1 = $event->{old_episode} //'';
-        my $e2 = $event->{episode}     //'';
-        my $o1 = $prev->{old_episode}  //'';
-        my $o2 = $prev->{episode}      //'';
-        if ($e1 eq $e2){
+        my $e1 = $event->{old_episode} // '';
+        my $e2 = $event->{episode}     // '';
+        my $o1 = $prev->{old_episode}  // '';
+        my $o2 = $prev->{episode}      // '';
+        if ( $e1 eq $e2 ) {
             $event->{class} = 'ok';
-        }else{
+        } else {
             $changes++;
             $event->{class} = 'warn';
         }
-        if ($e1 and $e2 and $o1 and $o2 and ( ($e2-$o2) != ($e1-$o1) ) ){
+        if ( $e1 and $e2 and $o1 and $o2 and ( ( $e2 - $o2 ) != ( $e1 - $o1 ) ) ) {
             $event->{class} = "error" if $e1 ne $e2;
             $prev->{class} = "error" if defined $prev and $o1 ne $o2;
             $errors++;
         }
-        if ($event->{episode} < $max_episode and !$event->{recurrence}){
+        if ( $event->{episode} < $max_episode and !$event->{recurrence} ) {
             $event->{class} = "error";
             $errors++;
         }
-        $event->{recurrence_start} = $events_by_id->{$event->{recurrence}}->{start};
-        $event->{recurrence} = '-' unless $event->{recurrence};
-        $prev = $event;
+        $event->{recurrence_start} = $events_by_id->{ $event->{recurrence} }->{start};
+        $event->{recurrence}       = '-' unless $event->{recurrence};
+        $prev                      = $event;
     }
     print "$errors errors, $changes changes\n";
-    if ( ($changes>0) and ($errors==0) ){
-        my $url = "series.cgi?action=set_rebuilt_episodes&project_id=$project_id&studio_id=$studio_id&series_id=$series_id";
+    if ( ( $changes > 0 ) and ( $errors == 0 ) ) {
+        my $url =
+"series.cgi?action=set_rebuilt_episodes&project_id=$project_id&studio_id=$studio_id&series_id=$series_id";
         print qq{<a class="button" href="$url"><button>apply changes</button></a>};
     }
-    my @cols=qw(id start series_name title episode old_episode recurrence recurrence_start project_name studio_name);
+    my @cols =
+      qw(id start series_name title episode old_episode recurrence recurrence_start project_name studio_name);
     print "<table>\n";
-    print "<tr>" . join ("", map { "<th>".($_ // '-')."</th>" } @cols) . "</tr>\n" ;
-        
-    for my $event (@$events){
+    print "<tr>" . join( "", map { "<th>" . ( $_ // '-' ) . "</th>" } @cols ) . "</tr>\n";
+
+    for my $event (@$events) {
         print qq{<tr class="$event->{class}" onclick="window.location.href=\$(this).attr('href');"}
-            . qq{ href="event.cgi?action=edit&project_id=$event->{project_id}&studio_id=$event->{studio_id}&series_id=$series_id&event_id=$event->{id}"\n}
-            . qq{>}
-            . join ("", map { "<td>".($event->{$_}//'-')."</td>" } @cols) 
-            . "</tr>\n";
+          . qq{ href="event.cgi?action=edit&project_id=$event->{project_id}&studio_id=$event->{studio_id}&series_id=$series_id&event_id=$event->{id}"\n}
+          . qq{>}
+          . join( "", map { "<td>" . ( $event->{$_} // '-' ) . "</td>" } @cols )
+          . "</tr>\n";
     }
     print "</table>\n";
 }
@@ -1396,23 +1401,33 @@ sub check_params {
     }
     $checked->{debug} = $debug;
 
-    #actions and roles
+    #actions
     $checked->{action} = '';
     if ( defined $params->{action} ) {
-        $checked->{action} = $params->{action} if $params->{action} =~
-/^(add_user|remove_user|create|delete|save|details|show|save_schedule|delete_schedule|save_scan|scan_events|assign_event|unassign_event|reassign_event|rebuild_episodes|set_rebuilt_episodes)$/
-        ;
+        $checked->{action} = $params->{action} if List::Util::any { $_ eq $params->{action} } qw{
+          add_user remove_user
+          create delete save details show
+          save_schedule delete_schedule
+          save_scan scan_events
+          assign_event unassign_event reassign_event
+          rebuild_episodes set_rebuilt_episodes
+        };
     }
 
     #numeric values
     $checked->{exclude} = 0;
-    $checked->{action} = $params->{action};
+    $checked->{action}  = $params->{action};
     for my $param (
-        'id',            'project_id',                'studio_id', 'default_studio_id',
-        'user_id',       'new_series_id',             'series_id', 'schedule_id',
-        'exclude',       'show_hint_to_add_schedule', 'event_id',  'weekday',
-        'week_of_month', 'month',                     'nextDay',   'predecessor_id'
-    ){
+        'id',            'project_id',
+        'studio_id',     'default_studio_id',
+        'user_id',       'new_series_id',
+        'series_id',     'schedule_id',
+        'exclude',       'show_hint_to_add_schedule',
+        'event_id',      'weekday',
+        'week_of_month', 'month',
+        'nextDay',       'predecessor_id'
+      )
+    {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
             $checked->{$param} = $params->{$param};
         }
@@ -1435,8 +1450,10 @@ sub check_params {
         $checked->{create_events}  = 0;
         $checked->{publish_events} = 0;
     }
-    for my $param ( 'frequency', 'duration', 'default_duration', 'create_events', 'publish_events', 'live',
-        'count_episodes' )
+    for my $param (
+        'frequency',      'duration', 'default_duration', 'create_events',
+        'publish_events', 'live',     'count_episodes'
+      )
     {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /(\d+)/ ) ) {
             $checked->{$param} = $1;
@@ -1452,8 +1469,15 @@ sub check_params {
         }
     }
 
-    for my $param ( 'series_name', 'title', 'excerpt', 'content', 'topic', 'image', 'image_label',
-        'assign_event_series_name', 'assign_event_title', 'comment', 'podcast_url', 'archive_url', 'setImage' )
+    for my $param (
+        'series_name',        'title',
+        'excerpt',            'content',
+        'topic',              'image',
+        'image_label',        'assign_event_series_name',
+        'assign_event_title', 'comment',
+        'podcast_url',        'archive_url',
+        'setImage'
+      )
     {
         if ( defined $params->{$param} ) {
 
@@ -1465,7 +1489,9 @@ sub check_params {
     }
 
     for my $attr ('start') {
-        if ( ( defined $params->{$attr} ) && ( $params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d[ T]\d\d\:\d\d)/ ) ) {
+        if (   ( defined $params->{$attr} )
+            && ( $params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d[ T]\d\d\:\d\d)/ ) )
+        {
             $checked->{$attr} = $1 . ':00';
         }
     }
