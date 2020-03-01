@@ -91,8 +91,6 @@ sub get($$) {
 		$limit
 	};
 
-    #print STDERR Dumper($query).Dumper($bind_values);
-
     my $dbh = db::connect($config);
     my $results = db::get( $dbh, $query, $bind_values );
 
@@ -147,8 +145,6 @@ sub insert ($$) {
 		values( } . join( ', ', ( map { '?' } @sql_columns ) ) . q{ )
 	};
     my @bind_values = map { $image->{$_} } @sql_columns;
-
-    #print STDERR Dumper($query).Dumper(\@bind_values);
     my $result = db::put( $dbh, $query, \@bind_values );
 
     images::setSeriesLabels( $dbh, $image );
@@ -208,8 +204,6 @@ sub update($$) {
 		set	   $set
 		where  $conditions
 	};
-
-    #print STDERR Dumper($query) . Dumper($bind_values);
     my $result = db::put( $dbh, $query, $bind_values );
 
     images::setSeriesLabels( $dbh, $image );
@@ -253,8 +247,6 @@ sub delete($$) {
 		delete from calcms_images 
 		where  $conditions
 	};
-
-    #print STDERR Dumper($query).Dumper($bind_values);
     return db::put( $dbh, $query, $bind_values );
 }
 
@@ -499,12 +491,7 @@ sub setEventLabels($$) {
         where  image=?
     };
     my $bind_values = [ $image->{licence}, $image->{filename} ];
-
-    #print STDERR Dumper($query) . Dumper($bind_values);
-
     my $results = db::put( $dbh, $query, $bind_values );
-
-    #print STDERR Dumper($results) . " changes\n";
     return $results;
 }
 
@@ -531,12 +518,7 @@ sub setSeriesLabels($$) {
         where  series_image=?
     };
     my $bind_values = [ $image->{licence}, $image->{filename} ];
-
-    #print STDERR Dumper($query) . Dumper($bind_values);
-
     my $results = db::put( $dbh, $query, $bind_values );
-
-    #print STDERR Dumper($results) . " changes\n";
     return $results;
 }
 

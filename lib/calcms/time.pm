@@ -221,7 +221,6 @@ sub add_days_to_datetime($;$) {
     $days = 0 unless defined $days;
     my $time = datetime_to_array($datetime);
 
-    #print STDERR Dumper($time);
     ( $time->[0], $time->[1], $time->[2] ) = Date::Calc::Add_Delta_Days( $time->[0] + 0, $time->[1] + 0, $time->[2] + 0, $days );
     return array_to_datetime($time);
 }

@@ -129,7 +129,6 @@ sub get_scheduled($$) {
         $limit
 	};
 
-    #print STDERR Dumper($query).Dumper(\@bind_values);
     my $entries = db::get( $dbh, $query, \@bind_values );
     return $entries;
 }
@@ -230,7 +229,6 @@ sub get($$) {
         $limit
 	};
 
-    #print STDERR Dumper($query).Dumper(\@bind_values);
     my $entries = db::get( $dbh, $query, \@bind_values );
     return $entries;
 }
@@ -241,7 +239,6 @@ sub sync ($$) {
     my $config  = shift;
     my $options = shift;
 
-    #print STDERR Dumper($config);
     print STDERR "upload " . Dumper($options);
     return undef unless defined $options->{project_id};
     return undef unless defined $options->{studio_id};
@@ -489,14 +486,11 @@ sub getEnd ($$) {
     my @start = @{ time::datetime_to_array($start) };
     next unless @start >= 6;
 
-    #print STDERR Dumper(\@start);
     my @end_datetime = Date::Calc::Add_Delta_DHMS(
         $start[0], $start[1], $start[2],    # start date
         $start[3], $start[4], $start[5],    # start time
         0, 0, 0, int($duration)             # delta days, hours, minutes, seconds
     );
-
-    #print STDERR Dumper(\@end_datetime);
     return time::array_to_datetime( \@end_datetime );
 }
 

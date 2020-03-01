@@ -104,9 +104,6 @@ sub get ($;$) {
 		order by start
 	};
 
-    #print STDERR $query."\n";
-    #print STDERR Dumper(\@bind_values);
-
     my $entries = db::get( $dbh, $query, \@bind_values );
     for my $entry (@$entries) {
         $entry->{weekday} = substr( $entry->{weekday}, 0, 2 );
@@ -331,8 +328,6 @@ sub update($$) {
         for my $date (@$dates) {
             $date->{exclude} = 0;
             $series_dates->{ $date->{start} } = $date;
-
-            #print STDERR Dumper($date)."\n" if ($date->{start} eq'2014-02-05 19:00:00');
         }
     }
 
@@ -342,12 +337,8 @@ sub update($$) {
         for my $date (@$dates) {
             $date->{exclude} = 1;
             $series_dates->{ $date->{start} } = $date;
-
-            #print STDERR Dumper($date)."\n" if ($date->{start} eq'2014-02-05 19:00:00');
         }
     }
-
-    #print STDERR Dumper($series_dates->{'2014-02-05 19:00:00'});
 
     my $request = { config => $config };
 
@@ -370,13 +361,9 @@ sub update($$) {
             $entry->{start_date} = time::add_hours_to_datetime( $entry->{start}, -$day_start );
             $entry->{end_date}   = time::add_hours_to_datetime( $entry->{end},   -$day_start );
             db::insert( $dbh, 'calcms_series_dates', $entry );
-
-            #print STDERR "$entry->{start_date}\n";
             $i++;
         } else {
             $j++;
-
-            #print STDERR Dumper($entry);
         }
     }
 

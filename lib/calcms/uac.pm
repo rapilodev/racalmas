@@ -352,8 +352,6 @@ sub update_role($$) {
 		where id=?
 	};
 
-    #	print $query."<br>\n".Dumper(\@bind_values)."<br>\ņ";
-
     db::put( $dbh, $query, \@bind_values );
 }
 
@@ -554,7 +552,6 @@ sub assign_user_role($$) {
     my $config  = shift;
     my $options = shift;
 
-    #print STDERR Dumper($options);
     return undef unless defined $options->{project_id};
     return undef unless defined $options->{studio_id};
     return undef unless defined $options->{user_id};
@@ -600,10 +597,8 @@ sub remove_user_role($$) {
 	};
     my $bind_values = [ $options->{project_id}, $options->{studio_id}, $options->{user_id}, $options->{role_id} ];
 
-    #print STDERR Dumper($query).Dumper($bind_values);
     my $dbh = db::connect($config);
     my $result = db::put( $dbh, $query, $bind_values );
-
     # successfully return  even if no entry exists
     return 1;
 }
@@ -767,7 +762,6 @@ sub get_user_presets($$) {
 
     my $logout_url = ( split( /\//, $0 ) )[-1];
 
-    #print STDERR "ok\n";
     my $result = {
         user       => $user,
         logout_url => $logout_url,

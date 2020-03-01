@@ -75,8 +75,6 @@ sub get ($$){
         $limit
 	};
 
-    #print STDERR Dumper($query).Dumper(\@bind_values);
-
     my $changes = db::get( $dbh, $query, \@bind_values );
 
     for my $change (@$changes) {

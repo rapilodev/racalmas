@@ -22,8 +22,6 @@ sub get($$) {
     my $config  = shift;
     my $options = shift;
 
-    #print STDERR Dumper($options);
-
     #get pot file
     unless ( defined $options->{file} ) {
         print STDERR "missing po file\n";

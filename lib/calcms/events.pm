@@ -62,14 +62,8 @@ sub get($$) {
     my $dbh = db::connect( $config, $request );
 
     ( my $query, my $bind_values ) = events::get_query( $dbh, $config, $request );
-
-    #print STDERR Dumper($query).Dumper($bind_values)."\n";
-
     my $results = db::get( $dbh, $$query, $bind_values );
-
     #$results = events::add_recordings($dbh, $config, $request, $results);
-
-    #print STDERR Dumper($results);
     $results = events::modify_results( $dbh, $config, $request, $results );
 
     return $results;
@@ -301,10 +295,6 @@ sub modify_results ($$$$) {
 
         #$result->{'project_title'}=$project->{title} if (defined $project->{title} && $project->{title} ne '');
 
-        #print STDERR "project:'$project_name'\n";
-        #print STDERR "title:'$result->{project_title}'\n";
-        #use Data::Dumper;print STDERR Dumper($result);
-
         for my $name ( keys %{ $config->{mapping}->{events} } ) {
             my $val = '';
             if (   ( defined $name )
@@ -323,8 +313,6 @@ sub modify_results ($$$$) {
 
         $previous_result = $result;
 
-        #print "Content-type:text/text\n\n";
-        #use Data::Dumper;print STDERR Dumper($result);
         $result->{ 'counter_' . $counter } = 1;
         $counter++;
 
@@ -418,8 +406,6 @@ sub add_recurrence_dates {
         where  id in ($conditions)
     };
 
-    #print STDERR Dumper($query);
-    #return;
     my $dbh = db::connect($config);
     my $events = db::get( $dbh, $query, $bind_values );
 
@@ -436,7 +422,6 @@ sub add_recurrence_dates {
           $recurrence_dates->{ $result->{recurrence} };
     }
 
-    #print STDERR Dumper($recurrence_dates);
 }
 
 sub calc_dates {
@@ -549,7 +534,6 @@ sub add_recordings($$$$) {
     my $request = shift;
     my $events  = shift;
 
-    #    print STDERR Dumper($results);
     return $events unless defined $events;
 
     my $params = $request->{params}->{checked};
@@ -579,8 +563,6 @@ sub add_recordings($$$$) {
 
     $dbh = db::connect($config) unless defined $dbh;
     my $recordings = db::get( $dbh, $query, $bindValues );
-
-    #print STDERR Dumper($recordings);
 
     for my $entry (@$recordings) {
         my $eventId = $entry->{event_id};

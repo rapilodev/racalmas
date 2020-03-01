@@ -26,14 +26,10 @@ sub get_cached_or_render($$$;$) {
     my $mark_locked = $_[3];
 
     my $params = $request->{params}->{checked};
-
-    #print STDERR Dumper($params);
     $config->{app_name} = $config->{controllers}->{comments};
 
     my $comment = $request->{params}->{checked};
-
     my $filename = '';
-
     my $results = comments::get( $config, $request );
 
     if ( ( defined $mark_locked ) && ( $mark_locked eq 'mark_locked' ) ) {
@@ -78,16 +74,9 @@ sub get($$) {
     my $request = shift;
 
     my $params = $request->{params}->{checked};
-
     my $dbh = db::connect( $config, $request );
-
     ( my $query, my $bind_values ) = comments::get_query( $dbh, $config, $request );
-
-    #print STDERR Dumper($$query);
-    #print STDERR Dumper($bind_values);
     my $results = db::get( $dbh, $$query, $bind_values );
-
-    #print STDERR Dumper($results);
     return $results;
 }
 
@@ -349,10 +338,7 @@ sub get_by_event($$$) {
         order by  created_at $sort_order
         $limit
     };
-
-    #print STDERR $query."\n";
     my $comments = db::get( $dbh, $query, $bind_values );
-
     return $comments;
 }
 
@@ -592,8 +578,6 @@ sub sort($$) {
         #define root nodes
         push @root_nodes, $node if ( $node->{level} == 0 );
     }
-
-    #print STDERR Dumper(\@root_nodes);
 
     #sort root nodes from newest to oldest
     my $sorted_nodes = [];

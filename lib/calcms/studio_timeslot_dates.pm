@@ -109,16 +109,12 @@ sub get ($$){
 		order by start
 	};
 
-    #print STDERR $query."\n";
-    #print STDERR Dumper(\@bind_values);
-
     my $entries = db::get( $dbh, $query, \@bind_values );
     for my $entry (@$entries) {
         $entry->{start_weekday} = substr( $entry->{start_weekday}, 0, 2 );
         $entry->{end_weekday}   = substr( $entry->{end_weekday},   0, 2 );
     }
 
-    #print STDERR Dumper($entries);
     return $entries;
 }
 
@@ -152,9 +148,7 @@ sub update {
         #calculate dates from start to end_date
         my $dateList = get_dates( $schedule->{start}, $schedule->{end}, $schedule->{end_date}, $schedule->{frequency} );
 
-        #print STDERR Dumper($dateList);
         for my $date (@$dateList) {
-
             #set studio i from
             $date->{project_id}                             = $schedule->{project_id};
             $date->{studio_id}                              = $schedule->{studio_id};
@@ -177,12 +171,8 @@ sub update {
         $entry->{start_date} = time::add_hours_to_datetime( $entry->{start}, -$day_start );
         $entry->{end_date}   = time::add_hours_to_datetime( $entry->{end},   -$day_start );
         db::insert( $dbh, 'calcms_studio_timeslot_dates', $entry );
-
-        #print STDERR "$entry->{start_date}\n";
         $i++;
     }
-
-    #print STDERR "$i studio_timeslot_dates updates\n";
     return $i;
 }
 
@@ -266,8 +256,6 @@ sub get_dates {
         my @start_date = Date::Calc::Add_Delta_Days( $start[0], $start[1], $start[2], $i );
         my @end_date   = Date::Calc::Add_Delta_Days( $end[0],   $end[1],   $end[2],   $i );
 
-        #print STDERR Dumper(\@start_date);
-        #print STDERR Dumper(\@end_date);
         my $start_date = sprintf( "%04d-%02d-%02d", @start_date );
         my $end_date   = sprintf( "%04d-%02d-%02d", @end_date );
         push @$dates,
@@ -350,11 +338,8 @@ sub can_studio_edit_events {
 		$conditions
 	};
 
-    #print STDERR Dumper($query).Dumper(\@bind_values);
-
     my $entries = db::get( $dbh, $query, \@bind_values );
 
-    #print STDERR Dumper($entries);
     return 0 if scalar(@$entries) == 0;
     return 1 if $entries->[0]->{permission} > 0;
 

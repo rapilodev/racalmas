@@ -53,7 +53,6 @@ sub save_content($$) {
         $entry->{$attr} = images::normalizeName( $entry->{$attr} ) if defined $entry->{$attr};
     }
 
-    #print STDERR Dumper(\$entry->{content});
     for my $attr ( 'content', 'topic' ) {
         if ( defined $entry->{$attr} ) {
             $entry->{ 'html_' . $attr } = markup::creole_to_html( $entry->{$attr} );
@@ -64,12 +63,7 @@ sub save_content($$) {
         }
     }
 
-    #print STDERR Dumper(\$entry->{series_image});
-    #print STDERR "ok2\n";
-    #return;
     $entry->{modified_at} = time::time_to_datetime( time() );
-
-    #return;
     #update only existing atributes
 
     #TODO: double check series_name (needed for reassignment but not for editing...)
@@ -207,10 +201,7 @@ sub set_playout_status ($$) {
 	};
     my $bind_values = [ $entry->{start}, $entry->{project_id}, $entry->{studio_id} ];
 
-    #print STDERR Dumper($sql).Dumper($bind_values);
     my $events = db::get( $dbh, $sql, $bind_values );
-
-    #print STDERR Dumper($events);
     return undef if scalar(@$events) != 1;
     my $event_id = $events->[0]->{event_id};
     $sql = qq{
@@ -220,8 +211,6 @@ sub set_playout_status ($$) {
 		and     start=?
 	};
     $bind_values = [ $entry->{playout}, $event_id, $entry->{start} ];
-
-    #print STDERR $sql."\n".Dumper($bind_values)."\n";
     my $result = db::put( $dbh, $sql, $bind_values );
     return $result;
 }
@@ -498,7 +487,6 @@ sub insert_event ($$) {
     $event->{created_at}  = time::time_to_datetime( time() );
     $event->{modified_by} = $user;
 
-    #print STDERR Dumper($event);
     my $dbh = db::connect($config);
     my $event_id = db::insert( $dbh, 'calcms_events', $event );
 

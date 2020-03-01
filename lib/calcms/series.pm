@@ -122,13 +122,10 @@ sub get ($$) {
     my $dbh = db::connect($config);
     my $series = db::get( $dbh, $query, \@bind_values );
 
-    #print STDERR Dumper(time());
     for my $serie (@$series) {
         $serie->{series_id} = $serie->{id};
         delete $serie->{id};
     }
-
-    #print STDERR Dumper($series);
     return $series;
 }
 
@@ -137,7 +134,6 @@ sub insert ($$) {
     my $config = shift;
     my $series = shift;
 
-    #print STDERR Dumper($series);
     return undef unless defined $series->{project_id};
     return undef unless defined $series->{studio_id};
 
@@ -154,8 +150,6 @@ sub insert ($$) {
 
     $entry->{created_at}  = time::time_to_datetime( time() );
     $entry->{modified_at} = time::time_to_datetime( time() );
-
-    #print STDERR Dumper($entry);
 
     my $dbh = db::connect($config);
     my $series_id = db::insert( $dbh, 'calcms_series', $entry );
@@ -203,8 +197,6 @@ sub update ($$) {
 		set    $values
 		where  id=?
 	};
-
-    #print STDERR Dumper($query).Dumper(\@bind_values);
 
     my $dbh = db::connect($config);
     return db::put( $dbh, $query, \@bind_values );
@@ -453,8 +445,6 @@ sub search_events ($$$) {
     }
 
     my $checked_params = events::check_params( $config, $params );
-
-    #print STDERR '<pre>'.Dumper($checked_params).'</pre>';
     my $request2 = {
         params => {
             checked => $checked_params
@@ -464,10 +454,7 @@ sub search_events ($$$) {
     };
 
     #my $debug=1;
-    #print STDERR Dumper($request2->{params});
     my $events = events::get( $config, $request2 );
-
-    #print Dumper($events);
     return $events;
 }
 
@@ -476,7 +463,6 @@ sub get_events ($$) {
     my $config  = shift;
     my $options = shift;
 
-    #print STDERR Dumper($options);
     return [] if defined( $options->{series_id} ) && ( $options->{series_id} <= 0 );
 
     my @conditions  = ();
@@ -545,13 +531,8 @@ sub get_events ($$) {
 		$limit
 	};
 
-    #print STDERR '<pre>'.$query.Dumper(\@bind_values).'</pre>';
-
     my $dbh = db::connect($config);
     my $results = db::get( $dbh, $query, \@bind_values );
-
-    #print STDERR Dumper($results);
-
     $results = events::modify_results(
         $dbh, $config,
         {
@@ -576,7 +557,6 @@ sub get_events ($$) {
         $result->{studio_id} = $studio_id_by_location->{ $result->{location} };
     }
 
-    #print STDERR Dumper($results);
     return $results;
 }
 
@@ -652,7 +632,6 @@ sub get_event_age($$) {
     my $config  = shift;
     my $options = shift;
 
-    #print STDERR Dumper($options);
     return undef unless defined $options->{project_id};
     return undef unless defined $options->{studio_id};
 
@@ -709,8 +688,6 @@ sub is_event_older_than_days ($$) {
     my $config  = shift;
     my $options = shift;
 
-    #print STDERR Dumper($options);
-
     return 1 unless defined $options->{project_id};
     return 1 unless defined $options->{studio_id};
     return 1 unless defined $options->{series_id};
@@ -733,8 +710,6 @@ sub is_event_older_than_days ($$) {
         return 1;
     }
     my $event = $events->[0];
-
-    #print STDERR Dumper($event);
     return 1 if $event->{days_over} > $options->{max_age};
     return 0;
 }
@@ -758,8 +733,6 @@ sub get_next_episode($$) {
     my $results     = db::get( $dbh, $query, $bind_values );
     return 0 if ( @$results != 1 );
     return 0 if ( $results->[0]->{count_episodes} eq '0' );
-
-    #print STDERR Dumper($results);
 
     #get all
     $query = q{
@@ -836,10 +809,7 @@ sub get_images ($$) {
 		$limit
 	};
 
-    #print STDERR Dumper($query).Dumper($bind_values);
     my $results = db::get( $dbh, $query, $bind_values );
-
-    #print STDERR @$results."\n";
     return $results;
 }
 
@@ -849,7 +819,6 @@ sub assign_event($$) {
     my $config = shift;
     my $entry  = shift;
 
-    #print STDERR Dumper($entry);
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};
     return undef unless defined $entry->{series_id};
@@ -1147,7 +1116,6 @@ sub is_event_assigned_to_user ($$) {
         }
     );
 
-    #print STDERR Dumper(@$events);
     return
         "no event found for"
       . " project $options->{project_id},"
@@ -1206,7 +1174,6 @@ sub get_rebuilt_episodes ($$) {
             $done->{$event2->{id}}=1;
         };
     }
-    #print STDERR Dumper($events);
     return $events;
 }
 

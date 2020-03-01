@@ -74,8 +74,6 @@ sub get($;$) {
 	    };
     }
     my $dbh = db::connect($config);
-
-    #print STDERR Dumper($query).Dumper(\@bind_values);
     my $studios = db::get( $dbh, $query, \@bind_values );
     return $studios;
 }
@@ -129,8 +127,6 @@ sub update ($$) {
 	};
 
     my $dbh = db::connect($config);
-
-    #print STDERR Dumper($query)." ".Dumper(\@bind_values);
     db::put( $dbh, $query, \@bind_values );
 }
 

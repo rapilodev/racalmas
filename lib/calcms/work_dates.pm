@@ -115,9 +115,6 @@ sub get ($$) {
 		order by start
 	};
 
-    #print STDERR $query."\n";
-    #print STDERR Dumper(\@bind_values);
-
     my $entries = db::get( $dbh, $query, \@bind_values );
     for my $entry (@$entries) {
         $entry->{weekday} = substr( $entry->{weekday}, 0, 2 );
@@ -162,8 +159,6 @@ sub update($$) {
         for my $date (@$dates) {
             $date->{exclude} = 0;
             $work_dates->{ $date->{start} } = $date;
-
-            #print STDERR Dumper($date)."\n" if ($date->{start} eq'2014-02-05 19:00:00');
         }
     }
 
@@ -173,15 +168,10 @@ sub update($$) {
         for my $date (@$dates) {
             $date->{exclude} = 1;
             $work_dates->{ $date->{start} } = $date;
-
-            #print STDERR Dumper($date)."\n" if ($date->{start} eq'2014-02-05 19:00:00');
         }
     }
 
-    #print STDERR Dumper($work_dates->{'2014-02-05 19:00:00'});
-
     my $request = { config => $config };
-
     my $i = 0;
     my $j = 0;
     for my $date ( keys %$work_dates ) {
@@ -208,8 +198,6 @@ sub update($$) {
             $i++;
         } else {
             $j++;
-
-            #print STDERR Dumper($entry);
         }
     }
 
@@ -382,8 +370,6 @@ sub delete($$) {
 		where project_id=? and studio_id=? and schedule_id=?
 	};
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{schedule_id} ];
-
-    #print '<pre>$query'.$query.Dumper($bind_values).'</pre>';
     return db::put( $dbh, $query, $bind_values );
 }
 

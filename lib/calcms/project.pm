@@ -73,8 +73,6 @@ sub get ($;$) {
         $limit
 	};
 
-    #print STDERR Dumper($query).Dumper(\@bind_values);
-
     my $projects = db::get( $dbh, $query, \@bind_values );
     return $projects;
 }
@@ -144,8 +142,6 @@ sub update($$) {
 		set $values
 		where project_id=?
 	};
-
-    #print STDERR Dumper($query).Dumper(\@bind_values);
     my $dbh = db::connect($config);
     db::put( $dbh, $query, \@bind_values );
 }

@@ -97,15 +97,11 @@ sub get($$) {
 		order  by exclude, start
 	};
 
-    #print STDERR $query."\n".Dumper(\@bind_values);
-
     my $entries = db::get( $dbh, $query, \@bind_values );
     for my $entry (@$entries) {
         $entry->{schedule_id} = $entry->{id};
         delete $entry->{id};
     }
-
-    #print STDERR Dumper($entries);
     return $entries;
 }
 
@@ -151,7 +147,6 @@ sub update($$) {
 		where  project_id=? and studio_id=? and id=?
 	};
 
-    #print STDERR Dumper($query).Dumper(\@bind_values);
     db::put( $dbh, $query, \@bind_values );
     print "done\n";
 }

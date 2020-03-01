@@ -200,7 +200,6 @@ sub update($$) {
 		where  user=?
 	};
 
-    #print STDERR Dumper($query).Dumper(\@bind_values);
     db::put( $dbh, $query, \@bind_values );
     print "done\n";
 }

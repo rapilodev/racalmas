@@ -100,8 +100,6 @@ sub get($$) {
 		$whereClause
 		order by created_at desc
 	};
-
-    #print STDERR Dumper($query).Dumper($bind_values);
     my $entries = db::get( $dbh, $query, $bind_values );
     return $entries;
 }
@@ -111,8 +109,6 @@ sub update($$$) {
     my $config = shift;
     my $dbh    = shift;
     my $entry  = shift;
-
-    #print STDERR "update:".Dumper($entry);
 
     my $day_start = $config->{date}->{day_starting_hour};
 
@@ -140,8 +136,6 @@ sub update($$$) {
         $query .= ' and id=?';
         push @$bind_values, $entry->{id};
     }
-
-    #print STDERR Dumper($query).Dumper($bind_values);
     return db::put( $dbh, $query, $bind_values );
 }
 
@@ -156,7 +150,6 @@ sub insert ($$$) {
     return undef unless defined $entry->{event_id};
     return undef unless defined $entry->{path};
 
-    #print STDERR "insert into audio_recordings:".Dumper($entry);
     return db::insert(
         $dbh,
         'calcms_audio_recordings',
