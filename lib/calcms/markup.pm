@@ -41,33 +41,13 @@ sub html_to_creole($) {
     my $s = shift;
 
     #remove elements
-    #	$s=~s/[\r\f\n]+/\n/gi;
-    #	$s=~s/<\/p.*?>//gi;
-    #	$s=~s/<\/br.*?>//gi;
     $s =~ s/\<\!\-\-[\s\S]*?\-\-\>//gi;
     $s =~ s/<script.*?>.*?<\/script.*?>//gi;
-
-    #	$s=~s/<\/?span.*?>//gi;
-    #	$s=~s/<\/?font.*?>//gi;
-    #	$s=~s/<\/?meta.*?>//gi;
-    #	$s=~s/<\/?title.*?>//gi;
-    #	$s=~s/<\/?style.*?>//gi;
-    #	$s=~s/<\/?col.*?>//gi;
-    #	$s=~s/<\/?thead.*?>//gi;
-    #	$s=~s/<\/?tbody.*?>//gi;
     $s =~ s/<\/?form.*?>//gi;
     $s =~ s/<\/?select.*?>//gi;
     $s =~ s/<\/?option.*?//gi;
     $s =~ s/<\/?input.*?>//gi;
-
-    #	$s=~s/<\/?button.*?>//gi;
-    #	$s=~s/<\/?textarea.*?>//gi;
     $s =~ s/<\/?script.*?>//gi;
-
-    #table elements
-    #	$s=~s/\s*<\/?td.*?>//gi;
-    #	$s=~s/\s*<\/?th.*?>//gi;
-
     #remove line breaks
     $s =~ s/[\r\n]+/ /gi;
 
@@ -87,13 +67,10 @@ sub html_to_creole($) {
     $s =~ s/<\/?i.*?>//gi;
     $s =~ s/<b.*?>(.*?)<\/b>/\*\*$1\*\*/gi;
 
-    #	$s=~s/<\/?b.*?>//gi;
-
     $s =~ s/<strong.*?>(.*?)<\/strong>/\*\*$1\*\*/gi;
     $s =~ s/<em.*?>(.*?)<\/em>/\/\/$1\/\//gi;
     $s =~ s/<blockquote.*?>((\W+|\w+)*?)<\/blockquote>/{{{$1}}}/gi;
 
-    #	$s=~s/<a\s+.*?href="(.*?)".*?>((\W+|\w+)*?)<\/a>/\[\[$1\|$2\]\]$3/gi;
     $s =~ s/<a\s+.*?href="(.*?)".*?>(.*?)(\s*)<\/a>/\[\[$1\|$2\]\]$3/gi;
     $s =~ s/<a.*?>//gi;
 
@@ -101,15 +78,8 @@ sub html_to_creole($) {
     $s =~ s/(\[\[[^\]\n]*?)\n([^\]]*?\]\])/$1$2/g;
     $s =~ s/(\[\[[^\]\n]*?)\n([^\]]*?\]\])/$1$2/g;
     $s =~ s/(\[\[[^\]\n]*?)\n([^\]]*?\]\])/$1$2/g;
-
-    #	print STDERR Dumper($s) if ($s=~/</);
-
+    
     $s =~ s/[\s]+/ /gi;
-
-    #	$s=~s/\n[ \t\r\n]+\n/\n\n/gi;
-    #	$s=~s/\n[ ]+/\n /gi;
-    #	$s=~s/\n+/\n/gi;
-    #	$s=~s/\n+/\\\n/gi;
 
     #line elements, increase head line level to avoid breaking single = chars
     $s =~ s/\s*<h1.*?>/== /gi;
@@ -117,42 +87,17 @@ sub html_to_creole($) {
     $s =~ s/\s*<h3.*?>/==== /gi;
     $s =~ s/\s*<h\d.*?>/===== /gi;
 
-    #	$s=~s/\s*<\/h\d.*?>/\n/gi;
-
-    #	$s=~s/<br.*?>/\\\\<br>/gi;
-    #	$s=~s/\s*<div.*?>//gi;
-    #	$s=~s/\s*<\/div>/\n/gi;
-
-    #	$s=~s/<table.*?>/\n/gi;
-    #	$s=~s/<\/table>/\n/gi;
-    #	$s=~s/\s*<tr.*?>//gi;
-    #	$s=~s/\s*<\/tr>//gi;
-
-    #	$s=~s/\s*<ol.*?>/\n/gi;
-    #	$s=~s/\s*<\/ol>/\n/gi;
-    #	$s=~s/\s*<ul.*?>/\n/gi;
-    #	$s=~s/\s*<\/ul>/\n/gi;
-    #	$s=~s/\s*<li.*?>/\n\* /gi;
-    #	$s=~s/\s*<\/li>//gi;
-
-    #	$s=~s/\s*<p.*?>\s*/\n\n/gi;
-    #	$s=~s/\s*<br.*?>\s*/\n /gi;
-
     my $tree = HTML::Parse::parse_html( '<body>' . $s . '</body>' );
     my $formatter = HTML::FormatText->new( leftmargin => 0, rightmargin => 2000 );
     $s = $formatter->format($tree);
 
-    #use Data::Dumper; print "asd:<textarea cols=100 rows=5>".Dumper($s);print "</textarea>";
     $s =~ s/\</\&lt;/g;
 
     #fix line endings
     $s =~ s/\n[ \t]+/\n/gi;
 
-    #$s=~s/\n[\t\r ]+\n/\n\n/g;
     $s =~ s/\n{3,99}/\n\n/g;
     $s =~ s/\n*\*[\s]+/\n\* /g;
-
-    #$s=~s/(\n\*.*?\n)([^\*])/$1\n\n$2/g;
 
     #enter line break before headlines
     $s =~ s/(={2,99})/\n$1/g;
@@ -164,15 +109,8 @@ sub html_to_creole($) {
     $s =~ s/\s+$//gi;
     $s =~ s/\n{3,99}/\n\n/g;
 
-    #	$s=~s/\n\n+/ \\\\\n/g;
     $s =~ s/\n/\\\\\n/g;
     $s =~ s/\\\\\n\=/\n\=/g;
-
-    #$s=~s/\n\n/ \\\\\n/g;
-    #	$s=~s/(\\\\\n){3,99}/\\\\\n\\\\\n/g;
-    #$s=~s/\\\\[ \t]+/\\\\\n/g;
-
-    #	$s=~s/<\/a>//gi;
 
     return $s;
 }
@@ -180,8 +118,6 @@ sub html_to_creole($) {
 sub creole_to_html ($) {
     my $s = $_[0] || '';
 
-    #$s=~s/\n\#\n/\n/g;
-    #fix_line_ends($s);
     $s =~ s/<a\s+.*?href="(.*?)".*?>(.*?)(\s*)<\/a>/\[\[$1\|$2\]\]$3/gi;
     $s =~ s/<a.*?>//gi;
 
@@ -193,27 +129,10 @@ sub creole_to_html ($) {
 
     $s = Text::WikiCreole::creole_parse($s) || '';
 
-    #	$s=~s/<p>/\n/gi;
-    #	$s=~s/\{\{\{((\W+|\w+)+?)\}\}\}/<blockquote>$1<\/blockquote>/g;
-    #	$s=~s/\{\{(.+?)\|(.*?)\}\}/<img src="$1" title="$2" \/>/g;
-    #	$s=~s/\[\[(.+?)\|(.*?)\]\]/<a href="$1">$2<\/a>/g;
-    #	$s=~s/([^\:])\/\/(.*?[^\:])\/\//$1<em>$2<\/em> /g;
-    #	$s=~s/\n=== (.*?)\n/<h3>$1<\/h3>\n/g;
-    #	$s=~s/\n== (.*?)\n/<h2>$1<\/h2>\n/g;
     #replace line breaks from images
     $s =~ s/(\{\{[^\}\n]*?)\n([^\}\n]*?\}\})/$1$2/g;
     $s =~ s/(\{\{[^\}\n]*?)\n([^\}\n]*?\}\})/$1$2/g;
     $s =~ s/(\{\{[^\}\n]*?)\n([^\}\n]*?\}\})/$1$2/g;
-
-    #replace line breaks from links
-    #	$s=~s/\n= (.*?)\n/<h1>$1<\/h1>\n/g;
-    #	$s=~s/\*\*(.*?)\*\*/<strong>$1<\/strong> /g;
-    #	$s=~s/^== (.*?)\n/<h2>$1<\/h2>\n/g;
-    #	$s=~s/\n\* (.*?)([\r\n]+)/<li>$1<\/li>\n/g;
-    #	$s=~s/\n\- (.*?)\n/<lo>$1<\/lo>\n/g;
-    #	$s=~s/\n\n/<p>/gi;
-    #	$s=~s/\n+/<br \/>/gi;
-    #	$s=~s/\</\&lt;/g;
 
     #remove whitespaces and break lines at start or end of elements
     for my $elem ( 'p', 'li' ) {
@@ -288,25 +207,6 @@ sub plain_to_xml($) {
     $_[0] =~ s/\[\[.+?\|(.+?)\]\]/$1/g;
     $_[0] =~ s/\{\{.+?\}\}//g;
     return encode_xml_element( $_[0] );
-
-    #	$_[0]=~s/\&auml;/ä/gi;
-    #	$_[0]=~s/\&ouml;/ö/gi;
-    #	$_[0]=~s/\&uuml;/ü/gi;
-    #	$_[0]=~s/\&Auml;/Ä/gi;
-    #	$_[0]=~s/\&Ouml;/Ö/gi;
-    #	$_[0]=~s/\&Uuml;/Ü/gi;
-    #	$_[0]=~s/\&szlig;/ß/gi;
-    #	$_[0]=~s/\&/\&amp;/gi;
-    #	$_[0]=~s/\</\&lt;/gi;
-    #	$_[0]=~s/\>/\&gt;/gi;
-    #	$_[0]=~s/\"/\&quot;/gi;
-
-##	$_[0]=~s/\n/<br\/>/gi;
-##	$_[0]=~s/\&amp;amp;/\&amp;/gi;
-##	$_[0]=~s/\&amp;amp;/+/gi;
-##	$_[0]=~s/\&amp;/+/gi;
-##	$_[0]=~s/\&/+/gi;
-    #	return $_[0];
 }
 
 sub fix_utf8($) {
@@ -324,22 +224,16 @@ sub compress ($) {
 
     if ( $_[0] =~ /(Content\-type\:[^\n]+[\n]+)/ ) {
         $header = $1;
-    } else {
-
-        #return;
     }
-
     my $start = index( $_[0], $header );
     return if ( $start < 0 );
 
     my $header_length = length($header);
     $header = substr( $_[0], 0, $start + $header_length );
 
-    #	print $header."\n";
-
     my $content = substr( $_[0], $start + $header_length );
 
-    #	#remove multiple line breaks
+    #remove multiple line breaks
     $content =~ s/[\r\n]+[\s]*[\r\n]+/\n/g;
 
     #remove leading whitespaces

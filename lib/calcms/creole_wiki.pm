@@ -86,7 +86,6 @@ sub extractEventFromWikiText($;$) {
         $category =~ s/^\s+|\s+$//g;
         $category =~ s/\&/\+/g;
 
-        #		print $category."\n";
         push @categories, $category if ( defined $category && $category =~ /\S/ );
         $title =~ s/\((.*?)\)//;
     }
@@ -100,9 +99,6 @@ sub extractEventFromWikiText($;$) {
         my $podcast_url = '';
         if ( $event->{content} =~ /\[\[\s*([^\|\]]+)\s*\|\s*podcast\s*\]\]/i ) {
             $podcast_url = $1;
-
-            #		$podcast_url=~s/\|.*//g;
-            #		print "found podcast:".$podcast_url."\n";
         }
         $event->{podcast_url} = $podcast_url;
 
@@ -110,9 +106,6 @@ sub extractEventFromWikiText($;$) {
         my $media_url = '';
         if ( $event->{content} =~ /\[\[\s*([^\|\]]+)\s*\|\s*(direct\s+)?download\s*\]\]/i ) {
             $media_url = $1;
-
-            #		$podcast_url=~s/\|.*//g;
-            #		print "found media:".$media_url."\n";
         }
         $event->{media_url} = $media_url;
 
@@ -162,27 +155,15 @@ sub eventToWikiText($$) {
     }
 
     my $meta = extractMeta( $event->{comments}, $event->{meta} );
-
-    #use Data::Dumper;print "extracted meta".Dumper($meta);
-
     $event->{comments}      = removeMeta( $event->{comments} );
     $event->{wiki_comments} = $event->{comments} . "\n\n" . metaToWiki($meta);
-
-    #use Data::Dumper;print "event content".Dumper($event->{content});
-
-    #rich content editors:
-    #$event->{wiki_content}=markup::html_to_creole($event->{content});
-
     #markup editors
     $event->{wiki_content} = $event->{content};
 
-#	[[http://localhost/agenda_files/media/images/Vl8X7YmaWrmm9RMN_OMywA.jpg|{{http://localhost/agenda_files/media/thumbs/Vl8X7YmaWrmm9RMN_OMywA.jpg|}}]]
-#replace "thumbs/xxx" link by link to local media URI
-#	while ($event->{wiki_content}=~/\[\[.*?\/+media\/+images\/+(.*?)\s*\|.*?\{\{.*?\/+media\/+thumbs\/+(.*?)\s*\|\s*(.*?)\s*\}\}\]\]/){
+    #	[[http://localhost/agenda_files/media/images/Vl8X7YmaWrmm9RMN_OMywA.jpg|{{http://localhost/agenda_files/media/thumbs/Vl8X7YmaWrmm9RMN_OMywA.jpg|}}]]
+    #replace "thumbs/xxx" link by link to local media URI
     $event->{wiki_content} =~
       s/\[\[.*?\/+media\/+images\/+(.*?)\s*\|.*?\{\{.*?\/+media\/+thumbs\/+(.*?)\s*\|\s*(.*?)\s*\}\}\]\]/\{\{thumbs\/$1\|$3\}\}/g;
-
-    #	}
 
     my $wiki_content = join( "\n" . ( "-" x 20 ) . "\n", ( $event->{excerpt}, $event->{wiki_content} ) );
     $wiki_content .= "\n" . ( "-" x 20 ) . "\n" . $event->{wiki_comments} if ( $event->{wiki_comments} =~ /\S/ );
@@ -231,8 +212,6 @@ sub extractMeta ($$){
             }
         }
     }
-
-    #	use Data::Dumper;print Dumper($meta);
     return $meta;
 }
 
@@ -244,8 +223,6 @@ sub removeMeta($) {
     for my $line ( split( /\n/, $comments ) ) {
         $result .= $line unless ( $line =~ /\~\~META\:(.+?)\=(.+?)\~\~/g );
     }
-
-    #use Data::Dumper;print "removed metsas:".Dumper($result);
     $result =~ s/^\s+//g;
     $result =~ s/\s+$//g;
 
@@ -258,18 +235,10 @@ sub metaToWiki {
 
     my $result = '';
     for my $pair (@$meta) {
-
-        #		use Data::Dumper;print Dumper($pair);
         $result .= '~~META:' . $pair->{name} . '=' . $pair->{value} . '~~' . "\n";
     }
     return $result;
-
-    #use Data::Dumper;print Dumper($meta);
-
 }
-
-#test:
-#perl -e 'use creole_wiki;$a=creole_wiki::extractEventFromWikiText("teaser\n----------------------\nbody[[asd|download]][[bsd|hallo]][[csd|podcast]]{{a|b}}[[dsd|wer]]\n----------------------\ncomments",{title=>" a : b - c ( d e -  f , g h i - j, k - m - l) "});use Data::Dumper;print Dumper($a)';
 
 #do not delete last line!
 1;
