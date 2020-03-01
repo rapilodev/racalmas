@@ -67,8 +67,6 @@ sub get ($$) {
         $limit
 	};
 
-    #print STDERR Dumper($query).Dumper(\@bind_values);
-
     my $results = db::get( $dbh, $query, \@bind_values );
     return $results;
 }
@@ -124,8 +122,6 @@ sub get_stats($$) {
 		group by user, project_id, studio_id
         $limit
 	};
-
-    #print STDERR Dumper($query).Dumper(\@bind_values);
 
     my $results = db::get( $dbh, $query, \@bind_values );
     for my $result (@$results) {
@@ -193,7 +189,6 @@ sub update ($$) {
 		where user=? and project_id=? and studio_id=? and series_id=?
 	};
 
-    #print STDERR Dumper($query).Dumper(\@bind_values);
     my $dbh = db::connect($config);
     return db::put( $dbh, $query, \@bind_values );
 }
@@ -203,25 +198,16 @@ sub increase ($$$) {
     my $usecase = shift;
     my $options = shift;
 
-    #print STDERR Dumper($usecase)." ".Dumper($options);
-
     return undef unless defined $usecase;
     return undef unless defined $options->{project_id};
     return undef unless defined $options->{studio_id};
     return undef unless defined $options->{series_id};
     return undef unless defined $options->{user};
 
-    #print STDERR "ok\n";
-
     my $columns = get_columns($config);
-
-    #print STDERR "columns:".Dumper($columns);
     return undef unless defined $columns->{$usecase};
 
     my $entries = get( $config, $options );
-
-    #print STDERR "exist:".Dumper($columns);
-
     if ( scalar @$entries == 0 ) {
         my $entry = {
             project_id => $options->{project_id},
@@ -231,18 +217,35 @@ sub increase ($$$) {
             $usecase   => 1,
         };
 
-        #print STDERR "user_stats::insert\n";
         return insert( $config, $entry );
     } elsif ( scalar @$entries == 1 ) {
         my $entry = $entries->[0];
         $entry->{$usecase}++ if defined
-
-          #print STDERR "user_stats::update\n";
-          return update( $config, $entry );
+        return update( $config, $entry );
     } else {
         print STDERR "user_stats: to few options given: $usecase," . Dumper($options) . "\n";
     }
 
+}
+
+sub get_active_users{
+    my $config    = shift;
+
+    my $dbh = db::connect($config);
+
+    my $query=qq{
+        select u.name login, u.full_name, 
+            s.last_login, s.login_count, 
+            u.disabled, u.created_at, u.created_by 
+        from calcms_users u left join (
+            SELECT user , max(start) last_login, count(user) login_count
+            FROM calcms_user_sessions
+            group by user
+        ) s on s.user=u.name 
+        order by u.disabled, s.last_login desc, u.created_at desc
+    };
+    my $results = db::get( $dbh, $query, [] );
+    return $results;    
 }
 
 sub error ($) {

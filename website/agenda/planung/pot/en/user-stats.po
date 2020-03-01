@@ -31,3 +31,30 @@ msgstr "last modified at"
 msgid "label_score"
 msgstr "Score"
 
+msgid "label_login"
+msgstr "Login"
+
+msgid "label_full_name"
+msgstr "Name"
+
+msgid "label_last_login"
+msgstr "last login date"
+
+msgid "label_login_count"
+msgstr "login counts"
+
+msgid "label_disabled"
+msgstr "disabled"
+
+msgid "label_created_at"
+msgstr "created at"
+
+msgid "label_created_by"
+msgstr "created by"
+
+msgid "button_show_active_users"
+msgstr "active users"
+
+msgid "button_show_user_stats"
+msgstr "user stats"
+

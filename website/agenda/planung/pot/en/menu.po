@@ -58,3 +58,6 @@ msgstr "Schedule"
 msgid "preview"
 msgstr "Preview"
 
+msgid "user-stats"
+msgstr "User Stats"
+

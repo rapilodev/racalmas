@@ -58,9 +58,16 @@ return unless uac::check( $config, $params, $user_presets ) == 1;
 
 our $errors = [];
 
-show_stats( $config, $request );
+if ($params->{action} eq 'show-active-users'){
+    show_active_users($config, $request);
+    return;
+};
+if ($params->{action} eq 'show-user-stats'){
+    show_user_stats( $config, $request );
+    return;
+};
 
-sub show_stats {
+sub show_user_stats {
     my $config  = shift;
     my $request = shift;
 
@@ -70,14 +77,38 @@ sub show_stats {
         uac::permissions_denied('read_user_stats');
         return;
     }
-    print STDERR "continue\n";
     $params->{user_stats}  = user_stats::get_stats( $config, $params );
     $params->{permissions} = $permissions;
     $params->{errors}      = $errors;
 
     $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'user-stats' } );
     uac::set_template_permissions( $permissions, $params );
-    template::process( $config, 'print', $params->{template}, $params );
+    my $template = template::check( $config, 'user-stats' );
+    template::process( $config, 'print', $template, $params );
+}
+
+sub show_active_users{
+    my $config  = shift;
+    my $request = shift;
+
+    my $params      = $request->{params}->{checked};
+    my $permissions = $request->{permissions};
+    unless ( $permissions->{read_user_stats} ) {
+        uac::permissions_denied('read_user_stats');
+        return;
+    }
+    my $user_stats  = user_stats::get_active_users( $config, $params );
+    for my $user (@$user_stats){
+        $user->{disabled} = $user->{disabled} ? 'x' : '-'; 
+    }
+    $params->{user_stats}  = $user_stats; 
+    $params->{permissions} = $permissions;
+    $params->{errors}      = $errors;
+
+    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'user-stats' } );
+    uac::set_template_permissions( $permissions, $params );
+    my $template = template::check( $config, 'user-active' );
+    template::process( $config, 'print', $template, $params );
 }
 
 sub check_params {
@@ -86,10 +117,12 @@ sub check_params {
 
     my $checked = {};
 
-    #template
-    my $template = '';
-    $template = template::check( $config, $params->{template}, 'user-stats' );
-    $checked->{template} = $template;
+    $checked->{action} = '';
+    if ( defined $params->{action} ) {
+        if ( $params->{action} =~ /^(show-user-stats|show-active-users)$/ ) {
+            $checked->{action} = $params->{action};
+        }
+    }
 
     #numeric values
     for my $param ( 'project_id', 'default_studio_id', 'studio_id', 'series_id' ) {

@@ -51,6 +51,10 @@
 <div><a href="image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>&search=<TMPL_VAR .presets.user>"><i class="fas fa-images"></i>&nbsp;<TMPL_VAR .loc.images></a></div>
 </TMPL_IF>
 
+<TMPL_IF .allow.read_user_stats>
+<div><a href="user-stats.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>&action=show-user-stats"><i class="fas fa-images"></i>&nbsp;<TMPL_VAR .loc.user-stats></a></div>
+</TMPL_IF>
+
 <div title="<TMPL_VAR .loc.profile>"><a href="user-settings.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-cog"></i>&nbsp;<TMPL_VAR .loc.profile></a></div>
 
 <div title="<TMPL_VAR .loc.help>"><a href="help.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-info"></i>&nbsp;<TMPL_VAR .loc.help></a></div>

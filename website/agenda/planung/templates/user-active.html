@@ -1,0 +1,67 @@
+<script src="js/jquery.tablesorter.min.js"></script>
+<script src="js/jquery.tablesorter.widgets.min.js"></script>
+<script src="js/jquery.tablesorter.scroller.js"></script>
+
+<script type="text/javascript">
+$(document).ready(
+    function(){
+        $('table#user_stats_table').tablesorter({
+            widgets: ["filter"],
+  	        usNumberFormat : false
+        });
+    }
+);
+</script>
+
+<style>
+div.col {
+    float:left;
+    width:10px;
+    height:10px;
+}
+table#user_stats_table input{
+    max-width:6em;
+}
+</style>
+
+<h2><TMPL_VAR loc.title></h2>
+<hr>
+<TMPL_INCLUDE status.html>
+
+    <button onclick="load('user-stats.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&action=show-user-stats')">
+        <TMPL_VAR .loc.button_show_user_stats>
+    </button>
+
+    <form method="post">
+        <input type="hidden" name="project_id" value="<TMPL_VAR project_id>">
+        <input type="hidden" name="studio_id" value="<TMPL_VAR studio_id>">
+    </form>
+
+    <table id="user_stats_table">
+        <thead>
+            <tr>
+                <th><TMPL_VAR loc.label_login></th>
+                <th><TMPL_VAR loc.label_full_name></th>
+                <th><TMPL_VAR loc.label_last_login></th>
+                <th><TMPL_VAR loc.label_login_count></th>
+                <th><TMPL_VAR loc.label_disabled></th>
+                <th><TMPL_VAR loc.label_created_at></th>
+                <th><TMPL_VAR loc.label_created_by></th>
+            </tr>
+        </thead>
+        <tbody>
+            <TMPL_LOOP user_stats>
+            <tr>
+                <td><TMPL_VAR login></td>
+                <td><TMPL_VAR full_name></td>
+                <td><TMPL_VAR last_login></td>
+                <td><TMPL_VAR login_count></td>
+                <td><TMPL_VAR disabled></td>
+                <td><TMPL_VAR created_at></td>
+                <td><TMPL_VAR created_by></td>
+            </tr>
+            </TMPL_LOOP>
+        </tbody>
+    </table>
+</body>
+</html>

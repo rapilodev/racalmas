@@ -28,6 +28,10 @@ table#user_stats_table input{
 <hr>
 <TMPL_INCLUDE status.html>
 
+    <button onclick="load('user-stats.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&action=show-active-users');">
+        <TMPL_VAR .loc.button_show_active_users>
+    </button>
+
     <form method="post">
         <input type="hidden" name="project_id" value="<TMPL_VAR project_id>">
         <input type="hidden" name="studio_id" value="<TMPL_VAR studio_id>">
@@ -36,15 +40,15 @@ table#user_stats_table input{
     <table id="user_stats_table">
         <thead>
             <tr>
-                <th><TMPL_VAR loc.label_user></td>
-                <th><TMPL_VAR loc.label_score></td>
-                <th><TMPL_VAR loc.label_modified_at></td>
-                <th><TMPL_VAR loc.label_create_events></td>
-                <th><TMPL_VAR loc.label_update_events></td>
-                <th><TMPL_VAR loc.label_delete_events></td>
-                <th><TMPL_VAR loc.label_create_series></td>
-                <th><TMPL_VAR loc.label_update_series></td>
-                <th><TMPL_VAR loc.label_delete_series></td>
+                <th><TMPL_VAR loc.label_user></th>
+                <th><TMPL_VAR loc.label_score></th>
+                <th><TMPL_VAR loc.label_modified_at></th>
+                <th><TMPL_VAR loc.label_create_events></th>
+                <th><TMPL_VAR loc.label_update_events></th>
+                <th><TMPL_VAR loc.label_delete_events></th>
+                <th><TMPL_VAR loc.label_create_series></th>
+                <th><TMPL_VAR loc.label_update_series></th>
+                <th><TMPL_VAR loc.label_delete_series></th>
             </tr>
         </thead>
         <tbody>

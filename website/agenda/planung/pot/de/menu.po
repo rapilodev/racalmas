@@ -58,3 +58,6 @@ msgstr "Dienstplan"
 msgid "preview"
 msgstr "Vorschau"
 
+msgid "user-stats"
+msgstr "Nutzeraktivität"
+

@@ -31,3 +31,30 @@ msgstr "letzte Änderung"
 msgid "label_score"
 msgstr "Punkte"
 
+msgid "label_login"
+msgstr "Login"
+
+msgid "label_full_name"
+msgstr "Name"
+
+msgid "label_last_login"
+msgstr "letztes Login"
+
+msgid "label_login_count"
+msgstr "Anzahl Logins"
+
+msgid "label_disabled"
+msgstr "gesperrt"
+
+msgid "label_created_at"
+msgstr "erstellt am"
+
+msgid "label_created_by"
+msgstr "erstellt von"
+
+msgid "button_show_active_users"
+msgstr "aktive Nutzer"
+
+msgid "button_show_user_stats"
+msgstr "Nutzerstatistik"
+
