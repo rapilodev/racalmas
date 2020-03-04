@@ -250,3 +250,11 @@ ADD COLUMN `studio_id` INT(10) UNSIGNED NULL AFTER `project_id`;
 ALTER TABLE `calcms`.`calcms_series` 
 ADD COLUMN `predecessor_id` INT(10) NULL AFTER `has_single_events`;
 
+CREATE TABLE `calcms`.`calcms_user_default_studios` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user` VARCHAR(50) NOT NULL,
+  `project_id` INT(11) NOT NULL,
+  `studio_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `user` (`user` ASC));
+

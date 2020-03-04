@@ -16,6 +16,7 @@ use project();
 use studios();
 use params();
 use user_settings();
+use user_default_studios();
 use localization();
 
 my $r = shift;
@@ -33,6 +34,7 @@ my $user_presets = uac::get_user_presets(
         studio_id  => $params->{studio_id}
     }
 );
+#print STDERR Dumper($user_presets);
 $params->{default_studio_id} = $user_presets->{studio_id};
 $params = uac::setDefaultStudio( $params, $user_presets );
 $params = uac::setDefaultProject( $params, $user_presets );
@@ -123,21 +125,41 @@ sub updateDefaultProjectStudio {
     my $permissions = $request->{permissions};
     my $user        = $params->{presets}->{user};
 
-    my $settings = {
+    my $entry = {
         user       => $user,
         project_id => $params->{project_id},
         studio_id  => $params->{studio_id},
     };
 
-    my $results = user_settings::get( $config, { user => $user } );
-    if ( defined $results ) {
+    $config->{access}->{write} = 1;
+    if ( 
+        defined user_settings::get( 
+            $config, 
+            { user => $user } 
+        ) 
+    ) {
         uac::print_info("update project and studio settings");
-        $config->{access}->{write} = 1;
-        user_settings::update( $config, $settings );
+        user_settings::update( $config, $entry );
     } else {
         uac::print_info("insert user settings, as missing on updating default project and studio");
         update_settings( $config, $request );
     }
+
+    if ( 
+        defined user_default_studios::get( 
+            $config, { 
+                user       => $user, 
+                project_id => $params->{project_id} 
+            } 
+        ) 
+    ) {
+        uac::print_info("update user default studio");
+        user_default_studios::update( $config, $entry );
+    } else {
+        uac::print_info("insert user default studio");
+        user_default_studios::insert( $config, $entry );
+    }
+
     $config->{access}->{write} = 0;
 }
 

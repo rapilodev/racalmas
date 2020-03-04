@@ -13,6 +13,7 @@ use template();
 use project();
 use studios();
 use user_settings();
+use user_default_studios();
 
 use base 'Exporter';
 our @EXPORT_OK = qw(
@@ -667,8 +668,9 @@ sub get_user_presets($$) {
     $config->{access}->{write} = 0;
 
     my $user_settings = user_settings::get( $config, { user => $user } );
-    $project_id = $user_settings->{project_id} || '' if $project_id eq '';
-    $studio_id  = $user_settings->{studio_id}  || '' if $studio_id eq '';
+    $project_id = $user_settings->{project_id} // '' if $project_id eq '';
+    my $defaults = user_default_studios::get( $config, { user => $user, project_id => $project_id } );
+    $studio_id = $defaults->{studio_id} // $user_settings->{studio_id}  // '' if $studio_id eq '';
 
     #get
     my $admin_roles = get_admin_user_roles( $config, { user => $user } );
