@@ -333,7 +333,7 @@ sub save_series {
     # fill series entry
     my $entry = {};
     for my $param ( keys %$params ) {
-        if ( defined $columns->{$param} ) {
+        if ( exists $columns->{$param} ) {
             $entry->{$param} = $params->{$param} || '';
         }
     }

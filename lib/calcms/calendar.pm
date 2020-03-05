@@ -164,10 +164,7 @@ sub get($$) {
             exclude_locations => 1,
         }
     );
-    my $used_day = {};
-    for my $day (@$used_days) {
-        $used_day->{ $day->{start_date} } = 1;
-    }
+    my $used_day = { map { $_->{start_date} => 1 } @$used_days };
 
     for my $year ( sort { $a <=> $b } keys %$years ) {
         my $months = $years->{$year};

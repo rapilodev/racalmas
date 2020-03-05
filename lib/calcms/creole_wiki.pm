@@ -191,10 +191,7 @@ sub extractMeta ($$) {
     if ( defined $comments ) {
 
         #build index for meta already defined
-        my $meta_keys = {};
-        for my $pair (@$meta) {
-            $meta_keys->{ $pair->{name} . '=' . $pair->{value} } = 1;
-        }
+        my $meta_keys = { map { $_->{name}."=".$_->{value} => 1 } @$meta };
 
         while ( $comments =~ /\~\~META\:(.+?)\=(.+?)\~\~/g ) {
             my $name  = $1;

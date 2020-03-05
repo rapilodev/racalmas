@@ -125,11 +125,7 @@ sub get_columns_hash($$) {
     my $table = shift;
 
     my $columns = db::get_columns( $dbh, $table );
-    my $result = {};
-    for my $column (@$columns) {
-        $result->{$column} = 1;
-    }
-    return $result;
+    return { map { $_ => 1 } @$columns };
 }
 
 #returns last inserted id

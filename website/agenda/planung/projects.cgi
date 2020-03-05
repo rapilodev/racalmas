@@ -237,11 +237,7 @@ sub show_projects {
         $project->{pid} = $project->{project_id};
 
         # get assigned studios by id
-        my $assigned_studio_by_id = {};
-        for my $studio (@$project_studio_assignements) {
-            $assigned_studio_by_id->{ $studio->{studio_id} } = 1;
-        }
-
+        my $assigned_studio_by_id = { map { $_->{studio_id} => 1 } @$project_studio_assignements };
         my $assigned_studios   = [];
         my $unassigned_studios = [];
         for my $studio (@$studios) {

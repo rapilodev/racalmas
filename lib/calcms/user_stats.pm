@@ -15,11 +15,7 @@ sub get_columns($) {
 
     my $dbh     = db::connect($config);
     my $cols    = db::get_columns( $dbh, 'calcms_user_stats' );
-    my $columns = {};
-    for my $col (@$cols) {
-        $columns->{$col} = 1;
-    }
-    return $columns;
+    return { map { $_ => undef } @$cols };
 }
 
 sub get ($$) {
@@ -205,7 +201,7 @@ sub increase ($$$) {
     return undef unless defined $options->{user};
 
     my $columns = get_columns($config);
-    return undef unless defined $columns->{$usecase};
+    return undef unless exists $columns->{$usecase};
 
     my $entries = get( $config, $options );
     if ( scalar @$entries == 0 ) {

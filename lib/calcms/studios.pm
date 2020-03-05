@@ -17,11 +17,7 @@ sub get_columns($) {
 
     my $dbh     = db::connect($config);
     my $cols    = db::get_columns( $dbh, 'calcms_studios' );
-    my $columns = {};
-    for my $col (@$cols) {
-        $columns->{$col} = 1;
-    }
-    return $columns;
+    return { map { $_ => undef } @$cols };
 }
 sub get($;$) {
     my $config = shift;

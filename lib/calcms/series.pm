@@ -34,11 +34,7 @@ sub get_columns ($) {
 
     my $dbh     = db::connect($config);
     my $cols    = db::get_columns( $dbh, 'calcms_series' );
-    my $columns = {};
-    for my $col (@$cols) {
-        $columns->{$col} = 1;
-    }
-    return $columns;
+    return { map { $_ => undef } @$cols };
 }
 
 # get series content
@@ -772,14 +768,14 @@ sub get_images ($$) {
             series_id  => $options->{series_id}
         }
     );
-    my $images = {};
-    my $found  = 0;
-    for my $event (@$events) {
-        my $image = $event->{image};
-        $image =~ s/.*\///;
-        $images->{$image} = 1;
-        $found++;
-    }
+    my $images = { 
+        map {
+            my $image = $_->{image};
+            $image =~ s/.*\///;
+            { $image => 1 };
+        } @$events 
+    };
+    my $found  = scalar(keys %$images);
 
     return undef if $found == 0;
 
@@ -948,10 +944,7 @@ sub set_event_ids ($$$$$) {
     return unless defined $event_ids;
 
     #make lookup table from events
-    my $event_id_hash = {};
-    for my $event_id (@$event_ids) {
-        $event_id_hash->{$event_id} = 1;
-    }
+    my $event_id_hash = { map { $_ => 1 } @$event_ids };
 
     #get series_entries from db
     #my $bind_names=join(',', (map { '?' } @$event_ids));
@@ -964,16 +957,8 @@ sub set_event_ids ($$$$$) {
     my $dbh = db::connect($config);
     my $results = db::get( $dbh, $query, $bind_values );
 
-    my $found = {};
-
     #mark events found assigned to series
-    my $i = 1;
-    for my $event (@$results) {
-
-        #print "found event $i: $event->{event_id}\n";
-        $found->{ $event->{event_id} } = 1;
-        $i++;
-    }
+    my $found = { map { $_->{event_id} => 1 } @$results };
 
     #insert events from list, not found in db
     for my $event_id (@$event_ids) {

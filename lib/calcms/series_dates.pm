@@ -26,11 +26,7 @@ sub get_columns ($) {
 
     my $dbh     = db::connect($config);
     my $cols    = db::get_columns( $dbh, 'calcms_series_dates' );
-    my $columns = {};
-    for my $col (@$cols) {
-        $columns->{$col} = 1;
-    }
-    return $columns;
+    return { map { $_ => undef } @$cols };
 }
 
 # get all series_dates for studio_id and series_id within given time range
@@ -261,12 +257,8 @@ sub addSeriesScheduleAttributes ($$) {
     my $config  = shift;
     my $entries = shift;
 
-    my $scheduleIds = {};
-
     # get series schedule ids used at entries
-    for my $entry (@$entries) {
-        $scheduleIds->{ $entry->{series_schedule_id} } = 1;
-    }
+    my $scheduleIds = { map { $_->{series_schedule_id} => 1 } @$entries };
     my @scheduleIds = keys %$scheduleIds;
     return $entries if scalar(@scheduleIds) == 0;
 

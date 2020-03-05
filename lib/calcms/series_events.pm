@@ -41,7 +41,7 @@ sub save_content($$) {
     my $config = shift;
     my $entry  = shift;
 
-    return undef unless ( defined $entry->{id} );
+    return undef unless defined $entry->{id};
 
     for my $attr ( keys %$entry ) {
         next unless defined $entry->{$attr};
@@ -308,10 +308,7 @@ sub check_permission($$) {
     delete $options->{permission};
 
     #convert check list to hash
-    my $check = {};
-    for my $permission ( @{ $options->{check_for} } ) {
-        $check->{$permission} = 1;
-    }
+    my $check = { map { $_ => 1 } @{ $options->{check_for} } };
     delete $options->{check_for};
 
     # is project assigned to studio

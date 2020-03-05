@@ -390,12 +390,7 @@ sub get_events($$$$) {
     my $params = $request->{params}->{checked}->{comment};
 
     #get event_ids from comments
-    my $event_ids = {};
-    for my $comment (@$comments) {
-        my $event_id = $comment->{event_id};
-        $event_ids->{$event_id} = 1;
-    }
-
+    my $event_ids = { map { $_->{event_id} => 1 } @$comments };
     my @keys = keys %{$event_ids};
     #get events from comment's event ids
     return [] if ( scalar @keys ) == 0;

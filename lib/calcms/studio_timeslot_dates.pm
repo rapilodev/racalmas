@@ -22,11 +22,7 @@ sub get_columns ($){
 
     my $dbh     = db::connect($config);
     my $cols    = db::get_columns( $dbh, 'calcms_studio_timeslot_dates' );
-    my $columns = {};
-    for my $col (@$cols) {
-        $columns->{$col} = 1;
-    }
-    return $columns;
+    return { map { $_ => undef } @$cols };
 }
 
 # get all studio_timeslot_dates for studio_id within given time range

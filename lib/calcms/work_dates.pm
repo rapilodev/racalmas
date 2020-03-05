@@ -26,11 +26,7 @@ sub get_columns($) {
 
     my $dbh     = db::connect($config);
     my $cols    = db::get_columns( $dbh, 'calcms_work_dates' );
-    my $columns = {};
-    for my $col (@$cols) {
-        $columns->{$col} = 1;
-    }
-    return $columns;
+    return { map { $_ => undef } @$cols };
 }
 
 # get all work_dates for studio_id and schedule_id within given time range
