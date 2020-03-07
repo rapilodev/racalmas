@@ -1,3 +1,4 @@
+
 msgid "region"
 msgstr "de"
 
@@ -120,6 +121,15 @@ msgstr "bearbeitet am"
 
 msgid "label_modified_by"
 msgstr "von"
+
+msgid "label_content_format"
+msgstr "Wiki-Sprache"
+
+msgid "label_content_format_markdown"
+msgstr "Markdown"
+
+msgid "label_content_format_creole"
+msgstr "Creole"
 
 msgid "button_event_list"
 msgstr "Sendungen zeigen"

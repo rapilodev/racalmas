@@ -46,7 +46,7 @@ sub setAttributesFromSeriesTemplate($$$) {
 	my $serie = $series->[0];
 	for my $attr (
 		'program',  'series_name', 'title', 'excerpt', 'topic',       'content', 'html_content', 'project',
-		'category', 'location',    'image', 'live',    'archive_url', 'podcast_url'
+		'category', 'location',    'image', 'live',    'archive_url', 'podcast_url', 'content_format'
 	  )
 	{
 		$event->{$attr} = $serie->{$attr};
@@ -109,7 +109,7 @@ sub setAttributesFromOtherEvent ($$$){
 		for my $attr (
 			'title',       'user_title',  'excerpt',      'user_excerpt', 'content',       'html_content',
 			'topics',      'image',       'series_image', 'live',         'no_event_sync', 'podcast_url',
-			'archive_url', 'image_label', 'series_image_label'
+			'archive_url', 'image_label', 'series_image_label', 'content_format'
 		  )
 		{
 			$event->{$attr} = $event2->{$attr};

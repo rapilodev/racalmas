@@ -77,11 +77,20 @@ msgstr "interne Kommentare"
 msgid "template_podcast_url"
 msgstr "Podcast URL"
 
+msgid "template_archive_url"
+msgstr "Archiv URL"
+
 msgid "template_predecessor_id"
 msgstr "ID der Vorgänger-Serie"
 
-msgid "template_archive_url"
-msgstr "Archiv URL"
+msgid "template_content_format"
+msgstr "Wiki-Sprache"
+
+msgid "template_content_format_markdown"
+msgstr "Markdown"
+
+msgid "template_content_format_creole"
+msgstr "Creole"
 
 msgid "tab_schedule"
 msgstr "Planung"
@@ -332,4 +341,5 @@ msgstr "löschen"
 
 msgid "label_excerpt_too_long"
 msgstr "Auszug ist zu lang. Für längeren Text bitte das Feld «aktuelle Themen» verwenden."
+
 

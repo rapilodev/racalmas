@@ -333,16 +333,22 @@ sub modify_results ($$$$) {
             && ( $params->{template} =~ /\.html/ ) )
         {
             if ( defined $result->{content} ) {
-                $result->{content} =
-                  markup::fix_line_ends( $result->{content} );
-                $result->{content} =
-                  markup::creole_to_html( $result->{content} );
+                if (($result->{content_format}//'') eq 'markdown'){
+                    $result->{content}      = markup::markdown_to_html( $result->{content} );
+                }else{
+                    $result->{content}      = markup::fix_line_ends( $result->{content} );
+                    $result->{content}      = markup::creole_to_html( $result->{content} );
+                }
                 $result->{html_content} = $result->{content};
-
             }
+
             if ( defined $result->{topic} ) {
-                $result->{topic}      = markup::fix_line_ends( $result->{topic} );
-                $result->{topic}      = markup::creole_to_html( $result->{topic} );
+                if (($result->{content_format}//'') eq 'markdown'){
+                    $result->{topic}      = markup::markdown_to_html( $result->{topic} );
+                }else{
+                    $result->{topic}      = markup::fix_line_ends( $result->{topic} );
+                    $result->{topic}      = markup::creole_to_html( $result->{topic} );
+                }
                 $result->{html_topic} = $result->{topic};
             }
         }
@@ -1029,13 +1035,14 @@ sub get_query($$$) {
     unless ( $get eq 'no_content' ) {
         if ( $template =~ /\.html/ ) {
             unless ( $template =~ /menu/ || $template =~ /list/ ) {
-                $query .= ', e.content, e.topic, e.html_content, e.html_topic';
+                $query .= ', e.content, e.topic, e.html_content, e.html_topic, e.content_format
+                ';
 
                 #$query.=',html_content content, html_topic topic' ;
             }
         } else {
             unless ( $template =~ /menu/ || $template =~ /list/ ) {
-                $query .= ', e.content, e.topic, e.html_content, e.html_topic';
+                $query .= ', e.content, e.topic, e.html_content, e.html_topic, e.content_format';
             }
         }
     }

@@ -76,6 +76,9 @@ msgstr "edit podcast URL"
 msgid "label_update_event_field_archive_url" 
 msgstr "edit archive URL"
 
+msgid "label_update_event_field_content_format"
+msgstr "set Wiki-Format"
+
 msgid "label_create_event_from_schedule" 
 msgstr "create new events (with date from an existing schedule)"
 

@@ -73,6 +73,9 @@ msgstr "Podcast-URL bearbeiten"
 msgid "label_update_event_field_archive_url" 
 msgstr "Archiv-URL bearbeiten"
 
+msgid "label_update_event_field_content_format"
+msgstr "Wiki-Format setzen"
+
 msgid "label_create_event_from_schedule" 
 msgstr "Sendungen vom Plan anlegen"
 

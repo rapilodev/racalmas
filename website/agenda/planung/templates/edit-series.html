@@ -165,6 +165,15 @@
                 <tr> <td class="label"><TMPL_VAR .loc.template_predecessor_id></td>     
                      <td><input name="predecessor_id" style="width:100%;" value="<TMPL_VAR predecessor_id>" placeholder="<TMPL_VAR .loc.template_predecessor_id>"></td></tr>
 
+                <tr> 
+                    <td class="label"><TMPL_VAR .loc.template_content_format></td>     
+                    <td>
+                        <select name="content_format" value="<TMPL_VAR content_format>">
+                            <option value="creole"<TMPL_IF content_format_creole> selected="selected"</TMPL_IF>><TMPL_VAR .loc.template_content_format_creole></option>
+                            <option value="markdown"<TMPL_IF content_format_markdown> selected="selected"</TMPL_IF>><TMPL_VAR .loc.template_content_format_markdown></option>
+                        </select>
+                    </td>
+                </tr>
 		    </table>
 
 		    <div class="buttons">

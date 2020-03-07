@@ -258,3 +258,13 @@ CREATE TABLE `calcms`.`calcms_user_default_studios` (
   PRIMARY KEY (`id`),
   INDEX `user` (`user` ASC));
 
+
+ALTER TABLE `calcms`.`calcms_series` 
+ADD COLUMN `content_format` VARCHAR(45) NULL AFTER `predecessor_id`;
+
+ALTER TABLE `calcms`.`calcms_events` 
+ADD COLUMN `content_format` VARCHAR(45) NULL DEFAULT NULL AFTER `disable_event_sync`;
+
+ALTER TABLE `calcms`.`calcms_roles` 
+ADD COLUMN `update_event_field_content_format` TINYINT(1) UNSIGNED NOT NULL AFTER `modified_at`;
+

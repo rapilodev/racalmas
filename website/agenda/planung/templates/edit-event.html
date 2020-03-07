@@ -494,6 +494,21 @@
                 </TMPL_IF>
             </td>
         </tr>
+        
+        <tr> 
+            <td class="label"><TMPL_VAR .loc.label_content_format></td>     
+            <td>
+                <TMPL_IF .allow.update_event_field_content_format>
+                <select name="content_format" style="width:100%;" value="<TMPL_VAR content_format>">
+                    <option value="creole"<TMPL_IF content_format_creole> selected="selected"</TMPL_IF>><TMPL_VAR .loc.label_content_format_creole></option>
+                    <option value="markdown"<TMPL_IF content_format_markdown> selected="selected"</TMPL_IF>><TMPL_VAR .loc.label_content_format_markdown></option>
+                </select>
+                <TMPL_ELSE>
+                    <TMPL_VAR content_format>
+                </TMPL_IF>
+            </td>
+        </tr>
+
     </table>
 
     <!-- buttons -->

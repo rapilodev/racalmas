@@ -10,6 +10,7 @@ use HTML::Parse();
 use HTML::FormatText();
 use Encode();
 use HTML::Entities();
+use Text::Markdown();
 
 use log();
 
@@ -142,6 +143,13 @@ sub creole_to_html ($) {
     }
 
     return $s;
+}
+
+sub markdown_to_html($){
+    my $text = $_[0] // '';
+    print STDERR "markwon!\n";
+    my $html = Text::Markdown::markdown($text);
+    return $html;
 }
 
 sub creole_to_plain($) {

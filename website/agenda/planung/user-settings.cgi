@@ -60,7 +60,8 @@ our $errors = [];
 
 if ( defined $params->{action} ) {
     update_settings( $config, $request ) if ( $params->{action} eq 'save' );
-    updateDefaultProjectStudio( $config, $request ) if ( $params->{action} eq 'updateDefaultProjectStudio' );
+    updateDefaultProjectStudio( $config, $request )
+      if ( $params->{action} eq 'updateDefaultProjectStudio' );
 }
 $config->{access}->{write} = 0;
 show_settings( $config, $request );
@@ -106,7 +107,8 @@ sub show_settings {
     my $period = $user_settings->{period} || 'month';
     $params->{ 'period_' . $period } = 1;
 
-    $params->{loc} = localization::get( $config, { language => $language, file => 'user-settings' } );
+    $params->{loc} =
+      localization::get( $config, { language => $language, file => 'user-settings' } );
 
     for my $color ( @{ $params->{colors} } ) {
         $color->{title} = $params->{loc}->{ $color->{title} };
@@ -132,12 +134,13 @@ sub updateDefaultProjectStudio {
     };
 
     $config->{access}->{write} = 1;
-    if ( 
-        defined user_settings::get( 
-            $config, 
-            { user => $user } 
-        ) 
-    ) {
+    if (
+        defined user_settings::get(
+            $config,
+            { user => $user }
+        )
+      )
+    {
         uac::print_info("update project and studio settings");
         user_settings::update( $config, $entry );
     } else {
@@ -145,14 +148,16 @@ sub updateDefaultProjectStudio {
         update_settings( $config, $request );
     }
 
-    if ( 
-        defined user_default_studios::get( 
-            $config, { 
-                user       => $user, 
-                project_id => $params->{project_id} 
-            } 
-        ) 
-    ) {
+    if (
+        defined user_default_studios::get(
+            $config,
+            {
+                user       => $user,
+                project_id => $params->{project_id}
+            }
+        )
+      )
+    {
         uac::print_info("update user default studio");
         user_default_studios::update( $config, $entry );
     } else {
@@ -217,7 +222,9 @@ sub check_params {
     $checked->{template} = $template;
 
     #numeric values
-    for my $param ( 'project_id', 'default_studio_id', 'studio_id', 'default_studio', 'default_project' ) {
+    for my $param ( 'project_id', 'default_studio_id', 'studio_id', 'default_studio',
+        'default_project' )
+    {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
             $checked->{$param} = $params->{$param};
         }

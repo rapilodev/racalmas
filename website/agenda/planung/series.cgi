@@ -343,10 +343,16 @@ sub save_series {
     $entry->{live}           = $params->{live} // 0;
     $entry->{count_episodes} = $params->{count_episodes} // 0;
     $entry->{predecessor_id} = $params->{predecessor_id} // 0;
+    #$entry->{content}        = $params->{content};
+    #$entry->{content_format} = $params->{content_format};
 
     #$entry->{html_content} = Encode::decode( 'utf-8', $entry->{content} );
-    $entry->{html_content} = markup::creole_to_html( $entry->{content} );
-    $entry->{html_content} =~ s/([^\>])\n+([^\<])/$1<br\/><br\/>$2/g;
+    if ($entry->{content_format} //'' eq "markdown"){
+        $entry->{html_content} = markup::markdown_to_html( $entry->{content} );
+    }else{
+        $entry->{html_content} = markup::creole_to_html( $entry->{content} );
+        $entry->{html_content} =~ s/([^\>])\n+([^\<])/$1<br\/><br\/>$2/g;
+    }
 
     $entry->{modified_at} = time::time_to_datetime( time() );
     $entry->{modified_by} = $request->{user};
@@ -356,6 +362,7 @@ sub save_series {
         return;
     }
 
+    # make sure name is not used anywhere else
     my $series_ids = series::get(
         $config,
         {
@@ -416,6 +423,7 @@ sub save_series {
             uac::print_error('series is not assigned to project!');
             return undef;
         }
+        
         if ( scalar(@$series_ids) > 1 ) {
             uac::permissions_denied('update due to entry already exists');
             return;
@@ -1145,8 +1153,12 @@ sub show_series {
 
     $serie->{studio_users} = $studio_users;
 
-    $serie->{html_content} = markup::creole_to_html( $serie->{content} );
-    $serie->{html_content} =~ s/([^\>])\n+([^\<])/$1<br\/><br\/>$2/g;
+    if (($serie->{markup_format}//'') eq 'markdown'){
+        $serie->{html_content} = markup::markdown_to_html( $serie->{content} );
+    }else{
+        $serie->{html_content} = markup::creole_to_html( $serie->{content} );
+        $serie->{html_content} =~ s/([^\>])\n+([^\<])/$1<br\/><br\/>$2/g;
+    }
 
     for my $user ( @{ $serie->{series_users} } ) {
         $user->{user_id} = $user->{id};
@@ -1214,9 +1226,12 @@ sub show_series {
     }
 
     #copy series to params
-    #$params->{series}=[$serie];
     for my $key ( keys %$serie ) {
         $params->{$key} = $serie->{$key};
+    }
+
+    for my $value ('markdown', 'creole'){
+        $params->{"content_format_$value"}=1 if $params->{content_format} eq $value;
     }
 
     $params->{loc} =
@@ -1476,7 +1491,7 @@ sub check_params {
         'image_label',        'assign_event_series_name',
         'assign_event_title', 'comment',
         'podcast_url',        'archive_url',
-        'setImage'
+        'setImage',           'content_format'
       )
     {
         if ( defined $params->{$param} ) {

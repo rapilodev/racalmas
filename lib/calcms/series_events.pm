@@ -54,12 +54,11 @@ sub save_content($$) {
     }
 
     for my $attr ( 'content', 'topic' ) {
-        if ( defined $entry->{$attr} ) {
+        next unless defined $entry->{$attr};
+        if (($entry->{content_format}//'') eq 'markdown'){
+            $entry->{ 'html_' . $attr } = markup::markdown_to_html( $entry->{$attr} );
+        }else{
             $entry->{ 'html_' . $attr } = markup::creole_to_html( $entry->{$attr} );
-
-            #$entry->{'html_'.$attr}=~s/([^\>])\n+([^\<])/$1<br\/><br\/>$2/g;
-            #$entry->{'html_'.$attr}=~s/^\s*(<p>)?//g;
-            #$entry->{'html_'.$attr}=~s/(<\/p>)?\s*$//g;
         }
     }
 
@@ -74,7 +73,8 @@ sub save_content($$) {
         'html_topic',   'episode',            'image',              'image_label',
         'series_image', 'series_image_label', 'podcast_url',        'archive_url',
         'live',         'published',          'playout',            'archived',
-        'rerun',        'draft',              'disable_event_sync', 'modified_by'
+        'rerun',        'draft',              'disable_event_sync', 'modified_by',
+        'content_format'
       )
     {
         push @keys, $key if defined $entry->{$key};
@@ -467,8 +467,14 @@ sub insert_event ($$) {
     {
         $event->{$attr} = $params->{$attr} if defined $params->{$attr};
     }
-    $event->{'html_content'} = markup::creole_to_html( $event->{'content'} ) if defined $event->{'content'};
-    $event->{'html_topic'}   = markup::creole_to_html( $event->{'topic'} )   if defined $event->{'topic'};
+    
+    if (($event->{'content_format'}//'') eq 'markdown'){
+        $event->{'html_content'} = markup::markdown_to_html( $event->{'content'} ) if defined $event->{'content'};
+        $event->{'html_topic'}   = markup::markdown_to_html( $event->{'topic'} )   if defined $event->{'topic'};
+    }else{
+        $event->{'html_content'} = markup::creole_to_html( $event->{'content'} ) if defined $event->{'content'};
+        $event->{'html_topic'}   = markup::creole_to_html( $event->{'topic'} )   if defined $event->{'topic'};
+    }
 
     #add event status
     for my $attr ( 'live', 'published', 'playout', 'archived', 'rerun', 'draft', 'disable_event_sync' ) {

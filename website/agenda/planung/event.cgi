@@ -207,7 +207,7 @@ sub show_event {
                 'image',              'image_label',
                 'series_image',       'series_image_label',
                 'live no_event_sync', 'podcast_url',
-                'archive_url'
+                'archive_url',        'content_format'
               )
             {
                 $event->{$attr} = $event2->{$attr};
@@ -313,6 +313,10 @@ sub show_event {
             }
         }
         $params->{edit_lock} = 1;
+    }
+    
+    for my $value ('markdown', 'creole'){
+        $params->{"content_format_$value"}=1 if ($params->{content_format}//'') eq $value;
     }
 
     $params->{loc} =
@@ -460,6 +464,10 @@ sub show_new_event {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
 
+    for my $value ('markdown', 'creole'){
+        $params->{"content_format_$value"}=1 if ($params->{content_format}//'') eq $value;
+    }
+
     $params->{loc} =
       localization::get( $config, { user => $params->{presets}->{user}, file => 'event,comment' } );
     template::process( $config, 'print', template::check( $config, 'edit-event' ), $params );
@@ -567,7 +575,7 @@ sub save_event {
     for my $key (
         'content',            'topic',       'title',        'excerpt',
         'episode',            'image',       'series_image', 'image_label',
-        'series_image_label', 'podcast_url', 'archive_url'
+        'series_image_label', 'podcast_url', 'archive_url',  'content_format'
       )
     {
         next unless defined $permissions->{ 'update_event_field_' . $key };
@@ -616,6 +624,7 @@ sub save_event {
         return;
     }
 
+    # set series image
     my $series = series::get(
         $config,
         {
@@ -848,7 +857,7 @@ sub check_params {
         'series_name',  'title',        'excerpt',    'content',
         'topic',        'program',      'category',   'image',
         'series_image', 'user_content', 'user_title', 'user_excerpt',
-        'podcast_url',  'archive_url',  'setImage'
+        'podcast_url',  'archive_url',  'setImage',   'content_format'
       )
     {
         if ( defined $params->{$param} ) {
@@ -877,6 +886,5 @@ sub check_params {
           create_event create_event_from_schedule get_json
         };
     }
-    print STDERR Dumper($checked);
     return $checked;
 }
