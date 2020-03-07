@@ -69,7 +69,7 @@ if ( defined $r ) {
     if ( $status =~ /limit/i ) {
         $error = $status;
     } else {
-        $upload = $apr->upload('image') if ( defined $params->{image} );
+        $upload = $apr->upload('image') if defined $params->{image};
     }
     print STDERR "apr\n";
 } else {

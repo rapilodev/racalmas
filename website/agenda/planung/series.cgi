@@ -148,7 +148,7 @@ sub save_schedule {
         'nextDay'
       )
     {
-        $entry->{$attr} = $params->{$attr} if ( defined $params->{$attr} );
+        $entry->{$attr} = $params->{$attr} if defined $params->{$attr};
     }
 
     unless ( project::is_series_assigned( $config, $entry ) == 1 ) {

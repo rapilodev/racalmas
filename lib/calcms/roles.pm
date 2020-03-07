@@ -107,7 +107,7 @@ sub get_user($) {
 
     my $user   = $ENV{REMOTE_USER};
     my $users  = $config->{users};
-    return $user if ( defined $users->{$user} );
+    return $user if defined $users->{$user};
     return 'nobody';
 }
 

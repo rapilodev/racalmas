@@ -31,7 +31,7 @@ sub get($$) {
     my $language = undef;
 
     #get language from options
-    $language = $options->{language} if ( defined $options->{language} );
+    $language = $options->{language} if defined $options->{language};
 
     #get language from user
     if ( ( !( defined $language ) ) && ( defined $options->{user} ) ) {

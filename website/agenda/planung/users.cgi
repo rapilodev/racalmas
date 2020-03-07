@@ -327,7 +327,7 @@ sub update_user_roles {
             my $message =
 "remove role '$role->{role}' (level $role->{level}) from user $user_id (level $max_user_level) for studio_id=$studio_id, project_id=$project_id. Your level is $max_level";
             my $update = 0;
-            $update = 1 if ( defined $permissions->{is_admin} );
+            $update = 1 if defined $permissions->{is_admin};
             $update = 1
               if ( ( $role_by_id->{ $user_role->{role_id} }->{level} < $max_level )
                 && ( $max_user_level < $max_level ) );
@@ -365,7 +365,7 @@ sub update_user_roles {
 
             #			print "user role id: $role->{id}<br>\n";
             my $update = 0;
-            $update = 1 if ( defined $permissions->{is_admin} );
+            $update = 1 if defined $permissions->{is_admin};
             $update = 1
               if ( ( $role_by_id->{ $role->{id} }->{level} < $max_level )
                 && ( $max_user_level < $max_level ) );

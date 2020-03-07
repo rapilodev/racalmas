@@ -371,7 +371,7 @@ sub modify_results ($$$$) {
           )
         {
             for my $key ( keys %$result ) {
-                $result->{$key} =~ s/\|/\\\|/g if ( defined $result->{$key} );
+                $result->{$key} =~ s/\|/\\\|/g if defined $result->{$key};
             }
 
             #            $result->{content}='no';

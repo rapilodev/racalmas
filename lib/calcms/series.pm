@@ -426,12 +426,12 @@ sub search_events ($$$) {
         template    => 'no'
     };
     if ( defined $options ) {
-        $params->{from_date} = $options->{from_date} if ( defined $options->{from_date} );
-        $params->{till_date} = $options->{till_date} if ( defined $options->{till_date} );
-        $params->{location}  = $options->{location}  if ( defined $options->{location} );
-        $params->{limit}     = $options->{limit}     if ( defined $options->{limit} );
-        $params->{archive}   = $options->{archive}   if ( defined $options->{archive} );
-        $params->{get}       = $options->{get}       if ( defined $options->{get} );
+        $params->{from_date} = $options->{from_date} if defined $options->{from_date};
+        $params->{till_date} = $options->{till_date} if defined $options->{till_date};
+        $params->{location}  = $options->{location}  if defined $options->{location};
+        $params->{limit}     = $options->{limit}     if defined $options->{limit};
+        $params->{archive}   = $options->{archive}   if defined $options->{archive};
+        $params->{get}       = $options->{get}       if defined $options->{get};
     }
 
     my $checked_params = events::check_params( $config, $params );

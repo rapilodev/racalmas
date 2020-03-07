@@ -94,7 +94,7 @@ sub save_schedule {
         'type'
       )
     {
-        $entry->{$attr} = $params->{$attr} if ( defined $params->{$attr} );
+        $entry->{$attr} = $params->{$attr} if defined $params->{$attr};
     }
 
     my $found = 0;

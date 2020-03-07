@@ -119,11 +119,11 @@ sub save_schedule {
 
     my $entry = {};
     for my $attr ( 'project_id', 'start', 'end', 'end_date', 'frequency' ) {
-        $entry->{$attr} = $params->{$attr} if ( defined $params->{$attr} );
+        $entry->{$attr} = $params->{$attr} if defined $params->{$attr};
     }
 
     #set schedule's studio to value from schedule_studio_id
-    $entry->{studio_id} = $params->{schedule_studio_id} if ( defined $params->{schedule_studio_id} );
+    $entry->{studio_id} = $params->{schedule_studio_id} if defined $params->{schedule_studio_id};
 
     if ( ( $entry->{end} ne '' ) && ( $entry->{end} le $entry->{start} ) ) {
         uac::print_error('start date should be before end date!');

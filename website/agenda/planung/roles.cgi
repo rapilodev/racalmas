@@ -366,7 +366,7 @@ sub show_roles {
         $out .= qq{</tr>};
     }
     $out .= '</table>';
-    $out .= '<input type="submit" name="action" value="save">' if ( defined $permissions->{update_role} );
+    $out .= '<input type="submit" name="action" value="save">' if defined $permissions->{update_role};
     $out .= '</form>';
     $out .= '</div>';
     print $out. "\n";
@@ -383,10 +383,8 @@ sub sort_columns {
         my $action = shift @words;
         my $group  = join( ' ', @words );
 
-        #print "action:'$action' group:'$group' <br>\n";
-
         my $index = $groups->{$group} || 0;
-        $index += $actions->{$action} if ( defined $actions->{$action} );
+        $index += $actions->{$action} if defined $actions->{$action};
         $column_level->{$column} = $index;
 
         #		print $index."<br>";

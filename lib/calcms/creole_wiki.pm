@@ -71,14 +71,14 @@ sub extractEventFromWikiText($;$) {
         $category =~ s/\s+/ /g;
         $category =~ s/^\s+|\s+$//g;
         $category =~ s/\&/\+/g;
-        push @categories, $category if ( defined $category && $category =~ /\S/ );
+        push @categories, $category if defined $category && $category =~ /\S/;
 
         $category = '';
         $category = $2 if ( defined $2 );
         $category =~ s/\s+/ /g;
         $category =~ s/^\s+|\s+$//g;
         $category =~ s/\&/\+/g;
-        push @categories, $category if ( defined $category && $category =~ /\S/ );
+        push @categories, $category if defined $category && $category =~ /\S/;
         $title =~ s/\((.*?),(.*?)\)/\($2\)/;
     }
     if ( $title =~ /\((.*?)\)/ ) {
@@ -87,7 +87,7 @@ sub extractEventFromWikiText($;$) {
         $category =~ s/^\s+|\s+$//g;
         $category =~ s/\&/\+/g;
 
-        push @categories, $category if ( defined $category && $category =~ /\S/ );
+        push @categories, $category if defined $category && $category =~ /\S/;
         $title =~ s/\((.*?)\)//;
     }
     $event->{categories} = \@categories if ( @categories > 0 );

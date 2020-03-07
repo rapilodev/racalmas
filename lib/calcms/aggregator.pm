@@ -103,7 +103,7 @@ sub get_calendar($$$) {
     my $debug  = $config->{system}->{debug};
 
     $request->{params}->{original}->{template} = 'calendar.html';
-    $request->{params}->{original}->{date} = $date if ( defined $date );
+    $request->{params}->{original}->{date} = $date if defined $date;
     $request->{params}->{checked} = calendar::check_params( $config, $request->{params}->{original} );
     $params = $request->{params}->{checked};
 

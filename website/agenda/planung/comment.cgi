@@ -138,7 +138,7 @@ sub showComments {
         my $language = $config->{date}->{language} || 'en';
         for my $event (@$events) {
             $event->{start} = time::date_time_format( $config, $event->{start}, $language );
-            $comment_count += $event->{comment_count} if ( defined $event->{comment_count} );
+            $comment_count += $event->{comment_count} if defined $event->{comment_count};
             $event->{cache_base_url} = $config->{cache}->{base_url};
         }
     }
