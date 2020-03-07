@@ -137,7 +137,6 @@ sub insert ($$) {
     my $studio_id  = $series->{studio_id};
 
     my $columns = series::get_columns($config);
-
     my $entry = {};
     for my $column ( keys %$columns ) {
         $entry->{$column} = $series->{$column} if defined $series->{$column};
@@ -174,11 +173,11 @@ sub update ($$) {
     return undef unless defined $series->{series_id};
 
     my $columns = series::get_columns($config);
-
     my $entry = {};
     for my $column ( keys %$columns ) {
         $entry->{$column} = $series->{$column} if defined $series->{$column};
     }
+
     $entry->{image}       = images::normalizeName( $entry->{image} ) if defined $entry->{image};
     $entry->{id}          = $series->{series_id};
     $entry->{modified_at} = time::time_to_datetime( time() );
@@ -193,7 +192,6 @@ sub update ($$) {
 		set    $values
 		where  id=?
 	};
-
     my $dbh = db::connect($config);
     return db::put( $dbh, $query, \@bind_values );
 }
@@ -254,7 +252,6 @@ sub delete($$) {
 		where project_id=? and studio_id=? and series_id=?
 	};
 
-    #print '<pre>$query'.$query.Dumper($bind_values).'</pre>';
     db::put( $dbh, $query, $bind_values );
 
     project::unassign_series(
@@ -285,7 +282,6 @@ sub delete($$) {
 	    where  id=?
 	};
 
-    #print STDERR $query.$query.Dumper($bind_values);
     db::put( $dbh, $query, $bind_values );
 }
 
@@ -327,11 +323,9 @@ sub get_users ($$) {
 		$conditions
 	};
 
-    #print STDERR $query." ".Dumper(\@bind_values)."\n";
     my $dbh = db::connect($config);
     my $result = db::get( $dbh, $query, \@bind_values );
 
-    #print STDERR $query." ".Dumper($result)."\n";
     return $result;
 }
 
@@ -669,7 +663,6 @@ sub get_event_age($$) {
         order  by has_single_events desc, days_over
     };
 
-    #print STDERR $query." ".Dumper(\@bind_values);
     my $dbh = db::connect($config);
     my $results = db::get( $dbh, $query, \@bind_values );
 
@@ -850,7 +843,6 @@ sub assign_event($$) {
     $bind_values =
       [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id}, $entry->{manual} ];
 
-    #print STDERR '<pre>'.$query.Dumper($bind_values).'</pre>';
     return db::put( $dbh, $query, $bind_values );
 }
 
@@ -874,7 +866,6 @@ sub unassign_event($$) {
 	};
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id} ];
 
-    #print STDERR '<pre>'.$query.Dumper($bind_values).'</pre>';
     my $dbh = db::connect($config);
     return db::put( $dbh, $query, $bind_values );
 }
