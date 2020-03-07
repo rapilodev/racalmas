@@ -98,8 +98,6 @@ my $permissions = $request->{permissions};
 $params->{action} = '' unless defined $params->{action};
 $params->{error} = $error || '';
 
-#print STDERR Dumper($params);
-
 if ( $params->{action} eq 'upload' ) {
     uploadRecording( $config, $request );
 } elsif ( $params->{action} eq 'delete' ) {
@@ -137,7 +135,6 @@ sub uploadRecording {
     if ( defined $fh ) {
         print STDERR "upload\n";
 
-        #print STDERR Dumper($fh)."<br>";
         my $fileInfo = uploadFile( $config, $fh, $params->{event_id}, $user, $params->{upload} );
         $params->{error} .= $fileInfo->{error} if defined $fileInfo->{error};
         $params->{path} = $fileInfo->{path};
@@ -284,8 +281,6 @@ sub showAudioRecordings {
         return;
     }
 
-    #print '<pre>'.Dumper($event).'</pre>';
-
     my $audioRecordings = audio_recordings::get(
         $config,
         {
@@ -294,8 +289,6 @@ sub showAudioRecordings {
             event_id   => $params->{event_id},
         }
     );
-
-    #print Dumper($audioRecordings);
     for my $recording (@$audioRecordings) {
         $recording->{size} =~ s/(\d)(\d\d\d)$/$1\.$2/g;
         $recording->{size} =~ s/(\d)(\d\d\d\.\d\d\d)$/$1\.$2/g;
@@ -411,8 +404,6 @@ sub updateDatabase {
         eventDuration => $eventDuration
     };
 
-    #print STDERR "updateDatabase:" . Dumper($entry);
-
     #connect
     $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
@@ -466,16 +457,11 @@ sub getFilename {
 
     }
 
-    #print STDERR "cgi:".Dumper($cgi);
-
     # fallback to CGI module
     my $file = $cgi->param("upload");
     return { error => "is no file" } if ( defined $file ) && ( $file =~ /\|/ );
 
-    #print STDERR "file:".Dumper($file);
     my $fileInfo = $cgi->uploadInfo($file);
-
-    #print STDERR "fileInfo:".Dumper($fileInfo);
 
     if ( defined $fileInfo ) {
         my $filename = $fileInfo->{'Content-Disposition'} || '';
@@ -559,7 +545,6 @@ sub check_params {
     $checked->{template} =
       template::check( $config, $params->{template}, 'upload-audio-recordings' );
 
-    #print Dumper($params);
     #numeric values
     for my $param ( 'project_id', 'studio_id', 'default_studio_id', 'series_id', 'event_id', 'id' )
     {

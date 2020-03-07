@@ -119,7 +119,7 @@ sub update {
     my $config = shift;
     my $entry  = shift;
 
-    return undef unless ( defined $entry->{schedule_id} );
+    return undef unless defined $entry->{schedule_id};
 
     my $dbh = db::connect($config);
 
@@ -270,10 +270,9 @@ sub delete {
     my $config = shift;
     my $entry  = shift;
 
-    #print STDERR "delete:".Dumper($entry);
-    return unless ( defined $entry->{project_id} );
-    return unless ( defined $entry->{studio_id} );
-    return unless ( defined $entry->{schedule_id} );
+    return unless defined $entry->{project_id};
+    return unless defined $entry->{studio_id};
+    return unless defined $entry->{schedule_id};
 
     my $dbh = db::connect($config);
 
@@ -284,7 +283,6 @@ sub delete {
 	};
     my $bind_values = [ $entry->{schedule_id} ];
 
-    #print '<pre>$query'.$query.Dumper($bind_values).'</pre>';
     db::put( $dbh, $query, $bind_values );
 }
 
@@ -296,8 +294,6 @@ sub can_studio_edit_events {
 
     my @conditions  = ();
     my @bind_values = ();
-
-    #print Dumper($condition);
 
     #return 0 unless defined $condition->{project_id};
     return 0 unless defined $condition->{studio_id};
@@ -363,8 +359,6 @@ sub getMergedDays {
     my @conditions  = ();
     my @bind_values = ();
 
-    #print Dumper($condition);
-
     #return 0 unless defined $condition->{project_id};
     return 0 unless defined $condition->{studio_id};
     return 0 unless defined $condition->{start};
@@ -411,20 +405,13 @@ sub getMergedDays {
 		order by start
 	};
 
-    # print STDERR Dumper($query).Dumper(\@bind_values);
-
     my $entries = db::get( $dbh, $query, \@bind_values );
-
-    # print STDERR Dumper($entries);
-
     if ( scalar(@$entries) == 2 ) {
         if ( $entries->[0]->{end} eq $entries->[1]->{start} ) {
             $entries = {
                 start => $entries->[0]->{start},
                 end   => $entries->[1]->{end}
             };
-
-            # print STDERR "found".Dumper($entries)."\n";
             return $entries;
         }
     }

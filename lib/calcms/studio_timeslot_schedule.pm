@@ -56,9 +56,6 @@ sub get($$) {
 		order  by start
 	};
 
-	#print $query."\n";
-	#print Dumper(\@bind_values);
-
 	my $entries = db::get( $dbh, $query, \@bind_values );
 	for my $entry (@$entries) {
 		$entry->{schedule_id} = $entry->{id};
@@ -71,11 +68,11 @@ sub insert($$) {
 	my $config = shift;
 	my $entry  = shift;
 
-	return unless ( defined $entry->{project_id} );
-	return unless ( defined $entry->{studio_id} );
-	return unless ( defined $entry->{start} );
-	return unless ( defined $entry->{end} );
-	return unless ( defined $entry->{frequency} );
+	return unless defined $entry->{project_id};
+	return unless defined $entry->{studio_id};
+	return unless defined $entry->{start};
+	return unless defined $entry->{end};
+	return unless defined $entry->{frequency};
 
 	my $dbh = db::connect($config);
 	return db::insert( $dbh, 'calcms_studio_timeslot_schedule', $entry );
@@ -86,12 +83,12 @@ sub update($$) {
 	my $config = shift;
 	my $entry  = shift;
 
-	return unless ( defined $entry->{project_id} );
-	return unless ( defined $entry->{studio_id} );
-	return unless ( defined $entry->{schedule_id} );
-	return unless ( defined $entry->{start} );
-	return unless ( defined $entry->{end} );
-	return unless ( defined $entry->{frequency} );
+	return unless defined $entry->{project_id};
+	return unless defined $entry->{studio_id};
+	return unless defined $entry->{schedule_id};
+	return unless defined $entry->{start};
+	return unless defined $entry->{end};
+	return unless defined $entry->{frequency};
 
 	$entry->{id} = $entry->{schedule_id};
 	delete $entry->{schedule_id};
@@ -121,7 +118,7 @@ sub delete ($$){
 	my $config = shift;
 	my $entry  = shift;
 
-	return unless ( defined $entry->{schedule_id} );
+	return unless defined $entry->{schedule_id};
 
 	my $dbh = db::connect($config);
 
@@ -132,7 +129,6 @@ sub delete ($$){
 	};
 	my $bind_values = [ $entry->{schedule_id} ];
 
-	#print '<pre>$query'.$query.Dumper($bind_values).'</pre>';
 	db::put( $dbh, $query, $bind_values );
 }
 

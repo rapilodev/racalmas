@@ -110,13 +110,10 @@ sub show_events {
         push @$years, $date;
     }
 
-    #print Dumper($params->{loc});
     $params->{studios} = $user_studios;
     $params->{series}  = $series;
     $params->{events}  = $events;
     $params->{years}   = $years;
-
-    #print STDERR Dumper($params);
     template::process( $config, 'print', $params->{template}, $params );
     return;
 }

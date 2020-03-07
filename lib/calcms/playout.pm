@@ -235,7 +235,6 @@ sub sync ($$) {
     my $config  = shift;
     my $options = shift;
 
-    print STDERR "upload " . Dumper($options);
     return undef unless defined $options->{project_id};
     return undef unless defined $options->{studio_id};
     return undef unless defined $options->{from};
@@ -268,8 +267,6 @@ sub sync ($$) {
     my $dbh = db::connect($config);
     my $entries = db::get( $dbh, $query, $bind_values );
 
-    #print STDERR "entries:".Dumper($entries);
-
     # get database entries by date
     my $entries_by_date = {};
     for my $entry (@$entries) {
@@ -280,7 +277,6 @@ sub sync ($$) {
 
         # remove outdated entries
         unless ( defined $update_by_date->{$start} ) {
-            print STDERR "delete:" . Dumper($entry);
             playout::delete( $config, $dbh, $entry );
             my $result = series_events::set_playout_status(
                 $config,
@@ -298,7 +294,6 @@ sub sync ($$) {
         # update existing entries
         if ( defined $update_by_date->{$start} ) {
             next if has_changed( $entry, $update_by_date->{$start} ) == 0;
-            print STDERR "update:" . Dumper($entry);
             playout::update( $config, $dbh, $entry, $update_by_date->{$start} );
             my $result = series_events::set_playout_status(
                 $config,
@@ -320,7 +315,6 @@ sub sync ($$) {
         unless ( defined $entries_by_date->{$start} ) {
             $entry->{project_id} = $project_id;
             $entry->{studio_id}  = $studio_id;
-            print STDERR "insert:" . Dumper($entry);
             playout::insert( $config, $dbh, $entry );
             my $result = series_events::set_playout_status(
                 $config,
@@ -377,8 +371,6 @@ sub update ($$$$) {
     }
 
     my $entry = $oldEntry;
-    print STDERR "update:" . Dumper($entry);
-
     my $day_start = $config->{date}->{day_starting_hour};
     $entry->{end} = playout::getEnd( $entry->{start}, $entry->{duration} );
     $entry->{start_date} = time::add_hours_to_datetime( $entry->{start}, -$day_start );

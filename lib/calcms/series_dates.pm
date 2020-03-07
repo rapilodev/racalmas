@@ -537,7 +537,6 @@ sub delete ($$) {
 	};
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id} ];
 
-    #print '<pre>$query'.$query.Dumper($bind_values).'</pre>';
     db::put( $dbh, $query, $bind_values );
 }
 

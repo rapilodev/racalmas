@@ -144,9 +144,6 @@ sub get_query($$$) {
         $limit
     };
 
-    #        where     lock_status='show'
-    #    use Data::Dumper;print STDERR Dumper($query);
-
     return ( \$query, $bind_values );
 }
 
@@ -430,10 +427,10 @@ sub get_events($$$$) {
     for my $comment (@$comments) {
         my $event_id = $comment->{event_id};
         my $event    = $events_by_id->{$event_id};
-        next unless ( defined $event );
+        next unless defined $event;
         $event->{comment_count}++;
         push @{ $event->{comments} }, $comment;    # if ($params->{event_id}ne'');
-        $event->{max_comment_id} = $comment->{id} if ( $comment->{id} > $event->{max_comment_id} );
+        $event->{max_comment_id} = $comment->{id} if $comment->{id} > $event->{max_comment_id};
         for my $name ( keys %{ $config->{controllers} } ) {
             $comment->{ "controller_" . $name } = $config->{controllers}->{$name} || '';
 
@@ -545,7 +542,7 @@ sub sort_childs {
     push @{$sorted_nodes}, $node;
 
     #return if node is leaf
-    return $sorted_nodes unless ( defined $node->{childs} );
+    return $sorted_nodes unless defined $node->{childs};
 
     #process child nodes
     for my $child ( @{ $node->{childs} } ) {

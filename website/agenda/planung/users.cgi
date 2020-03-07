@@ -100,7 +100,6 @@ sub show_users {
     for my $user (@$users) {
         $user->{disabled_checked} = 'selected="selected"' if ( $user->{disabled} eq '1' );
 
-        #print Dumper($user);
         my $user_roles = uac::get_user_roles(
             $config,
             {
@@ -111,8 +110,6 @@ sub show_users {
         );
         my @user_roles = ( map { { role => $_->{role} } } @$user_roles );
 
-        #print Dumper(\@user_roles);
-        #@user_roles[-1]->{__last__}=1 unless(@user_roles==0);
         $user->{user_roles} = \@user_roles;
 
         #mark all roles assigned to user
@@ -167,10 +164,7 @@ sub show_users {
     $params->{loc}         = localization::get( $config, { user => $params->{presets}->{user}, file => 'users' } );
     uac::set_template_permissions( $permissions, $params );
 
-    #print Dumper($permissions);
     template::process( $config, 'print', $params->{template}, $params );
-
-    #	template::process($config, 'print', template::check($config, 'users'), $params);
 
 }
 
@@ -198,11 +192,9 @@ sub update_user {
             return;
         }
 
-        #print Dumper($params);
         my $users = uac::get_users( $config, { email => $params->{user_email} } );
         if ( scalar(@$users) > 0 ) {
 
-            #print Dumper($users);
             error('There is already a user registered for the given email address');
             return;
         }
@@ -217,7 +209,6 @@ sub update_user {
         $user->{salt} = $crypt->{salt};
         $user->{pass} = $crypt->{crypt};
 
-        #print '<pre>'.Dumper($user).'</pre>';
         $user->{created_at}  = time::time_to_datetime( time() );
         $user->{modified_at} = time::time_to_datetime( time() );
         $user->{created_by}  = $params->{presets}->{user};
@@ -250,7 +241,6 @@ sub change_password {
     $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'users' } );
     uac::set_template_permissions( $permissions, $params );
 
-    #print Dumper($permissions);
     template::process( $config, 'print', template::check( $config, 'change-password' ), $params );
 }
 
@@ -274,9 +264,6 @@ sub delete_user {
 sub update_user_roles {
     my $config  = shift;
     my $request = shift;
-
-    #	print Dumper($params).'<br>';
-    #	print Dumper($request->{params}->{checked});
 
     my $permissions = $request->{permissions};
     unless ( $permissions->{update_user_role} == 1 ) {
@@ -453,8 +440,6 @@ sub check_params {
         }
     }
 
-    #print Dumper($params);
-    #print '<pre>'.Dumper($checked).'</pre>';
     return $checked;
 }
 

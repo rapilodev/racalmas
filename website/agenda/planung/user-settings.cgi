@@ -34,7 +34,6 @@ my $user_presets = uac::get_user_presets(
         studio_id  => $params->{studio_id}
     }
 );
-#print STDERR Dumper($user_presets);
 $params->{default_studio_id} = $user_presets->{studio_id};
 $params = uac::setDefaultStudio( $params, $user_presets );
 $params = uac::setDefaultProject( $params, $user_presets );

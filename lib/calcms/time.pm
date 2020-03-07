@@ -481,7 +481,7 @@ sub check_datetime($) {
 
 sub check_year_month($) {
     my $date = shift;
-    return -1 unless ( defined $date );
+    return -1 unless defined $date;
     return $date if ( $date eq '' );
     if ( $date =~ /(\d\d\d\d)\-(\d\d?)/ ) {
         return $1 . '-' . $2 . '-' . $3;

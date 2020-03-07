@@ -84,7 +84,6 @@ if ( defined $r ) {
     print STDERR "fallback\n";
 }
 
-print STDERR Dumper($params);
 print "Content-type:text/html; charset=UTF-8;\n\n";
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( ( !defined $user ) || ( $user eq '' ) );
@@ -214,7 +213,6 @@ sub update_database {
         studio_id   => $params->{studio_id},
         licence     => $params->{licence}
     };
-    print STDERR Dumper($image);
 
     #connect
     $config->{access}->{write} = 1;

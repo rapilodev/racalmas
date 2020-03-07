@@ -74,7 +74,6 @@ if ( defined $params->{action} ) {
 $config->{access}->{write} = 0;
 show_roles( $config, $request );
 
-#print '<pre>'.Dumper($request);
 return;
 
 # update roles in database:
@@ -107,8 +106,6 @@ sub save_roles {
     }
 
     my $columns = uac::get_role_columns($config);
-
-    #print '<pre>'.Dumper($columns).'</pre>';
 
     #initialize all value ids (given by params matching to database columns)
     my $values = {};
@@ -163,7 +160,6 @@ sub save_roles {
         }
     }
 
-    #print STDERR Dumper($values);
     #order roles to update by level
     for my $id ( sort { $values->{$a}->{level} <=> $values->{$b}->{level} } keys %$values ) {
         my $role = $values->{$id};
@@ -313,7 +309,6 @@ sub show_roles {
 
     for my $role (@$roles) {
 
-        #print Dumper($role);
         my $id    = $role->{id}   || '';
         my $value = $role->{role} || '';
         my $style = '';

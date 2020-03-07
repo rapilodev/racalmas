@@ -106,8 +106,8 @@ sub set_episode{
     my $config = shift;
     my $entry  = shift;
 
-    return undef unless ( defined $entry->{id} );
-    return undef unless ( defined $entry->{episode} );
+    return undef unless defined $entry->{id};
+    return undef unless defined $entry->{episode};
 
     my $query = qq{
 		update calcms_events 
@@ -131,9 +131,9 @@ sub save_event_time($$) {
     my $config = shift;
     my $entry  = shift;
 
-    return undef unless ( defined $entry->{id} );
-    return undef unless ( defined $entry->{duration} );
-    return undef unless ( defined $entry->{start_date} );
+    return undef unless defined $entry->{id};
+    return undef unless defined $entry->{duration};
+    return undef unless defined $entry->{start_date};
 
     my $dbh   = db::connect($config);
     my $event = {
@@ -173,7 +173,6 @@ sub save_event_time($$) {
 	};
     push @$bind_values, $event->{id};
 
-    #print STDERR $update_sql."\n".Dumper($bind_values)."\n";
     db::put( $dbh, $update_sql, $bind_values );
     return $event;
 }

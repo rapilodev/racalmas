@@ -54,8 +54,6 @@ sub get ($$) {
 		$conditions
 	};
 
-    #print $query."\n".Dumper(\@bind_values);
-
     my $entries = db::get( $dbh, $query, \@bind_values );
     return $entries->[0] || undef;
 }
@@ -77,7 +75,6 @@ sub update($$) {
 		set    $values
 		where  token=?
 	};
-    print STDERR $query . Dumper( \@bind_values );
     db::put( $dbh, $query, \@bind_values );
 }
 
@@ -88,7 +85,6 @@ sub insert ($$) {
     return undef unless defined $entry->{user};
 
     my $dbh = db::connect($config);
-    print STDERR 'insert ' . Dumper($entry);
     return db::insert( $dbh, 'calcms_password_requests', $entry );
 }
 
@@ -120,7 +116,6 @@ sub delete ($$) {
         $conditions
 	};
 
-    print STDERR "$query " . Dumper( \@bind_values );
     db::put( $dbh, $query, \@bind_values );
 }
 
@@ -137,8 +132,6 @@ sub sendToken ($$) {
     my $oldEntry = password_requests::get( $config, { user => $entry->{user} } );
     if ( defined $oldEntry ) {
         my $createdAt = $oldEntry->{created_at};
-        print STDERR Dumper($oldEntry);
-        print STDERR "createdAt=$createdAt\n";
         my $age = time() - time::datetime_to_time($createdAt);
         if ( $age < 60 ) {
             print STDERR "too many requests";
@@ -196,18 +189,13 @@ sub changePassword ($$$) {
         return { error => 'entered passwords do not match' };
     }
 
-    #print STDERR "error at changing password:" . Dumper($errors);
-
     my $crypt = auth::crypt_password( $params->{user_password} );
     $user = { id => $user->{id} };
     $user->{salt} = $crypt->{salt};
     $user->{pass} = $crypt->{crypt};
 
-    #print '<pre>'.Dumper($user).'</pre>';
     $config->{access}->{write} = 1;
-    print STDERR "update user" . Dumper($user);
     my $result = uac::update_user( $config, $user );
-    print STDERR "result:" . Dumper($result);
     $config->{access}->{write} = 0;
     return { success => "password changed for $userName" };
 }

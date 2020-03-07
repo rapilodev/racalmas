@@ -192,7 +192,6 @@ sub createEvent {
 
     $event->{start_date} = $event->{start};
     eventOps::createEvent( $request, $event, 'create_event_from_schedule' );
-    print STDERR Dumper($date);
     return $event;
 
 }

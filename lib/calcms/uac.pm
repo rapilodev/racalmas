@@ -89,7 +89,7 @@ sub get_users_by_studio ($$) {
     my $config    = shift;
     my $condition = shift;
 
-    return unless ( defined $condition->{studio_id} );
+    return unless defined $condition->{studio_id};
 
     my @conditions  = ();
     my @bind_values = ();
@@ -517,7 +517,7 @@ sub get_user_id ($$) {
     my $config = shift;
     my $user   = shift;
 
-    return undef unless ( defined $user );
+    return undef unless defined $user;
 
     my $query = qq{
 		select	id
@@ -535,7 +535,7 @@ sub get_role_id ($$) {
     my $config = shift;
     my $role   = shift;
 
-    return undef unless ( defined $role );
+    return undef unless defined $role;
 
     my $query = qq{
 		select	id

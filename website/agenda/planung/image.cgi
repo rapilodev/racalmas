@@ -168,8 +168,6 @@ sub show_image {
             $selectedImage = $filenames->{$selectedFilename};
         } else {
 
-            #print STDERR "getByName:".Dumper($params);
-
             #put selected image to the top
             my $imagesByNames = images::get(
                 $config,
@@ -179,8 +177,6 @@ sub show_image {
                     filename   => $selectedFilename
                 }
             );
-
-            #print STDERR Dumper($imagesByNames);
             $selectedImage = $imagesByNames->[0] if scalar @$imagesByNames > 0;
         }
 
@@ -292,8 +288,6 @@ sub save_image {
     my $dbh = db::connect($config);
 
     print STDERR "going to save\n";
-
-    #print STDERR Dumper($image);
 
     my $entries = images::get(
         $config,
@@ -479,8 +473,6 @@ sub check_params {
 
     $checked->{from} = time::check_date( $params->{from} );
     $checked->{till} = time::check_date( $params->{till} );
-
-    #print STDERR 'checked:'.Dumper ($checked);
 
     return $checked;
 }

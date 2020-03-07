@@ -175,7 +175,7 @@ sub creole_to_plain($) {
 
 sub html_to_plain ($) {
     my $s = shift;
-    return '' unless ( defined $s );
+    return '' unless defined $s;
     my $tree = HTML::Parse::parse_html( '<body>' . $s . '</body>' );
     my $formatter = HTML::FormatText->new( leftmargin => 0, rightmargin => 2000 );
     $s = $formatter->format($tree);

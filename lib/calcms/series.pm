@@ -365,9 +365,9 @@ sub remove_user ($$) {
     my $config    = shift;
     my $condition = shift;
 
-    return unless ( defined $condition->{project_id} );
-    return unless ( defined $condition->{studio_id} );
-    return unless ( defined $condition->{series_id} );
+    return unless defined $condition->{project_id};
+    return unless defined $condition->{studio_id};
+    return unless defined $condition->{series_id};
 
     my @conditions  = ();
     my @bind_values = ();

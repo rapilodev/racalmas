@@ -179,7 +179,6 @@ sub assign_series {
         }
     );
 
-    #print Dumper($series);
     if ( @$series == 0 ) {
 
         # assign series to project/studio
@@ -192,12 +191,9 @@ sub assign_series {
             }
         );
 
-        #print "assign\n";
     } else {
         print STDERR
 "event $entry->{event_id} already assigned to project $entry->{project_id}, studio $entry->{studio_id}, series $entry->{series_id}\n";
-
-        #print "is schon\n";
     }
 
     $config->{access}->{write} = 0;

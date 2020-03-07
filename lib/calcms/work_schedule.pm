@@ -80,8 +80,6 @@ sub get($$) {
 		order  by exclude, start
 	};
 
-    #print STDERR $query."\n".Dumper(\@bind_values);
-
     my $entries = db::get( $dbh, $query, \@bind_values );
     return $entries;
 }
@@ -143,7 +141,6 @@ sub delete($$) {
 	};
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{schedule_id} ];
 
-    #print '<pre>$query'.$query.Dumper($bind_values).'</pre>';
     return db::put( $dbh, $query, $bind_values );
 }
 

@@ -15,7 +15,7 @@ our @EXPORT_OK =
 sub extractEventFromWikiText($;$) {
     my $params = shift;
     my $event  = shift;
-    $event = {} unless ( defined $event );
+    $event = {} unless defined $event;
 
     my $title           = $params->{title}           || '';
     my $content         = $params->{content}         || '';
@@ -185,7 +185,7 @@ sub extractMeta ($$) {
     my $comments = shift;
     my $meta     = shift;
 
-    $meta = [] unless ( defined $meta );
+    $meta = [] unless defined $meta;
 
     #push meta tags into meta list
     if ( defined $comments ) {

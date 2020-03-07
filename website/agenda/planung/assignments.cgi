@@ -97,13 +97,11 @@ sub show_events {
     my $projects = project::get( $config, { project_id => $params->{project_id} } );
     my $project = $projects->[0];
 
-    #print STDERR Dumper($project);
     return unless ( @$projects == 1 );
 
     my $studios = studios::get( $config, { project_id => $params->{project_id}, studio_id => $params->{studio_id} } );
     my $studio = $studios->[0];
 
-    #print STDERR Dumper($studio);
     return unless ( @$studios == 1 );
 
     my $project_name = $project->{name};
@@ -161,7 +159,6 @@ sub show_events {
         order by series_name,title,start
         limit 1000
     };
-    print '<pre>' . Dumper($query) . Dumper($bind_values) . '</pre>';
     $results = db::get( $dbh, $query, $bind_values );
 
     # detect title and episode

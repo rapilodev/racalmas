@@ -48,8 +48,6 @@ my $request = {
     },
 };
 
-#print STDERR Dumper($request)."\n";
-
 #set user at params->presets->user
 $request = uac::prepare_request( $request, $user_presets );
 
@@ -106,15 +104,12 @@ sub show_history {
 
     my $events = event_history::get( $config, $options );
 
-    #print STDERR Dumper($events);
     return unless defined $events;
     $params->{events} = $events;
 
     for my $permission ( keys %{$permissions} ) {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
-
-    #print STDERR Dumper($params);
     $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event-history' } );
 
     template::process( $config, 'print', template::check( $config, 'event-history' ), $params );
@@ -280,8 +275,6 @@ sub check_params {
             $checked->{action} = $params->{action};
         }
     }
-
-    #print STDERR Dumper($checked);
     return $checked;
 }
 

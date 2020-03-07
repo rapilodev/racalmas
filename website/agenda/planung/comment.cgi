@@ -60,7 +60,6 @@ $request = uac::prepare_request( $request, $user_presets );
 
 $params = $request->{params}->{checked};
 
-#print Dumper($params);
 #show header
 if ( ( params::isJson() ) || ( defined $params->{action} ) ) {
     print "Content-Type:text/html; charset=utf-8;\n\n";

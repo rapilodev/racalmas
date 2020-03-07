@@ -108,7 +108,6 @@ sub save_schedule {
         return;
     }
 
-    #print Dumper($params);
     my $params = $request->{params}->{checked};
 
     for my $attr ( 'project_id', 'studio_id', 'start', 'end', 'end_date', 'schedule_studio_id' ) {
@@ -131,22 +130,16 @@ sub save_schedule {
         return;
     }
 
-    #print Dumper($entry);
     $config->{access}->{write} = 1;
     if ( defined $params->{schedule_id} ) {
         $entry->{schedule_id} = $params->{schedule_id};
-
-        #print Dumper($entry);
         studio_timeslot_schedule::update( $config, $entry );
 
-        #my $updates=0;
-        #print Dumper($entry);
         my $updates = studio_timeslot_dates::update( $config, $entry );
         uac::print_info("timeslot schedule saved. $updates dates scheduled");
     } else {
         $entry->{schedule_id} = studio_timeslot_schedule::insert( $config, $entry );
 
-        #my $updates=0;
         my $updates = studio_timeslot_dates::update( $config, $entry );
         uac::print_info("timeslot schedule added. $updates dates added");
     }

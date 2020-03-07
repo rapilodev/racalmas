@@ -80,7 +80,6 @@ sub save_schedule {
         return;
     }
 
-    #print Dumper($params);
     for my $attr ( 'project_id', 'studio_id', 'start' ) {
         unless ( defined $params->{$attr} ) {
             uac::print_error( $attr . ' not given!' );
@@ -255,7 +254,6 @@ sub show_work_schedule {
         $params->{$key} = $serie->{$key};
     }
 
-    #print STDERR '<pre>'.Dumper($params).'</pre>';
     $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'work-time' } );
     template::process( $config, 'print', $params->{template}, $params );
 }

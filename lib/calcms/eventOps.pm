@@ -61,7 +61,6 @@ sub setAttributesFromSchedule ($$$){
 	my $params = shift;
 	my $event  = shift;
 
-	#print 'setAttributesFromSchedule:'.Dumper($params);
 	#set attributes from schedule
 	my $schedules = series_dates::get(
 		$config,
@@ -167,7 +166,6 @@ sub getNewEvent($$$) {
 
 	my $serie = eventOps::setAttributesFromSeriesTemplate( $config, $params, $event );
 
-	#print Dumper($params);
 	if ( $action eq 'show_new_event_from_schedule' ) {
 		eventOps::setAttributesFromSchedule( $config, $params, $event );
 	} else {
@@ -221,15 +219,7 @@ sub createEvent($$$) {
 		push @$checklist, 'schedule' if $action eq 'create_event_from_schedule';
 	}
 
-	#use Data::Dumper;
-	#print Dumper($checklist);
-	#print Dumper($request);
-	#print Dumper($event);
-
 	my $start = $event->{start_date}, my $end = time::add_minutes_to_datetime( $event->{start_date}, $event->{duration} );
-
-	#print Dumper($start);
-	#print Dumper($end);
 
 	my $result = series_events::check_permission(
 		$request,
@@ -246,7 +236,6 @@ sub createEvent($$$) {
 		}
 	);
 
-	#print Dumper("            start_date => $event->{start_date}");
 	unless ( $result eq '1' ) {
 		uac::print_error($result);
 		return undef;
