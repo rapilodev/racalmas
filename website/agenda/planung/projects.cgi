@@ -86,7 +86,7 @@ sub delete_project {
 
     my $entry = {};
     for my $param ( keys %$params ) {
-        if ( defined $columns->{$param} ) {
+        if ( exists $columns->{$param} ) {
             $entry->{$param} = $params->{$param} || '';
         }
     }
@@ -113,7 +113,7 @@ sub save_project {
     my $columns = project::get_columns($config);
     my $entry   = {};
     for my $param ( keys %$params ) {
-        if ( defined $columns->{$param} ) {
+        if ( exists $columns->{$param} ) {
             $entry->{$param} = $params->{$param} || '';
         }
     }

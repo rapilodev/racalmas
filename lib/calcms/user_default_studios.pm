@@ -8,8 +8,6 @@ use Data::Dumper;
 
 # table:   calcms_user_default_studios
 # columns: user, project_id, studio_id
-#use base 'Exporter';
-#our @EXPORT_OK = qw(get insert update delete get_columns);
 
 sub debug;
 
@@ -17,8 +15,7 @@ sub get_columns($) {
     my $config = shift;
 
     my $dbh  = db::connect($config);
-    my $cols = db::get_columns( $dbh, 'calcms_user_default_studios' );
-    return { map { $_ => undef } @$cols };
+    return db::get_columns_hash( $dbh, 'calcms_user_default_studios' );
 }
 
 sub get ($$) {

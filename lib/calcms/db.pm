@@ -115,8 +115,7 @@ sub get_columns($$) {
     my $table = shift;
 
     my $columns = db::get( $dbh, 'select column_name from information_schema.columns where table_name=?', [$table] );
-    my @result = map { $_->{column_name} } (@$columns);
-    return \@result;
+    return [ map { $_->{column_name} } @$columns ];
 }
 
 # get hash with table columns as keys
@@ -124,8 +123,8 @@ sub get_columns_hash($$) {
     my $dbh   = shift;
     my $table = shift;
 
-    my $columns = db::get_columns( $dbh, $table );
-    return { map { $_ => 1 } @$columns };
+    my $columns = db::get( $dbh, 'select column_name from information_schema.columns where table_name=?', [$table] );
+    return { map { $_->{column_name} => 1 } @$columns };
 }
 
 #returns last inserted id

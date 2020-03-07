@@ -22,8 +22,7 @@ sub get_columns ($) {
     my $config = shift;
 
     my $dbh     = db::connect($config);
-    my $cols    = db::get_columns( $dbh, 'calcms_password_requests' );
-    return { map { $_ => undef } @$cols };
+    return db::get_columns_hash( $dbh, 'calcms_password_requests' );
 }
 
 sub get ($$) {

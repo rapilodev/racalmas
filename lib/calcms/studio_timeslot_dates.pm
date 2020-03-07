@@ -20,9 +20,8 @@ sub debug;
 sub get_columns ($){
     my $config = shift;
 
-    my $dbh     = db::connect($config);
-    my $cols    = db::get_columns( $dbh, 'calcms_studio_timeslot_dates' );
-    return { map { $_ => undef } @$cols };
+    my $dbh = db::connect($config);
+    return db::get_columns_hash( $dbh, 'calcms_studio_timeslot_dates' );
 }
 
 # get all studio_timeslot_dates for studio_id within given time range

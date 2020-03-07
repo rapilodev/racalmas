@@ -82,7 +82,7 @@ sub delete_studio {
 
     my $entry = {};
     for my $param ( keys %$params ) {
-        if ( defined $columns->{$param} ) {
+        if ( exists $columns->{$param} ) {
             $entry->{$param} = $params->{$param} || '';
         }
     }
@@ -131,7 +131,7 @@ sub save_studio {
     my $columns = studios::get_columns($config);
     my $entry   = {};
     for my $param ( keys %$params ) {
-        if ( defined $columns->{$param} ) {
+        if ( exists $columns->{$param} ) {
             $entry->{$param} = $params->{$param} || '';
         }
     }

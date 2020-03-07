@@ -25,9 +25,8 @@ sub debug;
 sub get_columns($) {
     my $config = shift;
 
-    my $dbh     = db::connect($config);
-    my $cols    = db::get_columns( $dbh, 'calcms_work_schedule' );
-    return { map { $_ => undef } @$cols };
+    my $dbh = db::connect($config);
+    return db::get_columns_hash( $dbh, 'calcms_work_schedule' );
 }
 
 #map schedule id to id
