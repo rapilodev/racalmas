@@ -39,23 +39,19 @@ sub init {
 }
 
 sub get_cached_or_render($$$) {
-
-    #    my $response=$_[0];
-    my $config  = $_[1];
-    my $request = $_[2];
+    my ($response, $config, $request) = @_;
 
     my $params = $request->{params}->{checked};
     my $debug  = $config->{system}->{debug};
 
     my $results = events::get( $config, $request );
-    events::render( $_[0], $config, $request, $results );
+    events::render( $response, $config, $request, $results );
 
-    return $_[0];
+    return $response;
 }
 
 sub get($$) {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $debug = $config->{system}->{debug};
 
@@ -70,10 +66,7 @@ sub get($$) {
 }
 
 sub modify_results ($$$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $request = shift;
-    my $results = shift;
+    my ($dbh, $config, $request, $results) = @_;
 
     my $params = $request->{params}->{checked};
 
@@ -383,8 +376,7 @@ sub modify_results ($$$$) {
 }
 
 sub add_recurrence_dates {
-    my $config  = shift;
-    my $results = shift;
+    my ($config, $results) = @_;
 
     # get unique list of recurrence ids from results
     my $recurrence_dates = {};
@@ -535,10 +527,7 @@ sub calc_dates {
 }
 
 sub add_recordings($$$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $request = shift;
-    my $events  = shift;
+    my ($dbh, $config, $request, $events) = @_;
 
     return $events unless defined $events;
 
@@ -580,9 +569,7 @@ sub add_recordings($$$$) {
 }
 
 sub getDateQueryConditions ($$$) {
-    my $config      = shift;
-    my $params      = shift;
-    my $bind_values = shift;
+    my ($config, $params, $bind_values) = @_;
 
     # conditions by date
     my $date_conds = [];
@@ -743,9 +730,7 @@ sub getDateQueryConditions ($$$) {
 
 # if recordings is set in params, recordings date and path will be included
 sub get_query($$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $request = shift;
+    my ($dbh, $config, $request) = @_;
 
     my $params = $request->{params}->{checked};
     my $debug  = $config->{system}->{debug};
@@ -1100,12 +1085,7 @@ sub get_query($$$) {
 }
 
 sub render($$$$;$) {
-
-    #    my $response    = $_[0];
-    my $config      = $_[1];
-    my $request     = $_[2];
-    my $results     = $_[3];
-    my $root_params = $_[4];
+    my ($response, $config, $request, $results, $root_params) = @_; 
 
     my $params = $request->{params}->{checked};
     if ( ref($root_params) eq 'HASH' ) {
@@ -1198,7 +1178,7 @@ sub render($$$$;$) {
 }
 
 sub get_running_event_id($) {
-    my $dbh = shift;
+    my ($dbh) = @_;
 
     my $query = qq{
         select id event_id, start, title
@@ -1225,10 +1205,12 @@ sub get_running_event_id($) {
 
 # add filters to query
 sub setDefaultEventConditions ($$$$) {
-    my $config      = shift;
-    my $conditions  = $_[0];
-    my $bind_values = $_[1];
-    my $options     = $_[2];
+    my ($config, $conditions, $bind_values, $options) = @_;
+
+    #my $config      = shift;
+    #my $conditions  = $_[0];
+    #my $bind_values = $_[1];
+    #my $options     = $_[2];
     $options = {} unless defined $options;
 
     # exclude projects
@@ -1263,10 +1245,7 @@ sub setDefaultEventConditions ($$$$) {
 
 # for local use only or add support for exclude_projects and exclude_locations
 sub getEventById ($$$$) {
-    my $dbh      = shift;
-    my $config   = shift;
-    my $event_id = shift;
-    my $options  = shift;
+    my ($dbh, $config, $event_id, $options) = @_;
 
     $dbh = db::connect($config) unless defined $dbh;
 
@@ -1290,9 +1269,7 @@ sub getEventById ($$$$) {
 }
 
 sub get_next_event_of_series ($$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $options = shift;
+    my ($dbh, $config, $options) = @_;
 
     my $eventId = $options->{event_id};
     return undef unless defined $eventId;
@@ -1330,9 +1307,7 @@ sub get_next_event_of_series ($$$) {
 }
 
 sub get_previous_event_of_series($$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $options = shift;
+    my ($dbh, $config, $options) = @_;
 
     my $eventId = $options->{event_id};
     return undef unless defined $eventId;
@@ -1368,11 +1343,7 @@ sub get_previous_event_of_series($$$) {
 
 # used by calendar
 sub get_by_date_range ($$$$$) {
-    my $dbh        = shift;
-    my $config     = shift;
-    my $start_date = shift;
-    my $end_date   = shift;
-    my $options    = shift;
+    my ($dbh, $config, $start_date, $end_date, $options) = @_;
 
     my $day_starting_hour = $config->{date}->{day_starting_hour};
 
@@ -1407,13 +1378,8 @@ sub get_by_date_range ($$$$$) {
 }
 
 sub get_by_image ($$$) {
-    my $dbh      = shift;
-    my $config   = shift;
-    my $filename = shift;
+    my ($dbh, $config, $filename) = @_;
 
-    #$filename=$dbh->quote('%'.$filename.'%');
-
-    #$filename='%'.$filename.'%';
     my $query = qq{
         select * from calcms_events
         where content like ?
@@ -1455,8 +1421,8 @@ sub delete ($$$) {
 }
 
 sub get_duration ($$) {
-    my $config   = shift;
-    my $event    = shift;
+    my ($config, $event) = @_;
+    
     my $timezone = $config->{date}->{time_zone};
     my $start    = time::get_datetime( $event->{start}, $timezone );
     my $end      = time::get_datetime( $event->{end}, $timezone );
@@ -1472,8 +1438,7 @@ sub get_duration ($$) {
 }
 
 sub check_params ($$) {
-    my $config = shift;
-    my $params = shift;
+    my ($config, $params) = @_;
 
     #define running at
     my $running_at = $params->{running_at} || '';
@@ -1750,7 +1715,7 @@ sub check_params ($$) {
 }
 
 sub get_keys($) {
-    my $event = shift;
+    my ($event) = @_;
 
     my $program                = $event->{program}                || '';
     my $series_name            = $event->{series_name}            || '';
