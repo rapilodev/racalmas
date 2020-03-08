@@ -8,7 +8,7 @@ use Data::Dumper;
 use Session::Token();
 
 # table:   calcms_password_requests
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(get insert delete get_columns);
 
 use mail;

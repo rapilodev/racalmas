@@ -10,7 +10,7 @@ use Date::Calc();
 use template();
 use events();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(init get_cached_or_render get render get_calendar_weeks configure_cache);
 
 sub init() {

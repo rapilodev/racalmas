@@ -8,7 +8,7 @@ use Data::Dumper;
 use uac();
 use user_settings();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(get getJavascript);
 
 sub debug;

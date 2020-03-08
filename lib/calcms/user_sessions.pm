@@ -18,7 +18,7 @@ use time;
 # start (timestamp),
 # end (timestamp),
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get insert update delete);
 
 sub debug;

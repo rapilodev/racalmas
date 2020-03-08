@@ -9,7 +9,7 @@ use comments();
 use calendar();
 use project();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(get_cache configure_cache put_cache get_list check_params);
 
 sub get_list($$) {

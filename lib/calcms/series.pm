@@ -9,7 +9,7 @@ use Data::Dumper;
 use events();
 use images();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(
   get_columns get insert update delete
   get_users add_user remove_user

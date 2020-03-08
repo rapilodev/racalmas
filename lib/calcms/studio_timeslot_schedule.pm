@@ -10,7 +10,7 @@ use studio_timeslot_dates();
 # table:   calcms_studio_timeslot_schedule
 # columns: id, project_id, studio_id, start(datetime), end(datetime), end_date(date),
 #          frequency(days), duration(minutes), create_events(days), publish_events(days)
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK   = qw(get_columns get insert update delete);
 
 sub debug;

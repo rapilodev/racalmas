@@ -9,7 +9,7 @@ use series_dates();
 
 # table:   calcms_user_settings
 # columns: user, colors
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(getColors getColorCss get insert update delete get_columns defaultColors);
 
 sub debug;

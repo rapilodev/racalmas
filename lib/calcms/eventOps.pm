@@ -13,7 +13,7 @@ use studios();
 use series_events();
 use user_stats();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(
   setAttributesFromSeriesTemplate
   setAttributesFromSchedule

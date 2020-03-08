@@ -17,7 +17,7 @@ use log();
 use project();
 use studios();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(
   init
   get_cached_or_render

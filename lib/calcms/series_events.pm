@@ -22,7 +22,7 @@ use images();
 
 # check permissions, insert and update events related to series
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(
   check_permission
   save_content

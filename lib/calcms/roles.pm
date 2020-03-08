@@ -8,7 +8,7 @@ use Apache2::Reload();
 
 use config();
 
-use base 'Exporter';
+#use base 'Exporter';
 my @EXPORT_OK = qw(get_user get_user_permissions get_template_parameters get_jobs);
 
 my $ROLES = {

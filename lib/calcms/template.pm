@@ -18,7 +18,7 @@ use project();
 use log();
 use roles();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(check process exit_on_missing_permission clear_cache);
 
 # TODO:config

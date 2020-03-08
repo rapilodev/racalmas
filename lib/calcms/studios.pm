@@ -7,7 +7,7 @@ no warnings 'redefine';
 use Data::Dumper;
 use images();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get get_by_id insert update delete check check_studio);
 
 sub debug;

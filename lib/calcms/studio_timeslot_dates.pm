@@ -12,7 +12,7 @@ use time();
 # table:   calcms_studio_timeslot_dates
 # columns: id, studio_id, start(datetime), end(datetime)
 # TODO: delete column schedule_id
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK   = qw(get_columns get insert update delete get_dates);
 
 sub debug;

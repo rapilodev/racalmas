@@ -18,7 +18,7 @@ use series_dates();
 # month
 # nextDay (add 24 hours to start)
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get insert update delete);
 
 sub debug;

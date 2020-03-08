@@ -8,7 +8,7 @@ use DBD::mysql();
 use Digest::MD5 qw();
 use Data::Dumper;
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(
   connect disconnect
   get insert put

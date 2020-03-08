@@ -12,7 +12,7 @@ use Authen::Passphrase::BlowfishCrypt();
 use time();
 use user_sessions ();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(get_user login logout crypt_password);
 my $defaultExpiration = 60;
 

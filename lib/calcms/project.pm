@@ -12,7 +12,7 @@ use log();
 use template();
 use images();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(
   check get_columns get insert delete get_date_range
   get_studios assign_studio unassign_studio is_studio_assigned get_studio_assignments

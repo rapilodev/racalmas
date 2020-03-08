@@ -4,7 +4,7 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(error load_file save_file append_file);
 
 use config();

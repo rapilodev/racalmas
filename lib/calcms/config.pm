@@ -7,7 +7,7 @@ no warnings 'redefine';
 use FindBin();
 use Config::General();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(get set);
 
 my $config = undef;

@@ -7,7 +7,7 @@ no warnings 'redefine';
 use Data::Dumper;
 use Apache2::Request();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(get isJson);
 
 sub debug;

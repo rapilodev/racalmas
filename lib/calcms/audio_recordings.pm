@@ -7,7 +7,7 @@ no warnings 'redefine';
 use Data::Dumper;
 use db();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get);
 
 # columns:

@@ -7,7 +7,7 @@ no warnings 'redefine';
 use Data::Dumper;
 use markup();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK =
   qw(extractEventFromWikiText removeMeta eventToWikiText extractMeta removeMeta metaToWiki);
 

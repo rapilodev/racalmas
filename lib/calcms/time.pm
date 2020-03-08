@@ -14,7 +14,7 @@ use Data::Dumper;
 
 use config();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(
   format_datetime format_time
   date_format time_format

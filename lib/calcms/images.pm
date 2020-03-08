@@ -8,7 +8,7 @@ use config();
 use template();
 use Data::Dumper;
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(get insert update insert_or_update delete delete_files);
 
 #column 'created_at' will be set at insert

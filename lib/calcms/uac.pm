@@ -15,7 +15,7 @@ use studios();
 use user_settings();
 use user_default_studios();
 
-use base 'Exporter';
+#use base 'Exporter';
 our @EXPORT_OK = qw(
   get_user get_users update_user insert_user delete_user
   get_roles insert_role update_role  get_role_columns
