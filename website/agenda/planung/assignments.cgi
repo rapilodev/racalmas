@@ -392,22 +392,12 @@ sub check_params {
         $checked->{create_events}  = 0;
         $checked->{publish_events} = 0;
     }
-    for my $param ( 'frequency', 'duration', 'default_duration', 'create_events', 'publish_events', 'live',
-        'count_episodes' )
-    {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /(\d+)/ ) ) {
-            $checked->{$param} = $1;
-        }
-    }
+    entry::set_numbers( $checked, $params, [
+        'frequency', 'duration', 'default_duration', 'create_events', 'publish_events', 'live']);
 
     #scalars
-    for my $param ( 'search', 'from', 'till' ) {
-        if ( defined $params->{$param} ) {
-            $checked->{$param} = $params->{$param};
-            $checked->{$param} =~ s/^\s+//g;
-            $checked->{$param} =~ s/\s+$//g;
-        }
-    }
+    entry::set_strings( $checked, $params, 
+        [ 'search', 'from', 'till' ]);
 
     return $checked;
 }

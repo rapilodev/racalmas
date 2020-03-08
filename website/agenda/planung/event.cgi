@@ -821,13 +821,9 @@ sub check_params {
     }
 
     #scalars
-    for my $param ( 'studio', 'search', 'from', 'till', 'hide_series' ) {
-        if ( defined $params->{$param} ) {
-            $checked->{$param} = $params->{$param};
-            $checked->{$param} =~ s/^\s+//g;
-            $checked->{$param} =~ s/\s+$//g;
-        }
-    }
+    entry::set_strings( $checked, $params, [
+        'studio', 'search', 'from', 'till', 'hide_series'
+    ]);
 
     #numbers
     for my $param ( 'duration', 'recurrence' ) {
@@ -847,23 +843,13 @@ sub check_params {
         }
     }
 
-    #strings
-    for my $param (
+    entry::set_strings( $checked, $params, [
         'series_name',  'title',        'excerpt',    'content',
         'topic',        'program',      'category',   'image',
         'series_image', 'user_content', 'user_title', 'user_excerpt',
         'podcast_url',  'archive_url',  'setImage',   'content_format'
-      )
-    {
-        if ( defined $params->{$param} ) {
-
-            #$checked->{$param}=uri_unescape();
-            $checked->{$param} = $params->{$param};
-            $checked->{$param} =~ s/^\s+//g;
-            $checked->{$param} =~ s/\s+$//g;
-        }
-    }
-
+    ]);
+    
     #dates
     for my $param ( 'start_date', 'end_date' ) {
         if (   ( defined $params->{$param} )
