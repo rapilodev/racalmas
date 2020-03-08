@@ -21,9 +21,7 @@ sub debug($);
 
 #TODO: remove CGI
 sub get_user($$$) {
-    my $config = shift;
-    my $params = shift;
-    my $cgi    = shift;
+    my ($config, $params, $cgi) = @_;
 
     debug("get_user") if $debug;
 
