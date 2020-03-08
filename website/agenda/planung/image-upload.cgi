@@ -381,26 +381,10 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
-    #string
-    for my $param ( 'debug', 'name', 'description', 'licence' ) {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\s*(.+?)\s*$/ ) ) {
-            $checked->{$param} = $1;
-        }
-    }
-
-    #Words
-    for my $attr ('action') {
-        if ( ( defined $params->{$attr} ) && ( $params->{$attr} =~ /(\S+)/ ) ) {
-            $checked->{$attr} = $params->{$attr};
-        }
-    }
+    entry::set_strings( $checked, $params, [ 'action', 'name', 'description', 'licence' ]);
 
     #checkboxes
-    for my $param ('public') {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /([01])/ ) ) {
-            $checked->{$param} = $1;
-        }
-    }
+    entry::set_bools( $checked, $params, [ 'public' ] );
     return $checked;
 }
 

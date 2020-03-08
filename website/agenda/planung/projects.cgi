@@ -285,11 +285,8 @@ sub check_params {
         }
     }
 
-    for my $param ( 'name', 'title', 'subtitle', 'start_date', 'end_date', 'image', 'email', 'setImage' ) {
-        if ( defined $params->{$param} ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    entry::set_strings( $checked, $params, [
+        'name', 'title', 'subtitle', 'start_date', 'end_date', 'image', 'email', 'setImage' ]);
 
     entry::set_numbers( $checked, $params, [
         'project_id', 'studio_id', 'default_studio_id', 'pid', 'sid']);

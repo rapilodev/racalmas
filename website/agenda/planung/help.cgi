@@ -620,13 +620,6 @@ sub check_params {
 
     my $checked = {};
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-    $checked->{debug} = $debug;
-
-    #numeric values
     $checked->{exclude} = 0;
     entry::set_numbers( $checked, $params, [
         'id', 'project_id', 'studio_id', 'default_studio_id' ]);

@@ -247,12 +247,6 @@ sub check_params {
     my $template = '';
     $checked->{template} = template::check( $config, $params->{template}, 'event-history' );
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-    $checked->{debug} = $debug;
-
     #numeric values
     entry::set_numbers( $checked, $params, [
         'id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'event_id', 'v1', 'v2' )

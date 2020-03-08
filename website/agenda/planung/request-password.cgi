@@ -142,20 +142,8 @@ sub check_params {
 
     my $checked = {};
 
-    #my $template = '';
-    #$checked->{template} = template::check($config,  $params->{template}, 'request-password' );
-
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-    $checked->{debug} = $debug;
-
-    for my $param ( 'user', 'token', 'user_password', 'user_password2' ) {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /\S/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    entry::set_strings( $checked, $params, [
+        'user', 'token', 'user_password', 'user_password2']);
 
     $checked->{action} = '';
     if ( defined $params->{action} ) {

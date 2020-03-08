@@ -358,12 +358,6 @@ sub check_params {
 
     my $checked = {};
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-    $checked->{debug} = $debug;
-
     #actions and roles
     if ( defined $params->{action} ) {
         if ( $params->{action} =~ /^(show|save_schedule|delete_schedule|show_dates)$/ ) {
@@ -371,7 +365,6 @@ sub check_params {
         }
     }
 
-    #numeric values
     $checked->{exclude} = 0;
     entry::set_numbers( $checked, $params, [
         'id', 'project_id', 'studio_id', 'default_studio_id', 'schedule_id', 'schedule_studio_id'
@@ -392,11 +385,7 @@ sub check_params {
 
     $checked->{template} = template::check( $config, $params->{template}, 'studio-timeslots' );
 
-    for my $param ('frequency') {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /(\d+)/ ) ) {
-            $checked->{$param} = $1;
-        }
-    }
+    entry::set_numbers( $checked, $params,  ['frequency'] );
 
     for my $attr ( 'start', 'end' ) {
         if ( ( defined $params->{$attr} ) && ( $params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d[ T]\d\d\:\d\d)/ ) ) {

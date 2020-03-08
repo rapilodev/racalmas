@@ -802,12 +802,6 @@ sub check_params {
     my $template = '';
     $checked->{template} = template::check( $config, $params->{template}, 'series' );
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-    $checked->{debug} = $debug;
-
     entry::set_numbers( $checked, $params, [
         'id',      'project_id', 'studio_id', 'default_studio_id',
         'user_id', 'series_id',  'event_id',  'source_event_id',
@@ -825,23 +819,13 @@ sub check_params {
         'studio', 'search', 'from', 'till', 'hide_series'
     ]);
 
-    #numbers
-    for my $param ( 'duration', 'recurrence' ) {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /(\d+)/ ) ) {
-            $checked->{$param} = $1;
-        }
-    }
+    entry::set_numbers( $checked, $params, [
+        'duration', 'recurrence' ]);
 
-    #checkboxes
-    for my $param (
+    entry::set_bools( $checked, $params, [
         'live',  'published', 'playout',            'archived',
         'rerun', 'draft',     'disable_event_sync', 'get_rerun'
-      )
-    {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /([01])/ ) ) {
-            $checked->{$param} = $1;
-        }
-    }
+    ]);
 
     entry::set_strings( $checked, $params, [
         'series_name',  'title',        'excerpt',    'content',

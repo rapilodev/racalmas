@@ -100,12 +100,6 @@ sub check_params {
 
     my $checked = {};
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-    $checked->{debug} = $debug;
-
     #numeric values
     for my $param ('filename') {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^[A-Za-z\_\-\.\d\/]+$/ ) ) {

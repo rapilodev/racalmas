@@ -288,9 +288,6 @@ sub check_params {
     my $event_id = $params->{event_id} || '';
     if ( $event_id =~ /^(\d+)$/ ) {
         $comment->{event_id} = $1;
-    } else {
-
-        #        error('invalid event_id');
     }
     $comment->{event_id} = '' unless defined $comment->{event_id};
 

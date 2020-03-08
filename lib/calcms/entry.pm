@@ -11,19 +11,31 @@ sub from_valid($$) {
 sub set_numbers($$$) {
     my ( $entry, $params, $fields ) = @_;
     for my $field (@$fields) {
-        next unless defined $params->{$field};
-        if ( $params->{$field} =~ /([\-\d]+)/ ){
+        my $value = $params->{$field};
+        next unless defined $value;
+        if ( $value =~ /([\-\d]+)/ ){
             $entry->{$field} = $1;
         }
     }
 }
 
+sub set_bools($$$) {
+    my ( $entry, $params, $fields ) = @_;
+    for my $field (@$fields) {
+        my $value = $params->{$field};
+        next unless defined $value;
+        if ($value=~/([01])/){
+            $entry->{$field} = $1;
+        }
+    }
+}
 
 sub set_strings($$$) {
     my ( $entry, $params, $attrs ) = @_;
     for my $field (@$attrs) {
-        next unless defined $params->{$field};
-        $entry->{$field} = $params->{$field};
+        my $value = $params->{$field};
+        next unless defined $value;
+        $entry->{$field} = $value;
         $entry->{$field} =~ s/^\s+//g;
         $entry->{$field} =~ s/\s+$//g;
     }
@@ -31,7 +43,8 @@ sub set_strings($$$) {
 
 sub element_of($$) {
     my ( $value, $attrs ) = @_;
-    return { map { $_ => $_ } @$attrs }->{$value};
+    return unless $value;
+    return { map { $_ => $_ } @$attrs }->{$value} //'';
 }
 
 # do not delete last line

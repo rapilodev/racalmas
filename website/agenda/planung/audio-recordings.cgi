@@ -554,19 +554,8 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
-    #word
-    for my $param ( 'debug', 'name', 'description' ) {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\s*(.+?)\s*$/ ) ) {
-            $checked->{$param} = $1;
-        }
-    }
-
-    # words
-    for my $attr ( 'action', 'path' ) {
-        if ( ( defined $params->{$attr} ) && ( $params->{$attr} =~ /(\S+)/ ) ) {
-            $checked->{$attr} = $params->{$attr};
-        }
-    }
+    entry::set_strings( $checked, $params, [
+        'name', 'description', 'action', 'path' ]);
 
     $checked->{upload} = $params->{upload};
     return $checked;

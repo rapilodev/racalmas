@@ -125,21 +125,13 @@ sub check_params {
 
     my $checked = {};
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-    $checked->{debug} = $debug;
-
     entry::set_numbers( $checked, $params, [
         'id', 'project_id', 'studio_id', 'series_id', 'event_id', 'p_id', 's_id'
     ]);
 
-    for my $param ( 'selectProjectStudio', 'selectSeries', 'selectRange' ) {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} eq '1' ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    entry::set_bools( $checked, $params, 
+        [ 'selectProjectStudio', 'selectSeries', 'selectRange' ] 
+    );
 
     for my $param ('resultElemId') {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^[a-zA-ZöäüÖÄÜß_\d]+$/ ) ) {

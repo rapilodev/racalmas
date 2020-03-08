@@ -202,12 +202,6 @@ sub check_params {
 
     my $checked = {};
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-    $checked->{debug} = $debug;
-
     #actions and roles
     $checked->{action} = '';
     if ( defined $params->{action} ) {

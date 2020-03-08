@@ -35,7 +35,6 @@ my $debug  = $config->{system}->{debug};
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( !defined $user ) || ( $user eq '' );
 
-#print STDERR $params->{project_id}."\n";
 my $user_presets = uac::get_user_presets(
     $config,
     {
@@ -48,7 +47,6 @@ $params->{default_studio_id} = $user_presets->{studio_id};
 $params = uac::setDefaultStudio( $params, $user_presets );
 $params = uac::setDefaultProject( $params, $user_presets );
 
-#print STDERR $params->{project_id}."\n";
 my $request = {
     url => $ENV{QUERY_STRING} || '',
     params => {
@@ -206,12 +204,6 @@ sub check_params {
 
     my $checked = {};
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-    $checked->{debug} = $debug;
-
     #actions and roles
     $checked->{action} = '';
     if ( defined $params->{action} ) {
@@ -236,11 +228,3 @@ sub check_params {
 
     return $checked;
 }
-
-__DATA__
-
-SELECT ps.project_id, ps.studio_id, ps.series_id,p.name,s.name,se.series_name,se.title
-FROM calcms_project_series ps ,calcms_projects p,calcms_studios s,calcms_series se
-where ps.project_id=p.project_id and ps.studio_id=s.id and ps.series_id=se.id
-order by se.series_name,p.name,s.name
-

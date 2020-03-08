@@ -416,7 +416,6 @@ sub check_params {
 
     my $checked = { template => template::check( $config, $params->{template}, 'image.html' ) };
 
-    #numeric values
     $checked->{limit} = 100;
     entry::set_numbers( $checked, $params, [
         'project_id', 'studio_id', 'series_id', 'event_id', 'pid', 'default_studio_id', 'limit' 
@@ -431,35 +430,15 @@ sub check_params {
     $checked->{limit} = 100 unless defined $checked->{limit};
     $checked->{limit} = 100 if ( $checked->{limit} > 100 );
 
-    #string
-    $checked->{search} = '';
-    if ( ( defined $params->{search} ) && ( $params->{search} =~ /^\s*(.+?)\s*$/ ) ) {
-        $checked->{search} = $1;
-    }
-
-    for my $attr ( 'update_name', 'update_description', 'licence' ) {
-        $checked->{$attr} = '';
-        if ( ( defined $params->{$attr} ) && ( $params->{$attr} =~ /^\s*(.+?)\s*$/ ) ) {
-            $checked->{$attr} = $params->{$attr};
-        }
-    }
-
-    #Words
     $checked->{delete_image} = '';
     $checked->{save_image}   = '';
-    for my $attr ( 'save_image', 'delete_image', 'show', 'filename', 'target' ) {
-        $checked->{$attr} = '';
-        if ( ( defined $params->{$attr} ) && ( $params->{$attr} =~ /(\S+)/ ) ) {
-            $checked->{$attr} = $params->{$attr};
-        }
-    }
+    entry::set_strings( $checked, $params, [
+        'search',
+        'update_name', 'update_description', 'licence',
+        'save_image', 'delete_image', 'show', 'filename', 'target' ]);
 
     #checkboxes
-    for my $param ('public') {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /([01])/ ) ) {
-            $checked->{$param} = $1;
-        }
-    }
+    entry::set_bools( $checked, $params, [ 'public ']);
 
     #map show to filename, but overwrite if filename given
     if ( $checked->{show} ne '' ) {

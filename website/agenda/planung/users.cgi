@@ -394,7 +394,6 @@ sub check_params {
 
     my $checked = {};
 
-    #template
     my $template = '';
     $template = template::check( $config, $params->{template}, 'users' );
     $checked->{template} = $template;

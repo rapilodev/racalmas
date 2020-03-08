@@ -264,12 +264,6 @@ sub check_params {
 
     my $checked = {};
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-    $checked->{debug} = $debug;
-
     #actions and roles
     $checked->{action} = '';
     if ( defined $params->{action} ) {
@@ -278,7 +272,6 @@ sub check_params {
         }
     }
 
-    #numeric values
     $checked->{exclude} = 0;
     entry::set_numbers( $checked, $params, [
         'project_id', 'studio_id',                 'default_studio_id',     'schedule_id',

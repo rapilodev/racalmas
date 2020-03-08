@@ -17,6 +17,7 @@ use series;
 use template;
 use playout;
 use audio;
+use entry;
 
 binmode STDOUT, ":utf8";
 
@@ -147,13 +148,6 @@ sub check_params {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;
-    }
-
-    #word
-    for my $param ('debug') {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\s*(.+?)\s*$/ ) ) {
-            $checked->{$param} = $1;
-        }
     }
 
     return $checked;

@@ -229,11 +229,8 @@ sub check_params {
         }
     }
 
-    for my $param ( 'name', 'description', 'location', 'stream', 'google_calendar', 'image', 'setImage' ) {
-        if ( defined $params->{$param} ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    entry::set_strings( $checked, $params, [
+        'name', 'description', 'location', 'stream', 'google_calendar', 'image', 'setImage' ]);
 
     entry::set_numbers( $checked, $params, [
         'project_id', 'studio_id', 'default_studio_id', 'id'

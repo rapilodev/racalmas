@@ -252,11 +252,8 @@ sub check_params {
         'event_id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'duration'
     ]);
 
-    for my $param ( 'subject', 'to', 'cc', 'content' ) {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /\S/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    entry::set_strings( $checked, $params, [
+        'subject', 'to', 'cc', 'content']);
 
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};
