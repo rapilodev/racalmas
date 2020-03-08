@@ -29,8 +29,7 @@ our $write = 1;
 
 # connect to database
 sub connect($;$) {
-    my $options = shift;
-    my $request = shift;
+    my ($options, $request) = @_;
 
     return $request->{connection} if ( defined $request ) && ( defined $request->{connection} );
 
@@ -68,7 +67,7 @@ sub connect($;$) {
 }
 
 sub disconnect ($){
-    my $request = shift;
+    my ($request) = @_;
     my $dbh     = $request->{connection};
     $dbh->disconnect;
     delete $request->{connection};
@@ -77,9 +76,7 @@ sub disconnect ($){
 
 # get all database entries of an sql query (as list of hashs)
 sub get($$;$) {
-    my $dbh         = shift;
-    my $sql         = shift;
-    my $bind_values = shift;
+    my ( $dbh, $sql, $bind_values ) = @_;
 
     if ( $debug_read == 1 ) {
         print STDERR $sql . "\n";
@@ -111,8 +108,7 @@ sub get($$;$) {
 
 # get list of table columns
 sub get_columns($$) {
-    my $dbh   = shift;
-    my $table = shift;
+    my ($dbh, $table) =@_;
 
     my $columns = db::get( $dbh, 'select column_name from information_schema.columns where table_name=?', [$table] );
     return [ map { $_->{column_name} } @$columns ];
@@ -120,8 +116,7 @@ sub get_columns($$) {
 
 # get hash with table columns as keys
 sub get_columns_hash($$) {
-    my $dbh   = shift;
-    my $table = shift;
+    my ($dbh, $table) =@_;
 
     my $columns = db::get( $dbh, 'select column_name from information_schema.columns where table_name=?', [$table] );
     return { map { $_->{column_name} => 1 } @$columns };
@@ -129,16 +124,14 @@ sub get_columns_hash($$) {
 
 #returns last inserted id
 sub insert ($$$){
-    my $dbh       = shift;
-    my $tablename = shift;
-    my $entry     = shift;
+    my ($dbh, $table, $entry) =@_;
 
     my @keys = sort keys %$entry;
     my $keys = join( ",", @keys );
     my $values = join( ",", map { '?' } @keys );
     my @bind_values = map { $entry->{$_} } @keys;
 
-    my $sql = "insert into $tablename \n ($keys) \n values  ($values);\n";
+    my $sql = "insert into $table \n ($keys) \n values  ($values);\n";
 
     if ( $debug_write == 1 ) {
         print STDERR $sql . "\n";
@@ -153,9 +146,7 @@ sub insert ($$$){
 
 # execute a modifying database command (update,insert,...)
 sub put($$$) {
-    my $dbh         = shift;
-    my $sql         = shift;
-    my $bind_values = shift;
+    my ($dbh, $sql, $bind_values) =@_;
 
     if ( $debug_write == 1 ) {
         print STDERR $sql . "\n";
@@ -178,6 +169,7 @@ sub put($$$) {
     return undef;
 }
 
+# deprecated
 sub quote($$) {
     my $dbh = shift;
     my $sql = shift;
@@ -212,8 +204,7 @@ sub shift_datetime_by_minutes($$$) {
 
 # get next free id of a database table
 sub next_id ($$){
-    my $dbh   = shift;
-    my $table = shift;
+    my ($dbh, $table) = @_;
 
     my $query = qq{
 		select max(id) id
@@ -226,8 +217,7 @@ sub next_id ($$){
 
 # get max id from table
 sub get_max_id($$) {
-    my $dbh   = shift;
-    my $table = shift;
+    my ($dbh, $table) = @_;
 
     my $query = qq{
 		select max(id) id
