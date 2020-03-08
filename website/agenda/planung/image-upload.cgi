@@ -370,7 +370,6 @@ sub check_params {
     my $checked = {};
     $checked->{template} = template::check( $config, $params->{template}, 'image-upload' );
 
-    #numeric values
     entry::set_numbers( $checked, $params, [
         'project_id', 'studio_id', 'default_studio_id'
     ]);
@@ -383,7 +382,6 @@ sub check_params {
 
     entry::set_strings( $checked, $params, [ 'action', 'name', 'description', 'licence' ]);
 
-    #checkboxes
     entry::set_bools( $checked, $params, [ 'public' ] );
     return $checked;
 }

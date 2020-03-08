@@ -13,6 +13,7 @@ use File::Temp();
 
 use config();
 use log();
+use entry();
 use localization();
 use auth();
 use uac();
@@ -542,8 +543,7 @@ sub check_params {
 
     my $checked = {};
     $checked->{error} = '';
-    $checked->{template} =
-      template::check( $config, $params->{template}, 'upload-audio-recordings' );
+    $checked->{template} = template::check( $config, $params->{template}, 'upload-audio-recordings' );
 
     entry::set_numbers( $checked, $params, [
         'project_id', 'studio_id', 'default_studio_id', 'series_id', 'event_id', 'id']);
@@ -554,8 +554,11 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
+    $checked->{action} = entry::element_of($params->{action}, 
+        ['update', 'delete']);
+
     entry::set_strings( $checked, $params, [
-        'name', 'description', 'action', 'path' ]);
+        'name', 'description', 'path' ]);
 
     $checked->{upload} = $params->{upload};
     return $checked;

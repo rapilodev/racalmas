@@ -843,13 +843,11 @@ sub check_params {
         }
     }
 
-    #actions
-    $checked->{action} = '';
-    if ( defined $params->{action} ) {
-        $checked->{action} = $params->{action} if List::Util::any { $_ eq $params->{action} } qw{
+    $checked->{action} = entry::element_of($params->{action}, 
+        [qw{
           save delete download show_new_event show_new_event_from_schedule
           create_event create_event_from_schedule get_json
-        };
-    }
+        }]
+    );
     return $checked;
 }

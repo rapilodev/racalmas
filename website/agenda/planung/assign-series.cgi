@@ -11,6 +11,7 @@ use Encode();
 use params();
 use config();
 use log();
+use entry();
 use template();
 use auth();
 use uac();
@@ -204,15 +205,8 @@ sub check_params {
 
     my $checked = {};
 
-    #actions and roles
-    $checked->{action} = '';
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(assign_series)$/ ) {
-            $checked->{action} = $params->{action};
-        }
-    }
+    $checked->{action} = entry::element_of( $params->{action}, ['assign_series'] );
 
-    #numeric values
     $checked->{exclude} = 0;
     entry::set_numbers( $checked, $params, [
         'id', 'project_id', 'studio_id', 'series_id'

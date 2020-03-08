@@ -1411,22 +1411,16 @@ sub check_params {
 
     my $checked = {};
 
-    #actions
-    $checked->{action} = '';
-    if ( defined $params->{action} ) {
-        $checked->{action} = $params->{action} if List::Util::any { $_ eq $params->{action} } qw{
-          add_user remove_user
+    $checked->{action} = entry::element_of( $params->{action}, 
+    [ qw( add_user remove_user
           create delete save details show
           save_schedule delete_schedule
           save_scan scan_events
           assign_event unassign_event reassign_event
           rebuild_episodes set_rebuilt_episodes
-        };
-    }
-
-    #numeric values
+    )]);
+    
     $checked->{exclude} = 0;
-    $checked->{action}  = $params->{action};
     entry::set_numbers( $checked, $params, [
         'id',            'project_id',
         'studio_id',     'default_studio_id',

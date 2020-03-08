@@ -10,6 +10,7 @@ use config();
 use log();
 use template();
 use auth();
+use entry();
 use uac();
 use roles();
 use project();
@@ -248,12 +249,7 @@ sub check_params {
         }
     }
 
-    #actions
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(save|updateDefaultProjectStudio)$/ ) {
-            $checked->{action} = $params->{action};
-        }
-    }
+    $checked->{action} = entry::element_of( $params->{action}, ['save', 'updateDefaultProjectStudio']);
     return $checked;
 }
 

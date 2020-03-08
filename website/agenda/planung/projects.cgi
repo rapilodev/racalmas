@@ -277,13 +277,8 @@ sub check_params {
     $template = template::check( $config, $params->{template}, 'projects' );
     $checked->{template} = $template;
 
-    #actions
-    my $action = '';
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(save|delete|assign_studio|unassign_studio)$/ ) {
-            $checked->{action} = $params->{action};
-        }
-    }
+    $checked->{action} = entry::element_of($params->{action}, 
+        ['save', 'delete', 'assign_studio', 'unassign_studio'] );
 
     entry::set_strings( $checked, $params, [
         'name', 'title', 'subtitle', 'start_date', 'end_date', 'image', 'email', 'setImage' ]);

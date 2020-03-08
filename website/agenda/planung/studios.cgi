@@ -221,13 +221,7 @@ sub check_params {
     $template = template::check( $config, $params->{template}, 'studios' );
     $checked->{template} = $template;
 
-    #actions
-    my $action = '';
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(save|delete)$/ ) {
-            $checked->{action} = $params->{action};
-        }
-    }
+    $checked->{action} = entry::element_of( $params->{action}, ['save', 'delete']);
 
     entry::set_strings( $checked, $params, [
         'name', 'description', 'location', 'stream', 'google_calendar', 'image', 'setImage' ]);

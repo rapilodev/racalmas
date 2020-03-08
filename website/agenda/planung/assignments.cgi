@@ -352,15 +352,8 @@ sub check_params {
 
     my $checked = {};
 
-    #actions and roles
-    $checked->{action} = '';
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(assign_events)$/ ) {
-            $checked->{action} = $params->{action};
-        }
-    }
+    $checked->{action} = entry::element_of($params->{action}, ['assign_events']);
 
-    #numeric values
     $checked->{exclude} = 0;
     entry::set_numbers( $checked, $params, [
         'id', 'project_id', 'studio_id', 'series_id', 'event_id'
@@ -389,7 +382,6 @@ sub check_params {
     entry::set_numbers( $checked, $params, [
         'frequency', 'duration', 'default_duration', 'create_events', 'publish_events', 'live']);
 
-    #scalars
     entry::set_strings( $checked, $params, 
         [ 'search', 'from', 'till' ]);
 

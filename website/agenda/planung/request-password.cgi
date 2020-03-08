@@ -145,12 +145,7 @@ sub check_params {
     entry::set_strings( $checked, $params, [
         'user', 'token', 'user_password', 'user_password2']);
 
-    $checked->{action} = '';
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(change)$/ ) {
-            $checked->{action} = $params->{action};
-        }
-    }
+    $checked->{action} = entry::element_of($params->{action}, ['change']);
 
     return $checked;
 }

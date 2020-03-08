@@ -242,13 +242,8 @@ sub check_params {
 
     my $checked = {};
 
-    #actions
-
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(setLock|setRead|showComment)$/ ) {
-            $checked->{action} = $params->{action};
-        }
-    }
+    $checked->{action} = entry::element_of($params->{action}, 
+        [ 'setLock', 'setRead', 'showComment', 'update', 'delete']);
 
     #template
     my $template = '';

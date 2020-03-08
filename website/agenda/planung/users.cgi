@@ -7,6 +7,7 @@ no warnings 'redefine';
 use Data::Dumper;
 
 use config();
+use entry();
 use log();
 use template();
 use auth();
@@ -407,32 +408,17 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
-    for my $param ( 'user_name', 'user_full_name', 'user_email' ) {
-        if ( defined $params->{$param} ) {
-            my $value = $params->{$param};
-            $value =~ s/^\s+//g;
-            $value =~ s/\s+$//g;
-            $checked->{$param} = $value;
-        }
-    }
+    entry::set_strings( $checked, $params, 
+        [ 'user_name', 'user_full_name', 'user_email', 'user_password', 'user_password2' ]
+    );
 
-    for my $param ( 'user_password', 'user_password2' ) {
-        if ( defined $params->{$param} ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    $checked->{action} = entry::element_of( $params->{action}, 
+        ['save', 'assign', 'delete', 'change_password']);
 
-    #actions and roles
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(save|assign|delete|change_password)$/ ) {
-            $checked->{action} = $params->{action};
-        }
-
-        if ( $params->{action} eq 'assign' ) {
-            $checked->{action} = $params->{action};
-            for my $param ( keys %$params ) {
-                $checked->{role_ids}->{$1} = 1 if ( $param =~ /^role_(\d+)$/ );
-            }
+    if ( $params->{action} eq 'assign' ) {
+        $checked->{action} = $params->{action};
+        for my $param ( keys %$params ) {
+            $checked->{role_ids}->{$1} = 1 if ( $param =~ /^role_(\d+)$/ );
         }
     }
 

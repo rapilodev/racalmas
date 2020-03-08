@@ -100,7 +100,6 @@ sub check_params {
 
     my $checked = {};
 
-    #numeric values
     for my $param ('filename') {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^[A-Za-z\_\-\.\d\/]+$/ ) ) {
             $checked->{$param} = $params->{$param};
@@ -115,10 +114,9 @@ sub check_params {
         }
     }
 
-    #numeric values
     entry::set_numbers( $checked, $params, [
         'project_id', 'studio_id', 'series_id', 'event_id'
-    ])
+    ]);
 
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};

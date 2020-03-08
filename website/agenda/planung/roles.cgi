@@ -8,6 +8,7 @@ use Data::Dumper;
 
 use config();
 use params();
+use entry();
 use log();
 use template();
 use auth();
@@ -434,12 +435,7 @@ sub check_params {
     $template = template::check( $config, $params->{template}, 'roles.html' );
     $checked->{template} = $template;
 
-    #actions
-    if ( defined $params->{action} ) {
-        if ( $params->{action} eq 'save' ) {
-            $checked->{action} = $params->{action};
-        }
-    }
+    $checked->{action} = entry::element_of( $params->{action}, ['save']);
 
     entry::set_numbers( $checked, $params, [
         'project_id', 'studio_id', 'default_studio_id'

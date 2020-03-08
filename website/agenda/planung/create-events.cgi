@@ -202,15 +202,9 @@ sub check_params {
 
     my $checked = {};
 
-    #actions and roles
-    $checked->{action} = '';
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(create_events|show_events)$/ ) {
-            $checked->{action} = $params->{action};
-        }
-    }
+    $checked->{action} = entry::element_of($params->{action}, 
+        ['create_events', 'show_events']);
 
-    #numeric values
     $checked->{exclude}  = 0;
     $checked->{duration} = 28;
     entry::set_numbers( $checked, $params, [

@@ -10,6 +10,7 @@ use config();
 use log();
 use template();
 use auth();
+use entry();
 use uac();
 use roles();
 use project();
@@ -117,12 +118,9 @@ sub check_params {
 
     my $checked = {};
 
-    $checked->{action} = '';
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(show-user-stats|show-active-users)$/ ) {
-            $checked->{action} = $params->{action};
-        }
-    }
+    $checked->{action} = entry::element_of( $params->{action}, 
+        ['show-user-stats', 'show-active-users']
+    );
 
     entry::set_numbers( $checked, $params, [
         'project_id', 'default_studio_id', 'studio_id', 'series_id']);

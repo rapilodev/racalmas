@@ -261,14 +261,7 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
-    #actions and roles
-    $checked->{action} = '';
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(send)$/ ) {
-            $checked->{action} = $params->{action};
-        }
-    }
-
+    $checked->{action} = entry::element_of($params->{action}, ['send']);
     return $checked;
 }
 

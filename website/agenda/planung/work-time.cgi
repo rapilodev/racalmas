@@ -8,6 +8,7 @@ use Data::Dumper;
 use URI::Escape();
 use params();
 use config();
+use entry();
 use log();
 use template();
 use auth();
@@ -264,13 +265,9 @@ sub check_params {
 
     my $checked = {};
 
-    #actions and roles
-    $checked->{action} = '';
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(show|save_schedule|delete_schedule)$/ ) {
-            $checked->{action} = $params->{action};
-        }
-    }
+    $checked->{action} = entry::element_of( $params->{action}, 
+        ['show', 'save_schedule', 'delete_schedule']
+    );
 
     $checked->{exclude} = 0;
     entry::set_numbers( $checked, $params, [

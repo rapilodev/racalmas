@@ -13,6 +13,7 @@ use Text::Diff::Unified::XS;
 
 use params();
 use config();
+use entry();
 use log();
 use template();
 use db();
@@ -249,7 +250,7 @@ sub check_params {
 
     #numeric values
     entry::set_numbers( $checked, $params, [
-        'id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'event_id', 'v1', 'v2' )
+        'id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'event_id', 'v1', 'v2'
     ]);
 
     if ( defined $checked->{studio_id} ) {
@@ -258,13 +259,8 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
-    #actions and roles
-    $checked->{action} = '';
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(show|diff)$/ ) {
-            $checked->{action} = $params->{action};
-        }
-    }
+    $checked->{action} = entry::element_of($params->{action}, ['show', 'diff']);
+
     return $checked;
 }
 
