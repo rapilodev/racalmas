@@ -12,6 +12,7 @@ use Encode::Locale();
 use params();
 use config();
 use log();
+use entry();
 use template();
 use db();
 use auth();
@@ -807,17 +808,11 @@ sub check_params {
     }
     $checked->{debug} = $debug;
 
-    #numeric values
-    for my $param (
+    entry::set_numbers( $checked, $params, [
         'id',      'project_id', 'studio_id', 'default_studio_id',
         'user_id', 'series_id',  'event_id',  'source_event_id',
         'episode'
-      )
-    {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    ]);
 
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};

@@ -254,13 +254,9 @@ sub check_params {
     $checked->{debug} = $debug;
 
     #numeric values
-    for
-      my $param ( 'id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'event_id', 'v1', 'v2' )
-    {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    entry::set_numbers( $checked, $params, [
+        'id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'event_id', 'v1', 'v2' )
+    ]);
 
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};

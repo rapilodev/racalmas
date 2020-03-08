@@ -371,9 +371,9 @@ sub check_params {
     $checked->{template} = template::check( $config, $params->{template}, 'image-upload' );
 
     #numeric values
-    for my $param ( 'project_id', 'studio_id', 'default_studio_id' ) {
-        $checked->{$param} = $params->{$param} if ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ );
-    }
+    entry::set_numbers( $checked, $params, [
+        'project_id', 'studio_id', 'default_studio_id'
+    ]);
 
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};

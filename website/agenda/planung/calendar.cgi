@@ -12,6 +12,7 @@ use utf8();
 use params();
 use config();
 use log();
+use entry();
 use template();
 use calendar();
 use auth();
@@ -1871,25 +1872,15 @@ sub check_params {
     my $template = '';
     $checked->{template} = template::check( $config, $params->{template}, 'series' );
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-    $checked->{debug} = $debug;
-
     #numeric values
-    $checked->{part} = 0;
-    $checked->{list} = 0;
-    for my $param (
+    $checked->{part}     = 0;
+    $checked->{list}     = 0;
+    $checked->{open_end} = 1;
+    entry::set_numbers( $checked, $params, [
         'id',      'project_id', 'studio_id', 'default_studio_id',
         'user_id', 'series_id',  'event_id',  'part',
-        'list',    'day_start'
-      )
-    {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+        'list',    'day_start',  'open_end'
+      ]);
 
     $checked->{day_start} = $config->{date}->{day_starting_hour}
       unless defined $checked->{day_start};
@@ -1909,56 +1900,27 @@ sub check_params {
         $checked->{studio_id} = $checked->{default_studio_id};
     }
 
-    $checked->{open_end} = 1;
-    for my $param ('open_end') {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
+    for my $param ('expires') {
+        $checked->{$param} = time::check_datetime( $params->{$param} );
     }
 
     #scalars
     $checked->{search} = '';
     $checked->{filter} = '';
 
-    #$checked->{range}='month';
-    for my $param ( 'search', 'filter', 'range' ) {
-        if ( defined $params->{$param} ) {
-            $checked->{$param} = $params->{$param};
-            $checked->{$param} =~ s/^\s+//g;
-            $checked->{$param} =~ s/\s+$//g;
-        }
-    }
-
-    for my $param ('expires') {
-        $checked->{$param} = time::check_datetime( $params->{$param} );
-    }
-
     for my $param ( 'date', 'from_date', 'till_date' ) {
         $checked->{$param} = time::check_date( $params->{$param} );
     }
 
-    for my $param (
+    entry::set_strings( $checked, $params, [
+        'search', 'filter', 'range',
         'series_name', 'title',    'excerpt', 'content',
         'program',     'category', 'image',   'user_content'
-      )
-    {
-        if ( defined $params->{$param} ) {
+      ]);
 
-            #$checked->{$param}=uri_unescape();
-            $checked->{$param} = $params->{$param};
-            $checked->{$param} =~ s/^\s+//g;
-            $checked->{$param} =~ s/\s+$//g;
-        }
-    }
-
-    #actions and roles
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~
-            /^(add_user|remove_user|delete|save|details|show|edit_event|save_event)$/ )
-        {
-            $checked->{action} = $params->{action};
-        }
-    }
+    $checked->{action} = entry::element_of( $params->{action}, 
+        [ 'add_user', 'remove_user', 'delete', 'save', 'details', 'show', 'edit_event', 'save_event' ]
+    );
 
     return $checked;
 }

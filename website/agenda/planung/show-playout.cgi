@@ -139,13 +139,9 @@ sub check_params {
     $checked->{error} = '';
     $checked->{template} = template::check( $config, $params->{template}, 'show-playout' );
 
-    #numeric values
-    for my $param ( 'project_id', 'studio_id', 'default_studio_id', 'series_id', 'event_id', 'id' )
-    {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    entry::set_numbers( $checked, $params, [
+         'project_id', 'studio_id', 'default_studio_id', 'series_id', 'event_id', 'id'
+    ]);
 
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};

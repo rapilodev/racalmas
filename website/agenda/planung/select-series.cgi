@@ -8,6 +8,7 @@ use Data::Dumper;
 
 use params();
 use config();
+use entry();
 use log();
 use template();
 use auth();
@@ -120,12 +121,9 @@ sub check_params {
     }
     $checked->{debug} = $debug;
 
-    #numeric values
-    for my $param ( 'id', 'project_id', 'studio_id', 'series_id', 'p_id', 's_id' ) {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^[\-\d]+$/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    entry::set_numbers( $checked, $params, [
+        'id', 'project_id', 'studio_id', 'series_id', 'p_id', 's_id'
+    ]);
 
     for my $param ( 'selectProjectStudio', 'selectSeries', 'selectRange' ) {
         if ( ( defined $params->{$param} ) && ( $params->{$param} eq '1' ) ) {

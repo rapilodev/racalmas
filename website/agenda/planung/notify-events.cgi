@@ -248,12 +248,9 @@ sub check_params {
     }
     $checked->{debug} = $debug;
 
-    #numeric values
-    for my $param ( 'event_id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'duration' ) {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    entry::set_numbers( $checked, $params, [
+        'event_id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'duration'
+    ]);
 
     for my $param ( 'subject', 'to', 'cc', 'content' ) {
         if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /\S/ ) ) {

@@ -131,11 +131,8 @@ sub check_params {
 
     #numeric values
     $checked->{exclude} = 0;
-    for my $param ( 'project_id', 'studio_id' ) {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    entry::set_numbers( $checked, $params, [
+        'project_id', 'studio_id']);
 
     #dates
     for my $param ('start_date') {

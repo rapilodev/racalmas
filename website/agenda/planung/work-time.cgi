@@ -280,15 +280,11 @@ sub check_params {
 
     #numeric values
     $checked->{exclude} = 0;
-    for my $param (
+    entry::set_numbers( $checked, $params, [
         'project_id', 'studio_id',                 'default_studio_id',     'schedule_id',
         'exclude',    'show_hint_to_add_schedule', 'weekday week_of_month', 'month'
-      )
-    {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    ]);
+    
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {

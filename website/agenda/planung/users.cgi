@@ -399,12 +399,9 @@ sub check_params {
     $template = template::check( $config, $params->{template}, 'users' );
     $checked->{template} = $template;
 
-    #numeric values
-    for my $param ( 'project_id', 'user_id', 'default_studio_id', 'studio_id', 'disabled' ) {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    entry::set_numbers( $checked, $params, [
+        'project_id', 'user_id', 'default_studio_id', 'studio_id', 'disabled']);
+        
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {

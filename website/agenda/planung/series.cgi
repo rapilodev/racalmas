@@ -11,6 +11,7 @@ use Encode();
 use utf8();
 use params();
 use config();
+use entry();
 use log();
 use template();
 use auth();
@@ -1432,7 +1433,7 @@ sub check_params {
     #numeric values
     $checked->{exclude} = 0;
     $checked->{action}  = $params->{action};
-    for my $param (
+    entry::set_numbers( $checked, $params, [
         'id',            'project_id',
         'studio_id',     'default_studio_id',
         'user_id',       'new_series_id',
@@ -1441,12 +1442,8 @@ sub check_params {
         'event_id',      'weekday',
         'week_of_month', 'month',
         'nextDay',       'predecessor_id'
-      )
-    {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
+    ]);
+    
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
@@ -1465,15 +1462,11 @@ sub check_params {
         $checked->{create_events}  = 0;
         $checked->{publish_events} = 0;
     }
-    for my $param (
+    
+    entry::set_numbers( $checked, $params, [
         'frequency',      'duration', 'default_duration', 'create_events',
         'publish_events', 'live',     'count_episodes'
-      )
-    {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /(\d+)/ ) ) {
-            $checked->{$param} = $1;
-        }
-    }
+    ]);
 
     #scalars
     for my $param ( 'search', 'from', 'till', 'period_type' ) {
