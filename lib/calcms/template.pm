@@ -23,11 +23,7 @@ our @EXPORT_OK = qw(check process exit_on_missing_permission clear_cache);
 
 # TODO:config
 sub process($$$$) {
-    my $config = $_[0];
-
-    #	my $output=$_[1];
-    my $filename = $_[2];
-    my $params   = $_[3];
+    my ($config, $output, $filename, $params) = @_;
 
     #TODO: get config
     for my $key ( keys %{ $config->{locations} } ) {
@@ -58,7 +54,6 @@ sub process($$$$) {
         my $header = "Content-type:application/json; charset=utf-8\n\n";
         my $json = JSON::to_json( $params, { pretty => 1 } );
 
-        #		$json=$header.$params->{json_callback}.'['.$json.']';
         $json = $header . $params->{json_callback} . $json;
         if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
             print $json. "\n";
@@ -78,23 +73,10 @@ sub process($$$$) {
       unless ( defined $params->{extern} ) && ( $params->{extern} eq '1' );
 
     $html_template->param($params);
-    my $output = $html_template->output();
-    if ( $filename =~ /html/ ) {
-        my ( $header, $content ) = split( /\n\n/, $output, 2 );
-        if ($content) {
-
-            #$content =~s/\s+/ /g;
-            $output = $header . "\n\n" . $content;
-        } else {
-
-            #$output =~s/[ \t]+/ /g;
-        }
-    }
-
     if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
-        print $output;
+        print $html_template->output();
     } else {
-        $_[1] = $output;
+        $_[1] = $html_template->output();
     }
 }
 
@@ -143,8 +125,6 @@ sub setRelativeUrls;
 sub setRelativeUrls {
     my $params = shift;
     my $depth = shift || 0;
-
-    #print STDERR "setRelativeUrls depth:$depth ".ref($params)."\n";
 
     return unless defined $params;
 
@@ -241,12 +221,3 @@ sub exit_on_missing_permission($$) {
 
 #do not delete last line!
 1;
-
-__END__
-sub clear_cache {
-    HTML::Template::Compiled->clear_cache();
-
-    #   return;
-    #   my $html_template = HTML::Template::Compiled->new();
-    #   $html_template->clear_cache();
-}
