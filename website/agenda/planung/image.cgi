@@ -14,6 +14,7 @@ use time();
 use images();
 use params();
 use config();
+use entry();
 use log();
 use template();
 use db();
@@ -139,7 +140,7 @@ sub show_image {
     }
 
     #load images matching by search
-    if ( $params->{search} =~ /\S/ ) {
+    if ( ($params->{search}//'') =~ /\S/ ) {
 
         #remove filename from search
         #delete $params->{filename};
@@ -208,6 +209,8 @@ sub show_image {
 
     my $search = $params->{search} || '';
     $search =~ s/\%+/ /g;
+    
+    $params->{target} //= '';
 
     my $template_params = {
         'search'     => $search,
@@ -286,8 +289,6 @@ sub save_image {
 
     $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
-
-    print STDERR "going to save\n";
 
     my $entries = images::get(
         $config,
@@ -438,14 +439,14 @@ sub check_params {
         'save_image', 'delete_image', 'show', 'filename', 'target' ]);
 
     #checkboxes
-    entry::set_bools( $checked, $params, [ 'public ']);
+    entry::set_bools( $checked, $params, [ 'public']);
 
     #map show to filename, but overwrite if filename given
-    if ( $checked->{show} ne '' ) {
+    if ( ($checked->{show}//'') ne '' ) {
         $checked->{filename} = $checked->{show};
         delete $checked->{show};
         $checked->{limit} = 1;
-    } elsif ( $checked->{filename} ne '' ) {
+    } elsif ( ($checked->{filename}//'') ne '' ) {
         delete $checked->{show};
     }
 
