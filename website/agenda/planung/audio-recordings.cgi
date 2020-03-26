@@ -5,7 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
-use CGI::Simple   ();
+use CGI::Simple();
 use ModPerl::Util ();
 use Date::Calc();
 use Time::Local();
@@ -144,6 +144,7 @@ sub uploadRecording {
         #$params->{duration} = $fileInfo->{duration};
         $params = updateDatabase( $config, $params, $user ) if $params->{error} eq '';
     } else {
+        print STDERR "could not get file handle\n";
         $params->{error} .= 'Could not get file handle';
     }
 
@@ -554,11 +555,9 @@ sub check_params {
         $checked->{studio_id} = -1;
     }
 
-    $checked->{action} = entry::element_of($params->{action}, 
-        ['update', 'delete']);
+    $checked->{action} = entry::element_of( $params->{action}, ['upload', 'delete'] );
 
-    entry::set_strings( $checked, $params, [
-        'name', 'description', 'path' ]);
+    entry::set_strings( $checked, $params, [ 'name', 'description', 'path' ]);
 
     $checked->{upload} = $params->{upload};
     return $checked;

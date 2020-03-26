@@ -10,6 +10,7 @@ use JSON();
 use config();
 use params();
 use log();
+use entry();
 use auth();
 use localization();
 

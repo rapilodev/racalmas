@@ -12,6 +12,7 @@ use Encode::Locale();
 
 use params();
 use config();
+use entry();
 use log();
 use template();
 use db();

@@ -18,6 +18,7 @@ use Image::Magick();
 use Image::Magick::Square;
 
 use config();
+use entry();
 use auth();
 use uac();
 use studios();

@@ -10,6 +10,7 @@ use URI::Escape();
 use localization();
 use params();
 use config();
+use entry();
 use log();
 use template();
 use auth();

@@ -1232,7 +1232,7 @@ sub show_series {
     }
 
     for my $value ('markdown', 'creole'){
-        $params->{"content_format_$value"}=1 if $params->{content_format} eq $value;
+        $params->{"content_format_$value"}=1 if ($params->{content_format}//'') eq $value;
     }
 
     $params->{loc} =

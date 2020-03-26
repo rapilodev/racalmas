@@ -9,6 +9,7 @@ use Encode();
 
 use params();
 use config();
+use entry();
 use log();
 use template();
 use auth();

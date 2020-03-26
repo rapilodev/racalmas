@@ -11,6 +11,7 @@ use DateTime();
 use utf8();
 use params();
 use config();
+use entry();
 use log();
 use entry();
 use template();

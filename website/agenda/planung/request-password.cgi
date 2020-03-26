@@ -8,6 +8,7 @@ use Data::Dumper;
 
 use params();
 use config();
+use entry();
 use db();
 use auth();
 use password_requests();

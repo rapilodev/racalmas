@@ -7,6 +7,7 @@ no warnings 'redefine';
 use Data::Dumper;
 
 use config();
+use entry();
 use log();
 use template();
 use auth();

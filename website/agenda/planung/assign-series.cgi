@@ -10,8 +10,8 @@ use Encode();
 
 use params();
 use config();
-use log();
 use entry();
+use log();
 use template();
 use auth();
 use uac();
