@@ -4,13 +4,9 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
-use Data::Dumper;
-
 use params();
 use config();
-use log();
 use events();
-use time();
 
 binmode STDOUT, ":encoding(UTF-8)";
 
@@ -35,9 +31,7 @@ if ( $0 =~ /events.*?\.cgi$/ ) {
         },
     };
 
-    my $output = '';
-    events::get_cached_or_render( $output, $config, $request );
-    print $output. "\n";
+    events::get_cached_or_render( 'print', $config, $request );
 }
 
 1;
