@@ -26,6 +26,21 @@
        url('../fonts/open-sans-v15-latin_latin-ext-regular.svg#OpenSans') format('svg'); /* Legacy iOS */
 }
 
+@media (prefers-color-scheme: dark) {
+    html,
+    *,
+    .entry-title a,
+    #calcms_calendar table thead a:hover,
+    #calcms_calendar table thead a:link,
+    .main-navigation a:hover, 
+    .main-navigation a:focus
+    {
+        color:white !important;
+        background:black !important;
+       
+    }
+}
+
 #page * {
     font-family: Roboto, serif !important;
 }
