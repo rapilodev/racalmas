@@ -111,14 +111,8 @@ sub check_params {
 
     my $template = template::check( $config, $params->{template}, 'categories.html' );
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-
     return {
         template => $template,
-        debug    => $debug
     };
 }
 
