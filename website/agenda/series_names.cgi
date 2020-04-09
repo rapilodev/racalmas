@@ -164,11 +164,6 @@ sub check_params {
 
     my $template = template::check( $config, $params->{template}, 'series_names.html' );
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-
     my $search = $params->{q} || $params->{search} || $params->{term} || '';
     if ( $search =~ /([a-z0-9A-Z\_\,]+)/ ) {
         $search = $1;
@@ -176,7 +171,6 @@ sub check_params {
 
     return {
         template => $template,
-        debug    => $debug,
         search   => $search,
     };
 }

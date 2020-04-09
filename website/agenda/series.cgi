@@ -8,6 +8,7 @@ use Data::Dumper;
 
 use params();
 use config();
+use entry();
 use template();
 use studios();
 use series();
@@ -78,25 +79,9 @@ sub check_params {
 
     my $checked = {};
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-    $checked->{debug} = $debug;
+    entry::set_numbers( $checked, $params, ['project_id', 'studio_id' ]);
 
-    for my $param ( 'project_id', 'studio_id' ) {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^\d+$/ ) ) {
-            $checked->{$param} = $params->{$param};
-        }
-    }
-
-    for my $param ('location') {
-        if ( defined $params->{$param} ) {
-            $checked->{$param} = $params->{$param};
-            $checked->{$param} =~ s/^\s+//g;
-            $checked->{$param} =~ s/\s+$//g;
-        }
-    }
+    entry::set_strings( $checked, $params, [ 'location'] );
 
     return $checked;
 }
