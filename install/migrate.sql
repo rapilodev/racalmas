@@ -116,11 +116,11 @@ ALTER TABLE `calcms_event_history`
 
 -- 2018-06-18 refactor columns
 
-ALTER TABLE `calcms`.`calcms_audio_recordings` 
+ALTER TABLE `calcms_audio_recordings` 
 CHANGE COLUMN `created_by` `created_by` VARCHAR(100) NOT NULL AFTER `processed`,
 CHANGE COLUMN `created_at` `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `created_by`;
 
-ALTER TABLE `calcms`.`calcms_events` 
+ALTER TABLE `calcms_events` 
 CHANGE COLUMN `program` `program` VARCHAR(40) NULL DEFAULT NULL AFTER `end`,
 CHANGE COLUMN `series_name` `series_name` VARCHAR(40) NULL DEFAULT NULL AFTER `program`,
 CHANGE COLUMN `episode` `episode` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `title`,
@@ -138,7 +138,7 @@ CHANGE COLUMN `modified_at` `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIM
 CHANGE COLUMN `reference` `reference` VARCHAR(300) NULL DEFAULT NULL AFTER `modified_at`,
 CHANGE COLUMN `disable_event_sync` `disable_event_sync` TINYINT(1) UNSIGNED NULL DEFAULT NULL AFTER `reference`;
 
-ALTER TABLE `calcms`.`calcms_images` 
+ALTER TABLE `calcms_images` 
 CHANGE COLUMN `project_id` `project_id` INT(10) UNSIGNED NOT NULL AFTER `id`,
 CHANGE COLUMN `studio_id` `studio_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `project_id`,
 CHANGE COLUMN `filename` `filename` VARCHAR(64) NOT NULL AFTER `studio_id`,
@@ -147,7 +147,7 @@ CHANGE COLUMN `licence` `licence` VARCHAR(300) NULL DEFAULT NULL AFTER `descript
 CHANGE COLUMN `public` `public` TINYINT(1) UNSIGNED NULL DEFAULT '0' AFTER `licence`,
 CHANGE COLUMN `created_at` `created_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP AFTER `modified_by`;
 
-ALTER TABLE `calcms`.`calcms_roles` 
+ALTER TABLE `calcms_roles` 
 CHANGE COLUMN `project_id` `project_id` TINYINT(1) UNSIGNED NOT NULL AFTER `id`,
 CHANGE COLUMN `studio_id` `studio_id` INT(10) UNSIGNED NOT NULL AFTER `project_id`,
 CHANGE COLUMN `level` `level` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER `role`,
@@ -197,60 +197,60 @@ CHANGE COLUMN `created_at` `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
 CHANGE COLUMN `create_download` `create_download` TINYINT(1) UNSIGNED NOT NULL AFTER `created_at`,
 CHANGE COLUMN `modified_at` `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `create_download`;
 
-ALTER TABLE `calcms`.`calcms_series_dates` 
+ALTER TABLE `calcms_series_dates` 
 CHANGE COLUMN `project_id` `project_id` INT(10) UNSIGNED NOT NULL AFTER `id`,
 CHANGE COLUMN `studio_id` `studio_id` INT(10) UNSIGNED NOT NULL AFTER `project_id`;
 
-ALTER TABLE `calcms`.`calcms_series_events` 
+ALTER TABLE `calcms_series_events` 
 CHANGE COLUMN `project_id` `project_id` INT(10) UNSIGNED NOT NULL FIRST,
 CHANGE COLUMN `studio_id` `studio_id` INT(12) UNSIGNED NOT NULL AFTER `project_id`;
 
-ALTER TABLE `calcms`.`calcms_series_schedule` 
+ALTER TABLE `calcms_series_schedule` 
 CHANGE COLUMN `project_id` `project_id` INT(10) UNSIGNED NOT NULL DEFAULT '1' AFTER `id`,
 CHANGE COLUMN `studio_id` `studio_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `project_id`;
 
-ALTER TABLE `calcms`.`calcms_studios` 
+ALTER TABLE `calcms_studios` 
 CHANGE COLUMN `image` `image` VARCHAR(200) NOT NULL AFTER `stream`;
 
-ALTER TABLE `calcms`.`calcms_studio_timeslot_dates` 
+ALTER TABLE `calcms_studio_timeslot_dates` 
 CHANGE COLUMN `project_id` `project_id` INT(10) UNSIGNED NOT NULL FIRST,
 CHANGE COLUMN `schedule_id` `schedule_id` INT(10) UNSIGNED NOT NULL AFTER `studio_id`,
 DROP PRIMARY KEY,
 ADD PRIMARY KEY USING BTREE (`project_id`, `studio_id`, `start`, `end`);
 
-ALTER TABLE `calcms`.`calcms_studio_timeslot_schedule` 
+ALTER TABLE `calcms_studio_timeslot_schedule` 
 CHANGE COLUMN `project_id` `project_id` INT(10) UNSIGNED NOT NULL AFTER `id`;
 
-ALTER TABLE `calcms`.`calcms_user_events` 
+ALTER TABLE `calcms_user_events` 
 CHANGE COLUMN `modified_by` `modified_by` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' AFTER `location`,
 CHANGE COLUMN `modified_at` `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `modified_by`;
 
-ALTER TABLE `calcms`.`calcms_user_roles` 
+ALTER TABLE `calcms_user_roles` 
 CHANGE COLUMN `project_id` `project_id` INT(10) UNSIGNED NOT NULL AFTER `id`,
 CHANGE COLUMN `studio_id` `studio_id` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `project_id`;
 
-ALTER TABLE `calcms`.`calcms_users` 
+ALTER TABLE `calcms_users` 
 CHANGE COLUMN `email` `email` VARCHAR(300) NOT NULL AFTER `full_name`,
 CHANGE COLUMN `pass` `pass` VARCHAR(100) NOT NULL AFTER `email`,
 CHANGE COLUMN `created_at` `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `created_by`,
 CHANGE COLUMN `modified_at` `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`;
 
-ALTER TABLE `calcms`.`calcms_user_series` 
+ALTER TABLE `calcms_user_series` 
 CHANGE COLUMN `project_id` `project_id` INT(10) UNSIGNED NOT NULL AFTER `id`,
 CHANGE COLUMN `studio_id` `studio_id` INT(10) UNSIGNED NOT NULL AFTER `project_id`;
 
-ALTER TABLE `calcms`.`calcms_user_stats` 
+ALTER TABLE `calcms_user_stats` 
 ADD COLUMN `upload_file` INT(10) UNSIGNED NULL DEFAULT 0 AFTER `delete_series`,
 ADD COLUMN `download_file` INT(10) UNSIGNED NULL DEFAULT 0 AFTER `upload_file`;
  
-ALTER TABLE `calcms`.`calcms_user_settings` 
+ALTER TABLE `calcms_user_settings` 
 ADD COLUMN `project_id` INT(10) UNSIGNED NULL AFTER `calendar_fontsize`,
 ADD COLUMN `studio_id` INT(10) UNSIGNED NULL AFTER `project_id`;
 
-ALTER TABLE `calcms`.`calcms_series` 
+ALTER TABLE `calcms_series` 
 ADD COLUMN `predecessor_id` INT(10) NULL AFTER `has_single_events`;
 
-CREATE TABLE `calcms`.`calcms_user_default_studios` (
+CREATE TABLE `calcms_user_default_studios` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `user` VARCHAR(50) NOT NULL,
   `project_id` INT(11) NOT NULL,
@@ -259,12 +259,12 @@ CREATE TABLE `calcms`.`calcms_user_default_studios` (
   INDEX `user` (`user` ASC));
 
 
-ALTER TABLE `calcms`.`calcms_series` 
+ALTER TABLE `calcms_series` 
 ADD COLUMN `content_format` VARCHAR(45) NULL AFTER `predecessor_id`;
 
-ALTER TABLE `calcms`.`calcms_events` 
+ALTER TABLE `calcms_events` 
 ADD COLUMN `content_format` VARCHAR(45) NULL DEFAULT NULL AFTER `disable_event_sync`;
 
-ALTER TABLE `calcms`.`calcms_roles` 
+ALTER TABLE `calcms_roles` 
 ADD COLUMN `update_event_field_content_format` TINYINT(1) UNSIGNED NOT NULL AFTER `modified_at`;
 
