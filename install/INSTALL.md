@@ -1,123 +1,128 @@
 
-==== database setup ====
+# setup database
 
-=== create database ===
+## create database
 
-  mysqladmin -u root -p create calcms_test
+    mysqladmin -u root -p create calcms
 
-=== create users ===
+### start mysql with root permissions
 
-  mysql -u root -p
-
-if using plesk, use
-
-  mysql -u admin mysql -p`cat /etc/psa/.psa.shadow`
-
-# calcms_admin
-
-CREATE USER 'calcms_admin'@'localhost' IDENTIFIED BY 'taes9Cho';
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON *.* TO 'calcms_admin'@'localhost' IDENTIFIED BY 'taes9Cho';
-GRANT ALL PRIVILEGES ON `calcms_test`.* TO 'calcms_admin'@'localhost';
-
-# calcms_write / for users
-
-CREATE USER 'calcms_write'@'localhost' IDENTIFIED BY 'Toothok8';
-GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'calcms_write'@'localhost' IDENTIFIED BY 'Toothok8';
-GRANT ALL PRIVILEGES ON `calcms_test`.* TO 'calcms_write'@'localhost';
-
-# calcms_read / for all
-
-CREATE USER 'calcms_read'@'localhost' IDENTIFIED BY 'Ro2chiya';
-GRANT SELECT ON *.* TO 'calcms_read'@'localhost' IDENTIFIED BY 'Ro2chiya' ;
-GRANT ALL PRIVILEGES ON `calcms_test`.* TO 'calcms_read'@'localhost';
-
-=== deploy time zones ===
-
-  mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql -p
+    mysql -u root -p
 
 if using plesk, use
 
-  mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u admin mysql -p`cat /etc/psa/.psa.shadow`
+    mysql -u admin mysql -p`cat /etc/psa/.psa.shadow`
 
-=== create database content ===
+We use different accounts for different purposes. 
+Please change the passwords config after "INDENTIFIED BY" ! 
 
-mysql -u calcms_admin -p calcms_test < ./install/create.sql 
+#### create admin account
 
-==== Apache HTTP Server Setup (at /etc/conf/apache2/ server settings or vhost settings) ====
+    CREATE USER 'calcms_admin'@'localhost' IDENTIFIED BY 'taes9Cho';
+    GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON *.* TO 'calcms_admin'@'localhost' IDENTIFIED BY 'taes9Cho';
+    GRANT ALL PRIVILEGES ON `calcms_test`.* TO 'calcms_admin'@'localhost';
 
-=== install mod_perl ===
+#### create editor account
 
-install 
+    CREATE USER 'calcms_write'@'localhost' IDENTIFIED BY 'Toothok8';
+    GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'calcms_write'@'localhost' IDENTIFIED BY 'Toothok8';
+    GRANT ALL PRIVILEGES ON `calcms_test`.* TO 'calcms_write'@'localhost';
 
-libapache2-mod-perl2
-libapache2-reload-perl
-libapache2-request-perl
+#### create read-only account
+
+    CREATE USER 'calcms_read'@'localhost' IDENTIFIED BY 'Ro2chiya';
+    GRANT SELECT ON *.* TO 'calcms_read'@'localhost' IDENTIFIED BY 'Ro2chiya' ;
+    GRANT ALL PRIVILEGES ON `calcms_test`.* TO 'calcms_read'@'localhost';
+
+### import database content
+
+    mysql -u calcms_admin -p calcms < ./install/create.sql 
+
+    mysql -u calcms_admin -p calcms < ./install/migrate.sql 
+
+## Apache HTTP Server Setup 
+
+### install mod_perl
+
+install apache2
+    
+    apt install apache2
+
+install apache2 rewrite
+
+    apt-get install libapache2-rewrite
+    a2enmod rewrite
+
+install mod_perl2
+
+    apt install libapache2-mod-perl2 libapache2-reload-perl libapache2-request-perl
+    a2enmod perl
 
 or via cpan
 
-Apache2::Reload
-Apache2::Request
+    cpan install Apache2::Reload Apache2::Request
+    a2enmod perl
 
-if mod_perl was installed already make sure it is enabled
 
-  ln -s /etc/apache2/mods-available/perl.load /etc/apache2/mods-enabled/perl.load
+### Apache Configuration
 
-=== enable mod_rewrite ===
-
-install
-
-libapache2-rewrite
-
-  ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load
-
-=== Apache Configuration ) ===
-
-This has to be put into your apache server or virtual host configuration
-
-### START OF FILE ###
+Virtual host configuration has to be placed at /etc/conf/apache2/.
+    
+    # adopt your settings here
+    Define domain   your-domain.org
+    Define base_dir /home/calcms
+    Define perl_lib /home/radio/calcms
 
     # Possible values include: debug, info, notice, warn, error, crit, alert, emerg.
-    LogLevel debug
+    LogLevel info
 
-    # init mod_perl (should be done at /etc/apache/mods-enabled/perl.load)
-    # LoadModule perl_module /usr/lib/apache2/modules/mod_perl.so
-
-    # redirect to inject calcms into website
+    # limit redirection on injecting into your website
     LimitInternalRecursion 4
 
-    # enable this at HTTP configuration, but disable at HTTPS configuration (!)
-    Redirect permanent /agenda/planung https://calcms.medienstaatsvertrag.org/agenda/planung
+    # redirect HTTP to HTTPS, 
+    # only needed for HTTP configuration, do not use this at HTTPS configuration(!)
+    Redirect permanent /agenda/planung https://${domain}/agenda/planung
 
-    # alias to inject calcms into website
-    Alias /agenda        /home/calcms/website/agenda
-    Alias /agenda_files  /home/calcms/website/agenda_files
-    Alias /programm      /home/calcms/website/agenda/cache/programm
+    # inject calcms into your website
+    Alias /agenda        ${base_dir}/website/agenda
+    Alias /programm      ${base_dir}/website/programm
+    Alias /agenda_files  ${base_dir}/website/agenda_files
 
-    <Directory /home/calcms/website/agenda>
+    <Directory ${base_dir}/website/agenda>
         AllowOverride All
         Options -Indexes +FollowSymLinks +MultiViews +ExecCGI
-        Order allow,deny
-        Allow from all
         Require all granted
     </Directory>
 
-    <Directory /home/calcms/website/agenda/cache/programm>
-	    AllowOverride All
-	    Options -Indexes +FollowSymLinks +MultiViews +ExecCGI
-	    Order allow,deny
-	    Allow from all
-	    Require all granted
+    <Directory ${base_dir}/website/programm>
+        AllowOverride All
+        Options -Indexes +FollowSymLinks -MultiViews -ExecCGI
+        Require all granted
+    
+        <IfModule mod_rewrite.c>
+            RewriteBase /programm
+    
+            RewriteEngine on
+            RewriteCond  %{REQUEST_FILENAME} -f
+            RewriteRule (.*) $1 [L]
+            RewriteCond  %{REQUEST_FILENAME} -d
+            RewriteRule (.*) $1 [L]
+    
+            RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$   /agenda/aggregate.cgi?from_date=$1&till_date=$2&$3 [L]
+            RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$                       /agenda/aggregate.cgi?date=$1&$2 [L]
+            RewriteRule ^sendungen/(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$                      /agenda/aggregate.cgi?date=$1&$2 [L]
+            RewriteRule ^sendung/(\d+)\.html[\?]?(.*)$                                      /agenda/aggregate.cgi?event_id=$1&$2 [L]
+            RewriteRule ^sendung/serie_plus/(\d+)\.html[\?]?(.*)$                           /agenda/aggregate.cgi?next_series=$1&$2 [L]
+            RewriteRule ^sendung/serie_minus/(\d+)\.html[\?]?(.*)$                          /agenda/aggregate.cgi?previous_series=$1&$2 [L]
+        </IfModule>
     </Directory>
 
-    <Directory /home/calcms/website/agenda_files>
+    <Directory ${base_dir}/website/agenda_files>
 	    AllowOverride All
 	    Options -Indexes -FollowSymLinks -MultiViews -ExecCGI
-	    Order allow,deny
-	    Allow from all
 	    Require all granted
     </Directory>
 
-    #mod_perl
     <IfModule mod_perl.c>
         PerlSetEnv LC_ALL   en_US.UTF-8
         PerlSetEnv LANGUAGE en_US.UTF-8
@@ -127,114 +132,126 @@ This has to be put into your apache server or virtual host configuration
 
         PerlModule Apache2::Reload
         PerlInitHandler Apache2::Reload
-        #PerlSetVar ReloadAll Off
+    
+        # set local tmp dir
+        SetEnv TMPDIR ${base_dir}/tmp/
 
-        SetEnv TMPDIR /var/tmp/
-
-        # set base library path
-        PerlSetEnv PERL5LIB /home/calcms/lib/calcms/
-        PerlPostConfigRequire /home/calcms/lib/calcms/startup.pl
+        # set library directory
+        PerlSetEnv PERL5LIB ${base_dir}/lib/calcms/
+        
+        # preload libraries
+        PerlPostConfigRequire ${base_dir}/lib/calcms/startup.pl
     </IfModule>
 
-#### END_OF_FILE ####
+### install required perl modules
 
-=== install required perl modules ===
-
-For debian/ubuntu there are packages for most required modules.
-If you cannot install packages you can use the CPAN perl package install.
-For Image::Magick::Square no deb package exists, you need to install it by "cpan Image::Magick::Square"
+There are debian packages for most required perl modules.
+You can install CPAN packages, if you cannot use debian packages.
+For example there is no debian package for Image::Magick::Square, so you can install it by "cpan Image::Magick::Square".
 
 apt-get install <deb-package>
 
-== Install by deb package ==
+#### install debian packages
 
-mariadb-server 
-build-essentials
-libapreq2-3
-libapache-dbi-perl
-libauthen-passphrase-blowfish-perl
-libcalendar-simple-perl
-libcgi-pm-perl
-libcgi-session-perl
-libconfig-general-perl
-libdatetime-perl
-libdate-calc-perl
-libdate-manip-perl
-libdbi-perl
-libdbd-mysql-perl
-libencode-perl
-libjson-perl
-libhtml-formattext-withlinks-andtables-perl
-libhtml-parser-perl
-libhtml-template-perl
-libhtml-template-compiled-perl
-libmime-base64-urlsafe-perl
-libtext-wikicreole-perl
-liburi-escape-xs-perl
-perlmagick
+    mariadb-server 
+    build-essentials
+    libapreq2-3
+    libapache-dbi-perl
+    libauthen-passphrase-blowfish-perl
+    libcalendar-simple-perl
+    libcgi-pm-perl
+    libcgi-session-perl
+    libconfig-general-perl
+    libdatetime-perl
+    libdate-calc-perl
+    libdate-manip-perl
+    libdbi-perl
+    libdbd-mysql-perl
+    libencode-perl
+    libjson-perl
+    libhtml-formattext-withlinks-andtables-perl
+    libhtml-parser-perl
+    libhtml-template-perl
+    libhtml-template-compiled-perl
+    libmime-base64-urlsafe-perl
+    libtext-wikicreole-perl
+    liburi-escape-xs-perl
+    perlmagick
 
-== Install by CPAN perl packages ==
+#### Install CPAN packages
 
-  cpan <perl-package>
+    cpan <perl-package>
 
-Apache2::Upload
-Apache::DBI
-Authen::Passphrase
-Authen::Passphrase::BlowfishCrypt
-Calendar::Simple
-CGI::Simple
-CGI::Session
-CGI
-CGI::Carp
-CGI::Cookie
-Config::General
-Data::Dumper
-DateTime
-Date::Calc
-Date::Manip
-DBD::mysql
-DBI
-Encode
-File::stat
-HTML::FormatText
-HTML::Parse
-HTML::Template
-HTML::Template::Compiled
-HTML::Template::Compiled::Plugin::XMLEscape
-JSON
-MIME::Base64
-MIME::Lite
-Text::Diff::FormatedHtml
-Text::WikiCreole
-Time::Local
-Time::localtime
-URI::Escape
-Image::Magick
-Image::Magick::Square
+    Apache2::Reload
+    Apache2::Request
+    Apache2::Upload
+    Apache::DBI
+    Authen::Passphrase
+    Authen::Passphrase::BlowfishCrypt
+    Calendar::Simple
+    CGI
+    CGI::Carp
+    CGI::Cookie
+    CGI::Session
+    CGI::Simple
+    Config::General
+    Data::Dumper
+    Date::Calc
+    Date::Manip
+    DateTime
+    DBD::mysql
+    DBI
+    Digest::MD5
+    Encode::Locale
+    HTML::Entities
+    HTML::FormatText
+    HTML::Parse
+    HTML::Template::Compiled
+    HTML::Template::Compiled::Plugin::XMLEscape
+    Image::Magick
+    Image::Magick::Square
+    JSON
+    MIME::Lite
+    ModPerl::Util
+    Session::Token
+    Text::Diff::FormatedHtml
+    Text::Markdown
+    Text::WikiCreole
+    URI::Escape
 
-==== Configure ====
+#### Configuration
 
 edit configuration at website/config/config.cgi
 
-==== inject calcms into any CMS ====
+Now you can connect to web gui 
 
-to frequently update calcms integration create a cronjob to run tools/update_page.sh
-
-you may have to update the paths inside update_page.sh
-
-=== connect to Admin interface 
-
-https://localhost/agenda/planung/
+https://<localhost>/agenda/planung/
 ccAdmin
 shug!3Lu
 
-=== how to migrate schema from one version to another one
+# inject calcms into your website
 
-cat  calcmsOld.sql | mysql -u root calcmsOld
-cat  calcmsNew.sql | mysql -u root calcmsNew
+calcms uses a copy of your web page as a template to have the same layout as your web site.  
+To update calcms content create a cronjob to run tools/update_page.sh
 
-mysqldiff --force --changes-for=server2 --difftype=sql calcmsOld:calcmsNew > migrate.sql
-# make sure lines with "modified_at" contain "ON UPDATE CURRENT_TIMESTAMP"
-# for example: `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-cat migrate | mysql -u root calcms
+you may have to update the paths inside update_page.sh
 
+# how-to
+   
+## update time zones
+
+    mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql -p
+
+if using plesk, use
+
+    mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u admin mysql -p`cat /etc/psa/.psa.shadow`
+
+## create database schema deltas for updates
+
+    cat  calcmsOld.sql | mysql -u root calcmsOld
+    cat  calcmsNew.sql | mysql -u root calcmsNew
+    mysqldiff --force --changes-for=server2 --difftype=sql calcmsOld:calcmsNew > migrate.sql
+    # make sure lines with "modified_at" contain "ON UPDATE CURRENT_TIMESTAMP"
+    # for example: `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    cat migrate | mysql -u root calcms
+    
