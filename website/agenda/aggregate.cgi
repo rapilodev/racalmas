@@ -102,7 +102,7 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
     }
 
     #replace whole element span with id="calcms_title" by value
-    $list->{project_title} = '' unless ( defined $list->{project_title} );
+    $list->{project_title} = '' unless defined $list->{project_title};
     $content =~ s/(<(div|span)\s+id="calcms_title".*?>).*?(<\/(div|span)>)/$list->{project_title}/g;
 
     my $values = [];
@@ -124,13 +124,6 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
     }
 
     $content =~ s/startCalcms\(\)\;/$js/gi;
-
-    #replace link to uncompressed or compressed drupal (first link in <head>)
-    #my @parts = split( /<\/head>/, $content );
-    #$parts[0] =~ s|/misc/jquery.js|/agenda_files/js/jquery.min.js|;
-    #$parts[0] =~ s|/sites/default/files/js/[a-z0-9\_]+\.js|/agenda_files/js/jquery.min.js|;
-    #$content = join( '</head>', @parts );
-
     print $output_header;
     print $content;
     $content = undef;
