@@ -529,3 +529,11 @@ div.play .error {
     border-radius: 4px;
     text-align: center;
 }
+
+#content tr.event.predecessor{
+    #background:#f0cccc;
+    opacity:0.5;
+}
+#content tr.event.predecessor:hover{
+    #background:#fdcccc
+}

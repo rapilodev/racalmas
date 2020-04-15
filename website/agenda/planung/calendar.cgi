@@ -262,14 +262,10 @@ sub showCalendar {
 
         # recalc after break (for list only?)
         for my $event (@$events) {
-
-            #if ($event->{splitCount}>0){
             delete $event->{day};
             delete $event->{start_date};
             delete $event->{end_date};
             $event = events::calc_dates( $config, $event );
-
-            #}
         }
 
         my $events_by_start = {};
@@ -457,7 +453,30 @@ sub showCalendar {
             }
             push @$events, $date;
         }
-
+        
+        # series dates
+        if ($params->{list} == 1){
+            my $series = series::get(
+                $config,
+                {
+                    #project_id => $project_id,
+                    #studio_id  => $studio_id,
+                    series_id  => $options->{series_id}
+                }
+            );
+            if ((defined $series->[0]) && ( $series->[0]->{predecessor_id})){
+                my $events2 = getSeriesEvents( $config, $request, {
+                    series_id => $series->[0]->{predecessor_id}
+                }, $params );
+                
+                for my $event (@$events2) {
+                    delete $event->{day};
+                    delete $event->{start_date};
+                    delete $event->{end_date};
+                    push @$events, events::calc_dates( $config, $event );
+                }
+            }
+        }
     }
 
     #output
@@ -481,8 +500,6 @@ sub showCalendar {
 
     #sort events by start
     @$events = sort { $a->{start} cmp $b->{start} } @$events;
-
-    #for my $date(@$events){debugDate($date);}
 
     #separate by day (e.g. to 6 pm)
     my $events_by_day = {};
@@ -730,6 +747,8 @@ sub showEventList {
                     <th class="draft">$draftIcon</th>
                     <th class="live">$liveIcon</th>
                     <th class="archive">$archiveIcon</th>
+                    <th class="project_id">project</th>
+                    <th class="studio">studio</th>
                  </tr>
             </thead>
             <tbody>
@@ -746,8 +765,8 @@ sub showEventList {
 
             #schedules with matching date are marked to be hidden in find_errors
             next if defined $event->{hide};
-            $event->{project_id} = $params->{project_id};
-            $event->{studio_id}  = $params->{studio_id};
+            $event->{project_id} //= $params->{project_id};
+            $event->{studio_id}  //= $params->{studio_id};
             $event->{series_id}  = '-1' unless defined $event->{series_id};
             $event->{event_id}   = '-1' unless defined $event->{event_id};
             my $id =
@@ -817,6 +836,12 @@ sub showEventList {
 
             my $title = $event->{title};
             $title .= ': ' . $event->{user_title} if $event->{user_title} ne '';
+            
+            my $other_studio  = $params->{studio_id}  ne $event->{studio_id};
+            my $other_project = $params->{project_id} ne $event->{project_id};
+            $class.=' predecessor' if $other_project or $other_studio;
+            $other_studio  = '<i class="fas fa-globe-americas"></i>' if $other_studio;
+            $other_project = '<i class="fas fa-globe-americas"></i>' if $other_project;
 
             $out .=
                 qq!<tr id="$id" class="$class" start="$event->{start}" >!
@@ -833,6 +858,8 @@ sub showEventList {
               . qq!<td class="draft">$draft</td>!
               . qq!<td class="live">$live</td>!
               . qq!<td class="archived">$archived</td>!
+              . qq!<td>$event->{project_name} $other_studio</td>!
+              . qq!<td>$event->{studio_name} $other_studio</td>!
               . qq!</tr>! . "\n";
         }
         $i++;
