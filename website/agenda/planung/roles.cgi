@@ -110,7 +110,7 @@ sub save_roles {
 
     #initialize all value ids (given by params matching to database columns)
     my $values = {};
-    for my $param ( keys %$params ) {
+    for my $param ( sort keys %$params ) {
         if ( $param =~ /(.+?)\_(\d+)?$/ ) {
             my $column = $1;
             my $id = $2 || '';
@@ -120,7 +120,7 @@ sub save_roles {
     }
 
     #init checkbox values with 0
-    for my $id ( keys %$values ) {
+    for my $id ( sort keys %$values ) {
         if ( update_allowed( $permissions, $role_by_id, $id ) ) {
             for my $column ( keys %$columns ) {
                 next
@@ -135,11 +135,11 @@ sub save_roles {
     }
 
     #set all checkbox values to 1
-    for my $param ( keys %$params ) {
+    for my $param ( sort keys %$params ) {
         if ( $param =~ /(.+?)\_(\d+)?$/ ) {
             my $column = $1;
             my $id = $2 || '';
-            next unless ( defined $columns->{$column} );
+            next unless defined $columns->{$column};
             if ( update_allowed( $permissions, $role_by_id, $id ) ) {
                 my $value = $params->{$param} || '';
                 if ( $column eq 'level' ) {
@@ -190,7 +190,7 @@ sub save_roles {
         if ( $id eq '' ) {
 
             #insert role
-            next if ( $role->{role} eq '' );
+            next if $role->{role} eq '';
             if ( defined $role_from_db ) {
                 uac::print_error("a role with name '$role->{role}' already exists!");
                 next;
@@ -387,8 +387,6 @@ sub sort_columns {
         my $index = $groups->{$group} || 0;
         $index += $actions->{$action} if defined $actions->{$action};
         $column_level->{$column} = $index;
-
-        #		print $index."<br>";
     }
 
     my @columns = sort { $column_level->{$a} <=> $column_level->{$b} } ( keys %$column_level );
