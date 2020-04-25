@@ -4,10 +4,8 @@ var calcms = (function($) {
 
     // calcms base functions
     my.updateContainer = function updateContainer(id, url, onLoading, callback) {
-        if (id == null)
-            return;
-        if (document.querySelector('#'+id).length == 0)
-            return;
+        if (id == null) return;
+        if (document.querySelector('#' + id).length == 0) return;
         $("#" + id).load(url, null, callback);
     }
 
@@ -16,14 +14,12 @@ var calcms = (function($) {
     }
 
     my.postContainer = function postContainer(url, parameters, callback) {
-        if (url != '')
-            $.post(url, parameters, callback);
+        if (url != '') $.post(url, parameters, callback);
     }
 
     // get calcms setting
     my.get = function get(name) {
-        if (calcms_settings[name] == null)
-            return '';
+        if (calcms_settings[name] == null) return '';
         return calcms_settings[name];
     }
 
@@ -39,15 +35,12 @@ var calcms = (function($) {
     }
 
     my.selectFirstOption = function selectFirstOption(id) {
-        if ($(id) && $(id).length > 0)
-            $(id)[0].selectedIndex = 0;
+        if ($(id) && $(id).length > 0) $(id)[0].selectedIndex = 0;
     }
 
     my.contains = function contains(s, t) {
-        if (s == false)
-            return false;
-        if (t == false)
-            return false;
+        if (s == false) return false;
+        if (t == false) return false;
         return s.indexOf(t) != -1;
     }
 
@@ -58,8 +51,7 @@ var calcms = (function($) {
     }
 
     my.isArchive = function isArchive() {
-        if ($('#calcms_archive:checked').length == 0)
-            return 0;
+        if ($('#calcms_archive:checked').length == 0) return 0;
         return 1;
     }
 
@@ -77,10 +69,7 @@ var calcms = (function($) {
     my.setAndGetUrlParameters = function setAndGetUrlParameters(field, value) {
 
         // overwrite fields by field and value
-        if (field != null && value != null && field != '') {
-            // alert(target+" "+field+" "+value);
-            set(field, value);
-        }
+        if (field != null && value != null && field != '') set(field, value);
 
         // read fields
         var debug = my.get('debug');
@@ -95,8 +84,7 @@ var calcms = (function($) {
 
         // delete filters by current action
         if ((field == 'search' && search_field != '')
-                || (field == 'series_name' && series_name != '')
-        ) {
+                || (field == 'series_name' && series_name != '')) {
             weekday = '';
             date = '';
             from_date = '';
@@ -146,7 +134,7 @@ var calcms = (function($) {
 
         if (field == 'time') {
             if (time == 'null') {
-                return
+                return;
             } else {
                 weekday = '';
             }
@@ -160,15 +148,11 @@ var calcms = (function($) {
         var url = '';
 
         if (field == 'month' || field == 'week') {
-            if (from_date != '')
-                url += '/' + from_date;
-            if (till_date != '')
-                url += '/' + till_date;
+            if (from_date != '') url += '/' + from_date;
+            if (till_date != '') url += '/' + till_date;
         } else if (weekday != '') {
-            if (from_date != '')
-                url += '/' + from_date;
-            if (till_date != '')
-                url += '/' + till_date;
+            if (from_date != '') url += '/' + from_date;
+            if (till_date != '') url += '/' + till_date;
             url += '/' + weekday;
         } else if (date != '') {
             if (date == 'today') {
@@ -207,11 +191,9 @@ var calcms = (function($) {
         $('#calcmsSeriesNamesForm select').each(function() {
             var id = $(this).attr('id');
             if (id == "calcms_series_name_" + projectJsName) {
-                if ($(this).css('display') == 'none')
-                    $(this).show();
+                if ($(this).css('display') == 'none') $(this).show();
             } else {
-                if ($(this).css('display') != 'none')
-                    $(this).hide();
+                if ($(this).css('display') != 'none') $(this).hide();
             }
         });
     }
@@ -219,8 +201,7 @@ var calcms = (function($) {
     // get current project
     my.getProject = function getProject() {
         var project = $('#calcms_project');
-        if (project.length == 0)
-            return 'all';
+        if (project.length == 0) return 'all';
         return project.val();
     }
 
@@ -256,12 +237,9 @@ var calcms = (function($) {
                 url += escape(project) + '/';
             else
                 url += 'all/';
-            if (value != '' && value != null)
-                url += escape(value) + '/';
-            if (archive != null && archive == 0)
-                url += 'kommende/';
-            if (archive != null && archive == 1)
-                url += 'vergangene/';
+            if (value != '' && value != null) url += escape(value) + '/';
+            if (archive != null && archive == 0) url += 'kommende/';
+            if (archive != null && archive == 1) url += 'vergangene/';
             my.updateContainer('calcms_list', url, 1);
         }
     }
@@ -271,14 +249,11 @@ var calcms = (function($) {
             project, seriesName, archive) {
         if (seriesName != '' && seriesName != null) {
             var url = my.get('search_series_name_url');
-            if (project != '' && project != null)
-                url += escape(project) + '/';
+            if (project != '' && project != null) url += escape(project) + '/';
             if (seriesName != '' && seriesName != null)
                 url += escape(seriesName) + '/';
-            if (archive != null && archive == 0)
-                url += 'kommende/';
-            if (archive != null && archive == 1)
-                url += 'vergangene/';
+            if (archive != null && archive == 0) url += 'kommende/';
+            if (archive != null && archive == 1) url += 'vergangene/';
             my.updateContainer('calcms_list', url, 1);
         }
     }
@@ -296,7 +271,6 @@ var calcms = (function($) {
         var events_url = my.get('events_url');
         var url = my.setAndGetUrlParameters('program', value);
         if (value != '' && value != null) {
-            // my.updateContainer('calcms_list', events_url+url, 1);
             my.updateContainer('calcms_list', url, 1);
         }
     }
@@ -342,8 +316,7 @@ var calcms = (function($) {
 
     // load given event details into list
     my.showEvents = function showEvents(event_id, view) {
-        if (view == null || view == '')
-            view = 'list_url';
+        if (view == null || view == '') view = 'list_url';
         if (event_id != '') {
             var url = my.get(view) + '/' + event_id + '/';
             my.updateContainer('calcms_list', url, 1);
@@ -446,9 +419,8 @@ var calcms = (function($) {
     my.showCommentsByEventIdOrEventStart = function showCommentsByEventIdOrEventStart(
             event_id, event_start) {
         var url = my.get('comments_url') || '/agenda/kommentare/';
-        if (event_id == '' || event_start == '' || url == '')
-            return false;
-        console.log("showCommentsByEventIdOrEventStart url="+url);
+        if (event_id == '' || event_start == '' || url == '') return false;
+        console.log("showCommentsByEventIdOrEventStart url=" + url);
 
         my.set('comments_event_start', event_start);
         my.set('comments_event_id', event_id);
@@ -477,9 +449,10 @@ var calcms = (function($) {
         var response = '<div>';
         if (parent_id != '') response += 'Deine Anwort:';
         var html = response
-        html += '<form id="add_comment_' + parent_id +'"'
+        html += '<form id="add_comment_' + parent_id + '"'
         html += ' action="/agenda/kommentar_neu/?" method="post"'
-        html += ' onsubmit="calcms.addComment(\'add_comment_'+parent_id+'\',this);return false;"'
+        html += ' onsubmit="calcms.addComment(\'add_comment_' + parent_id
+                + '\',this);return false;"'
         html += '>'
         html += 'Mit dem Absenden Ihres Kommentars erklären Sie sich mit der Veröffentlichung der Daten einverstanden.<br> ';
         html += 'Die Email-Addresse ist optional, dient privaten Antworten und wird nicht veröffentlicht.<br> '
@@ -491,9 +464,12 @@ var calcms = (function($) {
         html += ' ></textarea><br />'
         html += '<input name="email" maxlength="40" placeholder="Email-Addresse f&uuml;r R&uuml;ckmeldungen"/><br />'
         html += '<input type="submit" value="absenden!" style="color:#000"/>'
-        html += '<input name="event_id"    value="' + event_id + '" type="hidden" />'
-        html += '<input name="parent_id"    value="' + parent_id + '" type="hidden" />'
-        html += '<input name="event_start" value="' + event_start + '" type="hidden" />'
+        html += '<input name="event_id"    value="' + event_id
+                + '" type="hidden" />'
+        html += '<input name="parent_id"    value="' + parent_id
+                + '" type="hidden" />'
+        html += '<input name="event_start" value="' + event_start
+                + '" type="hidden" />'
         html += '</form>'
         html += '</div>';
 
@@ -542,4 +518,3 @@ var calcms = (function($) {
     // return instance
     return my;
 }(jQuery));
-
