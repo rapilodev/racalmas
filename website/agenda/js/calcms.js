@@ -3,21 +3,16 @@ var calcms = (function($) {
     var my = {};
 
     // calcms base functions
-    // event handlers are customized at herbstradio.org
-
     my.updateContainer = function updateContainer(id, url, onLoading, callback) {
         if (id == null)
             return;
-        if ($("#" + id).length == 0)
+        if (document.querySelector('#'+id).length == 0)
             return;
-        // if (onLoading)document.getElementById(id).innerHTML="lade ...";
         $("#" + id).load(url, null, callback);
     }
 
     my.load = function load(url) {
         window.location.href = url;
-        // $(window).load(url);
-        // $('html').load(url);
     }
 
     my.postContainer = function postContainer(url, parameters, callback) {
@@ -76,75 +71,6 @@ var calcms = (function($) {
         $("#calcms_search_field").val('');
     }
 
-    // set calcms_settings to parameters from URL
-    my.evaluateParametersFromUrl = function evaluateParametersFromUrl() {
-        var location = new String(window.location);
-
-        if (!location.match(my.get("base_url")))
-            return;
-
-        if (window.location.search != "") {
-            var parameters = window.location.search.split("?")[1].split("&");
-            for (var i = 0; i < parameters.length; i++) {
-                var pair = parameters[i];
-                var name_values = pair.split("=");
-                if (name_values != null) {
-                    // alert(name_values[0]+"="+name_values[1]);
-                    // set(name_values[0],name_values[1]);
-                    var element = document.getElementById(name_values[0]);
-                    if (element != null)
-                        element.value = name_values[1];
-                }
-            }
-        }
-
-        var sendung = /\/sendung\/(\d+)\//;
-        sendung.exec(location);
-
-        if (RegExp.$1 != null && RegExp.$1 != '') {
-            // alert(RegExp.$1);
-            set('event_id', RegExp.$1);
-            set('last_event_id', my.get('event_id'));
-        } else {
-
-            var sendungen = /\/sendungen\/(\d{4}\-\d{2}\-\d{2})\/(\d{4}\-\d{2}\-\d{2})\/(\d)\//;
-            sendungen.exec(location);
-            if (RegExp.$1 != '' && RegExp.$2 != '' && RegExp.$3 != '') {
-                set('from_date', RegExp.$1);
-                set('till_date', RegExp.$2);
-                set('weekday', RegExp.$3);
-            } else {
-
-                var sendungen = /\/sendungen\/(\d{4}\-\d{2}\-\d{2})\/(\d{4}\-\d{2}\-\d{2})\//;
-                sendungen.exec(location);
-                if (RegExp.$1 != '' && RegExp.$2 != '') {
-                    set('from_date', RegExp.$1);
-                    set('till_date', RegExp.$2);
-                } else {
-                    var sendungen = /\/sendungen\/(\d{4}\-\d{2}\-\d{2})\//;
-                    sendungen.exec(location);
-                    if (RegExp.$1 != '') {
-                        set('date', RegExp.$1);
-                    }
-                }
-
-            }
-
-            var kalender = /\/kalender\/(\d{4}\-\d{2}\-\d{2})\/(\d{4}\-\d{2}\-\d{2})\//;
-            kalender.exec(location);
-            if (RegExp.$1 != '' && RegExp.$2 != '') {
-                set('from_date', RegExp.$1);
-                set('till_date', RegExp.$2);
-            } else {
-                var kalender = /\/kalender\/(\d{4}\-\d{2}\-\d{2})\//;
-                kalender.exec(location);
-                if (RegExp.$1 != '') {
-                    set('date', RegExp.$1);
-                }
-            }
-        }
-    }
-
     // return URL from calcms_settings
     // parameters can be overwritten by field and value
     // This handles main controller interaction logics
@@ -163,20 +89,16 @@ var calcms = (function($) {
         var date = my.get('date');
         var month = my.get('month');
         var weekday = my.get('weekday');
-        var time_of_day = '';
         var time = '';
-        var program = my.get('program');
         var series_name = my.get('series_name');
         var category = my.get('category');
-        var tag = my.get('tag');
         var search_field = my.get('search');
 
         // delete filters by current action
         if ((field == 'search' && search_field != '')
                 || (field == 'category' && category != '')
                 || (field == 'series_name' && series_name != '')
-                || (field == 'program' && program != '') || (field == 'tag')
-                && tag != '') {
+        ) {
             weekday = '';
             date = '';
             from_date = '';
@@ -195,12 +117,6 @@ var calcms = (function($) {
             program = '';
         }
 
-        if (field == 'program') {
-            search_field = '';
-            series_name = '';
-            category = '';
-        }
-
         if (field == 'series_name') {
             search_field = '';
             program = '';
@@ -215,9 +131,7 @@ var calcms = (function($) {
             weekday = '';
             date = '';
             category = '';
-            program = '';
             series_name = '';
-            tags = '';
             search_field = '';
         }
 
@@ -225,21 +139,13 @@ var calcms = (function($) {
             weekday = '';
             date = '';
             category = '';
-            program = '';
             series_name = '';
-            tags = '';
             search_field = '';
         }
 
         if (field == 'weekday') {
-            /*
-             * if (month != ''){ from_date=month;
-             * till_date=month.substring(0,month.length-2)+"31" ; }
-             */
             category = '';
-            program = '';
             series_name = '';
-            tags = '';
             search_field = '';
         }
 
@@ -248,30 +154,19 @@ var calcms = (function($) {
             from_date = '';
             till_date = '';
             category = '';
-            program = '';
             series_name = '';
-            tags = '';
             search_field = '';
         }
 
         if (field == 'time') {
             if (time == 'null') {
                 return
-
-                
-
-                                
-
-                
-
             } else {
                 weekday = '';
-                time_of_day = '';
             }
         }
 
-        if (field == 'month' || field == 'week' || field == 'weekday'
-                || field == 'time_of_day') {
+        if (field == 'month' || field == 'week' || field == 'weekday') {
             time = '';
         }
 
@@ -311,20 +206,6 @@ var calcms = (function($) {
 
         if (url.substr(url.length - 1, url.length) != '/') {
             url += '/';
-        }
-
-        if (time_of_day != '') {
-            url += "&time_of_day=" + time_of_day;
-        } else if (time != '' && time != 'null') {
-            url += "&" + time;
-        }
-
-        if (tag != null && tag != '') {
-            url += "&tag=" + tag;
-        }
-
-        if (program != null && program != '') {
-            url += "&program=" + program;
         }
 
         if (field == 'print') {
@@ -558,7 +439,6 @@ var calcms = (function($) {
 
     // update menu and list by given date
     my.showEventsByDate = function showEventsByDate(date) {
-        // my.set('date',date);
         my.showMenuAndList('', 'date', date);
         return false;
 
@@ -611,32 +491,10 @@ var calcms = (function($) {
     }
 
     // update menu, list and calendar widget by entries of given month YYYY-MM
-    // (current day)
-    my.showTodaysCalendarAndEvents = function showTodaysCalendarAndEvents(month) {
-        my.set('month', month);
-        // my.set(date,'today');
-        my.showMenuAndList('', 'date', 'today');
-        my.showCalendar('', 'month');
-        return false;
-
-    };
-
-    // update menu, list and calendar widget by entries of given month YYYY-MM
     my.showCalendarAndEventsByMonth = function showCalendarAndEventsByMonth(
             month) {
         my.set('month', month);
         my.showMenuAndList('', 'month');
-        my.showCalendar('', 'month');
-        return false;
-
-    };
-
-    // update menu, list and calendar widget by entries of given date YYYY-MM-DD
-    my.showCalendarAndEventsByDate = function showCalendarAndEventsByDate(date) {
-        my.set('date', date);
-        my.showMenuAndList('', 'date');
-
-        my.set('month', date);
         my.showCalendar('', 'month');
         return false;
 
@@ -699,9 +557,9 @@ var calcms = (function($) {
         html += '</form>'
         html += '</div>';
 
-        document.getElementById(id).innerHTML = html
-
-        my.show(id);
+        document.getElementById(id).innerHTML = html;
+        $("#" + id).show("drop");
+        document.getElementById(id).style.visibility = "visible";
     }
     // end of Comment actions
 
@@ -723,7 +581,6 @@ var calcms = (function($) {
     // export selected events to ical
     my.exportSelectedToICal = function exportSelectedToICal() {
         window.location = my.get('ical_url') + my.setAndGetUrlParameters();
-        ;
         return false;
     }
 
@@ -743,41 +600,6 @@ var calcms = (function($) {
                 my.updateContainer('calcms_series_names', series_name_url, 1);
         }
         return false;
-    }
-
-    // wrapper to show an id
-    my.show = function show(id) {
-        $("#" + id).show("drop");
-        document.getElementById(id).style.visibility = "visible";
-        // document.getElementById(id).style.display="block";
-    }
-
-    // wrapper to hide an id
-    my.hide = function hide(id) {
-        $("#" + id).hide("drop");
-        document.getElementById(id).style.visibility = "hidden";
-        // document.getElementById(id).style.display="none";
-    }
-
-    // return max date
-    my.setDateIfBefore = function setDateIfBefore(date1, date2) {
-        if (date1 < date2)
-            return date2;
-        return date1;
-    }
-
-    // return min date
-    my.setDateIfAfter = function setDateIfAfter(date1, date2) {
-        if (date1 > date2)
-            return date2;
-        return date1;
-    }
-
-    // remove Drupal header for currently playing entry at topic overview page
-    my.removeCurrentPlayingHeader = function removeCurrentPlayingHeader() {
-        $("h2 a[href$='/testing']").each(function() {
-            $(this).css("display", "none");
-        });
     }
 
     // return instance

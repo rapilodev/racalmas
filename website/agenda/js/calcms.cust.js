@@ -179,228 +179,7 @@ var calcms_settings = new Array();
                 $("#result").load(editorsUrl)
             }
         }
-
     }
-
-    /*
-	function insertDeskDetails() {
-		var pattern = new RegExp(/redaktion\/(.*)$/);
-		var matchs = pattern.exec(document.location.href);
-		if ((matchs != null) && (matchs.length > 0) && (matchs[1] != '')) {
-			var desk = $('#center h2:first').text();
-			desk = desk.replace('Redaktion: ', '');
-			desk = escape(desk);
-			$('#center .content').append(
-					'<div>' + '<a onclick="insertDeskPrevShows(\'' + desk
-							+ '\');return false;" href="#">«letzte«</a>'
-							+ ' Sendungen '
-							+ '<a onclick="insertDeskNextShows(\'' + desk
-							+ '\');return false;" href="#">»nächste»</a>'
-							+ '<div id="showDesk" />' + '</div>');
-		}
-	}
-	*/
-
-    /*
-	function fixBlogEntries() {
-		if (document.location.href.match('/redaktionen/')
-				|| document.location.href.match('/redaktionen?')
-				|| document.location.href.match('/redaktionen$')) {
-			$('img.image-thumbnail').css('width', '3em');
-			$('img.image-thumbnail').css('height', '3em');
-			$('div.image-attach-teaser').css('width', '3em');
-			$('div.node').css('padding', '0');
-			$('div.node').css('margin', '0');
-			$('#center .submitted').remove();
-			$('#center .clear-block h2 a')
-					.each(
-							function(index) {
-								$(this)
-										.html(
-												$(this)
-														.text()
-														.replace('Redaktion: ',
-																'<font color="gray">Redaktion:</font> '));
-								if ($(this).text().match(/Information:/))
-									$(this).remove();
-							})
-
-		}
-	}
-    */
-
-    /*
-	function setImageSize() {
-		var image = '#calcms_list div.content img';
-		var size = $(window).width();
-		size = Math.floor(size * 0.16);
-		$(image).css('width', size + 'px');
-		$(image).css('height', size + 'px');
-		if (size > 200) {
-			$(image).each(function(index) {
-				var url = $(this).attr('src');
-				if (url != null) {
-					url = url.replace('/thumbs/', '/images/');
-					console.log(url);
-					$(this).attr('src', url);
-				}
-			});
-		} else {
-			$(image).each(function(index) {
-				var url = $(this).attr('src');
-				if (url != null) {
-					url = url.replace('/images/', '/thumbs/');
-					$(this).attr('src', url);
-				}
-			});
-		}
-	}
-    */	
-
-	function setThumbs() {
-		$('#calcms_playlist img').each(function(index) {
-			var url = $(this).attr('src');
-			if (url != null) {
-				url = url.replace('/images/', '/thumbs/');
-				$(this).attr('src', url);
-			}
-		});
-	}
-
-    /*
-	function addCommentsOnAgendaPages() {
-		if (calcms.contains(window.location.href, '/programm/')
-				|| calcms.contains(window.location.href, '/agenda/')) {
-			$('#sidebar-right')
-					.append(
-							'<div id="block-block-2" class="clear-block block block-block"><h2>Kommentare</h2><div class="content">'
-									+ '<div id="calcms_newest_comments">Bitte warten…</div>'
-									+ '</div></div>');
-		}
-	}
-	*/
-
-	function scrollNextEvent() {
-		if ($('#calcms_running_event').length == 0)
-			return;
-		$('#playlist_container').scrollLeft(0);
-		setInterval(nextSlideEvent, 10000);
-	}
-
-	var numberOfComingShows = 100;
-	var slideCount = 0;
-	var slideOffset = 1;
-	var slideEvents = 1;
-
-	// slideEvents will be updated at onmouseenter/leave handler at
-	// playlist_long
-	function nextSlideEvent() {
-		if (slideEvents == 0)
-			return;
-		if ($('#coming_shows a').length == 0)
-			return;
-		if (slideCount == 0) {
-			numberOfComingShows = $('#coming_shows a').length;
-			$('#playlist_container').scrollLeft(0)
-			$('#playlist_container').css('overflow', 'auto');
-			$('#playlist_container').css('-webkit-overflow-scrolling', 'touch');
-			$('#playlist_container').css('height', '150');
-			$('#coming_shows').css('white-space', 'nowrap');
-			$('#coming_shows').css('overflow-x', 'hidden');
-			$('#coming_shows').css('height', '150');
-		}
-
-		// console.log(slideCount+" "+slideOffset)
-		$('#playlist_container').animate({
-			scrollLeft : slideCount * 115 + "px"
-		}, 5000);
-
-		if (slideCount < 0)
-			slideOffset = 1
-		if (slideCount > numberOfComingShows + 1 - $('#coming_shows').width()
-				/ 100)
-			slideOffset = -1
-		slideCount += slideOffset;
-	}
-
-	function mobilise() {
-		if (!navigator.userAgent.match(/Mobi/))
-			return;
-
-		$('#wrapper #container #sidebar-left').before(
-				$('#wrapper #container #center'));
-		$('#wrapper #container #sidebar-left').before(
-				$('#wrapper #container #sidebar-right'));
-
-		$('body.sidebars').css('min-width', '100%');
-		$('body.sidebar-left').css('min-width', '100%');
-		$('body.sidebar-right').css('min-width', '100%');
-
-		$('#wrapper #container .sidebar').css('width', '100%');
-		$('#wrapper #container').css('width', '100%');
-		$('#wrapper #container').css('max-width', '100%');
-		$('#wrapper #container').css('margin', '0');
-		$('#wrapper #container').css('padding', '0');
-
-		$('#center').css('margin', '0');
-		$('#center #squeeze').css('margin', '0');
-		$('#center *').css('margin-left', '0');
-		$('#center *').css('margin-right', '0');
-		$('#center .right-corner').css('position', 'static');
-		$('#center .right-corner').css('left', '0');
-		$('#center .right-corner').css('padding-left', '0');
-		$('#center .right-corner').css('padding-right', '0');
-		$('#center .right-corner').css('background-image', 'url()');
-		$('#center .left-corner').css('position', 'static');
-		$('#center .left-corner').css('padding-left', '0');
-		$('#center .left-corner').css('padding-right', '0');
-		$('#center .left-corner').css('background-image', 'url()');
-		$('#center *').css('background-image', 'url()');
-
-		$('#wrapper #container #header').css('height', '100px');
-
-		var padding = '0.5em'
-		$('#center .left-corner').css('padding-left', padding);
-		$('#center .left-corner').css('padding-right', padding);
-		$('#wrapper #container #sidebar-left').css('padding-left', padding);
-		$('#wrapper #container #sidebar-left').css('padding-right', padding);
-
-		// $('*').css('background','none');
-		// $('#sidebar-left div.content').css('text-align','center');
-		// $('#sidebar-left *').css('margin-left','0');
-		// $('#sidebar-left *').css('margin-right','0');
-		// $('#sidebar-right *').css('margin-left','0');
-		// $('#sidebar-right *').css('margin-right','0');
-		// $('#sidebar-left').css('width','90%');
-		$('.node').css('padding-left', '0');
-		$('.node').css('padding-right', '0');
-
-		$('#calcms_search input').css("padding", "1em");
-		$('#calcms_search select').css("padding", "1em");
-
-		var menu = "ul.links.primary-links";
-		$(menu).addClass('mobileMenu');
-		$(menu).before('<div id="mobileMenuButton"></div>');
-		$(menu).hide();
-
-		var menu2 = "ul.links.secondary-links";
-		$(menu2).each(function() {
-			$(menu).append($(this).html());
-		})
-		$(menu2).remove();
-
-		$('#calcms_calendar table').css('width', '90%');
-
-		// move footer down
-		var footer = $('#wrapper #footer').html();
-		$('body').append(footer);
-		$('#wrapper #footer').remove();
-
-		$("#mobileMenuButton").click(function() {
-			$(menu).slideToggle();
-			return false;
-		});
-	}
 
 	function initSearch() {
 		var base = $('#calcms_search_show_details');
@@ -408,7 +187,6 @@ var calcms_settings = new Array();
 		if (elem.length == 0) {
 			base.append('<span id="plus"> ▼ </span>');
 			base.prepend('<span id="plus"></span>');
-
 		}
 	}
 
@@ -434,26 +212,13 @@ var calcms_settings = new Array();
         }
     }
 
-	function initAll() {
+	$(document).ready(function() {
 		initCalcms();
 		//initWordpress();
-		//addCommentsOnAgendaPages();
 		calcms.showPlaylist();
 		calcms.showNewestComments();
-		// insertDeskDetails();
-		// fixBlogEntries();
-		calcms.removeCurrentPlayingHeader();
-		// setImageSize();
-		// setThumbs();
-		// scrollNextEvent();
-		//initSlider();
-		// mobilise();
 		initSearch();
 		console.log("calcms inited")
-	}
-
-	$(document).ready(function() {
-		initAll();
 	});
 
 }(jQuery, calcms));
