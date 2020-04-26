@@ -51,20 +51,12 @@ function setupMenuHeight(){
             function(){
                 var height=$(this).height()+14;
                 if (height>weekday_height) weekday_height=height;
-                //console.log(weekday_height+" "+height);
             }
         );
-        //console.log(weekday_height)
         top+=weekday_height+1;
-
         $('#calendar').css("top", top);
-
         return top;
-
     } else {
-        // calendar list
-        //console.log('found calendar list')
-
         var top = $('#calcms_nav').height();
         $('#content').css("top", top);
 
@@ -110,7 +102,6 @@ function resizeCalendarMenu(){
     
     //set spacing between table columns
     var columnSpacing=Math.round($(window).width()/72);
-    //if(columnSpacing>16)columnSpacing=16;
     if(columnSpacing<0) columnSpacing=0;
     columnSpacing=Math.ceil(columnSpacing);
     
@@ -122,40 +113,14 @@ function resizeCalendarMenu(){
     if($(window).width()<720){
         $('#calendar td.week').hide();
         cell_width=(width-100)/(days)-4;
-        //$('#calendar div.text').css('padding-right','0');
     }else{
         $('#calendar td.week').show();
         cell_width=(width-100)/(days)-columnSpacing;
-        //$('#calendar div.text').css('padding-right','16px');
     }
 
     var with_param='width';
     var cw=cell_width.toFixed();
 
-    /*
-    $('#calendar div.work').css(with_param, cw);
-    $('#calendar div.play').css(with_param, cw);    
-    $('#calendar div.grid').css(with_param, cw);
-    $('#calendar div.event').css(with_param, cw);
-    $('#calendar div.schedule').css(with_param, cw);
-    $('#calendar div.date').css(with_param, cw);
-    $('#calendar_weekdays div.date').css(with_param, cw);
-    $('#calendar div.time').css(with_param, cw);
-    $('#calendar_weekdays div.time').css(with_param, cw);
-    */
-    
-    //now
-    //$('#calendar div.time.now').css(with_param, '100%');
-
-    //collisions
-    /*
-    $('#calendar div.event.error').css(   with_param, cw/2.2);
-    $('#calendar div.schedule.error').css(with_param, cw/2.2);
-
-    //shift right
-    $('#calendar div.event.error.x2').css(   'margin-left', cw/2+6);
-    $('#calendar div.schedule.error.x2').css('margin-left', cw/2+6);
-    */
     showCalendar();
 }
 
@@ -174,10 +139,6 @@ function setFilter(){
             }
         });
     }
-    
-    //var url=updateUrlParameters(window.location.href);
-    //url=setUrlParameter(url,'filter',filter);
-    //updateUrls(url);
 }
 
 // preselect options in select boxes
@@ -328,12 +289,9 @@ function getNearestDatetime(){
     );
 
     //add a day, if time < startOfDay
-    //console.log(date+" "+hour+" "+minute+" "+startOfDay)
     if(hour<startOfDay){
         date=addDays(date,1);
-        //console.log("+1: "+date)
         date=formatDate(date);
-        //alert(date)
     }
 
     var minute=0;
@@ -352,8 +310,6 @@ function getNearestDatetime(){
                 m=m*60/height;
                 minute=Math.floor(m/5)*5;
                 if (minute<10)minute='0'+minute;
-                //minute='30';
-                //if(delta<0) minute='00';
             }
         }
     );
@@ -407,24 +363,19 @@ function checkStudio(){
 function setIcons(){
     var img='';
     
-    //img='<img class="img_live" src="image/live.png" title="live">'
     img='<i class="fas fa-microphone-alt" title="live"></i>';
     $('#calendar div.event.live.no_rerun div.icons').append(img);
 
     img='<i class="fas fa-microphone-slash" title="preproduced"></i>';
-    //img='<img class="img_preproduced" src="image/preproduced.png" title="preproduced">'
     $('#calendar div.event.preproduced.no_rerun div.icons').append(img);
 
     img='<i class="fas fa-redo" title="rerun"></i>';
-    //img='<img class="img_rerun" src="image/rerun.png" title="rerun">'
     $('#calendar div.event.rerun div.icons').append(img);
 
     img='<i class="fas fa-play" title="playout"></i>';
-    //img='<img class="img_playout" src="image/playout.png" title="playout">'
     $('#calendar div.event.playout div.icons').append(img);
 
     img='<i class="fas fa-archive" title="archived"></i>';
-    //img='<img class="img_archived" src="image/archived.png" title="archived">'
     $('#calendar div.event.archived div.icons').append(img);
 }
 
@@ -452,13 +403,10 @@ function show_schedule_series_dialog(project_id, studio_id, series_id, start_dat
         title: loc['label_schedule_series'],
         buttons: {
             "Schedule": function() {
-                //add schedule
                 var series_id=$('#series_select').val();
                 var duration=$('#series_duration').val();
                 var start_date=$('#series_date').val();
-                //var url='event.cgi?action=show_new_event_from_schedule&studio_id='+studio_id+'&series_id='+series_id+'&start_date='+start_date;
                 var url='series.cgi?project_id='+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&start='+escape(start_date)+'&duration='+duration+'&show_hint_to_add_schedule=1#tabs-schedule';
-                //alert(url);
                 load(url);
             },
             "Cancel" : function() {
@@ -474,10 +422,6 @@ function setDatePicker(){
     
     registerDatePicker(
         '#start_date', {
-            //showOn: "button",
-            //buttonImageOnly: true,
-            //buttonImage: "image/calendar.png",
-            //buttonText: "cal",
             showWeek: true,
             onSelect : function(dateText, inst) {
                 var url=setUrlParameter(window.location.href,'date',dateText);
@@ -487,7 +431,6 @@ function setDatePicker(){
     );
     
     var date=getUrlParameter("date");
-    //console.log("set date: "+date);
     $('#start_date').datepicker("setDate", date);
 }
 
@@ -535,13 +478,11 @@ function initSelectDate(){
 
 function initCalendarMenu(){
     //add filters to header
-    //var html='<div style="white-space: nowrap;">';
     var html='';
     html += '<div><input id="show_events"   type="checkbox" checked="checked">'+(label_events || "label") +'</div>';
     html += '<div><input id="show_schedule" type="checkbox" checked="checked">'+(label_schedule || "schedule")+'</div>';
     html += '<div><input id="show_playout"  type="checkbox" checked="checked">'+(label_playout || "playout")+'</div>';
     html += '<div><input id="show_worktime" type="checkbox" >'+(label_worktime || "worktime")+'</div>';
-    //html += '</div>';
     $('#toolbar').append(html);
 
     if(getUrlParameter('s')=='0') unselectCheckbox('#show_schedule');
@@ -584,8 +525,6 @@ function deleteFromPlayout(id, projectId, studioId, start){
     url+='&project_id='+escape(projectId);
     url+='&studio_id='+escape(studioId);
     url+='&start_date='+escape(start);
-    //console.log(url);
-    //console.log(id)
     $('#'+id).load(url);
     return false;
 }
@@ -710,8 +649,6 @@ function updateTable(){
         baseElement='#calendar';
         resizeCalendarMenu();
 
-        //$('body').css('background','#eee');
-
         $(window).resize(function() {
             resizeCalendarMenu();
             setupMenu()
@@ -835,7 +772,6 @@ function updateTable(){
         function(){
             // get first event_list item
             var id = $('#event_list tbody tr').first().attr('id');
-            //console.log(id);
             var field=id.split('_');
             var classname   =field.shift();
             var project_id  =field.shift();
@@ -855,10 +791,6 @@ function updateTable(){
     $('#calendar').show();
 
     showMouse();
-    
-    //move schedules
-    //addDraggable();
-
 }
 
 function addDraggable(){
@@ -870,7 +802,6 @@ function addDraggable(){
         grid: [height, height],
         cursorAt: { top: 0 },
         drag: function(){
-            //$(this).attr("title", $("#position").text());
             $(this).parent().children(".schedule").each(
                 function(key, value){
                     if ( isColliding($(this)) == true ){ 
@@ -896,16 +827,12 @@ function isColliding(div){
     var intersect=false;
     div.parent().children(".schedule").each(
         function(key, value){
-            //console.log("isColliding");
-            //console.log(dragged);
-            //console.log($(this));
             if (dragged.is($(this))) {
                 return;
             }
             if (collision(dragged, $(this))==true){
                 intersect=true;
             }
-            //console.log(intersect);
         }
     );
     return intersect;
@@ -934,7 +861,6 @@ function handleEvent(id, event){
     var series_id   =field.shift();
     var event_id    =field.shift();
 
-    //if(checkStudio()==0)return;
     if (project_id<0) {alert("please select a project");return;}
     if (studio_id <0) {alert("please select a studio");return;}
     if (series_id <0) return;
@@ -961,7 +887,6 @@ function handleUnassignedEvent(id){
     if (project_id<0)   return;
     if (studio_id<0)    return;
     if (event_id<0)     return;
-    //console.log("assign series")
     $('#assign_series_events input[name="event_id"]').attr('value',event_id);
 
     show_not_assigned_to_series_dialog();
@@ -1005,7 +930,6 @@ function handleGrid(id){
     var start_date=getNearestDatetime();
     $('#series_date').attr('value',start_date);
     showDateTimePicker('#series_date');
-    //alert("studio "+studio_id+" "+start_date);
 
     show_schedule_series_dialog(project_id, studio_id, series_id, start_date);
 }
