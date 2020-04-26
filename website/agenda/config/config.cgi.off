@@ -11,6 +11,7 @@ Define LOG_DIR              /home/radio/log
 
 # default project from database
 project                     Corax
+domain                      ${DOMAIN}
 
 <filter>
 #    projects_to_exclude     project1
@@ -80,6 +81,8 @@ project                     Corax
 
     # multi language support
     admin_pot_dir           ${BASE_DIR}/agenda/planung/pot/
+
+    email                   info@${DOMAIN}
 </locations>
 
 <permissions>
