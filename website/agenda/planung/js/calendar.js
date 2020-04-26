@@ -8,9 +8,6 @@ function openNewTab(url){
     window.open(url, '_blank');
 }
 
-var effect=null;
-var effect_duration=null;
-
 function selectCheckbox(selector){
     $(selector).each(function(){
         $(this).prop('checked', 'checked');
@@ -28,63 +25,51 @@ function isChecked(selector){
 }
 
 function cancel_edit_event(){
-    $('#calendar').show(effect,null,effect_duration);
-    $('#calendar_weekdays').show(effect,null,effect_duration);
-    $('#event_editor').hide(effect,null,effect_duration);
+    $('#calendar').show();
+    $('#calendar_weekdays').show();
+    $('#event_editor').hide();
     resizeCalendarMenu();
     return false;
 }
 
 function setupMenuHeight(){
     if ($('#calendar').length>0){
-        // calendar table
-        console.log('setupMenuHeight')
         var top=$('#calcms_nav').height();
 
         $('#toolbar').css("top", top);
         $('#toolbar').css("position", "absolute");
         top+=$('#toolbar').height()+2;
 
+        var weekdays = document.querySelector("#calendar_weekdays");
         $('#calendar_weekdays').css("top", top);
+
         var weekday_height=30;
-        $('#calendar_weekdays table td div').each(
-            function(){
-                var height=$(this).height()+14;
+        weekdays.querySelectorAll("table td div").forEach( 
+            function(div) {
+                var height = div.offsetHeight + 14;
                 if (height>weekday_height) weekday_height=height;
-            }
+            } 
         );
+        
         top+=weekday_height+1;
         $('#calendar').css("top", top);
         return top;
     } else {
         var top = $('#calcms_nav').height();
         $('#content').css("top", top);
-
-        top = $('#calcms_nav').height();
-        $('#content').css("top", top);
-
         return top;
     }
 }
 
-function hideCalendar(){
-    $('#calendar').css("display","none");
-    $('#calendar_weekdays').css("visibility","hidden");
-}
-
-function showCalendar(){
-    $('#calendar').show();
-    $('#calendar_weekdays').css("visibility","visible");
-}
-    
 function resizeCalendarMenu(){
-    hideCalendar();
+    $('#calendar').hide();
+    $('#calendar_weekdays').css("visibility","hidden");
 
     //after getting menu heigth, hide calendar again
-    var menuHeight=setupMenuHeight();
+    var menuHeight = setupMenuHeight();
 
-    var width=    $(window).width()-0;
-    var height=    $(window).height()-menuHeight;
+    var width  = $(window).width()-0;
+    var height = $(window).height()-menuHeight;
 
     if($('#calendar').css('display')=='none'){
         $('body #content').css('max-width', '960');
@@ -121,7 +106,8 @@ function resizeCalendarMenu(){
     var with_param='width';
     var cw=cell_width.toFixed();
 
-    showCalendar();
+    $('#calendar').show();
+    $('#calendar_weekdays').css("visibility","visible");
 }
 
 
