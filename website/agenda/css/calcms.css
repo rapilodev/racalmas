@@ -49,11 +49,6 @@
     font-family: Open Sans, serif !important;
 }
 
-/* fix drupal */
-input {
-    max-width: 20em;
-}
-
 body.custom-background {
     image-rendering: pixelated;
 }
@@ -628,22 +623,15 @@ a#calcms_search_show_details #plus {
 
 #calcms_calendar table thead a:hover,
 #calcms_calendar table thead a:link,
-#calcms_calendar table thead a:visited {
-    color: #333;
-    padding: 0;
-    text-decoration: none;
-    font-weight: normal;
-}
-
+#calcms_calendar table thead a:visited,
 #calcms_calendar table tbody a:hover,
 #calcms_calendar table tbody a:link,
 #calcms_calendar table tbody a:visited {
     color: #333;
     padding: 5px;
-    padding-top: 2px;
-    padding-bottom: 3px;
     text-decoration: none;
     font-weight: normal;
+    display:block;
 }
 
 #calcms_calendar table td,
@@ -655,8 +643,6 @@ a#calcms_search_show_details #plus {
     font-weight: normal;
     border-bottom: 1px solid #ddd;
     transition: all .1s ease-in-out;
-    padding-top: 2%;
-    padding-bottom: 2%;
 }
 
 #calcms_calendar table thead td:hover,
@@ -715,15 +701,6 @@ a#calcms_search_show_details #plus {
     opacity: 0.3;
 }
 
-/* player
-#player{
-    border:0;
-    padding:0;
-    height:26px;
-    width:180px;
-    overflow:hidden;
-}
-*/
 #player {
     border: 0;
     padding: 0;
