@@ -4,6 +4,7 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
+
 use FindBin();
 
 #use base 'Exporter';
@@ -30,7 +31,7 @@ sub read_config {
     my @stack = ();
     my $entry = {};
 
-    open my $fh, '<', $file or die;
+    open my $fh, '<:encoding(UTF-8)', $file or die;
     while ( my $line = <$fh> ) {
         chomp $line;
 
