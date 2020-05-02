@@ -113,5 +113,10 @@ domain                      ${DOMAIN}
     day_starting_hour       6
 </date>
 
+no_result_message           Radio ${DOMAIN}
+events_title                Radio ${DOMAIN}
+events_description          Hört mehr Radio
+
+
 </config>
 

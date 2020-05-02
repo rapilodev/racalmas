@@ -1172,6 +1172,10 @@ sub render($$$$;$) {
       if ( defined $config->{permissions}->{hide_event_images} )
       && ( $config->{permissions}->{hide_event_images} == 1 );
 
+    for my $attr (qw(no_result events_title events_description)){
+        $template_parameters->{$attr} = $config->{$attr};
+    }
+
     template::process( $config, $_[0], $params->{template}, $template_parameters );
 
     return $_[0];
