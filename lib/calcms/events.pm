@@ -1718,6 +1718,11 @@ sub check_params ($$) {
     return $checked;
 }
 
+sub l($){
+    my ($word) = @_;
+    return length $word ? $word : ();
+}
+
 sub get_keys($) {
     my ($event) = @_;
 
@@ -1728,25 +1733,28 @@ sub get_keys($) {
     my $episode                = $event->{episode}                || '';
     my $recurrence_count_alpha = $event->{recurrence_count_alpha} || '';
 
-    my $skey = '';
-    $skey .= $series_name if $series_name ne '';
-    $skey .= ' - '
-      if ( $series_name ne '' )
-      && ( ( $title ne '' ) || ( $user_title ne '' ) );
+    # "<title>: <user-title>"
+    my $tkey = join (': ', (l($title), l($user_title)));
 
-    my $tkey = '';
-    $tkey = $title if $title ne '';
-    $tkey .= ': ' if ( $title ne '' ) && ( $user_title ne '' );
-    $tkey .= $user_title             if $user_title ne '';
-    $tkey .= ' #' . $episode         if $episode ne '';
-    $tkey .= $recurrence_count_alpha if $recurrence_count_alpha ne '';
+    # episode "#123c"
+    my $ekey = join '', (
+        (length $episode) ? '#'.$episode : '',
+        $recurrence_count_alpha
+    );
 
+    # "<title> <episode>"
+    my $te = join " ", (l($tkey), l($ekey));
+
+    # separation between <series> and <title>
+    my $stkey = ( length($series_name) and length($te) ) ? ' - ' : '';
+    
     return {
-        key                             => $skey . $tkey,
-        full_title                      => $skey . $tkey,
-        full_title_no_series            => $tkey . $pkey,
-        full_title_no_program           => $skey . $tkey,
-        full_title_no_program_no_series => $tkey
+        skey                            => $series_name,
+        stkey                           => $stkey,
+        tkey                            => $tkey,
+        ekey                            => $ekey,
+        full_title                      => $series_name . $stkey . $te,
+        full_title_no_series            => $te,
     };
 }
 
