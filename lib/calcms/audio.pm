@@ -100,5 +100,17 @@ sub formatLoudness {
     return qq{<div class="badge-$class">$prefix$value dB</div>};
 }
 
+sub formatFile{
+    my $file     = shift;
+    my $event_id = shift;
+
+    return '' unless $file;
+
+    my ($id) = $file =~ /id(\d+)/;
+    return '' unless $id;
+    return '' if $id eq $event_id;
+    return qq{<div class="badge-error" title="wrong file at playout: $file">Playout</div>};
+}
+
 # do not delete this line
 1;

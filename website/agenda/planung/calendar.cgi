@@ -1164,6 +1164,7 @@ sub printTableBody {
 
             if ( $event->{class} eq 'event' ) {
                 $event->{content} .= '<br><span class="weak">';
+                $event->{content} .= audio::formatFile($event->{file}, $event->{event_id});
                 $event->{content} .= audio::formatDuration(
                     $event->{duration},
                     $event->{event_duration},
