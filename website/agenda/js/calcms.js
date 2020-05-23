@@ -22,10 +22,6 @@ var calcms = (function($) {
         window.location.href = url;
     }
 
-    my.postContainer = function postContainer(url, parameters, callback) {
-        if (url != '') $.post(url, parameters, callback);
-    }
-
     // get calcms setting
     my.get = function get(name) {
         if (calcms_settings[name] == null) return '';
@@ -441,13 +437,29 @@ var calcms = (function($) {
     // add a comment to a event
     my.addComment = function addComment(id, comment) {
         var url = my.get('add_comment_url');
-        if (url != '')
-            $.post(url, $("#" + id).serialize(), function(data) {
-                my.showCommentsByEventIdOrEventStart(my
-                        .get('comments_event_id'), my
-                        .get('comments_event_start'));
+        if (url == '') return;
 
-            });
+        var formElement = document.getElementById(id);
+        const data = new URLSearchParams();
+        for (const pair of new FormData(formElement)) {
+            data.append(pair[0], pair[1]);
+        }
+        fetch( url, {
+            method: 'post',
+            body: data
+        })
+        .then( response => response.text() )
+        .then( result => {
+            console.log('Success:', result);
+            my.showCommentsByEventIdOrEventStart(
+                my.get('comments_event_id'), 
+                my.get('comments_event_start')
+            );        
+        })
+        .catch( error => { 
+            console.error('Error:', error);
+        });
+
         return false;
     }
 
