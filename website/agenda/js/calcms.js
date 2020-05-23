@@ -3,10 +3,19 @@ var calcms = (function($) {
     var my = {};
 
     // calcms base functions
-    my.updateContainer = function updateContainer(id, url, onLoading, callback) {
+    my.updateContainer = function updateContainer(id, url, callback) {
         if (id == null) return;
-        if (document.querySelector('#' + id).length == 0) return;
-        $("#" + id).load(url, null, callback);
+        var elem = document.querySelector('#' + id);
+        if (elem == null) return;
+        fetch( url )
+            .then( response => response.text())
+            .then( text => {
+                elem.innerHTML = text;
+                if (callback != null) callback();
+            })
+            .catch( error => { 
+                console.error('Error:', error);
+            });
     }
 
     my.load = function load(url) {
@@ -240,7 +249,7 @@ var calcms = (function($) {
             if (value != '' && value != null) url += escape(value) + '/';
             if (archive != null && archive == 0) url += 'kommende/';
             if (archive != null && archive == 1) url += 'vergangene/';
-            my.updateContainer('calcms_list', url, 1);
+            my.updateContainer('calcms_list', url);
         }
     }
 
@@ -254,7 +263,7 @@ var calcms = (function($) {
                 url += escape(seriesName) + '/';
             if (archive != null && archive == 0) url += 'kommende/';
             if (archive != null && archive == 1) url += 'vergangene/';
-            my.updateContainer('calcms_list', url, 1);
+            my.updateContainer('calcms_list', url);
         }
     }
 
@@ -262,7 +271,7 @@ var calcms = (function($) {
     my.showEventsBySeriesName = function showEventsBySeriesName(value) {
         if (value != '' && value != null) {
             my.updateContainer('calcms_list', my.get('search_series_name_url')
-                    + escape(value) + '/', 1);
+                    + escape(value) + '/');
         }
     }
 
@@ -271,7 +280,7 @@ var calcms = (function($) {
         var events_url = my.get('events_url');
         var url = my.setAndGetUrlParameters('program', value);
         if (value != '' && value != null) {
-            my.updateContainer('calcms_list', url, 1);
+            my.updateContainer('calcms_list', url);
         }
     }
 
@@ -298,7 +307,7 @@ var calcms = (function($) {
         if (target == 'window') {
             window.location.href = events_url + url;
         } else {
-            my.updateContainer('calcms_menu', menu_url + url, 1);
+            my.updateContainer('calcms_menu', menu_url + url);
 
             if (event_id != '' && event_id != null && Number(event_id) != 'NaN') {
                 // load list selected by url
@@ -306,7 +315,7 @@ var calcms = (function($) {
                 my.set('event_id', '');
             } else {
                 // load event list
-                my.updateContainer('calcms_list', events_url + url, 1);
+                my.updateContainer('calcms_list', events_url + url);
                 my.set('last_list_url', events_url + url);
             }
 
@@ -319,7 +328,7 @@ var calcms = (function($) {
         if (view == null || view == '') view = 'list_url';
         if (event_id != '') {
             var url = my.get(view) + '/' + event_id + '/';
-            my.updateContainer('calcms_list', url, 1);
+            my.updateContainer('calcms_list', url);
         } else {
             document.getElementById('calcms_list').innerHTML = 'keine Sendung gefunden...';
         }
@@ -335,7 +344,6 @@ var calcms = (function($) {
                     .updateContainer(
                             'calcms_list',
                             url,
-                            1,
                             function(responseText, textStatus, XMLHttpRequest) {
                                 var back_link = '<a href="#" onclick="updateContainer(\'calcms_list\',\''
                                         + old_url
@@ -508,9 +516,9 @@ var calcms = (function($) {
             var debug = my.get('debug');
 
             if (program_url != null && program_url != '')
-                my.updateContainer('calcms_programs', program_url, 1);
+                my.updateContainer('calcms_programs', program_url);
             if (series_name_url != null && series_name_url != '')
-                my.updateContainer('calcms_series_names', series_name_url, 1);
+                my.updateContainer('calcms_series_names', series_name_url);
         }
         return false;
     }

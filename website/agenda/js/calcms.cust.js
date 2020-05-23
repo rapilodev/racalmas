@@ -97,7 +97,7 @@ var calcms_settings = new Array();
 
         if (element.css('display') == 'none') {
             url = calcms.get('series_name_url');
-            calcms.updateContainer('calcms_series_names', url, 1, function() {
+            calcms.updateContainer('calcms_series_names', url, function() {
                 calcms.selectProject();
                 loadedSearchComponents++;
                 if (loadedSearchComponents == 2) {
@@ -113,13 +113,13 @@ var calcms_settings = new Array();
 
     calcms.insertDeskNextShows = function insertDeskNextShows(desk) {
         var url = '/agenda/suche/all/' + desk + '/kommende/';
-        calcms.updateContainer('showDesk', url, 1);
+        calcms.updateContainer('showDesk', url);
         return false;
     }
 
     calcms.insertDeskPrevShows = function insertDeskPrevShows(desk) {
         var url = '/agenda/suche/all/' + desk + '/vergangene/';
-        calcms.updateContainer('showDesk', url, 1);
+        calcms.updateContainer('showDesk', url);
         return false;
     }
 
@@ -141,7 +141,7 @@ var calcms_settings = new Array();
             if ((matchs != null) && (matchs.length > 0)) {
                 console.log("matchs " + url)
                 $('div.entry-content').append('<div id="result"> </div>')
-                $("#result").load(editorsUrl)
+                calcms.updateContainer("#result", editorsUrl);
             }
         }
     }
