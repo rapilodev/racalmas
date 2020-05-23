@@ -292,7 +292,7 @@ sub sync ($$) {
 
         # update existing entries
         if ( defined $update_by_date->{$start} ) {
-            next if has_changed( $entry, $update_by_date->{$start} ) == 0;
+            #next if has_changed( $entry, $update_by_date->{$start} ) == 0;
             playout::update( $config, $dbh, $entry, $update_by_date->{$start} );
             my $result = series_events::set_playout_status(
                 $config,
@@ -354,7 +354,7 @@ sub update ($$$$) {
     my $oldEntry = shift;
     my $newEntry = shift;
 
-    return if has_changed( $oldEntry, $newEntry ) == 0;
+    #return if has_changed( $oldEntry, $newEntry ) == 0;
 
     for my $key (
         'duration',        'errors',         'file',           'channels',
