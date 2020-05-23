@@ -107,8 +107,7 @@ var calcms_settings = new Array();
         } else {
             calcms.showProjectSeriesNames(calcms.getProject());
         }
-
-        $("#" + id).slideToggle();
+        calcms.toggle(document.querySelector('#' + id));
     }
 
     calcms.insertDeskNextShows = function insertDeskNextShows(desk) {

@@ -22,6 +22,22 @@ var calcms = (function($) {
         window.location.href = url;
     }
 
+    my.show = function (elem) {
+	    elem.style.display = 'block';
+    };
+
+    my.hide = function (elem) {
+	    elem.style.display = 'none';
+    };
+
+    my.toggle = function (elem) {
+	    if (window.getComputedStyle(elem).display === 'block') {
+		    my.hide(elem);
+	    }else{
+    	    my.show(elem);
+        }
+    };
+
     // get calcms setting
     my.get = function get(name) {
         if (calcms_settings[name] == null) return '';
@@ -494,7 +510,7 @@ var calcms = (function($) {
         html += '</div>';
 
         document.getElementById(id).innerHTML = html;
-        $("#" + id).show("drop");
+        my.show(document.getElementById(id));
         document.getElementById(id).style.visibility = "visible";
     }
     // end of Comment actions
