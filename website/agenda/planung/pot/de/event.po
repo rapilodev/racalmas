@@ -182,3 +182,5 @@ msgstr "Auszug ist zu lang. Für längeren Text bitte das Feld «aktuelle Themen
 msgid "label_excerpt_extension_too_long"
 msgstr "Auszug ist zu lang. Für längeren Text bitte das Feld «aktuelle Themen» verwenden."
 
+msgid "button_copy_to_clipboard"
+msgstr "in Zwischenablage kopieren"

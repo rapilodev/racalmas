@@ -175,3 +175,6 @@ msgstr "excerpt is too long. for longer text please use the field «Current Topi
 msgid "label_excerpt_extension_too_long"
 msgstr "excerpt is too long. for longer text please use the field «Current Topics»"
 
+msgid "button_copy_to_clipboard"
+msgstr "copy to clipboard"
+

@@ -276,6 +276,21 @@ function checkFields(){
     }
 }
 
+function copyEventToClipboard(){
+    var text = $('textarea[name="excerpt"]').val()+"\n";
+    text += $('textarea[name="user_excerpt"]').val()+"\n";
+    text += $('textarea[name="topic"]').val()+"\n\n";
+    text += $('textarea[name="content"]').val()+"\n";
+
+    text = '<textarea style="none" id="clipboard">' + text + '</textarea>';
+    $('body').append(text);
+
+    var copyText = document.getElementById('clipboard');
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+}
+
 $(document).ready(
     function(){
         initRegions(region);
