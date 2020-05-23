@@ -334,6 +334,8 @@ div.badge-error {
     display: inline;
     margin: 3px;
     padding: 3px;
+    line-height:1.6rem;
+    white-space: nowrap;
 }
 
 div.badge-ok {
