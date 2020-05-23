@@ -286,7 +286,7 @@ sub sync ($$) {
                     playout    => 0,
                 }
             );
-            print STDERR "delete playout_status result=" . $result . "\n";
+            print STDERR "delete playout_status result=" . ($result // 'undef') . "\n";
             next;
         }
 
@@ -303,7 +303,7 @@ sub sync ($$) {
                     playout    => 1,
                 }
             );
-            print STDERR "update playout_status result=" . $result . "\n";
+            print STDERR "update playout_status result=" . ($result // 'undef') . "\n";
             next;
         }
     }
@@ -324,7 +324,7 @@ sub sync ($$) {
                     playout    => 1,
                 }
             );
-            print STDERR "insert playout_status result=" . $result . "\n";
+            print STDERR "insert playout_status result=" . ($result // 'undef'). "\n";
         }
     }
     return 1;
@@ -342,7 +342,7 @@ sub has_changed ($$) {
         'writing_library', 'modified_at'
       )
     {
-        return 1 if ( $oldEntry->{$key} || '' ) ne ( $newEntry->{$key} || '' );
+        return 1 if ( $oldEntry->{$key} // '' ) ne ( $newEntry->{$key} // '' );
     }
     return 0;
 }
