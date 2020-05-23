@@ -1721,7 +1721,7 @@ sub check_params ($$) {
 sub get_keys($) {
     my ($event) = @_;
 
-    my $program                = $event->{program}                || '';
+    #my $program                = $event->{program}                || '';
     my $series_name            = $event->{series_name}            || '';
     my $title                  = $event->{title}                  || '';
     my $user_title             = $event->{user_title}             || '';
@@ -1741,12 +1741,9 @@ sub get_keys($) {
     $tkey .= ' #' . $episode         if $episode ne '';
     $tkey .= $recurrence_count_alpha if $recurrence_count_alpha ne '';
 
-    my $pkey = '';
-    $pkey = ' (' . $program . ')' if $program ne '';
-
     return {
-        key                             => $skey . $tkey . $pkey,
-        full_title                      => $skey . $tkey . $pkey,
+        key                             => $skey . $tkey,
+        full_title                      => $skey . $tkey,
         full_title_no_series            => $tkey . $pkey,
         full_title_no_program           => $skey . $tkey,
         full_title_no_program_no_series => $tkey
