@@ -146,63 +146,6 @@ var calcms_settings = new Array();
         }
     }
 
-    var setupSliderTimer;
-    function initSlider() {
-        setupSliderTimer = setInterval(function() {
-            setupSlider();
-        }, 1000);
-    }
-
-    var isSliderInited = 0;
-    var sliderTimer;
-    function setupSlider() {
-        console.log("setupSlider")
-        if (isSliderInited == 1) return;
-        isSliderInited = 1;
-        clearInterval(setupSliderTimer);
-        $('#playlist_container').scrollLeft(0);
-
-        numberOfComingShows = $('#coming_shows a').length;
-
-        $('#playlist_container').mouseenter(function() {
-            slideEvents = 0;
-        });
-
-        $('#playlist_container').mouseleave(function() {
-            slideEvents = 1;
-        });
-
-        nextSlideEvent();
-        sliderTimer = setInterval(nextSlideEvent, 10000);
-        console.log("setupSlider done")
-    }
-
-    var numberOfComingShows = 100;
-    var slideCount = 0;
-    var slideOffset = 1;
-    var slideEvents = 1;
-
-    // slideEvents will be updated at onmouseenter/leave handler at
-    // playlist_long
-    function nextSlideEvent() {
-        // console.log("slideEvent")
-        if (slideEvents == 0) return;
-        if ($('#coming_shows a').length == 0) return;
-
-        // console.log(slideCount+" "+slideOffset)
-        var item = $('#playlist_container .eventContainer').first();
-        var width = item.outerWidth();
-        // console.log("width="+width);
-        $('#playlist_container').animate({
-            scrollLeft : slideCount * width + "px"
-        }, 1000);
-
-        if (slideCount < 0) slideOffset = 1
-        if (slideCount > numberOfComingShows + 1 - $('#coming_shows').width()
-                / 100) slideOffset = -1
-        slideCount += slideOffset;
-    }
-
     function initSearch() {
         var base = $('#calcms_search_show_details');
         var elem = $('#calcms_search_show_details #plus');
@@ -240,7 +183,6 @@ var calcms_settings = new Array();
         calcms.showPlaylist();
         calcms.showNewestComments();
         calcms.insertEditors();
-        initSlider();
         initSearch();
         console.log("calcms inited")
     });
