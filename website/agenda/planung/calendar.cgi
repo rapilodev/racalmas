@@ -110,7 +110,6 @@ if (
         print q{
             <!--<link href="css/theme.default.css" rel="stylesheet">-->
             <script src="js/jquery.tablesorter.min.js"></script>
-            <script src="js/jquery.tablesorter.widgets.min.js"></script>
             <style>#content{ top:5rem; position:relative; }</style>
         };
     }

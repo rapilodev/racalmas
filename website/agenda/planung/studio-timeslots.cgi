@@ -76,8 +76,6 @@ if ( $action eq 'show_dates' ) {
 	    <link href="css/theme.default.css" rel="stylesheet">
 
 	<script src="js/jquery.tablesorter.min.js"></script>
-	<script src="js/jquery.tablesorter.widgets.min.js"></script>
-	<script src="js/jquery.tablesorter.scroller.js"></script>
 
         <script src="js/studio-timeslots.js" type="text/javascript"></script>
 	    <script src="js/datetime.js" type="text/javascript"></script>
