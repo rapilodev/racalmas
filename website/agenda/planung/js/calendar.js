@@ -346,25 +346,6 @@ function checkStudio(){
     return 1;
 }
 
-function setIcons(){
-    var img='';
-    
-    img='<i class="fas fa-microphone-alt" title="live"></i>';
-    $('#calendar div.event.live.no_rerun div.icons').append(img);
-
-    img='<i class="fas fa-microphone-slash" title="preproduced"></i>';
-    $('#calendar div.event.preproduced.no_rerun div.icons').append(img);
-
-    img='<i class="fas fa-redo" title="rerun"></i>';
-    $('#calendar div.event.rerun div.icons').append(img);
-
-    img='<i class="fas fa-play" title="playout"></i>';
-    $('#calendar div.event.playout div.icons').append(img);
-
-    img='<i class="fas fa-archive" title="archived"></i>';
-    $('#calendar div.event.archived div.icons').append(img);
-}
-
 function show_not_assigned_to_series_dialog(){
     $("#event_no_series").dialog({
         resizable: false,
@@ -773,7 +754,6 @@ function updateTable(){
     );
 
     //set checkboxes from url parameters and update all urls
-    setIcons();
     $('#calendar').show();
 
     showMouse();

@@ -449,6 +449,7 @@ sub showCalendar {
                 $events_by_start->{ $date->{start} }->{rms_right} = $date->{rms_right} || 0;
                 $events_by_start->{ $date->{start} }->{playout_modified_at} = $date->{modified_at};
                 $events_by_start->{ $date->{start} }->{playout_updated_at}  = $date->{updated_at};
+                $events_by_start->{ $date->{start} }->{file}  = $date->{file};
             }
             push @$events, $date;
         }
@@ -1504,7 +1505,27 @@ sub print_event {
     }
 
     if ($showIcons) {
-        $content = '<div class="text">' . $content . '</div><div class="icons"></div>';
+        my $attr =  { map { $_ => undef } split( /\s+/, $class) };
+        
+        my $file = $event->{file} 
+            ? 'playout: ' . $event->{file} =~ s/\'/\&apos;/gr 
+            : 'playout';
+
+        my $icons='';
+        if ( exists $attr->{event} ){
+            $icons.='<i class="fas fa-microphone-alt" title="live"></i>'
+                if exists($attr->{live}) && exists($attr->{no_rerun});
+            $icons.='<i class="fas fa-microphone-slash" title="preproduced"></i>'
+                if exists($attr->{preproduced}) && exists($attr->{no_rerun});
+            $icons.='<i class="fas fa-redo" title="rerun"></i>'
+                if exists $attr->{rerun};
+            $icons.=qq{<i class="fas fa-play" title="$file" onmouseenter="console.log('$file');"></i>}
+                if exists $attr->{playout};
+            $icons.='<i class="fas fa-archive" title="archived"></i>'
+                if exists $attr->{archived};
+        }
+
+        $content = qq{<div class="text">$content</div><div class="icons">$icons</div>};
     }
 
     my $time = '';
