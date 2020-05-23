@@ -75,8 +75,6 @@ RewriteRule ^sendereihe/(.*?)/(.*?)/(.*)$		events.cgi?template=event_list.html&p
 RewriteRule ^sendereihe/(.*?)/(.*)$ 			events.cgi?template=event_list.html&series_name=$1&$2 [L]
 
 RewriteRule ^freefm.xml$                events.cgi?template=event_freefm.xml&location=piradio&limit=40
-RewriteRule ^future$					events.cgi?template=event_list_image.html&limit=20
-RewriteRule ^dt64-festival.html$        events.cgi?location=dt64&template=event_dt64&archive=all
 RewriteRule ^frrapo-programm.html$      events.cgi?location=potsdam&template=event_frrapo
 RewriteRule ^upload_playout_piradio$    upload_playout.cgi?project_id=1&studio_id=1
 
