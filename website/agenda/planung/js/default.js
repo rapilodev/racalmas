@@ -349,6 +349,15 @@ function initLabels(){
     });
 };
 
+function copyToClipboard(text){
+    if ( text.length == 0 ) return;
+    $('body').append('<textarea style="display:none" id="clipboard">' + text + '</textarea>');
+    var copyText = document.getElementById('clipboard');
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+}
+
 $(document).ready(
     function(){
         setupMenu();
