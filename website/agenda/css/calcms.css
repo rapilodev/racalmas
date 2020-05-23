@@ -248,6 +248,20 @@ a {
         display: none;
     }
 }
+@media all and (max-width: 600px) {
+    #calcms_list .excerpt {
+        width: 0;
+        display: none;
+    }
+    #calcms_list .location {
+        width: 0;
+        display: none;
+    }
+    #calcms_list .subtitle {
+        width: 0;
+        display: none;
+    }
+}
 
 #calcms_list .event.running:hover {
     opacity: 0.9;

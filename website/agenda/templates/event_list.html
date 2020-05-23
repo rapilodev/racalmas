@@ -32,7 +32,9 @@
         <span class="summary" title="Mehr Infos zur Sendung">
             
             <a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
-                <span class="title"><TMPL_VAR full_title></span>
+                <span class="title"><TMPL_VAR skey></span>
+                <span class="subtitle"><TMPL_VAR stkey><TMPL_VAR tkey></span>
+                <span class="episode"><TMPL_VAR ekey></span>
             </a>
             <div class="excerpt"><TMPL_VAR excerpt> <TMPL_VAR user_excerpt> </div>
 
