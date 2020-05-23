@@ -334,7 +334,6 @@ sub has_changed ($$) {
     my $oldEntry = shift;
     my $newEntry = shift;
 
-    my $update = 0;
     for my $key (
         'duration',        'errors',         'file',           'channels',
         'format',          'format_version', 'format_profile', 'format_settings',

@@ -65,7 +65,6 @@ function uploadFile(uploadButton){
         processData: false,
         xhr: function() {
             var start = new Date();
-            //var myXhr = $.ajaxSettings.xhr();
             var xhr = new window.XMLHttpRequest();
             if (xhr.upload) {
                 var c=0;
@@ -87,7 +86,6 @@ function uploadFile(uploadButton){
                         var duration=(new Date().getTime() - start.getTime()) / 1000 ;
                         var bitrate = loaded / duration;
 
-                        //var remaining = Math.round(bitrate * ( total - loaded) );
                         var remaining = Math.round( (duration * data.total / data.loaded) - duration );
                         if (oldRemaining == 0) oldRemaining = remaining;
                         if (duration>30) remaining= oldRemaining*0.5 + remaining*0.5;
@@ -120,7 +118,6 @@ function uploadFile(uploadButton){
             showFinished();
             hideProgress();
             hideError();
-            //setTimeout(function() { location.reload() }, 1000);
         }
     );
 }

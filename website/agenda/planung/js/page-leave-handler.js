@@ -22,7 +22,6 @@ function pageLeaveHandler(){
         return confirmPageLeave();
     };
 
-    //$(window).unload(function(){});
     pageIsLoaded=1;
     console.log("pageLeaveHandler=initialized")
 

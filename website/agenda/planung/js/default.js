@@ -86,12 +86,7 @@ function updateContainer(id, url, callback){
 
 function load(url){
     window.location=url;
-    //window.location.replace(url);
-    //document.location.href=url;
-    //$(window).load(url);
-    //$('html').load(url);
 }
-
 
 function postContainer(url, parameters, callback){
     if (url!='') $.post(url, parameters, callback);

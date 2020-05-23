@@ -1177,8 +1177,7 @@ sub printTableBody {
                   if defined $event->{rms_left};
                 $event->{content} .= audio::formatLoudness( $event->{rms_right}, 'R: ' )
                   if defined $event->{rms_right};
-
-              #$event->{content} .= formatBitrate( $event->{bitrate} ) if defined $event->{bitrate};
+                #$event->{content} .= formatBitrate( $event->{bitrate} ) if defined $event->{bitrate};
                 $event->{content} .= '</span>';
             }
 
