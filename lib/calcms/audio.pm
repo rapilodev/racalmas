@@ -33,17 +33,17 @@ sub formatDuration($$$;$) {
         $class = "warn";
         $title = sprintf(
             qq{file is too long! It should be %d minutes, but is %d},
-            ($eventDuration+0.5) / 60,
-            ($audioDuration+0.5) / 60
+            ($eventDuration+30) / 60,
+            ($audioDuration+30) / 60
         );
     }
 
-    if ( $delta < 99.98 ) {
+    if ( $delta < 99.97 ) {
         $class = "error";
         $title = sprintf(
             qq{file is too short! should be %d minutes, but is %d},
-            ($eventDuration+0.5) / 60,
-            ($audioDuration+0.5) / 60
+            ($eventDuration+30) / 60,
+            ($audioDuration+30) / 60
         );
 
     }

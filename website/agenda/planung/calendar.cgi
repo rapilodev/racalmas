@@ -4,6 +4,8 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
+use utf8;
+
 use Data::Dumper;
 use URI::Escape();
 use DateTime();
@@ -1168,7 +1170,7 @@ sub printTableBody {
                 $event->{content} .= audio::formatDuration(
                     $event->{duration},
                     $event->{event_duration},
-                    sprintf( "%d min", ( $event->{duration} + 0.5 ) / 60 ),
+                    sprintf( "%d min", ( $event->{duration} + 30 ) / 60 ),
                     sprintf( "%d s", $event->{duration} )
                   )
                   . ' '
