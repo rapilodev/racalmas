@@ -413,11 +413,21 @@ sub add_recurrence_dates {
     }
 
     # set start dates to results
+    my $language = $config->{date}->{language} || 'en';
     for my $result (@$results) {
         next unless defined $result->{recurrence};
         next if $result->{recurrence} == 0;
-        $result->{recurrence_date} =
-          $recurrence_dates->{ $result->{recurrence} };
+        my $rdate = $recurrence_dates->{ $result->{recurrence} };
+        if ($rdate){
+            $result->{recurrence_date} = $rdate;
+            $result->{recurrence_date_name} = time::date_format( $config, $rdate, $language );
+            ( $result->{recurrence_time_name} ) = $rdate =~ m/(\d\d\:\d\d)\:\d\d/ ;
+            my $ymd = time::date_to_array($rdate);
+            my $weekdayIndex = time::weekday( $ymd->[0], $ymd->[1], $ymd->[2] );
+            $result->{recurrence_weekday_name}       = time::getWeekdayNames($language)->[$weekdayIndex];
+            $result->{recurrence_weekday_short_name} = time::getWeekdayNamesShort($language)->[$weekdayIndex];
+        }
+
     }
 
 }
@@ -517,12 +527,11 @@ sub calc_dates {
 
     if ( defined $result->{weekday} ) {
         my $language = $config->{date}->{language} || 'en';
-
         my $weekdayIndex = time::getWeekdayIndex( $result->{weekday} ) || 0;
-
         $result->{weekday_name}       = time::getWeekdayNames($language)->[$weekdayIndex];
         $result->{weekday_short_name} = time::getWeekdayNamesShort($language)->[$weekdayIndex];
     }
+
     return $result;
 }
 
