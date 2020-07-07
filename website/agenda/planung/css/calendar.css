@@ -464,6 +464,8 @@ div#toolbar input.search {
 #calendar div.event:hover {
     min-height: 4rem !important;
     z-index: 99;
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.2);
+    transition: all 0.3s;
 }
 
 #calendar div.ui-draggable-dragging {
