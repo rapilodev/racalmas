@@ -27,7 +27,7 @@ sub formatDuration($$$;$) {
     my $class = "ok";
     my $title = $mouseOver;
 
-    my $delta = 100 * $audioDuration / $eventDuration;
+    my $delta = 100 * $audioDuration / ($eventDuration+.00000000000001);
 
     if ( $delta > 101 ) {
         $class = "warn";
