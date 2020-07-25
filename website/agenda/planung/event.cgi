@@ -643,7 +643,8 @@ sub save_event {
         uac::print_error("series not found");
         return;
     }
-    $entry->{image}        = images::normalizeName( $serie->{image} );
+    $entry->{image}        = $serie->{series_image} if !$serie->{image} && $serie->{series_image};
+    $entry->{image}        = images::normalizeName( $entry->{image} );
     $entry->{series_image} = images::normalizeName( $serie->{series_image} );
 
     $config->{access}->{write} = 1;
