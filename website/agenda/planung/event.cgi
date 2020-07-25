@@ -6,6 +6,7 @@ no warnings 'redefine';
 
 use Encode();
 use Data::Dumper;
+$Data::Dumper::SortKeys=1;
 use MIME::Base64();
 use Encode::Locale();
 
@@ -398,8 +399,11 @@ sub getJson {
 
     # for rerun
     if ( $params->{get_rerun} == 1 ) {
-        $event->{rerun}      = 1;
         $event->{recurrence} = eventOps::getRecurrenceBaseId($event);
+        for my $key ( 'live', 'published', 'playout', 'archived', 'disable_event_sync', 'draft' ){
+            $event->{$key}=0;
+        }
+        $event->{rerun}      = 1;
 
         #$event=events::calc_dates($config, $event);
     }
