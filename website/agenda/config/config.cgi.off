@@ -76,6 +76,10 @@ domain                      ${DOMAIN}
     local_archive_dir       /home/calcms/archive/
     local_archive_url       /archive/
 
+    # listen
+    listen_dir              /home/calcms/${DOMAIN}/
+    listen_url              https://${DOMAIN}/listen/
+
     local_audio_recordings_dir ${BASE_DIR}/recordings/
     local_audio_recordings_url /agenda_files/recordings/
 

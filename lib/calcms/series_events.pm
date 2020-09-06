@@ -450,7 +450,7 @@ sub insert_event ($$) {
     #get event content from series
     for my $attr (
         'program', 'series_name', 'title',       'excerpt', 'content', 'topic',
-        'image',   'episode',     'podcast_url', 'archive_url'
+        'image',   'episode',     'podcast_url', 'archive_url', 'content_format'
       )
     {
         $event->{$attr} = $serie->{$attr} if defined $serie->{$attr};
@@ -461,7 +461,8 @@ sub insert_event ($$) {
     #overwrite series values from parameters
     for my $attr (
         'program', 'series_name', 'title', 'user_title', 'excerpt',     'user_except',
-        'content', 'topic',       'image', 'episode',    'podcast_url', 'archive_url'
+        'content', 'topic',       'image', 'episode',    'podcast_url', 'archive_url',
+        'content_format'
       )
     {
         $event->{$attr} = $params->{$attr} if defined $params->{$attr};

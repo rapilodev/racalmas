@@ -5,6 +5,9 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use MIME::Base64();
+use Encode();
+
 use DBI();
 use template();
 
@@ -176,6 +179,8 @@ sub modify_results ($$$$) {
         }
 
         $result = calc_dates( $config, $result, $params, $previous_result, $time_diff );
+        
+        set_listen_key($config, $result);
 
         $result->{event_uri} = '';
         if ( ( defined $result->{program} ) && ( $result->{program} ne '' ) ) {
@@ -533,6 +538,63 @@ sub calc_dates {
     }
 
     return $result;
+}
+
+sub set_listen_key($$){
+    my ($config, $event) =@_;
+    
+    my $time_zone = $config->{date}->{time_zone};
+    my $start = time::datetime_to_utc( $event->{start_datetime}, $time_zone );
+    my $now = time::datetime_to_utc( time::time_to_datetime( time() ), $time_zone);
+    my $over_since = $now-$start;
+    return if $over_since < 0;
+    return if $over_since > 7*24*60*60;
+
+    my $archive_url = $config->{locations}->{listen_url};
+    if (defined $event->{listen_key}){
+        $event->{listen_url} = $archive_url . '/' . $event->{listen_key};
+        return;
+    }
+
+    my $datetime = $event->{start_datetime};
+    if ( $datetime =~ /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d)\:(\d\d)/ ) {
+        $datetime = $1 . '\ ' . $2 . '_' . $3;
+    } else {
+        print STDERR "update_recording_link: no valid datetime found $datetime\n";
+        return;
+    }
+    my $archive_dir = $config->{locations}->{local_archive_dir};
+    my @files = glob( $archive_dir . '/' . $datetime . '*.mp3' );
+    return if @files <= 0;
+
+    my $key  = int( rand(99999999999999999) );
+    $key = MIME::Base64::encode_base64($key);
+    $key =~ s/[^a-zA-Z0-9]//g;
+    $key .='.mp3';
+
+    my $audio_file = Encode::decode( "UTF-8", $files[0] );
+    my $link = $archive_dir . '/' . $key;
+    symlink $audio_file, $link or die "cannot create $link, $!";
+    $event->{listen_url} = $archive_url . '/' . $key;
+    $event->{listen_key} = $key;
+    events::update_listen_key($config, $event);
+}
+
+sub update_listen_key($$){
+    my ($config, $event) = @_; 
+                    
+    return undef unless defined $event->{event_id};
+    return undef unless defined $event->{listen_key};
+    print STDERR "set listen_key=$event->{listen_key} for ".$event->{start}." ".$event->{title}."\n";
+    my $bindValues = [ $event->{listen_key}, $event->{event_id} ];
+
+    my $query = qq{
+        update calcms_events
+        set listen_key=? 
+        where id=?;
+    };
+    my $dbh = db::connect($config);
+    my $recordings = db::put( $dbh, $query, $bindValues );
 }
 
 sub add_recordings($$$$) {

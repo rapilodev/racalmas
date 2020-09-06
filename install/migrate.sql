@@ -268,3 +268,5 @@ ADD COLUMN `content_format` VARCHAR(45) NULL DEFAULT NULL AFTER `disable_event_s
 ALTER TABLE `calcms_roles` 
 ADD COLUMN `update_event_field_content_format` TINYINT(1) UNSIGNED NOT NULL AFTER `modified_at`;
 
+ALTER TABLE `calcms_events` 
+ADD COLUMN `listen_key` VARCHAR(100) NULL;
