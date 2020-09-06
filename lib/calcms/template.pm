@@ -27,7 +27,7 @@ sub process($$$$) {
 
     #TODO: get config
     for my $key ( keys %{ $config->{locations} } ) {
-        $params->{$key} = $config->{locations}->{$key} if ( $key =~ /\_url$/ );
+        $params->{$key} = $config->{locations}->{$key} if ( $key =~ /\_url$/ && $key !~/local/);
     }
 
     # add current project
