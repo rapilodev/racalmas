@@ -229,7 +229,7 @@ sub modify_results ($$$$) {
         if ( defined $result->{image} ) {
             my $url = $config->{locations}->{local_media_url} || '';
             my $image = $result->{image};
-            $result->{thumb_url} = $url . '/thumbs/' . $image;
+            $result->{thumb_url} = $config->{locations}->{thumbs_url} . $image;
             $result->{icon_url}  = $url . '/icons/' . $image;
             $result->{image_url} = $url . '/images/' . $image;
         }
@@ -237,7 +237,7 @@ sub modify_results ($$$$) {
         if ( defined $result->{series_image} ) {
             my $url = $config->{locations}->{local_media_url} || '';
             my $image = $result->{series_image};
-            $result->{series_thumb_url} = $url . '/thumbs/' . $image;
+            $result->{series_thumb_url} = $config->{locations}->{thumbs_url} . $image;
             $result->{series_icon_url}  = $url . '/icons/' . $image;
             $result->{series_image_url} = $url . '/images/' . $image;
         }

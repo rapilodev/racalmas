@@ -71,6 +71,7 @@ domain                      ${DOMAIN}
     # images
     local_media_dir         ${BASE_DIR}/agenda_files/media/
     local_media_url         /agenda_files/media/
+    thumbs_url              /thumbs/
 
     # archives
     local_archive_dir       /home/calcms/archive/
