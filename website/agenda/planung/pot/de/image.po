@@ -94,6 +94,9 @@ msgstr "Dieses Bild für Studio nutzen"
 msgid "label_assign_to_project"
 msgstr "Dieses Bild für Projekt nutzen"
 
+msgid "label_assign_to_projects"
+msgstr "Dieses Bild für Projekt nutzen"
+
 msgid "label_warn_not_public_event"
 msgstr "Bild muss veröffentlicht werden, um es in Sendebeschreibung zu nutzen."
 

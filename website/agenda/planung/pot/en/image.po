@@ -95,6 +95,9 @@ msgstr "use image for studio"
 msgid "label_assign_to_project"
 msgstr "use image for project"
 
+msgid "label_assign_to_projects"
+msgstr "use image for project"
+
 msgid "label_warn_not_public_event"
 msgstr "image must has been published before assigning to event"
 
