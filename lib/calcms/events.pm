@@ -189,11 +189,11 @@ sub modify_results ($$$$) {
               if ( ( $result->{series_name} ne '' )
                 || ( $result->{title} ne '' ) );
         }
-        if ( $result->{series_name} ne '' ) {
+        if ( ($result->{series_name}//'') ne '' ) {
             $result->{event_uri} .= $result->{series_name};
             $result->{event_uri} .= '-' if ( $result->{title} ne '' );
         }
-        $result->{event_uri} .= $result->{title} if $result->{title} ne '';
+        $result->{event_uri} .= $result->{title} if length $result->{title};
         $result->{event_uri} =~ s/\#/Nr./g;
         $result->{event_uri} =~ s/\&/und/g;
         $result->{event_uri} =~ s/\//\%2f/g;
@@ -212,10 +212,15 @@ sub modify_results ($$$$) {
         $result->{source_base_url}  = $config->{locations}->{source_base_url};
         $result->{cache_base_url}   = $config->{cache}->{base_url};
 
-        $result->{is_running} = 1
-          if ( $running_event_id eq $result->{event_id} );
-        $result->{one_comment} = 1 if ( $result->{comment_count} == 1 );
-        $result->{no_comment}  = 1 if ( $result->{comment_count} == 0 );
+        $result->{is_running} = 1 if 
+            $running_event_id 
+            && $result->{event_id} 
+            && $running_event_id eq $result->{event_id} ;
+          
+        if (defined $result->{comment_count}){
+            $result->{one_comment} = 1 if ( $result->{comment_count} == 1 );
+            $result->{no_comment}  = 1 if ( $result->{comment_count} == 0 );
+        }
 
 #fix image url
 #$params->{exclude_event_images}=0 unless defined $params->{exclude_event_images};
@@ -262,7 +267,7 @@ sub modify_results ($$$$) {
                 $result->{ 'project_' . $key } = $project->{$key};
             }
         } else {
-            print STDERR "events::get - unknown project for event $result->{id}\n";
+            printf STDERR "events::get - unknown project for event %s\n", $result->{id} // "undef";
         }
 
         #if project_id is set add columns from project (cached)
