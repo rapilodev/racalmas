@@ -58,6 +58,9 @@ msgstr "wöchentlich"
 msgid "every_two_weeks"
 msgstr "alle 14 Tage"
 
+msgid "every_four_weeks"
+msgstr "alle 28 Tage"
+
 msgid "every_month"
 msgstr "monatlich"
 

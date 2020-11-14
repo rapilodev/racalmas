@@ -58,6 +58,9 @@ msgstr "weekly"
 msgid "every_two_weeks"
 msgstr "every two weeks"
 
+msgid "every_four_weeks"
+msgstr "every four weeks"
+
 msgid "every_month"
 msgstr "every month"
 
