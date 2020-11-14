@@ -104,8 +104,6 @@ Options -Indexes +FollowSymLinks +MultiViews +ExecCGI
     AddHandler cgi-script .cgi .pl
 </IfModule>
 
-#Order allow,deny
-#allow from all
 Require all granted
 
 ## compress
