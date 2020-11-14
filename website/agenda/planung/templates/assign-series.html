@@ -15,10 +15,18 @@
             if (series_id=='')return false;
 
             $('#assignments_form input[name="series_id"]').val(series_id);
-            //console.log(project_id+" "+studio_id+" "+series_id);
-
             var url="assign-series.cgi?project_id="+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&action=assign_series';
-            //console.log(url);
+            $('#assignments_form').submit();
+            return false;
+        }
+
+        function unassign_series(project_id, studio_id, series_id){
+            if (project_id=='')return false;
+            if (studio_id=='')return false;
+            if (series_id=='')return false;
+
+            $('#assignments_form input[name="series_id"]').val(series_id);
+            var url="assign-series.cgi?project_id="+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&action=unassign_series';
             $('#assignments_form').submit();
             return false;
         }
@@ -54,6 +62,10 @@
                     onclick="assign_series('<TMPL_VAR .project_id>', '<TMPL_VAR .studio_id>', $('#series_id').val());return false;"
                     style="float:left"
                 >assign</button>
+                <button target="_blank"
+                    onclick="unassign_series('<TMPL_VAR .project_id>', '<TMPL_VAR .studio_id>', $('#series_id').val());return false;"
+                    style="float:left"
+                >unassign</button>
             </form>
         </div>
     </div>

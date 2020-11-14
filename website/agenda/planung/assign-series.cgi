@@ -79,7 +79,8 @@ unless ( $permissions->{scan_series_events} == 1 ) {
 }
 
 if ( defined $params->{action} ) {
-    assign_series( $config, $request ) if $params->{action} eq 'assign_series';
+    assign_series(   $config, $request ) if $params->{action} eq 'assign_series';
+    unassign_series( $config, $request ) if $params->{action} eq 'unassign_series';
 }
 show_events( $config, $request );
 
@@ -200,12 +201,67 @@ sub assign_series {
     return;
 }
 
+sub unassign_series {
+    my $config  = shift;
+    my $request = shift;
+
+    my $params      = $request->{params}->{checked};
+    my $permissions = $request->{permissions};
+    unless ( $permissions->{assign_series_events} == 1 ) {
+        uac::permissions_denied('assign_series_events');
+        return;
+    }
+
+    my $entry = {};
+    for my $attr ( 'project_id', 'studio_id', 'series_id' ) {
+        if ( defined $params->{$attr} ) {
+            $entry->{$attr} = $params->{$attr};
+        } else {
+            uac::print_error( $attr . ' not given!' );
+            return;
+        }
+    }
+
+    $config->{access}->{write} = 1;
+
+    #check if series is assigned to project/studio
+    my $series = series::get(
+        $config,
+        {
+            project_id => $entry->{project_id},
+            studio_id  => $entry->{studio_id},
+            series_id  => $entry->{series_id},
+        }
+    );
+
+    if ( @$series > 0 ) {
+
+        # assign series to project/studio
+        project::unassign_series(
+            $config,
+            {
+                project_id => $entry->{project_id},
+                studio_id  => $entry->{studio_id},
+                series_id  => $entry->{series_id},
+            }
+        );
+
+    } else {
+        print STDERR
+"event $entry->{event_id} is not assigned to project $entry->{project_id}, studio $entry->{studio_id}, series $entry->{series_id}\n";
+    }
+
+    $config->{access}->{write} = 0;
+    uac::print_info("The show was removed from the series.");
+    return;
+}
+
 sub check_params {
     my $params = shift;
 
     my $checked = {};
 
-    $checked->{action} = entry::element_of( $params->{action}, ['assign_series'] );
+    $checked->{action} = entry::element_of( $params->{action}, ['assign_series','unassign_series'] );
 
     $checked->{exclude} = 0;
     entry::set_numbers( $checked, $params, [
