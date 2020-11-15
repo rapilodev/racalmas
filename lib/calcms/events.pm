@@ -216,7 +216,7 @@ sub modify_results ($$$$) {
             $running_event_id 
             && $result->{event_id} 
             && $running_event_id eq $result->{event_id} ;
-          
+
         if (defined $result->{comment_count}){
             $result->{one_comment} = 1 if ( $result->{comment_count} == 1 );
             $result->{no_comment}  = 1 if ( $result->{comment_count} == 0 );
@@ -849,7 +849,7 @@ sub get_query($$$) {
     my $location_cond = '';
     if ( $params->{location} ne '' ) {
         my $location = ( split( /\,/, $params->{location} ) )[0];
-        $location =~ s/[^a-zA-Z0-9]/%/g;
+        $location =~ s/[^a-zA-Z0-9\-\_]/%/g;
         $location =~ s/%{2,99}/%/g;
         if ( $location ne '' ) {
             $location_cond = ' location like ? ';
