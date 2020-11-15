@@ -30,9 +30,6 @@ sub get($$) {
     my $config    = shift;
     my $condition = shift;
 
-    return undef unless defined $condition->{project_id};
-    return undef unless defined $condition->{studio_id};
-
     my $date_range_include = 0;
     $date_range_include = 1
       if ( defined $condition->{date_range_include} ) && ( $condition->{date_range_include} == 1 );
