@@ -728,11 +728,11 @@ sub showEventList {
     my $events_by_day = shift;
     my $language      = $params->{language};
 
-    my $rerunIcon = '<i class="fas fa-redo" title="$params->{loc}->{label_rerun}"></i>';
-    my $liveIcon  = '<i class="fas fa-microphone-alt" title="$params->{loc}->{label_live}"></i>';
-    my $draftIcon = '<i class="fas fa-drafting-compass" title="$params->{loc}->{label_draft}"></i>';
-    my $archiveIcon = '<i class="fas fa-archive" title="$params->{loc}->{label_archived}"></i>';
-    my $playoutIcon = '<i class="fas fa-play"></i>';
+    my $rerunIcon   = qq{<i class="fas fa-redo" title="$params->{loc}->{label_rerun}"></i>};
+    my $liveIcon    = qq{<i class="fas fa-microphone-alt" title="$params->{loc}->{label_live}"></i>};
+    my $draftIcon   = qq{<i class="fas fa-drafting-compass" title="$params->{loc}->{label_draft}"></i>};
+    my $archiveIcon = qq{<i class="fas fa-archive" title="$params->{loc}->{label_archived}"></i>};
+    my $playoutIcon = qq{<i class="fas fa-play"></i>};
 
     my $out = '';
     $out = qq{
@@ -750,7 +750,7 @@ sub showEventList {
                     <th class="rerun">$rerunIcon</th>
                     <th class="draft">$draftIcon</th>
                     <th class="live">$liveIcon</th>
-                    <th class="playout">$playoutIcon</th>
+                    <th class="playout" title="$params->{loc}->{label_playout}">$playoutIcon</th>
                     <th class="archive">$archiveIcon</th>
                     <th class="project_id">project</th>
                     <th class="studio">studio</th>
