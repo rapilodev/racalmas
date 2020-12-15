@@ -10,7 +10,7 @@ function hideProgress(){
 }
 
 function playAudio(path){
-    var url='../../agenda_files/recordings/'+path;
+    var url='recordings/'+path;
     var win = window.open(url, '_blank');
 }
 
