@@ -466,7 +466,8 @@ sub showCalendar {
                     series_id  => $options->{series_id}
                 }
             );
-            if ((defined $series->[0]) && ( $series->[0]->{predecessor_id})){
+            if ( defined $series->[0] and $series->[0]->{predecessor_id}
+                and $series->[0]->{predecessor_id} ne $series->[0]->{id} ){
                 my $events2 = getSeriesEvents( $config, $request, {
                     series_id => $series->[0]->{predecessor_id}
                 }, $params );

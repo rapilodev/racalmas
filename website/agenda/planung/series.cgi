@@ -344,8 +344,11 @@ sub save_series {
     $entry->{live}           = $params->{live} // 0;
     $entry->{count_episodes} = $params->{count_episodes} // 0;
     $entry->{predecessor_id} = $params->{predecessor_id} // 0;
-    #$entry->{content}        = $params->{content};
-    #$entry->{content_format} = $params->{content_format};
+    
+    if ($entry->{predecessor_id} eq $entry->{series_id}){
+        uac::print_error( 'Predecessor must be different from series id.' );
+        return;
+    }
 
     #$entry->{html_content} = Encode::decode( 'utf-8', $entry->{content} );
     if ($entry->{content_format} //'' eq "markdown"){
@@ -1071,10 +1074,8 @@ sub show_series {
     }
     my $serie = $series->[0];
 
-    #if ($serie->{has_single_events}==0){
-    #delete $serie->{has_single_events};
-    #$serie->{series_name}='';
-    #}
+    uac::print_error( 'Predecessor must be different from series id.' ) 
+        if $serie->{predecessor_id} eq $serie->{series_id};
 
     #get all users currently assigned to the user
     my $user_studios =
