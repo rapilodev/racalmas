@@ -490,7 +490,7 @@ sub getFilename {
 sub checkFilename {
     my $filename = shift;
 
-    my @validExtensions = ('mp3');
+    my @validExtensions = ('mp3','mp4','m4a','wav','ogg','flac');
     if ( $filename =~ /\.([a-zA-Z]{3,5})$/ ) {
         my $extension = lc $1;
         unless ( grep( /$extension/, @validExtensions ) ) {
