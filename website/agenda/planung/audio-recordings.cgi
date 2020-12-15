@@ -361,11 +361,15 @@ sub uploadFile {
     $time =~ s/\s/\_/g;
     $time =~ s/[^a-zA-Z0-9\.\-\_]//g;
 
-    $filename =~ s/\.(mp3)$//g;
-    $filename = join( '-', ( $time, 'id' . $eventId, $userName, $filename ) ) . '.mp3';
-    $filename =~ s/[^a-zA-Z0-9\.\-\_]//g;
+    my $extension =~ ( split( ".", $filename) ) [-1];
+    $filename =~ s/\.$extension$//;
+    $extension =~ s/[^a-zA-Z0-9\.\-\_]//g;
 
-    my $tempFile = $targetDir . '/' . $filename;
+    $filename = join( '-', ( $time, 'id' . $eventId, $userName, $filename ) );
+    $filename =~ s/[^a-zA-Z0-9\.\-\_]//g;
+    $filename .= $extension;
+
+    my $tempFile = "$targetDir/$filename";
     print STDERR "tempFile=$tempFile\n";
 
     my $start = time();
