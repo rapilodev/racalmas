@@ -732,6 +732,7 @@ sub showEventList {
     my $liveIcon  = '<i class="fas fa-microphone-alt" title="$params->{loc}->{label_live}"></i>';
     my $draftIcon = '<i class="fas fa-drafting-compass" title="$params->{loc}->{label_draft}"></i>';
     my $archiveIcon = '<i class="fas fa-archive" title="$params->{loc}->{label_archived}"></i>';
+    my $playoutIcon = '<i class="fas fa-play"></i>';
 
     my $out = '';
     $out = qq{
@@ -749,6 +750,7 @@ sub showEventList {
                     <th class="rerun">$rerunIcon</th>
                     <th class="draft">$draftIcon</th>
                     <th class="live">$liveIcon</th>
+                    <th class="playout">$playoutIcon</th>
                     <th class="archive">$archiveIcon</th>
                     <th class="project_id">project</th>
                     <th class="studio">studio</th>
@@ -837,6 +839,10 @@ sub showEventList {
             $draft = '-'        if $draft eq '0';
             $draft = $draftIcon if $draft eq '1';
 
+            my $playout = $event->{playout} || '0';
+            $playout = '-'        if $playout eq '0';
+            $playout = $playoutIcon if $playout eq '1';
+
             my $title = $event->{title};
             $title .= ': ' . $event->{user_title} if $event->{user_title} ne '';
             
@@ -845,6 +851,10 @@ sub showEventList {
             $class.=' predecessor' if $other_project or $other_studio;
             $other_studio  = '<i class="fas fa-globe-americas"></i>' if $other_studio;
             $other_project = '<i class="fas fa-globe-americas"></i>' if $other_project;
+
+            my $file = $event->{file} 
+                ? 'playout: ' . $event->{file} =~ s/\'/\&apos;/gr 
+                : 'playout';
 
             $out .=
                 qq!<tr id="$id" class="$class" start="$event->{start}" >!
@@ -860,6 +870,7 @@ sub showEventList {
               . qq!<td class="rerun">$rerun</td>!
               . qq!<td class="draft">$draft</td>!
               . qq!<td class="live">$live</td>!
+              . qq!<td class="playout" title="$file">$playout</td>!
               . qq!<td class="archived">$archived</td>!
               . qq!<td>$event->{project_name} $other_studio</td>!
               . qq!<td>$event->{studio_name} $other_studio</td>!
