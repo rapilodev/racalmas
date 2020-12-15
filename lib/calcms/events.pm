@@ -1085,6 +1085,7 @@ sub get_query($$$) {
             ,e.live
             ,e.disable_event_sync
             ,e.episode
+            ,e.listen_key
     };
     my $template = $params->{template} || '';
 
