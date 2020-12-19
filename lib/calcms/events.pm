@@ -1148,7 +1148,7 @@ sub get_query($$$) {
 
     # add recordings table
     if ( $params->{recordings} eq '1' ) {
-        $query .= "\n left join calcms_audio_recordings ar on e.id=ar.event_id";
+        $query .= "\n left join calcms_audio_recordings ar on e.id=ar.event_id and ar.active=1";
     }
 
     if ( scalar @$where_cond > 0 ) {

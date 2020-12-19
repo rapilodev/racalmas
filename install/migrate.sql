@@ -270,3 +270,10 @@ ADD COLUMN `update_event_field_content_format` TINYINT(1) UNSIGNED NOT NULL AFTE
 
 ALTER TABLE `calcms_events` 
 ADD COLUMN `listen_key` VARCHAR(100) NULL;
+
+ALTER TABLE `calcms_audio_recordings`
+ADD COLUMN `active` TINYINT(1) NOT NULL DEFAULT 0 AFTER `event_id`;
+
+ALTER TABLE `calcms`.`calcms_audio_recordings`
+ADD INDEX `active_index` (`active`);
+

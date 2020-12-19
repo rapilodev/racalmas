@@ -495,7 +495,7 @@ sub get_events ($$) {
 
     my $conditions = '';
     if ( @conditions > 0 ) {
-        $conditions = ' and ' . join( ' and ', @conditions );
+        $conditions = ' where ' . join( ' and ', @conditions );
     }
 
     my $limit = '';
@@ -504,17 +504,19 @@ sub get_events ($$) {
     }
 
     my $query = qq{
-		select * 
-			,date(start) 		start_date
-			,date(end) 			end_date
-			,weekday(start) 	weekday
-			,weekofyear(start) 	week_of_year
-			,dayofyear(start) 	day_of_year
-			,start_date         day
-			,id					event_id
-		from  calcms_series_events se, calcms_events e
-		where se.event_id = e.id
-		$conditions
+            select se.*,e.*
+            ,date(start)        start_date
+            ,date(end)          end_date
+            ,weekday(start)     weekday
+            ,weekofyear(start)  week_of_year
+            ,dayofyear(start)   day_of_year
+            ,start_date         day
+            ,e.id               event_id
+            ,ar.path            path
+        from  calcms_series_events se
+        inner join calcms_events e on se.event_id = e.id
+        left  join calcms_audio_recordings ar on se.event_id=ar.event_id and ar.active=1
+        $conditions
 		order by start_date desc
 		$limit
 	};
