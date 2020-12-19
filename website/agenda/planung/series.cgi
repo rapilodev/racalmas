@@ -1087,7 +1087,7 @@ sub show_series {
         $studio_user->{user_id} = $studio_user->{id};
     }
     my @users = @$studio_users;
-    @users = sort { $a->{full_name} cmp $b->{full_name} } @users;
+    @users = sort { lc $a->{full_name} cmp lc $b->{full_name} } @users;
     $studio_users = \@users;
 
     #show events from last month until next 3 months
