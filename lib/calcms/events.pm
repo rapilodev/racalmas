@@ -234,7 +234,7 @@ sub modify_results ($$$$) {
         if ( defined $result->{image} ) {
             my $url = $config->{locations}->{local_media_url} || '';
             my $image = $result->{image};
-            $result->{thumb_url} = $config->{locations}->{thumbs_url} . $image;
+            $result->{thumb_url} = $config->{locations}->{thumbs_url} . $image if $config->{locations}->{thumbs_url};
             $result->{icon_url}  = $url . '/icons/' . $image;
             $result->{image_url} = $url . '/images/' . $image;
         }
@@ -242,7 +242,7 @@ sub modify_results ($$$$) {
         if ( defined $result->{series_image} ) {
             my $url = $config->{locations}->{local_media_url} || '';
             my $image = $result->{series_image};
-            $result->{series_thumb_url} = $config->{locations}->{thumbs_url} . $image;
+            $result->{series_thumb_url} = $config->{locations}->{thumbs_url} . $image if $config->{locations}->{thumbs_url};
             $result->{series_icon_url}  = $url . '/icons/' . $image;
             $result->{series_image_url} = $url . '/images/' . $image;
         }
@@ -556,7 +556,7 @@ sub set_listen_key($$){
     return if $over_since > 7*24*60*60;
 
     my $archive_url = $config->{locations}->{listen_url};
-    if (defined $event->{listen_key}){
+    if (defined $event->{listen_url} and defined $event->{listen_key}){
         $event->{listen_url} = $archive_url . '/' . $event->{listen_key};
         return;
     }
