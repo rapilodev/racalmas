@@ -512,7 +512,6 @@ sub get_events ($$) {
 			,dayofyear(start) 	day_of_year
 			,start_date         day
 			,id					event_id
-            ,location           location
 		from  calcms_series_events se, calcms_events e
 		where se.event_id = e.id
 		$conditions
