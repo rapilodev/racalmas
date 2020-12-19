@@ -20,6 +20,13 @@ th {
     text-align: center;
 }
 
+tr.active{
+    border-left:6px solid #0c0;
+}
+tr.inactive{
+    border-left:6px solid #c00;
+}
+
 #progressBar {
     width: 100%;
     height: 1rem;

@@ -70,7 +70,7 @@
         <th>modified at</th>
     </tr>
     <TMPL_LOOP audio_recordings>
-        <tr>
+        <tr class="<TMPL_IF active>active<TMPL_ELSE>inactive</TMPL_IF>" >
             <td><button onclick="playAudio('<TMPL_VAR path>');return false">play</button></td>
             <td><TMPL_VAR path></td>
             <td><TMPL_VAR created_by></td>
