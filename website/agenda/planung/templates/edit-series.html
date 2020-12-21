@@ -453,7 +453,11 @@
 		
 		<table class="table">
 		<TMPL_LOOP events>
-			<tr id="event_<TMPL_VAR event_id>">
+			<tr id="event_<TMPL_VAR event_id>" style="cursor:pointer"
+                <TMPL_IF .allow.update_event>
+                onclick="edit_event('<TMPL_VAR event_id>','<TMPL_VAR .series_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .project_id>','hide_series')"
+                </TMPL_IF>
+            >
 			    <TMPL_IF .allow.read_image>
 				<td class="logo"><img width="33" height="33" src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR image>"></td>
 				</TMPL_IF>
@@ -463,12 +467,6 @@
 				<td class="spacer">-</td>
 				<td class="time"><TMPL_VAR end_time></td>
 				<td class="title"><TMPL_VAR full_title></td>
-				<TMPL_IF .allow.update_event>
-				<td>
-					<button onclick="edit_event('<TMPL_VAR event_id>','<TMPL_VAR .series_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .project_id>','hide_series')"
-					><TMPL_VAR .loc.button_edit></button>
-				</td>
-				</TMPL_IF>
 			</tr>
 			<tr id="event_container_<TMPL_VAR event_id>" style="display:none">
 				<td colspan="5">
