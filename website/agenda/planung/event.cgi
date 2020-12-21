@@ -6,7 +6,7 @@ no warnings 'redefine';
 
 use Encode();
 use Data::Dumper;
-$Data::Dumper::SortKeys=1;
+$Data::Dumper::Sortkeys = 1;
 use MIME::Base64();
 use Encode::Locale();
 
@@ -294,7 +294,7 @@ sub show_event {
         $params->{'allow'}->{$permission} = $permissions->{$permission};
     }
 
-    for my $key ( keys %$event ) {
+    for my $key (sort keys %$event ) {
         $params->{$key} = $event->{$key};
     }
     $params->{event_edited} = 1
