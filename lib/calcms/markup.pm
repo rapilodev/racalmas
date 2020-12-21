@@ -147,7 +147,6 @@ sub creole_to_html ($) {
 
 sub markdown_to_html($){
     my $text = $_[0] // '';
-    print STDERR "markwon!\n";
     my $html = Text::Markdown::markdown($text);
     $html=~s!(\s)(https?://[^\s]+)(\s)!$1<a href="$2">$2</a>$3!g;
     return $html;
