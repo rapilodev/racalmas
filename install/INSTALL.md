@@ -38,8 +38,6 @@ Please change the passwords config after "INDENTIFIED BY" !
 
     mysql -u calcms_admin -p calcms < ./install/create.sql 
 
-    mysql -u calcms_admin -p calcms < ./install/migrate.sql 
-
 ## Apache HTTP Server Setup 
 
 ### install mod_perl

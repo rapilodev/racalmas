@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.20, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.32, for Linux (x86_64)
 --
 -- Host: localhost    Database: calcms
 -- ------------------------------------------------------
--- Server version	5.7.20-0ubuntu0.16.04.1
+-- Server version	5.7.32-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -27,9 +27,8 @@ CREATE TABLE `calcms_audio_recordings` (
   `project_id` int(11) NOT NULL,
   `studio_id` int(11) NOT NULL,
   `event_id` int(11) NOT NULL,
-  `created_by` varchar(100) NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '0',
   `path` varchar(300) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `size` bigint(20) unsigned NOT NULL DEFAULT '0',
   `audioDuration` float NOT NULL DEFAULT '0',
   `eventDuration` int(11) NOT NULL DEFAULT '0',
@@ -37,13 +36,16 @@ CREATE TABLE `calcms_audio_recordings` (
   `rmsRight` float NOT NULL,
   `mastered` tinyint(1) NOT NULL DEFAULT '0',
   `processed` tinyint(1) NOT NULL DEFAULT '0',
+  `created_by` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `project_index` (`project_id`),
   KEY `studio_index` (`studio_id`),
   KEY `event_index` (`event_id`),
-  KEY `created_at_index` (`created_at`)
-) ENGINE=MyISAM AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
+  KEY `created_at_index` (`created_at`),
+  KEY `active_index` (`active`)
+) ENGINE=MyISAM AUTO_INCREMENT=2364 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -178,11 +180,7 @@ CREATE TABLE `calcms_event_history` (
   `series_id` int(10) unsigned DEFAULT NULL,
   `deleted` tinyint(1) unsigned DEFAULT '0',
   `project_id` int(10) unsigned NOT NULL,
-  `recurrence_count` int(10) unsigned NOT NULL DEFAULT '0',
-  `draft` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `series_image` VARCHAR(200)  DEFAULT NULL,
-  `image_label` VARCHAR(200)  DEFAULT NULL,
-  `series_image_label` VARCHAR(200)  DEFAULT NULL,
+  `draft` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `end` (`end`),
   KEY `start` (`start`),
@@ -203,8 +201,9 @@ CREATE TABLE `calcms_event_history` (
   KEY `published` (`published`),
   KEY `preproduced` (`playout`),
   KEY `archived` (`archived`),
-  KEY `project_id` (`project_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=24189 DEFAULT CHARSET=utf8;
+  KEY `project_id` (`project_id`),
+  KEY `draft` (`draft`)
+) ENGINE=MyISAM AUTO_INCREMENT=101492 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -227,50 +226,52 @@ CREATE TABLE `calcms_events` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `start` datetime NOT NULL,
   `end` datetime NOT NULL,
-  `reference` varchar(300) DEFAULT NULL,
+  `program` varchar(40) DEFAULT NULL,
+  `series_name` varchar(40) DEFAULT NULL,
   `title` varchar(200) DEFAULT NULL,
+  `episode` int(10) unsigned DEFAULT NULL,
   `excerpt` longtext,
   `content` longtext,
-  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `html_content` longtext,
   `rating` int(11) DEFAULT NULL,
   `status` varchar(40) DEFAULT NULL,
   `visibility` varchar(40) DEFAULT NULL,
   `responsible` varchar(40) DEFAULT NULL,
   `category` varchar(60) DEFAULT NULL,
   `start_date` date NOT NULL,
-  `time_of_day` varchar(40) DEFAULT NULL,
   `end_date` date NOT NULL,
-  `html_content` longtext,
-  `program` varchar(40) DEFAULT NULL,
-  `series_name` varchar(40) DEFAULT NULL,
+  `time_of_day` varchar(40) DEFAULT NULL,
   `comment_count` int(10) unsigned DEFAULT '0',
   `category_count` int(10) unsigned DEFAULT '0',
   `tag_count` int(10) unsigned DEFAULT '0',
-  `image` varchar(200) DEFAULT NULL,
   `podcast_url` varchar(300) DEFAULT NULL,
+  `archive_url` varchar(300) DEFAULT NULL,
   `media_url` varchar(300) DEFAULT NULL,
   `project` varchar(64) DEFAULT NULL,
-  `recurrence` int(11) DEFAULT '0',
   `location` varchar(100) DEFAULT NULL,
   `user_title` varchar(200) DEFAULT NULL,
   `user_excerpt` longtext,
+  `html_topic` longtext,
   `topic` longtext,
   `published` tinyint(1) unsigned DEFAULT NULL,
   `playout` tinyint(1) unsigned DEFAULT NULL,
   `archived` tinyint(1) unsigned DEFAULT NULL,
-  `html_topic` longtext,
-  `episode` int(10) unsigned DEFAULT NULL,
-  `rerun` int(10) unsigned DEFAULT NULL,
-  `disable_event_sync` tinyint(1) unsigned DEFAULT NULL,
-  `live` tinyint(1) unsigned DEFAULT NULL,
-  `modified_by` varchar(20) DEFAULT NULL,
-  `archive_url` varchar(300) DEFAULT NULL,
-  `recurrence_count` int(10) unsigned NOT NULL DEFAULT '0',
   `draft` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `series_image` VARCHAR(200)  DEFAULT NULL,
-  `image_label` VARCHAR(200)  DEFAULT NULL,
-  `series_image_label` VARCHAR(200)  DEFAULT NULL,
+  `rerun` int(10) unsigned DEFAULT NULL,
+  `live` tinyint(1) unsigned DEFAULT NULL,
+  `recurrence_count` int(10) unsigned NOT NULL DEFAULT '0',
+  `recurrence` int(11) DEFAULT '0',
+  `image` varchar(200) DEFAULT NULL,
+  `image_label` varchar(200) DEFAULT NULL,
+  `series_image` varchar(200) DEFAULT NULL,
+  `series_image_label` varchar(200) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_by` varchar(20) DEFAULT NULL,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `reference` varchar(300) DEFAULT NULL,
+  `disable_event_sync` tinyint(1) unsigned DEFAULT NULL,
+  `content_format` varchar(45) DEFAULT NULL,
+  `listen_key` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `end` (`end`),
   KEY `start` (`start`),
@@ -313,17 +314,17 @@ DROP TABLE IF EXISTS `calcms_images`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calcms_images` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  `description` text,
-  `name` varchar(300) DEFAULT NULL,
-  `filename` varchar(64) NOT NULL,
-  `created_by` varchar(64) DEFAULT NULL,
-  `studio_id` int(10) unsigned DEFAULT NULL,
-  `modified_by` varchar(64) DEFAULT NULL,
-  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `project_id` int(10) unsigned NOT NULL,
-  `public` tinyint(1) unsigned NULL DEFAULT '0', 
-  `licence` varchar(300) NULL, 
+  `studio_id` int(10) unsigned DEFAULT NULL,
+  `filename` varchar(64) NOT NULL,
+  `name` varchar(300) DEFAULT NULL,
+  `description` text,
+  `licence` varchar(300) DEFAULT NULL,
+  `public` tinyint(1) unsigned DEFAULT '0',
+  `created_by` varchar(64) DEFAULT NULL,
+  `modified_by` varchar(64) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `created_at` (`created_at`),
   KEY `filename` (`filename`),
@@ -373,6 +374,32 @@ LOCK TABLES `calcms_metas` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `calcms_password_requests`
+--
+
+DROP TABLE IF EXISTS `calcms_password_requests`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `calcms_password_requests` (
+  `id` int(12) unsigned NOT NULL AUTO_INCREMENT,
+  `user` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `token` varchar(200) NOT NULL,
+  `max_attempts` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=121 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `calcms_password_requests`
+--
+
+LOCK TABLES `calcms_password_requests` WRITE;
+/*!40000 ALTER TABLE `calcms_password_requests` DISABLE KEYS */;
+/*!40000 ALTER TABLE `calcms_password_requests` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `calcms_playout`
 --
 
@@ -404,7 +431,7 @@ CREATE TABLE `calcms_playout` (
   `rms_image` varchar(300) DEFAULT NULL,
   `replay_gain` float DEFAULT NULL,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` datetime  DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`project_id`,`studio_id`,`start`),
   KEY `project_id` (`project_id`),
   KEY `studio_id` (`studio_id`),
@@ -518,87 +545,88 @@ DROP TABLE IF EXISTS `calcms_roles`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calcms_roles` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` tinyint(1) unsigned NOT NULL,
+  `studio_id` int(10) unsigned NOT NULL,
   `role` varchar(40) NOT NULL,
+  `level` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `read_role` tinyint(1) unsigned DEFAULT NULL,
+  `update_role` tinyint(1) unsigned DEFAULT NULL,
+  `read_user_role` tinyint(1) unsigned DEFAULT NULL,
   `create_user` tinyint(1) unsigned DEFAULT NULL,
   `read_user` tinyint(1) unsigned DEFAULT NULL,
   `update_user` tinyint(1) unsigned DEFAULT NULL,
-  `disable_user` tinyint(1) unsigned DEFAULT NULL,
-  `update_studio` tinyint(1) unsigned DEFAULT NULL,
+  `delete_user` tinyint(1) unsigned DEFAULT NULL,
   `update_user_role` tinyint(1) unsigned DEFAULT NULL,
-  `read_user_role` tinyint(1) unsigned DEFAULT NULL,
+  `disable_user` tinyint(1) unsigned DEFAULT NULL,
+  `create_project` tinyint(1) unsigned NOT NULL,
+  `read_project` tinyint(1) unsigned NOT NULL,
+  `update_project` tinyint(1) unsigned NOT NULL,
+  `delete_project` tinyint(1) unsigned NOT NULL,
+  `assign_project_studio` tinyint(1) unsigned NOT NULL,
+  `create_studio` tinyint(1) unsigned NOT NULL,
+  `read_studio` tinyint(1) unsigned NOT NULL,
+  `update_studio` tinyint(1) unsigned DEFAULT NULL,
+  `delete_studio` tinyint(1) unsigned NOT NULL,
+  `read_studio_timeslot_schedule` tinyint(1) unsigned NOT NULL,
+  `update_studio_timeslot_schedule` tinyint(1) unsigned NOT NULL,
   `create_series` tinyint(1) unsigned DEFAULT NULL,
   `read_series` tinyint(1) unsigned DEFAULT NULL,
   `update_series` tinyint(1) unsigned DEFAULT NULL,
   `delete_series` tinyint(1) unsigned DEFAULT NULL,
-  `create_event` tinyint(1) unsigned DEFAULT NULL,
-  `read_event` tinyint(1) unsigned DEFAULT NULL,
-  `delete_event` tinyint(1) unsigned DEFAULT NULL,
-  `level` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `read_role` tinyint(1) unsigned DEFAULT NULL,
-  `update_role` tinyint(1) unsigned DEFAULT NULL,
-  `delete_user` tinyint(1) unsigned DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `update_event_of_series` tinyint(1) unsigned DEFAULT NULL,
-  `update_event_of_others` tinyint(1) unsigned DEFAULT NULL,
-  `studio_id` int(10) unsigned NOT NULL,
-  `update_event_time` tinyint(1) unsigned DEFAULT NULL,
-  `create_download` tinyint(1) unsigned NOT NULL,
-  `update_event_status_archived` tinyint(1) unsigned NOT NULL,
-  `update_event_status_playout` tinyint(1) unsigned NOT NULL,
-  `read_schedule` tinyint(1) unsigned NOT NULL,
-  `update_schedule` tinyint(1) unsigned NOT NULL,
-  `delete_schedule` tinyint(1) unsigned NOT NULL,
   `update_series_template` tinyint(1) unsigned NOT NULL,
   `assign_series_member` tinyint(1) unsigned NOT NULL,
   `remove_series_member` tinyint(1) unsigned NOT NULL,
+  `scan_series_events` tinyint(1) unsigned NOT NULL,
+  `assign_series_events` tinyint(1) unsigned NOT NULL,
+  `read_schedule` tinyint(1) unsigned NOT NULL,
+  `update_schedule` tinyint(1) unsigned NOT NULL,
+  `delete_schedule` tinyint(1) unsigned NOT NULL,
+  `create_event` tinyint(1) unsigned DEFAULT NULL,
+  `create_event_from_schedule` tinyint(1) unsigned NOT NULL,
+  `create_event_of_series` tinyint(1) unsigned NOT NULL,
+  `read_event` tinyint(1) unsigned DEFAULT NULL,
+  `delete_event` tinyint(1) unsigned DEFAULT NULL,
+  `update_event_of_series` tinyint(1) unsigned DEFAULT NULL,
+  `update_event_of_others` tinyint(1) unsigned DEFAULT NULL,
+  `update_event_time` tinyint(1) unsigned DEFAULT NULL,
+  `update_event_after_week` tinyint(1) unsigned NOT NULL,
+  `update_event_field_title` tinyint(1) unsigned NOT NULL,
+  `update_event_field_title_extension` tinyint(1) unsigned NOT NULL,
+  `update_event_field_excerpt` tinyint(1) unsigned NOT NULL,
   `update_event_field_content` tinyint(1) unsigned NOT NULL,
+  `update_event_field_description` tinyint(1) unsigned NOT NULL,
+  `update_event_field_topic` tinyint(1) unsigned NOT NULL,
+  `update_event_field_episode` tinyint(1) unsigned NOT NULL,
+  `update_event_field_excerpt_extension` tinyint(1) unsigned NOT NULL,
+  `update_event_field_image` tinyint(1) unsigned NOT NULL,
+  `update_event_field_podcast_url` tinyint(1) unsigned NOT NULL,
+  `update_event_field_archive_url` tinyint(1) unsigned NOT NULL,
   `update_event_status_disable_event_sync` tinyint(1) unsigned NOT NULL,
   `update_event_status_published` tinyint(1) unsigned NOT NULL,
-  `update_event_field_episode` tinyint(1) unsigned NOT NULL,
   `update_event_status_rerun` tinyint(1) unsigned NOT NULL,
-  `create_event_from_schedule` tinyint(1) unsigned NOT NULL,
-  `read_image` tinyint(1) unsigned NOT NULL,
+  `update_event_status_draft` tinyint(1) unsigned NOT NULL,
+  `update_event_status_live` tinyint(1) unsigned NOT NULL,
+  `update_event_status_playout` tinyint(1) unsigned NOT NULL,
+  `update_event_status_archived` tinyint(1) unsigned NOT NULL,
+  `create_image` tinyint(1) unsigned NOT NULL,
   `update_image_own` tinyint(1) unsigned NOT NULL,
+  `read_image` tinyint(1) unsigned NOT NULL,
   `delete_image_own` tinyint(1) unsigned NOT NULL,
   `update_image_others` tinyint(1) unsigned NOT NULL,
   `delete_image_others` tinyint(1) unsigned NOT NULL,
-  `create_image` tinyint(1) unsigned NOT NULL,
-  `scan_series_events` tinyint(1) unsigned NOT NULL,
-  `read_studio` tinyint(1) unsigned NOT NULL,
-  `read_studio_timeslot_schedule` tinyint(1) unsigned NOT NULL,
-  `update_studio_timeslot_schedule` tinyint(1) unsigned NOT NULL,
-  `update_event_status_live` tinyint(1) unsigned NOT NULL,
-  `update_event_field_topic` tinyint(1) unsigned NOT NULL,
-  `update_event_field_excerpt_extension` tinyint(1) unsigned NOT NULL,
-  `update_event_field_title_extension` tinyint(1) unsigned NOT NULL,
-  `update_event_field_title` tinyint(1) unsigned NOT NULL,
-  `update_event_field_excerpt` tinyint(1) unsigned NOT NULL,
-  `update_event_field_description` tinyint(1) unsigned NOT NULL,
-  `update_event_field_image` tinyint(1) unsigned NOT NULL,
-  `assign_series_events` tinyint(1) unsigned NOT NULL,
-  `update_event_field_podcast_url` tinyint(1) unsigned NOT NULL,
-  `update_event_field_archive_url` tinyint(1) unsigned NOT NULL,
   `read_changes` tinyint(1) unsigned NOT NULL,
   `undo_changes` tinyint(1) unsigned NOT NULL,
-  `project_id` tinyint(1) unsigned NOT NULL,
-  `create_studio` tinyint(1) unsigned NOT NULL,
-  `delete_studio` tinyint(1) unsigned NOT NULL,
-  `create_project` tinyint(1) unsigned NOT NULL,
-  `delete_project` tinyint(1) unsigned NOT NULL,
-  `update_project` tinyint(1) unsigned NOT NULL,
-  `assign_project_studio` tinyint(1) unsigned NOT NULL,
-  `read_project` tinyint(1) unsigned NOT NULL,
   `read_user_stats` tinyint(1) unsigned NOT NULL,
-  `update_event_after_week` tinyint(1) unsigned NOT NULL,
-  `create_event_of_series` tinyint(1) unsigned NOT NULL,
   `read_comment` tinyint(1) unsigned NOT NULL,
   `update_comment_status_lock` tinyint(1) unsigned NOT NULL,
   `update_comment_status_read` tinyint(1) unsigned NOT NULL,
   `upload_audio_recordings` tinyint(1) unsigned NOT NULL,
   `delete_audio_recordings` tinyint(1) unsigned NOT NULL,
   `read_playout` tinyint(1) unsigned NOT NULL,
-  `update_event_status_draft` tinyint(1) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_download` tinyint(1) unsigned NOT NULL,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `update_event_field_content_format` tinyint(1) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `role_2` (`role`),
   KEY `studio_id` (`studio_id`),
@@ -648,6 +676,8 @@ CREATE TABLE `calcms_series` (
   `podcast_url` varchar(300) DEFAULT NULL,
   `count_episodes` tinyint(1) unsigned DEFAULT '1',
   `has_single_events` tinyint(1) unsigned DEFAULT '0',
+  `predecessor_id` int(10) DEFAULT NULL,
+  `content_format` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `location` (`location`)
 ) ENGINE=MyISAM AUTO_INCREMENT=224 DEFAULT CHARSET=utf8;
@@ -672,14 +702,14 @@ DROP TABLE IF EXISTS `calcms_series_dates`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calcms_series_dates` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` int(10) unsigned NOT NULL,
+  `studio_id` int(10) unsigned NOT NULL,
   `series_id` int(10) unsigned NOT NULL,
   `start` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `end` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `studio_id` int(10) unsigned NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
   `exclude` tinyint(1) NOT NULL DEFAULT '0',
-  `project_id` int(10) unsigned NOT NULL,
   `series_schedule_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `series_id` (`series_id`),
@@ -709,11 +739,11 @@ DROP TABLE IF EXISTS `calcms_series_events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calcms_series_events` (
+  `project_id` int(10) unsigned NOT NULL,
+  `studio_id` int(12) unsigned NOT NULL,
   `series_id` int(12) unsigned NOT NULL,
   `event_id` int(12) unsigned NOT NULL,
-  `studio_id` int(12) unsigned NOT NULL,
   `manual` int(1) unsigned NOT NULL,
-  `project_id` int(10) unsigned NOT NULL,
   KEY `series_id` (`series_id`),
   KEY `event_id` (`event_id`),
   KEY `studio_id` (`studio_id`),
@@ -741,10 +771,11 @@ DROP TABLE IF EXISTS `calcms_series_schedule`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calcms_series_schedule` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` int(10) unsigned NOT NULL DEFAULT '1',
+  `studio_id` int(10) unsigned DEFAULT NULL,
   `series_id` int(10) unsigned NOT NULL,
   `start` datetime NOT NULL,
   `end` date DEFAULT NULL,
-  `studio_id` int(10) unsigned DEFAULT NULL,
   `frequency` int(10) unsigned DEFAULT NULL,
   `duration` int(10) unsigned DEFAULT NULL,
   `exclude` tinyint(1) unsigned DEFAULT NULL,
@@ -752,7 +783,6 @@ CREATE TABLE `calcms_series_schedule` (
   `week_of_month` int(10) unsigned DEFAULT NULL,
   `period_type` varchar(16) DEFAULT NULL,
   `month` int(10) unsigned NOT NULL DEFAULT '0',
-  `project_id` int(10) unsigned NOT NULL DEFAULT '1',
   `start_offset` int(11) DEFAULT '0',
   `nextDay` int(11) DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -781,14 +811,14 @@ DROP TABLE IF EXISTS `calcms_studio_timeslot_dates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calcms_studio_timeslot_dates` (
+  `project_id` int(10) unsigned NOT NULL,
   `studio_id` int(10) unsigned NOT NULL,
+  `schedule_id` int(10) unsigned NOT NULL,
   `start` datetime NOT NULL,
   `end` datetime NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
-  `schedule_id` int(10) unsigned NOT NULL,
-  `project_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`studio_id`,`start`,`end`,`project_id`) USING BTREE,
+  PRIMARY KEY (`project_id`,`studio_id`,`start`,`end`) USING BTREE,
   KEY `studio_id` (`studio_id`),
   KEY `start_date` (`start_date`),
   KEY `end_date` (`end_date`),
@@ -818,12 +848,12 @@ DROP TABLE IF EXISTS `calcms_studio_timeslot_schedule`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calcms_studio_timeslot_schedule` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` int(10) unsigned NOT NULL,
   `studio_id` int(10) unsigned NOT NULL,
   `start` datetime NOT NULL,
   `end` datetime NOT NULL,
   `frequency` int(10) unsigned NOT NULL,
   `end_date` date NOT NULL,
-  `project_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `studio_id` (`studio_id`),
   KEY `start` (`start`),
@@ -855,10 +885,10 @@ CREATE TABLE `calcms_studios` (
   `description` text NOT NULL,
   `location` varchar(100) NOT NULL,
   `stream` varchar(100) NOT NULL,
+  `image` varchar(200) NOT NULL,
   `google_calendar` varchar(100) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `image` varchar(200) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `name_2` (`name`),
   KEY `location` (`location`),
@@ -902,6 +932,32 @@ LOCK TABLES `calcms_tags` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `calcms_user_default_studios`
+--
+
+DROP TABLE IF EXISTS `calcms_user_default_studios`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `calcms_user_default_studios` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user` varchar(50) NOT NULL,
+  `project_id` int(11) NOT NULL,
+  `studio_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user` (`user`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `calcms_user_default_studios`
+--
+
+LOCK TABLES `calcms_user_default_studios` WRITE;
+/*!40000 ALTER TABLE `calcms_user_default_studios` DISABLE KEYS */;
+/*!40000 ALTER TABLE `calcms_user_default_studios` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `calcms_user_events`
 --
 
@@ -915,13 +971,13 @@ CREATE TABLE `calcms_user_events` (
   `title` varchar(200) DEFAULT NULL,
   `excerpt` longtext,
   `content` longtext,
-  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `modified_by` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `status` varchar(40) DEFAULT NULL,
   `program` varchar(40) DEFAULT NULL,
   `series_name` varchar(40) DEFAULT NULL,
   `image` varchar(200) DEFAULT NULL,
   `location` varchar(100) DEFAULT NULL,
+  `modified_by` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `title` (`title`),
   KEY `start` (`start`),
@@ -948,12 +1004,12 @@ DROP TABLE IF EXISTS `calcms_user_roles`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calcms_user_roles` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` int(10) unsigned NOT NULL,
+  `studio_id` int(10) unsigned NOT NULL DEFAULT '0',
   `user_id` int(10) unsigned NOT NULL,
   `role_id` int(10) unsigned NOT NULL,
-  `studio_id` int(10) unsigned NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `project_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `user_id` (`user_id`),
   KEY `role_id` (`role_id`),
@@ -981,13 +1037,13 @@ DROP TABLE IF EXISTS `calcms_user_series`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calcms_user_series` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` int(10) unsigned NOT NULL,
+  `studio_id` int(10) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
   `series_id` int(10) unsigned NOT NULL,
   `active` char(1) NOT NULL,
   `modified_by` varchar(100) DEFAULT NULL,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `studio_id` int(10) unsigned NOT NULL,
-  `project_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `series_id` (`series_id`),
@@ -1007,6 +1063,39 @@ LOCK TABLES `calcms_user_series` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `calcms_user_sessions`
+--
+
+DROP TABLE IF EXISTS `calcms_user_sessions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `calcms_user_sessions` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `session_id` varchar(64) NOT NULL,
+  `user` varchar(30) NOT NULL,
+  `start` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `end` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `timeout` int(10) unsigned NOT NULL,
+  `pid` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `session_id_UNIQUE` (`session_id`),
+  KEY `user` (`user`),
+  KEY `session_id` (`session_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1797 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `calcms_user_sessions`
+--
+
+LOCK TABLES `calcms_user_sessions` WRITE;
+/*!40000 ALTER TABLE `calcms_user_sessions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `calcms_user_sessions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `calcms_user_settings`
 --
 
@@ -1020,8 +1109,8 @@ CREATE TABLE `calcms_user_settings` (
   `language` varchar(3) DEFAULT 'de',
   `period` varchar(16) DEFAULT 'month',
   `calendar_fontsize` smallint(5) unsigned DEFAULT '12',
-  `project_id` INT(10) UNSIGNED NULL,
-  `studio_id` INT(10) UNSIGNED NULL,
+  `project_id` int(10) unsigned DEFAULT NULL,
+  `studio_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`,`user`) USING BTREE,
   KEY `user` (`user`)
 ) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
@@ -1057,6 +1146,8 @@ CREATE TABLE `calcms_user_stats` (
   `create_series` int(10) unsigned DEFAULT '0',
   `update_series` int(10) unsigned DEFAULT '0',
   `delete_series` int(10) unsigned DEFAULT '0',
+  `upload_file` int(10) unsigned DEFAULT '0',
+  `download_file` int(10) unsigned DEFAULT '0',
   PRIMARY KEY (`project_id`,`studio_id`,`series_id`,`user`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1081,16 +1172,17 @@ CREATE TABLE `calcms_users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
   `full_name` varchar(30) DEFAULT NULL,
-  `salt` varchar(32) NOT NULL,
-  `pass` varchar(100) NOT NULL,
   `email` varchar(300) NOT NULL,
-  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `pass` varchar(100) NOT NULL,
+  `salt` varchar(32) NOT NULL,
   `disabled` int(10) unsigned DEFAULT '0',
   `session_timeout` int(10) unsigned NOT NULL DEFAULT '120',
   `created_by` varchar(30) DEFAULT NULL,
-  PRIMARY KEY (`id`),
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `name` (`name`),
+  UNIQUE KEY `email` (`email`) USING BTREE,
   KEY `disabled` (`disabled`)
 ) ENGINE=MyISAM AUTO_INCREMENT=73 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1179,28 +1271,6 @@ CREATE TABLE `calcms_work_schedule` (
 LOCK TABLES `calcms_work_schedule` WRITE;
 /*!40000 ALTER TABLE `calcms_work_schedule` DISABLE KEYS */;
 /*!40000 ALTER TABLE `calcms_work_schedule` ENABLE KEYS */;
-
-DROP TABLE IF EXISTS `calcms_user_sessions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `calcms_user_sessions` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `session_id` varchar(64) NOT NULL,
-  `user` varchar(30) NOT NULL,
-  `start` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `end` timestamp NULL DEFAULT NULL,
-  `expires_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `timeout` int(10) unsigned NOT NULL,
-  `pid` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  UNIQUE KEY `session_id_UNIQUE` (`session_id`),
-  KEY `user` (`user`),
-  KEY `session_id` (`session_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -1212,6 +1282,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-14 17:23:51
-
-    
+-- Dump completed on 2020-12-21 13:16:22
