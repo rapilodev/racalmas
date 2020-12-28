@@ -187,7 +187,7 @@ sub update ($$) {
     push @bind_values, $entry->{id};
 
     my $query = qq{
-		update calcms_series 
+		update calcms_series
 		set    $values
 		where  id=?
 	};
@@ -277,7 +277,7 @@ sub delete($$) {
 
     $bind_values = [$series_id];
     $query       = qq{
-	    delete from calcms_series 
+	    delete from calcms_series
 	    where  id=?
 	};
 
@@ -317,7 +317,7 @@ sub get_users ($$) {
 
     my $query = qq{
 		select u.id, u.name, u.full_name, u.email, us.modified_by, us.modified_at
-		from   calcms_users u, calcms_user_series us 
+		from   calcms_users u, calcms_user_series us
 		where  us.user_id=u.id
 		$conditions
 	};
@@ -340,8 +340,8 @@ sub add_user ($$) {
     return unless defined $entry->{user};
 
     my $query = qq{
-		select	id 
-		from	calcms_user_series 
+		select	id
+		from	calcms_user_series
 		where 	project_id=? and studio_id=? and series_id=? and user_id=?
 	};
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{user_id} ];
@@ -351,7 +351,7 @@ sub add_user ($$) {
     return unless scalar @$results == 0;
 
     $query = qq{
-		insert calcms_user_series 
+		insert calcms_user_series
 		set    project_id=?, studio_id=?, series_id=?, user_id=?, modified_by=?, modified_at=now()
 	};
     $bind_values =
@@ -395,7 +395,7 @@ sub remove_user ($$) {
     $conditions = join( " and ", @conditions ) if ( @conditions > 0 );
 
     my $query = qq{
-		delete from calcms_user_series 
+		delete from calcms_user_series
 		where  $conditions
 	};
     my $dbh = db::connect($config);
@@ -653,13 +653,13 @@ sub get_event_age($$) {
         $conditions = join( ' and ', @conditions );
     }
     my $query = qq{
-        select s.id series_id, s.series_name, s.title, s.has_single_events has_single_events, (to_days(now())-to_days(max(e.start))) days_over 
+        select s.id series_id, s.series_name, s.title, s.has_single_events has_single_events, (to_days(now())-to_days(max(e.start))) days_over
         from      calcms_project_series ps
-        left join calcms_series s         on ps.series_id=s.id 
-        left join calcms_series_events se on s.id=se.series_id 
+        left join calcms_series s         on ps.series_id=s.id
+        left join calcms_series_events se on s.id=se.series_id
         left join calcms_events e         on e.id=se.event_id
         where  $conditions
-        group  by s.id 
+        group  by s.id
         order  by has_single_events desc, days_over
     };
 
@@ -713,7 +713,7 @@ sub get_next_episode($$) {
 
     #return if episodes should not be counted for this series
     my $query = q{
-        select count_episodes 
+        select count_episodes
         from   calcms_series
         where  id=?
     };
@@ -761,12 +761,12 @@ sub get_images ($$) {
             series_id  => $options->{series_id}
         }
     );
-    my $images = { 
+    my $images = {
         map {
             my $image = $_->{image};
             $image =~ s/.*\///;
             { $image => 1 };
-        } @$events 
+        } @$events
     };
     my $found  = scalar(keys %$images);
 
@@ -818,7 +818,7 @@ sub assign_event($$) {
     $conditions = 'and manual=1' if $entry->{manual} eq '1';
 
     my $query = qq{
-		select * from calcms_series_events 
+		select * from calcms_series_events
 		where project_id=? and studio_id=? and series_id=? and event_id=? $conditions
 	};
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id} ];
@@ -860,8 +860,8 @@ sub unassign_event($$) {
     $conditions = 'and manual=1' if ( defined $entry->{manual} ) && ( $entry->{manual} eq '1' );
 
     my $query = qq{
-		delete from calcms_series_events 
-		where project_id=? and studio_id=? and series_id=? and event_id=? 
+		delete from calcms_series_events
+		where project_id=? and studio_id=? and series_id=? and event_id=?
 		$conditions
 	};
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id} ];
@@ -892,7 +892,7 @@ sub add_series_ids_to_events ($$) {
     my $dbh   = db::connect($config);
     my $query = qq{
 		select project_id, studio_id, series_id, event_id
-		from calcms_series_events 
+		from calcms_series_events
 		where event_id in ($event_ids)
 	};
     my $results = db::get( $dbh, $query, \@bind_values );
@@ -941,7 +941,7 @@ sub set_event_ids ($$$$$) {
     #my $bind_names=join(',', (map { '?' } @$event_ids));
     my $query = qq{
 		select event_id from calcms_series_events
-		where project_id=? and studio_id=? and series_id=? 
+		where project_id=? and studio_id=? and series_id=?
 	};
     my $bind_values = [ $project_id, $studio_id, $serie_id ];
 
