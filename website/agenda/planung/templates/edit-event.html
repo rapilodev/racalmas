@@ -345,8 +345,8 @@
 
                 <span <TMPL_IF path>title="<TMPL_VAR path>"</TMPL_IF>>
                     <TMPL_IF .allow.update_event_status_playout>
-                        <input type="checkbox" name="playout" 
-                            <TMPL_IF playout>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF>
+                        <input type="checkbox" name="playout"
+                            <TMPL_IF playout> checked="checked" value="1"<TMPL_ELSE> value="0"</TMPL_IF>
                         > <TMPL_VAR .loc.label_playout>
                     <TMPL_ELSE>
                         <TMPL_IF playout><TMPL_VAR .loc.label_playout></TMPL_IF>
