@@ -457,7 +457,7 @@ sub showCalendar {
         }
         
         # series dates
-        if ($params->{list} == 1){
+        if ($params->{list} == 1 and defined $options->{series_id}){
             my $series = series::get(
                 $config,
                 {
