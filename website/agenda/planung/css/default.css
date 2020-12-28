@@ -355,7 +355,7 @@ div.badge-error {
 #content button,
 #content select,
 #content input {
-    padding: 4px;
+    padding: 6px;
 }
 
 #content div.flex {
@@ -444,7 +444,7 @@ table.tablesorter tr {
 #content input[type="file"]:hover,
 #content button:hover,
 #content .ui-button.ui-state-active:hover {
-    background-color: #39a1f4;
+    background-color: #1678c2;
 }
 
 #content .button {
@@ -455,11 +455,12 @@ table.tablesorter tr {
 #content input[type="submit"],
 #content input[type="file"],
 #content button{
+    font-weight:bold !important;
     display: inline-block;
     border: 0;
     padding-left: 16px;
     padding-right: 16px;
-    margin: 0.5rem;
+    margin: 4px;
     text-align: center;
     text-decoration: none;
     min-width: 64px;
@@ -468,9 +469,8 @@ table.tablesorter tr {
     color: #fff;
     height: 36px;
     position: relative;
-    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
-    transition: background-color .3s cubic-bezier(.64, .09, .08, 1),
-        box-shadow .3s cubic-bezier(.64, .09, .08, 1);
+    transition: background-color .3s cubic-bezier(.05, .05, .05, 1),
+        box-shadow .3s cubic-bezier(.05, .05, .05, 1);
 }
 
 #content input[type="submit"]:hover,
