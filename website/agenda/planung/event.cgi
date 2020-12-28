@@ -9,6 +9,7 @@ use Data::Dumper;
 $Data::Dumper::Sortkeys = 1;
 use MIME::Base64();
 use Encode::Locale();
+use File::Basename qw(basename);
 
 use params();
 use config();
@@ -67,8 +68,9 @@ $request = uac::prepare_request( $request, $user_presets );
 
 $params = $request->{params}->{checked};
 
-#show header
-unless ( params::isJson() ) {
+my $show_header = ! (params::isJson() or $params->{action} eq 'download_audio');
+
+if ( $show_header ) {
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
     template::process( $config, 'print', template::check( $config, 'default.html' ),
@@ -80,7 +82,7 @@ print q{
     <script src="js/datetime.js" type="text/javascript"></script>
     <script src="js/event.js" type="text/javascript"></script>
     <link rel="stylesheet" href="css/event.css" type="text/css" /> 
-} unless (params::isJson);
+} if $show_header;
 
 if ( defined $params->{action} ) {
     if (   ( $params->{action} eq 'show_new_event' )
@@ -106,6 +108,10 @@ if ( defined $params->{action} ) {
     if ( $params->{action} eq 'delete' ) { delete_event( $config, $request ) }
     if ( $params->{action} eq 'save' ) { save_event( $config, $request ) }
     if ( $params->{action} eq 'download' ) { download( $config, $request ) }
+    if ( $params->{action} eq 'download_audio' ) { 
+        download_audio( $config, $request );
+        return; 
+    }
 }
 $config->{access}->{write} = 0;
 show_event( $config, $request );
@@ -710,11 +716,9 @@ sub create_event {
     my $event  = $request->{params}->{checked};
     my $action = $params->{action};
     return eventOps::createEvent( $request, $event, $action );
-
 }
 
-#TODO: replace permission check with download
-sub download {
+sub get_download_event{
     my $config  = shift;
     my $request = shift;
 
@@ -758,6 +762,15 @@ sub download {
     $request2->{params}->{checked}->{published} = 'all';
     my $events   = events::get( $config, $request2 );
     my $event    = $events->[0];
+    return $event;    
+}
+
+#TODO: replace permission check with download
+sub download {
+    my $config  = shift;
+    my $request = shift;
+    
+    my $event = get_download_event($config, $request);
     my $datetime = $event->{start_datetime};
     if ( $datetime =~ /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d)\:(\d\d)/ ) {
         $datetime = $1 . '\ ' . $2 . '_' . $3;
@@ -777,6 +790,7 @@ sub download {
         my $key  = int( rand(99999999999999999) );
         $key = MIME::Base64::encode_base64($key);
         $key =~ s/[^a-zA-Z0-9]//g;
+        $key = 'shared-'.$key;
 
         #decode filename
         $file = Encode::decode( "UTF-8", $file );
@@ -796,6 +810,36 @@ sub download {
           . qq{</a>\n}
           . qq{<pre>$url</pre>\n}
           . qq{\nDer Link wird nach 7 Tagen geloescht.};
+    }
+}
+
+sub download_audio {
+    my $config  = shift;
+    my $request = shift;
+
+    my $event = get_download_event($config, $request);
+    my $datetime = $event->{start_datetime};
+    if ( $datetime =~ /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d)\:(\d\d)/ ) {
+        $datetime = $1 . '\ ' . $2 . '_' . $3;
+    } else {
+        print STDERR "event.cgi::download no valid datetime found $datetime\n";
+        return;
+    }
+    my $archive_dir = $config->{locations}->{local_archive_dir};
+    print STDERR "archive_dir: " . $archive_dir . "\n";
+    print STDERR "event.cgi::download look for : $archive_dir/$datetime*.mp3\n";
+    my @files = glob( $archive_dir . '/' . $datetime . '*.mp3' );
+    if ( @files > 0 ) {
+        my $file = $files[0];
+        $file = Encode::decode( "UTF-8", $file );
+        print qq{Content-Disposition: attachment; filename="}.basename($file).qq{"\n};
+        print qq{Content-Type: audio/mpeg\n\n};
+        binmode STDOUT;
+        open my $fh, '<:raw', $file;
+        while (<$fh>){
+            print $_;
+        }
+        close $fh;
     }
 }
 
@@ -849,7 +893,8 @@ sub check_params {
     }
 
     $checked->{action} = entry::element_of( $params->{action}, 
-        [ 'save', 'delete', 'download', 'show_new_event', 'show_new_event_from_schedule', 
+        [ 'save', 'delete', 'download', 'download_audio', 'show_new_event', 
+            'show_new_event_from_schedule', 
           'create_event', 'create_event_from_schedule', 'get_json'
         ]
     )//'';
