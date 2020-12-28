@@ -1075,7 +1075,7 @@ sub show_series {
     my $serie = $series->[0];
 
     uac::print_error( 'Predecessor must be different from series id.' ) 
-        if $serie->{predecessor_id} eq $serie->{series_id};
+        if $serie->{predecessor_id}//'' eq $serie->{series_id};
 
     #get all users currently assigned to the user
     my $user_studios =
