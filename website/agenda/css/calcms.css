@@ -1,3 +1,7 @@
+* {
+    border-radius:4px;
+}
+
 /* roboto-regular - latin_latin-ext */
 @font-face {
     font-family: 'Roboto';
@@ -38,6 +42,10 @@
         color:white !important;
         background:black !important;
        
+    }
+
+    img.custom-logo{
+        filter: invert(1);
     }
 }
 
@@ -180,7 +188,6 @@ a {
     flex-direction: row;
     width: 100%;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(100, 100, 100, 0.24);
     hyphens: none;
     cursor: pointer;
     overflow: hidden;
@@ -190,6 +197,7 @@ a {
 
 #calcms_list .event:hover {
     background: rgba(200, 200, 200, 0.2);
+    font-size:1.0rem;
 }
 
 #calcms_list .date {
@@ -197,17 +205,19 @@ a {
 }
 
 #calcms_list .time {
-    width: 10%;
+    width: 5%;
     min-width: 5rem;
     padding: 1rem;
     padding-right: 0;
     text-align: center;
     font-size: 1.1rem;
+    text-align:left;
 }
 
 #calcms_list .summary {
-    width: 70%;
+    width: 80%;
     padding: 1rem;
+    padding-left: 0;
     padding-right: 0;
     hyphens: auto;
 }
@@ -221,11 +231,27 @@ a {
     font-weight: bold;
 }
 
+#calcms_list .time{
+    font-size: 1.2rem;
+}
+#calcms_list .summary a,
+#calcms_list .time {
+    line-height: 1.8rem;
+}
+
 #calcms_list .location {
-    width: 20%;
+    width: 15%;
     padding: 1rem;
     font-weight: 100;
     text-align: center;
+    font-size: 1.0rem;
+    opacity:0.5;
+    display:inline-flex;
+    align-items:center;
+}
+
+#calcms_list .excerpt {
+    opacity:0.7;
 }
 
 @media all and (max-width: 959px) {
