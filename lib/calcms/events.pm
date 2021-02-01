@@ -180,7 +180,7 @@ sub modify_results ($$$$) {
 
         $result = calc_dates( $config, $result, $params, $previous_result, $time_diff );
         
-        set_listen_key($config, $result);
+        set_listen_key($config, $result) unless $params->{set_no_listen_keys};
 
         $result->{event_uri} = '';
         if ( ( defined $result->{program} ) && ( $result->{program} ne '' ) ) {
@@ -1752,6 +1752,8 @@ sub check_params ($$) {
     my $recordings = 0;
     $recordings = 1 if ( defined $params->{recordings} ) && ( $params->{recordings} eq '1' );
 
+    my $set_no_listen_keys = ($params->{recordings}//'') ? 1:0;
+
     my $checked = {
         date                 => $date,
         time                 => $time,
@@ -1790,6 +1792,7 @@ sub check_params ($$) {
         disable_event_sync   => $disable_event_sync,
         extern               => $extern,
         recordings           => $recordings,
+        set_no_listen_keys   => $set_no_listen_keys
     };
 
     return $checked;

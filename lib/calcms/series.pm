@@ -529,7 +529,8 @@ sub get_events ($$) {
             base_url => '',
             params   => {
                 checked => {
-                    template => ''
+                    template => '',
+                    set_no_listen_keys => ($options->{set_no_listen_keys}//'') ? 1:0
                 }
             }
         },
