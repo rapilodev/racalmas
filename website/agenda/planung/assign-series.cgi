@@ -82,9 +82,9 @@ if ( defined $params->{action} ) {
     assign_series(   $config, $request ) if $params->{action} eq 'assign_series';
     unassign_series( $config, $request ) if $params->{action} eq 'unassign_series';
 }
-show_events( $config, $request );
+show_series( $config, $request );
 
-sub show_events {
+sub show_series {
     my $config  = shift;
     my $request = shift;
 
@@ -192,12 +192,11 @@ sub assign_series {
         );
 
     } else {
-        print STDERR
-"event $entry->{event_id} already assigned to project $entry->{project_id}, studio $entry->{studio_id}, series $entry->{series_id}\n";
+        print STDERR "ERROR: series $entry->{series_id} already assigned to project $entry->{project_id}, studio $entry->{studio_id}\n";
     }
 
     $config->{access}->{write} = 0;
-    uac::print_info("event successfully assigned to series");
+    uac::print_info("The series $entry->{series_id} successfully assigned to project $entry->{project_id} and studio $entry->{studio_id}");
     return;
 }
 
@@ -247,12 +246,11 @@ sub unassign_series {
         );
 
     } else {
-        print STDERR
-"event $entry->{event_id} is not assigned to project $entry->{project_id}, studio $entry->{studio_id}, series $entry->{series_id}\n";
+        print STDERR "series $entry->{series_id} is not assigned to project $entry->{project_id}, studio $entry->{studio_id}\n";
     }
 
     $config->{access}->{write} = 0;
-    uac::print_info("The show was removed from the series.");
+    uac::print_info("The series $entry->{series_id} was removed from the project $entry->{project_id} and the studio $entry->{studio_id}.");
     return;
 }
 
