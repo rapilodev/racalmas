@@ -59,7 +59,7 @@
         <td>
             <select id="eventId" onchange=selectEventAction('<TMPL_VAR resultElemId>')>
                 <option value="-1"><TMPL_VAR .loc.label_select></option>            
-<TMPL_LOOP events><option value="<TMPL_VAR id>"><TMPL_VAR start> - <TMPL_VAR full_title></option>
+<TMPL_LOOP events><option value="<TMPL_VAR id>" <TMPL_IF selected>selected="selected"</TMPL_IF>><TMPL_VAR start> - <TMPL_VAR full_title></option>
 </TMPL_LOOPS>
             </select>
         </td>

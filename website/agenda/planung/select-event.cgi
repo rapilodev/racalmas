@@ -16,6 +16,7 @@ use uac();
 
 use series();
 use localization();
+use user_selected_events();
 
 binmode STDOUT, ":utf8";
 
@@ -70,11 +71,21 @@ sub show_events {
         return;
     }
 
+    my $entry = {
+        user                    => $request->{user},
+        project_id              => $params->{p_id},
+        studio_id               => $params->{s_id},
+        series_id               => $params->{series_id},
+        filter_project_studio   => $params->{selectProjectStudio},
+        filter_series           => $params->{selectSeries},
+    };
+    my $preset = user_selected_events::get($config, $entry);
+    
     # get user projects
     my $user_projects = uac::get_projects_by_user( $config, { user => $request->{user} } );
-    my $projects = {};
+    my $project_by_id = {};
     for my $project (@$user_projects) {
-        $projects->{ $project->{project_id} } = $project;
+        $project_by_id->{ $project->{project_id} } = $project;
     }
 
     # get user studios
@@ -82,32 +93,64 @@ sub show_events {
     for my $studio (@$user_studios) {
         my $project_id = $studio->{project_id};
         my $studio_id  = $studio->{id};
-        $studio->{project_name} = $projects->{$project_id}->{name};
-        $studio->{selected} = 1 if ( $project_id eq $params->{p_id} ) && ( $studio_id eq $params->{s_id} );
+        $studio->{project_name} = $project_by_id->{$project_id}->{name};
+        if ($preset) {
+            $studio->{selected} = 1 if $project_id eq $preset->{selected_project} and $studio_id eq $preset->{selected_studio};
+        } else {
+            $studio->{selected} = 1 if $project_id eq $params->{p_id} and $studio_id eq $params->{s_id};
+        }   
     }
 
     # get series
     my $options = {};
-    $options->{project_id} = $params->{p_id} if defined $params->{p_id};
-    $options->{studio_id}  = $params->{s_id} if defined $params->{s_id};
+    if ($preset){
+        $options->{project_id} = $preset->{selected_project};
+        $options->{studio_id}  = $preset->{selected_studio};
+    }else{
+        $options->{project_id} = $params->{p_id} if defined $params->{p_id};
+        $options->{studio_id}  = $params->{s_id} if defined $params->{s_id};
+    }
     my $series = series::get( $config, $options );
 
     for my $serie (@$series) {
-        $serie->{selected} = 1 if ( defined $params->{series_id} ) && ( $serie->{series_id} eq $params->{series_id} );
+        if ( defined $params->{series_id} ){
+            if ($preset){
+                $serie->{selected} = 1 if $serie->{series_id} eq $preset->{selected_series};
+            } else {
+                $serie->{selected} = 1 if $serie->{series_id} eq $params->{series_id};
+            }
+        } 
         $serie->{series_name} = 'Einzelsendung' if $serie->{series_name} eq '_single_';
     }
 
     # get events
-    $options->{series_id} = $params->{series_id} if defined $params->{series_id};
+    if ($preset){
+        $options->{series_id} = $preset->{selected_series};
+    }else{
+        $options->{series_id} = $params->{series_id} if defined $params->{series_id};
+    }
     $options->{from_date} = $params->{from_date} if defined $params->{from_date};
     $options->{till_date} = $params->{till_date} if defined $params->{till_date};
+    $options->{set_no_listen_keys} = 1;
     my $events = series::get_events( $config, $options );
+
+    my $preset_year = '';
+    for my $event ( @$events ) {
+        if ($preset and $preset->{selected_event} eq $event->{id}){
+            $event->{selected} = 1;
+            $preset_year = (split /\-/, $event->{start_date})[0];
+        }
+    }
 
     # filter by year
     my $years = [];
     for my $year ( 2005 .. 2025 ) {
         my $date = { year => $year };
-        $date->{selected} = 1 if ( defined $params->{from_date} ) && ( $params->{from_date} eq $year . '-01-01' );
+        if ( $preset ){
+            $date->{selected} = 1 if $preset_year eq $year;
+        }else{
+            $date->{selected} = 1 if ( defined $params->{from_date} ) && ( $params->{from_date} eq $year . '-01-01' );
+        }
         push @$years, $date;
     }
 

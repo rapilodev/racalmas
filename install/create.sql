@@ -1282,4 +1282,25 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-21 13:16:22
+
+DROP TABLE IF EXISTS `calcms_user_selected_events`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `calcms_user_selected_events` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) NOT NULL,
+  `project_id` int(10) unsigned DEFAULT NULL,
+  `studio_id` int(10) unsigned DEFAULT NULL,
+  `series_id` int(10) unsigned DEFAULT NULL,
+  `filter_project_studio` int(1) unsigned DEFAULT NULL,
+  `filter_series` int(1) unsigned DEFAULT NULL,
+  `selected_project` int(10) unsigned DEFAULT NULL,
+  `selected_studio` int(10) unsigned DEFAULT NULL,
+  `selected_series` int(10) unsigned DEFAULT NULL,
+  `selected_event` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique` (`user`,`project_id`,`studio_id`,`series_id`,`filter_project_studio`,`filter_series`),
+  KEY `user` (`user`,`project_id`,`studio_id`,`series_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+

@@ -88,8 +88,33 @@ function updateEventSelection(resultElemId){
 
 // set selected eventId at external result selector
 function selectEventAction(resultElemId){
-    var eventId=$('#selectEvent #eventId').val();
+
+
+    var projectId = $('#selectEvent #projectId').val();
+    var studioId  = $('#selectEvent #studioId').val();
+    var seriesId  = $('#selectEvent #seriesId').val();
+    var eventId   = $('#selectEvent #eventId').val();
     if (eventId<=0) return;
+
+    var filterProjectStudio =  $('#selectEvent #selectProjectStudio').length!=0 ? 1:0;
+    var filterSeries        =  $('#selectEvent #selectSeries').length!=0 ? 1:0;
+    
+    var url = "user-selected-event.cgi";
+    url += "?project_id="            + getProjectId();
+    url += "&studio_id="             + getStudioId();
+    url += "&series_id="             + getUrlParameter("series_id");
+    url += "&filter_project_studio=" + filterProjectStudio;
+    url += "&filter_series="         + filterSeries;
+    url += "&selected_project="   + projectId;
+    url += "&selected_studio="    + studioId;
+    url += "&selected_series="    + seriesId;
+    url += "&selected_event="     + eventId;
+    $.get(url).done(function() {
+        console.log("success: "+url)
+    }).fail(function() {
+        console.log("failed: "+url)
+    });
+
     // set the result value
     $('#'+resultElemId).val( eventId );
     // trigger the change event for invisble form elements
