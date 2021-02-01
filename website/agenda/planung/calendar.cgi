@@ -745,6 +745,7 @@ sub showEventList {
                     <th class="start_date">$params->{loc}->{label_start}</th>
                     <th class="start_time">$params->{loc}->{label_end}</th>
                     <th class="series_name">$params->{loc}->{label_series}</th>
+                    <th class="series_id">sid</th>
                     <th class="title">$params->{loc}->{label_title}</th>
                     <th class="episode">$params->{loc}->{label_episode}</th>
                     <th class="rerun">$rerunIcon</th>
@@ -865,6 +866,7 @@ sub showEventList {
               . qq!<td class="start_date" data-text="$event->{start_datetime}">$event->{start_date_name}</td>!
               . qq!<td class="start_time">$event->{start_time_name} - $event->{end_time}</td>!
               . qq!<td class="series_name">$event->{series_name}</td>!
+              . qq!<td class="series_id">$event->{series_id}</td>!
               . qq!<td class="title">$title</td>!
               . qq!<td class="episode">$event->{episode}</td>!
               . qq!<td class="rerun">$rerun</td>!
