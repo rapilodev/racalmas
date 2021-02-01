@@ -346,7 +346,7 @@ sub save_series {
     $entry->{predecessor_id} = $params->{predecessor_id} // 0;
     
     if ($entry->{predecessor_id} eq $entry->{series_id}){
-        uac::print_error( 'Predecessor must be different from series id.' );
+        uac::print_error( qq{save:Predecessor $entry->{predecessor_id} must be different from series id $entry->{series_id}.} );
         return;
     }
 
@@ -429,7 +429,7 @@ sub save_series {
         }
         
         if ( scalar(@$series_ids) > 1 ) {
-            uac::permissions_denied('update due to entry already exists');
+            uac::permissions_denied(q{update due to series already exists multiple times with name "$entry->{series_name}" and title "$entry->{title}"});
             return;
         }
         if (   ( scalar(@$series_ids) == 1 )
@@ -1074,8 +1074,8 @@ sub show_series {
     }
     my $serie = $series->[0];
 
-    uac::print_error( 'Predecessor must be different from series id.' ) 
-        if $serie->{predecessor_id}//'' eq $serie->{series_id};
+    uac::print_error( qq{show: Predecessor $serie->{predecessor_id} must be different from series id $serie->{series_id}.} ) 
+        if ($serie->{predecessor_id}//'') eq $serie->{series_id};
 
     #get all users currently assigned to the user
     my $user_studios =
