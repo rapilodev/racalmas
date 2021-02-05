@@ -21,11 +21,9 @@ function onDateModified(){
 
 function selectRerun(resultSelector, tillDate){
     $('#selectRerun').show();
-    //$('#selectRerun input:radio').attr("value","0");
-    //$('#selectRerun input:radio').prop("checked",false);
     $('#selectRerun input:radio.default').attr("value","1");
     $('#selectRerun input:radio.default').prop("checked",true);
-     $('#selectRerun input:radio.default').click();
+    $('#selectRerun input:radio.default').click();
     $('.buttons').hide();
 }
 
