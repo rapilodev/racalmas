@@ -34,6 +34,7 @@ use playout();
 use user_settings();
 use audio_recordings();
 use audio();
+use user_day_start();
 
 binmode STDOUT, ":utf8";
 
@@ -44,6 +45,7 @@ my $config = config::get('../config/config.cgi');
 my $debug  = $config->{system}->{debug};
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( !defined $user ) || ( $user eq '' );
+$config->{user} = $user;
 
 my $user_presets = uac::get_user_presets(
     $config,
@@ -1731,7 +1733,7 @@ sub printToolbar {
     # start of day
     my $day_start = $params->{day_start} || '';
     $toolbar .= qq{
-        <select id="day_start" name="day_start" onchange="reloadCalendar()" value="$day_start">
+        <select id="day_start" name="day_start" onchange="updateDayStart();reloadCalendar()" value="$day_start">
     };
     for my $hour ( 0 .. 24 ) {
         my $selected = '';
@@ -1947,7 +1949,9 @@ sub check_params {
     my $config = shift;
     my $params = shift;
 
-    my $checked  = {};
+    my $checked  = {
+        user => $config->{user}
+    };
     my $template = '';
     $checked->{template} = template::check( $config, $params->{template}, 'series' );
 
@@ -1961,6 +1965,13 @@ sub check_params {
         'list',    'day_start',  'open_end'
       ]);
 
+    my $start = user_day_start::get( $config, {
+        user       => $checked->{user},
+        project_id => $checked->{project_id},
+        studio_id  => $checked->{studio_id}
+    });
+    print  STDERR "read start $start\n";
+    $checked->{day_start} = $start->{day_start} if $start;
     $checked->{day_start} = $config->{date}->{day_starting_hour}
       unless defined $checked->{day_start};
     $checked->{day_start} %= 24;

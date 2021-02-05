@@ -411,6 +411,15 @@ function getUrl(name,value){
     return url;
 }
 
+function updateDayStart(){
+    var url = "set-user-day-start.cgi?";
+    url += "&project_id=" + getProjectId();
+    url += "&studio_id="  + getStudioId();
+    url += "&day_start="  + $('#day_start').val();
+    console.log(url);
+    $.get(url);
+}
+
 // to be called from elements directly
 function reloadCalendar(){
     var url=window.location.href;
