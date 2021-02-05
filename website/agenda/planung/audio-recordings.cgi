@@ -135,20 +135,25 @@ sub uploadRecording {
 
     if ( defined $fh ) {
         print STDERR "upload\n";
-
+        events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploading' });
         my $fileInfo = uploadFile( $config, $fh, $params->{event_id}, $user, $params->{upload} );
         $params->{error} .= $fileInfo->{error} if defined $fileInfo->{error};
         $params->{path} = $fileInfo->{path};
         $params->{size} = $fileInfo->{size};
 
         #$params->{duration} = $fileInfo->{duration};
-        $params = updateDatabase( $config, $params, $user ) if $params->{error} eq '';
+        if ($params->{error} eq ''){
+            $params = updateDatabase( $config, $params, $user ) ;
+            events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploaded' });
+        }
+        
     } else {
         print STDERR "could not get file handle\n";
         $params->{error} .= 'Could not get file handle';
     }
 
     if ( $params->{error} ne '' ) {
+        events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'upload failed' });
         if ( $params->{error} =~ /limit/ ) {
             $params->{error} .=
                 "audio file size is limited to "

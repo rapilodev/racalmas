@@ -1304,3 +1304,7 @@ CREATE TABLE `calcms_user_selected_events` (
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+ALTER TABLE `calcms`.`calcms_events` 
+ADD COLUMN `upload_status` VARCHAR(45) NULL DEFAULT NULL AFTER `listen_key`;
+

@@ -732,7 +732,9 @@ sub showEventList {
     my $liveIcon    = qq{<i class="fas fa-microphone-alt" title="$params->{loc}->{label_live}"></i>};
     my $draftIcon   = qq{<i class="fas fa-drafting-compass" title="$params->{loc}->{label_draft}"></i>};
     my $archiveIcon = qq{<i class="fas fa-archive" title="$params->{loc}->{label_archived}"></i>};
-    my $playoutIcon = qq{<i class="fas fa-play"></i>};
+    my $playoutIcon    = qq{<i class="fas fa-play"></i>};
+    my $processingIcon = qq{<i class="fas fa-sync fa-spin"></i>};
+    my $preparedIcon   = qq{<i class="fas fa-play-circle"></i>};
 
     my $out = '';
     $out = qq{
@@ -840,9 +842,10 @@ sub showEventList {
             $draft = '-'        if $draft eq '0';
             $draft = $draftIcon if $draft eq '1';
 
-            my $playout = $event->{playout} || '0';
-            $playout = '-'        if $playout eq '0';
-            $playout = $playoutIcon if $playout eq '1';
+            my $playout = '-';
+            $playout = $processingIcon if $event->{upload_status} ne '';
+            $playout = $preparedIcon   if $event->{upload_status} eq 'done';
+            $playout = $playoutIcon    if $event->{playout} eq '1';
 
             my $title = $event->{title};
             $title .= ': ' . $event->{user_title} if $event->{user_title} ne '';
@@ -856,6 +859,7 @@ sub showEventList {
             my $file = $event->{file} 
                 ? 'playout: ' . $event->{file} =~ s/\'/\&apos;/gr 
                 : 'playout';
+            my $playout_info = $file // $event->{upload_status} // '';
 
             $out .=
                 qq!<tr id="$id" class="$class" start="$event->{start}" >!
@@ -872,7 +876,7 @@ sub showEventList {
               . qq!<td class="rerun">$rerun</td>!
               . qq!<td class="draft">$draft</td>!
               . qq!<td class="live">$live</td>!
-              . qq!<td class="playout" title="$file">$playout</td>!
+              . qq!<td class="playout" title="$playout_info">$playout</td>!
               . qq!<td class="archived">$archived</td>!
               . qq!<td>$event->{project_name} $other_studio</td>!
               . qq!<td>$event->{studio_name} $other_studio</td>!
@@ -1527,16 +1531,27 @@ sub print_event {
             ? 'playout: ' . $event->{file} =~ s/\'/\&apos;/gr 
             : 'playout';
 
+        my $playoutClass    = qq{fas fa-play};
+        my $processingClass = qq{fas fa-sync fa-spin};
+        my $preparedClass   = qq{fas fa-play-circle};
+
         my $icons='';
         if ( exists $attr->{event} ){
+            my $playout = '';
+            if (exists $attr->{upload_status}){
+                $playout = $processingClass if $attr->{upload_status} ne '';
+                $playout = $preparedClass   if $attr->{upload_status} eq 'done';
+            }
+            $playout = $playoutClass    if exists $attr->{playout};
+
             $icons.='<i class="fas fa-microphone-alt" title="live"></i>'
                 if exists($attr->{live}) && exists($attr->{no_rerun});
             $icons.='<i class="fas fa-microphone-slash" title="preproduced"></i>'
                 if exists($attr->{preproduced}) && exists($attr->{no_rerun});
             $icons.='<i class="fas fa-redo" title="rerun"></i>'
                 if exists $attr->{rerun};
-            $icons.=qq{<i class="fas fa-play" title="$file" onmouseenter="console.log('$file');"></i>}
-                if exists $attr->{playout};
+            $icons.=qq{<i class="$playout" title="$file" onmouseenter="console.log('$file');"></i>}
+                if $playout;
             $icons.='<i class="fas fa-archive" title="archived"></i>'
                 if exists $attr->{archived};
         }

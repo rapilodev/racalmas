@@ -115,13 +115,20 @@ sub uploadRecording {
 
     if ( defined $fh ) {
         print STDERR "upload\n";
+        
+        events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploading' });
 
         my $fileInfo = uploadFile( $config, $fh, $params->{event_id}, $user, $params->{upload} );
         $params->{error} .= $fileInfo->{error} if defined $fileInfo->{error};
         $params->{path} = $fileInfo->{path};
         $params->{size} = $fileInfo->{size};
 
-        $params = updateDatabase( $config, $params, $user ) if $params->{error} eq '';
+        if ($params->{error} eq ''){
+            events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploaded' });
+            $params = updateDatabase( $config, $params, $user );
+        }else{
+            events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'upload failed' });
+        }
     } else {
         print STDERR "could not get file handle\n";
         $params->{error} .= 'Could not get file handle';

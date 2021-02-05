@@ -590,13 +590,30 @@ sub update_listen_key($$){
                     
     return undef unless defined $event->{event_id};
     return undef unless defined $event->{listen_key};
-    print STDERR "set listen_key=$event->{listen_key} for ".$event->{start}." ".$event->{title}."\n";
+    #print STDERR "set listen_key=$event->{listen_key} for ".$event->{start}." ".$event->{title}."\n";
     my $bindValues = [ $event->{listen_key}, $event->{event_id} ];
 
     my $query = qq{
         update calcms_events
         set listen_key=? 
         where id=?;
+    };
+    my $dbh = db::connect($config);
+    my $recordings = db::put( $dbh, $query, $bindValues );
+}
+
+sub set_upload_status($$){
+    my ($config, $event) = @_; 
+                    
+    print STDERR "set upload_status=$event->{upload_status} for ".$event->{event_id}."\n";
+    return undef unless defined $event->{event_id};
+    return undef unless defined $event->{upload_status};
+    my $bindValues = [ $event->{upload_status}, $event->{event_id}, $event->{upload_status} ];
+
+    my $query = qq{
+        update calcms_events
+        set upload_status=? 
+        where id=? and upload_status!=?;
     };
     my $dbh = db::connect($config);
     my $recordings = db::put( $dbh, $query, $bindValues );
@@ -1086,6 +1103,7 @@ sub get_query($$$) {
             ,e.disable_event_sync
             ,e.episode
             ,e.listen_key
+            ,e.upload_status
     };
     my $template = $params->{template} || '';
 
