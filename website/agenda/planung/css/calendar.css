@@ -269,7 +269,8 @@ input.tablesorter-filter {
 }
 
 #event_list tr td.title {
-    max-width: 20em;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 #event_list tr td.user_title {
@@ -284,9 +285,9 @@ input.tablesorter-filter {
 #event_list th:nth-child(7), 
 #event_list td:nth-child(7) .tablesorter-filter
 {
+    max-width: 20rem;
     white-space: nowrap;
     padding: 0;
-    width: 2em;
     text-align: right;
 }
 
