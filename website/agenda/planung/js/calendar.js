@@ -947,6 +947,7 @@ function hexToRgbA(hex){
 
 function adjustColors(){
     var elem = $('.schedule').get(0);
+    if (elem == null ) return;
     var color1=window.getComputedStyle(elem).backgroundColor;
     var color2=color1.replace('rgb','rgba').replace(')',', 0.4)')
     $('.schedule').css('background', 'repeating-linear-gradient(to right, '+color1+', '+color1+' 1px, '+color2+' 1px, '+color2+' 2px) ');
