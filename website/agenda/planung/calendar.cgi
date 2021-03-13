@@ -730,13 +730,13 @@ sub showEventList {
     my $events_by_day = shift;
     my $language      = $params->{language};
 
-    my $rerunIcon   = qq{<i class="fas fa-redo" title="$params->{loc}->{label_rerun}"></i>};
-    my $liveIcon    = qq{<i class="fas fa-microphone-alt" title="$params->{loc}->{label_live}"></i>};
-    my $draftIcon   = qq{<i class="fas fa-drafting-compass" title="$params->{loc}->{label_draft}"></i>};
-    my $archiveIcon = qq{<i class="fas fa-archive" title="$params->{loc}->{label_archived}"></i>};
-    my $playoutIcon    = qq{<i class="fas fa-play"></i>};
-    my $processingIcon = qq{<i class="fas fa-sync fa-spin"></i>};
-    my $preparedIcon   = qq{<i class="fas fa-play-circle"></i>};
+    my $rerunIcon   = qq{<img src="image/replay.svg" title="$params->{loc}->{label_rerun}">};
+    my $liveIcon    = qq{<img src="image/mic.svg" title="$params->{loc}->{label_live}">};
+    my $draftIcon   = qq{<img src="image/draft.svg" title="$params->{loc}->{label_draft}">};
+    my $archiveIcon = qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
+    my $playoutIcon    = qq{<img src="image/play.svg">};
+    my $processingIcon = qq{<img src="image/processsing.svg">};
+    my $preparedIcon   = qq{<img src="image/prepared.svg>};
 
     my $out = '';
     $out = qq{
@@ -855,8 +855,8 @@ sub showEventList {
             my $other_studio  = $params->{studio_id}  ne $event->{studio_id};
             my $other_project = $params->{project_id} ne $event->{project_id};
             $class.=' predecessor' if $other_project or $other_studio;
-            $other_studio  = '<i class="fas fa-globe-americas"></i>' if $other_studio;
-            $other_project = '<i class="fas fa-globe-americas"></i>' if $other_project;
+            $other_studio  = '<img src="image/globe.svg">' if $other_studio;
+            $other_project = '<img src="image/globe.svg">' if $other_project;
 
             my $file = $event->{file} 
                 ? 'playout: ' . $event->{file} =~ s/\'/\&apos;/gr 
@@ -1533,9 +1533,9 @@ sub print_event {
             ? 'playout: ' . $event->{file} =~ s/\'/\&apos;/gr 
             : 'playout';
 
-        my $playoutClass    = qq{fas fa-play};
-        my $processingClass = qq{fas fa-sync fa-spin};
-        my $preparedClass   = qq{fas fa-play-circle};
+        my $playoutClass    = qq{<img src="image/play.svg">};
+        my $processingClass = qq{<img src="image/processing.svg">};
+        my $preparedClass   = qq{<img src="image/prepare.svg">};
 
         my $icons='';
         if ( exists $attr->{event} ){
@@ -1545,16 +1545,15 @@ sub print_event {
                 $playout = $preparedClass   if $attr->{upload_status} eq 'done';
             }
             $playout = $playoutClass    if exists $attr->{playout};
-
-            $icons.='<i class="fas fa-microphone-alt" title="live"></i>'
+            $icons.='<img src="image/mic.svg" title="live"/>'
                 if exists($attr->{live}) && exists($attr->{no_rerun});
-            $icons.='<i class="fas fa-microphone-slash" title="preproduced"></i>'
+            $icons.='<img src="image/mic_off.svg" title="preproduced"/>'
                 if exists($attr->{preproduced}) && exists($attr->{no_rerun});
-            $icons.='<i class="fas fa-redo" title="rerun"></i>'
+            $icons.='<img src="image/replay.svg" title="rerun"/>'
                 if exists $attr->{rerun};
-            $icons.=qq{<i class="$playout" title="$file" onmouseenter="console.log('$file');"></i>}
+            $icons.=qq{<img src="image/play.svg" title="$file" onmouseenter="console.log('$file');"/>}
                 if $playout;
-            $icons.='<i class="fas fa-archive" title="archived"></i>'
+            $icons.='<img src="image/archive.svg" title="archived"/>'
                 if exists $attr->{archived};
         }
 

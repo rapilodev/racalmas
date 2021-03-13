@@ -2,88 +2,88 @@
 
 <nav id="calcms_nav">
 
-<div id="bars" class="mobile" onclick="handleBars();return false;"> <a><i class="fas fa-bars"></i> Menu</a></div>
+<div id="bars" class="mobile" onclick="handleBars();return false;"> <a><img src="image/more.svg"> Menu</a></div>
 
-<div><a href="/" ><i class="fas fa-rocket"></i>&nbsp;<TMPL_VAR .loc.preview></a></div>
+<div><a href="/" ><img src="image/preview.svg">&nbsp;<TMPL_VAR .loc.preview></a></div>
 
 <TMPL_IF .allow.read_event>
-<div><a id="menu_calendar" href="calendar.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>"><i class="fas fa-calendar-alt"></i>&nbsp;<TMPL_VAR .loc.calendar></a></div>
+<div><a id="menu_calendar" href="calendar.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>"><img src="image/calendar.svg">&nbsp;<TMPL_VAR .loc.calendar></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_series>
-<div><a href="series.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-list-alt"></i>&nbsp;<TMPL_VAR .loc.series></a></div>
+<div><a href="series.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/list.svg">&nbsp;<TMPL_VAR .loc.series></a></div>
 </TMPL_IF>
 
 <!-- start menu -->
 <div class="dropdown">
-<a href="#"><i class="fas fa-plus"></i>&nbsp;mehr...&nbsp;</a>
+<a href="#"><img src="image/more.svg">&nbsp;mehr...&nbsp;</a>
 <div class="dropdown-content">
 
 <TMPL_IF .allow.read_playout>
-<div><a href="show-playout.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-play"></i>&nbsp;<TMPL_VAR .loc.playout></a></div>
+<div><a href="show-playout.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/play-circle.svg">&nbsp;<TMPL_VAR .loc.playout></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_user>
-<div><a href="users.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-users"></i>&nbsp;<TMPL_VAR .loc.users></a></div>
+<div><a href="users.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/accounts.svg">&nbsp;<TMPL_VAR .loc.users></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_role>
-<div><a href="roles.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-tasks"></i>&nbsp;<TMPL_VAR .loc.roles></a></div>
+<div><a href="roles.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/rule.svg">&nbsp;<TMPL_VAR .loc.roles></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_studio_timeslot_schedule>
-<div><a href="studio-timeslots.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-clock"></i>&nbsp;<TMPL_VAR .loc.timeslots></a></div>
+<div><a href="studio-timeslots.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/schedule.svg">&nbsp;<TMPL_VAR .loc.timeslots></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_studio>
-<div><a href="studios.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-project-diagram"></i>&nbsp;<TMPL_VAR .loc.studios></a></div>
+<div><a href="studios.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/home.svg">&nbsp;<TMPL_VAR .loc.studios></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_project>
-<div><a href="projects.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-broadcast-tower"></i>&nbsp;<TMPL_VAR .loc.projects></a></div>
+<div><a href="projects.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/antenna.svg">&nbsp;<TMPL_VAR .loc.projects></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_schedule>
-<div><a href="work-time.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-clock"></i>&nbsp;<TMPL_VAR .loc.schedule></a></div>
+<div><a href="work-time.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/schedule.svg">&nbsp;<TMPL_VAR .loc.schedule></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.update_image_others>
-<div><a href="image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>&search=<TMPL_VAR .presets.user>"><i class="fas fa-images"></i>&nbsp;<TMPL_VAR .loc.images></a></div>
+<div><a href="image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>&search=<TMPL_VAR .presets.user>"><img src="image/image.svg">&nbsp;<TMPL_VAR .loc.images></a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_user_stats>
-<div><a href="user-stats.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>&action=show-user-stats"><i class="fas fa-images"></i>&nbsp;<TMPL_VAR .loc.user-stats></a></div>
+<div><a href="user-stats.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>&action=show-user-stats"><img src="image/activity.svg">&nbsp;<TMPL_VAR .loc.user-stats></a></div>
 </TMPL_IF>
 
-<div title="<TMPL_VAR .loc.profile>"><a href="user-settings.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-cog"></i>&nbsp;<TMPL_VAR .loc.profile></a></div>
+<div title="<TMPL_VAR .loc.profile>"><a href="user-settings.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/settings.svg">>&nbsp;<TMPL_VAR .loc.profile></a></div>
 
-<div title="<TMPL_VAR .loc.help>"><a href="help.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><i class="fas fa-info"></i>&nbsp;<TMPL_VAR .loc.help></a></div>
+<div title="<TMPL_VAR .loc.help>"><a href="help.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/help.svg">&nbsp;<TMPL_VAR .loc.help></a></div>
 
 <!--end menu -->
 </div>
 </div>
 
 <div class="mobile">
-<i class="fas fa-home"></i>
+<img src="image/home.svg">
 <select id="studio_id" name="studio_id" onchange="set_studio($(this).val())">
 <TMPL_LOOP .presets.studios>
 <option value="<TMPL_VAR id>" <TMPL_IF selected> selected="selected"</TMPL_IF> ><TMPL_VAR name></option>
 </TMPL_LOOP>
 </select>
-<i class="fas fa-caret-down"></i>
+<img src="image/arrow-down.svg">
 </div>
 
 <div class="mobile">
-<i class="fas fa-broadcast-tower"></i>
+<img src="image/antenna.svg">
 <select id="project_id" name="project_id" onchange="set_project($(this).val())">
 <TMPL_LOOP .presets.projects>
 <option value="<TMPL_VAR project_id>" <TMPL_IF selected> selected="selected"</TMPL_IF> ><TMPL_VAR name></option>
 </TMPL_LOOP>
 </select>
-<i class="fas fa-caret-down"></i>
+<img src="image/arrow-down.svg">
 </div>
 
-<div class="mobile"><a id="logout" href="<TMPL_VAR .presets.logout_url>?authAction=logout" expires="<TMPL_VAR .expires>"><i class="fas fa-sign-out-alt"></i>&nbsp;<TMPL_VAR .presets.user> <TMPL_VAR .loc.logout></a></div>
+<div class="mobile"><a id="logout" href="<TMPL_VAR .presets.logout_url>?authAction=logout" expires="<TMPL_VAR .expires>"><img src="image/logout.svg">&nbsp;<TMPL_VAR .presets.user> <TMPL_VAR .loc.logout></a></div>
 
 </nav>
 

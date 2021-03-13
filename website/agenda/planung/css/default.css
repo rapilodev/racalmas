@@ -285,7 +285,6 @@ li.ui-menu-item {
 #content h1, 
 #content h2 {
     margin: 1em;
-    padding: 0;
     font-weight: 100;
 }
 
@@ -549,10 +548,6 @@ input[type='checkbox'] {
     clear: both;
 }
 
-#content input[readonly] {
-    border: 0;
-}
-
 /* new */
 #calcms_nav div a,
 #calcms_nav select,
@@ -568,12 +563,6 @@ input[type='checkbox'] {
     -webkit-appearance: none;
     appearance: none;
     border: none;
-}
-
-#calcms_nav .fa,
-#calcms_nav .far,
-#calcms_nav .fas {
-    opacity: 0.4;
 }
 
 #content button.selectImage {

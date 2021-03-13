@@ -140,7 +140,7 @@ function addBackButton(){
     if (history.length>1){
         $('#calcms_nav').first().prepend(
             '<div><a id="backButton" href="#" onclick="getBack();">'
-            +'<i class="fas fa-caret-square-left fa-1g"></i>'
+            +'<img src="image/back.svg">'
             +'&nbsp'
             +loc['button_back']
             +'</a></div>'

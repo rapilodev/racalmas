@@ -102,10 +102,12 @@ button:hover {
     top: 0px;
     right: 0px;
     margin: 0;
-    width: 16px;
-    font-size: 16px;
-    opacity: 0.8;
-    line-height: 1.5;
+    width: 24px;
+    font-size: 24px;
+}
+
+#calendar div.icons img{
+    margin:-0.3rem;
 }
 
 #calendar div.time.now {
@@ -520,7 +522,8 @@ div.play .error {
     padding-left: 0px;
     padding-top: 0px;
     padding-bottom: 12px;
-    padding-right: 32px;
+    padding-right: 28px;
+    border-radius:4px;
 }
 
 #content div.ok, 
