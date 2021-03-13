@@ -122,33 +122,40 @@ function setTextWidth(select, minValue){
 
 // trigger action on commit
 function commitAction (title, action){
-    if (action==null)       {alert("missing action");return}
-    if (title==null)        {alert("missing title");return}
+    if ( title  == null )  { alert("missing title");return;  }
+    if ( action == null ) { alert("missing action");return; }
 
-    if ($("#dialog-confirm").length>0) $("#dialog-confirm").remove();
-    $("#content").append(
-        '<div id="dialog-confirm" title="'+title+'" style="min-height:2em;">'
-        +'<p>'
-        +'<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>'
-            +'Are you sure?'
-        +'</p>'
-        +'</div>'
-    );
-
-    $( "#dialog-confirm" ).dialog({
-        resizable: false,
-        height: "200",
-        modal: true,
-        buttons: {
-            Okay : function() {
-                $(this).dialog( "close" );
-                action();
-            },
-            Cancel: function() {
-                $(this).dialog( "close" );
-            }
+    showDialog({
+        title   : '<img src="image/alert.svg">Are you sure?</p>',
+        buttons : {
+            OK     : function(){ action(); },
+            Cancel : function(){ $(this).parent().remove(); }
         }
     });
+}
+
+function showDialog(options){
+    if ($("#dialog").length>0) $("#dialog").remove();
+    $("#content").append(
+        '<div id="dialog" class="panel">'
+        + (options.title ? '<div>'+options.title+'</div>' :'')
+        + (options.content ? options.content :'')
+        +'</div>'
+    );
+    var dialog = $('#content #dialog');
+    if (options.width)  dialog.css("width",  options.width);
+    if (options.height) dialog.css("height", options.height);
+    if (options.buttons) {
+        Object.keys(options.buttons).forEach( function (key) {
+            var value = options.buttons[key];
+            dialog.append("<button>"+key+"</button");
+            var button=$("#content #dialog button").last();
+            button.on("click", value);
+            button.addClass( 'dialog-'+key.toLowerCase().replace( /[^a-zA-Z0-9]/g, '-') )
+        });
+    }
+    if (options.onOpen) options.onOpen();
+    return dialog;
 }
 
 // set action=<action> at form and submit the form after confirmation

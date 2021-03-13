@@ -673,3 +673,20 @@ ul.tabContainer li:last-child{
     border-top-right-radius:0.5rem;
 }
 
+#content #dialog{
+    position:absolute;
+    z-index:1000;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 15rem;
+    height: 4rem;
+    text-align:center;
+    vertical-align:middle;
+    display:inline;
+}

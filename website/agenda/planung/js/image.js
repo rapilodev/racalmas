@@ -18,7 +18,7 @@ function updateActiveImage(){
     $('div.images div.image.active').click();
 }
 
-// open dialog to show or edit image properties
+// show or edit image properties
 function updateImageEditor(elem, filename, target, project_id, studio_id, series_id, event_id, pid){
     var url='image.cgi?show='+filename;
     url += '&template=edit-image.html';
@@ -126,10 +126,7 @@ function deleteImage(id, filename) {
     return false;
 }
 
-// close all open dialogs
 function hideImageDetails(id, filename){
-    try{$('#img_editor').dialog('close');}catch(e){}
-
     var url='image.cgi?show='+filename+'&template=image-single.html&project_id='+project_id+'&studio_id='+studio_id;
     console.log("hideImageDetails, load url="+url)
     $("#"+id).load(url);

@@ -337,50 +337,39 @@ function showMouse(){
 
 function checkStudio(){
     if($('#studio_id').val()=='-1'){
-        $("#no_studio_selected").dialog({
-            modal: true,
-            title: "please select a studio",
-        });
+        showDialog({ title: "please select a studio" });
         return 0;
     }
     return 1;
 }
 
 function show_not_assigned_to_series_dialog(){
-    $("#event_no_series").dialog({
-        resizable: false,
-        width:800,
-        height:340,
-        modal: true,
-        title: loc['label_event_not_assigned_to_series'],
-        buttons: {
-            Cancel: function() {
-                $( this ).dialog( "close" );
-            }
+    showDialog({
+        title   : loc['label_event_not_assigned_to_series'],
+        buttons : {
+            Cancel : function() { $(this).parent().remove(); }
         }
     });
 }
 
 function show_schedule_series_dialog(project_id, studio_id, series_id, start_date){
-    $("#series").dialog({
-        resizable: false,
-        width:800,
-        height:340,
-        modal: true,
-        title: loc['label_schedule_series'],
-        buttons: {
+    showDialog({
+        title   : loc['label_schedule_series'],
+        content : $('#series').html(),
+        width   : "50rem",
+        height  : "15rem",
+        buttons : {
             "Schedule": function() {
-                var series_id=$('#series_select').val();
-                var duration=$('#series_duration').val();
-                var start_date=$('#series_date').val();
+                var series_id  = $('#dialog #series_select').val();
+                var duration   = $('#dialog #series_duration').val();
+                var start_date = $('#dialog #series_date').val();
                 var url='series.cgi?project_id='+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&start='+escape(start_date)+'&duration='+duration+'&show_hint_to_add_schedule=1#tabs-schedule';
                 load(url);
             },
-            "Cancel" : function() {
-                $( this ).dialog( "close" );
-            }
+            Cancel : function() { $(this).parent().remove(); }
         }
     });
+    showDateTimePicker('#dialog #series_date');
 }
 
 function setDatePicker(){
@@ -485,12 +474,10 @@ function createId(prefix) {
 
 function showRmsPlot(id, project_id, studio_id, start){
     console.log(id+" "+project_id+" "+studio_id+" "+start)
-    $('#'+id).dialog({
+    showDialog({
         width:940, 
         height:560,
-        open: function () {
-            $(this).scrollTop(0);
-        }        
+        onOpen: function () { $(this).scrollTop(0); }
     });
     return false;
 }
