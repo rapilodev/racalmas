@@ -289,7 +289,7 @@ sub show_roles {
 		}
     }
 
-    $out .= '<hr>';
+    $out .= '<div class="panel">';
     $out .= '<table class="table">';
     my $localization = localization::get( $config, { user => $params->{presets}->{user}, file => 'roles' } );
     for my $key ( keys %$localization ) {

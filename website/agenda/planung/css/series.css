@@ -256,8 +256,12 @@ form {
     }
 }
 
-/*
-#content .editor .row:nth-child(2n+1){
-    background:#eee;
+div.editor > form > table{
+    background:white;
 }
-*/
+
+div.editor > form > table td{
+    padding-left:1rem;
+    padding-right:1rem;
+}
+

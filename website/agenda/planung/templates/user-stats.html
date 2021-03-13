@@ -23,7 +23,6 @@ table#user_stats_table input{
 </style>
 
 <h2><TMPL_VAR loc.title></h2>
-<hr>
 <TMPL_INCLUDE status.html>
 
     <button class="text"
@@ -36,6 +35,7 @@ table#user_stats_table input{
         <input type="hidden" name="studio_id" value="<TMPL_VAR studio_id>">
     </form>
 
+<div class="panel">
     <table id="user_stats_table">
         <thead>
             <tr>
@@ -66,5 +66,6 @@ table#user_stats_table input{
             </TMPL_LOOP>
         </tbody>
     </table>
+</div>
 </body>
 </html>

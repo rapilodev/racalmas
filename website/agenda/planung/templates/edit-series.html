@@ -99,7 +99,7 @@
 
     <!-- edit template-->
     <TMPL_IF .allow.update_series_template>
-    <div id="tabs-template">
+    <div id="tabs-template" class="panel">
         
 	    <div id="edit_<TMPL_VAR .series_id>" class="editor"> 
 	    <form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-template">
@@ -190,7 +190,7 @@
     </TMPL_IF>
 
     <!-- schedule -->
-    <div id="tabs-schedule">
+    <div id="tabs-schedule" class="panel">
         
 	    <!-- edit schedule -->
 		<TMPL_IF .allow.update_schedule>
@@ -451,7 +451,7 @@
     </div>
 
 	<!-- series events -->
-	<div id="tabs-events">
+	<div id="tabs-events" class="panel">
 		
 		<table class="table">
 		<TMPL_LOOP events>
@@ -484,7 +484,7 @@
 
 <TMPL_UNLESS has_single_events>
 	<!-- series members -->
-	<div id="tabs-members">
+	<div id="tabs-members" class="panel">
 		<table>
 
 		<!-- add members -->
@@ -604,7 +604,7 @@
     
     <!-- delete series -->
     <TMPL_IF .allow.delete_series>
-    <div id="tabs-delete">
+    <div id="tabs-delete" class="panel">
         <center>
         <div><TMPL_VAR .loc.label_delete_series></div>
         <div>
@@ -623,7 +623,9 @@
     </TMPL_IF>
 
 </TMPL_UNLESS> <!-- has single events-->
-	<div class="label right"><TMPL_VAR .loc.modified> <TMPL_VAR .loc.at> <TMPL_VAR modified_at> <TMPL_VAR .loc.by> <TMPL_VAR modified_by>.</div>
+	<div class="label right" 
+        style="background:none"
+    ><TMPL_VAR .loc.modified> <TMPL_VAR .loc.at> <TMPL_VAR modified_at> <TMPL_VAR .loc.by> <TMPL_VAR modified_by>.</div>
 
 </main>	    
 </body>

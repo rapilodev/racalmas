@@ -82,7 +82,6 @@
 		}
 		return false;
 	}
-
 </script>
 
 <h2><TMPL_VAR .loc.title></h2>
@@ -91,7 +90,7 @@
 <TMPL_IF allow.create_user>
 <div style="clear:both" class="newuser">
 	<button onclick="add_user('<TMPL_VAR name>')"><TMPL_VAR .loc.button_add_user></button>
-	<div id="edit_new" class="user editor" style="display:none">
+	<div id="edit_new" class="user editor panel" style="display:none">
 		<form method="post">
 		<table>
 		<tr>	<td><TMPL_VAR .loc.label_name></td>		    <td><input name="user_name" 	 value="<TMPL_VAR user_name>"></td>	</tr>
@@ -110,6 +109,7 @@
 </div>
 </TMPL_IF>
 
+<div class="panel">
 <table class="table">
 <TMPL_LOOP users>
 	
@@ -216,6 +216,7 @@
 
 </TMPL_LOOP>
 </table>
+</div>
 
 </body>
 </html>

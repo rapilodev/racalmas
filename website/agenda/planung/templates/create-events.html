@@ -7,7 +7,7 @@
 </script>
 
 <h1>create events from schedule</h1>
-
+<div class="panel">
 <form id="create_event_form" method="post">
     <input type="hidden" name="project_id"
         value="<TMPL_VAR .project_id>"> <input type="hidden"
@@ -28,8 +28,8 @@
         value="create_events">create</button>
     </TMPL_IF>
 </form>
-
-<div class="view" style="clear: both">
+</div>
+<div class="panel view" style="clear: both">
     <TMPL_VAR action> <TMPL_VAR created_total>
     events from <TMPL_VAR from_date> till <TMPL_VAR till_date>
     <br>
@@ -37,6 +37,7 @@
     <TMPL_LOOP events> <TMPL_var start> <TMPL_var
         full_title> <br></TMPL_LOOP> </view>
 
+</div>
     </body>
     </html>
 

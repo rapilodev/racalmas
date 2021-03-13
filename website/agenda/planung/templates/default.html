@@ -4,8 +4,6 @@
 
 <div id="bars" class="mobile" onclick="handleBars();return false;"> <a><img src="image/more.svg"> Menu</a></div>
 
-<div><a href="/" ><img src="image/preview.svg">&nbsp;<TMPL_VAR .loc.preview></a></div>
-
 <TMPL_IF .allow.read_event>
 <div><a id="menu_calendar" href="calendar.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>"><img src="image/calendar.svg">&nbsp;<TMPL_VAR .loc.calendar></a></div>
 </TMPL_IF>
@@ -82,6 +80,8 @@
 </select>
 <img src="image/arrow-down.svg">
 </div>
+
+<div><a href="/" ><img src="image/preview.svg">&nbsp;<TMPL_VAR .loc.preview></a></div>
 
 <div class="mobile"><a id="logout" href="<TMPL_VAR .presets.logout_url>?authAction=logout" expires="<TMPL_VAR .expires>"><img src="image/logout.svg">&nbsp;<TMPL_VAR .presets.user> <TMPL_VAR .loc.logout></a></div>
 

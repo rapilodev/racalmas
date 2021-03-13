@@ -44,6 +44,7 @@ div.col {
 </h2>
 <TMPL_INCLUDE status.html>
 
+<div class="panel">
 <form method="post">
     <input class="primary" type="hidden" name="action" value="save">
     <button onclick="$(this).submit()">
@@ -121,8 +122,9 @@ div.col {
         <TMPL_VAR loc.button_colors_reset>
     </button>
 </form>
+</div>
 
-
+<div class="panel">
 <h3 style="clear: both">
     <TMPL_VAR .loc.label_change_password>
 </h3>
@@ -147,6 +149,7 @@ div.col {
         <TMPL_VAR loc.button_change_password>
     </button>
 </form>
+</div>
 
 </body>
 </html>
