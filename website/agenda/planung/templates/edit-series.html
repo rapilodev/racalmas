@@ -33,21 +33,24 @@
             ><TMPL_VAR .loc.button_event_list></button>
         </TMPL_IF>
 
-        <TMPL_IF .allow.read_event>
-            <button target="_blank"
-                onclick="load('event-history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>');"
-                style="float:left"
-            ><TMPL_VAR .loc.button_show_changes></button>
-        </TMPL_IF>
-
 	    <TMPL_IF .allow.create_event>
-	        <form action="event.cgi">
+	        <form action="event.cgi"
+                style="float:left"
+            >
 	            <input  type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
 	            <input  type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
 	            <input  type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
 	            <button type="submit" name="action"     value="show_new_event"><TMPL_VAR .loc.button_create_event></button>
 	        </form>
 	    </TMPL_IF>
+
+        <TMPL_IF .allow.read_event>
+            <button target="_blank"
+                class="text"
+                onclick="load('event-history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>');"
+                style="float:left"
+            ><TMPL_VAR .loc.button_show_changes></button>
+        </TMPL_IF>
 
 	    <TMPL_IF .allow.update_event>
 	        <form action="series.cgi">
