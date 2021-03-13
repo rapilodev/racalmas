@@ -1,119 +1,27 @@
-
-// wrapper for date time picker with callback function
 function showDateTimePicker(selector, options){
-    $(selector).each( function(){
-        // init on first select
-        $(this).on('click', function(){
-            if ($(this).hasClass("hasDatepicker")) return;
-
-            var defaultOptions={
-                dateFormat: "yy-mm-dd",
-                timeFormat: "HH:mm",
-                stepMinute: 5,
-                firstDay: 1,
-                showOtherMonths: true,
-                selectOtherMonths: true,
-                changeMonth: true,
-                changeYear: true,
-                showWeek: true,         
-            }
-
-            //recursively merge options
-            $.extend(true, defaultOptions, options); 
-
-            $(this).datetimepicker(defaultOptions);
-
-            // set date and time from input field
-            var datetime=$(this).attr('value');
-            if ((datetime != null) && (datetime != "")){
-                var datetime=parseDateTime(datetime);
-                $(this).datetimepicker('setDate', datetime);
-                $(this).datetimepicker('setTime', datetime);
-            }
-
-            if((region !=null) && (region !='' ) && (region != 'en')){
-                $(this).datetimepicker( $.timepicker.regional[ region+"" ] );
-            }
-            //show if has been initialized on first click            
-            $(this).focus();
-        });
-    });
+    var defaults = {
+        locale: { firstDayOfWeek: 1 },
+        enableTime: true,
+        time_24hr: true
+    }
+    if (options){
+        if (options["onSelect"]) defaults["onChange"] = options["onSelect"];
+        if (options["onChange"]) defaults["onChange"] = options["onChange"];
+    }
+    var elem = $(selector).flatpickr(defaults);
+    if (options && options.date) elem.setDate(options.date);
 }
 
-// show date picker on first select with callback function
 function showDatePicker(selector, options){
-
-    $(selector).each( function(){
-        // init on first select
-        var activator=$(this);
-        if ((options!=null)&&(options.activator!=null)) activator=$(options.activator);
-        
-        activator.on('click', function(){
-            if ($(this).hasClass("hasDatepicker")) return;
-
-            var defaultOptions={
-                dateFormat: "yy-mm-dd",
-                timeFormat: "HH:mm",
-                showTimePicker: false,
-                firstDay: 1,
-                showOtherMonths: true,
-                selectOtherMonths: true,        
-                changeMonth: true,
-                changeYear: true,        
-                showWeek: true,         
-            }
-
-            //recursively merge options
-            $.extend(true, defaultOptions, options); 
-            $(this).datepicker(defaultOptions);
-
-            // set date from input field
-            var datetime=$(this).attr('value');
-            if ((datetime != null) && (datetime != "")){
-               $(this).datepicker('setDate', datetime);
-            }
-
-            if((region !=null) && (region !='' ) && (region != 'en')){
-               $(this).datepicker( $.datepicker.regional[ region+"" ] );
-            }
-            //show if has been initialized on first click
-            $(this).focus();
-        });
-    });
-}
-
-// date picker with direct registration
-function registerDatePicker(selector, options){
-
-    $(selector).each( function(){
-        var defaultOptions={
-            dateFormat: "yy-mm-dd",
-            timeFormat: "HH:mm",
-            showTimePicker: false,
-            firstDay: 1,
-            showOtherMonths: true,
-            selectOtherMonths: true,        
-            changeMonth: true,
-            changeYear: true,        
-            showWeek: true,         
-        }
-
-        //recursively merge options
-        $.extend(true, defaultOptions, options); 
-        $(this).datepicker(defaultOptions);
-
-        // set date from input field
-        var datetime=$(this).attr('value');
-        if ((datetime != null) && (datetime != "")){
-           $(this).datepicker('setDate', datetime);
-        }
-
-        if((region !=null) && (region !='' ) && (region != 'en')){
-           $(this).datepicker( $.datepicker.regional[ region+"" ] );
-        }
-        //show if has been initialized on first click
-        $(this).focus();
-    });
+    var defaults = {
+        locale: { firstDayOfWeek: 1 },
+    }
+    if (options){
+        if (options["onSelect"]) defaults["onChange"] = options["onSelect"];
+        if (options["onChange"]) defaults["onChange"] = options["onChange"];
+        if (options["wrap"]) defaults["wrap"] = options["wrap"];
+    }
+    return $(selector).flatpickr(defaults);
 }
 
 function showYearPicker(selector, options){
@@ -221,7 +129,6 @@ function getWeekday(date){
     if (loc['weekday_Fr']!=null) weekdays[4]=loc['weekday_Fr'];
     if (loc['weekday_Sa']!=null) weekdays[5]=loc['weekday_Sa'];
     if (loc['weekday_Su']!=null) weekdays[6]=loc['weekday_Su'];
-    //console.log(weekdays);
 
     return weekdays[(date.getDay()-1+7)%7]+','
 }

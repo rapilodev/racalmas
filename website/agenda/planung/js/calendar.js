@@ -299,7 +299,7 @@ function getNearestDatetime(){
             }
         }
     );
-    return date+" "+hour+":"+minute+ " ";
+    return date+" "+hour+":"+minute+ ":00";
 }
 
 var mouseX=0;
@@ -375,19 +375,16 @@ function show_schedule_series_dialog(project_id, studio_id, series_id, start_dat
 function setDatePicker(){
 
     initRegions(region);
-    
-    registerDatePicker(
-        '#start_date', {
-            showWeek: true,
-            onSelect : function(dateText, inst) {
-                var url=setUrlParameter(window.location.href,'date',dateText);
-                loadCalendar(url);    
-            }
+    var datePicker=showDatePicker('#selectDate', {
+        wrap:true,
+        onSelect : function(dates, inst) {
+            var date = dates[0];
+            var url  = setUrlParameter(window.location.href, 'date', formatDate(date));
+            loadCalendar(url);    
         }
-    );
-    
-    var date=getUrlParameter("date");
-    $('#start_date').datepicker("setDate", date);
+    });
+    datePicker.setDate(parseDateTime(getUrlParameter("date")));
+    $('#selectDate').on('click', () => datePicker.toggle() );
 }
 
 // add name=value to current url
@@ -431,16 +428,6 @@ function initTodayButton(){
     return true;
 }
 
-function initSelectDate(){
-    $('#selectDate').on('click', function(){
-        if($('#ui-datepicker-div').css("display")=="block"){
-            $('#start_date').datepicker("hide");
-        }else{
-            $('#start_date').datepicker("show");
-        }
-    });
-}
-
 function initCalendarMenu(){
     //add filters to header
     var html='';
@@ -459,7 +446,6 @@ function initCalendarMenu(){
     setFilter();
     setDatePicker();
     initTodayButton();
-    initSelectDate();
     resizeCalendarMenu();
 }
 
@@ -889,9 +875,13 @@ function handleGrid(id){
     if (project_id<0)   return;
     if (studio_id<0)    return;
 
-    var start_date=getNearestDatetime();
+    var start_date = getNearestDatetime();
     $('#series_date').attr('value',start_date);
-    showDateTimePicker('#series_date');
+    var date=parseDateTime(start_date);
+    showDateTimePicker('#series_date', {
+        date: start_date
+    });
+    
 
     show_schedule_series_dialog(project_id, studio_id, series_id, start_date);
 }

@@ -673,6 +673,11 @@ ul.tabContainer li:last-child{
     border-top-right-radius:0.5rem;
 }
 
+#content .editor input.datetimepicker{
+    padding-left:0;
+    padding-right:0;
+}
+
 #content #dialog{
     position:absolute;
     z-index:1000;

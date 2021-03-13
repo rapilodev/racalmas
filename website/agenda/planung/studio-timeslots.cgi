@@ -71,8 +71,6 @@ if ( $action eq 'show_dates' ) {
     print "Content-Type:text/html\n\n";
 } else {
     print q{
-	    <script src="js/jquery-ui-timepicker.js" type="text/javascript"></script>
-	    <link href="css/jquery-ui-timepicker.css" type="text/css" rel="stylesheet" /> 
 	    <link href="css/theme.default.css" rel="stylesheet">
 
 	<script src="js/jquery.tablesorter.min.js"></script>

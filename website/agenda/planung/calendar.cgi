@@ -103,16 +103,14 @@ if (
     template::process( $config, 'print', template::check( $config, 'default.html' ),
         $headerParams );
     print q{
-        <link href="css/jquery-ui-timepicker.css" type="text/css" rel="stylesheet" /> 
         <link rel="stylesheet" href="css/calendar.css" type="text/css" /> 
-
-        <script src="js/jquery-ui-timepicker.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="css/flatpickr.min.css" type="text/css" /> 
+        <script src="js/flatpickr.js" type="text/javascript"></script>
         <script src="js/calendar.js" type="text/javascript"></script>
         <script src="js/datetime.js" type="text/javascript"></script>
     };
     if ( $params->{list} eq '1' ) {
         print q{
-            <!--<link href="css/theme.default.css" rel="stylesheet">-->
             <script src="js/jquery.tablesorter.min.js"></script>
             <style>#content{ top:5rem; position:relative; }</style>
         };
@@ -1299,8 +1297,8 @@ sub addCalendarButton {
     #add calendar button
     my $content = qq{
         <div id="previous_month"><a id="previous">&laquo;</a></div>
-        <div id="selectDate">
-            <input id="start_date"/>
+        <div id="selectDate" data-toggle>
+            <input id="start_date" data-input/>
             <div id="current_date">$calendar->{month} $calendar->{year}</div>
         </div>
         <div id="next_month"><a id="next">&raquo;</a></div>
