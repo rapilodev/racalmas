@@ -10,8 +10,6 @@
 }
 
 #content .label {
-    padding: 0;
-    margin: 0;
     color: #555;
 }
 
@@ -30,8 +28,6 @@
 
 #content .right {
     float: right;
-    padding: 0;
-    margin: 0;
 }
 
 #content .editor {
@@ -40,7 +36,6 @@
 
 #content .editor div.buttons {
     text-align: center;
-    padding: 0;
 }
 
 #content .editor div.buttons button,
@@ -56,8 +51,6 @@
 }
 */
 #imagePreview {
-    padding: 0;
-    margin: 0;
     border: none;
     width: 24px;
     height: 24px;
@@ -84,18 +77,12 @@
     background-color: #aaa;
 }
 
-#content .series table tr {
-    padding: 0;
-    margin: 0;
-}
-
 #content .series table td:nth-child(1) {
     width: 10em;
 }
 
 #content .series table td {
     padding: 6px;
-    margin: 0;
 }
 
 #content .editor .row {
@@ -112,21 +99,6 @@
 #content .editor .row.active {
     background: #ff0;
     min-height: 4em;
-}
-
-#content div.ui-tabs-panel,
-#content div.editor,
-#content div.row.schedule {
-    padding-left: 0;
-    padding-right: 0;
-}
-
-/* start of schedule */
-#content div.cell {
-    margin-left: 6px;
-    margin-right: 0;
-    padding-left: 0;
-    padding-right: 0;
 }
 
 #content div.cell.exclude,
