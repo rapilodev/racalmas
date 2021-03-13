@@ -368,7 +368,7 @@ div.badge-error {
 #content button,
 #content select,
 #content input {
-    padding: 6px;
+    padding: 0.5rem;
 }
 
 #content div.flex {
@@ -460,6 +460,20 @@ table.tablesorter tr {
     background-color: #1678c2;
 }
 
+#content button.text,
+#content #dialog button.dialog-cancel{
+    color:#2196f3;
+    background:none;
+    box-shadow:none;
+    transition: all 0.1s linear;
+}
+#content button.text:hover{
+    color:#1678c2;
+    background:none;
+    box-shadow:none;
+    transition: all 0.1s linear;
+}
+
 #content .button {
     cursor: pointer;
 }
@@ -468,22 +482,26 @@ table.tablesorter tr {
 #content input[type="submit"],
 #content input[type="file"],
 #content button{
-    font-weight:bold !important;
     display: inline-block;
     border: 0;
-    padding-left: 16px;
-    padding-right: 16px;
-    margin: 4px;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+    margin: 0.3rem;
     text-align: center;
     text-decoration: none;
-    min-width: 64px;
-    font-weight: 500;
-    border-radius: 4px;
+    min-width: 5rem;
+    border-radius: 0.3rem;
     color: #fff;
-    height: 36px;
+    height: 2.3rem;
     position: relative;
     transition: background-color .3s cubic-bezier(.05, .05, .05, 1),
         box-shadow .3s cubic-bezier(.05, .05, .05, 1);
+}
+
+#content button.primary {
+    border: 1px solid #167ec2;
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18), 
+                0 4px 15px 0 rgba(0, 0, 0, .15);
 }
 
 #content input[type="submit"]:hover,

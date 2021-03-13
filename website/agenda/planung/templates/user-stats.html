@@ -26,7 +26,8 @@ table#user_stats_table input{
 <hr>
 <TMPL_INCLUDE status.html>
 
-    <button onclick="load('user-stats.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&action=show-active-users');">
+    <button class="text"
+        onclick="load('user-stats.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&action=show-active-users');">
         <TMPL_VAR .loc.button_show_active_users>
     </button>
 

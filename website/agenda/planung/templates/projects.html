@@ -44,7 +44,7 @@
     <div class="panel-header">
         <div class="title"><TMPL_VAR title></div>
         <TMPL_IF .allow.update_project>
-            <button onclick="edit_project('<TMPL_VAR project_id>')"
+            <button class="text" onclick="edit_project('<TMPL_VAR project_id>')"
             ><TMPL_VAR .loc.button_edit></button>
         </TMPL_IF>
     </div>
@@ -66,7 +66,7 @@
                 </td><td>
                 <TMPL_IF .allow.update_project>
                     <button onclick="edit_project_assignments('<TMPL_VAR project_id>')"
-                        style="float:left"
+                        class="text" style="float:left"
                     ><TMPL_VAR .loc.button_change></button>
                 </TMPL_IF>
                 
@@ -112,7 +112,7 @@
                     <TMPL_IF .allow.delete_project>
                     <td>
                         <div class="right">
-                            <button type=submit name="action" value="delete"
+                            <button type=submit class="text" name="action" value="delete"
                             onclick="commitForm('project_<TMPL_VAR project_id>','delete','<TMPL_VAR .loc.button_delete>');return false;"
                             ><TMPL_VAR .loc.button_delete></button>
                         </div>
@@ -159,7 +159,7 @@
                             <input type="hidden" name="pid"        value="<TMPL_VAR pid>">
                             <input type="hidden" name="sid"        value="<TMPL_VAR sid>">
                             <input type="hidden" name="action"     value="unassign_studio">
-                            <button type="submit"
+                            <button type="submit" class="text"
                                 onclick="commitForm($(this).parent(),'unassign_studio','<TMPL_VAR .loc.button_unassign_studio>');return false;"
                             ><TMPL_VAR .loc.button_unassign_studio></button>
                         </form>

@@ -60,7 +60,7 @@
 	            <input  type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
 	            <input  type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
 	            <input  type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
-	            <button type="submit" name="action"     value="rebuild_episodes"><TMPL_VAR .loc.button_rebuild_episodes></button>
+	            <button type="submit" name="action"     value="rebuild_episodes" class="text"><TMPL_VAR .loc.button_rebuild_episodes></button>
 	        </form>
 	    </TMPL_IF>
 
@@ -176,7 +176,9 @@
 
 		    <div class="buttons">
 			    <TMPL_IF .allow.update_series_template>
-				    <button type=submit name="action" value="save"><TMPL_VAR .loc.button_save_template></button>
+				    <button type=submit name="action" value="save"
+                        class="primary"
+                    ><TMPL_VAR .loc.button_save_template></button>
 			    </TMPL_IF>
 			    <!--
 			    <button onclick="cancel_edit_series('<TMPL_VAR series_id>');return false;">cancel</button>
@@ -302,7 +304,7 @@
 					</div>
 					<TMPL_IF .allow.delete_schedule>
 					<div class="cell delete"><br>
-					    <button type="submit" name="action" value="delete_schedule" 
+					    <button type="submit" class="text" name="action" value="delete_schedule" 
                             onclick="commitForm('schedule_<TMPL_VAR schedule_id>','delete_schedule','<TMPL_VAR .loc.button_delete_schedule>');return false;"
                         ><TMPL_VAR .loc.button_delete_schedule></button>
                     </div>

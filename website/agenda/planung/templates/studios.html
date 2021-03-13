@@ -17,7 +17,7 @@
 		        <tr>
 			        <td></td>
 			        <td class="buttons">
-				        <button onclick="cancel_edit_studio('new');return false;"><TMPL_VAR .loc.button_cancel></button>
+				        <button class="text" onclick="cancel_edit_studio('new');return false;"><TMPL_VAR .loc.button_cancel></button>
 				        <button type=submit name="action" value="save"><TMPL_VAR .loc.button_create></button>
 			        </td>
 		        </tr>
@@ -39,7 +39,7 @@
 	    </TMPL_IF>
 
         <TMPL_IF .allow.read_event>
-            <button target="_blank"
+            <button target="_blank" class="text"
                 onclick="load('event-history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR id>');"
             ><TMPL_VAR .loc.button_show_changes></button>
         </TMPL_IF>
@@ -84,13 +84,9 @@
 				    <td></td>
 				    <td class="buttons">
 					    <button type=submit name="action" value="save"><TMPL_VAR .loc.button_save></button>
-				    </td>
-				    <td>
-					    <div class="right">
-					        <button type=submit name="action" value="delete"
-                            onclick="commitForm('studio_<TMPL_VAR id>','delete','<TMPL_VAR .loc.button_delete>');return false;"
-                            ><TMPL_VAR .loc.button_delete></button>
-                        </div>
+				        <button type=submit class="text" name="action" value="delete"
+                        onclick="commitForm('studio_<TMPL_VAR id>','delete','<TMPL_VAR .loc.button_delete>');return false;"
+                        ><TMPL_VAR .loc.button_delete></button>
 				    </td>
 			    </tr>
 		    </table>

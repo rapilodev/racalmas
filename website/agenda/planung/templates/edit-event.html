@@ -70,8 +70,10 @@
 <div class="buttons">
     <TMPL_IF series_id>
         <TMPL_IF .allow.read_series>
-        <button onclick="view_series_details('<TMPL_VAR series_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .project_id>')" style="float:left">
-            <TMPL_VAR .loc.button_edit_series>
+        <button 
+            onclick="view_series_details('<TMPL_VAR series_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .project_id>')" 
+            style="float:left"
+            ><TMPL_VAR .loc.button_edit_series>
         </button>
         </TMPL_IF>
     </TMPL_IF>
@@ -86,11 +88,16 @@
     <TMPL_IF new_event>
     	<TMPL_IF .allow.delete_schedule>
             <button
-                onclick="load('series.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&series_id=<TMPL_VAR series_id>&start=<TMPL_VAR start escape=url>&exclude=1&show_hint_to_add_schedule=1#tabs-schedule')"><TMPL_VAR .loc.button_delete_from_schedule></button>
+                class="text"
+                onclick="load('series.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&series_id=<TMPL_VAR series_id>&start=<TMPL_VAR start escape=url>&exclude=1&show_hint_to_add_schedule=1#tabs-schedule')"
+            ><TMPL_VAR .loc.button_delete_from_schedule></button>
         </TMPL_IF>
     <TMPL_ELSE>
         <TMPL_IF .allow.assign_series_events>
-            <button onclick="selectChangeSeries('changeSeriesId');return false;"><TMPL_VAR loc.button_assign_series></button>
+            <button 
+                class="text"
+                onclick="selectChangeSeries('changeSeriesId');return false;"
+            ><TMPL_VAR loc.button_assign_series></button>
         </TMPL_IF>
     </TMPL_IF>
 
@@ -98,7 +105,10 @@
         <!--
         <button onclick="$('#copy_from_source').toggle();$('#change_series').hide();return false;"><TMPL_VAR .loc.button_copy_existing_event></button>
         -->
-        <button onclick="selectRerun('rerunEventId', <TMPL_VAR start_date>)"><TMPL_VAR .loc.button_rerun></button>
+        <button 
+            class="text"
+            onclick="selectRerun('rerunEventId', <TMPL_VAR start_date>)"
+        ><TMPL_VAR .loc.button_rerun></button>
     </TMPL_IF>
 
     <TMPL_UNLESS new_event>
@@ -108,7 +118,9 @@
                 <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
                 <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">    
                 <input type="hidden" name="event_id"   value="<TMPL_VAR .event_id>">
-                <button type="submit"><TMPL_VAR .loc.button_upload></button>
+                <button 
+                    class="text"
+                    type="submit"><TMPL_VAR .loc.button_upload></button>
             </form>
         </TMPL_IF>
 
@@ -119,11 +131,13 @@
                 <input type="hidden" name="event_id"   value="<TMPL_VAR .event_id>">
                 <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">    
                 <input type="hidden" name="action"     value="download">    
-                <button type="submit"><TMPL_VAR .loc.button_download></button>
+                <button 
+                    class="text"
+                    type="submit"><TMPL_VAR .loc.button_download></button>
             </form>
         </TMPL_IF>
         
-        <button onclick="copyEventToClipboard();"><TMPL_VAR .loc.button_copy_to_clipboard></button>
+        <button class="text" onclick="copyEventToClipboard();"><TMPL_VAR .loc.button_copy_to_clipboard></button>
     </TMPL_UNLESS>
 
     <!--
@@ -136,18 +150,21 @@
 
     <TMPL_IF .allow.read_event>
         <button target="_blank"
+            class="text"
             onclick="load('event-history.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&series_id=<TMPL_VAR series_id>&event_id=<TMPL_VAR event_id>');"
         ><TMPL_VAR .loc.button_show_changes></button>
     </TMPL_IF>
 
     <TMPL_IF .allow.read_event>
         <button target="_blank"
+            class="text"
             onclick="window.open('/programm/sendung/<TMPL_VAR event_id>.html', '_blank');"
         ><TMPL_VAR .loc.button_show_event></button>
     </TMPL_IF>
 
     <TMPL_IF .allow.read_comment>
         <button id="showComment" 
+            class="text"
             onclick="showEventComments('<TMPL_VAR id>')"
         ><TMPL_VAR .loc.label_comments></button>
     </TMPL_IF>
@@ -155,7 +172,6 @@
 </div>
 
 <div>
-
     <!-- import rerun from old event of series or any event of any project -->
     <TMPL_IF .allow.update_event>
         <div id="selectRerun" style="display:none;" class="select panel">
@@ -183,7 +199,7 @@
                                 
                 <input id="rerunEventId" value="-1" style="display:none" onchange="copyFromEvent('rerunEventId')">
 
-                <div id="import_rerun" class="active" style="display:none;"></div>
+                <div id="import_rerun" class="active text" style="display:none;"></div>
                 <button onclick="hideSelectRerun('rerunEventId')"><TMPL_VAR .loc.button_cancel></button>
             </div>
         </div>
@@ -198,7 +214,7 @@
             <div class="panel-body">
                 <div id="changeSeriesContainer"> </div>
                 <input id="changeSeriesId" value="-1" style="display:none">
-                <button onclick="hideChangeSeries()"><TMPL_VAR .loc.button_cancel></button>
+                <button onclick="hideChangeSeries()" ><TMPL_VAR .loc.button_cancel></button>
                 <button onclick="changeSeries()"><TMPL_VAR .loc.button_assign></button>
             </div>
         </div>
@@ -206,8 +222,10 @@
 
 
     <!-- edit event -->
-<div id="edit_event" style="padding:0">    
-<form id="event_<TMPL_VAR event_id>" method="post" action="event.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id><TMPL_UNLESS new_event>&event_id=<TMPL_VAR .event_id></TMPL_UNLESS>" >
+<div id="edit_event" class="panel">    
+<form id="event_<TMPL_VAR event_id>" method="post" 
+    action="event.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id><TMPL_UNLESS new_event>&event_id=<TMPL_VAR .event_id></TMPL_UNLESS>"
+>
     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
     <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
     <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">    
@@ -220,26 +238,26 @@
     <div class="buttons" style="text-align:center;clear:both">
         <TMPL_IF show_new_event_from_schedule>
             <TMPL_IF .allow.create_event_from_schedule>
-                <button type="submit" name="action" value="create_event_from_schedule"
+                <button type="submit" name="action" value="create_event_from_schedule" class="primary"
                     onclick="leavePage();return true"
                 ><TMPL_VAR .loc.button_create></button>
              </TMPL_IF>
         <TMPL_ELSIF show_new_event>
             <TMPL_IF .allow.create_event>
-                <button type="submit" name="action" value="create_event"
+                <button type="submit" name="action" value="create_event" class="primary"
                     onclick="leavePage();return true"
                 ><TMPL_VAR .loc.button_create></button>
              </TMPL_IF>
         <TMPL_ELSE>
             <TMPL_IF .allow.update_event>
-                <button type="submit" name="action" value="save"
+                <button type="submit" name="action" value="save" class="primary"
                     onclick="leavePage();return true"
                 ><TMPL_VAR .loc.button_save></button>
             </TMPL_IF>
         </TMPL_IF>
         <TMPL_IF .allow.delete_event>
             <TMPL_UNLESS new_event>
-                <button type="submit" name="action" value="delete"
+                <button type="submit" name="action" value="delete"  class="text"
                     onclick="commitForm('event_<TMPL_VAR event_id>','delete','delete event');return false;"
                 ><TMPL_VAR .loc.button_delete></button>
             </TMPL_UNLESS>
@@ -275,7 +293,8 @@
 
                 <TMPL_UNLESS has_single_events>
                 <TMPL_IF .allow.update_event_field_episode>
-                    <TMPL_VAR .loc.label_episode> <input name="episode" value="<TMPL_VAR episode>" class="episode" placeholder="episode">
+                    <span class="label"><TMPL_VAR .loc.label_episode></span>
+                    <input name="episode" value="<TMPL_VAR episode>" class="episode" placeholder="episode">
                 <TMPL_ELSE>
                     <TMPL_VAR .loc.label_episode>: <TMPL_VAR episode>
                 </TMPL_IF>
@@ -296,18 +315,18 @@
         <tr> 
             <td class="label"><TMPL_VAR .loc.label_when></td> 
             <td>
-                <TMPL_VAR .loc.label_start>
+                <span class="label"><TMPL_VAR .loc.label_start>:</span>
                 <span id="start_date_weekday"></span>
                 <input id="start_date" class="date" name="start_date" value="<TMPL_VAR start>" onchange="onDateModified()" placeholder="<TMPL_VAR .loc.label_when>">
 
-                <TMPL_VAR .loc.label_duration> 
+                <span class="label"><TMPL_VAR .loc.label_duration>:</span>
                 <select id="duration" name="duration" onchange="onDateModified()"> minutes
                 <TMPL_LOOP durations>
                     <option value="<TMPL_VAR value>" <TMPL_IF selected>selected="selected"</TMPL_IF>><TMPL_VAR name></option>
                 </TMPL_LOOP>
                 </select>
 
-                <TMPL_VAR .loc.label_end>
+                <span class="label"><TMPL_VAR .loc.label_end>:</span>
                 <span id="end_date" class="date" name="end_date" ><TMPL_VAR end></span>
 
             </td>
@@ -536,7 +555,7 @@
              </TMPL_IF>
         <TMPL_ELSE>
             <TMPL_IF .allow.update_event>
-                <button type="submit" name="action" value="save"
+                <button type="submit" class="primary" name="action" value="save"
                     onclick="leavePage();return true"
                 ><TMPL_VAR .loc.button_save></button>
             </TMPL_IF>

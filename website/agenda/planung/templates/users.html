@@ -100,7 +100,7 @@
 		<tr>	<td><TMPL_VAR .loc.label_password></td>	    <td><input name="user_password"  value="<TMPL_VAR password>"></td>	</tr>
 		<tr>	<td><TMPL_VAR .loc.label_password2></td>	<td><input name="user_password2" value="<TMPL_VAR password2>"></td>	</tr>
 		<tr>	<td class="buttons" colspan="3">
-				<button onclick="cancel_edit_user('new');return false;"><TMPL_VAR .loc.button_cancel></button>
+				<button onclick="cancel_edit_user('new');return false;" class="text"><TMPL_VAR .loc.button_cancel></button>
 				<button type=submit name="action" value="save"><TMPL_VAR .loc.button_create_user></button>
 			</td>
 		</tr>
@@ -159,11 +159,11 @@
 
 	<td>
 		<TMPL_IF allow.update_user>
-			<button onclick="edit_user('<TMPL_VAR id>')"><TMPL_VAR .loc.button_edit_user></button>
+			<button class="text" onclick="edit_user('<TMPL_VAR id>')"><TMPL_VAR .loc.button_edit_user></button>
 		</TMPL_IF>
 
 		<TMPL_IF allow.update_user_role>
-			<button onclick="edit_roles('<TMPL_VAR id>')"><TMPL_VAR .loc.button_edit_roles></button>
+			<button class="text" onclick="edit_roles('<TMPL_VAR id>')"><TMPL_VAR .loc.button_edit_roles></button>
 		</TMPL_IF>
 		<!--	</div> -->
 	</td>

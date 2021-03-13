@@ -65,7 +65,7 @@
 					<div class="cell"> <button type="submit" name="action" value="save_schedule"><TMPL_VAR .loc.button_save></button>   </div>
 					<TMPL_IF .allow.delete_schedule>
 					<div class="cell">
-                        <button type="submit" name="action" value="delete_schedule" 
+                        <button class="text" type="submit" name="action" value="delete_schedule" 
                             onclick="commitForm('form_schedule_<TMPL_VAR schedule_id>','delete_schedule','<TMPL_VAR .loc.button_delete>');return false;"
                         ><TMPL_VAR .loc.button_delete></button> 
                     </div>
