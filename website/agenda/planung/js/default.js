@@ -353,6 +353,52 @@ function copyToClipboard(text){
     document.execCommand("copy");
 }
 
+function setTabs(id, callback) {
+    var key = id + ' ul li';
+    var i = 0;
+
+    // preselect by URL hash
+    var pos=0;
+    $(key).each( function() {
+        if ( window.location.hash == "#"+$(this).children(":first").attr("href").substr(1) )
+            pos=i;
+        i++
+    })
+
+    var i = 0;
+    $(key).each( function() {
+        var elem = $(this);
+        var id = elem.children(":first").attr("href").substr(1);
+        if ( i==pos ) {
+            elem.addClass("active");
+            $('#'+id).show();
+        } else {
+            $('#'+id).hide();
+            elem.removeClass("active");
+        }
+        i++;
+    });
+
+    $( key ).on( "click", function(){
+        var id2 = $(this).children(":first").attr("href").substr(1);
+        $(key).each( function(){
+            var elem = $(this);
+            var id = elem.children(":first").attr("href").substr(1);
+            if (id==id2){
+                $('#'+id).show();
+                elem.addClass("active");
+            } else {
+                $('#'+id).hide();
+                elem.removeClass("active");
+            }
+        });
+        if (callback) callback();
+        return false;
+    });
+    $( id+' ul' ).addClass("tabContainer");
+    return false;
+}
+
 $(document).ready(
     function(){
         setupMenu();

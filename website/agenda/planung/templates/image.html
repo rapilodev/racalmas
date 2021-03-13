@@ -17,22 +17,19 @@
             addLocalization('image');
 
             //add tab change handler
-            $("#image-tabs").tabs({
-                activate: function(event, ui){
-                    if (ui==null) return;
-                    selectedImageTab = getSelectedTab('image-tabs');
+            setTabs("#image-tabs", function(){
+                selectedImageTab = getSelectedTab('image-tabs');
 
-                    <TMPL_IF .allow.create_image>
-                        if(selectedImageTab=="upload"){
-                            initUploadDialog();
-                            $('#imageList').hide();
-                            return;
-                        }
-                    </TMPL_IF>
+                <TMPL_IF .allow.create_image>
+                    if(selectedImageTab=="upload"){
+                        initUploadDialog();
+                        $('#imageList').hide();
+                        return;
+                    }
+                </TMPL_IF>
 
-                    //TODO: add confirm handler
-                    $('#imageList').show();
-                }
+                //TODO: add confirm handler
+                $('#imageList').show();
             });
             // get initially selected tab
             selectedImageTab = getSelectedTab('image-tabs');

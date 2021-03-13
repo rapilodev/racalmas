@@ -454,28 +454,6 @@ div.badge-error {
     background: none;
 }
 
-/*overwrite jquery ui*/
-#content .ui-tabs-nav {
-    border: 0;
-    background: #fff;
-    border-bottom: solid 1px #ccc;
-}
-
-#content .ui-tab a {
-    color: #fff;
-}
-
-#content .ui-tabs-tab {
-    border: 0;
-    background: #aaa;
-    padding: 6px;
-    border-radius: 3px 3px 0 0;
-}
-
-#content .ui-tab a:hover {
-    text-decoration: none;
-}
-
 /* overwrite tablesorter */
 tr.tablesorter-filter-row {
     background: #ccc;
@@ -650,5 +628,48 @@ input.image {
 #content #imageList div.images {
     max-height: 650px;
     overflow-y: scroll
+}
+
+div#tabs > div {
+    background:white;
+}
+
+ul.tabContainer{
+    background:none;
+    display:block;
+}
+ul.tabContainer li.active{
+    background:#1678c2;
+}
+ul.tabContainer li:hover{
+    border-bottom-color:#1678c2;
+}
+#content ul.tabContainer li a:hover{
+    text-decoration:none;
+}
+
+#content ul.tabContainer li.active a{
+    color:#fff;
+}
+#content ul.tabContainer li.active a:hover{
+    color:#fff;
+}
+ul.tabContainer li{
+    background:white;
+    display:inline-block;
+    padding:1rem;
+    cursor:pointer;
+    border: 1px solid rgba(0, 0, 0, .03);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, .24),
+                0 0   2px rgba(0, 0, 0, .12);
+    margin-left:-3px;
+    margin-bottom:-2px;
+}
+ul.tabContainer li:first-child{
+    border-top-left-radius:0.5rem;
+    margin-left:4px;
+}
+ul.tabContainer li:last-child{
+    border-top-right-radius:0.5rem;
 }
 

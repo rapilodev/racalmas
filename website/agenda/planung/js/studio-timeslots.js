@@ -68,16 +68,7 @@ $(document).ready(
         updateWeekdays();
     });
 
-    $("#tabs").tabs({
-        activate: function(){
-            console.log("set style");
-            $('.tablesorter-scroller-header').css('width','95%');
-            $('.tablesorter-scroller-table').css('width','95%');
-            $('.tablesorter-scroller-header table').css('width','95%');
-            $('.tablesorter-scroller-table table').css('width','95%');
-        }
-    });
-    $('#tabs').removeClass('ui-widget ui-widget-content ui-corner-all');
+    setTabs('#tabs');
 
        initTextWidth();
 

@@ -1,7 +1,7 @@
 
 // get current selected tab by tabs-id
 function getSelectedTab(id){
-    var selector = '#'+id+" li.ui-tabs-active a";
+    var selector = '#'+id+" li.active a";
     var tabValue = $(selector).attr("value");
     return tabValue;
 }

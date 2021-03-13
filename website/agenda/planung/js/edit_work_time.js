@@ -204,8 +204,7 @@ $(document).ready(
         initCheckBoxes();
         addCheckBoxHandler();
 
-        $("#tabs").tabs();
-        $('#tabs').removeClass('ui-widget ui-widget-content ui-corner-all');
+        setTabs('#tabs');
 
         updateScheduleButtonName();
         initScheduleFields();
