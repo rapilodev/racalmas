@@ -70,7 +70,7 @@ $(document).ready(
 
     setTabs('#tabs');
 
-       initTextWidth();
+    initTextWidth();
 
     setTextWidth('.datetimepicker.start',     130);
     setTextWidth('.datetimepicker.end',       130);

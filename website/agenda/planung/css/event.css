@@ -7,12 +7,17 @@ pre {
 }
 
 #content div.editor td {
-    width: 800px;
-    padding-left: 0;
+    width: 100%;
 }
 
 #content div.editor td.label {
-    width: 11em;
+    width:6rem;
+    color:#666;
+}
+
+#content div.editor span.label {
+    width: 6rem;
+    color:#666;
 }
 
 #content .editor img {
@@ -31,28 +36,40 @@ pre {
 
 #content .excerpt {
     width: 100%;
-    max-width: 40rem;
-    height: 3em;
+    height: 3rem;
 }
 
 #content textarea {
     width: 100%;
-    max-width: 40rem;
 }
 
 #content .edit_event input.url {
     width: 100%;
-    max-width: 40rem;
 }
 
 .date {
-    width: 10em;
+    width: 9rem;
 }
 
 .time {
-    width: 6em;
+    width: 5rem;
 }
 
 .episode {
-    width: 3em;
+    width: 3rem;
 }
+
+div#edit_new form,
+div#edit_new table{
+    width:480px;
+}
+
+#content table.edit_event{
+    background:white;
+}
+
+#content table.edit_event td{
+    padding-left:1rem;
+    padding-right:1rem;
+}
+

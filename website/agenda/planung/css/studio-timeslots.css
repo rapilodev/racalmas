@@ -1,7 +1,7 @@
 #content {
     margin-top: 3em;
     padding: 1em;
-    max-width: 1000px;
+    max-width: 960px;
     min-height: 100%;
 }
 
@@ -46,7 +46,8 @@
 }
 
 #content .editor .cell {
-    float: left;
+    display: table-cell ;
+    vertical-align:baseline;
     text-align: center;
 }
 

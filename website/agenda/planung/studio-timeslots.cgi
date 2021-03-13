@@ -72,9 +72,7 @@ if ( $action eq 'show_dates' ) {
 } else {
     print q{
 	    <link href="css/theme.default.css" rel="stylesheet">
-
-	<script src="js/jquery.tablesorter.min.js"></script>
-
+    	<script src="js/jquery.tablesorter.min.js"></script>
         <script src="js/studio-timeslots.js" type="text/javascript"></script>
 	    <script src="js/datetime.js" type="text/javascript"></script>
 	    <link rel="stylesheet" href="css/studio-timeslots.css" type="text/css" /> 

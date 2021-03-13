@@ -1,8 +1,11 @@
 #content {
     margin-top: 3em;
     padding: 1em;
-    /*max-width:1000px;*/
     min-height: 100%;
+}
+
+#content table.td{
+    padding:0;
 }
 
 #content td.label {
@@ -31,7 +34,13 @@
 }
 
 #content .editor {
+    padding:0.5rem;
     clear: both;
+    background:white;
+}
+
+#content .editor td{
+    padding:0;
 }
 
 #content .editor div.buttons {
@@ -43,13 +52,6 @@
     margin-left: 1em;
 }
 
-/*
-#content .editor input,
-#content .editor textarea,
-#content .editor button{
-    padding:6px;
-}
-*/
 #imagePreview {
     border: none;
     width: 24px;
@@ -91,9 +93,10 @@
 }
 
 #content .editor .cell {
-    float: left;
+    display:table-cell;
     text-align: center;
     white-space: nowrap;
+    padding-right:0.5rem;
 }
 
 #content .editor .row.active {
@@ -207,11 +210,6 @@
     width: 2em;
 }
 
-/*
-#content div.show_schedule tr:nth-child(odd){
-    background:#f0f0f0;
-}
-*/
 #content div.show_schedule tr.exclude td {
     text-decoration: line-through;
 }
@@ -224,6 +222,10 @@
     width: 90%;
 }
 
+div#tabs > div {
+    background:white;
+}
+
 #content #tabs-events td.weekday,
 #content #tabs-events td.date,
     #content #tabs-events td.time,
@@ -231,23 +233,8 @@
     width: 0;
 }
 
-#content #tabs-events td.weekday,
-#content #tabs-events td.spacer {
-    padding: 0;
-}
-
-#content input.datetimepicker {
-    padding-left: 0;
-    padding-right: 0;
-}
-
 button {
     cursor: pointer;
-}
-
-form {
-    padding: 0;
-    margin: 0;
 }
 
 @media print {

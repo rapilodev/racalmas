@@ -802,7 +802,7 @@ sub download {
         print `$cmd`;
 
         $request->{params}->{checked}->{download} = ''
-          . qq{<a href="$url" style="padding:8px;background:#39a1f4;color:white;border-radius:4px;" download="$event->{series_name}#$event->{episode}.mp3">}
+          . qq{<a href="$url" style="color:#39a1f4;" download="$event->{series_name}#$event->{episode}.mp3">}
           . q{Download: }
           . $event->{start_date_name} . ", "
           . $event->{start_time_name} . " - "
