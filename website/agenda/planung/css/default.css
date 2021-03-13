@@ -332,12 +332,6 @@ table {
     top: 3em;
 }
 
-li.ui-menu-item {
-    background: none;
-    list-style-image: url();
-    list-style-type: none;
-}
-
 #content h1, 
 #content h2 {
     margin: 1em;
@@ -479,18 +473,14 @@ table.tablesorter tr {
 /*colors*/
 #content input[type="submit"],
 #content input[type="file"],
-#content button,
-#content .ui-state-active,
-#content a.ui-button:active,
-#content .ui-button:active {
+#content button{
     background-color: #2196f3;
     cursor: pointer;
 }
 
 #content input[type="submit"]:hover,
 #content input[type="file"]:hover,
-#content button:hover,
-#content .ui-button.ui-state-active:hover {
+#content button:hover{
     background-color: #1678c2;
 }
 
@@ -614,10 +604,6 @@ input[type='checkbox'] {
 
 input.image {
     width: 16rem;
-}
-
-#content .ui-widget.ui-widget-content {
-    border: 0;
 }
 
 #content .select .option {

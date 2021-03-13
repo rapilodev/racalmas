@@ -471,11 +471,6 @@ div#toolbar input.search {
     transition: all 0.3s;
 }
 
-#calendar div.ui-draggable-dragging {
-    z-index: 99;
-    cursor: move;
-}
-
 #calendar div.intersect {
     background: #fcc;
 }
