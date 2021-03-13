@@ -96,7 +96,7 @@ msgid "label_episode"
 msgstr "Folge"
 
 msgid "label_live"
-msgstr "Live-Sendung"
+msgstr "live"
 
 msgid "label_draft"
 msgstr "Entwurf"
