@@ -1,6 +1,5 @@
 #content {
-    margin-top: 3em;
-    padding: 1em;
+    margin-top: 3rem;
     min-height: 100%;
 }
 
@@ -9,7 +8,7 @@
 }
 
 #content td.label {
-    max-width: 3em;
+    max-width: 2rem;
 }
 
 #content .label {
@@ -17,7 +16,7 @@
 }
 
 #content table.series {
-    border-radius: 1em;
+    border-radius: 1rem;
 }
 
 #content .series div.header {
@@ -49,7 +48,7 @@
 
 #content .editor div.buttons button,
 #content .editor div.buttons input {
-    margin-left: 1em;
+    margin-left: 1rem;
 }
 
 #imagePreview {
@@ -80,16 +79,16 @@
 }
 
 #content .series table td:nth-child(1) {
-    width: 10em;
+    width: 10rem;
 }
 
 #content .series table td {
-    padding: 6px;
+    padding: 0.5rem;
 }
 
 #content .editor .row {
     clear: both;
-    min-height: 4em;
+    min-height: 4rem;
 }
 
 #content .editor .cell {
@@ -101,7 +100,7 @@
 
 #content .editor .row.active {
     background: #ff0;
-    min-height: 4em;
+    min-height: 4rem;
 }
 
 #content div.cell.exclude,
@@ -111,111 +110,111 @@
 }
 
 #content div.cell.containsInput {
-    margin-right: 12px;
+    margin-right: 1rem;
 }
 
 #content div.cell.containsSelect {
-    margin-right: 12px;
+    margin-right: 1rem;
 }
 
 #content div.cell.exclude,
 #content div.cell.nextDay {
-    width: 1em;
+    width: 1rem;
 }
 
 #content div.cell.weekday,
 #content div.cell.weekday input,
 #content div.cell.weekday select {
-    width: 2em;
-    padding-top: 2em;
+    width: 2rem;
+    padding-top: 1.6rem;
 }
 
 #content div.cell.start,
 #content div.cell.start input,
 #content div.cell.start select {
-    width: 9.5em;
+    width: 9rem;
 }
 
 #content div.cell.duration,
 #content div.cell.duration input,
 #content div.cell.duration select {
-    width: 7em;
+    width: 6rem;
 }
 
 #content div.cell.period_type,
 #content div.cell.period_type input,
     #content div.cell.period_type select {
-    width: 7em;
+    width: 8rem;
 }
 
 #content div.cell.period_type.isSingle,
 #content div.cell.period_type select.isSingle {
-    width: 9em;
+    width: 8rem;
 }
 
 #content div.cell.end,
 #content div.cell.end input,
 #content div.cell.end select {
-    width: 6em;
+    width: 6rem;
 }
 
 #content div.cell.frequency,
 #content div.cell.frequency input,
 #content div.cell.frequency select {
-    width: 6em;
+    width: 7rem;
 }
 
 #content div.cell.week_of_month,
 #content div.cell.week_of_month input,
     #content div.cell.week_of_month select {
-    width: 6em;
+    width: 6rem;
 }
 
 #content div.cell.schedule_weekday,
 #content div.cell.schedule_weekday input,
     #content div.cell.schedule_weekday select {
-    width: 4em;
+    width: 4rem;
 }
 
 #content div.cell.schedule_month,
 #content div.cell.schedule_month input,
     #content div.cell.schedule_month select {
-    width: 6em;
+    width: 6rem;
 }
 
 /* end of schedule */
 #content .create_events {
-    width: 5em;
+    width: 5rem;
 }
 
 #content .publish_events {
-    width: 5em;
+    width: 5rem;
 }
 
 #content div.show_schedule {
     overflow: auto;
-    height: 20em;
+    height: 20rem;
     clear: both;
 }
 
 #content div.show_schedule table {
-    width: 24em;
+    width: 24rem;
 }
 
 #content div.show_schedule td {
-    width: 10em;
+    width: 10rem;
 }
 
 #content div.show_schedule td:nth-child(1) {
-    width: 2em;
+    width: 2rem;
 }
 
 #content div.show_schedule tr.exclude td {
     text-decoration: line-through;
 }
 
-#content div.buttons {
-    padding-left: 12px;
+input.exclude{
+    margin-top:0.5rem;
 }
 
 #content div.editor input.image {
@@ -228,7 +227,7 @@ div#tabs > div {
 
 #content #tabs-events td.weekday,
 #content #tabs-events td.date,
-    #content #tabs-events td.time,
+#content #tabs-events td.time,
 #content #tabs-events td.spacer {
     width: 0;
 }

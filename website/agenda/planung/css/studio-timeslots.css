@@ -1,6 +1,6 @@
 #content {
-    margin-top: 3em;
-    padding: 1em;
+    margin-top: 3rem;
+    padding: 1rem;
     max-width: 960px;
     min-height: 100%;
 }
@@ -32,13 +32,13 @@
 
 #content .editor div.buttons button,
 #content .editor div.buttons input {
-    margin-left: 1em;
+    margin-left: 1rem;
 }
 
 #content .editor input,
 #content .editor textarea,
 #content .editor button {
-    padding: 6px;
+    padding: 0.5rem;
 }
 
 #content .editor .row {
@@ -93,7 +93,7 @@
 }
 
 #content div.buttons {
-    padding-left: 12px;
+    padding-left: 1rem;
 }
 
 #content div.editor input.image {

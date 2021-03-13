@@ -22,15 +22,15 @@ div#newSeries a,
 div#oldSeries a{
     color:#fff;
     background:#1abc9c;
-    padding:8px;
-    margin:8px;
+    padding:0.5rem;
+    margin:0.5rem;
     cursor:pointer;
     text-align:center;
     display:table-cell;
     vertical-align:middle;
     width:10rem;
     height:4rem;
-    line-height:2em;
+    line-height:1.4rem;
 }
 
 div#newSeries a:hover,
