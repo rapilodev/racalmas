@@ -173,6 +173,71 @@ body,
     color: #ff4444;
 }
 
+#calcms_nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+#calcms_nav div a,
+#calcms_nav select,
+#calcms_nav option {
+    font-size: 0.9375rem;
+}
+
+#calcms_nav select,
+#calcms_nav option {
+    border: 0;
+    text-align: left;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+}
+
+#calcms_nav #bars {
+    cursor: pointer;
+}
+
+#calcms_nav.mobile {
+    flex-direction: column;
+    position: absolute;
+}
+
+#calcms_nav.mobile div {
+    text-align: left;
+}
+
+#calcms_nav .dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+#calcms_nav .dropdown-content {
+    display: none;
+    position: absolute;
+    z-index: 100;
+    text-align: left;
+    vertical-align:middle;
+    background: #004f9b;
+    min-width: 10rem;
+}
+
+#calcms_nav .dropdown-content a {
+    min-width: 10rem;
+    display: inline-block;
+}
+
+#calcms_nav > div > a {
+    display: inline-block;
+}
+
+#calcms_nav .dropdown:hover .dropdown-content {
+    display: block;
+    transition: all 1s linear;
+}    
+
 a {
     color: #000;
     text-decoration: none;
@@ -557,23 +622,6 @@ input[type='checkbox'] {
     clear: both;
 }
 
-/* new */
-#calcms_nav div a,
-#calcms_nav select,
-#calcms_nav option {
-    font-size: 0.9375rem;
-}
-
-#calcms_nav select,
-#calcms_nav option {
-    border: 0;
-    text-align: left;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
-    border: none;
-}
-
 #content button.selectImage {
     padding: 0 !important;
     float: left;
@@ -604,38 +652,3 @@ input.image {
     overflow-y: scroll
 }
 
-#calcms_nav #bars {
-    cursor: pointer;
-}
-
-#calcms_nav.mobile {
-    flex-direction: column;
-    position: absolute;
-}
-
-#calcms_nav.mobile div {
-    text-align: left;
-}
-
-#calcms_nav .dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-#calcms_nav .dropdown-content {
-    display: none;
-    position: absolute;
-    z-index: 100;
-    text-align: left;
-    background: #004f9b;
-    min-width: 10rem;
-}
-
-#calcms_nav .dropdown-content  a {
-    width: 20rem;
-}
-
-#calcms_nav .dropdown:hover .dropdown-content {
-    display: block;
-    transition: all 1s linear;
-}
