@@ -677,7 +677,6 @@ function updateTable(){
     });
 
     $(baseElement).on("mousedown", ".schedule", function(event){
-        if ( $('.ui-draggable-dragging').length>0 ) return;
         handleSchedule($(this).attr("id"), $(this).attr("start"), event);
     });
 
@@ -728,66 +727,6 @@ function updateTable(){
     $('#calendar').show();
 
     showMouse();
-}
-
-function addDraggable(){
-    var height=$('#calendar div.time').first().outerHeight()/12;
-
-    $("#calendar div.schedule").draggable({ 
-        containment: "parent",
-        axis: "y",
-        grid: [height, height],
-        cursorAt: { top: 0 },
-        drag: function(){
-            $(this).parent().children(".schedule").each(
-                function(key, value){
-                    if ( isColliding($(this)) == true ){ 
-                        $(this).addClass("error");
-                        $(this).addClass("x2");
-                    }else{ 
-                        $(this).removeClass("error");
-                        $(this).addClass("x2");
-                    }
-                }
-            );
-        },
-        stop: function() {
-            console.log("move to "+$("#position").text());
-        }
-    });
-
-}
-
-var dragged=null;
-function isColliding(div){
-    dragged=div;
-    var intersect=false;
-    div.parent().children(".schedule").each(
-        function(key, value){
-            if (dragged.is($(this))) {
-                return;
-            }
-            if (collision(dragged, $(this))==true){
-                intersect=true;
-            }
-        }
-    );
-    return intersect;
-}
-
-function collision(div1, div2) {
-    var y1 = div1.offset().top;
-    var h1 = div1.outerHeight(true);
-    var b1 = y1 + h1;
-
-    var y2 = div2.offset().top;
-    var h2 = div2.outerHeight(true);
-    var b2 = y2 + h2;
-
-    var tolerate=6;
-    if (b1 - tolerate < y2) return false;
-    if (b2 - tolerate < y1) return false;
-    return true;
 }
 
 function handleEvent(id, event){
