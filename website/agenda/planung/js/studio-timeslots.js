@@ -78,8 +78,6 @@ $(document).ready(
     setTextWidth('.datetimepicker.weekday',   20);
     setTextWidth('.datetimepicker.frequency', 20);
 
-    initRegions(region);
-
     showDateTimePicker('.datetimepicker.start', {
         onSelect: function(){updateWeekdays();}
     });

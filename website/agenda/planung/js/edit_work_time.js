@@ -190,8 +190,6 @@ $(document).ready(
                 updateWeekdays();
             }
         );    
-        
-        initRegions(region);
 
         showDateTimePicker('.datetimepicker.start', {
             onSelect: function(){updateWeekdays();}

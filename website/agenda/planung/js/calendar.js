@@ -373,8 +373,6 @@ function show_schedule_series_dialog(project_id, studio_id, series_id, start_dat
 }
 
 function setDatePicker(){
-
-    initRegions(region);
     var datePicker=showDatePicker('#selectDate', {
         wrap:true,
         onSelect : function(dates, inst) {

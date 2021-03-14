@@ -43,7 +43,6 @@ function add_project(){
 
 $(document).ready(
     function(){
-        initRegions(region);
         showDatePicker('input.date');
     }
 );

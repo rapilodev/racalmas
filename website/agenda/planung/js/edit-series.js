@@ -236,7 +236,6 @@ $(document).ready(
             }
         );    
 
-        initRegions(region);
         showDateTimePicker('input.datetimepicker.start', {
             onSelect: function(){updateWeekdays();}
         });

@@ -291,7 +291,6 @@ function copyEventToClipboard(){
 
 $(document).ready(
     function(){
-        initRegions(region);
         showDateTimePicker('#start_date');
 
         $('input[type="checkbox"]').click(
