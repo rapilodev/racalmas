@@ -569,6 +569,20 @@ function loadCalendar(url, mouseButton){
     });
 }
 
+function getMouseOverText(elem){
+    if (elem.attr('title')!=null) return elem.attr('title');
+    if (elem.hasClass('event') || elem.parent().hasClass('event'))
+        return 'click to edit show'
+    if (elem.hasClass('schedule') || elem.parent().hasClass('schedule'))
+        return 'click to create show'
+    if (elem.hasClass('no_series') || elem.parent().hasClass('no_series'))
+        return 'please create a series for this show'
+    if (elem.hasClass('work') || elem.parent().hasClass('work'))
+        return 'edit work schedule'
+    if (elem.hasClass('grid') || elem.parent().hasClass('grid'))
+        return 'click to create schedule'
+}
+
 function updateTable(){
 
     $('#previous_month').off();
@@ -681,33 +695,10 @@ function updateTable(){
     
 
     //add tooltips
-    $('#calendarTable').tooltip({
-        items:'td div,img',
-        show: {
-            effect: "none",
-            delay: 500
-        },
-        hide: {
-            effect: "none",
-            delay: 500
-        },
-        close: function(){
-            $('.ui-helper-hidden-accessible').children().first().remove();
-        },
-        content: function(){
-            var elem=$(this);
-            if (elem.attr('title')!=null) return elem.attr('title');
-            if (elem.hasClass('event') || elem.parent().hasClass('event'))
-                return 'click to edit show'
-            if (elem.hasClass('schedule') || elem.parent().hasClass('schedule'))
-                return 'click to create show'
-            if (elem.hasClass('no_series') || elem.parent().hasClass('no_series'))
-                return 'please create a series for this show'
-            if (elem.hasClass('work') || elem.parent().hasClass('work'))
-                return 'edit work schedule'
-            if (elem.hasClass('grid') || elem.parent().hasClass('grid'))
-                return 'click to create schedule'
-        }
+    $('#calendar > table > tbody > tr > td > div').mouseover( function(){
+        var text = getMouseOverText($(this));
+        if ($(this).attr("title") == text) return;
+        $(this).attr("title",text);
     });
     
     if($('#event_list table').length!=0){
