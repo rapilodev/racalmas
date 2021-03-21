@@ -511,7 +511,7 @@ function initRmsPlot(){
 
                 var content = $(this).html();
                 var id      = createId("rms_img");
-                var url     = '/agenda_files/playout/'+plot;
+                var url     = '/media/playout/'+plot;
                 var img     = '<img src="'+url+'" ></img>';
                 var deleteHandler = 'onclick="deleteFromPlayout(' + quoteAttr(id) + ", " + quoteAttr(project_id) + ", " + quoteAttr(studio_id) + ", "+ quoteAttr(start) + ')"';
 
