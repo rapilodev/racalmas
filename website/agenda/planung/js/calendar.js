@@ -456,11 +456,14 @@ function createId(prefix) {
   return prefix+'_'+s4() + s4();
 }
 
-function showRmsPlot(id, project_id, studio_id, start){
-    console.log(id+" "+project_id+" "+studio_id+" "+start)
+function showRmsPlot(id, project_id, studio_id, start, elem){
     showDialog({
         width:940, 
         height:560,
+        content: elem.html(),
+        buttons: {
+            Close : function() { $(this).parent().remove(); }
+        },
         onOpen: function () { $(this).scrollTop(0); }
     });
     return false;
@@ -499,7 +502,7 @@ function initRmsPlot(){
                 $(this).addClass("clickHandler");
                 $(this).click( function(event){
                      event.stopImmediatePropagation();
-                     showRmsPlot( id , project_id , studio_id , start );
+                     showRmsPlot( id , project_id , studio_id , start, $(this) );
                 });
             }
 
