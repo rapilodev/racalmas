@@ -31,7 +31,6 @@ RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})/$ 				cal.cgi?date=$1 [L]
 RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/$ 	cal.cgi?from_date=$1&till_date=$2 [L]
 RewriteRule ^kalender/(.*)$ 						cal.cgi?$1 [L]
 
-RewriteRule ^kategorien/(.*)$ 			category.cgi?$1 [L]
 RewriteRule ^sendereihen/(.*)$ 			series_names.cgi?$1 [L]
 
 RewriteRule ^playlist/(.*)$ 			events.cgi?template=event_playlist.html&time=future&limit=5&$1 [L]
@@ -59,11 +58,6 @@ RewriteRule ^suche/(.*?)/(.*?)/kommende/(.*)$	events.cgi?template=event_list.htm
 RewriteRule ^suche/(.*?)/(.*?)/vergangene/(.*)$	events.cgi?template=event_list.html&project=$1&search=$2&archive=gone&$3 [L]
 RewriteRule ^suche/(.*?)/(.*?)/(.*)$		events.cgi?template=event_list.html&project=$1&search=$2&$3 [L]
 RewriteRule ^suche/(.*?)/(.*)$ 			events.cgi?template=event_list.html&search=$1&$2 [L]
-
-RewriteRule ^kategorie/(.*?)/(.*?)/kommende/(.*)$	events.cgi?template=event_list.html&project=$1&category=$2&archive=coming&$3 [L]
-RewriteRule ^kategorie/(.*?)/(.*?)/vergangene/(.*)$	events.cgi?template=event_list.html&project=$1&category=$2&archive=gone&$3 [L]
-RewriteRule ^kategorie/(.*?)/(.*?)/(.*)$		events.cgi?template=event_list.html&project=$1&category=$2&$3 [L]
-RewriteRule ^kategorie/(.*?)/(.*)$ 			events.cgi?template=event_list.html&category=$1&$2 [L]
 
 RewriteRule ^rds/(.*)$ 				events.cgi?template=event_playlist.txt&time=now&limit=1&$1 [L]
 RewriteRule ^playlist_show/(.*)$ 		events.cgi?template=event_playlist_show.html&time=future&limit=3&$1 [L]

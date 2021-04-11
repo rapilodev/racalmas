@@ -73,7 +73,7 @@ sub get ($$) {
         $search =~ s/[\%\s]+$//;
         if ( $search ne '' ) {
             $search = '%' . $search . '%';
-            my @attr = ( 'title', 'series_name', 'excerpt', 'category', 'content' );
+            my @attr = ( 'title', 'series_name', 'excerpt', 'content' );
             push @conditions, "(" . join( " or ", map { 'lower(' . $_ . ') like ?' } @attr ) . ")";
             for my $attr (@attr) {
                 push @bind_values, $search;

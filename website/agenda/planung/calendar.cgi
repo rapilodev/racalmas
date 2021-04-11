@@ -457,7 +457,7 @@ sub showCalendar {
         }
         
         # series dates
-        if ($params->{list} == 1 and defined $options->{series_id}){
+        if ($params->{list} == 1){
             my $series = series::get(
                 $config,
                 {
@@ -2000,7 +2000,7 @@ sub check_params {
     entry::set_strings( $checked, $params, [
         'search', 'filter', 'range',
         'series_name', 'title',    'excerpt', 'content',
-        'program',     'category', 'image',   'user_content'
+        'program',     'image',   'user_content'
       ]);
 
     $checked->{action} = entry::element_of( $params->{action}, 

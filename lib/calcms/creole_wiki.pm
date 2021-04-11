@@ -67,30 +67,11 @@ sub extractEventFromWikiText($;$) {
     #extract categories from title
     my @categories = ();
     while ( $title =~ /\((.*?),(.*?)\)/ ) {
-        my $category = $1;
-        $category =~ s/\s+/ /g;
-        $category =~ s/^\s+|\s+$//g;
-        $category =~ s/\&/\+/g;
-        push @categories, $category if defined $category && $category =~ /\S/;
-
-        $category = '';
-        $category = $2 if ( defined $2 );
-        $category =~ s/\s+/ /g;
-        $category =~ s/^\s+|\s+$//g;
-        $category =~ s/\&/\+/g;
-        push @categories, $category if defined $category && $category =~ /\S/;
         $title =~ s/\((.*?),(.*?)\)/\($2\)/;
     }
     if ( $title =~ /\((.*?)\)/ ) {
-        my $category = $1;
-        $category =~ s/\s+/ /g;
-        $category =~ s/^\s+|\s+$//g;
-        $category =~ s/\&/\+/g;
-
-        push @categories, $category if defined $category && $category =~ /\S/;
         $title =~ s/\((.*?)\)//;
     }
-    $event->{categories} = \@categories if ( @categories > 0 );
     $event->{title} = $title;
     $event->{title} =~ s/^\s+|\s+$//g;
 

@@ -208,7 +208,7 @@ sub get_series($;$) {
         $search =~ s/[\%\s]+$//;
         if ( $search ne '' ) {
             $search = '%' . $search . '%';
-            my @attr = ( 's.title', 's.series_name', 's.excerpt', 's.category', 's.content' );
+            my @attr = ( 's.title', 's.series_name', 's.excerpt', 's.content' );
             push @conditions, "(" . join( " or ", map { 'lower(' . $_ . ') like ?' } @attr ) . ")";
             for my $attr (@attr) {
                 push @bind_values, $search;

@@ -49,7 +49,6 @@ sub get_cached_or_render($$$) {
 
     my $results = events::get( $config, $request );
     events::render( $response, $config, $request, $results );
-
     return $response;
 }
 
@@ -900,23 +899,6 @@ sub get_query($$$) {
         }
     }
 
-    #filter for category
-    my $category_cond = '';
-    if ( $params->{category} ne '' ) {
-        my $category = ( split( /\,/, $params->{category} ) )[0];
-        $category =~ s/[^a-zA-Z0-9]/%/g;
-        $category =~ s/%{2,99}/%/g;
-        if ( $category ne '' ) {
-            $category_cond = qq{
-                id in(
-                    select event_id from calcms_categories
-                    where name like ?
-                )
-            };
-        }
-        push @$bind_values, $category;
-    }
-
     my $series_name_cond = '';
     if (   ( defined $params->{series_name} )
         && ( $params->{series_name} ne '' ) )
@@ -971,7 +953,7 @@ sub get_query($$$) {
         $search =~ s/[\%\s]+$//;
         if ( $search ne '' ) {
             $search = '%' . $search . '%';
-            my @attr = ( 'title', 'series_name', 'excerpt', 'category', 'content', 'topic' );
+            my @attr = ( 'title', 'series_name', 'excerpt', 'content', 'topic' );
             $search_cond = "(" . join( " or ", map { 'lower(' . $_ . ') like ?' } @attr ) . ")";
             for my $attr (@attr) {
                 push @$bind_values, $search;
@@ -1021,14 +1003,13 @@ sub get_query($$$) {
 
     #print STDERR $disable_event_sync_cond." ".$bind_values->[-1]."\n";
 
-    #combine date, location, category, series_name, tag, search and project
+    #combine date, location, series_name, tag, search and project
 
     push @$where_cond, $location_cond if ( $location_cond =~ /\S/ );
     push @$where_cond, $exclude_location_cond
       if ( $exclude_location_cond =~ /\S/ );
     push @$where_cond, $exclude_project_cond
       if ( $exclude_project_cond =~ /\S/ );
-    push @$where_cond, $category_cond    if ( $category_cond =~ /\S/ );
     push @$where_cond, $series_name_cond if ( $series_name_cond =~ /\S/ );
     push @$where_cond, $tag_cond         if ( $tag_cond =~ /\S/ );
     push @$where_cond, $title_cond       if ( $title_cond =~ /\S/ );
@@ -1221,7 +1202,6 @@ sub render($$$$;$) {
 
     if ( scalar @$results == 0 ) {
         if (   ( $params->{search} ne '' )
-            || ( $params->{category} ne '' )
             || ( $params->{series_name} ne '' ) )
         {
             $template_parameters->{no_search_result} = '1';
@@ -1607,14 +1587,6 @@ sub check_params ($$) {
         $tag =~ s/\'//gi;
     }
 
-    my $category = $params->{category} || '';
-    if ( ( defined $category ) && ( $category ne '' ) ) {
-        log::error( $config, "invalid category" ) if ( $category =~ /\;/ );
-        $category =~ s/^\s+//gi;
-        $category =~ s/\s+$//gi;
-        $category =~ s/\'//gi;
-    }
-
     my $series_name = $params->{series_name} || '';
     if ( ( defined $series_name ) && ( $series_name ne '' ) ) {
         log::error( $config, "invalid series_name" )
@@ -1785,7 +1757,6 @@ sub check_params ($$) {
         limit                => $limit,
         template             => $template,
         location             => $location,
-        category             => $category,
         series_name          => $series_name,
         tag                  => $tag,
         title                => $title,

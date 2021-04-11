@@ -878,7 +878,7 @@ sub check_params {
 
     entry::set_strings( $checked, $params, [
         'series_name',  'title',        'excerpt',    'content',
-        'topic',        'program',      'category',   'image',
+        'topic',        'program',      'image',
         'series_image', 'user_content', 'user_title', 'user_excerpt',
         'podcast_url',  'archive_url',  'setImage',   'content_format'
     ]);

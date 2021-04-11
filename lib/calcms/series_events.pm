@@ -413,8 +413,7 @@ sub check_permission($$) {
 }
 
 #not handled, yet:
-# responsible, status, rating, podcast_url, media_url, visible, time_of_day, recurrence, reference, created_at
-# category, time_of_day,
+# responsible, status, rating, podcast_url, media_url, visible, time_of_day, recurrence, reference, created_at, time_of_day,
 
 #insert event
 sub insert_event ($$) {
