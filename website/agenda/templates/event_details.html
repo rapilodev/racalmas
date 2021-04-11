@@ -13,8 +13,8 @@
 	</div>
 	</TMPL_IF>
 
-<div class="event-base" data-first-date="<TMPL_VAR first_date>" data-last-date="<TMPL_VAR last_date>">
-	<TMPL_LOOP events>
+<TMPL_LOOP events>
+<div class="event-base" data-prev-event="<TMPL_VAR prev_event_id>" data-next-event="<TMPL_VAR next_event_id>">
 	<div class="vevent">
 		<span class="dtstart"><TMPL_VAR start></span>
 		<TMPL_IF NAME=end><span class="dtend"><TMPL_VAR end></span></TMPL_IF>
@@ -88,9 +88,8 @@
 			);
 		</script>
 	</div>
-
-	</TMPL_LOOP>
 </div>
+</TMPL_LOOP>
 </body>
 </html>
 </TMPL_IF>

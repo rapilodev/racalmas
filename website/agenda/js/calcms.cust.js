@@ -191,15 +191,21 @@ var calcms_settings = new Array();
         if (offset==null)   offset=0;
         if (duration==null) duration=500;
         $([document.documentElement, document.body]).scrollTop( elem.offset().top+offset )
-        //animate({
-        //    scrollTop: elem.offset().top+offset
-        //}, duration);
+    }
+
+    function addPrevEvent(id){
+        $('a.load-prev').remove();
+        $('div.event-base').first().prepend('<a class="load-prev">davor</a>');
+        $('a.load-prev').on( "click", function(){
+            var url = "/programm/sendung/"+id+'.html';
+            window.location.href=url;
+        })
     }
 
     function addPrevSection(till){
         $('a.load-prev').remove();
         $('div.events-base').first().prepend('<a class="load-prev"><img src="/agenda/images/more_vert.svg"></a>');
-        $('a.load-prev').on( "mouseover", function(){
+        $('a.load-prev').on( "click", function(){
             till.setDate(till.getDate())
             var from = new Date(till.getTime());
             from.setDate(from.getDate()-7);
@@ -213,13 +219,22 @@ var calcms_settings = new Array();
                 scrollTo( $('a.load-prev'), -offset, 0 );
                 addPrevSection(from);
             })
-        });            
+        });
+    }
+
+    function addNextEvent(id){
+        $('a.load-next').remove();
+        $('div.event-base').last().append('<a class="load-next">danach</a>');
+        $('a.load-next').on( "click", function(){
+            var url = "/programm/sendung/"+id+'.html';
+            window.location.href=url;
+        });
     }
 
     function addNextSection(from){
         $('a.load-next').remove();
         $('div.events-base').last().append('<a class="load-next"><img src="/agenda/images/more_vert.svg"></a>');
-        $('a.load-next').on( "mouseover", function(){
+        $('a.load-next').on( "click", function(){
             from.setDate(from.getDate()+1)
             var till = new Date(from.getTime());
             till.setDate(till.getDate()+7);
@@ -231,38 +246,38 @@ var calcms_settings = new Array();
                 $('div.events-base').last().css("display","none").fadeIn("1s");
                 addNextSection(till);
             })
-        });            
+        });
     }
 
     function initEventScroll(){
         var values = window.location.href.match(/programm/);
-        console.log("test")
         if (!values) return;
- 
+
         var first_date = $('div.events-base').data('first-date');
         if (first_date) addPrevSection(new Date( first_date.split("-") ) );
- 
+
         var last_date  = $('div.events-base').data('last-date');
         if (last_date)  addNextSection(new Date( last_date.split("-") ) );
-        
 
-        /*
+        var prev = $('div.event-base').data('prev-event');
+        if (prev) addPrevEvent(prev);
+
+        var next = $('div.event-base').data('next-event');
+        if (next) addNextEvent(next);
+
         $(window).scroll( function() {
+            /*
             clearTimeout( $.data( this, "scrollCheck" ) );
             $("div.event div.excerpt").css("opacity","0");
             $.data( this, "scrollCheck", setTimeout(function() {
                 $("div.event div.excerpt").css("opacity","0.7");
             }, 100) );
-
+            */
             if($(window).scrollTop() + $(window).height() == $(document).height()) {
                 $('a.load-next').click();
             }
-            if($(window).scrollTop() == 0) {
-                $('a.load-prev').click();
-            }
+            //if($(window).scrollTop() == 0) $('a.load-prev').click();
         });
-        */
-
     }
 
     $(document).ready(function() {

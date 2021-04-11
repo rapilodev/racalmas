@@ -30,7 +30,6 @@ if ( $0 =~ /events.*?\.cgi$/ ) {
             checked  => events::check_params( $config, $params ),
         },
     };
-
     events::get_cached_or_render( 'print', $config, $request );
 }
 

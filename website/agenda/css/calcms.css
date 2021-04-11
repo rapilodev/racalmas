@@ -129,11 +129,12 @@ a {
     transition: all .2s ease-in-out;
 }
 
-.load-prev, .load-next{
+a.load-prev, a.load-next{
     text-align:center;
     cursor:pointer;
     display:block ruby;
     background:#eee;
+    padding:0.5rem;
 }
 
 #calcms_menu .event:hover {

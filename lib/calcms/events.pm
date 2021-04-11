@@ -7,6 +7,7 @@ no warnings 'redefine';
 use Data::Dumper;
 use MIME::Base64();
 use Encode();
+use Storable 'dclone';
 
 use DBI();
 use template();
@@ -52,6 +53,50 @@ sub get_cached_or_render($$$) {
     return $response;
 }
 
+sub get_prev{
+    my ($config, $event) = @_;
+    my $params = {
+        till_date => time::check_date($event->{start}),
+        till_time => time::check_time($event->{start}),
+        archive   => 'all',
+        order     => 'desc',
+        limit     => 1,
+    };
+    my $request = {
+        url    => $ENV{QUERY_STRING},
+        params => {
+            original  => $params,
+            checked  => events::check_params( $config, $params ),
+        }
+    };
+    $request->{params}->{checked}->{stop_nav} = 1;
+    my $results = events::get( $config, $request );
+    return $results->[0];
+}
+
+sub get_next{
+    my ($config, $event) = @_;
+
+    my $params = {
+        from_date => time::check_date($event->{end}),
+        from_time => time::check_time($event->{end}),
+        archive   => 'all',
+        order     => 'asc',
+        limit     => 1,
+    };
+    my $request = {
+        url    => $ENV{QUERY_STRING},
+        params => {
+            original => $params,
+            checked  => events::check_params( $config, $params ),
+        },
+    };
+    $request->{params}->{checked}->{stop_nav} = 1;
+    my $results = events::get( $config, $request );
+    return $results->[0];
+}
+
+sub get($$);
 sub get($$) {
     my ($config, $request) = @_;
 
@@ -63,6 +108,16 @@ sub get($$) {
     my $results = db::get( $dbh, $$query, $bind_values );
     #$results = events::add_recordings($dbh, $config, $request, $results);
     $results = events::modify_results( $dbh, $config, $request, $results );
+
+    # get prev and next event
+    if ( @$results==1
+        and !$request->{params}->{checked}->{stop_nav}  #< prevent recursion!
+        and  my $event_id = $request->{params}->{original}->{event_id}
+    ){
+        my $event = $results->[0];
+        $event->{prev_event_id} = get_prev($config, $event)->{event_id};
+        $event->{next_event_id} = get_next($config, $event)->{event_id};
+    }
 
     return $results;
 }
