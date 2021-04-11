@@ -14,7 +14,7 @@
 <TMPL_INCLUDE no_search_result.html>
 <TMPL_INCLUDE no_result.html>
 
-<div>
+<div class="events-base" data-first-date="<TMPL_VAR first_date>" data-last-date="<TMPL_VAR last_date>">
 <TMPL_LOOP NAME=events>
 <TMPL_IF event_id>
     <TMPL_IF name="is_first_of_day">

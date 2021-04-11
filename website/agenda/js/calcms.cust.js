@@ -176,6 +176,95 @@ var calcms_settings = new Array();
         }
     }
 
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day   = '' + d.getDate(),
+            year  = d.getFullYear();
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2)   day = '0' + day;
+        return [year, month, day].join('-');
+    }
+
+    function scrollTo(elem, offset, duration){
+        if (elem==null)     return;
+        if (offset==null)   offset=0;
+        if (duration==null) duration=500;
+        $([document.documentElement, document.body]).scrollTop( elem.offset().top+offset )
+        //animate({
+        //    scrollTop: elem.offset().top+offset
+        //}, duration);
+    }
+
+    function addPrevSection(till){
+        $('a.load-prev').remove();
+        $('div.events-base').first().prepend('<a class="load-prev"><img src="/agenda/images/more_vert.svg"></a>');
+        $('a.load-prev').on( "mouseover", function(){
+            till.setDate(till.getDate())
+            var from = new Date(till.getTime());
+            from.setDate(from.getDate()-7);
+            var url = "/programm/events/"+formatDate(from)+'_'+formatDate(till)+'.html';
+            fetch( url )
+            .then( response => response.text())
+            .then( text => {
+                var offset = $('a.load-prev').offset().top
+                $('div.events-base').first().before(text);
+                $('div.events-base').first().css("display","none").fadeIn("1s");
+                scrollTo( $('a.load-prev'), -offset, 0 );
+                addPrevSection(from);
+            })
+        });            
+    }
+
+    function addNextSection(from){
+        $('a.load-next').remove();
+        $('div.events-base').last().append('<a class="load-next"><img src="/agenda/images/more_vert.svg"></a>');
+        $('a.load-next').on( "mouseover", function(){
+            from.setDate(from.getDate()+1)
+            var till = new Date(from.getTime());
+            till.setDate(till.getDate()+7);
+            var url = "/programm/events/"+formatDate(from)+'_'+formatDate(till)+'.html';
+            fetch( url )
+            .then( response => response.text())
+            .then( text => {
+                $('div.events-base').last().after(text);
+                $('div.events-base').last().css("display","none").fadeIn("1s");
+                addNextSection(till);
+            })
+        });            
+    }
+
+    function initEventScroll(){
+        var values = window.location.href.match(/programm/);
+        console.log("test")
+        if (!values) return;
+ 
+        var first_date = $('div.events-base').data('first-date');
+        if (first_date) addPrevSection(new Date( first_date.split("-") ) );
+ 
+        var last_date  = $('div.events-base').data('last-date');
+        if (last_date)  addNextSection(new Date( last_date.split("-") ) );
+        
+
+        /*
+        $(window).scroll( function() {
+            clearTimeout( $.data( this, "scrollCheck" ) );
+            $("div.event div.excerpt").css("opacity","0");
+            $.data( this, "scrollCheck", setTimeout(function() {
+                $("div.event div.excerpt").css("opacity","0.7");
+            }, 100) );
+
+            if($(window).scrollTop() + $(window).height() == $(document).height()) {
+                $('a.load-next').click();
+            }
+            if($(window).scrollTop() == 0) {
+                $('a.load-prev').click();
+            }
+        });
+        */
+
+    }
+
     $(document).ready(function() {
         initCalcms();
         initWordpress();
@@ -183,6 +272,7 @@ var calcms_settings = new Array();
         calcms.showNewestComments();
         calcms.insertEditors();
         initSearch();
+        initEventScroll();
         console.log("calcms inited")
     });
 

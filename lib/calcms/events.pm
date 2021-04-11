@@ -1201,6 +1201,8 @@ sub render($$$$;$) {
         my $result = $results->[0];
         $template_parameters->{event_id}      = $result->{event_id};
         $template_parameters->{event_dtstart} = $result->{dtstart};
+        $template_parameters->{first_date}    = $results->[0]->{start_date};
+        $template_parameters->{last_date}     = $results->[-1]->{start_date};
     }
 
     #    $template_parameters->{print}            =1 if ($params->{print} eq '1');
