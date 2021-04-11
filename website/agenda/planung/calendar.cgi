@@ -457,7 +457,7 @@ sub showCalendar {
         }
         
         # series dates
-        if ($params->{list} == 1){
+        if ($params->{list} == 1 and defined $options->{series_id}){
             my $series = series::get(
                 $config,
                 {
@@ -849,7 +849,7 @@ sub showEventList {
 
             my $title = $event->{title};
             $title .= ': ' . $event->{user_title} if $event->{user_title} ne '';
-            
+
             my $other_studio  = $params->{studio_id}  ne $event->{studio_id};
             my $other_project = $params->{project_id} ne $event->{project_id};
             $class.=' predecessor' if $other_project or $other_studio;
@@ -861,6 +861,7 @@ sub showEventList {
                 : 'playout';
             my $playout_info = $file // $event->{upload_status} // '';
 
+            my $studio_name = $event->{studio_name} // '-';
             $out .=
                 qq!<tr id="$id" class="$class" start="$event->{start}" >!
               . qq!<td class="day_of_year">!
@@ -879,7 +880,7 @@ sub showEventList {
               . qq!<td class="playout" title="$playout_info">$playout</td>!
               . qq!<td class="archived">$archived</td>!
               . qq!<td>$event->{project_name} $other_studio</td>!
-              . qq!<td>$event->{studio_name} $other_studio</td>!
+              . qq!<td>$studio_name $other_studio</td>!
               . qq!</tr>! . "\n";
         }
         $i++;
