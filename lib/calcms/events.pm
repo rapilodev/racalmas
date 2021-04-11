@@ -1169,89 +1169,89 @@ sub render($$$$;$) {
     }
     my $debug = $config->{system}->{debug};
 
-    my %template_parameters = %$params;
-    my $template_parameters = \%template_parameters;
-    $template_parameters->{events}       = $results;
-    $template_parameters->{debug}        = $debug;
-    $template_parameters->{server_cache} = $config->{cache}->{server_cache}
+    my %tparams = %$params;
+    my $tparams = \%tparams;
+    $tparams->{events}       = $results;
+    $tparams->{debug}        = $debug;
+    $tparams->{server_cache} = $config->{cache}->{server_cache}
       if ( $config->{cache}->{server_cache} );
-    $template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache}
+    $tparams->{use_client_cache} = $config->{cache}->{use_client_cache}
       if ( $config->{cache}->{use_client_cache} );
 
     if ( scalar @$results > 0 ) {
         my $result = $results->[0];
-        $template_parameters->{event_id}      = $result->{event_id};
-        $template_parameters->{event_dtstart} = $result->{dtstart};
-        $template_parameters->{first_date}    = $results->[0]->{start_date};
-        $template_parameters->{last_date}     = $results->[-1]->{start_date};
+        $tparams->{event_id}      = $result->{event_id};
+        $tparams->{event_dtstart} = $result->{dtstart};
+        $tparams->{first_date}    = $results->[0]->{start_date};
+        $tparams->{last_date}     = $results->[-1]->{start_date};
     }
 
-    #    $template_parameters->{print}            =1 if ($params->{print} eq '1');
-    $template_parameters->{base_url}       = $config->{locations}->{base_url};
-    $template_parameters->{base_domain}    = $config->{locations}->{base_domain};
-    $template_parameters->{cache_base_url} = $config->{cache}->{base_url};
-    $template_parameters->{modified_at}    = time::time_to_datetime( time() );
+    #    $tparams->{print}            =1 if ($params->{print} eq '1');
+    $tparams->{base_url}       = $config->{locations}->{base_url};
+    $tparams->{base_domain}    = $config->{locations}->{base_domain};
+    $tparams->{cache_base_url} = $config->{cache}->{base_url};
+    $tparams->{modified_at}    = time::time_to_datetime( time() );
     if (   ( defined $params->{template} )
         && ( $params->{template} =~ /(\.xml)/ ) )
     {
-        $template_parameters->{modified_at_datetime_utc} =
-          time::datetime_to_utc_datetime( $template_parameters->{modified_at}, $config->{date}->{time_zone} );
+        $tparams->{modified_at_datetime_utc} =
+          time::datetime_to_utc_datetime( $tparams->{modified_at}, $config->{date}->{time_zone} );
     }
 
-    #$template_parameters->{tags}        = $tags;
+    #$tparams->{tags}        = $tags;
 
     if ( scalar @$results == 0 ) {
         if (   ( $params->{search} ne '' )
             || ( $params->{series_name} ne '' ) )
         {
-            $template_parameters->{no_search_result} = '1';
+            $tparams->{no_search_result} = '1';
         } else {
-            $template_parameters->{no_result} = '1';
+            $tparams->{no_result} = '1';
         }
     } else {
         if ( ( !defined $params->{event_id} ) || ( $params->{event_id} eq '' ) ) {
-            $template_parameters->{event_count}   = scalar @$results . '';
-            $template_parameters->{first_of_list} = $results->[0]->{event_id};
+            $tparams->{event_count}   = scalar @$results . '';
+            $tparams->{first_of_list} = $results->[0]->{event_id};
         }
         my $start = $results->[0]->{start_datetime} || '';
         if ( $start =~ /(\d{4}\-\d{2})/ ) {
-            $template_parameters->{month} = $1;
+            $tparams->{month} = $1;
         }
     }
 
     my $time_diff = time::utc_offset( $config->{date}->{time_zone} );
     $time_diff =~ s/(\d\d)(\d\d)/$1\:$2/g;
-    $template_parameters->{time_zone}  = $config->{date}->{time_zone};
-    $template_parameters->{utc_offset} = $time_diff;
+    $tparams->{time_zone}  = $config->{date}->{time_zone};
+    $tparams->{utc_offset} = $time_diff;
 
     if ( $params->{template} =~ /\.atom\.xml/ ) {
-        $template_parameters->{modified_at} =~ s/ /T/gi;
-        $template_parameters->{modified_at} .= $time_diff;
+        $tparams->{modified_at} =~ s/ /T/gi;
+        $tparams->{modified_at} .= $time_diff;
     } elsif ( $params->{template} =~ /\.rss\.xml/ ) {
-        $template_parameters->{modified_at} =
-          time::datetime_to_rfc822( $template_parameters->{modified_at} );
+        $tparams->{modified_at} =
+          time::datetime_to_rfc822( $tparams->{modified_at} );
     } elsif ( $params->{template} =~ /\.txt/ ) {
-        $template_parameters->{modified_at_utc} =
-          time::datetime_to_utc( $template_parameters->{modified_at}, $config->{date}->{time_zone} );
+        $tparams->{modified_at_utc} =
+          time::datetime_to_utc( $tparams->{modified_at}, $config->{date}->{time_zone} );
     }
 
     my $project = $params->{default_project};
     foreach my $key ( keys %$project ) {
-        $template_parameters->{ 'project_' . $key } = $project->{$key};
+        $tparams->{ 'project_' . $key } = $project->{$key};
     }
-    $template_parameters->{ 'project_' . $project->{name} } = 1
+    $tparams->{ 'project_' . $project->{name} } = 1
       if ( $project->{name} ne '' );
 
-    $template_parameters->{controllers}       = $config->{controllers};
-    $template_parameters->{hide_event_images} = 1
+    $tparams->{controllers}       = $config->{controllers};
+    $tparams->{hide_event_images} = 1
       if ( defined $config->{permissions}->{hide_event_images} )
       && ( $config->{permissions}->{hide_event_images} == 1 );
 
     for my $attr (qw(no_result events_title events_description)){
-        $template_parameters->{$attr} = $config->{$attr};
+        $tparams->{$attr} = $config->{$attr};
     }
 
-    template::process( $config, $_[0], $params->{template}, $template_parameters );
+    template::process( $config, $_[0], $params->{template}, $tparams );
 
     return $_[0];
 }
