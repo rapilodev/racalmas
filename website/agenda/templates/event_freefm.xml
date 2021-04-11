@@ -5,7 +5,7 @@ Content-type:text/xml; charset=UTF-8
     <info>
         <displayname>Pi-Radio</displayname>
         <fullname>Pi-Radio</fullname>
-        <logo src="https://piradio.de/agenda/image/logo.jpg" />
+        <logo src="https://piradio.de/agenda/images/logo.jpg" />
         <basecolor>#FF6600</basecolor>
         <city>Berlin</city>
         <studio>
