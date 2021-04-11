@@ -266,6 +266,7 @@ var calcms_settings = new Array();
     }
 
     $(document).ready(function() {
+        if (window.location.href.match(/\/programm\//)) scrollTo( $("h1"), -16,0 );
         initCalcms();
         initWordpress();
         calcms.showPlaylist();
