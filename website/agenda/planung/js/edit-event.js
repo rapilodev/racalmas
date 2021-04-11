@@ -89,6 +89,7 @@ function copyFromEvent(resultSelector){
 
     loadEvent(projectId, studioId, seriesId, eventId, function(){
         hideSelectRerun();
+        updateCheckBox( "#edit_event input[name='published']", 1);
     });   
 }
 
