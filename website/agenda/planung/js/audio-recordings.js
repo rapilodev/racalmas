@@ -140,6 +140,6 @@ $( document ).ready(
         );
 
         var number = 1+Math.floor(11 * Math.random());
-        $('#progress img').attr("src", "/agenda/image/upload/bird"+number+".gif");
+        $('#progress img').attr("src", "/agenda/planung/image/upload/bird"+number+".gif");
     }
 );
