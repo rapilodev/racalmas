@@ -552,14 +552,14 @@ sub set_listen_key($$){
     my $start = time::datetime_to_utc( $event->{start_datetime}, $time_zone );
     my $now = time::datetime_to_utc( time::time_to_datetime( time() ), $time_zone);
     my $over_since = $now-$start;
+
     return if $over_since < 0;
     return if $over_since > 7*24*60*60;
 
+    my $archive_dir = $config->{locations}->{local_archive_dir};
     my $archive_url = $config->{locations}->{listen_url};
-    if (defined $event->{listen_url} and defined $event->{listen_key}){
-        $event->{listen_url} = $archive_url . '/' . $event->{listen_key};
-        return;
-    }
+    return $event->{listen_url} = $archive_url . '/' . $event->{listen_key} if 
+        defined $event->{listen_key} and -l $archive_dir .'/'. $event->{listen_key};
 
     my $datetime = $event->{start_datetime};
     if ( $datetime =~ /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d)\:(\d\d)/ ) {
@@ -568,7 +568,6 @@ sub set_listen_key($$){
         print STDERR "update_recording_link: no valid datetime found $datetime\n";
         return;
     }
-    my $archive_dir = $config->{locations}->{local_archive_dir};
     my @files = glob( $archive_dir . '/' . $datetime . '*.mp3' );
     return if @files <= 0;
 
@@ -590,7 +589,6 @@ sub update_listen_key($$){
                     
     return undef unless defined $event->{event_id};
     return undef unless defined $event->{listen_key};
-    #print STDERR "set listen_key=$event->{listen_key} for ".$event->{start}." ".$event->{title}."\n";
     my $bindValues = [ $event->{listen_key}, $event->{event_id} ];
 
     my $query = qq{
