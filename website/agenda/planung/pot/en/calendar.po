@@ -7,7 +7,7 @@ msgstr "today"
 msgid "button_search"
 msgstr "search"
 
-msgid "button_pin"
+msgid "label_pin"
 msgstr "pin"
 
 msgid "label_month"

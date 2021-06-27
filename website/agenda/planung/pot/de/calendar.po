@@ -10,7 +10,7 @@ msgstr "Heute"
 msgid "button_search"
 msgstr "Suche"
 
-msgid "button_pin"
+msgid "label_pin"
 msgstr "Anpinnen"
 
 msgid "label_month"

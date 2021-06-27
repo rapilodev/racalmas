@@ -430,13 +430,27 @@ function initTodayButton(){
     return true;
 }
 
+function getSwitch(id, text, active){
+    if (active) active = 'checked="checked"';
+    var html='';
+    html += '<div class="switch">'
+    html += '<label>'
+    html += text
+    html += '<input id="'+id+'" type="checkbox" '+active+'>'
+    html += '<span class="lever"></span>'
+    html += '</label>'
+    html += '</div>'
+    return html;
+}
+
 function initCalendarMenu(){
     //add filters to header
     var html='';
-    html += '<div><input id="show_events"   type="checkbox" checked="checked">'+(label_events || "label") +'</div>';
-    html += '<div><input id="show_schedule" type="checkbox" checked="checked">'+(label_schedule || "schedule")+'</div>';
-    html += '<div><input id="show_playout"  type="checkbox" checked="checked">'+(label_playout || "playout")+'</div>';
-    html += '<div><input id="show_worktime" type="checkbox" >'+(label_worktime || "worktime")+'</div>';
+    html += getSwitch('pin', label_pin || "label", false);
+    html += getSwitch('show_events', label_events || "label", true);
+    html += getSwitch('show_schedule', label_schedule || "schedule", true);
+    html += getSwitch('show_playout', label_playout || "playout", true);
+    html += getSwitch('show_worktime', label_worktime || "worktime", false);
     $('#toolbar').append(html);
 
     if(getUrlParameter('s')=='0') unselectCheckbox('#show_schedule');
@@ -730,8 +744,8 @@ function updateTable(){
         }
     );
 
-    $('button#pin').off();
-    $('button#pin').on( "click", function(){
+    $('input#pin').off();
+    $('input#pin').on( "click", function(){
         var button = $(this);
         var elem = $('#content #calendar').first();
         if ( button.hasClass("pressed") ){
