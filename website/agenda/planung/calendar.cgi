@@ -967,19 +967,29 @@ sub calcCalendarTable {
     }
 
     #insert current time
-    my $now  = time::get_datetime( time::time_to_datetime(), $config->{date}->{time_zone} );
     my $time = '00:00';
     my $date = '';
-    if ( $now =~ /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d\:\d\d)/ ) {
+    if ( time::get_datetime(
+        time::time_to_datetime(time()), 
+        $config->{date}->{time_zone}
+    ) =~ /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d\:\d\d)/ ) {
         $date = $1;
         $time = $2;
     }
 
-    push @{ $events_by_day->{0} },
+    my $next_time = '00:00';
+    if ( time::get_datetime(
+        time::time_to_datetime(time()+60),
+        $config->{date}->{time_zone}
+    ) =~ /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d\:\d\d)/ ) {
+        $next_time = $2;
+    }
+
+    unshift @{ $events_by_day->{0} },
       {
-        start      => $time,
+        #start      => $time,
         start_time => $time,
-        end_time   => $time,
+        end_time   => $next_time,
         series_id  => -1,
         event_id   => -1,
         project_id => -1,
