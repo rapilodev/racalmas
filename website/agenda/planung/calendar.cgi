@@ -843,8 +843,10 @@ sub showEventList {
             $draft = $draftIcon if $draft eq '1';
 
             my $playout = '-';
-            $playout = $processingIcon if $event->{upload_status} ne '';
-            $playout = $preparedIcon   if $event->{upload_status} eq 'done';
+            if (exists $event->{upload_status}){
+                $playout = $processingIcon if $event->{upload_status} ne '';
+                $playout = $preparedIcon   if $event->{upload_status} eq 'done';
+            }
             $playout = $playoutIcon    if $event->{playout} eq '1';
 
             my $title = $event->{title};
