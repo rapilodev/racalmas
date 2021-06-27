@@ -44,6 +44,12 @@ button:hover {
         overflow-x: hidden;
         overflow-y: scroll;
     }
+
+    #content #calendar.pin {
+        overflow-x: initial;
+        overflow-y: initial;
+    }
+
 }
 
 #calendar_weekdays table, 
@@ -142,12 +148,14 @@ button:hover {
 #calendar td.week div {
     padding: 0;
     min-width: 1px;
-    height: 100%;
     background: #ccc;
 }
 
+#calendar td.week{
+    height:100hv;
+}
 #calendar td.week div {
-    height: 180em;
+    height:100hv;
 }
 
 #calendar div.time, 
@@ -438,6 +446,13 @@ div#toolbar input.search {
     display: none;
 }
 
+#toolbar button.pressed{
+    transition: all 0.1s linear;
+    box-shadow: inset 0px 0px 5px #c1c1c1;
+    background: #105a91
+}
+
+
 #series td {
     padding: 6px;
 }
@@ -539,3 +554,5 @@ div.play .error {
 #content tr.event.predecessor:hover{
     #background:#fdcccc
 }
+
+

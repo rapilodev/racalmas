@@ -105,6 +105,10 @@ function resizeCalendarMenu(){
 
     var with_param='width';
     var cw=cell_width.toFixed();
+    menuHeight = setupMenuHeight();
+    
+    //var theight=$('#calendar table tr').last().find('td').first().find('div').last().css("top")
+    //$('td.week').css("height",theight)
 
     $('#calendar').show();
     $('#calendar_weekdays').css("visibility","visible");
@@ -726,6 +730,19 @@ function updateTable(){
         }
     );
 
+    $('button#pin').off();
+    $('button#pin').on( "click", function(){
+        var button = $(this);
+        var elem = $('#content #calendar').first();
+        if ( button.hasClass("pressed") ){
+            button.removeClass("pressed");
+            elem.removeClass("pin");
+        } else {
+            button.addClass("pressed");
+            elem.addClass("pin");
+        }
+    });
+    
     //set checkboxes from url parameters and update all urls
     $('#calendar').show();
 

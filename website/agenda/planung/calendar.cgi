@@ -925,6 +925,7 @@ sub showEventList {
                 var label_schedule='} . $params->{loc}->{label_schedule} . q{';
                 var label_worktime='} . $params->{loc}->{label_worktime} . q{';
                 var label_playout='} . $params->{loc}->{label_playout} . q{';
+                var label_print='} . $params->{loc}->{label_print} . q{';
             </script>
         </body>
     </html>
@@ -1791,6 +1792,10 @@ sub printToolbar {
     $toolbar .= qq{
         <button id="editSeries">} . $params->{loc}->{button_edit_series} . qq{</button>
     } if $params->{list} == 1;
+
+    $toolbar .= qq{
+        <button id="pin">} . $params->{loc}->{button_pin} . qq{</button>
+    } unless $params->{list};
 
     $toolbar .= qq{
         </div>
