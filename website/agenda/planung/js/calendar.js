@@ -51,7 +51,7 @@ function setupMenuHeight(){
             } 
         );
         
-        top+=weekday_height+1;
+        top+=weekday_height+1-10;
         $('#calendar').css("top", top);
         return top;
     } else {
