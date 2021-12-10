@@ -216,10 +216,18 @@ a.load-prev, a.load-next{
     font-weight: bold;
 }
 
+#calcms_list .icon {
+    width:20%;
+    padding: 1rem;
+    text-align: center;
+    text-align:left;
+}
+
 #calcms_list .time {
     width: 5%;
     min-width: 5rem;
     padding: 1rem;
+    padding-left: 0.5rem;
     padding-right: 0;
     text-align: center;
     font-size: 1.1rem;
@@ -299,6 +307,10 @@ a.load-prev, a.load-next{
         width: 0;
         display: none;
     }
+    #calcms_list .icon {
+        width: 0;
+        display: none;
+    }
 }
 
 #calcms_list .event.running:hover {
@@ -325,10 +337,16 @@ a.load-prev, a.load-next{
     border: 0;
 }
 
+#calcms_list .icon img {
+    width:100%;
+    height:auto;
+}
+
 #calcms_list .content figure {
     float: right;
-    margin-left: 1em;
-    margin-bottom: 20px;
+    margin: 3vw;
+    width:33%;
+    display:inline-block;
 }
 
 #calcms_list .content figcaption {

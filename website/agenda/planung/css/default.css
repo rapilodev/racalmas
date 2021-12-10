@@ -690,3 +690,7 @@ ul.tabContainer li:last-child{
     vertical-align:middle;
     display:inline;
 }
+
+.right{
+    margin-left:auto;
+}

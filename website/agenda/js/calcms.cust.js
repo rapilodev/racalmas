@@ -83,7 +83,6 @@ var calcms_settings = new Array();
         calcms.set('comments_url', '/agenda/kommentare/');
         calcms.set('add_comment_url', '/agenda/kommentar_neu/');
         calcms.set('newest_comments_url', '/agenda/neueste_kommentare/');
-
         return true;
     }
 

@@ -41,6 +41,17 @@
             </TMPL_UNLESS>
         </span>
         <span class="location"><TMPL_VAR location_mapped></span>
+        <span class="icon">
+            <TMPL_IF .hide_event_images>
+                <TMPL_IF series_thumb_url>
+                    <img src="<TMPL_VAR series_thumb_url>" title="<TMPL_VAR series_image_label>" onerror="if(!this.src.match(/not-found/))this.src='<TMPL_VAR icon_url>/../not-found.svg'">
+                </TMPL_IF>
+            <TMPL_ELSE>
+                <TMPL_IF icon_url>
+                    <img src="<TMPL_VAR thumb_url>" title="<TMPL_VAR image_label>" onerror="if(!this.src.match(/not-found/))this.src='<TMPL_VAR icon_url>/../not-found.svg'">
+                </TMPL_IF>
+            </TMPL_IF>
+        </span>
     </div>
 </TMPL_IF>
 </TMPL_LOOP>
