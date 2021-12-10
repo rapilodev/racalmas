@@ -430,10 +430,10 @@ function initTodayButton(){
     return true;
 }
 
-function getSwitch(id, text, active){
+function getSwitch(id, text, active, klass){
     if (active) active = 'checked="checked"';
     var html='';
-    html += '<div class="switch">'
+    html += '<div class="switch '+klass+'">'
     html += '<label>'
     html += text
     html += '<input id="'+id+'" type="checkbox" '+active+'>'
@@ -446,11 +446,11 @@ function getSwitch(id, text, active){
 function initCalendarMenu(){
     //add filters to header
     var html='';
-    html += getSwitch('pin', label_pin || "label", false);
     html += getSwitch('show_events', label_events || "label", true);
     html += getSwitch('show_schedule', label_schedule || "schedule", true);
     html += getSwitch('show_playout', label_playout || "playout", true);
     html += getSwitch('show_worktime', label_worktime || "worktime", false);
+    html += getSwitch('pin', label_pin || "label", false, 'right');
     $('#toolbar').append(html);
 
     if(getUrlParameter('s')=='0') unselectCheckbox('#show_schedule');
