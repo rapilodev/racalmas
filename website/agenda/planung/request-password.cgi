@@ -27,10 +27,24 @@ print "Content-type:text/html\n\n";
 print qq{<!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 </head>
+<style>
+    * {text-align:center; font-family: sans-serif;}
+    div,input {padding:6px;margin:6px;}
+    .error {background:red; color:white;}
+    .info {background:blue; color:white;}
+</style>
 <body>
+<h1>Change your password</h1>
 };
+
+sub info{
+    print qq{<div class="info">$_[0]</div>\n};
+}
+sub error{
+    print qq{<div class="error">$_[0]</div>\n};
+}
 
 if ( defined $params->{user} ) {
     sendToken( $config, $params );
@@ -45,9 +59,9 @@ sub sendToken {
     my $params = shift;
     my $entry  = password_requests::sendToken( $config, { user => $params->{user} } );
     if ( defined $entry ) {
-        print "Please check you mails\n";
+        info "Please check you mails.";
     } else {
-        print "Sorry\n";
+        error "Sorry.";
     }
 }
 
@@ -59,20 +73,17 @@ sub checkToken {
 
     my $entry = password_requests::get( $config, { token => $token } );
     unless ( defined $entry ) {
-        print "invalid token\n";
-        return undef;
+        return error "The token is invalid.";
     }
 
-    print STDERR Dumper($entry);
     my $created_at = $entry->{created_at};
     unless ( defined $created_at ) {
-        print "invalid token age\n";
-        return undef;
+        return error "The token age is invalid.";
     }
 
     my $age = time() - time::datetime_to_time($created_at);
     if ( $age > 600 ) {
-        print "token is too old\n";
+        error "The token is too old.";
         password_requests::delete( $config, { token => $token } );
         return undef;
     }
@@ -83,7 +94,7 @@ sub checkToken {
     $config->{access}->{write} = 0;
 
     if ( $entry->{max_attempts} > 10 ) {
-        print "too many failed attempts, please request a new token by mail\n";
+        error "Too many failed attempts. Please request a new token by mail.";
         password_requests::delete( $config, { token => $token } );
         return undef;
     }
@@ -100,24 +111,20 @@ sub checkToken {
             params => { checked => $params }
         };
         my $result = password_requests::changePassword( $config, $request, $user );
-
         if ( defined $result->{error} ) {
-
-            #print "sorry\n";
-            print $result->{error} . "\n";
+            error $result->{error};
             printForm($token);
         }
 
         if ( defined $result->{success} ) {
-
-            #print "success\n";
-            print $result->{success} . "\n";
+            info $result->{success};
             password_requests::delete( $config, { user => $user } );
             my $url = $config->{locations}->{editor_base_url};
             print qq{
                 <script type="text/javascript">
-                window.location = "$url";
+                setTimeout( () => window.location = "$url", 3000);
                 </script>
+                You will be forwarded to $url …
             };
         }
     }
@@ -129,8 +136,8 @@ sub printForm {
     print qq{
         <form method="post">
             <input type="hidden" name="token" value="$token">
-            <input type="password" name="user_password" placeholder="enter new password">
-            <input type="password" name="user_password2" placeholder="repeat password">
+            <input type="password" name="user_password" placeholder="Please enter a password">
+            <input type="password" name="user_password2" placeholder="Please repeat the password">
             <input type="submit" name="action" value="change">
         </form>
     };

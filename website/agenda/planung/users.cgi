@@ -200,7 +200,9 @@ sub update_user {
             return;
         }
 
-        return unless password_requests::checkPassword( $params->{user_password} );
+        my $error = password_requests::isPasswordInvalid( $params->{user_password} );
+        error($error) if $error;
+        return if $error;
 
         if ( $params->{user_password} ne $params->{user_password2} ) {
             error('password mismatch');

@@ -146,10 +146,10 @@ sub sendToken ($$) {
     my $baseUrl = $config->{locations}->{source_base_url} . $config->{locations}->{editor_base_url};
     my $url     = $baseUrl . "/request-password.cgi?token=" . $entry->{token};
     my $content = "Hi,$user->{full_name}\n\n";
-    $content .= "Someone just tried to reset your password for $baseUrl.\n\n";
-    $content .= "If you like to set a new password, please follow the link below\n";
+    $content .= "Someone has just tried to reset your password for $baseUrl.\n\n";
+    $content .= "If you want to set a new password, please follow this link\n";
     $content .= $url . "\n\n";
-    $content .= "If you do not like to set a new password, please ignore this mail.\n";
+    $content .= "If you do not want to set a new password, please ignore this mail.\n";
 
     mail::send(
         {
@@ -171,21 +171,21 @@ sub changePassword ($$$) {
     my $permissions = $request->{permissions};
 
     unless ( ( defined $userName ) || ( $userName eq '' ) ) {
-        return { error => 'user not found' };
+        return { error => 'The User could not be found.' };
     }
 
     my $user = uac::get_user( $config, $userName );
 
     unless ( ( defined $user ) && ( defined $user->{id} ) && ( $user->{id} ne '' ) ) {
-        return { error => 'user id not found' };
+        return { error => 'Te User ID could not be found.' };
     }
 
-    unless ( password_requests::checkPassword( $params->{user_password} ) ) {
-        return { error => 'password does not meet requirements' };
+    if ( my $msg = password_requests::isPasswordInvalid( $params->{user_password} ) ) {
+        return { error => $msg } if $msg;
     }
 
     if ( $params->{user_password} ne $params->{user_password2} ) {
-        return { error => 'entered passwords do not match' };
+        return { error => 'The passwords entered do not match.' };
     }
 
     my $crypt = auth::crypt_password( $params->{user_password} );
@@ -196,41 +196,30 @@ sub changePassword ($$$) {
     $config->{access}->{write} = 1;
     my $result = uac::update_user( $config, $user );
     $config->{access}->{write} = 0;
-    return { success => "password changed for $userName" };
+    return { success => "The password was changed for $userName." };
 }
 
-sub checkPassword($) {
+sub isPasswordInvalid($) {
     my $password = shift;
     unless ( defined $password || $password eq '' ) {
-        error("password is empty");
-        return;
+        return "The password must not be empty.";
     }
     if ( length($password) < 8 ) {
-        error("password to short");
-        return 0;
+        return "The password must have at least 8 characters.";
     }
     unless ( $password =~ /[a-z]/ ) {
-        error("password should contains at least one small character");
-        return 0;
+        return "The password must contain at least one small character.";
     }
     unless ( $password =~ /[A-Z]/ ) {
-        error("password should contains at least one big character");
-        return 0;
+        return "The password must contain at least one big character";
     }
     unless ( $password =~ /[0-9]/ ) {
-        error("password should contains at least one number");
-        return 0;
+        return "The password must contain at least one number.";
     }
     unless ( $password =~ /[^a-zA-Z0-9]/ ) {
-        error("password should contains at least one special character");
-        return 0;
+        return "The password must contain at least one special character.";
     }
-    return 1;
-}
-
-sub error($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
+    return 0;
 }
 
 #do not delete last line!
