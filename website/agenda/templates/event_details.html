@@ -46,14 +46,14 @@
                 <TMPL_IF .hide_event_images>
                     <figure>
                         <TMPL_IF series_thumb_url>
-                            <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR series_thumb_url>">
+                            <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR series_image_url>">
                             <TMPL_IF series_image_label><figcaption>Bild: <TMPL_VAR series_image_label></figcaption></TMPL_IF>
                         </TMPL_IF>
                     </figure>
                 <TMPL_ELSE>
                     <figure>
                         <TMPL_IF thumb_url>
-                            <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR thumb_url>">
+                            <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR image_url>">
                             <TMPL_IF image_label><figcaption>Bild: <TMPL_VAR image_label></figcaption></TMPL_IF>
                         </TMPL_IF>
                     </figure>
