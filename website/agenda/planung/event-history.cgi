@@ -8,9 +8,6 @@ use URI::Escape();
 use Data::Dumper;
 use MIME::Base64();
 
-#use Text::Diff::FormattedHTML();
-use Text::Diff::Unified::XS;
-
 use params();
 use config();
 use entry();
@@ -26,8 +23,8 @@ use event_history();
 use events();
 use series_events();
 use localization();
-
-#binmode STDOUT, ":utf8";
+use utf8;
+binmode STDOUT, ":utf8";
 
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
@@ -36,10 +33,17 @@ my $config = config::get('../config/config.cgi');
 my $debug  = $config->{system}->{debug};
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( ( !defined $user ) || ( $user eq '' ) );
-
-my $user_presets = uac::get_user_presets( $config, { user => $user, studio_id => $params->{studio_id} } );
+my $user_presets = uac::get_user_presets(
+    $config,
+    {
+        user       => $user,
+        project_id => $params->{project_id},
+        studio_id  => $params->{studio_id}
+    }
+);
 $params->{default_studio_id} = $user_presets->{studio_id};
 $params = uac::setDefaultStudio( $params, $user_presets );
+$params = uac::setDefaultProject( $params, $user_presets );
 
 my $request = {
     url => $ENV{QUERY_STRING} || '',
@@ -61,12 +65,16 @@ template::process( $config, 'print', template::check( $config, 'default.html' ),
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
 print q{
-    <script src="js/datetime.js" type="text/javascript"></script>
-    <script src="js/event.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="css/event.css" type="text/css" />
-
-    <script src="js/diff2html.min.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="css/diff2html.min.css" type="text/css" />
+    <style>
+        pre{
+            font-family:monospace;
+        }
+        textarea{
+            height:fit-content;
+            min-height:500px;
+            width:50%;
+        }
+    </style>
 };
 
 $config->{access}->{write} = 0;
@@ -135,8 +143,6 @@ sub compare {
         return;
     }
 
-    print qq{<link href="css/diff.css" rel="stylesheet">} . "\n";
-
     if ( $params->{v1} > $params->{v2} ) {
         my $t = $params->{v1};
         $params->{v1} = $params->{v2};
@@ -172,58 +178,59 @@ sub compare {
     print '<textarea>' . $t1 . '</textarea>';
     print '<textarea>' . $t2 . '</textarea>';
 
-    #log::save_file('/tmp/diff-a.txt', $t1);
-    #log::save_file('/tmp/diff-b.txt', $t2);
-    #my $diff=`/usr/bin/diff /tmp/diff-a.txt /tmp/diff-b.txt`;
-
-    my $diff = diff( \$t1, \$t2 );
-
-    #$diff=~s/\&/\&amp;/g;
-    #$diff=~s/\</\&lt;/g;
-    #$diff=~s/\>/\&gt;/g;
-    #$diff=~s/\"/\&quot;/g;
-    #$diff=~s/\'/\&#039;/g;
-    $diff =~ s/\'/\\\'/g;
-
-    #$diff=~s/\n/\'+\'/g;
-    $diff = join( qq{\\n' + '}, split( /\r?\n/, $diff ) );
-
-    #<pre id="diff">$diff</pre>
-    print qq!
-        <div id="result"></div>
-        <script>
-        var diff='$diff';
-        \$(document).ready(function(){
-            //var diff=\$('#diff').html();
-            console.log(diff)
-            var diffHtml = Diff2Html.getPrettyHtml(
-                  diff,
-                  {
-                    inputFormat: 'diff', 
-                    showFiles: true, 
-                    matching: 'words', 
-                    outputFormat: 'side-by-side'
-                }
-            );
-            document.getElementById("result").innerHTML = diffHtml;
-        });
-        </script>
-    </div>
-    </body>    
-    !;
-
-    #print '<script>var a="'.$diff.'";</script>';
-
-    #print "<style>".diff_css."</style>";
-    #print '<pre>';
-    #my $diff=diff_strings( { vertical => 1 }, $t1, $t2);
-    #my $diff = Text::Diff::FormattedHTML::diff_strings( {}, $t1, $t2 );
-
-    #print Text::Diff::diff(\$t1, \$t2, { STYLE => "Table" });
-    #print Text::Diff::diff($v1, $v2, { STYLE => "Table" });
-    #print $diff;
-
-    #print '</pre>';
+    my $cmd="/usr/bin/colordiff /tmp/diff-a.txt /tmp/diff-b.txt | ansi2html";
+    #print  "$cmd\n";
+    log::save_file('/tmp/diff-a.txt', $t1);
+    log::save_file('/tmp/diff-b.txt', $t2);
+    print qq{
+        <style>
+        pre {
+    font-weight: normal;
+    color: #bbb;
+    white-space: -moz-pre-wrap;
+    white-space: -o-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+b {font-weight: normal}
+b.BOLD {color: #fff}
+b.ITA {font-style: italic}
+b.UND {text-decoration: underline}
+b.STR {text-decoration: line-through}
+b.UNDSTR {text-decoration: underline line-through}
+b.BLK {color: #000000}
+b.RED {color: #aa0000}
+b.GRN {color: #00aa00}
+b.YEL {color: #aa5500}
+b.BLU {color: #0000aa}
+b.MAG {color: #aa00aa}
+b.CYN {color: #00aaaa}
+b.WHI {color: #aaaaaa}
+b.HIK {color: #555555}
+b.HIR {color: #ff5555}
+b.HIG {color: #55ff55}
+b.HIY {color: #ffff55}
+b.HIB {color: #5555ff}
+b.HIM {color: #ff55ff}
+b.HIC {color: #55ffff}
+b.HIW {color: #ffffff}
+b.BBLK {background-color: #000000}
+b.BRED {background-color: #aa0000}
+b.BGRN {background-color: #00aa00}
+b.BYEL {background-color: #aa5500}
+b.BBLU {background-color: #0000aa}
+b.BMAG {background-color: #aa00aa}
+b.BCYN {background-color: #00aaaa}
+b.BWHI {background-color: #aaaaaa}
+    </style>        
+    };
+    my $diff = qx{$cmd};
+    $diff = substr($diff, index($diff, "<body>")+6);
+    $diff = substr($diff, 0, index($diff, "</body>"));
+    print "$diff\n";
+    
 }
 
 sub eventToText {
