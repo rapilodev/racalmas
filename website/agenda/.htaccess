@@ -13,7 +13,7 @@ RewriteRule ^feed_kommentare/(.*)$ 					comments.cgi?template=comments.xml&limit
 RewriteRule ^kommentar_neu/(.*)$ 					add_comment.cgi?$1 [L]
 
 RewriteRule ^sendung/(\d+)/[^&]*(&.*)?$ 	events.cgi?template=event_details.html&event_id=$1&$2 [L]
-RewriteRule ^sendung/(.*)$ 			events.cgi?$1 [L]
+RewriteRule ^sendung/(.*)$ 			        events.cgi?$1 [L]
 
 RewriteRule ^sendungen/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(\d)/(.*)$ events.cgi?template=event_list.html&from_date=$1&till_date=$2&weekday=$3&$4 [L]
 RewriteRule ^sendungen/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(.*)$ 	events.cgi?template=event_list.html&from_date=$1&till_date=$2&$3 [L]
@@ -23,9 +23,9 @@ RewriteRule ^sendungen/(.*)$ 						events.cgi?$1 [L]
 
 RewriteRule ^menu/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(\d)/(.*)$	events.cgi?template=event_menu.html&from_date=$1&till_date=$2&weekday=$3&$4 [L]
 RewriteRule ^menu/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(.*)$ 	events.cgi?template=event_menu.html&from_date=$1&till_date=$2&$3 [L]
-RewriteRule ^menu/(\d{4}-\d{2}-\d{2})/(.*)$ 				events.cgi?template=event_menu.html&date=$1&$2 [L]
-RewriteRule ^menu/heute/(.*)$ 						events.cgi?template=event_menu.html&date=today&$1 [L]
-RewriteRule ^menu/(.*)$ 						events.cgi?$1 [L]
+RewriteRule ^menu/(\d{4}-\d{2}-\d{2})/(.*)$         				events.cgi?template=event_menu.html&date=$1&$2 [L]
+RewriteRule ^menu/heute/(.*)$ 				                		events.cgi?template=event_menu.html&date=today&$1 [L]
+RewriteRule ^menu/(.*)$ 					                    	events.cgi?$1 [L]
 
 RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})/$ 				cal.cgi?date=$1 [L]
 RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/$ 	cal.cgi?from_date=$1&till_date=$2 [L]
@@ -101,13 +101,13 @@ Options -Indexes +FollowSymLinks +MultiViews +ExecCGI
 Require all granted
 
 ## compress
-<IfModule mod_headers.c>
+#<IfModule mod_headers.c>
 #	SetOutputFilter DEFLATE
 #	SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|zip|mp3)$ no-gzip dont-vary
 #	Header append Vary User-Agent env=!dont-vary
-
+#
 #    <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
 #        Header set Cache-Control "max-age=600, public"
 #    </FilesMatch>
-</IfModule>
+#</IfModule>
 
