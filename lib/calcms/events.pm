@@ -61,6 +61,8 @@ sub get_prev{
         archive   => 'all',
         order     => 'desc',
         limit     => 1,
+        exclude_locations => 1,
+        exclude_projects  => 1,
     };
     my $request = {
         url    => $ENV{QUERY_STRING},
@@ -83,6 +85,8 @@ sub get_next{
         archive   => 'all',
         order     => 'asc',
         limit     => 1,
+        exclude_locations => 1,
+        exclude_projects  => 1,
     };
     my $request = {
         url    => $ENV{QUERY_STRING},
@@ -233,7 +237,6 @@ sub modify_results ($$$$) {
         }
 
         $result = calc_dates( $config, $result, $params, $previous_result, $time_diff );
-        
         set_listen_key($config, $result) unless $params->{set_no_listen_keys};
 
         $result->{event_uri} = '';
@@ -266,39 +269,32 @@ sub modify_results ($$$$) {
         $result->{source_base_url}  = $config->{locations}->{source_base_url};
         $result->{cache_base_url}   = $config->{cache}->{base_url};
 
-        $result->{is_running} = 1 if 
-            $running_event_id 
-            && $result->{event_id} 
-            && $running_event_id eq $result->{event_id} ;
+        $result->{is_running} = 1 if $running_event_id
+            && $result->{event_id}
+            && $running_event_id eq $result->{event_id};
 
         if (defined $result->{comment_count}){
             $result->{one_comment} = 1 if ( $result->{comment_count} == 1 );
             $result->{no_comment}  = 1 if ( $result->{comment_count} == 0 );
         }
 
-#fix image url
-#$params->{exclude_event_images}=0 unless defined $params->{exclude_event_images};
-#if ($params->{exclude_event_images}==1){
-#    if ( (defined $config->{permissions}->{hide_event_images}) && ($config->{permissions}->{hide_event_images} eq '1') ){
-#        $result->{image}       = $result->{series_image};
-#        $result->{image_label} = $result->{series_image_label};
-#    }
-#}
-
-        if ( defined $result->{image} ) {
-            my $url = $config->{locations}->{local_media_url} || '';
+        {
+            my $url   = $config->{locations}->{local_media_url} // '';
             my $image = $result->{image};
-            $result->{thumb_url} = $config->{locations}->{thumbs_url} . $image if $config->{locations}->{thumbs_url};
-            $result->{icon_url}  = $url . '/icons/' . $image;
-            $result->{image_url} = $url . '/images/' . $image;
-        }
+            my $conf  = $config->{locations};
+            my $basic_url = "$url/images/";
 
-        if ( defined $result->{series_image} ) {
-            my $url = $config->{locations}->{local_media_url} || '';
-            my $image = $result->{series_image};
-            $result->{series_thumb_url} = $config->{locations}->{thumbs_url} . $image if $config->{locations}->{thumbs_url};
-            $result->{series_icon_url}  = $url . '/icons/' . $image;
-            $result->{series_image_url} = $url . '/images/' . $image;
+            if ( defined $result->{image} ) {
+                $result->{thumb_url} = ($conf->{thumbs_url} // $basic_url) . $image;
+                $result->{icon_url}  = ($conf->{icons_url}  // $basic_url) . $image;
+                $result->{image_url} = ($conf->{images_url} // $basic_url) . $image;
+            }
+
+            if ( defined $result->{series_image} ) {
+                $result->{series_thumb_url} = ($conf->{thumbs_url} // $basic_url) . $image;
+                $result->{series_icon_url}  = ($conf->{icons_url}  // $basic_url) . $image;
+                $result->{series_image_url} = ($conf->{images_url} // $basic_url) . $image;
+            }
         }
 
         $result->{location_css} = $result->{location} || '';
@@ -463,7 +459,7 @@ sub add_recurrence_dates {
     $conditions = join( ',', @$conditions );
 
     my $query = qq{
-        select id event_id, start 
+        select id event_id, start
         from   calcms_events
         where  id in ($conditions)
     };
@@ -601,7 +597,7 @@ sub calc_dates {
 
 sub set_listen_key($$){
     my ($config, $event) =@_;
-    
+
     my $time_zone = $config->{date}->{time_zone};
     my $start = time::datetime_to_utc( $event->{start_datetime}, $time_zone );
     my $now = time::datetime_to_utc( time::time_to_datetime( time() ), $time_zone);
@@ -1341,10 +1337,6 @@ sub get_running_event_id($) {
 sub setDefaultEventConditions ($$$$) {
     my ($config, $conditions, $bind_values, $options) = @_;
 
-    #my $config      = shift;
-    #my $conditions  = $_[0];
-    #my $bind_values = $_[1];
-    #my $options     = $_[2];
     $options = {} unless defined $options;
 
     # exclude projects
