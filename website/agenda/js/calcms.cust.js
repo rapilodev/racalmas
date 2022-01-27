@@ -203,7 +203,7 @@ var calcms_settings = new Array();
 
     function addPrevSection(till){
         $('a.load-prev').remove();
-        $('div.events-base').first().prepend('<a class="load-prev"><img src="/agenda/images/more_vert.svg"></a>');
+        $('div.events-base').first().prepend('<a class="load-prev">davor…</a>');
         $('a.load-prev').on( "click", function(){
             till.setDate(till.getDate())
             var from = new Date(till.getTime());
@@ -232,7 +232,7 @@ var calcms_settings = new Array();
 
     function addNextSection(from){
         $('a.load-next').remove();
-        $('div.events-base').last().append('<a class="load-next"><img src="/agenda/images/more_vert.svg"></a>');
+        $('div.events-base').last().append('<a class="load-next">danach…</a>');
         $('a.load-next').on( "click", function(){
             from.setDate(from.getDate()+1)
             var till = new Date(from.getTime());
