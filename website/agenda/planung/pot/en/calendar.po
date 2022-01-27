@@ -34,6 +34,9 @@ msgstr "schedule"
 msgid "label_worktime"
 msgstr "worktime"
 
+msgid "label_descriptions"
+msgstr "descriptions"
+
 msgid "label_playout"
 msgstr "playout"
 

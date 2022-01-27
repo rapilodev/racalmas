@@ -211,9 +211,9 @@ sub showCalendar {
         #build event filter
         $options = {
             project_id         => $project_id,
-            template           => 'no',
+            template           => 'html',
             limit              => 600,
-            get                => 'no_content',
+            #get                => 'no_content',
             from_date          => $from,
             till_date          => $till,
             date_range_include => 1,
@@ -257,6 +257,7 @@ sub showCalendar {
         unless ( $params->{list} == 1 ) {
             for my $event (@$events) {
                 $event->{origStart} = $event->{start};
+                $event->{origContent} = $event->{origContent};
             }
             $events = break_dates( $events, $start_of_day );
         }
@@ -735,6 +736,7 @@ sub showEventList {
     my $playoutIcon    = qq{<img src="image/play.svg">};
     my $processingIcon = qq{<img src="image/processsing.svg">};
     my $preparedIcon   = qq{<img src="image/prepared.svg>};
+    my $creoleIcon     = qq{<img src="image/creole.svg>};
 
     my $out = '';
     $out = qq{
@@ -757,6 +759,7 @@ sub showEventList {
                     <th class="archive">$archiveIcon</th>
                     <th class="project_id">project</th>
                     <th class="studio">studio</th>
+                    <th class="creole">creole</th>
                  </tr>
             </thead>
             <tbody>
@@ -864,6 +867,8 @@ sub showEventList {
             my $playout_info = $file // $event->{upload_status} // '';
 
             my $studio_name = $event->{studio_name} // '-';
+            
+            my $format = {"markdown" => "-", "creole" => "Lang Belta" }->{$event->{content_format}} // 'Lang Belta';
             $out .=
                 qq!<tr id="$id" class="$class" start="$event->{start}" >!
               . qq!<td class="day_of_year">!
@@ -883,6 +888,7 @@ sub showEventList {
               . qq!<td class="archived">$archived</td>!
               . qq!<td>$event->{project_name} $other_studio</td>!
               . qq!<td>$studio_name $other_studio</td>!
+              . qq!<td>$format</td>!
               . qq!</tr>! . "\n";
         }
         $i++;
@@ -927,6 +933,7 @@ sub showEventList {
                 var label_schedule='} . $params->{loc}->{label_schedule} . q{';
                 var label_worktime='} . $params->{loc}->{label_worktime} . q{';
                 var label_playout='} . $params->{loc}->{label_playout} . q{';
+                var label_descriptions='} . $params->{loc}->{label_descriptions} . q{';
                 var label_pin='} . $params->{loc}->{label_pin} . q{';
             </script>
         </body>
@@ -1207,9 +1214,9 @@ sub printTableBody {
                   )
                   . ' '
                   if defined $event->{duration};
-                $event->{content} .= audio::formatLoudness( $event->{rms_left}, 'L: ' ) . ' '
+                $event->{content} .= audio::formatLoudness( $event->{rms_left}, 'L: ' ,'round') . ' '
                   if defined $event->{rms_left};
-                $event->{content} .= audio::formatLoudness( $event->{rms_right}, 'R: ' )
+                $event->{content} .= audio::formatLoudness( $event->{rms_right}, 'R: ','round' )
                   if defined $event->{rms_right};
                 #$event->{content} .= formatBitrate( $event->{bitrate} ) if defined $event->{bitrate};
                 $event->{content} .= '</span>';
@@ -1296,6 +1303,7 @@ sub printJavascript {
             var label_events='} . $params->{loc}->{label_events} . q{';
             var label_schedule='} . $params->{loc}->{label_schedule} . q{';
             var label_worktime='} . $params->{loc}->{label_worktime} . q{';
+            var label_descriptions='} . $params->{loc}->{label_descriptions} . q{';
             var label_playout='} . $params->{loc}->{label_playout} . q{';
             var label_pin='} . $params->{loc}->{label_pin} . q{';
         </script>
@@ -1519,8 +1527,10 @@ sub print_event {
         $height = '';
     }
 
-    #	my $date = $event->{origStart} || $event->{start} || '';
-    my $content = $event->{content} || '';
+    my $content = '<div class="header">';
+    $content .=  qq!<img class="icon" src="!.($event->{series_icon_url}).q!">! if $class=~/event/;
+    $content .= $event->{content} || '';
+    $content .= '</div>';
 
     if ( $class =~ /schedule/ ) {
         my $frequency = getFrequency($event);
@@ -1537,6 +1547,11 @@ sub print_event {
         $content .= '<br>uploading <progress max="10" ></progress> ';
     }
 
+    $content .= q{<div class="scrollable">};
+    $content .= q{<div class="excerpt">}.$event->{excerpt}.q{</div>} if defined $event->{excerpt};
+    $content .= q{<div class="excerpt">}.$event->{html_topic}.q{</div>}   if defined $event->{topic};
+    $content .= q{</div>};
+
     if ($showIcons) {
         my $attr =  { map { $_ => undef } split( /\s+/, $class) };
         
@@ -1547,8 +1562,8 @@ sub print_event {
         my $playoutClass    = qq{<img src="image/play.svg">};
         my $processingClass = qq{<img src="image/processing.svg">};
         my $preparedClass   = qq{<img src="image/prepare.svg">};
-
-        my $icons='';
+        my $icons = '';
+        
         if ( exists $attr->{event} ){
             my $playout = '';
             if (exists $attr->{upload_status}){
@@ -1568,14 +1583,14 @@ sub print_event {
                 if exists $attr->{archived};
         }
 
-        $content = qq{<div class="text">$content</div><div class="icons">$icons</div>};
+        $content = qq{<div class="text" style="$height">$content</div><div class="icons">$icons</div>};
     }
 
     my $time = '';
     $time = qq{ time="$event->{time}"} if $class =~ m/time/;
 
     my $date = '';
-    $date = qq{ date="$event->{date}"} if $class =~ m/date/;
+    $date = qq{ date="$event->{date}"} if $class =~ m/date/;    
 
     my $line = q{<div } . qq{class="$class" id="$id"};
     $line .= qq{ style="} . $height . q{top:} . $ystart . q{px;"};

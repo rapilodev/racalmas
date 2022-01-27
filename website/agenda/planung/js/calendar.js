@@ -193,6 +193,12 @@ function updateUrlParameters(url){
         url=setUrlParameter(url, 'p', 0);
     }
 
+    if(isChecked('#show_descriptions')){
+        url=setUrlParameter(url, 'd', 1);
+    }else{
+        url=setUrlParameter(url, 'd', 0);
+    }
+
     var filter=$('#filter').val();
     if(filter!='no markup')
         url=setUrlParameter(url, 'filter',     $filter);
@@ -236,6 +242,14 @@ function show_playout(){
         $('#calendar .play').css("display",'');
     }else{
         $('#calendar .play').css("display",'none');
+    }
+}
+
+function show_descriptions(){
+    if(isChecked('#show_descriptions')){
+        $('#calendar .excerpt').css("display",'');
+    }else{
+        $('#calendar .excerpt').css("display",'none');
     }
 }
 
@@ -449,6 +463,7 @@ function initCalendarMenu(){
     html += getSwitch('show_events', label_events || "label", true);
     html += getSwitch('show_schedule', label_schedule || "schedule", true);
     html += getSwitch('show_playout', label_playout || "playout", true);
+    html += getSwitch('show_descriptions', label_descriptions || "descriptions", false);
     html += getSwitch('show_worktime', label_worktime || "worktime", false);
     html += getSwitch('pin', label_pin || "label", false, 'right');
     $('#toolbar').append(html);
@@ -457,6 +472,7 @@ function initCalendarMenu(){
     if(getUrlParameter('e')=='0') unselectCheckbox('#show_events'  );
     if(getUrlParameter('p')=='0') unselectCheckbox('#show_playout' );
     if(getUrlParameter('w')=='0') unselectCheckbox('#show_worktime');
+    if(getUrlParameter('d')=='0') unselectCheckbox('#show_descriptions');
 
     setSelectedOptions();
     setFilter();
@@ -641,6 +657,7 @@ function updateTable(){
     show_events();
     show_playout();
     show_worktime();
+    show_descriptions();
     
     $('#show_events').off();
     $('#show_events').on("click",   
@@ -660,6 +677,13 @@ function updateTable(){
     $('#show_playout').on("click",
         function(){
             show_playout();
+            updateUrls();
+        }
+    );
+    $('#show_descriptions').off();
+    $('#show_descriptions').on("click",
+        function(){
+            show_descriptions();
             updateUrls();
         }
     );

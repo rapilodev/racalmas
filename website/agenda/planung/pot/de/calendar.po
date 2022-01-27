@@ -37,6 +37,9 @@ msgstr "Planung"
 msgid "label_worktime"
 msgstr "Studiodienst"
 
+msgid "label_descriptions"
+msgstr "Beschreibungen"
+
 msgid "label_playout"
 msgstr "Playout"
 
