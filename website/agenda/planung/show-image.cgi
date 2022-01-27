@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 no warnings 'redefine';
-
+use utf8;
 use Data::Dumper;
 
 use params();
