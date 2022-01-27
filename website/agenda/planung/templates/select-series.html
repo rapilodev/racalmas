@@ -15,7 +15,7 @@
         <tr>
             <td class="label"><TMPL_VAR .loc.label_project> & <TMPL_VAR .loc.label_Studio></td>
             <td>
-                <select id="selectProjectStudio" onchange="updateSeriesSelection('<TMPL_VAR resultElemId>');return false;">
+                <select id="selectProjectStudio" onchange="updateSeriesSelection('<TMPL_VAR resultElemId escape=js>');return false;">
                     <option value="-1_-1"><TMPL_VAR .loc.label_all></option>
 <TMPL_LOOP studios><option value="<TMPL_VAR project_id>_<TMPL_VAR id>" <TMPL_IF selected>selected="selected"</TMPL_IF> ><TMPL_VAR project_name> - <TMPL_VAR name></option>
 </TMPL_LOOP>
@@ -30,7 +30,7 @@
         <tr>
             <td class="label"><TMPL_VAR .loc.label_series></td>
             <td>
-                <select id="selectSeriesId" onchange="selectSeriesAction('<TMPL_VAR resultElemId>');return false;">
+                <select id="selectSeriesId" onchange="selectSeriesAction('<TMPL_VAR resultElemId escape=js>');return false;">
                     <option value="-1"><TMPL_VAR .loc.label_select></option>
 <TMPL_LOOP series><option value="<TMPL_VAR series_id>" <TMPL_IF selected>selected="selected"</TMPL_IF>><TMPL_VAR series_name><TMPL_IF title> - <TMPL_VAR title></TMPL_IF></option>
 </TMPL_LOOP>

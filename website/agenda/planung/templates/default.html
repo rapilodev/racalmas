@@ -53,7 +53,7 @@
 <div><a href="user-stats.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>&action=show-user-stats"><img src="image/activity.svg">&nbsp;<TMPL_VAR .loc.user-stats></a></div>
 </TMPL_IF>
 
-<div title="<TMPL_VAR .loc.profile>"><a href="user-settings.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/settings.svg">>&nbsp;<TMPL_VAR .loc.profile></a></div>
+<div title="<TMPL_VAR .loc.profile>"><a href="user-settings.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/settings.svg">&nbsp;<TMPL_VAR .loc.profile></a></div>
 
 <div title="<TMPL_VAR .loc.help>"><a href="help.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/help.svg">&nbsp;<TMPL_VAR .loc.help></a></div>
 
@@ -62,23 +62,20 @@
 </div>
 
 <div class="mobile">
-<img src="image/home.svg">
 <select id="studio_id" name="studio_id" onchange="set_studio($(this).val())">
 <TMPL_LOOP .presets.studios>
-<option value="<TMPL_VAR id>" <TMPL_IF selected> selected="selected"</TMPL_IF> ><TMPL_VAR name></option>
+<option value="<TMPL_VAR id>" <TMPL_IF selected> selected="selected"</TMPL_IF> ><img src="image/home.svg"><TMPL_VAR name></option>
 </TMPL_LOOP>
 </select>
-<img src="image/arrow-down.svg">
 </div>
 
 <div class="mobile">
-<img src="image/antenna.svg">
 <select id="project_id" name="project_id" onchange="set_project($(this).val())">
 <TMPL_LOOP .presets.projects>
-<option value="<TMPL_VAR project_id>" <TMPL_IF selected> selected="selected"</TMPL_IF> ><TMPL_VAR name></option>
+<option value="<TMPL_VAR project_id>" <TMPL_IF selected> selected="selected"</TMPL_IF> ><img src="image/home.svg">
+<TMPL_VAR name></option>
 </TMPL_LOOP>
 </select>
-<img src="image/arrow-down.svg">
 </div>
 
 <div><a href="/" ><img src="image/preview.svg">&nbsp;<TMPL_VAR .loc.preview></a></div>

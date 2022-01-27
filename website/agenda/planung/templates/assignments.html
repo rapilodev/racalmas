@@ -4,7 +4,7 @@
 	<script src="js/jquery.tablesorter.min.js"></script>
     <script src="js/image.js" type="text/javascript"></script>
     <script>
-        var event_id='<TMPL_VAR event_id>';
+        var event_id='<TMPL_VAR event_id escape=js>';
         <TMPL_IF .getBack>
             $(document).ready(
                 function(){
@@ -113,7 +113,7 @@ found <TMPL_VAR sum_events> unassigned events for project <b><TMPL_VAR project_n
             <input type="hidden" name="event_ids" value="<TMPL_VAR .event_id>">	
             <input type="hidden" name="action" value="assign_events">
             <button target="_blank"
-                onclick="assign_series_events('<TMPL_VAR .project_id>', '<TMPL_VAR .studio_id>', $('#series_id').val());return false;"
+                onclick="assign_series_events('<TMPL_VAR .project_id escape=js>', '<TMPL_VAR .studio_id escape=js>', $('#series_id').val());return false;"
                 style="float:left"
             >assign</button>
         </form>

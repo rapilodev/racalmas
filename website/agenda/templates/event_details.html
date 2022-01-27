@@ -80,7 +80,7 @@
 		<script>
 			jQuery(document).ready(
 				function() {
-					calcms.showCommentsByEventIdOrEventStart('<TMPL_VAR event_id>','<TMPL_VAR start_datetime>');
+					calcms.showCommentsByEventIdOrEventStart('<TMPL_VAR event_id escape=js>','<TMPL_VAR start_datetime escape=js>');
 				}
 			);
 		</script>

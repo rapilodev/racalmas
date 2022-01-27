@@ -8,7 +8,7 @@
 	<script src="js/jquery.tablesorter.min.js"></script>
 	
     <script>
-        var region='<TMPL_VAR loc.region>';
+        var region='<TMPL_VAR loc.region escape=js>';
         <TMPL_IF .getBack>
             $(document).ready(
                 function(){
@@ -149,7 +149,7 @@
 			<TMPL_IF .allow.delete_schedule>
 			<div class="cell delete"><br>
 			    <button type="submit" name="action" value="delete_schedule" 
-                    onclick="commitForm('schedule_<TMPL_VAR schedule_id>','delete_schedule','<TMPL_VAR .loc.button_delete_schedule>');return false;"
+                    onclick="commitForm('schedule_<TMPL_VAR schedule_id escape=js>','delete_schedule','<TMPL_VAR .loc.button_delete_schedule escape=js>');return false;"
                 ><TMPL_VAR .loc.button_delete_schedule></button>
             </div>
 			</TMPL_IF>

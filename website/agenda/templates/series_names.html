@@ -14,7 +14,7 @@
     id="calcms_series_name_<TMPL_VAR js_name escape=none>" 
     name="series_name_<TMPL_VAR js_name escape=none>" 
     title="Sendereihen durchsuchen" 
-    onchange="calcms.selectSeries('<TMPL_VAR name>', jQuery(this).val())" 
+    onchange="calcms.selectSeries('<TMPL_VAR name escape=js>', jQuery(this).val())" 
     style="display:none;"
 >
 

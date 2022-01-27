@@ -4,7 +4,7 @@
 	}
 </style>
 <script>
-    var region='<TMPL_VAR loc.region>';
+    var region='<TMPL_VAR loc.region escape=js>';
 </script>
 
 <!-- view timeslot schedule and dates -->
@@ -66,7 +66,7 @@
 					<TMPL_IF .allow.delete_schedule>
 					<div class="cell">
                         <button class="text" type="submit" name="action" value="delete_schedule" 
-                            onclick="commitForm('form_schedule_<TMPL_VAR schedule_id>','delete_schedule','<TMPL_VAR .loc.button_delete>');return false;"
+                            onclick="commitForm('form_schedule_<TMPL_VAR schedule_id escape=js>','delete_schedule','<TMPL_VAR .loc.button_delete escape=js>');return false;"
                         ><TMPL_VAR .loc.button_delete></button> 
                     </div>
 					</TMPL_IF>

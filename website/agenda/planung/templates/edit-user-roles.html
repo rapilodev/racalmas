@@ -60,9 +60,9 @@
 <div class="user">
 	<div id="header">
 		<div style="float:left;font-weight:bold;"><TMPL_VAR name></div>
-		<button onclick="edit_user('<TMPL_VAR id>')">edit</button>
+		<button onclick="edit_user('<TMPL_VAR id escape=js>')">edit</button>
 	</div>
-	<div id="view_<TMPL_VAR id>" class="view">
+	<div id="view_<TMPL_VAR id escape=js>" class="view">
 		<div class="label">name</div> 		<div><TMPL_VAR name> &nbsp;</div>
 		<div class="label">full name</div> 	<div><TMPL_VAR full_name> &nbsp;</div>
 		<div class="label">password</div> 	<div><TMPL_VAR password> &nbsp;</div>
@@ -77,7 +77,7 @@
 		<div class="label">password</div> 	<div><input type="password" name="password2"></div>
 		<div class="label">email</div> 		<div><input name="email" value="<TMPL_VAR email>"></div>
 		<div class="buttons">
-			<button onclick="cancel_edit_user('<TMPL_VAR id>');return false;">cancel</button>
+			<button onclick="cancel_edit_user('<TMPL_VAR id escape=js>');return false;">cancel</button>
 			<input type=submit name="action" value="save">
 			<div class="right"><input type=submit name="action" value="delete"></div>
 			<input type="hidden" name="id" value="<TMPL_VAR id>">	
@@ -88,7 +88,7 @@
 </TMPL_LOOP>
 
 <div style="clear:both" class="newuser">
-	<button onclick="add_user('<TMPL_VAR name>')">add user</button>
+	<button onclick="add_user('<TMPL_VAR name escape=js>')">add user</button>
 	<div id="edit_new" class="user editor" style="display:none">
 		<form method="post">
 		<div class="label">name</div> 		<div><input name="name" value="<TMPL_VAR name>"></div>

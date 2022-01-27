@@ -11,18 +11,18 @@ found no image
 <div id="imageEditor" class="editor">
 
     <TMPL_IF public>
-        <button onclick="assignImage('<TMPL_VAR filename escape=none>', '<TMPL_VAR .target>', '<TMPL_VAR .project_id>', '<TMPL_VAR .studio_id>', '<TMPL_VAR .series_id>', '<TMPL_VAR .event_id>', '<TMPL_VAR .pid>'); return false">
+        <button onclick="assignImage('<TMPL_VAR filename  escape=js>', '<TMPL_VAR .target escape=js>', '<TMPL_VAR .project_id escape=js>', '<TMPL_VAR .studio_id escape=js>', '<TMPL_VAR .series_id escape=js>', '<TMPL_VAR .event_id escape=js>', '<TMPL_VAR .pid escape=js>'); return false">
             <TMPL_VAR .label_assign_to_by_label>
         </button>
 
-        <button onclick="depublishImage('<TMPL_VAR id>', '<TMPL_VAR filename escape=none>'); return false;"><TMPL_VAR .loc.button_depublish></button>
+        <button onclick="depublishImage('<TMPL_VAR id escape=js>', '<TMPL_VAR filename  escape=js>'); return false;"><TMPL_VAR .loc.button_depublish></button>
 
     <TMPL_ELSE>
         <div class="warn"><TMPL_VAR .label_warn_not_public_by_label></div>
         <TMPL_IF missing_licence>
             <div class="warn"><TMPL_VAR .loc.label_warn_unknown_licence></div>
         <TMPL_ELSE>
-            <button onclick="publishImage('<TMPL_VAR id>', '<TMPL_VAR filename escape=none>'); return false;"><TMPL_VAR .loc.button_publish></button>
+            <button onclick="publishImage('<TMPL_VAR id escape=js>', '<TMPL_VAR filename  escape=js>'); return false;"><TMPL_VAR .loc.button_publish></button>
         </TMPL_IF>
     </TMPL_IF>
 
@@ -32,7 +32,7 @@ found no image
     <form id="save_img_<TMPL_VAR id>"
 	    method="post" 
 	    action="image.cgi" 
-	    onsubmit="saveImage('<TMPL_VAR id>','<TMPL_VAR filename>');return false;"
+	    onsubmit="saveImage('<TMPL_VAR id escape=js>','<TMPL_VAR filename escape=js>');return false;"
     >   
 
         <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
@@ -54,7 +54,7 @@ found no image
         </TMPL_IF>
 
         <TMPL_IF name="delete_image">
-            <button onclick="askDeleteImage('img_<TMPL_VAR id escape=none>','<TMPL_VAR filename escape=none>');return false;"><TMPL_VAR .loc.button_delete></button>
+            <button onclick="askDeleteImage('img_<TMPL_VAR id escape=js>','<TMPL_VAR filename escape=js>');return false;"><TMPL_VAR .loc.button_delete></button>
         </TMPL_IF>
 
         <button onclick='$("#save_img_<TMPL_VAR id> #properties").show();return false;'><TMPL_VAR .loc.button_properties></button>

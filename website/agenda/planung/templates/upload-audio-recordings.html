@@ -71,7 +71,7 @@
     </tr>
     <TMPL_LOOP audio_recordings>
         <tr class="<TMPL_IF active>active<TMPL_ELSE>inactive</TMPL_IF>" >
-            <td><button onclick="playAudio('<TMPL_VAR path>');return false">play</button></td>
+            <td><button onclick="playAudio('<TMPL_VAR path escape=js>');return false">play</button></td>
             <td><TMPL_VAR path></td>
             <td><TMPL_VAR created_by></td>
             <td><TMPL_VAR created_at></td>

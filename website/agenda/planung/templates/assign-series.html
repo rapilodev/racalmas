@@ -63,11 +63,11 @@
                 <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
                 <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">	
                 <button target="_blank"
-                    onclick="assign_series('<TMPL_VAR .project_id>', '<TMPL_VAR .studio_id>', $('#series_id').val());return false;"
+                    onclick="assign_series('<TMPL_VAR .project_id escape=js>', '<TMPL_VAR .studio_id escape=js>', $('#series_id').val());return false;"
                     style="float:left"
                 >assign</button>
                 <button target="_blank"
-                    onclick="unassign_series('<TMPL_VAR .project_id>', '<TMPL_VAR .studio_id>', $('#series_id').val());return false;"
+                    onclick="unassign_series('<TMPL_VAR .project_id escape=js>', '<TMPL_VAR .studio_id escape=js>', $('#series_id').val());return false;"
                     style="float:left"
                 >unassign</button>
             </form>

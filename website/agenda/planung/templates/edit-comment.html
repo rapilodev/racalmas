@@ -29,13 +29,13 @@
                 <td>
                 <TMPL_IF .allow.update_comment_status_read>
                     <button 
-                        onclick="setCommentStatusRead('<TMPL_VAR id>','<TMPL_VAR event_id>','<TMPL_IF received>unread</TMPL_IF><TMPL_IF unread>received</TMPL_IF>');return false;">
+                        onclick="setCommentStatusRead('<TMPL_VAR id escape=js>','<TMPL_VAR event_id escape=js>','<TMPL_IF received>unread</TMPL_IF><TMPL_IF unread>received</TMPL_IF>');return false;">
                         <TMPL_IF received><TMPL_VAR .loc.label_status_unread></TMPL_IF><TMPL_IF unread><TMPL_VAR .loc.label_status_read></TMPL_IF>
                     </button>
                 </TMPL_IF>
                 <TMPL_IF .allow.update_comment_status_lock>
                     <button
-                        onclick="setCommentStatusLock('<TMPL_VAR id>','<TMPL_VAR event_id>','<TMPL_IF blocked>show</TMPL_IF><TMPL_IF show>blocked</TMPL_IF>');return false;">
+                        onclick="setCommentStatusLock('<TMPL_VAR id escape=js>','<TMPL_VAR event_id escape=js>','<TMPL_IF blocked>show</TMPL_IF><TMPL_IF show>blocked</TMPL_IF>');return false;">
                         <TMPL_IF blocked><TMPL_VAR .loc.label_status_show></TMPL_IF><TMPL_IF show><TMPL_VAR .loc.label_status_hide></TMPL_IF>
                     </button>
                 </TMPL_IF>

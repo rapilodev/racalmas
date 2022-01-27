@@ -30,7 +30,7 @@
 
 
 <script>
-    var region='<TMPL_VAR loc.region>';
+    var region='<TMPL_VAR loc.region escape=js>';
     $(function(){
 	    $('table').tablesorter({
 		    widgets        : ['zebra','filter'],
@@ -50,10 +50,10 @@
         }
 
         // forward to comparator
-        project_id='<TMPL_VAR .project_id>';
-        studio_id='<TMPL_VAR .studio_id>';
-        series_id='<TMPL_VAR series_id>';
-        event_id="<TMPL_VAR event_id>";
+        project_id='<TMPL_VAR .project_id escape=js>';
+        studio_id='<TMPL_VAR .studio_id escape=js>';
+        series_id='<TMPL_VAR series_id escape=js>';
+        event_id="<TMPL_VAR event_id escape=js>";
         if (project_id=='') return ;
         if (studio_id=='')  return ;
         if (event_id=='')   return ;

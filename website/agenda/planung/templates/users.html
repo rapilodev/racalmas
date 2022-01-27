@@ -81,7 +81,7 @@
 
 <TMPL_IF allow.create_user>
 <div style="clear:both" class="newuser">
-	<button onclick="add_user('<TMPL_VAR name>')"><TMPL_VAR .loc.button_add_user></button>
+	<button onclick="add_user('<TMPL_VAR name escape=js>')"><TMPL_VAR .loc.button_add_user></button>
 	<div id="edit_new" class="user editor panel" style="display:none">
 		<form method="post">
 		<table>
@@ -151,11 +151,11 @@
 
 	<td>
 		<TMPL_IF allow.update_user>
-			<button class="text" onclick="edit_user('<TMPL_VAR id>')"><TMPL_VAR .loc.button_edit_user></button>
+			<button class="text" onclick="edit_user('<TMPL_VAR id escape=js>')"><TMPL_VAR .loc.button_edit_user></button>
 		</TMPL_IF>
 
 		<TMPL_IF allow.update_user_role>
-			<button class="text" onclick="edit_roles('<TMPL_VAR id>')"><TMPL_VAR .loc.button_edit_roles></button>
+			<button class="text" onclick="edit_roles('<TMPL_VAR id escape=js>')"><TMPL_VAR .loc.button_edit_roles></button>
 		</TMPL_IF>
 		<!--	</div> -->
 	</td>
@@ -193,7 +193,7 @@
 					<TMPL_IF allow.delete_user>
 					<div class="right">
 					    <button type=submit name="action" value="delete"
-                        onclick="commitForm('user_<TMPL_VAR id>','delete','<TMPL_VAR .loc.button_delete_user>');return false;"
+                        onclick="commitForm('user_<TMPL_VAR id escape=js>','delete','<TMPL_VAR .loc.button_delete_user escape=js>');return false;"
                     ><TMPL_VAR .loc.button_delete_user></div>
 					</TMPL_IF>
 				</td>
