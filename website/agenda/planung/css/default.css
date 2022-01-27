@@ -125,7 +125,6 @@ body,
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    vertical-align: middle;
     z-index: 99;
 }
 
@@ -140,13 +139,15 @@ body,
 
 #calcms_nav, 
 #calcms_nav select {
-    background: #004f9b;
+    background-color: #004f9b;
 }
 
 #calcms_nav a:hover, 
 #calcms_nav select:hover {
-    background: #007acc;
+    background-color: #007acc;
     transition: all 0.5s linear;
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18), 0 4px 15px 0
+        rgba(0, 0, 0, .15);
 }
 
 #calcms_nav div a, 
@@ -190,10 +191,28 @@ body,
 #calcms_nav option {
     border: 0;
     text-align: left;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
     border: none;
+}
+
+select#studio_id,
+select#project_id {
+    padding:0.8rem;    
+    padding-left:24px;
+    background-repeat:no-repeat;
+    background-position:6px center;
+}
+
+select#studio_id {
+    background-image:url(../image/antenna.svg);
+}
+select#project_id {
+    background-image:url(../image/home.svg);
+}
+
+
+select#studio_id::after,
+select#project_id::after {
+    content : "url(../image/arrow-down.svg)"
 }
 
 #calcms_nav #bars {
@@ -230,6 +249,14 @@ body,
 }
 
 #calcms_nav > div > a {
+    display: flex;
+}
+
+#calcms_nav > div {
+}
+
+nav img {
+    vertical-align: text-bottom;
     display: inline-block;
 }
 

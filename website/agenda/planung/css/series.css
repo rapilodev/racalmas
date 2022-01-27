@@ -103,6 +103,11 @@
     min-height: 4rem;
 }
 
+#content div.cell select,
+#content div.cell input{
+    text-align:center;
+}
+
 #content div.cell.exclude,
 #content div.cell.nextDay,
 #content div.cell.weekday {
@@ -119,67 +124,78 @@
 
 #content div.cell.exclude,
 #content div.cell.nextDay {
-    width: 1rem;
+    width: 2ch;
 }
 
 #content div.cell.weekday,
 #content div.cell.weekday input,
 #content div.cell.weekday select {
-    width: 2rem;
+    width: 2.5ch;
     padding-top: 1.6rem;
 }
 
 #content div.cell.start,
 #content div.cell.start input,
 #content div.cell.start select {
-    width: 9rem;
+    width: 14ch;
 }
 
 #content div.cell.duration,
 #content div.cell.duration input,
 #content div.cell.duration select {
-    width: 6rem;
+    width: 14ch;
 }
 
 #content div.cell.period_type,
 #content div.cell.period_type input,
     #content div.cell.period_type select {
-    width: 8rem;
+    width: 14ch;
 }
 
 #content div.cell.period_type.isSingle,
 #content div.cell.period_type select.isSingle {
-    width: 8rem;
+    width: 14ch;
 }
 
 #content div.cell.end,
 #content div.cell.end input,
 #content div.cell.end select {
-    width: 6rem;
+    width: 14ch;
 }
 
 #content div.cell.frequency,
 #content div.cell.frequency input,
 #content div.cell.frequency select {
-    width: 7rem;
+    width: 14ch;
 }
 
 #content div.cell.week_of_month,
 #content div.cell.week_of_month input,
-    #content div.cell.week_of_month select {
-    width: 6rem;
+#content div.cell.week_of_month select {
+    width: 7ch;
 }
 
 #content div.cell.schedule_weekday,
 #content div.cell.schedule_weekday input,
-    #content div.cell.schedule_weekday select {
-    width: 4rem;
+#content div.cell.schedule_weekday select {
+    width: 2.5ch;
 }
 
 #content div.cell.schedule_month,
 #content div.cell.schedule_month input,
-    #content div.cell.schedule_month select {
-    width: 6rem;
+#content div.cell.schedule_month select {
+    width: 7ch;
+}
+
+#content div.cell.frequency button{
+    width:10ch;
+}
+
+#content div.cell.delete,
+#content div.cell.delete button {
+    padding-right:0;
+    margin:0;
+    padding:0;    
 }
 
 /* end of schedule */
