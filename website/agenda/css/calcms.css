@@ -209,7 +209,18 @@ a.load-prev, a.load-next{
 
 #calcms_list .event:hover {
     background: rgba(200, 200, 200, 0.2);
-    font-size:1.0rem;
+}
+
+#calcms_list h1,
+#calcms_list h2,
+#calcms_list h3,
+#calcms_list h4 {
+    display: inline;
+}
+#calcms_list a:hover,
+#calcms_list a:focus,
+#calcms_list a:active {
+    color:none;
 }
 
 #calcms_list .date {
