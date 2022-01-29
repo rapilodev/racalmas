@@ -1,0 +1,3 @@
+msgid "button_send"
+msgstr "Senden"
+
