@@ -1144,17 +1144,8 @@ sub get_query($$$) {
 
     my $get = $params->{get} || '';
     unless ( $get eq 'no_content' ) {
-        if ( $template =~ /\.html/ ) {
-            unless ( $template =~ /menu/ || $template =~ /list/ ) {
-                $query .= ', e.content, e.topic, e.html_content, e.html_topic, e.content_format
-                ';
-
-                #$query.=',html_content content, html_topic topic' ;
-            }
-        } else {
-            unless ( $template =~ /menu/ || $template =~ /list/ ) {
-                $query .= ', e.content, e.topic, e.html_content, e.html_topic, e.content_format';
-            }
+        unless ( $template =~ /menu/ || $template =~ /list/ ) {
+            $query .= ', e.content, e.topic, e.html_content, e.html_topic';
         }
     }
 
