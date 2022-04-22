@@ -42,6 +42,7 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
     $params->{exclude_locations}    = 1;
     $params->{exclude_projects}     = 1;
     $params->{exclude_event_images} = 1;
+    $params->{ro} = 1;
     $params->{recordings}           = 1;
 
     my $request = {

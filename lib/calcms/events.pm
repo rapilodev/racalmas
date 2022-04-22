@@ -1828,7 +1828,8 @@ sub check_params ($$) {
         disable_event_sync   => $disable_event_sync,
         extern               => $extern,
         recordings           => $recordings,
-        set_no_listen_keys   => $set_no_listen_keys
+        set_no_listen_keys   => $set_no_listen_keys,
+        ro                   => ($params->{ro}//'') ? 1 : 0
     };
 
     return $checked;

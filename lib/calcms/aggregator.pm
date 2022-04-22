@@ -230,6 +230,7 @@ sub check_params($$) {
         till_date => $till_date,
         event_id  => $event_id,
         debug => $debug,
+        ro    => $params->{ro}//'' ? 1 : 0
     };
 }
 
