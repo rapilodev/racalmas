@@ -1196,8 +1196,9 @@ sub get_query($$$) {
     }
 
     # add recordings table
-    if ( $params->{recordings} eq '1' ) {
-        $query .= "\n left join calcms_audio_recordings ar on e.id=ar.event_id and ar.active=1";
+    if ( $params->{recordings} ) {
+        my $type = $params->{only_recordings}//'' ? 'inner' : 'left';
+        $query .= "\n $type join calcms_audio_recordings ar on e.id=ar.event_id and ar.active=1";
     }
 
     if ( scalar @$where_cond > 0 ) {
@@ -1787,9 +1788,11 @@ sub check_params ($$) {
     my $extern = 0;
     $extern = 1 if ( defined $params->{extern} ) && ( $params->{extern} eq '1' );
 
+    my $only_recordings = $params->{only_recordings} // '';
     my $recordings = 0;
-    $recordings = 1 if ( defined $params->{recordings} ) && ( $params->{recordings} eq '1' );
-    my $set_no_listen_keys = ($params->{recordings}//'') ? 1:0;
+    $recordings = 1 if $params->{recordings}//'';
+    $recordings = 1 if $only_recordings;
+    my $set_no_listen_keys = !$recordings ;
 
     my $checked = {
         date                 => $date,
@@ -1828,6 +1831,7 @@ sub check_params ($$) {
         disable_event_sync   => $disable_event_sync,
         extern               => $extern,
         recordings           => $recordings,
+        only_recordings      => $only_recordings,
         set_no_listen_keys   => $set_no_listen_keys,
         ro                   => ($params->{ro}//'') ? 1 : 0
     };
