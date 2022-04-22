@@ -1096,6 +1096,7 @@ sub get_query($$$) {
             ,e.id                 event_id
             ,e.start
             ,e.end
+            ,TIMEDIFF(e.end,e.start)      duration
             ,e.time_of_day
             ,e.program
             ,e.series_name
