@@ -237,7 +237,7 @@ sub modify_results ($$$$) {
         }
 
         $result = calc_dates( $config, $result, $params, $previous_result, $time_diff );
-        set_listen_key($config, $result) unless $params->{set_no_listen_keys};
+        get_listen_key($config, $result) unless $params->{set_no_listen_keys};
 
         $result->{event_uri} = '';
         if ( ( defined $result->{program} ) && ( $result->{program} ne '' ) ) {
@@ -595,7 +595,7 @@ sub calc_dates {
     return $result;
 }
 
-sub set_listen_key($$){
+sub get_listen_key($$){
     my ($config, $event) =@_;
 
     my $time_zone = $config->{date}->{time_zone};
@@ -610,7 +610,13 @@ sub set_listen_key($$){
     my $archive_url = $config->{locations}->{listen_url};
     return $event->{listen_url} = $archive_url . '/' . $event->{listen_key} if 
         defined $event->{listen_key} and -l $archive_dir .'/'. $event->{listen_key};
+    set_listen_key($config, $event) unless $event->{listen_key};
+}
 
+sub set_listen_key{
+    my ($config, $event) =@_;
+    my $archive_dir = $config->{locations}->{local_archive_dir};
+    my $archive_url = $config->{locations}->{listen_url};
     my $datetime = $event->{start_datetime};
     if ( $datetime =~ /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d)\:(\d\d)/ ) {
         $datetime = $1 . '\ ' . $2 . '_' . $3;
@@ -631,11 +637,6 @@ sub set_listen_key($$){
     symlink $audio_file, $link or die "cannot create $link, $!";
     $event->{listen_url} = $archive_url . '/' . $key;
     $event->{listen_key} = $key;
-    events::update_listen_key($config, $event);
-}
-
-sub update_listen_key($$){
-    my ($config, $event) = @_; 
                     
     return undef unless defined $event->{event_id};
     return undef unless defined $event->{listen_key};
@@ -1788,7 +1789,6 @@ sub check_params ($$) {
 
     my $recordings = 0;
     $recordings = 1 if ( defined $params->{recordings} ) && ( $params->{recordings} eq '1' );
-
     my $set_no_listen_keys = ($params->{recordings}//'') ? 1:0;
 
     my $checked = {
