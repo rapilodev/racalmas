@@ -843,15 +843,17 @@ sub getDateQueryConditions ($$$) {
         push @$bind_values, $weekday;
     }
 
-    if ( $params->{archive} eq 'past' ) {
+    if ( $params->{last_days} ) {
+        my $d = int $params->{last_days};
+        push @$date_conds,  qq{ ( end between date_sub(now(),INTERVAL $d DAY) and now() ) };
+    } elsif ( $params->{archive} eq 'past' ) {
         my $date = time::get_event_date($config);
         if ( $date ne '' ) {
             push @$date_conds,  ' ( start < ? ) ';
             push @$bind_values, $date;
         }
 
-    }
-    if ( $params->{archive} eq 'future' ) {
+    } elsif ( $params->{archive} eq 'future' ) {
         my $date = time::get_event_date($config);
         if ( $date ne '' ) {
             push @$date_conds,  ' ( end >= ? ) ';
@@ -1681,6 +1683,8 @@ sub check_params ($$) {
         $archive = 'future' if ( $params->{archive} eq 'coming' );
     }
 
+    my $last_days = defined $params->{last_days} ? int($params->{last_days}) : 0;
+
     my $disable_event_sync = '';
     if (   ( defined $params->{disable_event_sync} )
         && ( $params->{disable_event_sync} =~ /([01])/ ) )
@@ -1797,6 +1801,7 @@ sub check_params ($$) {
         search               => $search,
         debug                => $debug,
         archive              => $archive,
+        last_days            => $last_days,
         order                => $order,
         project              => $project,
         default_project      => $default_project,
@@ -1818,7 +1823,6 @@ sub check_params ($$) {
         set_no_listen_keys   => $set_no_listen_keys,
         ro                   => ($params->{ro}//'') ? 1 : 0
     };
-
     return $checked;
 }
 
