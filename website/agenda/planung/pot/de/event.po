@@ -27,7 +27,7 @@ msgid "button_unassign_event"
 msgstr "aus Sendereihe entfernen"
 
 msgid "button_show_event"
-msgstr "Progammansicht"
+msgstr "Programmansicht"
 
 msgid "button_show_changes"
 msgstr "Änderungen"
