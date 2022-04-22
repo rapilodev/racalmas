@@ -267,6 +267,7 @@ sub modify_results ($$$$) {
         $result->{base_domain}      = $config->{locations}->{base_domain};
         $result->{static_files_url} = $config->{locations}->{static_files_url};
         $result->{source_base_url}  = $config->{locations}->{source_base_url};
+        $result->{local_base_url}   = $config->{locations}->{local_base_url};
         $result->{cache_base_url}   = $config->{cache}->{base_url};
 
         $result->{is_running} = 1 if $running_event_id
@@ -1228,6 +1229,7 @@ sub render($$$$;$) {
     #    $tparams->{print}            =1 if ($params->{print} eq '1');
     $tparams->{base_url}       = $config->{locations}->{base_url};
     $tparams->{base_domain}    = $config->{locations}->{base_domain};
+    $tparams->{local_base_url} = $config->{locations}->{local_base_url};
     $tparams->{cache_base_url} = $config->{cache}->{base_url};
     $tparams->{modified_at}    = time::time_to_datetime( time() );
     if (   ( defined $params->{template} )
