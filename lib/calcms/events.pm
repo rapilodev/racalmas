@@ -1719,8 +1719,10 @@ sub check_params ($$) {
 
     #print STDERR $params->{template}."\n";
     my $template = '.html';
-    if ( ( defined $params->{template} ) && ( $params->{template} eq 'no' ) ) {
+    if ( ($params->{template}//'') eq 'no' ) {
         $template = 'no';
+    } elsif ( ($params->{template}//'') eq 'html' ) {
+        $template = 'html';
     } else {
         $template = template::check( $config, $params->{template}, 'event_list.html' );
     }
