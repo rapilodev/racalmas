@@ -1,0 +1,50 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
+</TMPL_IF>Content-type:application/rss+xml; charset=UTF-8
+
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" 
+    xmlns:atom="http://www.w3.org/2005/Atom" 
+    xmlns:media="http://search.yahoo.com/mrss/" 
+    xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+>
+
+<channel>
+    <atom:link href="http:<TMPL_VAR base_domain>agenda/rss-media/rss" rel="self" type="application/rss+xml" />
+	<link>http:<TMPL_VAR base_domain><TMPL_VAR cache_base_url>/event.rss.xml</link>
+	<title><TMPL_VAR project_title></title>
+	<description><TMPL_VAR project_subtitle></description>
+    <itunes:owner>
+        <itunes:email><TMPL_VAR project_email></itunes:email>
+    </itunes:owner>
+    <itunes:author><TMPL_VAR project_title></itunes:author>
+
+	<copyright><TMPL_VAR project_title>, <TMPL_VAR project_email></copyright>
+	<pubDate><TMPL_VAR modified_at></pubDate>
+    <ttl>3600</ttl>
+	<image>
+		<url>http:<TMPL_VAR base_domain>agenda/images/logo.jpg</url>
+	    <link>http:<TMPL_VAR base_domain>agenda/rss-media/</link>
+	    <title><TMPL_VAR project_title></title>
+	</image>
+    <itunes:image href="http:<TMPL_VAR base_domain>/agenda/images/logo.jpg"/>
+	<language>de-de</language>
+    <itunes:category text="Arts" />
+
+<TMPL_LOOP events>
+	<item>
+		<title><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name> - <TMPL_VAR start_time_name> - <TMPL_VAR end_time_name> | <TMPL_VAR full_title></title>
+		<description><TMPL_VAR excerpt></description>
+		<link>http:<TMPL_VAR base_domain><TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url></link>
+		<guid>http:<TMPL_VAR base_domain><TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html</guid>
+		<pubDate><TMPL_VAR modified_at></pubDate>
+		<comments>http:<TMPL_VAR base_domain>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#comments</comments>
+        <enclosure url="https:<TMPL_VAR listen_url>" length="<TMPL_VAR size>" type="audio/mpeg" />
+        <itunes:duration><TMPL_VAR duration></itunes:duration>
+		<media:content url="http:<TMPL_VAR base_domain>media/image/<TMPL_VAR image>" medium="image">
+			<media:title type="html"><TMPL_VAR full_title></media:title>
+		</media:content>
+        <media:content url="https:<TMPL_VAR listen_url>" medium="audio" />
+	</item>
+</TMPL_LOOP>
+</channel>
+</rss>
