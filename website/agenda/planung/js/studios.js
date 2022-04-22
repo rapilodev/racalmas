@@ -1,4 +1,4 @@
-var region='<TMPL_VAR loc.region>';
+var region='<TMPL_VAR loc.region escape=js>';
 
 function edit_studio(name){
     if ($('#edit_'+name).css('display')=='none'){
