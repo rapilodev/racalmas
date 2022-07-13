@@ -366,7 +366,7 @@ sub uploadFile {
     $time =~ s/\s/\_/g;
     $time =~ s/[^a-zA-Z0-9\.\-\_]//g;
 
-    my $extension =~ ( split( ".", $filename) ) [-1];
+    my $extension =~ ( split( /\./, $filename) ) [-1];
     $filename =~ s/\.$extension$//;
     $extension =~ s/[^a-zA-Z0-9\.\-\_]//g;
 
