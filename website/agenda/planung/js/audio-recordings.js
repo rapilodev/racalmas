@@ -45,11 +45,17 @@ function hideFinished(){
 }
 
 function roundSize(size){
-    var MB=1000*1000;
-    var value= Math.round(size*10/MB)/10;
-    value+='';
-    if (value.indexOf('.')<0)value+='.0';
+    const MB = 1000*1000;
+    var value= Math.round(size/MB);
+    value += '';
+    //if (value.indexOf('.')<0)value+='.0';
     return value;
+}
+
+function formatTime(duration){
+    if (duration > 3600) return Math.ceil(duration/3600) + " hours";
+    if (duration > 60)   return Math.ceil(duration/60)   + " minutes";
+    return duration += " seconds";
 }
 
 function uploadFile(uploadButton){
@@ -64,39 +70,42 @@ function uploadFile(uploadButton){
         contentType: false,
         processData: false,
         xhr: function() {
-            var start = new Date();
+            var start = Math.floor(Date.now()/1000);
+            var update = start;
             var xhr = new window.XMLHttpRequest();
+            $('#uploadButton').hide();
             if (xhr.upload) {
-                var c=0;
-                var oldRemaining=0;
+                $('#progress_done').html(0);
+                $('#progress_todo').html(100);
+                $('#progress_done').css("width", 0 + "%")
+                $('#progress_todo').css("width", (100)+ "%")
+                $('#progress_container').show();
+
                 xhr.upload.addEventListener(
                     'progress', 
                     function(data) {
                         if (!data.lengthComputable) return;
-                        c++;
+                        let now = Math.floor(Date.now()/1000);
+                        if (now == update) return;
+                        update = now;
 
-                        var loaded=roundSize(data.loaded);
-                        var total=roundSize(data.total);
-                        $('#progressBar').attr("value", loaded);
-                        $('#progressBar').attr("max", total);
+                        let loaded = roundSize(data.loaded);
+                        if (loaded == 0) return;
+                        let total = roundSize(data.total);
+                        let duration = now - start;
+                        if (duration == 0) return;
+                        let remaining = Math.round( (duration * data.total / data.loaded) - duration );
+                        remaining = formatTime(remaining);
+                        duration = formatTime(duration);
+  
+                        var perc = Math.round(100*loaded/total);
+                        $('#progress_done').css("width", perc + "%")
+                        $('#progress_todo').css("width", (100-perc)+ "%")
+                        $('#progress_done').html(loaded + " MB");
+                        $('#progress_todo').html(remaining+" left");
 
-                        if (c<2)return;
-                        c=0;
-
-                        var duration=(new Date().getTime() - start.getTime()) / 1000 ;
-                        var bitrate = loaded / duration;
-
-                        var remaining = Math.round( (duration * data.total / data.loaded) - duration );
-                        if (oldRemaining == 0) oldRemaining = remaining;
-                        if (duration>30) remaining= oldRemaining*0.5 + remaining*0.5;
-                        oldRemaining=remaining;
-
-                        var content = loaded + " of " + total + " MB<br>";
-                        content += '<div class="thin">';
-                        content += "finished in " + Math.round(remaining) + " seconds<br>";
-                        content += "took " + Math.round(duration) + " seconds<br>";
-                        content += '</div>'
-                        $('#progressLabel').html(content);
+                        let content = total + " MB<br>";
+                         $('#progressLabel').html(content);
                     } , 
                     false
                 );
@@ -110,6 +119,7 @@ function uploadFile(uploadButton){
             showError("error: "+errorThrown);
             hideProgress();
             hideFinished();
+            $('#uploadButton').show();
         }
     );
 
@@ -118,6 +128,7 @@ function uploadFile(uploadButton){
             showFinished();
             hideProgress();
             hideError();
+            $('#uploadButton').show();
         }
     );
 }

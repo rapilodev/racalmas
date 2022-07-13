@@ -32,6 +32,7 @@ tr.inactive{
     height: 1rem;
     border: 0;
     box-shadow: #888 2px 2px 1px 1px;
+    transition : width 1s ease;
 }
 
 #content div.ok, 
@@ -43,3 +44,29 @@ tr.inactive{
     border-radius: 4px;
     text-align: center;
 }
+
+#progress_container{
+    display:flex;
+    box-shadow: #888 2px 2px 1px 1px;
+    width:100%;
+    padding:0;
+}
+
+#progress_container div{
+    transition : width 3s linear;
+    text-align: center;
+    padding: 1rem;
+    color:white;
+    overflow:none;
+    white-space: nowrap;
+}
+
+#progress_container #progress_done{
+    background:#004f9b;
+}
+
+#progress_container #progress_todo{
+    color: #004f9b;
+    background:#ccc;
+}
+
