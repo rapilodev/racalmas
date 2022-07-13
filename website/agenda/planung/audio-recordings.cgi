@@ -378,17 +378,17 @@ sub uploadFile {
     print STDERR "tempFile=$tempFile\n";
 
     my $start = time();
-    open DAT, '>', $tempFile
+    open my $f, '>', $tempFile
       or return { error => 'could not save upload. ' . $! . " " . $tempFile };
-    binmode DAT;
+    binmode $f;
     my $size = 0;
     my $data = '';
     while ( my $bytesRead = $fh->read( $data, 65000 ) ) {
-        print DAT $data;
+        print $f $data;
         $size += $bytesRead;
         $data = '';
     }
-    close DAT;
+    close $f;
 
     return {
         dir  => $targetDir,
