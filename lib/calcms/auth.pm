@@ -118,7 +118,8 @@ sub create_cookie($$) {
         -name    => 'sessionID',
         -value   => $session_id,
         -expires => $timeout,
-        -secure  => 1
+        -secure  => 1,
+        -samesite=>  "Lax"
     );
     print "Set-Cookie: " . $cookie->as_string . "\n";
 
