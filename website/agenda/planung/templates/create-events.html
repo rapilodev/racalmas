@@ -11,21 +11,21 @@
 <form id="create_event_form" method="post">
     <input type="hidden" name="project_id"
         value="<TMPL_VAR .project_id>"> <input type="hidden"
-        name="studio_id" value="<TMPL_VAR .studio_id>"> duration
+        name="studio_id" value="<TMPL_VAR .studio_id>"> schedule events by
     <select name="duration">
-        <option value="7">1 week</option>
-        <option value="14">2 weeks</option>
-        <option value="21">3 weeks</option>
-        <option value="28">4 weeks</option>
-        <option value="56">8 weeks</option>
+        <option value="7">1 week.</option>
+        <option value="14">2 weeks.</option>
+        <option value="21">3 weeks.</option>
+        <option value="28">4 weeks.</option>
+        <option value="56">8 weeks.</option>
     </select>
 
     <TMPL_IF .allow.read_event>
-    <button target="_blank" type='submit' name="action" value="show">show</button>
+    <button target="_blank" type='submit' name="action" value="show">Show schedule</button>
     </TMPL_IF>
     <TMPL_IF .allow.assign_series_events>
     <button target="_blank" type='submit' name="action"
-        value="create_events">create</button>
+        value="create_events">Create events</button>
     </TMPL_IF>
 </form>
 </div>
@@ -34,8 +34,14 @@
     events from <TMPL_VAR from_date> till <TMPL_VAR till_date>
     <br>
 
-    <TMPL_LOOP events> <TMPL_var start> <TMPL_var
-        full_title> <br></TMPL_LOOP> </view>
+    <table>
+    <TMPL_LOOP events>
+        <tr>
+        <td><TMPL_var start></td>
+        <td><TMPL_var series_name></td>
+        <td><TMPL_var series_title></td>
+        </tr>
+    </TMPL_LOOP> </view>
 
 </div>
     </body>

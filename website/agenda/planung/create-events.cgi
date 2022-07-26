@@ -167,6 +167,16 @@ sub getDates {
             till       => $till_date
         }
     );
+    my $series = series::get( $config, {
+            project_id => $project_id,
+            studio_id  => $studio_id
+    });
+    my %series_by_id = map { $_->{series_id} => $_ } @$series;
+    for  my $date (@$dates) {
+        my $serie = $series_by_id{$date->{series_id}};
+        $date->{series_name} = $serie->{series_name};
+        $date->{series_title} = $serie->{series_title};
+    }
 
     return $dates;
 }
