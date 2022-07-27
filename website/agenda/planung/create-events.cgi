@@ -52,7 +52,6 @@ my $request = {
     },
 };
 $request = uac::prepare_request( $request, $user_presets );
-
 $params = $request->{params}->{checked};
 
 #process header
@@ -213,12 +212,13 @@ sub check_params {
     my $checked = {};
 
     $checked->{action} = entry::element_of($params->{action}, 
-        ['create_events', 'show_events']);
+        ['create_events', 'show_events'])//'';
 
     $checked->{exclude}  = 0;
     $checked->{duration} = 28;
     entry::set_numbers( $checked, $params, [
         'id', 'project_id', 'studio_id', 'duration']);
+    $checked->{"duration".$checked->{duration}}='selected="selected"';
 
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};
