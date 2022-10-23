@@ -23,6 +23,7 @@ function changeFile(fileInput){
         showError("file is too large. maximum size is 700 MB!");
     }else{
         $('#uploadButton').show();
+        $('#uploadButton').focus();
     }
 }
 

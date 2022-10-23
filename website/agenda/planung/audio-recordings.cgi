@@ -28,8 +28,6 @@ use time();
 #$|=1;
 binmode STDOUT, ":utf8";
 
-my $useCgi = 0;
-
 our $config = config::get('../config/config.cgi');
 our $debug  = $config->{system}->{debug};
 my $base_dir = $config->{locations}->{base_dir};
@@ -378,17 +376,14 @@ sub uploadFile {
     print STDERR "tempFile=$tempFile\n";
 
     my $start = time();
-    open my $f, '>', $tempFile
+    open my $out, '>', $tempFile
       or return { error => 'could not save upload. ' . $! . " " . $tempFile };
-    binmode $f;
-    my $size = 0;
-    my $data = '';
-    while ( my $bytesRead = $fh->read( $data, 65000 ) ) {
-        print $f $data;
-        $size += $bytesRead;
-        $data = '';
-    }
-    close $f;
+    binmode $out;
+    my $buffer='';
+    print $out $buffer while read( $fh, $buffer, 4096 );
+    close $out;
+
+    my $size = (stat($tempFile))[7];
 
     return {
         dir  => $targetDir,
