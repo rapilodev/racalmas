@@ -8,6 +8,7 @@ use events();
 use comments();
 use calendar();
 use project();
+use Date::Calc;
 
 #use base 'Exporter';
 our @EXPORT_OK = qw(get_cache configure_cache put_cache get_list check_params);
@@ -170,6 +171,19 @@ sub check_params($$) {
     if ( ( defined $params->{today} ) && ( $params->{today} eq '1' ) ) {
         $date = time::time_to_date( time() );
         $params->{date} = $date;
+    }
+
+    if (defined $params->{month}){
+        if ($params->{month} eq 'this') {
+            my ($y, $m) = split /-/, time::time_to_date();
+            $params->{from_date} = time::datetime_to_date("$y-$m-01");
+            $params->{till_date} = time::datetime_to_date("$y-$m-".Date::Calc::Days_in_Month($y,$m));
+        } elsif (my ($y, $m) = $params->{month} =~ m/^(\d\d\d\d)-(\d\d)$/) {
+            if ($m) {
+                $params->{from_date} = time::datetime_to_date("$y-$m-01");
+                $params->{till_date} = time::datetime_to_date("$y-$m-".Date::Calc::Days_in_Month($y,$m));
+            }
+        }
     }
 
     my $from_date = time::check_date( $params->{from_date} );
