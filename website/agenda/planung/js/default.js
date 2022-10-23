@@ -433,6 +433,11 @@ $(document).ready(
             });
         }
         initLabels();
+        let title = '';
+        if (title=='') title = $('.panel-header').first().text();
+        if (title=='') title = $('h2').first().text();
+        document.title = title
+
     }
 );
 
