@@ -300,6 +300,10 @@ sub show_login_form ($$) {
 		margin:1rem;
 		padding:1rem;
         text-align:center;
+        animation-name:form;
+        animation-duration: 1s;
+        animation-timing-function:ease;
+
 	}
 
 	#login_form .field{
@@ -327,7 +331,21 @@ sub show_login_form ($$) {
         text-decoration:none;
         color:#ccf;
     }
+    .container{
+        animation-name: login;
+        animation-duration: 1s;
+        animation-timing-function:ease;
+    }
+    \@keyframes login{
+        00%   {transform-origin: 0px; transform: scale(0.9); scaleX(1); opacity:0.7; }
+        100% {transform-origin: 0px;  transform: scale(1);   scaleX(1); opacity:1;   }
+    }
 
+    \@keyframes form{
+        00%   { box-shadow: 0rem 0rem 1rem #eee; transform: translateX(1rem) translateY(1rem);}
+        100% { box-shadow: 1rem 1rem 1rem #eee; transform: translateX(0) translateY(0);}
+    }
+    
 </style>
 </head>
 <body>
