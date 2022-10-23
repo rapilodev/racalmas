@@ -44,6 +44,8 @@ RewriteRule ^atom/(.*)$ 			events.cgi?template=event.atom.xml&time=future&limit=
 RewriteRule ^atom.xml[\?]?(.*)$                 events.cgi?template=event.atom.xml&time=future&limit=100&$1 [L]
 RewriteRule ^rss/(.*)$ 				events.cgi?template=event.rss.xml&time=future&limit=100&$1 [L]
 RewriteRule ^rss.xml[\?]?(.*)$                  events.cgi?template=event.rss.xml&time=future&limit=100&$1 [L]
+RewriteRule ^rss-media/(.*)$                    events.cgi?last_days=7&only_recordings=1&template=event_media.rss.xml&$1 [L]
+
 
 RewriteRule ^ical/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(\d)/(.*)$ 	events.cgi?template=event.ics&from_date=$1&till_date=$2&weekday=$3&$4 [L]
 RewriteRule ^ical/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(.*)$ 	events.cgi?template=event.ics&from_date=$1&till_date=$2&$3 [L]
