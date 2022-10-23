@@ -1131,6 +1131,7 @@ sub get_query($$$) {
             ,e.episode
             ,e.listen_key
             ,e.upload_status
+            ,e.content_format
     };
     my $template = $params->{template} || '';
 
