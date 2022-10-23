@@ -17,21 +17,26 @@ function cancel_edit_project_assignments(name){
     return false;
 }
 
-function edit_project(name){
+function edit_project(elem, name){
+    
     if ($('#edit_'+name).css('display')=='none'){
         $('#view_'+name).hide();
         $('#assign_'+name).hide();
         $('#edit_'+name).show();
+        elem.text(elem.data("cancel"));
+        elem.addClass("text");
     }else{
-        cancel_edit_project(name);
+        cancel_edit_project(elem, name);
     }
     return false;
 }
 
-function cancel_edit_project(name){
+function cancel_edit_project(elem, name){
     $('#edit_'+name).hide();
     $('#assign_'+name).hide();
     $('#view_'+name).show();
+    elem.text(elem.data("action"));
+    elem.removeClass("text");
     return false;
 }
 

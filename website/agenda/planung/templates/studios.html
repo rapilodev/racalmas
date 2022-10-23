@@ -20,7 +20,7 @@
 		        <tr>
 			        <td></td>
 			        <td class="buttons">
-				        <button class="text" onclick="cancel_edit_studio('new');return false;"><TMPL_VAR .loc.button_cancel></button>
+				        <button class="text" onclick="cancel_edit_studio($(this), 'new');return false;"><TMPL_VAR .loc.button_cancel></button>
 				        <button type=submit name="action" value="save"><TMPL_VAR .loc.button_create></button>
 			        </td>
 		        </tr>
@@ -36,23 +36,11 @@
 	<div class="panel-header">
 	    <TMPL_VAR name>
 	</div>
-	<div class="panel-body">
-	    <TMPL_IF .allow.update_studio>
-		    <button onclick="edit_studio('<TMPL_VAR id escape=js>')"><TMPL_VAR .loc.button_edit></button>
-	    </TMPL_IF>
-
-        <TMPL_IF .allow.read_event>
-            <button target="_blank" class="text"
-                onclick="load('event-history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR id>');"
-            ><TMPL_VAR .loc.button_show_changes></button>
-        </TMPL_IF>
-    </div>
 
 	<!-- view studio -->
 	<div id="view_<TMPL_VAR id>" class="panel-body">
 		<table>
 			<tr><td class="label"><TMPL_VAR .loc.label_image></td> 	         <td><img src="show-image.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=thumbs"> &nbsp;</td></tr>
-			<tr><td class="label"><TMPL_VAR .loc.label_name></td> 	         <td><TMPL_VAR name> &nbsp;</td></tr>
 			<tr><td class="label"><TMPL_VAR .loc.label_description></td> 	 <td><TMPL_VAR description> &nbsp;</td></tr>
 			<tr><td class="label"><TMPL_VAR .loc.label_location></td> 	     <td><TMPL_VAR location> &nbsp;</td></tr>
 			<tr><td class="label"><TMPL_VAR .loc.label_stream></td> 	     <td><TMPL_VAR stream> &nbsp;</td></tr>
@@ -70,7 +58,9 @@
 			    <tr><td class="label"><TMPL_VAR .loc.label_name></td> 	         <td><input name="name" value="<TMPL_VAR name>"></td></tr>
 			    <tr><td class="label"><TMPL_VAR .loc.label_description></td>     <td><input name="description" value="<TMPL_VAR description>"></td></tr>
 			    <tr><td class="label"><TMPL_VAR .loc.label_location></td> 	     <td><input name="location" value="<TMPL_VAR location>"></td></tr>
-			    <tr><td class="label"><TMPL_VAR .loc.label_stream></td> 	     <td><input name="stream" value="<TMPL_VAR stream>"></td></tr>
+			    <TMPL_IF stream>
+                    <tr><td class="label"><TMPL_VAR .loc.label_stream></td> 	 <td><input name="stream" value="<TMPL_VAR stream>"></td></tr>
+                </TMPL_IF>
                 <tr><td class="label">
                     <TMPL_VAR .loc.label_image></td>      
                     <td>
@@ -95,6 +85,23 @@
 		    </table>
 		</form>
 	</div>
+
+	<div class="panel-body" style="display:flex">
+        <TMPL_IF .allow.read_event>
+            <button target="_blank" class="text bottom"
+                onclick="load('event-history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR id>');"
+            ><TMPL_VAR .loc.button_show_changes></button>
+        </TMPL_IF>
+
+	    <TMPL_IF .allow.update_studio>
+		    <button class="bottom right"
+                onclick="edit_studio($(this), '<TMPL_VAR id escape=js>')"
+                data-action="<TMPL_VAR .loc.button_edit escape=HTML>"
+                data-cancel="<TMPL_VAR .loc.button_cancel escape=HTML>"
+            ><TMPL_VAR .loc.button_edit></button>
+	    </TMPL_IF>
+    </div>
+
 	</TMPL_IF>
 </div>
 </TMPL_LOOP>

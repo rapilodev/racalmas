@@ -44,7 +44,7 @@ msgid "button_edit"
 msgstr "edit"
 
 msgid "button_change"
-msgstr "change"
+msgstr "edit studios"
 
 msgid "button_show_changes"
 msgstr "show changes"
@@ -63,6 +63,9 @@ msgstr "start date"
 
 msgid "label_end_date"
 msgstr "end date"
+
+msgid "label_activity"
+msgstr "active"
 
 msgid "label_image"
 msgstr "logo"

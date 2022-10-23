@@ -1,16 +1,20 @@
 #content .label {
-    width: 10em;
+    width: 10ch;
     padding: 0;
     margin: 0;
     color: #555;
 }
 
 #content div.studio {
-    width: 45%;
+    min-width: 40ch;
 }
 
 #content div.editor {
-    display: inline-block;
+    clear: both;
+}
+
+#content div.view {
+    clear: both;
 }
 
 #content div.editor div.right {
@@ -31,5 +35,33 @@
 
 #content div.view {
     text-align: left;
-    clear: both;
 }
+
+#content div.flex{
+    align-items: inherit;
+}
+
+body #content{
+    max-width:none;
+}
+
+.buttons{
+    display: flex;
+}
+
+#content .bottom,
+.bottom{
+    position: absolute;
+    bottom: 1rem;
+}
+
+#content .bottom.right,
+.bottom.right{
+    position: absolute;
+    right: 1rem;
+}
+
+#content .panel{
+    min-height: 25rem;
+}
+

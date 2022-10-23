@@ -53,7 +53,7 @@ tr.inactive{
 }
 
 #progress_container div{
-    transition : width 3s linear;
+    transition : width 1s linear;
     text-align: center;
     padding: 1rem;
     color:white;

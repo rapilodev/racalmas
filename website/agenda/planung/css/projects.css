@@ -1,12 +1,13 @@
+
 #content .label {
-    width: 10em;
+    width: 10ch;
     padding: 0;
     margin: 0;
     color: #555;
 }
 
 #content div.project {
-    width: 45%;
+    min-width: 40ch;
 }
 
 #content div.editor {
@@ -28,11 +29,39 @@
     padding: 0;
 }
 
-#content div.editor div.buttons button, 
+#content div.editor div.buttons button,
 #content div.editor div.buttons input {
     margin-left: 1em;
 }
 
 #content div.view {
     text-align: left;
+}
+
+#content div.flex{
+    align-items: inherit;
+}
+
+body #content{
+    max-width:none;
+}
+
+.buttons{
+    display: flex;
+}
+
+#content .bottom,
+.bottom{
+    position: absolute;
+    bottom: 1rem;
+}
+
+#content .bottom.right,
+.bottom.right{
+    position: absolute;
+    right: 1rem;
+}
+
+#content div.title {
+    font-size:1.5rem;
 }

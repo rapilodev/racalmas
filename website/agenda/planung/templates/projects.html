@@ -23,7 +23,7 @@
                 <tr>
                     <td></td>
                     <td class="buttons">
-                        <button class="cancel" onclick="cancel_edit_project('new');return false;"><TMPL_VAR .loc.button_cancel></button>
+                        <button class="text cancel" onclick="cancel_edit_project($(this),'new');return false;"><TMPL_VAR .loc.button_cancel></button>
                         <button type=submit name="action" value="save"><TMPL_VAR .loc.button_create></button>
                     </td>
                 </tr>
@@ -40,38 +40,39 @@
     <!-- buttons -->
     <div class="panel-header">
         <div class="title"><TMPL_VAR title></div>
-        <TMPL_IF .allow.update_project>
-            <button class="text" onclick="edit_project('<TMPL_VAR project_id escape=js>')"
-            ><TMPL_VAR .loc.button_edit></button>
-        </TMPL_IF>
     </div>
 
     <!-- view project -->
     <div id="view_<TMPL_VAR project_id>" class="panel-body">
         <table>
-            <tr><td class="label"><TMPL_VAR .loc.label_image></td>      <td colspan="2"><img src="show-image.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=thumbs"> &nbsp;</td></tr>
-            <tr><td class="label"><TMPL_VAR .loc.label_name></td>       <td colspan="2"><TMPL_VAR name> &nbsp;</td></tr>
-            <tr><td class="label"><TMPL_VAR .loc.label_subtitle></td>   <td colspan="2"><TMPL_VAR subtitle> &nbsp;</td></tr>
-            <tr><td class="label"><TMPL_VAR .loc.label_start_date></td> <td colspan="2"><TMPL_VAR start_date> &nbsp;</td></tr>
-            <tr><td class="label"><TMPL_VAR .loc.label_end_date></td>   <td colspan="2"><TMPL_VAR end_date> &nbsp;</td></tr>
-            <tr><td class="label"><TMPL_VAR .loc.label_email></td>      <td colspan="2"><TMPL_VAR email> &nbsp;</td></tr>
+            <TMPL_IF image>
+            <tr><td class="label"><TMPL_VAR .loc.label_image></td>
+                <td><img src="show-image.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=thumbs"> &nbsp;</td>
+            </tr>
+            </TMPL_IF>
+            <tr><td class="label"><TMPL_VAR .loc.label_name></td>       <td><TMPL_VAR name> &nbsp;</td></tr>
+            <TMPL_IF subtitle><tr><td class="label"><TMPL_VAR .loc.label_subtitle></td>   <td><TMPL_VAR subtitle> &nbsp;</td></tr></TMPL_IF>
+            <tr><td class="label"><TMPL_VAR .loc.label_activity></td> 
+                <td><TMPL_VAR start_date> - <TMPL_VAR end_date></td>
+            </tr>
+            <TMPL_IF email><tr><td class="label"><TMPL_VAR .loc.label_email></td>      <td><TMPL_VAR email> &nbsp;</td></tr></TMPL_IF>
             <tr><td class="label"><TMPL_VAR .loc.label_studios></td>
                 <td>
                 <TMPL_LOOP assigned_studios>
                     <TMPL_VAR name><br/>
-                </TMPL_LOOP><br/>
-                </td><td>
-                <TMPL_IF .allow.update_project>
-                    <button onclick="edit_project_assignments('<TMPL_VAR project_id escape=js>')"
-                        class="text" style="float:left"
-                    ><TMPL_VAR .loc.button_change></button>
-                </TMPL_IF>
-                
-            </td></tr>
+                </TMPL_LOOP>
+                </td>
+            </tr>
         </table>
-        <div>
-        </div>
     </div>
+        <div style="display:flex">
+        <TMPL_IF .allow.update_project>
+            <button class="right bottom" onclick="edit_project($(this), '<TMPL_VAR project_id escape=js>')"
+                data-action="<TMPL_VAR .loc.button_edit escape=HTML>"
+                data-cancel="<TMPL_VAR .loc.button_cancel escape=HTML>"
+            ><TMPL_VAR .loc.button_edit></button>
+        </TMPL_IF>
+        </div>
 
     <TMPL_IF .allow.update_project>
     <!-- update project -->
@@ -84,40 +85,46 @@
             <input type="hidden" name="pid" value="<TMPL_VAR pid>">
             <table>
                 <tr><td class="label"><TMPL_VAR .loc.label_title></td>     <td><input name="title" value="<TMPL_VAR title>"></td></tr>
-                <tr><td class="label"><TMPL_VAR .loc.label_name></td>      <td><input name="name" value="<TMPL_VAR name>"></td></tr>
-                <tr><td class="label"><TMPL_VAR .loc.label_subtitle></td>  <td><input name="subtitle" value="<TMPL_VAR subtitle>"></td></tr>
-                <tr><td class="label"><TMPL_VAR .loc.label_start_date></td><td><input class="date" name="start_date" value="<TMPL_VAR start_date>"></td></tr>
-                <tr><td class="label"><TMPL_VAR .loc.label_end_date></td>  <td><input class="date" name="end_date" value="<TMPL_VAR end_date>"></td></tr>        
-                <tr><td class="label"><TMPL_VAR .loc.label_email></td>     <td><input name="email" value="<TMPL_VAR email>"></td></tr>        
                 <tr><td class="label">
                     <TMPL_VAR .loc.label_image></td>      
                     <td>
                         <button 
                             class="selectImage"
-                            onclick="selectImage('<TMPL_VAR name escape=HTML escape=js>', '<TMPL_VAR image  escape=js>', 'projects', '<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>', null, null, '<TMPL_VAR pid escape=js>'); return false;"
+                            onclick="selectImage('<TMPL_VAR name escape=js>', '<TMPL_VAR image  escape=js>', 'projects', '<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>', null, null, '<TMPL_VAR pid escape=js>'); return false;"
                         >
                             <img id="imagePreview" src="show-image.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=icon">
                         </button>
                         <input id="image_<TMPL_VAR pid>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.template_image>">
                     </td>
                 </tr>
+                <tr><td class="label"><TMPL_VAR .loc.label_name></td>      <td><input name="name" value="<TMPL_VAR name>"></td></tr>
+                <tr><td class="label"><TMPL_VAR .loc.label_subtitle></td>  <td><input name="subtitle" value="<TMPL_VAR subtitle>"></td></tr>
+                <tr><td class="label"><TMPL_VAR .loc.label_start_date></td><td><input class="date" name="start_date" value="<TMPL_VAR start_date>"></td></tr>
+                <tr><td class="label"><TMPL_VAR .loc.label_end_date></td>  <td><input class="date" name="end_date" value="<TMPL_VAR end_date>"></td></tr>        
+                <tr><td class="label"><TMPL_VAR .loc.label_email></td>     <td><input name="email" value="<TMPL_VAR email>"></td></tr>        
+
                 <tr>
                     <td></td>
                     <td class="buttons">
                         <button type=submit name="action" value="save"><TMPL_VAR .loc.button_save></button>
+                        <TMPL_IF .allow.delete_project>
+                            <div class="right">
+                                <button type=submit class="text" name="action" value="delete"
+                                onclick="commitForm('project_<TMPL_VAR project_id>','delete','<TMPL_VAR .loc.button_delete escape=js>');return false;"
+                                ><TMPL_VAR .loc.button_delete></button>
+                            </div>
+                        </TMPL_IF>
                     </td>
-                    <TMPL_IF .allow.delete_project>
-                    <td>
-                        <div class="right">
-                            <button type=submit class="text" name="action" value="delete"
-                            onclick="commitForm('project_<TMPL_VAR project_id>','delete','<TMPL_VAR .loc.button_delete escape=js>');return false;"
-                            ><TMPL_VAR .loc.button_delete></button>
-                        </div>
-                    </td>
-                    </TMPL_IF>
                 </tr>
             </table>
         </form>
+
+
+        <TMPL_IF .allow.update_project>
+        <button onclick="edit_project_assignments('<TMPL_VAR project_id escape=js>')"
+            class="text" style="float:left;margin:0;padding:0;text-align:left;"
+        ><TMPL_VAR .loc.button_change></button>
+        </TMPL_IF>
     </div>
     </TMPL_IF>
 
