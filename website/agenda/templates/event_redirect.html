@@ -1,0 +1,13 @@
+<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
+</TMPL_IF>Content-type:text/html; charset=UTF-8;
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="refresh" content="0; url=<TMPL_LOOP NAME=events><TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url></TMPL_LOOP>" />
+</head>
+
+<body></body>
+</html>
+
+
