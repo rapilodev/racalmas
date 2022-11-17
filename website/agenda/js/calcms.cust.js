@@ -263,20 +263,6 @@ var calcms_settings = new Array();
 
         var next = $('div.event-base').data('next-event');
         if (next) addNextEvent(next);
-
-        $(window).scroll( function() {
-            /*
-            clearTimeout( $.data( this, "scrollCheck" ) );
-            $("div.event div.excerpt").css("opacity","0");
-            $.data( this, "scrollCheck", setTimeout(function() {
-                $("div.event div.excerpt").css("opacity","0.7");
-            }, 100) );
-            */
-            if($(window).scrollTop() + $(window).height() == $(document).height()) {
-                $('a.load-next').click();
-            }
-            //if($(window).scrollTop() == 0) $('a.load-prev').click();
-        });
     }
 
     $(document).ready(function() {
