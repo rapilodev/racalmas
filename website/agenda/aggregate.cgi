@@ -107,17 +107,10 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
     $list->{project_title} = '' unless defined $list->{project_title};
     $content =~ s/(<(div|span)\s+id="calcms_title".*?>).*?(<\/(div|span)>)/$list->{project_title}/g;
 
-    my $values = [];
-    for
-      my $value ( $list->{'series_name'}, $list->{'title'}, $list->{'location'}, 'Programm ' . $list->{project_title} )
-    {
-        next unless defined $value;
-        next if $value eq '';
-        push @$values, $value;
-    }
-
-    my $title = join( ' - ', @$values );
-
+    my $title = join ' - ', grep {defined $_ and $_ ne ''} ( 
+        $list->{'series_name'}, $list->{'title'}, 
+        $list->{'location'}, 'Programm ' . $list->{project_title} 
+    );
     $content =~ s/(<title>)(.*?)(<\/title>)/$1$title$3/;
 
     $js = '';
