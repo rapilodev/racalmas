@@ -55,7 +55,6 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
     $params = $request->{params}->{checked};
 
     my $content = load_file( $base_dir . './index.html' );
-    $content = $$content || '';
 
     #replace HTML escaped calcms_title span by unescaped one
     $content =~
@@ -133,11 +132,11 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
 }
 
 sub load_file {
-    my $filename = shift;
-    my $content  = "cannot load '$filename'";
-    open my $FILE, '<:utf8', $filename or return \$content;
-    $content = join( "", (<$FILE>) );
-    close $FILE;
-    return \$content;
+    my ($filename) = @_;
+    open my $fh, '<:utf8', $filename or return qq{cannot load '$filename'};
+    local $/ = undef;
+    my $content = <$fh>;
+    close $fh or return qq{cannot load '$filename'};
+    return $content;
 }
 
