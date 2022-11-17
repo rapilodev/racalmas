@@ -90,7 +90,8 @@ function copyFromEvent(resultSelector){
     loadEvent(projectId, studioId, seriesId, eventId, function(){
         hideSelectRerun();
         updateCheckBox( "#edit_event input[name='published']", 1);
-    });   
+    });
+    return 1;
 }
 
 function loadEvent(projectId,studioId,seriesId,eventId, callback){
@@ -105,7 +106,8 @@ function loadEvent(projectId,studioId,seriesId,eventId, callback){
     url+="&get_rerun=1";
     console.log("loadEvent: "+url)
     
-    $.getJSON( url, function( event ) {
+    $.getJSON(url)
+    .done( function(event) {
         $("#edit_event input[name='title']").attr('value', event.title)
         $("#edit_event input[name='user_title']").attr('value', event.user_title)
         $("#edit_event input[name='episode']").attr('value', event.episode)
@@ -128,8 +130,11 @@ function loadEvent(projectId,studioId,seriesId,eventId, callback){
 
         updateDuration("#edit_event #duration", event.duration);
         
-        if (callback!=null) callback();
+        if (callback != null) callback();
         console.log("loadEvent done")
+    }).fail( function(jqxhr, textStatus, error) {
+        var err = textStatus + ", " + error;
+        console.log("loadEvent failed: " + err);
     });
 }
 
