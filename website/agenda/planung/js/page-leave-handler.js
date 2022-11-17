@@ -5,7 +5,8 @@ function pageHasChanged(){
     console.log("pageHasChanged="+pageHasChangedCounter)
     if (pageIsLoaded==0) return;
     pageHasChangedCounter++;
-    console.log("pageHasChanged="+pageHasChangedCounter)
+    console.log("pageHasChanged="+pageHasChangedCounter);
+    return 1;
 }
 
 function confirmPageLeave(){
