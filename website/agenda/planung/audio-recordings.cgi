@@ -87,11 +87,8 @@ $headerParams->{loc} = localization::get( $config, { user => $user, file => 'men
 template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
 
 exit unless uac::check( $config, $params, $user_presets ) == 1;
-
-print q{
-    <script src="js/audio-recordings.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="css/audio-recordings.css" type="text/css" /> 
-} unless (params::isJson);
+template::process( $config, 'print', template::check( $config, 'audio-recordings-header.html' ), $headerParams )
+    unless params::isJson;
 
 my $permissions = $request->{permissions};
 $params->{action} = '' unless defined $params->{action};

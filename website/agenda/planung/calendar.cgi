@@ -100,15 +100,8 @@ if (
     #process header
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check( $config, 'default.html' ),
+    template::process( $config, 'print', template::check( $config, 'calendar-header.html' ),
         $headerParams );
-    print q{
-        <link rel="stylesheet" href="css/calendar.css" type="text/css" /> 
-        <link rel="stylesheet" href="css/flatpickr.min.css" type="text/css" /> 
-        <script src="js/flatpickr.js" type="text/javascript"></script>
-        <script src="js/calendar.js" type="text/javascript"></script>
-        <script src="js/datetime.js" type="text/javascript"></script>
-    };
     if ( $params->{list} eq '1' ) {
         print q{
             <script src="js/jquery.tablesorter.min.js"></script>

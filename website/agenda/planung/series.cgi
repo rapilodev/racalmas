@@ -65,18 +65,10 @@ $params = $request->{params}->{checked};
 unless ( params::isJson() ) {
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check( $config, 'default.html' ),
+    template::process( $config, 'print', template::check( $config, 'series-header.html' ),
         $headerParams );
 }
 return unless uac::check( $config, $params, $user_presets ) == 1;
-
-print q{
-	<script src="js/datetime.js" type="text/javascript"></script>
-	<script src="js/event.js" type="text/javascript"></script>
-	<link rel="stylesheet" href="css/series.css" type="text/css" /> 
-} unless params::isJson();
-
-#	<script src="js/localization.js" type="text/javascript"></script>
 
 if ( defined $params->{action} ) {
     save_schedule( $config, $request ) if ( $params->{action} eq 'save_schedule' );
@@ -109,14 +101,12 @@ if ( defined $params->{action} ) {
 $config->{access}->{write} = 0;
 
 if ( defined $params->{series_id} ) {
-    print q{<script src="js/edit-series.js" type="text/javascript"></script>}
-      unless params::isJson();
+    template::process( $config, 'print', template::check( $config, 'show-series-header.html' ),{})
+        unless params::isJson();
     show_series( $config, $request );
 } else {
-    print q{
-    	<link rel="stylesheet" href="css/list-series.css" type="text/css" /> 
-        <script src="js/list-series.js" type="text/javascript"></script>
-    } unless params::isJson();
+    template::process( $config, 'print', template::check( $config, 'list-series-header.html' ),{})
+        unless params::isJson();
     list_series( $config, $request );
 }
 

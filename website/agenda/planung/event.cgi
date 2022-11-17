@@ -43,6 +43,7 @@ my $config = config::get('../config/config.cgi');
 my $debug  = $config->{system}->{debug};
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( ( !defined $user ) || ( $user eq '' ) );
+
 my $user_presets = uac::get_user_presets(
     $config,
     {
@@ -73,16 +74,9 @@ my $show_header = ! (params::isJson() or $params->{action} eq 'download_audio');
 if ( $show_header ) {
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check( $config, 'default.html' ),
-        $headerParams );
+    template::process( $config, 'print', template::check( $config, 'event-header.html' ), $headerParams ); 
 }
 return unless uac::check( $config, $params, $user_presets ) == 1;
-
-print q{
-    <script src="js/datetime.js" type="text/javascript"></script>
-    <script src="js/event.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="css/event.css" type="text/css" /> 
-} if $show_header;
 
 if ( defined $params->{action} ) {
     if (   ( $params->{action} eq 'show_new_event' )

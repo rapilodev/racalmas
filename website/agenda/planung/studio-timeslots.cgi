@@ -60,7 +60,6 @@ $headerParams->{loc} = localization::get( $config, { user => $user, file => 'all
 
 my $action = $params->{action} || '';
 if ( $action eq 'show_dates' ) {
-
     #print "Content-type:text/html\n\n";
 } else {
     template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
@@ -70,13 +69,7 @@ return unless uac::check( $config, $params, $user_presets ) == 1;
 if ( $action eq 'show_dates' ) {
     print "Content-Type:text/html\n\n";
 } else {
-    print q{
-	    <link href="css/theme.default.css" rel="stylesheet">
-    	<script src="js/jquery.tablesorter.min.js"></script>
-        <script src="js/studio-timeslots.js" type="text/javascript"></script>
-	    <script src="js/datetime.js" type="text/javascript"></script>
-	    <link rel="stylesheet" href="css/studio-timeslots.css" type="text/css" /> 
-    };
+    template::process( $config, 'print', template::check( $config, 'studio-timeslots-header.html' ), $headerParams );
 }
 
 if ( defined $params->{action} ) {

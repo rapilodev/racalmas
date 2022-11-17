@@ -68,9 +68,8 @@ if ( ( params::isJson() ) || ( defined $params->{action} ) ) {
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
     template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
-    print q{
-        <script src="js/datetime.js" type="text/javascript"></script>
-    } unless (params::isJson);
+    template::process( $config, 'print', template::check( $config, 'comment-header.html' ), $headerParams ) 
+        unless (params::isJson);
 }
 return unless uac::check( $config, $params, $user_presets ) == 1;
 

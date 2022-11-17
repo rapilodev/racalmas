@@ -62,15 +62,8 @@ $params = $request->{params}->{checked};
 #process header
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
+template::process( $config, 'print', template::check( $config, 'assign-series-header.html' ), $headerParams );
 return unless uac::check( $config, $params, $user_presets ) == 1;
-
-print q{
-	<script src="js/datetime.js" type="text/javascript"></script>
-	<script src="js/event.js" type="text/javascript"></script>
-	<script src="js/localization.js" type="text/javascript"></script>
-	<link rel="stylesheet" href="css/series.css" type="text/css" /> 
-};
 
 my $permissions = $request->{permissions};
 unless ( $permissions->{scan_series_events} == 1 ) {

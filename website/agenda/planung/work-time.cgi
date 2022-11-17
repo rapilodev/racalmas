@@ -64,7 +64,8 @@ if ( defined $params->{action} ) {
 }
 
 $config->{access}->{write} = 0;
-print q{<script src="js/edit_work_time.js" type="text/javascript"></script>};
+template::process( $config, 'print', template::check( $config, 'worktime-header.html' ), $headerParams );
+
 show_work_schedule( $config, $request );
 return;
 
