@@ -88,8 +88,6 @@ function updateEventSelection(resultElemId){
 
 // set selected eventId at external result selector
 function selectEventAction(resultElemId){
-
-
     var projectId = $('#selectEvent #projectId').val();
     var studioId  = $('#selectEvent #studioId').val();
     var seriesId  = $('#selectEvent #seriesId').val();
@@ -115,10 +113,12 @@ function selectEventAction(resultElemId){
         console.log("failed: "+url)
     });
 
+    console.log(`set: "${resultElemId}"="${eventId}"`)
     // set the result value
     $('#'+resultElemId).val( eventId );
     // trigger the change event for invisble form elements
     $('#'+resultElemId).trigger('change');
+    return 1;
 }
 
 $(document).ready(
