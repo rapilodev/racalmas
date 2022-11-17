@@ -800,7 +800,7 @@ sub showEventList {
                 $class .= ' preproduced'
                   unless ( ( defined $event->{'live'} ) && ( $event->{'live'} eq '1' ) );
                 $class .= ' no_playout'
-                  unless ( ( defined $event->{'playout'} ) && ( $event->{'playout'} eq '1' ) );
+                  unless ( ( defined $event->{'playout'} ) && ( defined $event->{'playout'} and $event->{'playout'} eq '1' ) );
                 $class .= ' no_rerun'
                   unless ( ( defined $event->{'rerun'} ) && ( $event->{'rerun'} eq '1' ) );
             }
@@ -816,6 +816,7 @@ sub showEventList {
             $event->{episode}            ||= '';
             $event->{rerun}              ||= '';
             $event->{draft}              ||= '';
+            $event->{playout}            ||= '';
             $id                          ||= '';
             $class                       ||= '';
 
@@ -839,11 +840,11 @@ sub showEventList {
             $draft = $draftIcon if $draft eq '1';
 
             my $playout = '-';
-            if (exists $event->{upload_status}){
+            if (defined $event->{upload_status}){
                 $playout = $processingIcon if $event->{upload_status} ne '';
                 $playout = $preparedIcon   if $event->{upload_status} eq 'done';
             }
-            $playout = $playoutIcon    if $event->{playout} eq '1';
+            $playout = $playoutIcon if $event->{playout} eq '1';
 
             my $title = $event->{title};
             $title .= ': ' . $event->{user_title} if $event->{user_title} ne '';
@@ -861,11 +862,11 @@ sub showEventList {
 
             my $studio_name = $event->{studio_name} // '-';
             
-            my $format = {"markdown" => "-", "creole" => "Lang Belta" }->{$event->{content_format}} // 'Lang Belta';
+            my $format = {"markdown" => "-", "creole" => "Lang Belta" }->{$event->{content_format}//''} // 'Lang Belta';
             $out .=
                 qq!<tr id="$id" class="$class" start="$event->{start}" >!
               . qq!<td class="day_of_year">!
-              . time::dayOfYear( $event->{start} )
+              . (defined $event->{start} ? time::dayOfYear( $event->{start} ) :'')
               . q!</td>!
               . qq!<td class="weekday">$event->{weekday_short_name},</td>!
               . qq!<td class="start_date" data-text="$event->{start_datetime}">$event->{start_date_name}</td>!
