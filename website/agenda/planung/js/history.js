@@ -32,20 +32,6 @@ function comeFromCalendar(){
 
 //return history or null, if url should not be appended to history
 function isNewToHistory(url){
-    //if (window.location.search=='')return null;
-    
-    /*
-    if (contains(url,"action")){
-        //action defined but not show...,edit...
-        if (
-               (!contains(url,"action=show"))
-            && (!contains(url,"action=edit"))
-        ){
-            //alert("return");
-            //return null;
-        }
-    }
-    */
     var params=window.location.search;
 
     var history = getHistory();
@@ -58,21 +44,8 @@ function isNewToHistory(url){
     var historyController=history[0].split('.cgi').shift();
     //remove last entry on same controller
     if(urlController==historyController){
-    console.log("same controller\n"+url+"\n"+history[0])
-        //var ignore=0;
-        //provide back to series from series details
-        //if(contains(url,'series')){
-            //console.log(url);
-            //console.log(history[0]);
-            //if( (contains(url,'series_id')==true)  && (contains(history[0],'series_id')==false)) ignore=1;
-            //console.log(ignore);
-        //}
-        //if (ignore==0) 
-    //history.shift();
-    return null;
+        return null;
     }
-    
-
     return history;
 }
 
