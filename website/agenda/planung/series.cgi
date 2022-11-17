@@ -94,8 +94,6 @@ if ( defined $params->{action} ) {
         set_rebuilt_episodes( $config, $request );
         return;
     }
-
-    #    save_scan    ($config, $request)    if ($params->{action} eq 'save_scan');
 }
 
 $config->{access}->{write} = 0;
@@ -717,8 +715,6 @@ sub assign_event {
             $event->{title}       = $title;
             $event->{user}        = $params->{presets}->{user};
             event_history::insert( $config, $event );
-
-            #            print STDERR "ok\n";
         }
     } else {
         print STDERR
@@ -847,7 +843,6 @@ sub reassign_event {
         return undef;
     }
 
-    #print STDERR " event\n";
     my $url =
         'event.cgi?project_id='
       . $project_id
@@ -1178,8 +1173,6 @@ sub show_series {
             $schedule->{period_type} = 'single' unless ( $schedule->{end} =~ /\d/ );
         }
         $schedule->{ 'period_type_' . $schedule->{period_type} } = 1;
-
-        #print STDERR $schedule->{period_type}."\n";
     }
 
     $serie->{schedule}  = $schedules;
@@ -1287,7 +1280,6 @@ sub set_rebuilt_episodes {
         );
         $updates++;
     }
-    print "$updates changes done.\n";
 }
 
 sub rebuild_episodes {
