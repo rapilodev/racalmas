@@ -156,7 +156,6 @@ var calcms_settings = new Array();
     var isCalcms = false;
     function initWordpress() {
         $('header.entry-header').each(function() {
-            var elem = $(this);
             $(this).find("h1").each(function() {
                 if ($(this).text() == "Programm") {
                     isCalcms = true;
