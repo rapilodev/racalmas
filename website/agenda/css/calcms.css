@@ -41,9 +41,17 @@
     {
         color:white !important;
         background:black !important;
-       
     }
 
+    #calcms_list h1.summary{
+        background: none !important;
+    }
+    
+    a.load-prev, a.load-next{
+        color:#999 !important;
+        background:#333 !important;
+    }
+    
     img.custom-logo{
         filter: invert(1);
     }
