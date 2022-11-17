@@ -65,6 +65,10 @@ RewriteRule ^rds/(.*)$ 				events.cgi?template=event_playlist.txt&time=now&limit
 RewriteRule ^playlist_show/(.*)$ 		events.cgi?template=event_playlist_show.html&time=future&limit=3&$1 [L]
 RewriteRule ^json/(.*)$ 			events.cgi?template=event.json&time=now&limit=15&$1 [L]
 
+RewriteRule ^dashboard/sendung/(\d+)/[^&]*(&.*)?$ 	events.cgi?template=event_dashboard_details.html&event_id=$1&$2 [L]
+RewriteRule ^dashboard/date/(\d{4}-\d{2}-\d{2})/    events.cgi?template=event_dashboard.html.js&date=$1&$2 [L]
+RewriteRule ^dashboard/(.*)$ 		                events.cgi?template=event_dashboard.html.js&time=now&limit=1&$1 [L]
+
 RewriteRule ^sendereihe/(.*?)/(.*?)/kommende/(.*)$	events.cgi?template=event_list.html&project=$1&series_name=$2&archive=coming&$3 [L]
 RewriteRule ^sendereihe/(.*?)/(.*?)/vergangene/(.*)$	events.cgi?template=event_list.html&project=$1&series_name=$2&archive=gone&$3 [L]
 RewriteRule ^sendereihe/(.*?)/(.*?)/show/$		events.cgi?template=event_redirect.html&project=$1&series_name=$2&limit=1&$3 [L]
