@@ -18,7 +18,6 @@ sub get_list($$) {
     my $request = shift;
 
     my $params = $request->{params}->{checked};
-    my $debug  = $config->{system}->{debug};
 
     #customize prefiltered request parameters
     $request->{params}->{original}->{date} = $request->{params}->{checked}->{date};
@@ -101,7 +100,6 @@ sub get_calendar($$$) {
     my $date    = shift;
 
     my $params = $request->{params}->{checked};
-    my $debug  = $config->{system}->{debug};
 
     $request->{params}->{original}->{template} = 'calendar.html';
     $request->{params}->{original}->{date} = $date if defined $date;
@@ -160,13 +158,10 @@ sub check_params($$) {
     $date = time::time_to_date( time() )  if $date eq '';
     $date = time::get_event_date($config) if $date eq 'today';
 
-    #    $date    =$config->{date}->{start_date}        if ($date lt $config->{date}->{start_date});
-    #    $date    =$config->{date}->{end_date}        if ($date gt $config->{date}->{end_date});
     $date = $start_date if $date lt $start_date;
     $date = $end_date   if $date gt $end_date;
 
     #filter for date
-    #    my $date=time::check_date($params->{date});
     my $time = time::check_time( $params->{time} );
     if ( ( defined $params->{today} ) && ( $params->{today} eq '1' ) ) {
         $date = time::time_to_date( time() );
@@ -222,11 +217,6 @@ sub check_params($$) {
         }
     }
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-
     #set query string for caching
     if ( ( !exists $ENV{QUERY_STRING} ) || ( $ENV{QUERY_STRING} eq '' ) ) {
         my $options = [];
@@ -243,7 +233,6 @@ sub check_params($$) {
         from_date => $from_date,
         till_date => $till_date,
         event_id  => $event_id,
-        debug => $debug,
         ro    => $params->{ro}//'' ? 1 : 0
     };
 }

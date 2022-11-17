@@ -113,9 +113,6 @@ sub initTemplate($) {
         default_escape    => $default_escape,
         cache             => 1,
         utf8              => 1,
-
-        #pre_chomp => 1,
-        #post_chomp => 1,
     );
 }
 

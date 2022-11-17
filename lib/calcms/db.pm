@@ -34,7 +34,6 @@ sub connect($;$) {
     return $request->{connection} if ( defined $request ) && ( defined $request->{connection} );
 
     my $access_options = $options->{access};
-
     my $hostname = $access_options->{hostname};
     my $port     = $access_options->{port};
     my $database = $access_options->{database};
@@ -53,14 +52,11 @@ sub connect($;$) {
 
     my $dbh = DBI->connect( $dsn, $username, $password, { mysql_enable_utf8 => 1 } )
       || die "could not connect to database: $DBI::errstr";
-
     $dbh->{RaiseError} = 1;
-
     $dbh->{'mysql_enable_utf8'} = 1;
     put( $dbh, "set character set utf8" );
     put( $dbh, "set names utf8" );
     put( $dbh, "set time_zone='" . $options->{date}->{time_zone} . "'" );
-
     $request->{connection} = $dbh;
     $options->{connections}->{$key} = $dbh;
     return $dbh;
@@ -78,14 +74,8 @@ sub disconnect ($){
 sub get($$;$) {
     my ( $dbh, $sql, $bind_values ) = @_;
 
-    if ( $debug_read == 1 ) {
-        print STDERR $sql . "\n";
-        print STDERR Dumper($bind_values) . "\n" if defined $bind_values;
-    }
-
     my $sth = $dbh->prepare($sql);
     if ( ( defined $bind_values ) && ( ref($bind_values) eq 'ARRAY' ) ) {
-
         my $result = $sth->execute(@$bind_values);
         unless ($result) {
             print STDERR $sql . "\n";
