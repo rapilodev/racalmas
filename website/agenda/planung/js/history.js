@@ -1,5 +1,5 @@
 function setCookie(name, value) {
-    document.cookie = name + "=" + value + "; "
+    document.cookie = name + "=" + value + "; SameSite=strict;"
 }
 
 function clearCookie(name) {
