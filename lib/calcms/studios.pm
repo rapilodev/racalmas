@@ -10,8 +10,6 @@ use images();
 #use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get get_by_id insert update delete check check_studio);
 
-sub debug;
-
 sub get_columns($) {
     my $config = shift;
 

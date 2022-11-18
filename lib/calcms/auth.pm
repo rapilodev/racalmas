@@ -16,14 +16,9 @@ use user_sessions ();
 our @EXPORT_OK = qw(get_user login logout crypt_password);
 my $defaultExpiration = 60;
 
-my $debug             = 0;
-sub debug($);
-
 #TODO: remove CGI
 sub get_user($$$) {
     my ($config, $params, $cgi) = @_;
-
-    debug("get_user") if $debug;
 
     # login or logout on action
     if ( defined $params->{authAction} ) {
@@ -74,7 +69,6 @@ sub login($$$) {
     my $config   = shift;
     my $user     = shift;
     my $password = shift;
-    debug("login") if $debug;
 
     my $result = authenticate( $config, $user, $password );
 
@@ -96,7 +90,6 @@ sub logout($$) {
     my $cgi = shift;
 
     my $session_id = read_cookie();
-    debug("logout") if $debug;
     unless ( delete_session($config, $session_id) ) {
         return show_login_form( 'Cant delete session', 'logged out' );
     }
@@ -127,14 +120,10 @@ sub create_cookie($$) {
 }
 
 sub read_cookie() {
-    debug("read_cookie") if $debug;
     my %cookie = CGI::Cookie->fetch;
-    debug( "cookies: " . Dumper( \%cookie ) ) if $debug;
     my $cookie = $cookie{'sessionID'};
-    debug( "cookie: " . $cookie ) if $debug;
     return undef unless defined $cookie;
     my $session_id = $cookie->value || undef;
-    debug( "sid: " . $session_id ) if $debug;
     return $session_id;
 }
 
@@ -142,7 +131,6 @@ sub read_cookie() {
 sub delete_cookie($) {
     my $cgi = shift;
 
-    debug("delete_cookie") if $debug;
     my $cookie = $cgi->cookie(
         -name    => 'sessionID',
         -value   => '',
@@ -159,8 +147,6 @@ sub create_session ($$$) {
     my $user       = shift;
     my $timeout    = shift;
 
-    debug("create_session") if $debug;
-    
     my $session_id = user_sessions::start( 
         $config, {
             user       => $user,
@@ -189,7 +175,6 @@ sub delete_session($$) {
     my $config = shift;
     my $session_id = shift;
 
-    debug("delete_session") if $debug;
     return undef unless defined $session_id;
     
     user_sessions::stop( $config, { session_id => $session_id } );
@@ -249,7 +234,6 @@ sub show_login_form ($$) {
         };
     }
 
-    debug("show_login_form") if $debug;
     print qq{Content-type:text/html
 
 <!DOCTYPE HTML>        
@@ -375,12 +359,6 @@ sub show_login_form ($$) {
 </html>
 };
     return undef;
-}
-
-sub debug ($) {
-    my $message = shift;
-    print STDERR "$message\n" if $debug > 0;
-    return;
 }
 
 #do not delete last line!

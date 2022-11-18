@@ -9,8 +9,6 @@ use Data::Dumper;
 # table:   calcms_user_default_studios
 # columns: user, project_id, studio_id
 
-sub debug;
-
 sub get_columns($) {
     my $config = shift;
 

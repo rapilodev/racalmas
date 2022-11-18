@@ -623,11 +623,6 @@ sub check_params ($$) {
         $comment->{type} = 'tree';
     }
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $comment->{debug} = $1;
-    }
-
     log::error( $config, 'missing parameter a' ) if ( defined $params->{limit} )    && ( $comment->{limit} eq '' );
     log::error( $config, 'missing parameter b' ) if ( defined $params->{event_id} ) && ( $comment->{event_id} eq '' );
     log::error( $config, 'missing parameter c' )

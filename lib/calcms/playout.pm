@@ -13,8 +13,6 @@ use series_events();
 #use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get sync);
 
-sub debug;
-
 sub get_columns ($) {
     my $config = shift;
 

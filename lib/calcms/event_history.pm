@@ -9,8 +9,6 @@ use Data::Dumper;
 #use base 'Exporter';
 our @EXPORT_OK   = qw(get_columns get get_by_id insert insert_by_event_id delete);
 
-sub debug;
-
 sub get_columns ($){
     my $config = shift;
 

@@ -32,8 +32,6 @@ our @EXPORT_OK = qw(
   set_playout_status
 );
 
-sub debug;
-
 # update main fields of the event by id
 # do not check for project,studio,series
 # all changed columns are returned for history handling

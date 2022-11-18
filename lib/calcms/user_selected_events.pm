@@ -11,8 +11,6 @@ use Data::Dumper;
 #           project_studio_filter, series_filter    <- optional filter params
 #           selected_project, selected_studio, selected_series, selected_event <-result
 
-sub debug;
-
 sub get_columns($) {
     my $config = shift;
 

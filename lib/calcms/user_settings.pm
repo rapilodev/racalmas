@@ -12,8 +12,6 @@ use series_dates();
 #use base 'Exporter';
 our @EXPORT_OK = qw(getColors getColorCss get insert update delete get_columns defaultColors);
 
-sub debug;
-
 our $defaultColors = [
     {
         name  => 'color_event',

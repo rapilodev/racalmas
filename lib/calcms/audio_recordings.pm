@@ -16,8 +16,6 @@ our @EXPORT_OK = qw(get_columns get);
 # mastered, processed
 # audioDuration, eventDuration, rmsLeft, rmsRight
 
-sub debug;
-
 sub get_columns($) {
     my $config = shift;
 

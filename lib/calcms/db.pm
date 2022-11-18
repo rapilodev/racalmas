@@ -20,10 +20,6 @@ our @EXPORT_OK = qw(
   $read
 );
 
-#debug settings
-my $debug_read  = 0;
-my $debug_write = 0;
-
 #database control
 our $read  = 1;
 our $write = 1;
@@ -60,7 +56,7 @@ sub connect($;$) {
     put( $dbh, "set names utf8", undef );
     put( $dbh, "set time_zone='" . $options->{date}->{time_zone} . "'", undef );
     $request->{connection} = $dbh;
-    $options->{connections}->{$key} = $dbh;
+    #$options->{connections}->{$key} = $dbh;
     $connections->{$key} = $dbh;
     return $dbh;
 }
@@ -89,11 +85,6 @@ sub get($$;$) {
     }
 
     my $results = $sth->fetchall_arrayref({});
-
-    if ( $debug_read == 1 ) {
-        print STDERR Dumper( $results->[0] ) . "\n" if ( scalar @$results == 1 );
-        print STDERR @$results . "\n" if ( scalar @$results != 1 );
-    }
 
     $sth->finish;
     return $results;
@@ -125,12 +116,6 @@ sub insert ($$$){
     my @bind_values = map { $entry->{$_} } @keys;
 
     my $sql = "insert into $table \n ($keys) \n values  ($values);\n";
-
-    if ( $debug_write == 1 ) {
-        print STDERR $sql . "\n";
-        print STDERR Dumper( \@bind_values ) . "\n" if scalar(@bind_values);
-    }
-
     put( $dbh, $sql, \@bind_values );
     my $result = get( $dbh, 'SELECT LAST_INSERT_ID() id;' );
     return $result->[0]->{id} if $result->[0]->{id} > 0;
@@ -141,11 +126,6 @@ sub insert ($$$){
 sub put($$$) {
     my ($dbh, $sql, $bind_values) =@_;
 
-    if ( $debug_write == 1 ) {
-        print STDERR $sql . "\n";
-        print STDERR Dumper($bind_values) . "\n" if defined $bind_values;
-    }
-
     my $sth = $dbh->prepare($sql);
     if ( $write == 1 ) {
         if ( ( defined $bind_values ) && ( ref($bind_values) eq 'ARRAY' ) ) {
@@ -155,7 +135,6 @@ sub put($$$) {
         }
     }
     $sth->finish;
-    print STDERR "1\n" if ( $debug_write == 1 );
 
     my $result = get( $dbh, 'SELECT ROW_COUNT() changes;' );
     return $result->[0]->{changes} if $result->[0]->{changes} > 0;

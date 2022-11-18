@@ -19,8 +19,6 @@ use work_schedule();
 #use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get insert update delete get_dates);
 
-sub debug;
-
 sub get_columns($) {
     my $config = shift;
 

@@ -22,8 +22,6 @@ our @EXPORT_OK = qw(
 
 #TODO: globally replace get_studios by get_studio_assignments
 
-sub debug;
-
 # get project columns
 sub get_columns ($) {
     my $config = shift;

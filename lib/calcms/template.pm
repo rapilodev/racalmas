@@ -53,7 +53,7 @@ sub process($$$$) {
     $params->{jobs} = roles::get_user_jobs($config);
     if ( ( $filename =~ /json\-p/ ) || (params::isJson) ) {
         my $header = "Content-type:application/json; charset=utf-8\n\n";
-        my $json = JSON::to_json( $params, { pretty => 1 } );
+        my $json = JSON->new->pretty(1)->canonical()->encode($params);
 
         $json = $header . $params->{json_callback} . $json;
         if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {

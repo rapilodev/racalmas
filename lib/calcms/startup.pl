@@ -1,7 +1,7 @@
 use lib qw(/home/radio/calcms/calcms/);
 
 use Data::Dumper;
-use Apache::DBI();
+#use Apache::DBI();
 use Time::Local();
 use Date::Calc();
 use Calendar::Simple qw(date_span);

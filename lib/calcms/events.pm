@@ -47,8 +47,6 @@ sub get_cached_or_render($$$) {
     my ($response, $config, $request) = @_;
 
     my $params = $request->{params}->{checked};
-    my $debug  = $config->{system}->{debug};
-
     my $results = events::get( $config, $request );
     events::render( $response, $config, $request, $results );
     return $response;
@@ -105,8 +103,6 @@ sub get($$);
 sub get($$) {
     my ($config, $request) = @_;
 
-    my $debug = $config->{system}->{debug};
-
     my $dbh = db::connect( $config, $request );
 
     ( my $query, my $bind_values ) = events::get_query( $dbh, $config, $request );
@@ -136,7 +132,6 @@ sub modify_results ($$$$) {
     my $projects         = {};
     my $studios          = {};
 
-    #    print $running_event_id." ".$running_events->[0]->{start}." ".$running_events->[0]->{title} if ($debug ne'');
     my $time_diff = '';
     if ( scalar @$results > 0 ) {
         $results->[0]->{__first__} = 1;
@@ -871,8 +866,6 @@ sub get_query($$$) {
     my ($dbh, $config, $request) = @_;
 
     my $params = $request->{params}->{checked};
-    my $debug  = $config->{system}->{debug};
-
     $params->{recordings} = '' unless defined $params->{recordings};
 
     my $bind_values = [];
@@ -1209,12 +1202,9 @@ sub render($$$$;$) {
             $params->{$param} = $root_params->{$param};
         }
     }
-    my $debug = $config->{system}->{debug};
-
     my %tparams = %$params;
     my $tparams = \%tparams;
     $tparams->{events}       = $results;
-    $tparams->{debug}        = $debug;
     $tparams->{server_cache} = $config->{cache}->{server_cache}
       if ( $config->{cache}->{server_cache} );
     $tparams->{use_client_cache} = $config->{cache}->{use_client_cache}
@@ -1520,8 +1510,6 @@ sub delete ($$$) {
     my $event_id = shift;
 
     my $params = $request->{params}->{checked};
-    my $debug  = $config->{system}->{debug};
-
     my $dbh = db::connect($config);
 
     my $query = 'delete from calcms_events where id=?';
@@ -1768,11 +1756,6 @@ sub check_params ($$) {
     my $project_id = $params->{project_id} || '';
     my $studio_id  = $params->{studio_id}  || '';
 
-    my $debug = $params->{debug} || '';
-    if ( $debug =~ /([a-z\_\,]+)/ ) {
-        $debug = $1;
-    }
-
     my $json_callback = $params->{json_callback} || '';
     if ( $json_callback ne '' ) {
         $json_callback =~ s/[^a-zA-Z0-9\_]//g;
@@ -1806,7 +1789,6 @@ sub check_params ($$) {
         title                => $title,
         event_id             => $event_id,
         search               => $search,
-        debug                => $debug,
         archive              => $archive,
         last_days            => $last_days,
         order                => $order,

@@ -21,8 +21,6 @@ use series_dates();
 #use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get insert update delete);
 
-sub debug;
-
 sub get_columns ($) {
     my $config = shift;
 

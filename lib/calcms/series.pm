@@ -26,8 +26,6 @@ our @EXPORT_OK = qw(
 #TODO: remove studio_id
 #TODO: get project_id, studio_id by join with project_series
 
-sub debug;
-
 # get series columns
 sub get_columns ($) {
     my $config = shift;
@@ -442,7 +440,6 @@ sub search_events ($$$) {
         permissions => $request->{permissions}
     };
 
-    #my $debug=1;
     my $events = events::get( $config, $request2 );
     return $events;
 }

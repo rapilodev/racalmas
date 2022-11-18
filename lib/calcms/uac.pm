@@ -28,8 +28,6 @@ our @EXPORT_OK = qw(
   permission_denied
 );
 
-sub debug;
-
 # get user by name
 sub get_user($$) {
     my $config = shift;

@@ -11,8 +11,6 @@ use user_settings();
 #use base 'Exporter';
 our @EXPORT_OK = qw(get getJavascript);
 
-sub debug;
-
 # get localisation
 #    file     : po file
 #    language : get for selected language

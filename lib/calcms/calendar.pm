@@ -17,16 +17,12 @@ sub init() {
 }
 
 sub get_cached_or_render($$$) {
-
     #   my $output  = $_[0]
     my $config  = $_[1];
     my $request = $_[2];
 
     my $parms = $request->{params}->{checked};
-    my $debug = $config->{system}->{debug};
-
     my $calendar = calendar::get( $config, $request );
-
     calendar::render( $_[0], $config, $request, $calendar );
 }
 
@@ -35,8 +31,6 @@ sub get($$) {
     my $request = shift;
 
     my $params = $request->{params}->{checked};
-    my $debug  = $config->{system}->{debug};
-
     my $language = $config->{date}->{language} || 'en';
 
     my $date      = $params->{date}      || '';
@@ -287,10 +281,7 @@ sub render($$$$) {
     my $calendar = $_[3];
 
     my $parms = $request->{params}->{checked};
-    my $debug = $config->{system}->{debug};
-
     my $template_parameters = $calendar;
-    $template_parameters->{debug}            = $config->{system}->{debug};
     $template_parameters->{base_url}         = $config->{locations}->{base_url};
     $template_parameters->{cache_base_url}   = $config->{cache}->{base_url};
     $template_parameters->{server_cache}     = $config->{cache}->{server_cache} if ( $config->{cache}->{server_cache} );
@@ -304,8 +295,6 @@ sub get_calendar_weeks($$$) {
     my $config = shift;
     my $start  = shift;
     my $end    = shift;
-
-    my $debug = $config->{system}->{debug};
 
     $start = time::date_to_array($start);
     $end   = time::date_to_array($end);
@@ -460,17 +449,11 @@ sub check_params($$) {
 
     my $template = template::check( $config, $params->{template}, 'calendar.html' );
 
-    my $debug = $params->{debug};
-    if ( ( defined $debug ) && ( $debug =~ /([a-z\_\,]+)/ ) ) {
-        $debug = $1;
-    }
-
     return {
         template   => $template,
         date       => $date,
         from_date  => $from_date,
         till_date  => $till_date,
-        debug      => $debug,
         month_only => $month_only,
         open_end   => $open_end,
         start_date => $start_date,

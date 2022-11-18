@@ -10,7 +10,6 @@ use Apache2::Request();
 #use base 'Exporter';
 our @EXPORT_OK = qw(get isJson);
 
-sub debug;
 my $isJson = 0;
 
 sub isJson () {
@@ -60,10 +59,6 @@ sub get ($) {
     }
 
     return ( $cgi, $params, $status );
-}
-
-sub debug ($) {
-    my $message = shift;
 }
 
 #do not delete last line!

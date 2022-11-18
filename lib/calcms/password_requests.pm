@@ -16,8 +16,6 @@ use uac;
 use db;
 use auth;
 
-sub debug;
-
 sub get_columns ($) {
     my $config = shift;
 

@@ -19,20 +19,6 @@ sub error($$) {
         print STDERR "missing config at log::error\n";
         die();
     }
-
-    #do not call template::check to avoid deep recursion!
-    if ( $config->{system}->{debug} ) {
-
-        template::process(
-            $config, 'print',
-            'templates/default.html',
-            {
-                static_files_url => $config->{locations}->{static_files_url},
-                error            => $message
-            }
-        );
-    }
-
     die();
 }
 
