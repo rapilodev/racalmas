@@ -34,16 +34,10 @@ sub get_list($$) {
 
     #set url to embed as last loaded url in javascript
     my $date = $params->{date} || '';
-    $date = 'heute' if ( $params->{date} eq 'today' );
-    $date = $results->[0]->{day} if ( $params->{event_id} ne '' );
-    my $url = '';
+    $date = 'heute' if $params->{date} eq 'today';
+    $date = $results->[0]->{day} if $params->{event_id} ne '';
 
-    #$config->{controllers}->{events}.'/'.$date.'/';
-    if ( $params->{from_date} ne '' && $params->{till_date} ne '' ) {
-        $url = $config->{controllers}->{events} . '/' . $params->{from_date} . '/' . $params->{till_date};
-    } else {
-        $url = $config->{controllers}->{events} . '/' . $params->{from_date} . '/' . $params->{till_date};
-    }
+    my $url = $config->{controllers}->{events} . '/' . $params->{from_date} . '/' . $params->{till_date};
 
     #count most projects
     my $used_projects = {};
