@@ -3,6 +3,7 @@ package db;
 use strict;
 use warnings;
 no warnings 'redefine';
+use feature 'state';
 
 use DBD::mysql();
 use Digest::MD5 qw();
@@ -31,7 +32,7 @@ our $write = 1;
 sub connect($;$) {
     my ($options, $request) = @_;
 
-    return $request->{connection} if ( defined $request ) && ( defined $request->{connection} );
+    return $request->{connection} if defined $request and defined $request->{connection};
 
     my $access_options = $options->{access};
     my $hostname = $access_options->{hostname};
@@ -46,17 +47,16 @@ sub connect($;$) {
     }
 
     my $dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
-
-    my $key = Digest::MD5::md5($dsn.$username.$password);
+    my $key = Digest::MD5::md5_hex($dsn.$username.$password);
     return $options->{connections}->{$key} if defined $options->{connections}->{$key}; 
 
     my $dbh = DBI->connect( $dsn, $username, $password, { mysql_enable_utf8 => 1 } )
       || die "could not connect to database: $DBI::errstr";
     $dbh->{RaiseError} = 1;
     $dbh->{'mysql_enable_utf8'} = 1;
-    put( $dbh, "set character set utf8" );
-    put( $dbh, "set names utf8" );
-    put( $dbh, "set time_zone='" . $options->{date}->{time_zone} . "'" );
+    put( $dbh, "set character set utf8", undef );
+    put( $dbh, "set names utf8", undef );
+    put( $dbh, "set time_zone='" . $options->{date}->{time_zone} . "'", undef );
     $request->{connection} = $dbh;
     $options->{connections}->{$key} = $dbh;
     return $dbh;
@@ -82,7 +82,7 @@ sub get($$;$) {
             die "db: $DBI::errstr $sql" if ( $read == 1 );
         }
     } else {
-        $sth->execute() || die "db: $DBI::errstr $sql" if ( $read == 1 );
+        $sth->execute() or die "db: $DBI::errstr $sql" if $read == 1;
     }
 
     my $results = $sth->fetchall_arrayref({});
