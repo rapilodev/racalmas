@@ -34,7 +34,7 @@ use localization();
 use eventOps();
 use images();
 
-binmode STDOUT, ":utf8";
+binmode STDOUT, ":encoding(utf8)";
 
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
