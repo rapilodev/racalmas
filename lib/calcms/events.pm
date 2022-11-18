@@ -5,6 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+$Data::Dumper::Sortkeys=1;
 use MIME::Base64();
 use Encode();
 use Storable 'dclone';
