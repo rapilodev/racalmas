@@ -3,6 +3,7 @@ package template;
 use strict;
 use warnings;
 no warnings 'redefine';
+use feature 'state';
 
 use Data::Dumper;
 use HTML::Template::Compiled();
@@ -11,7 +12,7 @@ use HTML::Template::Compiled::Plugin::XMLEscape();
 #use HTML::Template::JIT();
 use JSON();
 use Cwd();
-
+use Digest::MD5 qw(md5_hex);
 use config();
 use params();
 use project();
@@ -73,15 +74,20 @@ sub process($$$$) {
       unless ( defined $params->{extern} ) && ( $params->{extern} eq '1' );
 
     $html_template->param($params);
+    my $out = $html_template->output();
+    my $version = "?v=".substr(md5_hex(join("",(stat "js",stat "css",stat "image"))),0,8);
+    $out =~ s{(src="js/.*\.js)"}{$1$version"}g;
+    $out =~ s{(href="css/.*\.css)"}{$1$version"}g;
+    $out =~ s{(src="image/.*\.svg)"}{$1$version"}g;
     if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
-        print $html_template->output();
+        print $out;
     } else {
-        $_[1] = $html_template->output();
+        $_[1] = $out;
     }
 }
 
 sub initTemplate($) {
-    my $filename = shift;
+    my ($filename) = @_;
 
     my $default_escape = 'none';
     $default_escape = 'js'       if ( $filename =~ /\.js$/ );
