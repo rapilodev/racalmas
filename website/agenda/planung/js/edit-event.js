@@ -88,9 +88,14 @@ function copyFromEvent(resultSelector){
     var eventId   = $('#selectEvent #eventId').val();
 
     loadEvent(projectId, studioId, seriesId, eventId, function(){
+        console.log("loadEvent:",projectId, studioId, seriesId, eventId)
+        console.log("loadEvent.callback: hideSelectRerun")
         hideSelectRerun();
+        console.log("loadEvent.callback: updateCheckbox")
         updateCheckBox( "#edit_event input[name='published']", 1);
+        console.log("loadEvent.callback: done")
     });
+    console.log("copyFromEvent done")
     return 1;
 }
 
