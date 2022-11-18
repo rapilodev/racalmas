@@ -4,6 +4,7 @@ use strict;
 use warnings;
 no warnings 'redefine';
 use utf8;
+use feature 'state';
 
 use config();
 use params();
@@ -126,10 +127,14 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
 
 sub load_file {
     my ($filename) = @_;
+    state $cache;
+    my $cached = $cache->{$filename};
+    return $cached->{content} if defined $cached and $cached->{updated} > time - 60;  
     open my $fh, '<:utf8', $filename or return qq{cannot load '$filename'};
     local $/ = undef;
     my $content = <$fh>;
     close $fh or return qq{cannot load '$filename'};
+    $cache->{$filename} = {updated => time, content => $content};
     return $content;
 }
 
