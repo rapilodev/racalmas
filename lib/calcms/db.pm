@@ -49,6 +49,8 @@ sub connect($;$) {
     my $dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
     my $key = Digest::MD5::md5_hex($dsn.$username.$password);
     return $options->{connections}->{$key} if defined $options->{connections}->{$key}; 
+    state $connections = {};
+    return $connections->{$key} if defined $connections->{$key} and $connections->{$key}->ping;
 
     my $dbh = DBI->connect( $dsn, $username, $password, { mysql_enable_utf8 => 1 } )
       || die "could not connect to database: $DBI::errstr";
@@ -59,6 +61,7 @@ sub connect($;$) {
     put( $dbh, "set time_zone='" . $options->{date}->{time_zone} . "'", undef );
     $request->{connection} = $dbh;
     $options->{connections}->{$key} = $dbh;
+    $connections->{$key} = $dbh;
     return $dbh;
 }
 
