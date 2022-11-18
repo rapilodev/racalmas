@@ -55,13 +55,10 @@ $params = $request->{params}->{checked};
 unless ( params::isJson() ) {
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check( $config, 'default.html' ),
+    template::process( $config, 'print', template::check( $config, 'show-playout-header.html' ), 
         $headerParams );
 }
 return unless uac::check( $config, $params, $user_presets ) == 1;
-
-template::process( $config, 'print', template::check( $config, 'show-playout-header.html' ), $headerParams )
-    unless (params::isJson);
 
 my $permissions = $request->{permissions};
 $params->{action} = '' unless defined $params->{action};

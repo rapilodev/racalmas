@@ -53,7 +53,7 @@ $params = $request->{params}->{checked};
 #process header
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'studio-headers.html' ), $headerParams );
+template::process( $config, 'print', template::check( $config, 'studios-header.html' ), $headerParams );
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
 if ( defined $params->{action} ) {
