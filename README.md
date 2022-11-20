@@ -1,31 +1,37 @@
 #radio calendar management system
 
-public view
+Web View
 ![public calendar](docs/screenshots/web-view.png)
 
-management view
-![management calendar](docs/screenshots/calcms-calendar.png)
+Projects
+![studios](docs/screenshots/calcms-projects.png)
 
-show series
-![series](docs/screenshots/calcms-show-series.png)
-
-edit series 
-![series](docs/screenshots/calcms-series.png)
-
-show events of series
-![series-events](docs/screenshots/calcms-series-events.png)
-
-edit event
-![edit-event](docs/screenshots/calcms-edit-event.png)
-
-manage studios
+Studios
 ![studios](docs/screenshots/calcms-studios.png)
 
-schedule studio broadcast time
-![schedule studios](docs/screenshots/calcms-schedule-studios.png)
-
-edit roles per project and studio
+Assign Roles by Project and Studio
 ![roles](docs/screenshots/calcms-roles.png)
 
-import and show status of external playout system
+Schedule Studio Broadcast Time
+![schedule studios](docs/screenshots/calcms-schedule-studios.png)
+
+Event Calendar
+![management calendar](docs/screenshots/calcms-calendar.png)
+
+Series
+![series](docs/screenshots/calcms-show-series.png)
+
+Edit Series 
+![series](docs/screenshots/calcms-edit-series.png)
+
+Schedule Series 
+![series](docs/screenshots/calcms-schedule-series.png)
+
+List Series Events
+![series-events](docs/screenshots/calcms-series-events.png)
+
+Edit Event
+![edit-event](docs/screenshots/calcms-edit-event.png)
+
+Ingegrated View on External Playout System
 ![import playout status](docs/screenshots/calcms-import-playout-status.png)
