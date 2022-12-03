@@ -527,8 +527,6 @@ sub showCalendar {
         $cal_options->{max_hour} = $max_hour;
     }
 
-    #print STDERR $start_of_day." ".$cal_options->{min_hour}."\n";
-
     # calculate positions and find schedule errors (depending on position)
     for my $date ( sort ( keys %$events_by_day ) ) {
         my $events = $events_by_day->{$date};
@@ -583,8 +581,6 @@ sub debugDate {
     my $dt = ( $date->{start} || '' ) . "   " . ( $date->{end} | '' );
     my $da = ( $date->{start_date} || '' ) . "    " . ( $date->{end_date} || '' );
     my $type = "schedule:" . ( $date->{schedule} || "" ) . " grid:" . ( $date->{grid} || "" );
-
-#print STDERR "$dt  $da count:$date->{splitCount} $type  $date->{program}-$date->{series_name}-$date->{title}\n";
 }
 
 # break dates at start_of_day
@@ -752,7 +748,7 @@ sub showEventList {
                     <th class="archive">$archiveIcon</th>
                     <th class="project_id">project</th>
                     <th class="studio">studio</th>
-                    <th class="creole">creole</th>
+                    <th class="creole">wiki format</th>
                  </tr>
             </thead>
             <tbody>
