@@ -65,10 +65,6 @@
     font-family: Open Sans, serif !important;
 }
 
-body.custom-background {
-    image-rendering: pixelated;
-}
-
 a {
     text-decoration: none;
     box-shadow: none !important;
