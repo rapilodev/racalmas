@@ -28,6 +28,8 @@ my $debug  = $config->{system}->{debug};
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( ( !defined $user ) || ( $user eq '' ) );
 
+print "Content-type:text/plain; charset=UTF-8;\n\n";
+
 my $user_presets = uac::get_user_presets(
     $config,
     {
@@ -48,8 +50,6 @@ my $request = {
     },
 };
 $request = uac::prepare_request( $request, $user_presets );
-
-print "Content-type:text/plain; charset=UTF-8;\n\n";
 return unless uac::check( $config, $params, {} ) == 1;
 log_event_selection( $config, $request, $user );
 

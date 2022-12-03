@@ -109,8 +109,8 @@ function selectEventAction(resultElemId){
     url += "&selected_event="     + eventId;
     $.get(url).done(function() {
         console.log("success: "+url)
-    }).fail(function() {
-        console.log("failed: "+url)
+    }).fail(function(jqXHR, textStatus) {
+        console.log("failed: "+url, "status:" + textStatus)
     });
 
     console.log(`set: "${resultElemId}"="${eventId}"`)

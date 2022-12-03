@@ -22,6 +22,9 @@ msgstr "save"
 msgid "button_delete"
 msgstr "delete"
 
+msgid "button_apply"
+msgstr "apply"
+
 msgid "button_unassign_event"
 msgstr "unassign from series"
 

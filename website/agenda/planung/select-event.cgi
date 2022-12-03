@@ -24,9 +24,8 @@ my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
-my $debug  = $config->{system}->{debug};
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+return if !defined $user or $user eq '';
 
 my $user_presets = uac::get_user_presets(
     $config,
@@ -40,6 +39,9 @@ $params->{default_studio_id} = $user_presets->{studio_id};
 $params = uac::setDefaultStudio( $params, $user_presets );
 $params = uac::setDefaultProject( $params, $user_presets );
 
+#process header
+print "Content-type:text/html; charset=UTF-8;\n\n";
+
 my $request = {
     url => $ENV{QUERY_STRING} || '',
     params => {
@@ -52,9 +54,6 @@ $request = uac::prepare_request( $request, $user_presets );
 $params = $request->{params}->{checked};
 $params = uac::set_template_permissions( $request->{permissions}, $params );
 $params->{loc} = localization::get( $config, { user => $user, file => 'select-event' } );
-
-#process header
-print "Content-type:text/html; charset=UTF-8;\n\n";
 
 return unless uac::check( $config, $params, $user_presets ) == 1;
 show_events( $config, $request );
@@ -206,4 +205,3 @@ sub check_params {
 
     return $checked;
 }
-

@@ -23,6 +23,15 @@
 	}
 </style>
 
+    <div class="panel-header">
+        <TMPL_IF has_single_events>
+            <TMPL_VAR .loc.single_events> <TMPL_IF title><TMPL_VAR title></TMPL_IF>
+        <TMPL_ELSE>
+            <TMPL_VAR .loc.title>
+            <TMPL_IF series_name> <TMPL_VAR series_name></TMPL_IF><TMPL_IF title> - <TMPL_VAR title></TMPL_IF>
+        </TMPL_IF>
+    </div>
+
 <!-- view series -->
 <div id="view_<TMPL_VAR .series_id>" class="view" style="clear:both">
 	<div class="buttons">
@@ -61,15 +70,6 @@
 	        </form>
 	    </TMPL_IF>
 
-    </div>
-
-	<div class="panel-header">
-        <TMPL_IF has_single_events>
-            <TMPL_VAR .loc.single_events> <TMPL_IF title><TMPL_VAR title></TMPL_IF>
-        <TMPL_ELSE>
-            <TMPL_VAR .loc.title>
-			<TMPL_IF series_name> <TMPL_VAR series_name></TMPL_IF><TMPL_IF title> - <TMPL_VAR title></TMPL_IF>
-        </TMPL_IF>
     </div>
 
 </div>

@@ -192,10 +192,11 @@
                     <TMPL_VAR .loc.label_rerun_select_other>
                 </div>
                                 
-                <input id="rerunEventId" value="-1" style="display:none" onchange="copyFromEvent('rerunEventId')">
+                <input id="rerunEventId" value="-1" style="display:none" onchange="">
 
                 <div id="import_rerun" class="active text" style="display:none;"></div>
                 <button onclick="hideSelectRerun('rerunEventId')"><TMPL_VAR .loc.button_cancel></button>
+                <button onclick="if ($('#rerunEventId').val()) copyFromEvent('rerunEventId')"><TMPL_VAR .loc.button_apply></button>
             </div>
         </div>
     </TMPL_IF>
