@@ -5,6 +5,8 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use Scalar::Util qw( blessed );
+use Try::Tiny;
 
 use config();
 use entry();
@@ -18,54 +20,32 @@ use series();
 use localization();
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
 
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( $user eq '' );
+    #process header
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    my $out =  template::process( $config, template::check( $config, 'studios-header.html' ), $headerParams );
+    uac::check($config, $params, $user_presets);
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        user       => $user,
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id}
+    if ( defined $params->{action} ) {
+        return $out . save_studio( $config, $request ) if ( $params->{action} eq 'save' );
+        return $out . delete_studio( $config, $request ) if ( $params->{action} eq 'delete' );
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
-
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
-$params = $request->{params}->{checked};
-
-#process header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'studios-header.html' ), $headerParams );
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-if ( defined $params->{action} ) {
-    save_studio( $config, $request ) if ( $params->{action} eq 'save' );
-    delete_studio( $config, $request ) if ( $params->{action} eq 'delete' );
+    $config->{access}->{write} = 0;
+    return $out . show_studios( $config, $request );
 }
-$config->{access}->{write} = 0;
-show_studios( $config, $request );
 
 sub delete_studio {
     my ($config, $request) = @_;
 
     my $permissions = $request->{permissions};
     unless ( $permissions->{update_studio} == 1 ) {
-        uac::permissions_denied('update_studio');
+        PermissionError->throw(error=>'Missing permission to update_studio');
         return;
     }
 
@@ -114,7 +94,7 @@ sub save_studio {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{update_studio} == 1 ) {
-        uac::permissions_denied('update_studio');
+        PermissionError->throw(error=>'Missing permission to update_studio');
         return;
     }
 
@@ -133,8 +113,7 @@ sub save_studio {
     } else {
         my $studios = studios::get( $config, { name => $entry->{name} } );
         if ( scalar @$studios > 0 ) {
-            uac::print_error("studio with name '$entry->{name}' already exists");
-            return;
+            ExistError->throw(error=> "studio with name '$entry->{name}' already exists");
         }
         $entry->{id} = studios::insert( $config, $entry );
 
@@ -171,7 +150,7 @@ sub save_studio {
         );
     }
 
-    print qq{<div class="ok head">changes saved</div>};
+    return qq{<div class="ok head">changes saved</div>};
 }
 
 sub show_studios {
@@ -198,13 +177,11 @@ sub show_studios {
     $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'studios' } );
     uac::set_template_permissions( $permissions, $params );
 
-    template::process( $config, 'print', $params->{template}, $params );
+    return $out . template::process( $config, $params->{template}, $params );
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
 
     #template
@@ -229,4 +206,3 @@ sub check_params {
 
     return $checked;
 }
-

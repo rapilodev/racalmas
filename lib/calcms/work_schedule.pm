@@ -5,6 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+
 use series_dates();
 
 # table:   calcms_work_schedule
@@ -82,7 +83,7 @@ sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'start' ) {
-        return undef unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_work_schedule', $entry );
@@ -93,7 +94,7 @@ sub update ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'schedule_id', 'start' ) {
-        return undef unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
     my $dbh         = db::connect($config);
@@ -106,12 +107,11 @@ sub update ($$) {
     push @bind_values, $entry->{schedule_id};
 
     my $query = qq{
-		update calcms_work_schedule 
+		update calcms_work_schedule
 		set    $values
 		where  project_id=? and studio_id=? and schedule_id=?
 	};
     return db::put( $dbh, $query, \@bind_values );
-    print "done\n";
 }
 
 #map schedule id to id
@@ -119,24 +119,19 @@ sub delete($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'schedule_id' ) {
-        return undef unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete 
-		from calcms_work_schedule 
+		delete
+		from calcms_work_schedule
 		where project_id=? and studio_id=? and schedule_id=?
 	};
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{schedule_id} ];
 
     return db::put( $dbh, $query, $bind_values );
-}
-
-sub error($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

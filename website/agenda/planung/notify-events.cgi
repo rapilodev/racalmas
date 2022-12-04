@@ -6,6 +6,8 @@ no warnings 'redefine';
 use utf8;
 
 use Data::Dumper;
+use Scalar::Util qw( blessed );
+use Try::Tiny;
 
 use params();
 use config();
@@ -25,51 +27,27 @@ use mail();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        user       => $user,
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id}
+    my $out;
+    #show header
+    unless ( params::is_json() || ( $params->{template} =~ /\.txt/ ) ) {
+        my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+        $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+        $out .= template::process( $config, template::check( $config, 'default.html' ), $headerParams );
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
+    uac::check($config, $params, $user_presets);
 
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-
-#set user at params->presets->user
-$request = uac::prepare_request( $request, $user_presets );
-
-$params = $request->{params}->{checked};
-
-#show header
-unless ( params::isJson() || ( $params->{template} =~ /\.txt/ ) ) {
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
+    $config->{access}->{write} = 0;
+    if ( $params->{action} eq 'send' ) {
+        return sendMail( $config, $request );
+    }
+    return $out . show_events( $config, $request );
 }
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-$config->{access}->{write} = 0;
-if ( $params->{action} eq 'send' ) {
-    sendMail( $config, $request );
-    return;
-}
-show_events( $config, $request );
 
 #show existing event history
 sub show_events {
@@ -80,14 +58,13 @@ sub show_events {
 
     for my $attr ( 'project_id', 'studio_id') {    # 'series_id','event_id'
         unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to show changes" );
+            ParamError->throw(error=> "missing " . $attr . " to show changes" );
             return;
         }
     }
 
     unless ( $permissions->{read_event} == 1 ) {
-        uac::print_error("missing permissions to show changes");
-        return;
+        PermissionError->throw(error=> "missing permissions to show changes");
     }
 
     # get events
@@ -120,7 +97,7 @@ sub show_events {
     }
 
     $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'notify-events' } );
-    template::process( $config, 'print', $params->{template}, $params );
+    return template::process( $config, $params->{template}, $params );
 
 }
 
@@ -132,14 +109,13 @@ sub sendMail {
 
     for my $attr ( 'project_id', 'studio_id', 'series_id', 'event_id' ) {
         unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to send notification" );
+            ParamError->throw(error=> "missing " . $attr . " to send notification" );
             return;
         }
     }
 
     unless ( $permissions->{read_event} == 1 ) {
-        uac::print_error("missing permissions to send notification");
-        return;
+        PermissionError->throw(error=> "missing permissions to send notification");
     }
 
     my $options = {
@@ -153,8 +129,7 @@ sub sendMail {
     my $events = series::get_events( $config, $options );
 
     unless ( scalar(@$events) == 1 ) {
-        uac::print_error("did not found exactly one event");
-        return;
+        ExistError->throw(error=> "did not found exactly one event");
     }
 
     my $mail = getMail( $config, $request, $events->[0] );
@@ -163,7 +138,6 @@ sub sendMail {
     $mail->{Subject} = $params->{subject} if defined $params->{subject};
     $mail->{Data}    = $params->{content} if defined $params->{content};
     my $result = mail::send($mail);
-    print "Content-type:text/plain\n\nresult:".Dumper($result);
 }
 
 sub getMail {
@@ -215,7 +189,6 @@ sub eventToText {
     $s .= $event->{topic} . "\n";
     $s .= $event->{content} . "\n";
 
-    #print STDERR "DUMP\n$s";
     return $s;
 
 }

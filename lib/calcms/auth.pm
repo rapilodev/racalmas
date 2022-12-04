@@ -6,49 +6,29 @@ no warnings 'redefine';
 
 use CGI::Simple();
 use CGI::Cookie();
-
-use Data::Dumper;
 use Authen::Passphrase::BlowfishCrypt();
-use time();
 use user_sessions ();
+use localization ();
 
-#use base 'Exporter';
-our @EXPORT_OK = qw(get_user login logout crypt_password);
 my $defaultExpiration = 60;
 
-#TODO: remove CGI
-sub get_user($$$) {
-    my ($config, $params, $cgi) = @_;
-
-    # login or logout on action
-    if ( defined $params->{authAction} ) {
-        if ( $params->{authAction} eq 'login' ) {
-            my $user = login( $config, $params->{user}, $params->{password} );
-            $cgi->delete( 'user', 'password', 'uri', 'authAction' ) if defined $cgi;
-            return $user;
-        } elsif ( $params->{authAction} eq 'logout' ) {
-            $cgi = new CGI::Simple() unless defined $cgi;
-            logout($config, $cgi);
-            $cgi->delete( 'user', 'password', 'uri', 'authAction' );
-            return undef;
+sub get_session($$) {
+    my ($config, $params) = @_;
+    if (defined $params->{authAction}) {
+        if ($params->{authAction} eq 'login') {
+            my ($user, $password, $uri) = ($params->{user}, $params->{password}, $params->{uri});
+            print login($config, $user, $password) .  new CGI::Simple()->redirect($uri);
+            exit;
+        } elsif ($params->{authAction} eq 'logout') {
+            print logout($config);
+            LogoutDone->throw;
         }
     }
-
-    # read session id from cookie
     my $session_id = read_cookie();
-
-    # login if no cookie found
-    return show_login_form( $params->{user}, 'Please login' ) unless defined $session_id;
-
-    # read session
-    my $session = read_session($config, $session_id);
-
-    # login if user not found
-    return show_login_form( $params->{user}, 'unknown User' ) unless defined $session;
-
-    $params->{user}    = $session->{user};
-    $params->{expires} = $session->{expires};
-    return $session->{user}, $session->{expires};
+    my $session    = read_session($config, $session_id);
+    $params->{$_} = $session->{$_} for qw (user expires);
+    $session->{params} = $params;
+    return $session;
 }
 
 sub crypt_password($) {
@@ -67,92 +47,69 @@ sub crypt_password($) {
 
 sub login($$$) {
     my ($config, $user, $password) = @_;
-    my $result = authenticate( $config, $user, $password );
-
-    return show_login_form( $user, 'Could not authenticate you' ) unless defined $result;
-    return unless defined $result->{login} eq '1';
-
-    my $timeout = $result->{timeout} || $defaultExpiration;
-    my $session_id = create_session( $config, $user, $timeout * 60 );
-
-    # here timeout is in minutes
-    $timeout = '+' . $timeout . 'm';
-    return $user if create_cookie( $session_id, $timeout );
-    return undef;
+    my $timeout    = authenticate($config, $user, $password);
+    my $session_id = create_session($config, $user, $timeout * 60);
+    return create_cookie($session_id, '+' . $timeout . 'm');
 }
 
-#TODO: remove cgi
-sub logout($$) {
-    my ($config, $cgi) = @_;
+sub logout($) {
+    my ($config) = @_;
     my $session_id = read_cookie();
-    unless ( delete_session($config, $session_id) ) {
-        return show_login_form( 'Cant delete session', 'logged out' );
-    }
-    unless ( delete_cookie($cgi) ) {
-        return show_login_form( 'Cant remove cookie', 'logged out' );
-    }
-    my $uri = $ENV{HTTP_REFERER} || '';
-    $uri =~ s/authAction=logout//g;
-    print $cgi->redirect($uri);
-    return;
+    delete_session($config, $session_id);
+    delete_cookie();
+    my $uri = params::get_uri() || '';
+    $uri =~ s/authAction=logout//;
+    return CGI::Simple->new()->redirect($uri);
 }
 
 #read and write data from browser, http://perldoc.perl.org/CGI/Cookie.html
 sub create_cookie($$) {
     my ($session_id, $timeout) = @_;
     my $cookie = CGI::Cookie->new(
-        -name    => 'sessionID',
-        -value   => $session_id,
-        -expires => $timeout,
-        -secure  => 1,
-        -samesite=>  "Lax"
+        -name     => 'sessionID',
+        -value    => $session_id,
+        -expires  => $timeout,
+        -secure   => 1,
+        -samesite => "Lax"
     );
-    print "Set-Cookie: " . $cookie->as_string . "\n";
-
-    return 1;
+    return CGI::Simple->new()->header(-cookie => $cookie);
 }
 
 sub read_cookie() {
     my %cookie = CGI::Cookie->fetch;
     my $cookie = $cookie{'sessionID'};
-    return undef unless defined $cookie;
-    my $session_id = $cookie->value || undef;
+    SessionError->throw(message => 'please_login') unless defined $cookie;
+    my $session_id = $cookie->value;
+    SessionError->throw(message => 'please_login') unless defined $session_id;
     return $session_id;
 }
 
-#TODO: remove CGI
-sub delete_cookie($) {
-    my ($cgi) = @_;
-    my $cookie = $cgi->cookie(
+sub delete_cookie() {
+    my $cookie = CGI::Cookie->new(
         -name    => 'sessionID',
         -value   => '',
         -expires => '+1s'
-    );
-    print $cgi->header( -cookie => $cookie );
-    return 1;
+        -secure   => 1,
+        -samesite => "Lax"
+    )->bake;
 }
 
 # read and write server-side session data
 # timeout is in seconds
 sub create_session ($$$) {
     my ($config, $user, $timeout) = @_;
-    my $session_id = user_sessions::start( 
-        $config, {
-            user       => $user,
-            timeout    => $timeout,
+    return user_sessions::start(
+        $config,
+        {
+            user    => $user,
+            timeout => $timeout,
         }
     );
-    return $session_id;
 }
 
 sub read_session($$) {
     my ($config, $session_id) = @_;
-
-    return undef unless defined $session_id;
-
-    my $session = user_sessions::check( $config, { session_id => $session_id } );
-    return undef unless defined $session;
-
+    my $session = user_sessions::check($config, { session_id => $session_id });
     return {
         user    => $session->{user},
         expires => $session->{expires_at}
@@ -162,8 +119,7 @@ sub read_session($$) {
 sub delete_session($$) {
     my ($config, $session_id) = @_;
     return unless defined $session_id;
-    user_sessions::stop( $config, { session_id => $session_id } );
-    return 1;
+    user_sessions::stop($config, { session_id => $session_id });
 }
 
 #check user authentication
@@ -178,50 +134,45 @@ sub authenticate($$$) {
 		where 	name=?
 	};
     my $bind_values = [$user];
-
-    my $users = db::get( $dbh, $query, $bind_values );
-
-    if ( scalar(@$users) != 1 ) {
-        print STDERR "auth: did not find user '$user'\n";
-        return undef;
-    }
+    my $users       = db::get($dbh, $query, $bind_values);
+    LoginError->throw(user => $user, message => 'authentication_failed')
+        if scalar(@$users) != 1;
 
     my $salt = $users->[0]->{salt};
-    my $ppr = Authen::Passphrase::BlowfishCrypt->from_crypt( $users->[0]->{pass}, $users->[0]->{salt} );
+    my $ppr = Authen::Passphrase::BlowfishCrypt->from_crypt($users->[0]->{pass},
+        $users->[0]->{salt});
+    LoginError->throw(user => $user, message => 'authentication_failed')
+        unless $ppr->match($password);
+    LoginError->throw(user => $user, message => 'authentication_failed')
+        if $users->[0]->{disabled} == 1;
 
-    return undef unless $ppr->match($password);
-    if ( $users->[0]->{disabled} == 1 ) {
-        print STDERR "user '$user' is disabled\n";
-        return undef;
-    }
-
-    # timeout in seconds
-    my $timeout = $users->[0]->{session_timeout} || 120;
+    my $timeout = $users->[0]->{session_timeout} || $defaultExpiration;
     $timeout = 60 if $timeout < 60;
-
-    return {
-        timeout => $timeout,
-        login   => 1
-    };
+    return $timeout;
 }
 
-sub show_login_form ($$) {
-    my ($user, $message) = @_;
-    my $uri     = $ENV{HTTP_REFERER} || '';
+sub show_login_form ($$$) {
+    my ($config, $user, $message) = @_;
+    my $loc = localization::get( $config, { user => $user, file => 'login' } );
+    my $uri = params::get_uri() // '';
+    $uri =~ s/_=\d+//;
     my $requestReset = '';
-
-    if ( ( $user ne '' ) && ( $message ne '' ) ) {
+    if ($user and $message) {
         $requestReset = qq{
-            <a href="request-password.cgi?user=$user">Passwort vergessen?</a>
+            <a href="request-password.cgi?user=$user">$loc->{password_lost}</a>
         };
     }
 
-    print qq{Content-type:text/html
+    return qq{
+Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+Pragma: no-cache
+Expires: 0
+Content-type:text/html
 
-<!DOCTYPE HTML>        
+<!DOCTYPE HTML>
 <html>
 <head>
-<meta charset="UTF-8"> 
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style type="text/css">
     *{
@@ -236,7 +187,7 @@ sub show_login_form ($$) {
     }
 
     body{
-        display: table; 
+        display: table;
         margin: 0 auto;
     }
 
@@ -250,8 +201,8 @@ sub show_login_form ($$) {
 
     .container{
         height: 100%;
-        display: table-cell;   
-        vertical-align: middle;    
+        display: table-cell;
+        vertical-align: middle;
     }
 
     input{
@@ -269,8 +220,13 @@ sub show_login_form ($$) {
         animation-name:form;
         animation-duration: 1s;
         animation-timing-function:ease;
-
 	}
+
+    button:hover{
+        scale:1.1;
+        box-shadow: 1rem 1rem 1rem #eee;
+        transition: all 0.1s ease;
+    }
 
 	#login_form .field{
 		width:8rem;
@@ -286,12 +242,16 @@ sub show_login_form ($$) {
         margin:-1rem;
         margin-bottom:0;
 	}
-    input.button{
-        padding:1rem;        
+    input.button,
+    button.button{
+        padding:1rem;
+        margin-left:2rem;
+        margin-right:2rem;
         color:#fff;
         background:#39a1f4;
         border:0;
         font-weight:bold;
+        cursor:pointer;
     }
     a{
         text-decoration:none;
@@ -311,26 +271,25 @@ sub show_login_form ($$) {
         00%   { box-shadow: 0rem 0rem 1rem #eee; transform: translateX(1rem) translateY(1rem);}
         100% { box-shadow: 1rem 1rem 1rem #eee; transform: translateX(0) translateY(0);}
     }
-    
 </style>
 </head>
 <body>
 
 <div class="container">
     <div id="login_form">
-	    <div class="message">$message</div><br/>
+	    <div class="message">}.($loc->{$message}//$message).qq{</div><br/>
 	    <form method="post">
             <div class="row">
-		        <div class="field">user</div>
+		        <div class="field">$loc->{user}</div>
 		        <input name="user" value="$user"><br/>
             </div>
             <div class="row">
-		        <div class="field">password</div>
+		        <div class="field">$loc->{password}</div>
 		        <input type="password" name="password"><br/>
             </div>
             <div class="row">
-		        <input class="button" type="submit" name="authAction" value="login">
-		        <input class="button" type="submit" name="authAction" value="logout">
+		        <button class="button" type="submit" name="authAction" value="logout" style="opacity:0.5">$loc->{logout}</button>
+                <button class="button" type="submit" name="authAction" value="login">$loc->{login}</button>
             </div>
 		    <input type="hidden" name="uri" value="$uri">
 	    </form>
@@ -340,7 +299,6 @@ sub show_login_form ($$) {
 </body>
 </html>
 };
-    return undef;
 }
 
 #do not delete last line!

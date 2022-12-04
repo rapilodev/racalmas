@@ -4,10 +4,16 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
+use Scalar::Util qw( blessed );
+use JSON;
+use Try::Tiny qw(try catch finally);
 use CGI::Session qw(-ip-match);
 use CGI::Cookie();
 use Data::Dumper;
+use List::Util qw(none all);
+
 use auth();
+use params();
 use db();
 use template();
 use project();
@@ -40,10 +46,7 @@ sub get_user($$) {
 
     my $dbh = db::connect($config);
     my $users = db::get( $dbh, $query, $bind_values );
-    if ( scalar @$users != 1 ) {
-        print STDERR "cannot find user '$user'\n";
-        return undef;
-    }
+    UserError->throw(error => "cannot find user '$user'\n") if scalar @$users != 1;
     return $users->[0];
 }
 
@@ -254,7 +257,7 @@ sub get_studio_roles($$) {
     my $query = qq{
 		select	r.*, ur.studio_id, ur.project_id
 		from 	calcms_roles r, calcms_user_roles ur
-		where 	r.id=ur.role_id 
+		where 	r.id=ur.role_id
 		$conditions
 	};
 
@@ -332,7 +335,7 @@ sub update_role($$) {
     push @bind_values, $entry->{id};
 
     my $query = qq{
-		update calcms_roles 
+		update calcms_roles
 		set $values
 		where id=?
 	};
@@ -347,7 +350,7 @@ sub delete_role($$) {
     return unless ( defined $id && ( $id =~ /^\d+$/ ) );
 
     my $query = qq{
-		delete from calcms_roles 
+		delete from calcms_roles
 		where id=?
 	};
     my $dbh = db::connect($config);
@@ -385,7 +388,7 @@ sub get_user_roles($$) {
     my $query = qq{
 		select	distinct r.*
 		from 	calcms_users u, calcms_user_roles ur, calcms_roles r
-		where 	ur.user_id=u.id and ur.role_id=r.id 
+		where 	ur.user_id=u.id and ur.role_id=r.id
 			$conditions
 	};
 
@@ -437,7 +440,7 @@ sub get_admin_user_roles ($$) {
 		select	distinct r.*, ur.studio_id, ur.project_id
 		from 	calcms_users u, calcms_user_roles ur, calcms_roles r
 		where 	ur.user_id=u.id and ur.role_id=r.id and r.admin=1
-			$conditions
+    			$conditions
 		limit 1
 	};
 
@@ -525,7 +528,7 @@ sub assign_user_role($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'user_id', 'role_id') {
-        return undef unless defined $options->{$_}
+        ParamError->throw(error=>"assign_user_role: missing $_") unless defined $options->{$_}
     }
 
     #return if already exists
@@ -556,7 +559,7 @@ sub remove_user_role($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'user_id', 'role_id') {
-        return undef unless defined $options->{$_}
+        ParamError->throw(error=>"remove_user_role: missing $_") unless defined $options->{$_}
     }
 
     my $query = qq{
@@ -578,10 +581,10 @@ sub is_user_assigned_to_studio ($$) {
 
     my $config = $request->{config};
     for ('project_id', 'studio_id') {
-        return 0 unless defined $options->{$_}
+        ParamError->throw(error=>"is_user_assigned_to_studio: missing $_") unless defined $options->{$_}
     }
-    return 0 unless defined $request->{user};
- 
+    ParamError->throw(error=>"is_user_assigned_to_studio: missing user") unless defined $request->{user};
+
     my $user_studios = uac::get_studios_by_user( $config, {
         user       => $request->{user},
         studio_id  => $options->{studio_id},
@@ -594,23 +597,8 @@ sub is_user_assigned_to_studio ($$) {
 # call after header is printed
 sub check($$$) {
     my ($config, $params, $user_presets) = @_;
-    if ( defined $user_presets->{error} ) {
-        uac::print_error( $user_presets->{error} );
-        return 0;
-    }
-
-    my $project_check = project::check( $config, { project_id => $params->{project_id} } );
-    if ( $project_check ne '1' ) {
-        uac::print_error($project_check);
-        return 0;
-    }
-
-    my $studio_check = studios::check( $config, { studio_id => $params->{studio_id} } );
-    if ( $studio_check ne '1' ) {
-        uac::print_error($studio_check);
-        return 0;
-    }
-    return 1;
+    project::check( $config, { project_id => $params->{project_id} } );
+    studios::check( $config, { studio_id => $params->{studio_id} } );
 }
 
 # get user, projects and studios user is assigned to for selected values from params
@@ -620,8 +608,7 @@ sub get_user_presets($$) {
     my ($config, $options) = @_;
 
     my $user = $options->{user} || '';
-    my $error = undef;
-    return { error => "no user selected" } if ( $user eq '' );
+    UacError->throw(error => "no user selected") if $user eq '';
 
     my $project_id = $options->{project_id} || '';
     my $studio_id  = $options->{studio_id}  || '';
@@ -637,43 +624,31 @@ sub get_user_presets($$) {
 
     #get all projects by user
     my $projects = uac::get_projects_by_user( $config, { user => $user } );
-    return { error => "no project is assigned to user" } if scalar @$projects == 0;
+    UacError->throw(error => "no project is assigned to user") if scalar @$projects == 0;
 
     $projects = project::get($config) if ( @$admin_roles > 0 );
     my @projects = reverse sort { $a->{end_date} cmp $b->{end_date} } (@$projects);
     $projects = \@projects;
 
     if ( $project_id ne '' && $project_id ne '-1' ) {
-        my $projectFound = 0;
-        for my $project (@$projects) {
-            if ( $project->{project_id} eq $project_id ) {
-                $projectFound = 1;
-                last;
-            }
-        }
-        return { error => "project is not assigned to user" } if ( $projectFound == 0 );
+        UacError->throw( error => "project $project_id is not assigned to user $user")
+        if none { $_->{project_id} eq $project_id } @projects;
     } else {
         $project_id = $projects->[0]->{project_id};
     }
 
     #check if studios are assigned to project
     my $studios = project::get_studios( $config, { project_id => $project_id } );
-    $error = "no studio is assigned to project" if scalar @$studios == 0;
+    UacError->throw(error => "no studio is assigned to project") if scalar @$studios == 0;
 
     if ( scalar @$admin_roles == 0 ) {
 
         #get all studios by user
         $studios = uac::get_studios_by_user( $config, { user => $user, project_id => $project_id } );
-        $error = "no studio is assigned to user" if scalar @$studios == 0;
+        UacError->throw(error =>"no studio is assigned to user") if scalar @$studios == 0;
         if ( ( $studio_id ne '' ) && ( $studio_id ne '-1' ) ) {
-            my $studioFound = 0;
-            for my $studio (@$studios) {
-                if ( $studio->{id} eq $studio_id ) {
-                    $studioFound = 1;
-                    last;
-                }
-            }
-            $error = "studio is not assigned to user" if ( $studioFound == 0 );
+            UacError->throw(error=>"studio is not assigned to user")
+            if none { $_->{id} eq $studio_id } @$studios;
         } else {
             $studio_id = $studios->[0]->{id} unless defined $studio_id;
         }
@@ -682,14 +657,8 @@ sub get_user_presets($$) {
         #for admin get studios by project
         $studios = studios::get( $config, { project_id => $project_id } );
         if ( ( $studio_id ne '' ) && ( $studio_id ne '-1' ) ) {
-            my $studioFound = 0;
-            for my $studio (@$studios) {
-                if ( $studio->{id} eq $studio_id ) {
-                    $studioFound = 1;
-                    last;
-                }
-            }
-            $error = "studio is not assigned to project" if ( $studioFound == 0 );
+            UacError->throw(error=>"studio $studio_id is not assigned to project $project_id")
+            if none { $_->{id} eq $studio_id } @$studios;
         } else {
             $studio_id = $studios->[0]->{id} unless defined $studio_id;
         }
@@ -739,7 +708,6 @@ sub get_user_presets($$) {
         permissions => $permissions,      # from parameter or default
         config      => $config
     };
-    $result->{error} = $error if defined $error;
     return $result;
 }
 
@@ -788,19 +756,18 @@ sub set_template_permissions ($$) {
 sub permissions_denied($) {
     my ($message) = @_;
     $message =~ s/_/ /g;
-    print '<div class="error">Sorry! Missing permissions to ' . $message . '</div>' . "\n";
-    print STDERR 'Sorry! Missing permissions to ' . $message . "\n";
+    PermissionError->throw(error=>'Missing permissions to ' . $message);
 }
 
 sub print_info($) {
-    print '<div class="ok head">'
+    return '<div class="ok head">'
       . '<span class="ui-icon ui-icon-check" style="float:left"></span>&nbsp;'
       . $_[0]
       . '</div>' . "\n";
 }
 
 sub print_warn($) {
-    print '<div class="warn head">'
+    return '<div class="warn head">'
       . '<span class="ui-icon ui-icon-info" style="float:left"></span>&nbsp;'
       . $_[0]
       . '</div>' . "\n";
@@ -813,6 +780,87 @@ sub print_error ($) {
       . '<span class="ui-icon ui-icon-alert" style="float:left"></span>&nbsp;'
       . $message
       . '</div>' . "\n";
+}
+
+sub json {
+    my ($obj) = @_;
+    return qq{Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+Pragma: no-cache
+Expires: 0
+Content-Type:application/json; charset=utf-8
+
+} . JSON->new->canonical->utf8(0)->encode($obj) . "\n";
+}
+
+sub error_handler {
+    print STDERR Dumper(\@_);
+    my $last = $_[-1];
+    if (blessed($last) and $last->isa("APR::Request::Error")){
+        print json({error => $last->{func}});    
+    }
+    return json({
+            error => ref $_[0] eq 'SCALAR' ? $_[0]: $_[0]->{message} // $_[0]->{error} //'',
+            "status" => 200
+        }, 200) if blessed $_[0];
+    die @_;
+};
+
+sub init{
+    my ($r, $check_params, $main, $options) = @_;
+    binmode STDOUT, ":encoding(utf8)";
+    try {
+        my ($params, $fh) = params::get($r, $options);
+        my $config = config::get('../config/config.cgi');
+        my $session = try {
+            return auth::get_session($config, $params);
+        } catch {
+            if (blessed $_ and $_->isa('AuthError') and !params::is_json) {
+                print auth::show_login_form($config, '', $_->message // $_->error);
+                exit;
+            }
+            AuthError->throw(error=>"session not found");
+        };
+        $params = $session->{params};
+
+        my $user_presets = uac::get_user_presets(
+            $config,
+            {
+                user       => $session->{user},
+                project_id => $params->{project_id},
+                studio_id  => $params->{studio_id}
+            }
+        );
+        $params->{default_studio_id} = $user_presets->{studio_id};
+        $params = uac::setDefaultStudio( $params, $user_presets );
+        $params = uac::setDefaultProject( $params, $user_presets );
+
+        my $request = {
+            url => $ENV{QUERY_STRING} || '',
+            params => {
+                original => $params,
+                checked  => $check_params->( $config, $params ),
+            },
+        };
+
+        #set user at params->presets->user
+        $request = uac::prepare_request( $request, $user_presets );
+        print $main->($config, $session, $params, $user_presets, $request, $fh);
+    } catch {
+        print STDERR uac::error_handler(@_);
+        exit if $_->isa ("APR::Error");
+        # ^ silent quit on exit
+        print uac::error_handler(@_);
+    };
+}
+
+sub set {
+    my ($entry, @fields) = @_;
+    return wantarray ? %$entry{@fields} : { map { $_ => $entry->{$_} } @fields };
+}
+
+sub missing {
+    my ($entry, @fields) = @_;
+    return grep {!defined $entry->{$_}} @fields;
 }
 
 #do not delete last line!

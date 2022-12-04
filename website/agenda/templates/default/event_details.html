@@ -29,7 +29,7 @@ Access-Control-Allow-Origin: *
 			    <TMPL_VAR full_title_no_series>
 
 			    <div style="font-size:1rem">
-			    <TMPL_VAR weekday_name>, <TMPL_VAR start_date_name>, 
+			    <TMPL_VAR weekday_name>, <TMPL_VAR start_date_name>,
 			    <span style="font-size:1.5rem"><TMPL_VAR start_time_name></span> bis <TMPL_VAR end_time_name> Uhr
 			    </div>
 
@@ -37,7 +37,7 @@ Access-Control-Allow-Origin: *
 
 			<TMPL_IF program> (<TMPL_VAR program>)</TMPL_IF>
 		</div>
-		<div class="content description" > 
+		<div class="content description" >
 			<TMPL_VAR excerpt > <TMPL_VAR user_excerpt >
             <TMPL_IF excerpt><hr><TMPL_ELSE><TMPL_IF user_excerpt><hr></TMPL_IF></TMPL_IF>
 
@@ -60,8 +60,8 @@ Access-Control-Allow-Origin: *
             </TMPL_IF>
 
 			<TMPL_VAR topic escape=none><TMPL_VAR content escape=none>
-            <TMPL_IF listen_url><audio 
-                controls 
+            <TMPL_IF listen_url><audio
+                controls
                 src="<TMPL_VAR listen_url>"
                 title="Sendung nachh&ouml;ren"
                 ></audio></TMPL_IF>

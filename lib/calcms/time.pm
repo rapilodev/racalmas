@@ -12,6 +12,9 @@ use Date::Manip();
 use POSIX qw(strftime);
 use Data::Dumper;
 
+use Try::Tiny;
+use Scalar::Util qw( blessed );
+
 use config();
 
 our @EXPORT_OK = qw(
@@ -170,11 +173,11 @@ sub datetime_to_time ($){
         my $hour   = $4;
         my $minute = $5;
         my $second = $8 || 0;
-        return Time::Local::timelocal( $second, $minute, $hour, $day, $month, $year ) || print STDERR "datetime_to_time: no valid date time found! ($datetime)\n";
+        return (Time::Local::timelocal( $second, $minute, $hour, $day, $month, $year )
+            or TimeCalcError->throw(error=> "datetime_to_time: no valid date time found! ($datetime)\n"));
 
     } else {
-        print STDERR "datetime_to_time: no valid date time found! ($datetime)\n";
-        return -1;
+        TimeCalcError->throw(error=> "datetime_to_time: no valid date time found! ($datetime)\n");
     }
 }
 
@@ -350,23 +353,19 @@ sub get_duration_seconds($$;$) {
     $timezone ||= 'UTC';
 
     unless ( defined $start ) {
-        print STDERR "time::get_duration_seconds(): start is missing\n";
-        return 0;
+        TimeCalcError->throw(error=>"time::get_duration_seconds(): start is missing\n");
     }
     unless ( defined $end ) {
-        print STDERR "time::get_duration_seconds(): end is missing\n";
-        return 0;
+        TimeCalcError->throw(error=>"time::get_duration_seconds(): end is missing\n");
     }
 
     $start = time::get_datetime( $start, $timezone );
     $end   = time::get_datetime( $end,   $timezone );
     unless ( defined $start ) {
-        print STDERR "time::get_duration_seconds(): invalid start\n";
-        return 0;
+        TimeCalcError->throw(error=>"time::get_duration_seconds(): invalid start\n");
     }
     unless ( defined $end ) {
-        print STDERR "time::get_duration_seconds(): invalid end\n";
-        return 0;
+        TimeCalcError->throw(error=>"time::get_duration_seconds(): invalid end\n");
     }
     my $duration = $end->epoch() - $start->epoch();
     return $duration;
@@ -458,7 +457,7 @@ sub check_time($) {
     if ( $time =~ /(\d\d?)\:(\d\d?)/ ) {
         return $1 . ':' . $2;
     }
-    return -1;
+    TimeCalcError->throw(error=>"invalid time\n");
 }
 
 sub check_datetime($) {
@@ -468,7 +467,7 @@ sub check_datetime($) {
     if ( $date =~ /(\d\d\d\d)\-(\d\d?)\-(\d\d?)[T ](\d\d?)\:(\d\d?)/ ) {
         return sprintf( "%04d-%02d-%02dT%02d:%02d", $1, $2, $3, $4, $5 );
     }
-    return -1;
+    TimeCalcError->throw(error=>"invalid datetime\n");
 }
 
 sub check_year_month($) {
@@ -478,7 +477,7 @@ sub check_year_month($) {
     if ( $date =~ /(\d\d\d\d)\-(\d\d?)/ ) {
         return $1 . '-' . $2 . '-' . $3;
     }
-    return -1;
+    TimeCalcError->throw(error=>"invalid year or month\n");
 }
 
 #TODO: remove config dependency

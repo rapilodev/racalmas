@@ -5,6 +5,8 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use Scalar::Util qw( blessed );
+use Try::Tiny;
 
 use params();
 use config();
@@ -23,52 +25,27 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
 
-#print STDERR $params->{project_id}."\n";
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id},
-        user       => $user
+    #process header
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    my $out =  template::process( $config, template::check( $config, 'create-events-header.html' ), $headerParams );
+    uac::check($config, $params, $user_presets);
+
+    my $permissions = $request->{permissions};
+    PermissionError->throw(error=>'Missing permission to create_event_from_schedule')
+    unless $permissions->{create_event_from_schedule} == 1;
+    
+    if ( $params->{action} eq 'create_events' ) {
+        return $out . create_events( $config, $request );
+    } else {
+        return $out . show_events( $config, $request );
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
-
-#print STDERR $params->{project_id}."\n";
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
-$params = $request->{params}->{checked};
-
-#process header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'create-events-header.html' ), $headerParams );
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-my $permissions = $request->{permissions};
-unless ( $permissions->{create_event_from_schedule} == 1 ) {
-    uac::permissions_denied('create_event_from_schedule');
-    return;
-}
-
-if ( $params->{action} eq 'create_events' ) {
-    create_events( $config, $request );
-} else {
-    show_events( $config, $request );
 }
 
 sub show_events {
@@ -77,18 +54,15 @@ sub show_events {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{assign_series_events} == 1 ) {
-        uac::permissions_denied('read_events');
-        return;
+        PermissionError->throw(error=>'Missing permission to read_events');
     }
 
     my $events = getDates( $config, $request );
     $params->{events} = $events;
     $params->{total}  = scalar(@$events);
     $params->{action} = 'show';
-    $params->{loc} =
-      localization::get( $config, { user => $params->{presets}->{user}, file => 'create-events' } );
-    template::process( $config, 'print', $params->{template}, $params );
-
+    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'create-events' } );
+    return template::process( $config, $params->{template}, $params );
 }
 
 sub create_events {
@@ -97,8 +71,7 @@ sub create_events {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{assign_series_events} == 1 ) {
-        uac::permissions_denied('assign_series_events');
-        return;
+        PermissionError->throw(error=>'Missing permission to assign_series_events');
     }
 
     print STDERR "create events\n";
@@ -116,7 +89,7 @@ sub create_events {
     $params->{action} = 'created';
     $params->{loc} =
       localization::get( $config, { user => $params->{presets}->{user}, file => 'create-events' } );
-    template::process( $config, 'print', $params->{template}, $params );
+    return template::process( $config, $params->{template}, $params );
 }
 
 sub getDates {
@@ -125,8 +98,7 @@ sub getDates {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{read_event} == 1 ) {
-        uac::permissions_denied('read_event');
-        return;
+        PermissionError->throw(error=>'Missing permission to read_event');
     }
 
     my $project_id = $params->{project_id};
@@ -184,7 +156,7 @@ sub createEvent {
 
     $date->{show_new_event_from_schedule} = 1;
     unless ( $permissions->{create_event_from_schedule} == 1 ) {
-        uac::permissions_denied('create_event_from_schedule');
+        PermissionError->throw(error=>'Missing permission to create_event_from_schedule');
         return;
     }
 
@@ -200,12 +172,11 @@ sub createEvent {
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
+    my ($config, $params) = @_;
 
     my $checked = {};
 
-    $checked->{action} = entry::element_of($params->{action}, 
+    $checked->{action} = entry::element_of($params->{action},
         ['create_events', 'show_events'])//'';
 
     $checked->{exclude}  = 0;

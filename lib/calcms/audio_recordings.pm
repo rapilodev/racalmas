@@ -67,7 +67,7 @@ sub get($$) {
     $whereClause = " where " . join( " and ", @$conditions ) if ( scalar @$conditions > 0 );
 
     my $query = qq{
-		select	id 
+		select	id
 		        ,project_id
 				,studio_id
 				,event_id
@@ -142,11 +142,11 @@ sub update($$) {
 
     my $query = qq{
         update calcms_audio_recordings
-        set    path=?, size=?, 
-               created_by=?, created_at=?, 
+        set    path=?, size=?,
+               created_by=?, created_at=?,
                modified_at=?,
                processed=?, mastered=?,
-               eventDuration=?, audioDuration=?, 
+               eventDuration=?, audioDuration=?,
                rmsLeft=?, rmsRight=?
         where  project_id=? and studio_id=? and event_id=?
     };
@@ -164,7 +164,7 @@ sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'event_id', 'path') {
-        return undef unless defined $entry->{$_}
+        ParamError->throw(error => "audio-recordings: missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -193,7 +193,7 @@ sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'event_id', 'path') {
-        return undef unless defined $entry->{$_}
+        ParamError->throw(error => "audio-recordings: missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -209,9 +209,35 @@ sub delete ($$) {
     return $result;
 }
 
-sub error($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
+sub update_active($$$) {
+    my ($config, $dbh, $entry) = @_;
+
+    for ('project_id', 'studio_id', 'event_id') {
+        ParamError->throw(error => "audio-recordings: missing $_") unless defined $entry->{$_}
+    };
+
+    my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{event_id} ];
+    my $query = qq{
+        update calcms_audio_recordings
+        set    active=0
+        where  project_id=? and studio_id=? and event_id=? and active=1
+    };
+    db::put( $dbh, $query, $bind_values );
+
+    $query = qq{
+        select max(id) id from calcms_audio_recordings
+        where  project_id=? and studio_id=? and event_id=?
+    };
+    my $entries = db::get( $dbh, $query, $bind_values );
+    my $max = $entries->[0];
+    return undef unless defined $max->{id};
+
+    $query = qq{
+        update calcms_audio_recordings
+        set    active=1
+        where  id=?
+    };
+    return db::put( $dbh, $query, [$max->{id}] );
 }
 
 #do not delete last line!

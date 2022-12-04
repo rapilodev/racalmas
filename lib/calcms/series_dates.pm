@@ -109,7 +109,7 @@ sub is_event_scheduled($$) {
     my ($request, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'start_at') {
-        return 0 unless defined $options->{$_}
+        ParamError->throw(error => "missing $_") unless defined $options->{$_}
     };
 
     my $config    = $request->{config};
@@ -281,7 +281,7 @@ sub update($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        return undef unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -349,7 +349,6 @@ sub update($$) {
             $j++;
         }
     }
-    #print STDERR "$i series_dates updates\n";
     return $j . " dates out of studio times, " . $i;
 }
 
@@ -502,14 +501,14 @@ sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        return unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete 
-		from calcms_series_dates 
+		delete
+		from calcms_series_dates
 		where project_id=? and studio_id=? and series_id=?
 	};
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id} ];
@@ -522,7 +521,7 @@ sub getDatesWithoutEvent ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'form', 'till') {
-        return unless defined $options->{$_}
+        ParamError->throw(error => "missing $_") unless defined $options->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -531,10 +530,10 @@ sub getDatesWithoutEvent ($$) {
     my $query = qq{
         SELECT sd.* 
         FROM calcms_series_dates sd LEFT JOIN calcms_events e
-        on (sd.start = e.start) 
+        on (sd.start = e.start)
         where e.start is null
         and sd.exclude != 1
-        and sd.project_id = ? 
+        and sd.project_id = ?
         and sd.studio_id  = ?
         $cond
         and sd.start      > ? 
@@ -550,11 +549,6 @@ sub getDatesWithoutEvent ($$) {
     my $entries = db::get( $dbh, $query, $bind_values );
     return $entries;
 
-}
-
-sub error($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

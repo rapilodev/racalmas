@@ -1,3 +1,5 @@
+var green = "#6f6";
+
 function updateCalendarLink(){
     var link=$('a#menu_calendar');
     var url=link.attr('href');
@@ -15,7 +17,7 @@ function onDateModified(){
     var startDate=parseDateTime($('#start_date').val());
     var weekday=getWeekday(startDate);
     $('#start_date_weekday').html(weekday);
-    
+
     updateCalendarLink();
 }
 
@@ -34,7 +36,7 @@ function hideSelectRerun(resultSelector, tillDate){
     $('#import_rerun').hide();
 
     $('.buttons').show();
-    $('#edit_event').show();    
+    $('#edit_event').show();
 }
 
 function selectOldEventFromSeries(resultSelector, tillDate){
@@ -43,15 +45,17 @@ function selectOldEventFromSeries(resultSelector, tillDate){
     $('#import_rerun_header').show('slideUp');
     if ($('#import_rerun_header').css('display')=='none')return;
 
-    var url='select-event.cgi?'
-    url+='project_id='+getProjectId();
-    url+='&studio_id='+getStudioId();
-    url+='&series_id='+getUrlParameter('series_id');
-    url+='&event_id='+getUrlParameter('event_id');
-    url+="&resultElemId="+encodeURIComponent(resultSelector);
-    url+="&till_date="+tillDate;
-    url+="&selectRange=1";
-    
+    var url='select-event.cgi?' + new URLSearchParams({
+        action : "edit",
+        project_id : getProjectId(),
+        studio_id : getStudioId(),
+        series_id : getUrlParameter('series_id'),
+        event_id : getUrlParameter('event_id'),
+        resultElemId: resultSelector,
+        till_date: tillDate,
+        selectRange: 1
+    }).toString();
+
     updateContainer('import_rerun', url);
 }
 
@@ -61,16 +65,16 @@ function selectOtherEvent(resultSelector){
     $('#import_rerun_header').show('slideUp');
     if ($('#import_rerun_header').css('display')=='none')return;
 
-    var url='select-event.cgi?'
-    url+='project_id='+getProjectId();
-    url+='&studio_id='+getStudioId();
-    url+='&series_id='+getUrlParameter('series_id');
-    url+='&event_id='+getUrlParameter('event_id');
-    url+="&resultElemId="+encodeURIComponent(resultSelector);
-    url+="&selectRange=1";
-    url+="&selectProjectStudio=1";
-    url+="&selectSeries=1";
-    
+    var url='select-event.cgi?' + new URLSearchParams({
+        project_id : getProjectId(),
+        studio_id : getStudioId(),
+        series_id : getUrlParameter('series_id'),
+        event_id : getUrlParameter('event_id'),
+        resultElemId: resultSelector,
+        selectRange: 1,
+        selectProjectStudio: 1,
+        selectSeries: 1,
+    }).toString();
     updateContainer('import_rerun', url);
 }
 
@@ -99,59 +103,65 @@ function copyFromEvent(resultSelector){
     return 1;
 }
 
-function loadEvent(projectId,studioId,seriesId,eventId, callback){
+async function loadEvent(projectId,studioId,seriesId,eventId, callback){
 
-    var url="broadcast.cgi";
-    url+="?project_id="+projectId;
-    url+="&studio_id="+studioId;
-    url+="&series_id="+seriesId;
-    url+="&event_id="+eventId;
-    url+="&action=get_json";
-    url+="&json=1";
-    url+="&get_rerun=1";
-    console.log("loadEvent: "+url)
-    
-    $.getJSON(url)
-    .done( function(event) {
-        $("#edit_event input[name='title']").attr('value', event.title)
-        $("#edit_event input[name='user_title']").attr('value', event.user_title)
-        $("#edit_event input[name='episode']").attr('value', event.episode)
-
-        updateCheckBox( "#edit_event input[name='live']", event.live);
-        updateCheckBox( "#edit_event input[name='published']", event.published);
-        updateCheckBox( "#edit_event input[name='archived']", event.archived);
-        updateCheckBox( "#edit_event input[name='rerun']", event.rerun);
-        updateCheckBox( "#edit_event input[name='playout']", event.playout);
-        updateCheckBox( "#edit_event input[name='draft']", event.draft);
-
-        $("#edit_event textarea[name='excerpt'").html(event.excerpt);
-        $("#edit_event textarea[name='user_excerpt'").html(event.user_excerpt);
-        $("#edit_event textarea[name='topic']").html(event.topic);
-        $("#edit_event textarea[name='content']").html(event.content);
-
-        updateImage("#edit_event input[name='image']", event.image);
-        $("#edit_event input[name='podcast_url']").attr('value', event.podcast_url);
-        $("#edit_event input[name='archive_url']").attr('value', event.archive_url);
-
-        updateDuration("#edit_event #duration", event.duration);
-        
-        if (callback != null) callback();
-        console.log("loadEvent done")
-    }).fail( function(jqxhr, textStatus, error) {
-        var err = textStatus + ", " + error;
-        console.log("loadEvent failed: " + err);
+    var url="broadcast.cgi?" + new URLSearchParams({
+        action: "get_json",
+        project_id : projectId,
+        studio_id : studioId,
+        series_id : seriesId,
+        event_id : eventId,
+        json: 1,
+        get_rerun: 1,
+    }).toString();
+    console.log("modifyEvent:" + url);
+    let response = await fetch(url, {
+        method: 'GET',
+        cache: "no-store",
     });
+    let json = await response.json();
+    console.log(json)
+    if (json.error) showError(json.error);
+    else callback(json);
+
+    console.log("loadEvent: "+url)
+    var event = json;
+    $("#edit_event input[name='title']").attr('value', event.title)
+    $("#edit_event input[name='user_title']").attr('value', event.user_title)
+    $("#edit_event input[name='episode']").attr('value', event.episode)
+
+    updateCheckBox( "#edit_event input[name='live']", event.live);
+    updateCheckBox( "#edit_event input[name='published']", event.published);
+    updateCheckBox( "#edit_event input[name='archived']", event.archived);
+    updateCheckBox( "#edit_event input[name='rerun']", event.rerun);
+    updateCheckBox( "#edit_event input[name='playout']", event.playout);
+    updateCheckBox( "#edit_event input[name='draft']", event.draft);
+
+    $("#edit_event textarea[name='excerpt'").html(event.excerpt);
+    $("#edit_event textarea[name='user_excerpt'").html(event.user_excerpt);
+    $("#edit_event textarea[name='topic']").html(event.topic);
+    $("#edit_event textarea[name='content']").html(event.content);
+
+    updateImage("#edit_event input[name='image']", event.image);
+    $("#edit_event input[name='podcast_url']").attr('value', event.podcast_url);
+    $("#edit_event input[name='archive_url']").attr('value', event.archive_url);
+
+    updateDuration("#edit_event #duration", event.duration);
+
+    if (callback != null) callback();
+    console.log("loadEvent done")
 }
 
 // load series selection
 function selectChangeSeries(resultSelector){
-    var url='select-series.cgi?'
-    url+='project_id='+getProjectId();
-    url+='&studio_id='+getStudioId();
-    url+='&series_id='+getUrlParameter('series_id');
-    url+="&resultElemId="+encodeURIComponent(resultSelector);
-    url+="&selectSeries=1";
-    //console.log(url);
+    var url='select-series.cgi?' + new URLSearchParams({
+        project_id : getProjectId(),
+        studio_id : getStudioId(),
+        series_id : getUrlParameter('series_id'),
+        resultElemId: resultSelector,
+        selectSeries: 1,
+    }).toString();
+    console.log(url);
     updateContainer('changeSeriesContainer', url, function(){
         $('#selectSeries').removeClass('panel');
         $('#selectChangeSeries').addClass('panel');
@@ -174,32 +184,28 @@ function changeSeries(seriesId){
     if (eventId <=0 ) return;
     if (newSeriesId <=0 ) return;
 
-
     $('div.buttons').show();
     $('#selectChangeSeries').hide('slideUp');
 
     console.log('move to '+projectId+', '+studioId+', '+seriesId+', '+eventId+' -> series '+newSeriesId);
-
-    var url='series.cgi?';
-    url += '&project_id='+projectId;
-    url += '&studio_id='+studioId;
-    url += '&series_id='+seriesId;
-    url += '&event_id='+eventId;
-    url += '&new_series_id='+newSeriesId;
-    url += '&action=reassign_event';
-    //alert(url);
-    
     $.post(
-        url, 
+        url="series.cgi?" + new URLSearchParams({
+            action: "reassign_event",
+            project_id : projectId,
+            studio_id : studioId,
+            series_id : seriesId,
+            event_id : eventId,
+            new_series_id: newSeriesId,
+        }).toString(),
         function(data){
-            var url='broadcast.cgi?';
-            url += '&project_id='+projectId;
-            url += '&studio_id='+studioId;
-            url += '&series_id='+newSeriesId;
-            url += '&event_id='+eventId;
-            url += '&action=edit';
-            window.location.href = url;
-        } 
+            loadUrl("broadcast.cgi?" + new URLSearchParams({
+                action: "edit",
+                project_id : projectId,
+                studio_id : studioId,
+                series_id : newSeriesId,
+                event_id : eventId,
+            }).toString());
+        }
     );
     return false;
 }
@@ -231,6 +237,10 @@ function updateDuration(selector, value){
 }
 
 function updateImage(selector, value){
+    if (value == null) {
+        console.log("update image with null");
+        return;
+    }
     value=value.replace("http://","//");
     $(selector).attr('value', value);
     $(selector).parent().find('button img').attr('src',value);
@@ -298,10 +308,146 @@ function copyEventToClipboard(){
     copyText.select();
     copyText.setSelectionRange(0, 99999);
     document.execCommand("copy");
+    $(copyText).remove();
+    showInfo("copied")
+}
+
+function listEvents(project_id, studio_id, series_id) {
+    loadUrl( 'calendar.cgi?' + new URLSearchParams({
+        project_id: project_id,
+        studio_id: studio_id,
+        series_id: series_id,
+        list: 1,
+    }).toString());
+}
+
+function deleteFromSchedule(project_id, studio_id, series_id, start) {
+    loadUrl( 'series.cgi?' + new URLSearchParams({
+        project_id: project_id,
+        studio_id: studio_id,
+        series_id: series_id,
+        start: start,
+        exclude: 1,
+        show_hint_to_add_schedule: 1
+    }).toString() + '#tabs-schedule');
+}
+
+async function modifyEvent(elem, action, callback){
+    let form = elem.closest('form');
+    let url = form.attr('action');
+    let data = new URLSearchParams();
+    data.append("action",action);
+    for (let pair of new FormData(form.get(0))) {
+        data.append(pair[0], pair[1]);
+    }
+    console.log("modifyEvent:" + url);
+    let response = await fetch(url, {
+        method: 'POST',
+        body: data,
+        cache: "no-store",
+    });
+    let json = await response.json();
+    console.log(json)
+    if (json.error) showError(json.error);
+    else callback(json);
+}
+
+function createEvent2(elem, action){
+    modifyEvent(elem, action, function(json){
+        if (json.status == "created"){
+            showInfo("created");
+            let event = json.entry;
+            let url="broadcast.cgi?" + new URLSearchParams({
+                action : "edit",
+                project_id : event.project_id,
+                studio_id : event.studio_id,
+                series_id : event.series_id,
+                event_id : event.event_id
+            }).toString();
+            loadUrl(url);
+        } else showError("Could not create event");
+    })
+}
+
+async function saveEvent(elem, action){
+    console.log("saveEvent")
+    modifyEvent(elem, action, function(json){
+        if (json.status == "saved") showInfo("event saved");
+        else showError(json.error);
+    })
+}
+
+async function deleteEvent(elem, action){
+    console.log("deleteElem");
+    let form = elem.closest('form');
+    let event_id = form.find("input[name='event_id']").val();
+    commitForm('event_'+event_id, 'delete', 'delete event', function(){
+        modifyEvent(elem, action, function(json) {
+            if (json.status == "deleted") {
+                showInfo("Event deleted");
+                $('#content').remove();
+                getBack();
+            } else showError(json.error);
+        })
+    })
+}
+
+function uploadRecording(project_id, studio_id, series_id, event_id){
+    loadUrl("audio-recordings.cgi?" + new URLSearchParams({
+        action: "show",
+        project_id : project_id,
+        studio_id : studio_id,
+        series_id : series_id,
+        event_id : event_id,
+    }).toString());
+}
+
+function downloadRecording(project_id, studio_id, series_id, event_id){
+    loadUrl("broadcast.cgi?" + new URLSearchParams({
+        action: "download",
+        project_id : project_id,
+        studio_id : studio_id,
+        series_id : series_id,
+        event_id : event_id
+    }).toString());
+}
+
+async function loadHelpTexts () {
+    var url = "help-texts.cgi?" + new URLSearchParams({
+        project_id : getProjectId(),
+        studio_id : getStudioId(),
+        action : "get_json",
+        json: 1,
+        get_rerun: 1,
+    }).toString();
+    console.log("modifyEvent:" + url);
+    let response = await fetch(url, {
+        method: 'GET',
+        cache: "no-store",
+    });
+    console.log("reponse:",response)
+    let json = await response.json();
+    console.log(json)
+    if (json.error){
+        showError(json.error);
+        return
+    }
+
+    var data = json;
+    for (col in data){
+        let value = data[col];
+        console.log(col+" "+value)
+        $(`input[name="${col}"]`).hover(function() {
+            $(this).attr("title",value)
+        });
+        $(`textarea[class="${col}"]`).hover(function() {
+            $(this).attr("title",value)
+        });
+    }
 }
 
 $(document).ready(
-    function(){
+    function() {
         showDateTimePicker('#start_date');
 
         $('input[type="checkbox"]').click(
@@ -312,7 +458,7 @@ $(document).ready(
                     $(this).attr('value','1');
                 }
             }
-        );    
+        );
 
         if($('#calendar').length==0){
             $('#back_to_calendar').hide();
@@ -322,7 +468,7 @@ $(document).ready(
         checkFields();
 
         $('textarea').autosize();
-        
+
         // unset published on setting draft
         $("#edit_event input[name='draft']").change(
             function(){
@@ -332,25 +478,8 @@ $(document).ready(
                 }
             }
         )
-
-        jQuery.getJSON("help-texts.cgi?project_id="+getProjectId()+"&studio_id="+getStudioId()+"&action=get")
-        .done( function(data) {
-            for (col in data){
-                let value = data[col];
-                $(`input[name="${col}"]`).hover(function() {
-                    $(this).attr("title",value)
-                });
-                $(`textarea[class="${col}"]`).hover(function() {
-                    $(this).attr("title",value)
-                });
-            }
-        })
-        .always( function() {
-            console.log("register page leave handler");
-            pageLeaveHandler();
-        });
-
-        console.log("done")
+        loadHelpTexts();
+        console.log("done");
     }
 );
 

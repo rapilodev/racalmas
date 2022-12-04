@@ -12,8 +12,39 @@ local $SIG{__WARN__} = \&Apache2::ServerRec::warn;
 use Data::Dumper;
 use Time::Local();
 use Date::Calc();
-use Calendar::Simple qw(date_span);
-
+use Calendar::Simple ();
+use Try::Tiny ();
+use Scalar::Util qw( blessed );
+use Exception::Class(
+    'AuthError',
+    'SessionError' => { isa => 'AuthError' },
+    'LoginError'   => { isa => 'AuthError', fields => [ 'user' ] },
+    'LogoutError'  => { isa => 'AuthError', fields => [ 'user' ] },
+    'LogoutDone'   => { isa => 'AuthError' },
+    qw(
+    ActionError 
+    AppError 
+    AssignError 
+    ConfigError 
+    DatabaseError 
+    DateTimeError  
+    DbError 
+    EventError 
+    EventExistError 
+    ExistError 
+    InsertError 
+    InvalidIdError 
+    LocalizationError 
+    ParamError 
+    PermissionError 
+    ProjectError 
+    SeriesError 
+    StudioError  
+    TimeCalcError 
+    UacError 
+    UpdateError 
+    UserError
+));
 use config();
 use log();
 use time();

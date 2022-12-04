@@ -175,6 +175,15 @@
                             <option value="4"><TMPL_VAR .loc.week_4th></option>
                             <option value="5"><TMPL_VAR .loc.week_5th></option>
                         </select>
+
+					<div class="cell weekday"></div>
+					<div class="cell"> <input name="end_date"  value="<TMPL_VAR end_date>"   class="datetimepicker end_date"/>   </div>
+                    <div class="cell">
+                            <select name="schedule_studio_id" >
+                                <TMPL_LOOP studios>
+                                    <option value="<TMPL_VAR id>" <TMPL_IF selected>selected="selected"</TMPL_IF>><TMPL_VAR name></option>
+                                </TMPL_LOOP>
+                            </select>
                     </div>
 
                     <div class="cell schedule_weekday">
@@ -235,8 +244,8 @@
         <div id="show_schedule" class="show_schedule">
 	    </div>
     </div>
-
-</div>
+</div>  
+</div>  
 </body>
 </html>
 

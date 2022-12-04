@@ -22,7 +22,7 @@ msgstr "Name"
 msgid "label_level"
 msgstr "Rang"
 
-msgid "label_role" 
+msgid "label_role"
 msgstr "Rolle"
 
 msgid "label_create_download"
@@ -40,188 +40,188 @@ msgstr "Sendung für Sendereihe anlegen, der man zugeordnet ist"
 msgid "label_delete_event"
 msgstr "Sendung löschen"
 
-msgid "label_update_event_field_content" 
+msgid "label_update_event_field_content"
 msgstr "Sendung bearbeiten"
 
-msgid "label_update_event_field_description" 
+msgid "label_update_event_field_description"
 msgstr "Sendebeschreibung bearbeiten"
 
-msgid "label_update_event_field_episode" 
+msgid "label_update_event_field_episode"
 msgstr "Sendefolge bearbeiten"
 
-msgid "label_update_event_field_excerpt" 
+msgid "label_update_event_field_excerpt"
 msgstr "Sendeauszug bearbeiten"
 
-msgid "label_update_event_field_excerpt_extension" 
+msgid "label_update_event_field_excerpt_extension"
 msgstr "Sendeauszug erweitern"
 
-msgid "label_update_event_field_image" 
+msgid "label_update_event_field_image"
 msgstr "Sendebild bearbeiten"
 
-msgid "label_update_event_field_title" 
+msgid "label_update_event_field_title"
 msgstr "Sendetitel bearbeiten"
 
-msgid "label_update_event_field_title_extension" 
+msgid "label_update_event_field_title_extension"
 msgstr "Sendetitel erweitern"
 
-msgid "label_update_event_field_topic" 
+msgid "label_update_event_field_topic"
 msgstr "Sendethemen bearbeiten"
 
-msgid "label_update_event_field_podcast_url" 
+msgid "label_update_event_field_podcast_url"
 msgstr "Podcast-URL bearbeiten"
 
-msgid "label_update_event_field_archive_url" 
+msgid "label_update_event_field_archive_url"
 msgstr "Archiv-URL bearbeiten"
 
 msgid "label_update_event_field_content_format"
 msgstr "Wiki-Format setzen"
 
-msgid "label_create_event_from_schedule" 
+msgid "label_create_event_from_schedule"
 msgstr "Sendungen vom Plan anlegen"
 
-msgid "label_update_event_of_others" 
+msgid "label_update_event_of_others"
 msgstr "alle Sendungen bearbeiten"
 
-msgid "label_update_event_of_series" 
+msgid "label_update_event_of_series"
 msgstr "Sendungen bearbeiten, denen man zugeordnet ist"
 
-msgid "label_update_event_status_archived" 
+msgid "label_update_event_status_archived"
 msgstr "Sendearchiv-Status ändern"
 
-msgid "label_update_event_status_live" 
+msgid "label_update_event_status_live"
 msgstr "Live-Sende-Status ändern"
 
-msgid "label_update_event_status_playout" 
+msgid "label_update_event_status_playout"
 msgstr "Playout-Sende-Status ändern"
 
-msgid "label_update_event_status_published" 
+msgid "label_update_event_status_published"
 msgstr "Sendung veröffentlichen"
 
-msgid "label_update_event_status_rerun" 
+msgid "label_update_event_status_rerun"
 msgstr "Wiederholung-Sende Status ändern "
 
-msgid "label_update_event_status_draft" 
+msgid "label_update_event_status_draft"
 msgstr "Sendungsentwurf-Status ändern"
 
-msgid "label_update_event_status_disable_event_sync" 
+msgid "label_update_event_status_disable_event_sync"
 msgstr "Google-Import blockieren"
 
-msgid "label_update_event_time" 
+msgid "label_update_event_time"
 msgstr "Sendedatum/zeit ändern"
 
-msgid "label_read_image" 
+msgid "label_read_image"
 msgstr "Bilder anzeigen"
 
 msgid "label_create_image"
 msgstr "Bilder hochladen"
 
-msgid "label_update_image_others" 
+msgid "label_update_image_others"
 msgstr "Bilder von anderen bearbeiten"
 
-msgid "label_delete_image_others" 
+msgid "label_delete_image_others"
 msgstr "Bilder von anderen löschen"
 
-msgid "label_update_image_own" 
+msgid "label_update_image_own"
 msgstr "Bilder bearbeiten"
 
-msgid "label_delete_image_own" 
+msgid "label_delete_image_own"
 msgstr "Bilder löschen"
 
-msgid "label_read_role" 
+msgid "label_read_role"
 msgstr "Rollen anzeigen"
 
-msgid "label_update_role" 
+msgid "label_update_role"
 msgstr "Rollen definieren"
 
-msgid "label_read_schedule" 
+msgid "label_read_schedule"
 msgstr "Sendeplanung anzeigen"
 
-msgid "label_update_schedule" 
+msgid "label_update_schedule"
 msgstr "Sendungen planen"
 
-msgid "label_delete_schedule" 
+msgid "label_delete_schedule"
 msgstr "Sendeplanung löschen"
 
-msgid "label_read_series" 
+msgid "label_read_series"
 msgstr "Sendereihen anzeigen"
 
-msgid "label_update_series" 
+msgid "label_update_series"
 msgstr "Sendereihen bearbeiten"
 
-msgid "label_create_series" 
+msgid "label_create_series"
 msgstr "Sendereihe anlegen"
 
-msgid "label_delete_series" 
+msgid "label_delete_series"
 msgstr "Sendereihe löschen"
 
-msgid "label_scan_series_events" 
+msgid "label_scan_series_events"
 msgstr "Sendereihe importieren"
 
-msgid "label_assign_series_member" 
+msgid "label_assign_series_member"
 msgstr "Nutzer zu einer Sendereihe hinzufügen"
 
-msgid "label_assign_series_events" 
+msgid "label_assign_series_events"
 msgstr "Sendung zu Sendereihe hinzufügen"
 
-msgid "label_remove_series_member" 
+msgid "label_remove_series_member"
 msgstr "Nutzer von einer Sendereihe entfernen"
 
-msgid "label_update_series_template" 
+msgid "label_update_series_template"
 msgstr "Vorlage einer Sendereihe bearbeiten"
 
-msgid "label_read_studio" 
+msgid "label_read_studio"
 msgstr "Studio anzeigen"
 
-msgid "label_update_studio" 
+msgid "label_update_studio"
 msgstr "Studio bearbeiten"
 
-msgid "label_create_studio" 
+msgid "label_create_studio"
 msgstr "Studio anlegen"
 
-msgid "label_delete_studio" 
+msgid "label_delete_studio"
 msgstr "Studio löschen"
 
-msgid "label_read_studio_timeslot_schedule" 
+msgid "label_read_studio_timeslot_schedule"
 msgstr "Studio-Sendezeiten anzeigen"
 
-msgid "label_update_studio_timeslot_schedule" 
+msgid "label_update_studio_timeslot_schedule"
 msgstr "Studio-Sendezeiten bearbeiten"
 
-msgid "label_read_project" 
+msgid "label_read_project"
 msgstr "Projekt anzeigen"
 
-msgid "label_update_project" 
+msgid "label_update_project"
 msgstr "Projekt bearbeiten"
 
-msgid "label_create_project" 
+msgid "label_create_project"
 msgstr "Projekt anlegen"
 
-msgid "label_delete_project" 
+msgid "label_delete_project"
 msgstr "Projekt löschen"
 
-msgid "label_assign_project_studio" 
+msgid "label_assign_project_studio"
 msgstr "Studio zu Projekt hinzufügen"
 
-msgid "label_read_user" 
+msgid "label_read_user"
 msgstr "Nutzer anzeigen"
 
-msgid "label_update_user" 
+msgid "label_update_user"
 msgstr "Nutzer bearbeiten"
 
 msgid "label_disable_user"
 msgstr "Nutzer deaktivieren"
 
-msgid "label_create_user" 
+msgid "label_create_user"
 msgstr "Nutzer anlegen"
 
-msgid "label_delete_user" 
+msgid "label_delete_user"
 msgstr "Nutzer löschen"
 
-msgid "label_read_user_role" 
+msgid "label_read_user_role"
 msgstr "Nutzer-Rechte anzeigen"
 
-msgid "label_update_user_role" 
-msgstr "Nutzer-Rechte ändern" 
+msgid "label_update_user_role"
+msgstr "Nutzer-Rechte ändern"
 
 msgid "label_read_changes"
 msgstr "Änderungen anzeigen"

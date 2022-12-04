@@ -4,59 +4,80 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use CGI::Simple();
 use Apache2::Request();
+use Exception::Class ('ParamError');
 
-our @EXPORT_OK = qw(get isJson);
+{
+    my $is_json = 0;
 
-my $isJson = 0;
+    sub set_json() {
+        $is_json = 1;
+    }
 
-sub isJson () {
-    return $isJson;
+    sub reset_json() {
+        $is_json = 0;
+    }
+
+    sub is_json() {
+        return $is_json;
+    }
 }
 
-sub get ($) {
-    my ($r) = @_;
+{
+    my $uri;
 
+    sub set_uri($) {
+        ($uri) = @_;
+    }
+
+    sub get_uri() {
+        return $uri;
+    }
+}
+
+sub get($;$) {
+    my ($r, $options) = @_;
+    my $MB           = 1000 * 1000;
     my $tmp_dir      = '/var/tmp/';
-    my $upload_limit = 1000 * 1024;
+    my $upload_limit = 5 * $MB;
+    my $status       = undef;
+    my $fh           = undef;
+    my $params       = {};
+    reset_json();
+    set_uri(undef);
 
-    my $cgi    = undef;
-    my $status = undef;
-    my $params = {};
-
-    $isJson = 0;
-
-    if ( defined $r ) {
-        my $req = Apache2::Request->new( $r, POST_MAX => $upload_limit, TEMP_DIR => $tmp_dir );
-
-        for my $key ( $req->param ) {
-            $params->{ scalar($key) } = scalar( $req->param($key) );
+    # fallback to CGI::Simple if uploads can take more than 64 MB
+    if (defined $r and ($options->{upload}->{limit} // 0) < 64 * $MB) {
+        my $req = Apache2::Request->new(
+            $r,
+            POST_MAX => $upload_limit,
+            TEMP_DIR => $tmp_dir
+        );
+        params::set_uri($r->unparsed_uri);
+        for my $key ($req->param) {
+            $params->{scalar($key)} = scalar($req->param($key));
         }
-
-        $status = $req->parse;
     } else {
-        print STDERR "$0: require CGI\n";
-        require "CGI.pm";
-        $CGI::POST_MAX     = $upload_limit;
-        $CGI::TMPDIRECTORY = $tmp_dir;
-        $cgi               = new CGI();
-        $status            = $cgi->cgi_error() || $status;
+        $CGI::Simple::POST_MAX = $options->{upload}->{limit} // $upload_limit;
+        $CGI::Simple::DISABLE_UPLOADS = 0;
+        my $cgi = CGI::Simple->new;
+
+        params::set_uri($cgi->self_url);
+        my $filename = $cgi->param('upload');
+        $fh     = $cgi->upload($filename);
+        $status = $cgi->cgi_error() || '';
         my %params = $cgi->Vars();
         $params = \%params;
     }
 
-    $isJson = 1 if ( defined $params->{json} ) && ( $params->{json} eq '1' );
-
-    if ( defined $status ) {
+    set_json() if ($params->{json} // '') eq '1';
+    if (defined $status) {
         $status = '' if $status eq 'Success';
         $status = '' if $status eq 'Missing input data';
-        if ( $status ne '' ) {
-            $cgi = new CGI::Simple() unless defined $cgi;
-            print $cgi->header . $status . "\n";
-        }
+        ParamError->throw(error => $status) if $status;
     }
-
-    return ( $cgi, $params, $status );
+    return ($params, $fh);
 }
 
 #do not delete last line!

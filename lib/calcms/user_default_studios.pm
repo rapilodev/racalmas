@@ -51,7 +51,7 @@ sub get ($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
+    ParamError->throw(error => "missing user on inserting default studio") unless defined $entry->{user};
 
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_user_default_studios', $entry );
@@ -60,7 +60,8 @@ sub insert ($$) {
 sub update($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
+    ParamError->throw(error => "missing user on updating default studio") unless defined $entry->{user};
+    ParamError->throw(error => "missing project_id on updating default studio") unless defined $entry->{project_id};
 
     my @keys        = sort keys %$entry;
     my $values      = join( ",", map { $_ . '=?' } @keys );
@@ -70,7 +71,7 @@ sub update($$) {
     push @bind_values, $entry->{project_id};
 
     my $query = qq{
-		update calcms_user_default_studios 
+		update calcms_user_default_studios
 		set    $values
 		where  user=? and project_id=?
 	};
@@ -82,10 +83,10 @@ sub update($$) {
 sub delete ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
+    ParamError->throw(error => "missing user on deleting default studio") unless defined $entry->{user};
 
     my $query = qq{
-		delete 
+		delete
 		from calcms_user_default_studios
 		where user=?
 	};
@@ -93,11 +94,6 @@ sub delete ($$) {
 
     my $dbh = db::connect($config);
     return db::put( $dbh, $query, $bind_values );
-}
-
-sub error ($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

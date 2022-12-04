@@ -5,6 +5,8 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use Scalar::Util qw( blessed );
+use Try::Tiny;
 
 use params();
 use config();
@@ -16,10 +18,9 @@ use password_requests();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+my ($params, $error) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
-
 $params = check_params( $config, $params );
 
 print "Content-type:text/html\n\n";
@@ -47,10 +48,8 @@ sub error{
 
 if ( defined $params->{user} ) {
     sendToken( $config, $params );
-    return;
 } else {
-    my $result = checkToken( $config, $params );
-    return;
+    checkToken( $config, $params );
 }
 
 sub sendToken {
@@ -152,9 +151,7 @@ sub printForm {
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
 
     entry::set_strings( $checked, $params, [

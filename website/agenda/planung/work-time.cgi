@@ -6,6 +6,8 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use URI::Escape();
+use Scalar::Util qw( blessed );
+
 use params();
 use config();
 use entry();
@@ -21,51 +23,25 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    my $out =  template::process( $config, template::check( $config, 'default.html' ), $headerParams );
+    uac::check($config, $params, $user_presets);
 
-#print STDERR $params->{project_id}."\n";
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id},
-        user       => $user
+    if ( defined $params->{action} ) {
+        return $out . save_schedule( $config, $request ) if ( $params->{action} eq 'save_schedule' );
+        return $out . delete_schedule( $config, $request ) if ( $params->{action} eq 'delete_schedule' );
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
 
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
-$params = $request->{params}->{checked};
-
-#process header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-if ( defined $params->{action} ) {
-    save_schedule( $config, $request ) if ( $params->{action} eq 'save_schedule' );
-    delete_schedule( $config, $request ) if ( $params->{action} eq 'delete_schedule' );
+    $config->{access}->{write} = 0;
+    $out.= template::process( $config, template::check( $config, 'worktime-header.html' ), $headerParams );
+    return show_work_schedule( $config, $request );
 }
-
-$config->{access}->{write} = 0;
-template::process( $config, 'print', template::check( $config, 'worktime-header.html' ), $headerParams );
-
-show_work_schedule( $config, $request );
-return;
 
 #insert or update a schedule and update all schedule dates
 sub save_schedule {
@@ -75,15 +51,12 @@ sub save_schedule {
 
     my $permissions = $request->{permissions};
     unless ( $permissions->{update_schedule} == 1 ) {
-        uac::permissions_denied('update_schedule');
+        PermissionError->throw(error=>'Missing permission to update_schedule');
         return;
     }
 
     for my $attr ( 'project_id', 'studio_id', 'start' ) {
-        unless ( defined $params->{$attr} ) {
-            uac::print_error( $attr . ' not given!' );
-            return;
-        }
+        ParamError->throw(error=> "missing $attr" ) unless defined $params->{$attr};
     }
 
     my $entry = {};
@@ -91,8 +64,7 @@ sub save_schedule {
         'project_id', 'studio_id', 'start',   'duration',      'exclude', 'period_type',
         'end',        'frequency', 'weekday', 'week_of_month', 'month',   'title',
         'type'
-      )
-    {
+    ) {
         $entry->{$attr} = $params->{$attr} if defined $params->{$attr};
     }
 
@@ -139,7 +111,7 @@ sub delete_schedule {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{delete_schedule} == 1 ) {
-        uac::permissions_denied('delete_schedule');
+        PermissionError->throw(error=>'Missing permission to delete_schedule');
         return;
     }
 
@@ -148,8 +120,7 @@ sub delete_schedule {
         if ( defined $params->{$attr} ) {
             $entry->{$attr} = $params->{$attr};
         } else {
-            uac::print_error( $attr . ' not given!' );
-            return;
+            ParamError->throw(error=> "missing $attr" );
         }
     }
 
@@ -167,16 +138,11 @@ sub show_work_schedule {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{read_series} == 1 ) {
-        uac::permissions_denied('read_series');
-        return;
-    }
+    PermissionError->throw(error=>'Missing permission to read_series') 
+        unless $permissions->{read_series} == 1;
 
     for my $param ( 'project_id', 'studio_id' ) {
-        unless ( defined $params->{$param} ) {
-            uac::print_error("missing $param");
-            return;
-        }
+        ParamError->throw(error=>"missing $param") unless defined $params->{$param};
     }
 
     #this will be updated later (especially allow_update_events)
@@ -208,11 +174,7 @@ sub show_work_schedule {
             $schedule->{period_type} = 'single' unless ( $schedule->{end} =~ /\d/ );
         }
         $schedule->{ 'period_type_' . $schedule->{period_type} } = 1;
-        if ( $params->{schedule_id} eq $schedule->{schedule_id} ) {
-            $schedule->{selected} = 1;
-        }
-
-        #print STDERR $schedule->{period_type}."\n";
+        $schedule->{selected} = 1 if $params->{schedule_id} eq $schedule->{schedule_id};
     }
     my $serie = {};
     $serie->{schedule} = $schedules;
@@ -246,22 +208,19 @@ sub show_work_schedule {
     $serie->{show_hint_to_add_schedule} = $params->{show_hint_to_add_schedule};
 
     #copy series to params
-    #$params->{series}=[$serie];
     for my $key ( keys %$serie ) {
         $params->{$key} = $serie->{$key};
     }
 
     $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'work-time' } );
-    template::process( $config, 'print', $params->{template}, $params );
+    print template::process( $config, $params->{template}, $params );
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
 
-    $checked->{action} = entry::element_of( $params->{action}, 
+    $checked->{action} = entry::element_of( $params->{action},
         ['show', 'save_schedule', 'delete_schedule']
     );
 
@@ -270,7 +229,7 @@ sub check_params {
         'project_id', 'studio_id',                 'default_studio_id',     'schedule_id',
         'exclude',    'show_hint_to_add_schedule', 'weekday week_of_month', 'month'
     ]);
-    
+
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
@@ -287,7 +246,7 @@ sub check_params {
     }
     entry::set_numbers( $checked, $params, [ 'frequency', 'duration', 'default_duration' ]);
 
-    entry::set_strings( $checked, $params, 
+    entry::set_strings( $checked, $params,
         [ 'from', 'till', 'period_type', 'type', 'title' ]
     );
 

@@ -1,4 +1,3 @@
-
 # setup database
 
 Edit the file "init.sql" and change the passwords of the three user accounts (calcms_admin, calcms_write and calcms_read).
@@ -12,11 +11,18 @@ We use different accounts for different purposes.
 
     mysql -u admin mysql -p`cat /etc/psa/.psa.shadow` < ./install/init.sql
 
+if using plesk, use
+
+    mysql -u admin mysql -p`cat /etc/psa/.psa.shadow`
+
+We use different accounts for different purposes.
+Do not forget to use your own passwords!
+
 ### import database content
 
-    mysql -u calcms_admin -p calcms < ./install/create.sql 
+    mysql -u calcms_admin -p calcms < ./install/create.sql
 
-We use different accounts for different purposes. 
+We use different  for different purposes. 
 Do not forget to use your own passwords! 
 
 ## socket connection issues
@@ -28,12 +34,12 @@ file /var/run/mysqld/mysqld.sock. You can either change the directory/file permi
 or use host "127.0.0.1" in bind-address at /etc/mysql/* for client and server and
 additionally as hostname in config.cgi.
 
-## Apache HTTP Server Setup 
+## Apache HTTP Server Setup
 
 ### install mod_perl
 
 install apache2
-    
+
     apt install apache2
 
 enable prefork mode
@@ -55,7 +61,7 @@ install mod_perl2
 ### Apache Configuration
 
 Copy Virtual host configuration apache2-sites/calcms.conf to /etc/conf/apache2/sites-enabled/.
-=======
+
 or via cpan
 
     cpan install Apache2::Reload Apache2::Request
@@ -69,7 +75,7 @@ set apeche to fork mode, required for preform registry
 ### Apache Configuration
 
 Virtual host configuration has to be placed at /etc/conf/apache2/.
-    
+
     # adopt your settings here
     Define domain   your-domain.org
     Define base_dir /home/calcms
@@ -88,7 +94,7 @@ apt-get install <deb-package>
 
 #### install debian packages
 
-    mariadb-server 
+    mariadb-server
     build-essentials
     imagemagick
     libapreq2-3
@@ -176,13 +182,13 @@ shug!3Lu
 
 # inject calcms into your website
 
-calcms uses a copy of your web page as a template to have the same layout as your web site.  
+calcms uses a copy of your web page as a template to have the same layout as your web site.
 To update calcms content create a cronjob to run tools/update_page.sh
 
 you may have to update the paths inside update_page.sh
 
 # how-to
-   
+
 ## update time zones
 
     mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql -p

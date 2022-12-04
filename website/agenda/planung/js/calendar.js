@@ -11,13 +11,13 @@ function openNewTab(url){
 function selectCheckbox(selector){
     $(selector).each(function(){
         $(this).prop('checked', 'checked');
-    })   
+    })
 }
 
 function unselectCheckbox(selector){
     $(selector).each(function(){
         $(this).removeProp('checked');
-    })   
+    })
 }
 
 function isChecked(selector){
@@ -44,13 +44,13 @@ function setupMenuHeight(){
         $('#calendar_weekdays').css("top", top);
 
         var weekday_height=30;
-        weekdays.querySelectorAll("table td div").forEach( 
+        weekdays.querySelectorAll("table td div").forEach(
             function(div) {
                 var height = div.offsetHeight + 14;
                 if (height>weekday_height) weekday_height=height;
-            } 
+            }
         );
-        
+
         top+=weekday_height+1-10;
         $('#calendar').css("top", top);
         return top;
@@ -84,12 +84,12 @@ function resizeCalendarMenu(){
     $('#calendar table').css('width', width-20);
     $('#calendar_weekdays table').css('width', width-20);
     $('#calendar table').css('height', height);
-    
+
     //set spacing between table columns
     var columnSpacing=Math.round($(window).width()/72);
     if(columnSpacing<0) columnSpacing=0;
     columnSpacing=Math.ceil(columnSpacing);
-    
+
     $('div.week').css('width',       columnSpacing);
     $('div.week').css('margin-left',-columnSpacing);
 
@@ -106,14 +106,10 @@ function resizeCalendarMenu(){
     var with_param='width';
     var cw=cell_width.toFixed();
     menuHeight = setupMenuHeight();
-    
-    //var theight=$('#calendar table tr').last().find('td').first().find('div').last().css("top")
-    //$('td.week').css("height",theight)
 
     $('#calendar').show();
     $('#calendar_weekdays').css("visibility","visible");
 }
-
 
 function setFilter(){
     var filter=$('#filter').val();
@@ -153,15 +149,16 @@ function updateUrls(url){
         url=window.location.href;
         url=updateUrlParameters(url);
     }
-    url=removeUrlParameter(url, 'part');    
+    url=removeUrlParameter(url, 'part');
 
     //replace current in history
+    url = url.replace("calendar-content.cgi","calendar.cgi");
     history.pushState(null, null, url);
     appendHistory(url,'replace');
 }
 
 function updateUrlParameters(url){
-
+    url = url.replace("calendar-content.cgi","calendar.cgi");
     var range=$('#range').val();
     if (range=='events'){
         url=setUrlParameter(url, 'list', 1);
@@ -285,7 +282,7 @@ function getNearestDatetime(){
             var distance=Math.abs(delta);
             if (distance<yMin){
                 yMin=delta;
-                hour= $(this).attr('time');
+                hour= $(this).attr('time').substr(0,2);
                 minute='30';
                 if(delta<0) minute='00';
             }
@@ -308,11 +305,12 @@ function getNearestDatetime(){
             var distance=Math.abs(delta);
             if (distance<yMin){
                 yMin=delta;
-                hour= $(this).attr('time');
+                hour= $(this).attr('time').substr(0,2);
                 var height=$(this).height()+14;
                 var m=((delta+height*1.5)-8) % height;
                 m=m*60/height;
                 minute=Math.floor(m/5)*5;
+                minute = (minute + 60) %60;
                 if (minute<10)minute='0'+minute;
             }
         }
@@ -335,7 +333,8 @@ function showMouse(){
     );
 
     // Get a reference to the last interval, then clean all
-    var interval_id = window.setInterval("", 9999); 
+    var interval_id = window.setInterval("", 9999);
+    console.log(interval_id);
     for (var i = 1; i < interval_id; i++)
         window.clearInterval(i);
 
@@ -365,29 +364,67 @@ function show_not_assigned_to_series_dialog(){
     showDialog({
         title   : loc['label_event_not_assigned_to_series'],
         buttons : {
-            Cancel : function() { $(this).parent().remove(); }
-        }
+            Cancel : function() { $(this).closest('div#dialog').remove(); }        }
     });
 }
 
 function show_schedule_series_dialog(project_id, studio_id, series_id, start_date){
-    showDialog({
-        title   : loc['label_schedule_series'],
-        content : $('#series').html(),
-        width   : "50rem",
-        height  : "15rem",
-        buttons : {
-            "Schedule": function() {
-                var series_id  = $('#dialog #series_select').val();
-                var duration   = $('#dialog #series_duration').val();
-                var start_date = $('#dialog #series_date').val();
-                var url='series.cgi?project_id='+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&start='+escape(start_date)+'&duration='+duration+'&show_hint_to_add_schedule=1#tabs-schedule';
-                load(url);
-            },
-            Cancel : function() { $(this).parent().remove(); }
+    jQuery.getJSON(
+        "series.cgi?" + new URLSearchParams({
+            action : "list_series",
+            json: 1,
+            project_id: getProjectId(),
+            studio_id: getStudioId()
+        }).toString()
+    ).done(function(data) {
+        var html = '';
+        html += "<table><tr><td>" + loc['label_series'] + "</td>";
+        html += '<td><select id="series_select" name="series_id">';
+        for (const serie of data["series"]) {
+            let id       = serie["series_id"]   || -1;
+            let duration = serie["duration"]    || 0;
+            let name     = serie["series_name"] || '';
+            let title    = serie["title"]       || '';
+            if (serie['has_single_events'] == '1') name = loc['single_events'];
+            if (title != '') title = ' - ' + title;
+            html += '<option value="' + id + '" duration="' + duration + '">' + name + title + '</option>' + "\n";
         }
+        html+= '</select></td></tr>';
+        html+= '<tr>';
+        html+= '    <td>' + loc["label_date"] + "</td>";
+        html+= '    <td><input id="series_date" name="start_date" value=""></td>';
+        html+= '</tr>';
+        html+= '<tr>';
+        html+= '    <td>' + loc["label_duration"] + '</td>';
+        html+= '    <td><input id="series_duration" value="60"></td>';
+        html+= '</tr>';
+        html+= '</table>';
+
+        showDialog({
+            title   : loc['label_schedule_series'],
+            content : html,
+            width   : "50rem",
+            height  : "15rem",
+            buttons : {
+                "Schedule": function() {
+                    var series_id  = $('#dialog #series_select').val();
+                    var duration   = $('#dialog #series_duration').val();
+                    var start_date = $('#dialog #series_date').val();
+                    var url='series.cgi?action=show_series&project_id='+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&start='+escape(start_date)+'&duration='+duration+'&show_hint_to_add_schedule=1#tabs-schedule';
+                    loadUrl(url);
+                },
+                Cancel : function() { $(this).closest('div#dialog').remove() }
+            }
+        });
+        $('#series_date').attr('value',start_date);
+        var date=parseDateTime(start_date);
+        showDateTimePicker('#series_date', {
+            date: start_date
+        });
+
+    }).fail(function( jqxhr, textStatus, error ) {
+        alert(error);
     });
-    showDateTimePicker('#dialog #series_date');
 }
 
 function setDatePicker(){
@@ -396,7 +433,7 @@ function setDatePicker(){
         onSelect : function(dates, inst) {
             var date = dates[0];
             var url  = setUrlParameter(window.location.href, 'date', formatDate(date));
-            loadCalendar(url);    
+            loadCalendar(url);
         }
     });
     datePicker.setDate(parseDateTime(getUrlParameter("date")));
@@ -479,6 +516,7 @@ function initCalendarMenu(){
     setDatePicker();
     initTodayButton();
     resizeCalendarMenu();
+    console.log("calendar initialized")
 }
 
 function createId(prefix) {
@@ -492,11 +530,11 @@ function createId(prefix) {
 
 function showRmsPlot(id, project_id, studio_id, start, elem){
     showDialog({
-        width:940, 
+        width:940,
         height:560,
         content: elem.html(),
         buttons: {
-            Close : function() { $(this).parent().remove(); }
+            Close : function() { $(this).closest('div#dialog').remove(); }
         },
         onOpen: function () { $(this).scrollTop(0); }
     });
@@ -527,7 +565,7 @@ function initRmsPlot(){
             var project_id  = field.shift();
             var studio_id   = field.shift();
             var start       = $(this).attr("start")
-            
+
             if (project_id==null) return;
             if (studio_id==null) return;
             if (start==null) return;
@@ -561,8 +599,8 @@ function initRmsPlot(){
             $(this).find('img').each(function(){
                 $(this).show();
             });
-            
-        }, 
+
+        },
         function() {
             var plot=$(this).attr("rms");
             if (plot==null) return;
@@ -594,8 +632,9 @@ function loadCalendar(url, mouseButton){
         url=updateUrlParameters(url);
     }
     url=setUrlParameter(url, 'part', '1');
-    updateContainer('calendarTable', url, function(){ 
-        updateTable(); 
+    url=url.replace("calendar.cgi","calendar-content.cgi");
+    updateContainer('calendarTable', url, function(){
+        updateTable();
         $('#calendarTable').css('opacity','1.0');
         $('#current_date').html(current_date);
         updateUrls(url);
@@ -641,7 +680,7 @@ function updateTable(){
             openNewTab(url);
         }
     });
-    
+
     var baseElement='#event_list';
     if(calendarTable==1){
         baseElement='#calendar';
@@ -651,6 +690,12 @@ function updateTable(){
             resizeCalendarMenu();
             setupMenu()
         });
+    } else {
+        if ( $('#event_list').length){
+            $('#toolbar').css({
+                "top":"3rem",
+            })
+        }
     }
 
     show_schedule();
@@ -658,16 +703,16 @@ function updateTable(){
     show_playout();
     show_worktime();
     show_descriptions();
-    
+
     $('#show_events').off();
-    $('#show_events').on("click",   
+    $('#show_events').on("click",
         function(){
             show_events();
             updateUrls();
         }
     );
     $('#show_schedule').off();
-    $('#show_schedule').on("click",   
+    $('#show_schedule').on("click",
         function(){
             show_schedule();
             updateUrls();
@@ -701,8 +746,8 @@ function updateTable(){
                 selectCheckbox('#show_playout');
             }
             show_events();
-            show_schedule();            
-            show_playout();            
+            show_schedule();
+            show_playout();
             updateUrls();
         }
     );
@@ -734,7 +779,7 @@ function updateTable(){
     $(baseElement).on("mousedown", ".work", function(event){
         handleWorktime($(this).attr("id"), event);
     });
-    
+
 
     //add tooltips
     $('#calendar > table > tbody > tr > td > div').mouseover( function(){
@@ -742,7 +787,7 @@ function updateTable(){
         if ($(this).attr("title") == text) return;
         $(this).attr("title",text);
     });
-    
+
     if($('#event_list table').length!=0){
         $('#event_list table').tablesorter({
             widgets: ["filter"],
@@ -763,8 +808,8 @@ function updateTable(){
             url+='?project_id='+project_id;
             url+='&studio_id='+studio_id;
             url+='&series_id='+series_id;
-            url+='&action=show';
-            load(url);
+            url+='&action=show_series';
+            loadUrl(url);
         }
     );
 
@@ -780,7 +825,7 @@ function updateTable(){
             elem.addClass("pin");
         }
     });
-    
+
     //set checkboxes from url parameters and update all urls
     $('#calendar').show();
 
@@ -802,7 +847,7 @@ function handleEvent(id, event){
 
     var url="broadcast.cgi?action=edit&project_id="+project_id+"&studio_id="+studio_id+"&series_id="+series_id+"&event_id="+event_id;
     if(event.which==1){
-        load(url);
+        loadUrl(url);
     }
     if(event.which==2){
         openNewTab(url);
@@ -826,7 +871,7 @@ function handleUnassignedEvent(id){
     show_not_assigned_to_series_dialog();
 }
 
-function handleSchedule(id, start_date, event){
+async function handleSchedule(id, start_date, event){
     var field=id.split('_');
     var classname   =field.shift();
     var project_id  =field.shift();
@@ -840,13 +885,38 @@ function handleSchedule(id, start_date, event){
 
     if(event.which==1){
         //left click: create event from schedule
-        var url="broadcast.cgi?action=show_new_event_from_schedule&project_id="+project_id+"&studio_id="+studio_id+"&series_id="+series_id+"&start_date="+start_date;
-        load(url);
+        var url="broadcast.cgi?" + new URLSearchParams({
+            action : "show_new_event_from_schedule",
+            project_id : project_id,
+            studio_id : studio_id,
+            series_id : series_id,
+            start_date : start_date
+        }).toString();
+        loadUrl(url);
+        /*
+        console.log(url);
+        let response = await fetch(url, {
+            //method: 'POST',
+            cache: "no-store"
+        });
+        let json = await response.json();
+        if (json.error) showError(json.error);
+        else {
+            var url="broadcast.cgi?" + new URLSearchParams({
+                action : "edit",
+                project_id : project_id,
+                studio_id : studio_id,
+                series_id : series_id,
+                event_id : json.entry.event_id
+            }).toString();
+            loadUrl(url);
+        }
+        */
     }
     if(event.which==3){
         //right click: remove schedule
-        var url='series.cgi?project_id='+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&start='+escape(start_date)+'&exclude=1&show_hint_to_add_schedule=1#tabs-schedule';
-        load(url);
+        var url='series.cgi?action=show_series&project_id='+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&start='+escape(start_date)+'&exclude=1&show_hint_to_add_schedule=1#tabs-schedule';
+        loadUrl(url);
     }
 }
 
@@ -862,13 +932,6 @@ function handleGrid(id){
     if (studio_id<0)    return;
 
     var start_date = getNearestDatetime();
-    $('#series_date').attr('value',start_date);
-    var date=parseDateTime(start_date);
-    showDateTimePicker('#series_date', {
-        date: start_date
-    });
-    
-
     show_schedule_series_dialog(project_id, studio_id, series_id, start_date);
 }
 
@@ -887,7 +950,7 @@ function handleWorktime(id, event){
 
     var url="work-time.cgi?action=show_new_event_from_schedule&project_id="+project_id+"&studio_id="+studio_id+"&schedule_id="+schedule_id+"&start_date="+start_date;
     if(event.which==1){
-        load(url);
+        loadUrl(url);
     }
     if(event.which==2){
         openNewTab(url)
@@ -913,12 +976,11 @@ function adjustColors(){
     if (elem == null ) return;
     var color1=window.getComputedStyle(elem).backgroundColor;
     var color2=color1.replace('rgb','rgba').replace(')',', 0.4)')
-    $('.schedule').css('background', 'repeating-linear-gradient(to right, '+color1+', '+color1+' 1px, '+color2+' 1px, '+color2+' 2px) ');
+    $('.schedule').css('background', 'repeating-linear-gradient(to bottom, '+color1+', '+color1+' 1px, '+color2+' 1px, '+color2+' 2px) ');
 }
 
 $(document).ready(function(){
     initCalendarMenu();
-
     if(calendarTable==1){
         loadCalendar();
     }else{

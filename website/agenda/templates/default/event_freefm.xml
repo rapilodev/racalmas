@@ -13,7 +13,7 @@ Content-type:text/xml; charset=UTF-8
             <number>9</number>
             <city>Berlin</city>
             <zip>10119</zip>
-            <studio-location>    
+            <studio-location>
                 <gml:Point>
                     <gml:pos>52.53119 13.4066</gml:pos>
                 </gml:Point>

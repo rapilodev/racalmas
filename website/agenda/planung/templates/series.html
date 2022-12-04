@@ -4,13 +4,14 @@
 
 <h2><TMPL_VAR .loc.title></h2>
 
-<div id="search"><input id="searchField" name="search" value="" onkeyup="searchEvents()" placeholder="<TMPL_VAR .loc.label_search>"><button id="clearSearch" onclick="clearSearch()"><TMPL_VAR .loc.label_clear_search></div>
+<div id="search"><input id="searchField" name="search" value="" onkeyup="searchEvents()" placeholder="<TMPL_VAR .loc.label_search>"
+><button id="clearSearch" onclick="clearSearch()"><TMPL_VAR .loc.label_clear_search></div>
 
 <!-- create a new series -->
 <TMPL_IF .allow.create_series>
 <div style="clear:both" class="newseries">
 	<button onclick="add_series('<TMPL_VAR series_name escape=js>')"><TMPL_VAR .loc.button_add_series></button>
-	<div id="edit_new" class="editor" style="display:none;clear:both">
+	<div id="edit_new" class="editor card" style="display:none;clear:both">
 		<form method="post" action="series.cgi">
 			<input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
 			<input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
@@ -27,8 +28,9 @@
             </div>
 
 		    <div class="formField">
-	        	<button type=submit name="action" value="create"><TMPL_VAR .loc.button_create></button>
-	        	<button onclick="cancel_edit_series('new');return false;"><TMPL_VAR .loc.button_cancel></button>
+	        	<button onclick="createSeries($(this).closest('form'));return false"
+                    ><TMPL_VAR .loc.button_create></button>
+	        	<button onclick="$('#edit_new').hide();return false;"><TMPL_VAR .loc.button_cancel></button>
             </div>
 		</form>
 	</div>
@@ -36,14 +38,16 @@
 </TMPL_IF>
 
 <div id="newSeries">
-<TMPL_LOOP newSeries>
-	<a 
-        onclick="view_series_details('<TMPL_VAR series_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR .project_id escape=js>')"
-        href="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>&action=show"
+<TMPL_LOOP series>
+    <TMPL_IF is_new>
+	<a
+        onclick="view_series_details('<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR series_id escape=js>')"
+        href="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>&action=show_series"
     >
-		<b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b> 
+		<b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b>
         <TMPL_IF title> <br> <TMPL_VAR title></TMPL_IF>
 	</a>
+    </TMPL_IF>
 </TMPL_LOOP>
 </div>
 
@@ -52,17 +56,19 @@
 </div>
 
 <div id="oldSeries" style="display:none;">
-<TMPL_LOOP oldSeries>
-	<a onclick="view_series_details('<TMPL_VAR series_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR .project_id escape=js>')"
+<TMPL_LOOP series>
+    <TMPL_IF is_old>
+	<a onclick="view_series_details('<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR series_id escape=js>')"
         href="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>&action=show"
     >
-		<b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b> 
+		<b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b>
         <TMPL_IF title> <br> <TMPL_VAR title></TMPL_IF>
 	</a>
+    </TMPL_IF>
 </TMPL_LOOP>
 </div>
 
 
-</main>	    
+</main>	
 </body>
 </html>

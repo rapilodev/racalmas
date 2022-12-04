@@ -9,7 +9,8 @@ img {
 }
 
 h2 {
-    line-height: 1.5em;
+    font-size: 1.5rem;
+    line-height: 2rem;
 }
 
 .thin {
@@ -20,11 +21,12 @@ th {
     text-align: center;
 }
 
-tr.active{
-    border-left:6px solid #0c0;
+tr.active {
+    border-left: 6px solid #0c0;
 }
-tr.inactive{
-    border-left:6px solid #c00;
+
+tr.inactive {
+    border-left: 6px solid #c00;
 }
 
 #progressBar {
@@ -32,12 +34,10 @@ tr.inactive{
     height: 1rem;
     border: 0;
     box-shadow: #888 2px 2px 1px 1px;
-    transition : width 1s ease;
+    transition: width 1s ease;
 }
 
-#content div.ok, 
-#content div.warn, 
-#content div.error {
+#content div.ok, #content div.warn, #content div.error {
     padding-top: 3px;
     padding-bottom: 3px;
     margin: 1px;
@@ -45,28 +45,45 @@ tr.inactive{
     text-align: center;
 }
 
-#progress_container{
-    display:flex;
-    box-shadow: #888 2px 2px 1px 1px;
-    width:100%;
-    padding:0;
+#progress_container {
+    display: flex;
+    box-shadow: #fff 2px 2px 1px 1px;
+    width: 100%;
+    padding: 0;
 }
 
-#progress_container div{
-    transition : width 1s linear;
+#progress_container div {
+    transition: width 1s linear;
     text-align: center;
     padding: 1rem;
-    color:white;
-    overflow:none;
+    color: black;
+    overflow: none;
     white-space: nowrap;
 }
 
-#progress_container #progress_done{
-    background:#004f9b;
+#progress_container #progress_done {
+    background: rgb(22, 120, 194);
+    
 }
 
-#progress_container #progress_todo{
+#progress_container #progress_todo {
     color: #004f9b;
-    background:#ccc;
+    background: #ddd;
 }
 
+#progress {
+    display: none;
+    vertical-align: middle;
+    background: #fff;
+    text-align: center;
+    margin: 1em;
+    padding: 1em;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+#upload {
+    display: flex;
+    flex-direction: row;
+    align-items: center;    
+}

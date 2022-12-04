@@ -283,7 +283,7 @@ sub render($$$$) {
     $template_parameters->{base_url}         = $config->{locations}->{base_url};
     $template_parameters->{widget_render_url}= $config->{locations}->{widget_render_url};
 
-    template::process( $config, $_[0], $parms->{template}, $template_parameters );
+    $_[0] = template::process( $config, $parms->{template}, $template_parameters );
 }
 
 sub get_calendar_weeks($$$) {

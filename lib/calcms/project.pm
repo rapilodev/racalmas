@@ -73,7 +73,7 @@ sub getImageById($$) {
     my ($config, $conditions) = @_;
 
     for ('project_id') {
-        return undef unless defined $conditions->{$_};
+        ParamError->throw(error => "missing $_") unless defined $conditions->{$_};
     };
 
     my $projects = project::get( $config, $conditions );
@@ -85,7 +85,7 @@ sub get_date_range($) {
     my ($config) = @_;
 
     my $query = qq{
-        select min(start_date) start_date, max(end_date) end_date 
+        select min(start_date) start_date, max(end_date) end_date
         from   calcms_projects
 	};
     my $dbh = db::connect($config);
@@ -129,7 +129,7 @@ sub update($$) {
     push @bind_values, $entry->{project_id};
 
     my $query = qq{
-		update calcms_projects 
+		update calcms_projects
 		set $values
 		where project_id=?
 	};
@@ -149,7 +149,7 @@ sub get_studios($$) {
     my ($config, $options) = @_;
 
     for ('project_id') {
-        return undef unless defined $options->{$_}
+        ParamError->throw(error => "missing $_") unless defined $options->{$_}
     };
     my $project_id = $options->{project_id};
 
@@ -200,7 +200,7 @@ sub is_studio_assigned ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id') {
-        return 0 unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
     my $project_id = $entry->{project_id};
@@ -224,7 +224,7 @@ sub assign_studio($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id') {
-        return undef unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
     my $project_id = $entry->{project_id};
     my $studio_id  = $entry->{studio_id};
@@ -243,7 +243,7 @@ sub unassign_studio($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id') {
-        return undef unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
     my $project_id = $entry->{project_id};
     my $studio_id  = $entry->{studio_id};
@@ -259,7 +259,7 @@ sub get_series ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id') {
-        return undef unless defined $options->{$_}
+        ParamError->throw(error => "missing $_") unless defined $options->{$_}
     };
     my $project_id = $options->{project_id};
     my $studio_id  = $options->{studio_id};
@@ -317,7 +317,7 @@ sub is_series_assigned ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        return undef unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
     my $project_id = $entry->{project_id};
@@ -342,7 +342,7 @@ sub assign_series($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        return undef unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
     my $project_id = $entry->{project_id};
@@ -365,7 +365,7 @@ sub unassign_series ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        return undef unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
     my $project_id = $entry->{project_id};
@@ -460,17 +460,11 @@ sub get_months ($$;$) {
 # check project_id
 sub check ($$) {
     my ($config, $options) = @_;
-    return "missing project_id at checking project" unless defined $options->{project_id};
-    return "Please select a project" if ( $options->{project_id} eq '-1' );
-    return "Please select a project" if ( $options->{project_id} eq '' );
+    ParamError->throw(error=> "missing project_id at checking project") unless defined $options->{project_id};
+    ParamError->throw(error=> "Please select a project") if ( $options->{project_id} eq '-1' );
+    ParamError->throw(error=> "Please select a project") if ( $options->{project_id} eq '' );
     my $projects = project::get( $config, { project_id => $options->{project_id} } );
-    return "Sorry. unknown project" unless defined $projects;
-    return 1;
-}
-
-sub error($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
+    ProjectError->throw(error=> "Unknown project") unless defined $projects;
 }
 
 #do not delete last line!

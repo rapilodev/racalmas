@@ -1,5 +1,6 @@
 function showCommentsByAge(age){
     var url='comment.cgi?';
+    url += '&action=show';
     url += '&project_id='+getProjectId();
     url += '&studio_id='+getStudioId();
     url += '&age='+age;
@@ -22,7 +23,7 @@ function showEventComments(eventId){
 
 function loadComments(eventId, callback){
     var url='comment.cgi?';
-    url += '&action=showComment';
+    url += '&action=show';
     url += '&project_id='+getProjectId();
     url += '&studio_id='+getStudioId();
     url += '&event_id='+eventId;
@@ -34,7 +35,7 @@ function loadComments(eventId, callback){
         url,
         function(){
             showComments(elemId);
-            
+
             if(callback!=null){
                 //console.log("callback");
                 callback();
@@ -88,10 +89,10 @@ function setCommentStatusRead(commentId, eventId, status){
     url += '&comment_id='+commentId;
     //console.log(url);
     $("#event_"+eventId+"_comments").load(
-        url, 
+        url,
         function(){
             loadComments(
-                eventId, 
+                eventId,
                 function(){
                     scrollToComment(eventId);
                 }
@@ -112,10 +113,10 @@ function setCommentStatusLock(commentId,eventId,status){
     //console.log(url);
 
     $("#event_"+eventId+"_comments").load(
-        url, 
+        url,
         function(){
             loadComments(
-                eventId, 
+                eventId,
                 function(){
                     scrollToComment(eventId);
                 }

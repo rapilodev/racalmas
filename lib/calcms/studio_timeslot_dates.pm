@@ -11,7 +11,6 @@ use time();
 # table:   calcms_studio_timeslot_dates
 # columns: id, studio_id, start(datetime), end(datetime)
 # TODO: delete column schedule_id
-our @EXPORT_OK = qw(get_columns get insert update delete get_dates);
 
 sub get_columns ($){
     my ($config) = @_;
@@ -112,7 +111,9 @@ sub get ($$){
 sub update {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{schedule_id};
+    for ('project_id', 'studio_id', 'schedule_id') {
+        ParamError->throw(error => "studio_timeslots:update: missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
 
@@ -304,7 +305,7 @@ sub delete {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'schedule_id') {
-        return unless defined $entry->{$_}
+        ParamError->throw(error => "studio_timeslots:delete: missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -328,7 +329,7 @@ sub can_studio_edit_events {
     my @bind_values = ();
 
     for ('studio_id', 'start', 'end') {
-       return 0 unless defined $condition->{$_}
+        ParamError->throw(error => "studio_timeslots:can_studio_edit_events: missing $_") unless defined $condition->{$_}
     };
 
     if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
@@ -388,7 +389,7 @@ sub getMergedDays {
     my @bind_values = ();
 
     for ('studio_id', 'start', 'end') {
-        return 0 unless defined $condition->{$_}
+        ParamError->throw(error => "studio_timeslots:getMergedDays missing $_") unless defined $condition->{$_}
     };
 
     if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
@@ -444,11 +445,6 @@ sub getMergedDays {
     }
 
     return undef;
-}
-
-sub error {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

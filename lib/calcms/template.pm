@@ -18,11 +18,11 @@ use params();
 use project();
 use log();
 
-our @EXPORT_OK = qw(check process exit_on_missing_permission clear_cache);
+our @EXPORT_OK = qw(check process clear_cache);
 
 # TODO:config
-sub process($$$$) {
-    my ($config, $output, $filename, $params) = @_;
+sub process($$$) {
+    my ($config, $filename, $params) = @_;
 
     #TODO: get config
     for my $key ( keys %{ $config->{locations} } ) {
@@ -42,17 +42,12 @@ sub process($$$$) {
 
     $params->{user} = $ENV{REMOTE_USER} unless defined $params->{user};
 
-    if ( ( $filename =~ /json\-p/ ) || (params::isJson) ) {
+    if ( ( $filename =~ /json\-p/ ) || (params::is_json) ) {
         my $header = "Content-type:application/json; charset=utf-8\n\n";
         my $json = JSON->new->pretty(1)->canonical()->encode($params);
-
-        $json = $header . $params->{json_callback} . $json;
-        if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
-            print $json. "\n";
-        } else {
-            $_[1] = $json . "\n";
-        }
-        return;
+        $json = $header . ($params->{json_callback}//'') . $json;
+        print STDERR Dumper($json);
+        return $json. "\n";
     }
 
     unless ( -r $filename ) {
@@ -70,11 +65,7 @@ sub process($$$$) {
     $out =~ s{(src="js/.*\.js)"}{$1$version"}g;
     $out =~ s{(href="css/.*\.css)"}{$1$version"}g;
     $out =~ s{(src="image/.*\.svg)"}{$1$version"}g;
-    if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
-        print $out;
-    } else {
-        $_[1] = $out;
-    }
+    return $out;
 }
 
 sub initTemplate($) {

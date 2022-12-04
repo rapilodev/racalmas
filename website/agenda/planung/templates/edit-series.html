@@ -36,42 +36,22 @@
 <div id="view_<TMPL_VAR .series_id>" class="view" style="clear:both">
 	<div class="buttons">
 	    <TMPL_IF .allow.read_event>
-            <button 
-                onclick="window.location='calendar.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>&list=1'"
+            <button onclick="listEvents('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
                 style="float:left"
             ><TMPL_VAR .loc.button_event_list></button>
         </TMPL_IF>
 
 	    <TMPL_IF .allow.create_event>
-	        <form action="broadcast.cgi"
-                style="float:left"
-            >
-	            <input  type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-	            <input  type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
-	            <input  type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
-	            <button type="submit" name="action"     value="show_new_event"><TMPL_VAR .loc.button_create_event></button>
-	        </form>
+            <button onclick="showNewEvent('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
+            ><TMPL_VAR .loc.button_create_event></button>
 	    </TMPL_IF>
-
-        <TMPL_IF .allow.read_event>
-            <button target="_blank"
-                class="text"
-                onclick="load('event-history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>');"
-                style="float:left"
-            ><TMPL_VAR .loc.button_show_changes></button>
-        </TMPL_IF>
 
 	    <TMPL_IF .allow.update_event>
-	        <form action="series.cgi">
-	            <input  type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-	            <input  type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
-	            <input  type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
-	            <button type="submit" name="action"     value="rebuild_episodes" class="text"><TMPL_VAR .loc.button_rebuild_episodes></button>
-	        </form>
+            <button onclick="previewRebuildEpisodes('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
+                class="text"
+            ><TMPL_VAR .loc.button_rebuild_episodes></button>
 	    </TMPL_IF>
-
     </div>
-
 </div>
 
 <div id="tabs">
@@ -83,11 +63,6 @@
             <li><a href="#tabs-events"><TMPL_VAR .loc.tab_current_events></a></li>
         <TMPL_UNLESS has_single_events>
              <li><a href="#tabs-members"><TMPL_VAR .loc.tab_members></a></li>
-             <!--
-             <TMPL_IF .allow.scan_series_events>
-                 <li><a href="#tabs-import"><TMPL_VAR .loc.tab_import></a></li>
-             </TMPL_IF>
-             -->
              <TMPL_IF .allow.delete_series>
                  <li><a href="#tabs-delete"><TMPL_VAR .loc.tab_delete></a></li>
             </TMPL_IF>
@@ -97,23 +72,23 @@
     <!-- edit template-->
     <TMPL_IF .allow.update_series_template>
     <div id="tabs-template" class="panel">
-        
-	    <div id="edit_<TMPL_VAR .series_id>" class="editor"> 
+
+	    <div id="edit_<TMPL_VAR .series_id>" class="editor">
 	    <form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-template">
             <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
 		    <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
 		    <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">	
 		    <table>
                 <TMPL_UNLESS has_single_events>
-			    <tr> <td class="label"><TMPL_VAR .loc.template_series></td> 	      
+			    <tr> <td class="label"><TMPL_VAR .loc.template_series></td> 	
                      <td><input name="series_name" value="<TMPL_VAR series_name>" placeholder="<TMPL_VAR .loc.template_series>"></td></tr>
                 <TMPL_ELSE>
                      <input type="hidden" name="series_name" value="_single_">
                 </TMPL_UNLESS>
-			    <tr> <td class="label"><TMPL_VAR .loc.template_title></td> 	      
+			    <tr> <td class="label"><TMPL_VAR .loc.template_title></td> 	
                      <td><input name="title" value="<TMPL_VAR title>" placeholder="<TMPL_VAR .loc.template_title>"></td></tr>
 			    <tr id="excerpt">
-			        <td class="label"><TMPL_VAR .loc.template_excerpt></td> 	  
+			        <td class="label"><TMPL_VAR .loc.template_excerpt></td> 	
                     <td>
                         <div id="excerpt_too_long" class="error" style="display:none"><TMPL_VAR .loc.label_excerpt_too_long></div>
                         <textarea name="excerpt" class="animated" style="width:100%;" maxlength="251" placeholder="<TMPL_VAR .loc.template_excerpt>"><TMPL_VAR excerpt></textarea>
@@ -121,25 +96,25 @@
                 </tr>
 			    <tr> <td class="label"><TMPL_VAR .loc.template_topic></td>
                      <td><textarea name="topic" class="animated" style="width:100%;" placeholder="<TMPL_VAR .loc.template_topic>"><TMPL_VAR topic></textarea></td></tr>
-			    <tr> <td class="label"><TMPL_VAR .loc.template_content></td>	      
+			    <tr> <td class="label"><TMPL_VAR .loc.template_content></td>	
                      <td><textarea name="content" class="animated" style="width:100%;" placeholder="<TMPL_VAR .loc.template_content>"><TMPL_VAR content></textarea></td></tr>
 			    <tr> <td class="label"><TMPL_VAR .loc.template_image></td>
 			         <td>
                     <TMPL_IF .allow.read_image>
-                        <button class="selectImage" 
+                        <button class="selectImage"
                             onclick="selectImage('<TMPL_VAR series_name escape=js>', '<TMPL_VAR image escape=js>', 'series', '<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR series_id escape=js>'); return false;"
                         >
                             <img id="imagePreview" src="show-image.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image escape=js>&type=icon">
                         </button>
 
-                        <input type="hidden" name="series_image" value="<TMPL_VAR series_image>" > 
+                        <input type="hidden" name="series_image" value="<TMPL_VAR series_image>" >
                         <input id="image_<TMPL_VAR .series_id>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.template_image>" readonly="readonly">
                     </TMPL_IF>
                 </td></tr>
-			    <tr> <td class="label"><TMPL_VAR .loc.template_duration></td>	  
+			    <tr> <td class="label"><TMPL_VAR .loc.template_duration></td>	
                      <td><input name="default_duration" value="<TMPL_VAR default_duration>" style="width:3em" placeholder="<TMPL_VAR .loc.template_duration>"> <TMPL_VAR .loc.minutes></td></tr>
 
-			    <tr> <td class="label"><TMPL_VAR .loc.template_live></td>	      
+			    <tr> <td class="label"><TMPL_VAR .loc.template_live></td>	
                      <td><input name="live" type="checkbox"<TMPL_IF live> value="1" checked="checked"<TMPL_ELSE> value="0"</TMPL_IF> ></td></tr>
 
                 <TMPL_UNLESS has_single_events>
@@ -147,21 +122,21 @@
                      <td><input name="count_episodes" type="checkbox"<TMPL_IF count_episodes> value="1" checked="checked"<TMPL_ELSE> value="0"</TMPL_IF> ></td></tr>
                 </TMPL_UNLESS>
 
-			    <tr> <td class="label"><TMPL_VAR .loc.template_podcast_url></td>	      
+			    <tr> <td class="label"><TMPL_VAR .loc.template_podcast_url></td>	
                      <td><input name="podcast_url" style="width:100%;" value="<TMPL_VAR podcast_url>" placeholder="<TMPL_VAR .loc.template_podcast_url>"></td></tr>
 
-			    <tr> <td class="label"><TMPL_VAR .loc.template_archive_url></td>	      
+			    <tr> <td class="label"><TMPL_VAR .loc.template_archive_url></td>	
                      <td><input name="archive_url" style="width:100%;" value="<TMPL_VAR archive_url>" placeholder="<TMPL_VAR .loc.template_archive_url>"></td></tr>
 
-			    <tr> <td class="label"><TMPL_VAR .loc.template_comments></td>	  
+			    <tr> <td class="label"><TMPL_VAR .loc.template_comments></td>	
                      <td><textarea name="comment" class="animated" style="width:100%;" placeholder="<TMPL_VAR .loc.template_comments>"><TMPL_VAR comment></textarea></td></tr>
 			    <!--<tr> <td class="label">studio</td> 	<td><TMPL_VAR studio></td></tr>-->
 
-                <tr> <td class="label"><TMPL_VAR .loc.template_predecessor_id></td>     
+                <tr> <td class="label"><TMPL_VAR .loc.template_predecessor_id></td>
                      <td><input name="predecessor_id" style="width:100%;" value="<TMPL_VAR predecessor_id>" placeholder="<TMPL_VAR .loc.template_predecessor_id>"></td></tr>
 
-                <tr> 
-                    <td class="label"><TMPL_VAR .loc.template_content_format></td>     
+                <tr>
+                    <td class="label"><TMPL_VAR .loc.template_content_format></td>
                     <td>
                         <select name="content_format" value="<TMPL_VAR content_format>">
                             <option value="creole"<TMPL_IF content_format_creole> selected="selected"</TMPL_IF>><TMPL_VAR .loc.template_content_format_creole></option>
@@ -173,8 +148,7 @@
 
 		    <div class="buttons">
 			    <TMPL_IF .allow.update_series_template>
-				    <button type=submit name="action" value="save"
-                        class="primary"
+				    <button type=submit name="action" value="save_series" class="primary"
                     ><TMPL_VAR .loc.button_save_template></button>
 			    </TMPL_IF>
 			    <!--
@@ -188,7 +162,7 @@
 
     <!-- schedule -->
     <div id="tabs-schedule" class="panel">
-        
+
 	    <!-- edit schedule -->
 		<TMPL_IF .allow.update_schedule>
 		<div id="edit_schedule_<TMPL_VAR .series_id>" class="editor">
@@ -296,13 +270,13 @@
 					</div>
 
 					<div class="cell save"><br>
-					    <button type="submit" name="action" value="save_schedule"
+					    <button onclick="saveSchedule($(this).closest('form'));return false;"
 					    ><TMPL_VAR .loc.button_save_schedule></button>
 					</div>
 					<TMPL_IF .allow.delete_schedule>
 					<div class="cell delete"><br>
-					    <button type="submit" class="text" name="action" value="delete_schedule" 
-                            onclick="commitForm('schedule_<TMPL_VAR schedule_id escape=js>','delete_schedule','<TMPL_VAR .loc.button_delete_schedule escape=js>');return false;"
+					    <button
+                            onclick="deleteSchedule($(this.closest('form'));return false;"
                         ><TMPL_VAR .loc.button_delete_schedule></button>
                     </div>
 					</TMPL_IF>
@@ -311,7 +285,7 @@
 			</TMPL_LOOP>
 			
 			<div class="row schedule row<TMPL_IF show_hint_to_add_schedule> active</TMPL_IF>">
-				<form id="schedule_add" method="post" 
+				<form id="schedule_add" method="post"
 				    action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-schedule"
 				>
                     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
@@ -343,11 +317,11 @@
 					<div class="cell period_type"> 
                         <div class="label"><TMPL_VAR .loc.period_type></div>
                         <select name="period_type" onchange="showScheduleFields('schedule_add')">
-                            <option value="single" <TMPL_IF period_type_single>selected="selected"</TMPL_IF> 
+                            <option value="single" <TMPL_IF period_type_single>selected="selected"</TMPL_IF>
                             ><TMPL_VAR .loc.period_type_single></option>
-                            <option value="days" <TMPL_IF period_type_days>selected="selected"</TMPL_IF> 
+                            <option value="days" <TMPL_IF period_type_days>selected="selected"</TMPL_IF>
                             ><TMPL_VAR .loc.period_type_days></option>
-                            <option value="week_of_month" <TMPL_IF period_type_week_of_month>selected="selected"</TMPL_IF> 
+                            <option value="week_of_month" <TMPL_IF period_type_week_of_month>selected="selected"</TMPL_IF>
                             ><TMPL_VAR .loc.period_type_week_of_month></option>
                         </select>
 					</div>
@@ -371,8 +345,8 @@
                         </select>
 					</div>
 
-					<div class="cell week_of_month"> 
-                        <div class="label"><TMPL_VAR .loc.week_of_month></div>
+					<div class="cell week_of_month">
+                        <TMPL_VAR .loc.week_of_month><br/>
 					    <select name="week_of_month" value="<TMPL_VAR week_of_month>" class="week_of_month">
                             <option value="1"><TMPL_VAR .loc.week_1st></option>
                             <option value="2"><TMPL_VAR .loc.week_2nd></option>
@@ -413,7 +387,8 @@
 					<TMPL_IF .allow.update_schedule>
     					<div class="cell save">
     					    <br/>
-                            <button id="addScheduleButton" type="submit" name="action" value="save_schedule"
+                            <button id="addScheduleButton"
+                                onclick="saveSchedule($(this).closest('form'));return false"
                                 ><TMPL_VAR .loc.button_add_schedule></button>
                             <TMPL_IF show_hint_to_add_schedule><TMPL_VAR .loc.label_hint_to_add_schedule></TMPL_IF>
                         </div>
@@ -449,7 +424,6 @@
 
 	<!-- series events -->
 	<div id="tabs-events" class="panel">
-		
 		<table class="table">
 		<TMPL_LOOP events>
 			<tr id="event_<TMPL_VAR event_id>" style="cursor:pointer"
@@ -476,7 +450,6 @@
 
 		</TMPL_LOOP>
 		</table>
-		
 	</div>
 
 <TMPL_UNLESS has_single_events>
@@ -494,7 +467,7 @@
 		    <td colspan="2">
 			    <TMPL_IF .allow.assign_series_member>
 			    <div class="edit_series_members_<TMPL_VAR .series_id>" style="display:none;">
-			        <form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-members">
+			        <form>
                         <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
 				        <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
 				        <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
@@ -505,7 +478,7 @@
 					        <option value="<TMPL_VAR user_id>"><TMPL_VAR full_name></option>
 				        </TMPL_LOOP>
 				        </select>
-				        <button type="submit" value="add user"
+				        <button onclick="addUser($(this).closest('form'));return false"
 				            ><TMPL_VAR .loc.button_add_member></button>
 			        </form>
 			    </div>
@@ -518,30 +491,21 @@
 
 		<!-- view members -->
 		<TMPL_LOOP series_users>
-		<tr>
+		<tr id="edit_series_members_<TMPL_VAR user_id>">
 			<td>
 				<TMPL_VAR full_name>
 			</td>
 
 			<TMPL_IF .allow.remove_series_member>
 			<td>
-			<div class="edit_series_members_<TMPL_VAR .series_id>" style="display:none">
-				<form method="post" id="series_members_<TMPL_VAR .series_id>_<TMPL_VAR user_id>"
-				    action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-members" 
-				>
-                    <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-					<input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
-					<input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
-					<input type="hidden" name="user_id"    value="<TMPL_VAR user_id>">
-					<input type="hidden" name="action"     value="remove_user">
-					<button type="submit" value="remove user"
-                        onclick="commitForm('series_members_<TMPL_VAR .series_id escape=js>_<TMPL_VAR user_id escape=js>', 'remove_user', '<TMPL_VAR .loc.button_remove_member escape=js>'); return false;"
-                    ><TMPL_VAR .loc.button_remove_member></button>
-				</form>
+			<div style="display:none" class="edit_series_members_<TMPL_VAR .series_id>">
+				<button value="remove user"
+                    onclick="commitRemoveUser('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>','<TMPL_VAR user_id>');return false;"
+                ><TMPL_VAR .loc.button_remove_member></button>
 			</div>
 			</td>
 
-			<td class="edit_series_members_<TMPL_VAR .series_id> label" style="display:none;max-width:10em;">
+			<td class="label" style="display:none;max-width:10em;">
 				<TMPL_VAR .loc.added> <TMPL_VAR .loc.at> <TMPL_VAR modified_at> <TMPL_VAR .loc.by> <TMPL_VAR modified_by>
 			</td>
 			</TMPL_IF>
@@ -550,81 +514,26 @@
 		</table>
 	</div>
 
-    <!-- assign events from series_name and title-->
-    <TMPL_IF .allow.scan_series_events>
-    <!--
-    <div id="tabs-import">
-	    <div id="scan_<TMPL_VAR .series_id>" class="editor"> 
-	        <div><TMPL_VAR .loc.label_import></div>
-            <form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-import">
-                <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-	            <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
-	            <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">	
-	            <input type="hidden" name="action" value="save_scan">
-                <table>
-	                <tr> 
-	                    <td class="label"><TMPL_VAR .loc.label_import_series></td>
-	                    <td><input name="assign_event_series_name" value="<TMPL_VAR assign_event_series_name>"></td>
-	                </tr>
-	                <tr>
-	                    <td class="label"><TMPL_VAR .loc.label_import_title></td>
-	                    <td><input name="assign_event_title" value="<TMPL_VAR assign_event_title>"></td>
-	                </tr>
-      			    <tr>
-      			        <td></td>
-      			        <td><button type="submit" value="save"><TMPL_VAR .loc.button_import_save></button></td>
-  			    </table>
-            </form>
-        </div>
-
-        <div class="buttons">
-		    <div><TMPL_VAR .loc.label_import_scan></div>
-            <form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-import">
-                <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-	            <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
-	            <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">	
-	            <input type="hidden" name="action" value="scan_events">
-                <table>
-	                <tr>
-	                    <td class="label"></td> 	
-	                    <td><button type="submit" value="scan"
-	                        ><TMPL_VAR .loc.button_import_scan></button>
-	                    </td>
-	                </tr>
-  			    </table>
-            </form>
-        </div>
-        <TMPL_VAR scan_results escape="no">
-    </div>
-    -->
-    </TMPL_IF>
-    
     <!-- delete series -->
     <TMPL_IF .allow.delete_series>
     <div id="tabs-delete" class="panel">
         <center>
         <div><TMPL_VAR .loc.label_delete_series></div>
         <div>
-	        <form method="post" action="series.cgi#tabs-delete" id="series_<TMPL_VAR .series_id>">
-                <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-		        <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
-		        <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">	
-		        <input type="hidden" name="action" value="delete">
-		        <button type="submit" value="delete this series" 
-                    onclick="commitForm('series_<TMPL_VAR .series_id>','delete','<TMPL_VAR .loc.button_delete_series>');return false;"
-                ><TMPL_VAR .loc.button_delete_series></button>
-            </form>
+            <button
+            onclick="commitDeleteSeries('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
+            ><TMPL_VAR .loc.button_delete_series></button>
         </div>
         </center>
     </div>
     </TMPL_IF>
 
 </TMPL_UNLESS> <!-- has single events-->
-	<div class="label right" 
+	<div class="label right"
         style="background:none"
     ><TMPL_VAR .loc.modified> <TMPL_VAR .loc.at> <TMPL_VAR modified_at> <TMPL_VAR .loc.by> <TMPL_VAR modified_by>.</div>
 
-</main>	    
+</main>	
 </body>
 </html>
 

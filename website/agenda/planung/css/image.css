@@ -62,8 +62,8 @@ input.field{
     height:100%;
 }
 
-#content #imageEditor input, 
-#content #imageEditor select, 
+#content #imageEditor input,
+#content #imageEditor select,
 #content #imageEditor textarea{
     margin-left:0;
     margin-bottom:1rem;

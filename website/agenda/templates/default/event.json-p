@@ -5,14 +5,14 @@ if(typeof(Feed) == 'undefined') Feed = {};
 Feed = {
 "version" : "1.0",
 "encoding" : "UTF-8",
-"feed" : { 
+"feed" : {
   "xmlns" : "http://www.w3.org/2005/Atom",
   "xmlns$openSearch" : "http://a9.com/-/spec/opensearchrss/1.0/",
   "id" : { "$t" : "<TMPL_VAR source_base_url>" },
   "updated" : { "$t" : "<TMPL_VAR modified_at>" },
   "title" : {
     "type" : "text",
-    "$t" : "<TMPL_VAR project_title> Sendeplan>" 
+    "$t" : "<TMPL_VAR project_title> Sendeplan>"
    },
   "subtitle" : {
     "type" : "text",

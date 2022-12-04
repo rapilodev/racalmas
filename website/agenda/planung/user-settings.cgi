@@ -5,6 +5,8 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use Scalar::Util qw( blessed );
+use Try::Tiny;
 
 use config();
 use entry();
@@ -21,49 +23,28 @@ use user_default_studios();
 use localization();
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
-my $config = config::get('../config/config.cgi');
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+uac::init($r, \&check_params, \&main);
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        user       => $user,
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id}
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
+
+    #process header
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    my $out = template::process( $config, template::check( $config, 'default.html' ), $headerParams );
+    uac::check($config, $params, $user_presets);
+
+    our $errors = [];
+
+    if ( defined $params->{action} ) {
+        return $out . update_settings( $config, $request ) if ( $params->{action} eq 'save' );
+        return $out . updateDefaultProjectStudio( $config, $request )
+          if ( $params->{action} eq 'updateDefaultProjectStudio' );
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
-
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
-
-$params = $request->{params}->{checked};
-
-#process header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-our $errors = [];
-
-if ( defined $params->{action} ) {
-    update_settings( $config, $request ) if ( $params->{action} eq 'save' );
-    updateDefaultProjectStudio( $config, $request )
-      if ( $params->{action} eq 'updateDefaultProjectStudio' );
+    $config->{access}->{write} = 0;
+    return $out . show_settings( $config, $request );
 }
-$config->{access}->{write} = 0;
-show_settings( $config, $request );
 
 sub show_settings {
     my ($config, $request) = @_;
@@ -71,10 +52,6 @@ sub show_settings {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    #	unless ($permissions->{read_user}==1){
-    #		uac::permissions_denied('read_user');
-    #		return;
-    #	}
     my $user = $params->{presets}->{user};
     my $colors = user_settings::getColors( $config, { user => $user } );
 
@@ -95,7 +72,6 @@ sub show_settings {
     $params->{colors}      = \@colors;
     $params->{css}         = user_settings::getColorCss( $config, { user => $user } );
     $params->{permissions} = $permissions;
-    $params->{errors}      = $errors if scalar @$errors > 0;
 
     my $user_settings = user_settings::get( $config, { user => $user } );
     my $language = $user_settings->{language} || 'en';
@@ -114,7 +90,7 @@ sub show_settings {
 
     uac::set_template_permissions( $permissions, $params );
 
-    template::process( $config, 'print', $params->{template}, $params );
+    return template::process( $config, $params->{template}, $params );
 }
 
 sub updateDefaultProjectStudio {
@@ -207,9 +183,7 @@ sub update_settings {
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
 
     #template
@@ -221,7 +195,7 @@ sub check_params {
     entry::set_numbers( $checked, $params, [
         'project_id', 'default_studio_id', 'studio_id', 'default_studio',
         'default_project' ]);
-        
+
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
@@ -247,9 +221,5 @@ sub check_params {
 
     $checked->{action} = entry::element_of( $params->{action}, ['save', 'updateDefaultProjectStudio']);
     return $checked;
-}
-
-sub error {
-    push @$errors, { error => $_[0] };
 }
 

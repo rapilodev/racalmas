@@ -1,5 +1,4 @@
 #content {
-    margin-top: 3rem;
     min-height: 100%;
 }
 
@@ -7,8 +6,9 @@
     padding:0;
 }
 
-#content td.label {
-    max-width: 2rem;
+#content .editor td.label {
+    max-width: min-content;
+    padding-top:0.5rem;
 }
 
 #content .editor td.label {
@@ -91,14 +91,23 @@
 }
 
 #content .editor .row {
-    clear: both;
     min-height: 4rem;
 }
 
+#content .editor .row form{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-start;
+    align-items:center;
+}
+
+#content #tabs-schedule {
+    width:1000px;
+    max-width:none;
+}
+
 #content .editor .cell {
-    display:table-cell;
     text-align: center;
-    white-space: nowrap;
     padding-right:0.5rem;
 }
 
@@ -199,7 +208,7 @@
 #content div.cell.delete button {
     padding-right:0;
     margin:0;
-    padding:0;    
+    padding:0;
 }
 
 /* end of schedule */
@@ -242,7 +251,16 @@ input.exclude{
 }
 
 div#tabs > div {
+    clear: both;
     background:white;
+}
+
+ul.tabContainer,
+div.buttons,
+div.row form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #content #tabs-events td.weekday,
@@ -271,3 +289,19 @@ div.editor > form > table td{
     padding-right:1rem;
 }
 
+/* rebuild episodes */
+#content #rebuild.card {
+    background:white;
+    max-width:1000px;
+    margin:0;
+    transition: all 2s;
+}
+#rebuild tr        {cursor:pointer}
+#rebuild td        {border:1px solid gray}
+#rebuild tr.error  {background:#f99}
+#rebuild tr.warn   {background:#ff9}
+#rebuild tr.ok     {background:#9f9}
+
+#event_history {
+    background: white;
+}

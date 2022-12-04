@@ -39,11 +39,10 @@ var series_id=0;
     </TMPL_IF>
 </form>
 </div>
-<div class="panel view" style="clear: both">
-    <TMPL_VAR action> <TMPL_VAR total>
-    events from <TMPL_VAR from_date> till <TMPL_VAR till_date>:
-    <br><br>
 
+<div class="panel view" style="clear: both">
+    <TMPL_VAR action> <TMPL_VAR total> events from <TMPL_VAR from_date> till <TMPL_VAR till_date>:
+    <br><br>
     <table>
     <TMPL_LOOP events>
         <tr>
@@ -51,7 +50,9 @@ var series_id=0;
         <td><TMPL_var series_name></td>
         <td><TMPL_var series_title></td>
         </tr>
-    </TMPL_LOOP> </view>
+    </TMPL_LOOP>
+    </table>
+</div>
 
 </div>
 </body>

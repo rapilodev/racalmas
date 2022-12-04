@@ -6,6 +6,8 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use URI::Escape();
+use Scalar::Util qw( blessed );
+use Try::Tiny;
 
 use params();
 use config();
@@ -18,112 +20,90 @@ use studios();
 use markup();
 use localization();
 
-#binmode STDOUT, ":utf8";
+binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        user       => $user,
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id}
+    #process header
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    my $out = template::process( $config, template::check( $config, 'default.html' ), $headerParams );
+    uac::check($config, $params, $user_presets);
+
+    my $toc = $headerParams->{loc}->{toc};
+
+    $out .= q!
+    <style>
+    #content h1{
+        font-size:1.6em;
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
 
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
+    #content h2{
+        font-size:1.2em;
+        padding-top:1em;
+        padding-left:2em;
+    }
 
-$params = $request->{params}->{checked};
+    #content h3{
+        font-size:1em;
+        padding-left:4em;
+    }
 
-#process header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
-return unless uac::check( $config, $params, $user_presets ) == 1;
+    #content h4{
+        font-size:1em;
+        padding-left:4em;
+    }
 
-my $toc = $headerParams->{loc}->{toc};
+    #content p{
+        padding-left:6em;
+        line-height:1.5em;
+    }
 
-print q!
-<style>
-#content h1{
-    font-size:1.6em;
+    #content ul{
+        padding-left:7em;
+    }
+
+    #content li{
+        line-height:1.5em;
+    }
+
+    body #content{
+        max-width:60em;
+    }
+
+    </style>
+
+    <script>
+    function addToToc(selector){
+        $(selector).each(function(){
+            if($(this).hasClass('hide'))return
+            var title=$(this).text();
+            var tag=$(this).prop('tagName');
+            var span=2;
+            if(tag=='H2')span=4;
+            if(tag=='H3')span=6;
+            if(tag=='H4')span=8;
+            var url=title;
+            url=url.replace(/[^a-zA-Z]/g,'-')
+            url=url.replace(/\-+/g, '-')
+            $(this).append('<a name="'+url+'" />');
+            $('#toc').append('<li style="margin-left:'+span+'em"><a href="#'+url+'">'+title+'</a></li>')
+        });
+    }
+
+    $( document ).ready(function() {
+        addToToc('#content h1,#content h2,#content h3,#content h4');
+    })
+    </script>
+    !;
+
+    return $out . markup::creole_to_html( getHelp( $headerParams->{loc}->{region} ) );
 }
-
-#content h2{
-    font-size:1.2em;
-    padding-top:1em;
-    padding-left:2em;
-}
-
-#content h3{
-    font-size:1em;
-    padding-left:4em;
-}
-
-#content h4{
-    font-size:1em;
-    padding-left:4em;
-}
-
-#content p{
-    padding-left:6em;
-    line-height:1.5em;
-}
-
-#content ul{
-    padding-left:7em;
-}
-
-#content li{
-    line-height:1.5em;
-}
-
-body #content{
-    max-width:60em;
-}
-
-</style>
-
-<script>
-function addToToc(selector){
-    $(selector).each(function(){
-        if($(this).hasClass('hide'))return
-        var title=$(this).text();
-        var tag=$(this).prop('tagName');
-        var span=2;
-        if(tag=='H2')span=4;
-        if(tag=='H3')span=6;
-        if(tag=='H4')span=8;
-        var url=title;
-        url=url.replace(/[^a-zA-Z]/g,'-')
-        url=url.replace(/\-+/g, '-')
-        $(this).append('<a name="'+url+'" />');
-        $('#toc').append('<li style="margin-left:'+span+'em"><a href="#'+url+'">'+title+'</a></li>')
-    });
-}
-
-$( document ).ready(function() {
-    addToToc('#content h1,#content h2,#content h3,#content h4');
-})
-</script>
-!;
-
-print markup::creole_to_html( getHelp( $headerParams->{loc}->{region} ) );
 
 sub getHelp {
     my $region = shift;
@@ -175,7 +155,7 @@ Die zugewiesenen Rechte gelten immer nur für das gewählte Projekt und Studio. 
 
 == Nutzer
 
-Es können individuelle Benutzerkonten angelegt und bearbeitet werden. 
+Es können individuelle Benutzerkonten angelegt und bearbeitet werden.
 
 Hier lässt sich die email-Addresse bearbeiten, ein Nutzer sperren oder löschen.
 
@@ -183,11 +163,11 @@ Die Berechtigungen des Nutzers können über ihm zugewiesene Rollen definiert we
 
 == Sendezeiten
 
-Hier können für ein Projekt und die Sendezeiten für mehrere Studios eingetragen werden. 
+Hier können für ein Projekt und die Sendezeiten für mehrere Studios eingetragen werden.
 
 Sendungen eines Studios lassen sich nur innerhalb der Sendezeiten des Studios anlegen.
 
-Sendezeiten bestehen aus 
+Sendezeiten bestehen aus
 * Datum und Zeit des Beginns des ersten Sendeblocks,
 * Datum und Zeit des Endes des ersten Sendeblocks,
 * in welchem Interval der Sendeblock stattfindet (täglich, wöchentlich, ...)
@@ -222,8 +202,8 @@ Mögliche Ursachen für Konflikte:
 Der Menüpunkt "Sendereihe" zeigt eine Übersicht aller Sendereihen eines Studios an.
 Sendereihen, die lange nicht gesendet wurden, können über "alte Sendungen" eingeblendet werden.
 
-Eine Sendereihe umfasst 
-* eine Vorlage für das Anlegen neuer Sendungen, 
+Eine Sendereihe umfasst
+* eine Vorlage für das Anlegen neuer Sendungen,
 * die Verwaltung von Planterminen
 * die Mitglieder der Redaktion der Sendereihe.
 
@@ -247,11 +227,11 @@ Sobald eine Sendung angelegt wurde, existiert sie unabhängig vom Plantermin. Ei
 
 Unter "Sendereihen" können Plantermine für eine ausgewählte Sendereihe eingetragen werden.
 
-Plantermin anlegen: 
+Plantermin anlegen:
 * im Kalender beim Klick auf den gewünschten freien Zeitbereich innerhalb der Sendezeiten.
-* Unter "Sendereihe" / "Planung" in der Liste der Plantermine 
+* Unter "Sendereihe" / "Planung" in der Liste der Plantermine
 
-Plantermin löschen: 
+Plantermin löschen:
 * im Kalender beim Klick mit der rechten Maustaste auf einen Plantermin.
 * im Kalender beim Klick auf einen Plantermin, dann unter "Planungstermin löschen"
 * Unter "Sendereihe" / "Planung" in der Luste der Plantermine
@@ -295,15 +275,15 @@ Beispiel: jeden 5.Montag im Monat, jedes 2te Mal
 
 Wenn bestimmte geplante Termine nicht stattfinden sollen, können separate Ausnahmetermine über das Häkchen "Ausnahme" angelegt werden.
 
-Ausnahmetermine erscheinen 
-* nicht als Plantermin im Kalender und 
+Ausnahmetermine erscheinen
+* nicht als Plantermin im Kalender und
 * durchgestrichen in der Liste der geplanten Termine einer Sendereihe.
 
-für Einzeltermine: der Plantermin kann einfach gelöscht werden. 
+für Einzeltermine: der Plantermin kann einfach gelöscht werden.
 
 für Wiederholungstermine: der ausfallende Plantermin kann als zusätzlicher Einzel-Planungstermin definiert werden.
 
-Es ist auch möglich, wiederholende Ausnahmen zu definieren. Beispiel: 
+Es ist auch möglich, wiederholende Ausnahmen zu definieren. Beispiel:
 * ein Plantermin alle 2 Wochen und zusätzlich
 * ein Ausnahmetermin alle 3 Wochen
 
@@ -327,7 +307,7 @@ Beim Anlegen einer Sendung wird die Vorlage aus der Sendereihe in die Sendung ko
 Solbald die Sendung angelegt wurde, kann die Sendung von der Redaktion der Sendereihe bearbeitet werden.
 
 Für nummerierte Sendungen wird die Nummer der Episode automatisch ermittelt, falls eine vorherige Sendung eine Episode eingetragen hat.
-Ist der Titel der Sendung identisch zu einer existierenden, wird sie automatisch als Wiederholung gekennzeichnet. 
+Ist der Titel der Sendung identisch zu einer existierenden, wird sie automatisch als Wiederholung gekennzeichnet.
 
 == Sendung bearbeiten
 
@@ -337,12 +317,12 @@ Nachdem eine Sendung angelegt wurde, kann sie im Kalender oder in der Liste der 
 
 Dies umfasst einzelne Felder für den Titel, den Auszug, aktuelle Themen, die Sendebeschreibung und ein Bild.
 
-Für Titel und Auszug existieren separate Felder, die von der Redaktion bearbeitet werden können, 
+Für Titel und Auszug existieren separate Felder, die von der Redaktion bearbeitet werden können,
 falls die Redaktion keine Rechte für die Bearbeitung der Felder Titel und Auszug besitzt.
 
 === Status
 
-Von der Planung bis zur Archivierung kann der aktuelle Status einer Sendung über StatusFelder geändert werden. 
+Von der Planung bis zur Archivierung kann der aktuelle Status einer Sendung über StatusFelder geändert werden.
 Im Kalender kann nach dem Status gefiltert werden.
 
 Folgende Status-Felder gibt es:
@@ -404,7 +384,7 @@ Project and studio can be selected at the top right of each page.
 A user can execute different actions depending on the permissions the user has for the selected project and studio.
 
 == Permissions
-A user can be assigned to different roles for a selected project and studio 
+A user can be assigned to different roles for a selected project and studio
 (for example Guest, Editor, Program Scheduler, Studio Manager).
 A role is a set of selected permissions.
 It is possible to define new roles and assign them to selected users.
@@ -429,7 +409,7 @@ At the Time Slots menu you can assign time spans for each studio of the project.
 One can create broadcasts only within the broadcast date ranges of the selected studio.
 This prevents to create broadcasts out of the time slots defined.
 
-Time Slot definition consists of 
+Time Slot definition consists of
 * start date and time of the first time slot,
 * end date and time of the first time slot,
 * The interval of the time slot (daily, weekly, and more)
@@ -492,7 +472,7 @@ create schedule dates:
 * at Calendar click on a free date of one of the displayed time slots. (Studio time slots are to be defined before.)
 * at Series / Schedule one can edit the schedule
 
-delete schedule dates: 
+delete schedule dates:
 * at Calendar right mouse clock on a schedule date.
 * at Calendar select a schedule date, then select the remove schedule button.
 * At Series / Schedule one can edit the schedule
@@ -574,13 +554,13 @@ Once a broadcast has been created, it can be edited by selecting at Calendar or 
 
 There are fields for the title, the excerpt, current topice, a textual description and an image.
 
-There are separate fields for title and excerpt that can be used to be edited by editors, in case editors have not the 
+There are separate fields for title and excerpt that can be used to be edited by editors, in case editors have not the
 permission to edit title and excerpt themself.
 In general editing each field can be selected for each role of the permission sets.
 
 === Status
 
-The current status of a broadcast can be set to communicate it to other users. 
+The current status of a broadcast can be set to communicate it to other users.
 The status can be filtered at Calendar.
 
 There are following status fields:
@@ -614,15 +594,13 @@ There are following status fields:
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
 
     $checked->{exclude} = 0;
     entry::set_numbers( $checked, $params, [
         'id', 'project_id', 'studio_id', 'default_studio_id' ]);
-        
+
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {

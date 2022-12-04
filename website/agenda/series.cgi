@@ -17,7 +17,7 @@ binmode STDOUT, ":utf8";
 print "Content-Type: text/html; charset=utf-8\n\n";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+my ($params, $error) = params::get($r);
 
 my $config = config::getFromScriptLocation();
 $params = check_params( $config, $params );
@@ -70,7 +70,7 @@ sub list_series {
     $params->{info} .= "no results found" if scalar(@$series) == 0;
     $params->{info} = '';
 
-    template::process( $config, 'print', 'templates/series.html', $params );
+    print template::process( $config, 'templates/series.html', $params );
 }
 
 sub check_params {

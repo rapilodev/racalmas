@@ -12,7 +12,7 @@ function edit_event(event_id, series_id, studio_id, project_id, hide_series){
         elem.addClass('active');
         var url="broadcast.cgi?project_id="+project_id+"&studio_id="+studio_id+"&series_id="+series_id+"&event_id="+event_id+"&action=edit";
         if ((hide_series!=null) && (hide_series!=''))url+='&hide_series=1';
-        load(url);
+        loadUrl(url);
     }
 }
 

@@ -24,7 +24,7 @@ sub get ($$) {
     my @bind_values = ();
 
     for ('user', 'project_id', 'studio_id', 'series_id') {
-        return unless defined $condition->{$_}
+        ParamError->throw(error => "user_selected_event:get: missing $_") unless defined $condition->{$_}
     };
 
     for my $field ('user', 'project_id', 'studio_id', 'series_id',
@@ -54,23 +54,22 @@ sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'project_id', 'studio_id', 'series_id', 'selected_event') {
-        return unless defined $entry->{$_}
+        ParamError->throw(error => "user_selected_event:insert; missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
-    print STDERR "insert".Dumper($entry );
     return db::insert( $dbh, 'calcms_user_selected_events', $entry );
 }
 
 sub update($$) {
     my ($config, $entry) = @_;
 
-    my $fields = [ 
-        'user', 'project_id', 'studio_id', 'series_id', 
-        'filter_project_studio', 'filter_series' 
+    my $fields = [
+        'user', 'project_id', 'studio_id', 'series_id',
+        'filter_project_studio', 'filter_series'
     ];
-    for (@$fields){
-        return unless defined $entry->{$_}
+    for (@$fields) {
+        ParamError->throw(error => "user_selected_event:update: missing $_") unless defined $entry->{$_}
     };
 
     my @keys        = sort keys %$entry;
@@ -79,12 +78,11 @@ sub update($$) {
     my $conditions  = join (' and ', map { $_.'=?' } @$fields );
 
     my $query = qq{
-		update calcms_user_selected_events 
+		update calcms_user_selected_events
 		set    $values
 		where  $conditions
 	};
 
-    print STDERR "update".Dumper($query ).Dumper(\@bind_values);
     my $dbh = db::connect($config);
     return db::put( $dbh, $query, \@bind_values );
 }
@@ -93,11 +91,11 @@ sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'project_id', 'studio_id', 'series_id') {
-        return unless defined $entry->{$_}
+        ParamError->throw(error => "user_selected_event:delete: $_") unless defined $entry->{$_}
     };
 
     my $query = qq{
-		delete 
+		delete
 		from calcms_user_selected_events
 		where user=? and project_id=? and studio_id=? and series_id=?
 	};
@@ -105,11 +103,6 @@ sub delete ($$) {
 
     my $dbh = db::connect($config);
     return db::put( $dbh, $query, $bind_values );
-}
-
-sub error ($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

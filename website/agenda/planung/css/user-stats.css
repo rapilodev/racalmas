@@ -1,0 +1,11 @@
+div.col {
+    float:left;
+    width:10px;
+    height:10px;
+}
+table#user_stats_table input{
+    max-width:6em;
+}
+th{
+    cursor:pointer;
+}

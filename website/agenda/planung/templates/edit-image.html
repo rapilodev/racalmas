@@ -30,15 +30,15 @@ found no image
         <div id="status"></div>
 
     <form id="save_img_<TMPL_VAR id>"
-	    method="post" 
-	    action="image.cgi" 
+	    method="post"
+	    action="image.cgi"
 	    onsubmit="saveImage('<TMPL_VAR id escape=js>','<TMPL_VAR filename escape=js>');return false;"
-    >   
+    >
 
         <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
         <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
         <input type="hidden" class="public" name="public" <TMPL_IF public>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF> /><br>
-    
+
         <label><TMPL_VAR .loc.label_name></label><br>
         <input value="<TMPL_VAR name escape=none>" name="update_name" class="field" placeholder="<TMPL_VAR .loc.label_mandatory_field>"><br>
 
@@ -71,7 +71,7 @@ found no image
 </TMPL_IF>
 </TMPL_LOOP>
 
-</main>	    
+</main>	
 </body>
 </html>
 

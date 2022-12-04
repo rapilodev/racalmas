@@ -18,7 +18,7 @@ use time();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+my ($params, $error) = params::get($r);
 
 my $config = config::getFromScriptLocation();
 my $request = {
@@ -67,7 +67,7 @@ sub is_blocked {
     my $user_agent = $ENV{HTTP_USER_AGENT};
 
     # add lock settings here
-    # return 1 if 
+    # return 1 if
     #    ( $user_agent eq 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:35.0) Gecko/20100101 Firefox/35.0' )
     #  && ( $nslookup =~ /alicedsl/ );
 
@@ -96,7 +96,7 @@ EMAIL:    $comment->{email}
 
 CONTENT: '$comment->{content}'
 
-view event 
+view event
 $base_domain/programm/sendung/$comment->{event_id}.html#comments
 !;
 

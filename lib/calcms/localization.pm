@@ -5,6 +5,9 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use Try::Tiny;
+use Scalar::Util qw( blessed );
+
 use uac();
 use user_settings();
 
@@ -20,8 +23,7 @@ sub get($$) {
 
     #get pot file
     unless ( defined $options->{file} ) {
-        print STDERR "missing po file\n";
-        return $options->{loc} || {};
+        LocalizationError->throw(error=> "missing po file\n");
     }
 
     my $language = undef;
@@ -55,11 +57,11 @@ sub read_po_file($$) {
     my ($po_file, $loc) = @_;
 
     unless ( -e $po_file ) {
-        print STDERR "po file $po_file does not exist\n";
+        LocalizationError->throw(error=> "po file $po_file does not exist\n");
         return $loc;
     }
     unless ( -r $po_file ) {
-        print STDERR "cannot read po file $po_file\n";
+        LocalizationError->throw(error=> "cannot read po file $po_file\n");
         return $loc;
     }
 

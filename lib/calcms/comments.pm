@@ -220,7 +220,7 @@ sub render($$$$) {
     $template_parameters->{event_id}    = $params->{event_id};
     $template_parameters->{event_start} = $params->{event_start};
     $template_parameters->{controllers} = $config->{controllers};
-    template::process( $config, $_[0], $params->{template}, $template_parameters );
+    $_[0] = template::process( $config, $params->{template}, $template_parameters );
 }
 
 #check if comment exists already
@@ -336,8 +336,8 @@ sub get_by_time($$$) {
                 select   distinct event_id
                 from     calcms_comments
                 where    (
-                    unix_timestamp(now()) - ?   < unix_timestamp(created_at) 
-                ) 
+                    unix_timestamp(now()) - ?   < unix_timestamp(created_at)
+                )
             )
         };
         $bind_values = [ $comment->{age} * 3600, ];
@@ -380,7 +380,7 @@ sub get_events($$$$) {
     my $query = qq{
         select   id, start, program, series_name, title, excerpt
         from     calcms_events
-        where    id in ($event_id_values) 
+        where    id in ($event_id_values)
     };
 
     my $events = db::get( $dbh, $query, \@bind_values );
@@ -457,7 +457,7 @@ sub set_lock_status ($$$) {
     db::put( $dbh, $query, $bind_values );
 
     $query = qq{
-        select  event_id 
+        select  event_id
         from    calcms_comments
         where   id=?
     };
@@ -476,7 +476,7 @@ sub set_news_status($$$) {
     my $news_status = $comment->{set_news_status};
     my $query       = qq{
         update  calcms_comments
-        set     news_status= ? 
+        set     news_status= ?
         where   id = ?
     };
     my $bind_values = [ $news_status, $id ];
@@ -498,7 +498,7 @@ sub update_comment_count ($$$) {
     my $count = 0;
     $count = $comments->[0]->{count} if scalar @$comments > 0;
     $query = qq{
-        update  calcms_events 
+        update  calcms_events
         set     comment_count=?
         where   id=?
     };
@@ -592,9 +592,9 @@ sub check_params ($$) {
         $comment->{type} = 'tree';
     }
 
-    log::error( $config, 'missing parameter a' ) if ( defined $params->{limit} )    && ( $comment->{limit} eq '' );
-    log::error( $config, 'missing parameter b' ) if ( defined $params->{event_id} ) && ( $comment->{event_id} eq '' );
-    log::error( $config, 'missing parameter c' )
+    log::error( $config, 'comments: missing parameter a' ) if ( defined $params->{limit} )    && ( $comment->{limit} eq '' );
+    log::error( $config, 'comments: missing parameter b' ) if ( defined $params->{event_id} ) && ( $comment->{event_id} eq '' );
+    log::error( $config, 'comments: missing parameter c' )
       if ( defined $params->{event_start} ) && ( $comment->{event_start} eq '' );
 
     my $delta_days = 1;

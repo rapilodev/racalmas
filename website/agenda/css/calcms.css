@@ -36,7 +36,7 @@
     .entry-title a,
     #calcms_calendar table thead a:hover,
     #calcms_calendar table thead a:link,
-    .main-navigation a:hover, 
+    .main-navigation a:hover,
     .main-navigation a:focus
     {
         color:white !important;
@@ -46,12 +46,12 @@
     #calcms_list h1.summary{
         background: none !important;
     }
-    
+
     a.load-prev, a.load-next{
         color:#999 !important;
         background:#333 !important;
     }
-    
+
     img.custom-logo{
         filter: invert(1);
     }
@@ -332,7 +332,7 @@ a.load-prev, a.load-next{
     opacity: 0.9;
 }
 
-#calcms_list .event.running, 
+#calcms_list .event.running,
 #calcms_list .event.running .excerpt,
 #calcms_list .event.running .location,
 #calcms_list .event.running a {
@@ -504,7 +504,7 @@ a.load-prev, a.load-next{
 }
 
 #calcms_comments .comment {
-    
+
 }
 
 #calcms_comments .level0 {
@@ -768,7 +768,7 @@ a#calcms_search_show_details #plus {
     background-color: #4f7acc;
 }
 
-#calcms_calendar table tbody td.calcms_today, 
+#calcms_calendar table tbody td.calcms_today,
 #calcms_calendar table tbody td.calcms_today a {
     background: #007acc;
     color: white;
@@ -830,7 +830,7 @@ ul.mobileMenu {
     width: 100%;
 }
 
-ul.mobileMenu li, 
+ul.mobileMenu li,
 ul.mobileMenu li a {
     float: none !important;
     background: #444 !important;
@@ -844,16 +844,16 @@ ul.mobileMenu li a {
     width: 80%;
 }
 
-ul.mobileMenu a, 
-ul.mobileMenu a:link, 
-ul.mobileMenu a:hover, 
+ul.mobileMenu a,
+ul.mobileMenu a:link,
+ul.mobileMenu a:hover,
 ul.mobileMenu a:visited {
     background-image: url() !important;
     background: #444 !important;
     width: 80%;
 }
 
-ul.mobileMenu li:hover, 
+ul.mobileMenu li:hover,
 ul.mobileMenu li:hover a {
     background: #999 !important;
     transition: all 0.2s ease;

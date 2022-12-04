@@ -62,9 +62,9 @@
                     <tr><td class="label"><TMPL_VAR .loc.label_stream></td> 	 <td><input name="stream" value="<TMPL_VAR stream>"></td></tr>
                 </TMPL_IF>
                 <tr><td class="label">
-                    <TMPL_VAR .loc.label_image></td>      
+                    <TMPL_VAR .loc.label_image></td>
                     <td>
-                        <button 
+                        <button
                             class="selectImage"
                             onclick="selectImage('<TMPL_VAR name escape=javascript>', '<TMPL_VAR image escape=javascript>', 'studio', '<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>'); return false;"
                         >
@@ -89,7 +89,7 @@
 	<div class="panel-body" style="display:flex">
         <TMPL_IF .allow.read_event>
             <button target="_blank" class="text bottom"
-                onclick="load('event-history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR id>');"
+                onclick="loadUrl('event-history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR id>');"
             ><TMPL_VAR .loc.button_show_changes></button>
         </TMPL_IF>
 
