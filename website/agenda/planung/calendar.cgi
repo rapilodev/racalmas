@@ -9,11 +9,12 @@ use utf8;
 use Data::Dumper;
 use URI::Escape();
 use DateTime();
+use Scalar::Util qw( blessed );
+use Try::Tiny;
 
 use utf8();
 use params();
 use config();
-use entry();
 use log();
 use entry();
 use template();
@@ -41,8 +42,12 @@ my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( !defined $user ) || ( $user eq '' );
+my ($user, $expires) = try {
+    auth::get_user($config, $params, $cgi)
+} catch {
+    auth::show_login_form('',$_->msg) if blessed $_ and $_->isa('AuthError');
+};
+return unless $user;
 $config->{user} = $user;
 
 my $user_presets = uac::get_user_presets(

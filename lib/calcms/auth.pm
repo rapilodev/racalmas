@@ -6,48 +6,40 @@ no warnings 'redefine';
 
 use CGI::Simple();
 use CGI::Cookie();
-
-use Data::Dumper;
+use Try::Tiny;
+use Exception::Class (
+    'AuthError',
+    'SessionError' => { isa => 'AuthError', fields => ['msg'] },
+    'LoginError'   => { isa => 'AuthError', fields => [ 'user', 'msg' ] },
+    'LogoutError'  => { isa => 'AuthError', fields => [ 'user', 'msg' ] },
+    'LogoutDone'   => { isa => 'AuthError' }
+);
+use Scalar::Util qw( blessed );
 use Authen::Passphrase::BlowfishCrypt();
-use time();
 use user_sessions ();
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(get_user login logout crypt_password);
 my $defaultExpiration = 60;
 
-#TODO: remove CGI
 sub get_user($$$) {
     my ($config, $params, $cgi) = @_;
 
-    # login or logout on action
-    if ( defined $params->{authAction} ) {
-        if ( $params->{authAction} eq 'login' ) {
-            my $user = login( $config, $params->{user}, $params->{password} );
-            $cgi->delete( 'user', 'password', 'uri', 'authAction' ) if defined $cgi;
-            return $user;
-        } elsif ( $params->{authAction} eq 'logout' ) {
+    if (defined $params->{authAction}) {
+        if ($params->{authAction} eq 'login') {
+            login($config, $params->{user}, $params->{password});
+            $cgi->delete('user', 'password', 'uri', 'authAction')
+                if defined $cgi;
+            return $params->{user};
+        } elsif ($params->{authAction} eq 'logout') {
             $cgi = new CGI::Simple() unless defined $cgi;
             logout($config, $cgi);
-            $cgi->delete( 'user', 'password', 'uri', 'authAction' );
-            return undef;
+            $cgi->delete('user', 'password', 'uri', 'authAction');
+            return;
         }
     }
-
-    # read session id from cookie
     my $session_id = read_cookie();
-
-    # login if no cookie found
-    return show_login_form( $params->{user}, 'Please login' ) unless defined $session_id;
-
-    # read session
-    my $session = read_session($config, $session_id);
-
-    # login if user not found
-    return show_login_form( $params->{user}, 'unknown User' ) unless defined $session;
-
-    $params->{user}    = $session->{user};
-    $params->{expires} = $session->{expires};
+    my $session    = read_session($config, $session_id);
+    $params->{$_} = $session->{$_} for qw (user expires);
     return $session->{user}, $session->{expires};
 }
 
@@ -67,60 +59,44 @@ sub crypt_password($) {
 
 sub login($$$) {
     my ($config, $user, $password) = @_;
-    my $result = authenticate( $config, $user, $password );
-
-    return show_login_form( $user, 'Could not authenticate you' ) unless defined $result;
-    return unless defined $result->{login} eq '1';
-
-    my $timeout = $result->{timeout} || $defaultExpiration;
-    my $session_id = create_session( $config, $user, $timeout * 60 );
-
-    # here timeout is in minutes
-    $timeout = '+' . $timeout . 'm';
-    return $user if create_cookie( $session_id, $timeout );
-    return undef;
+    my $timeout    = authenticate($config, $user, $password);
+    my $session_id = create_session($config, $user, $timeout * 60);
+    create_cookie($session_id, '+' . $timeout . 'm');
 }
 
 #TODO: remove cgi
 sub logout($$) {
     my ($config, $cgi) = @_;
     my $session_id = read_cookie();
-    unless ( delete_session($config, $session_id) ) {
-        return show_login_form( 'Cant delete session', 'logged out' );
-    }
-    unless ( delete_cookie($cgi) ) {
-        return show_login_form( 'Cant remove cookie', 'logged out' );
-    }
+    delete_session($config, $session_id);
+    delete_cookie($cgi);
     my $uri = $ENV{HTTP_REFERER} || '';
     $uri =~ s/authAction=logout//g;
     print $cgi->redirect($uri);
-    return;
 }
 
 #read and write data from browser, http://perldoc.perl.org/CGI/Cookie.html
 sub create_cookie($$) {
     my ($session_id, $timeout) = @_;
     my $cookie = CGI::Cookie->new(
-        -name    => 'sessionID',
-        -value   => $session_id,
-        -expires => $timeout,
-        -secure  => 1,
-        -samesite=>  "Lax"
+        -name     => 'sessionID',
+        -value    => $session_id,
+        -expires  => $timeout,
+        -secure   => 1,
+        -samesite => "Lax"
     );
     print "Set-Cookie: " . $cookie->as_string . "\n";
-
-    return 1;
 }
 
 sub read_cookie() {
     my %cookie = CGI::Cookie->fetch;
     my $cookie = $cookie{'sessionID'};
-    return undef unless defined $cookie;
-    my $session_id = $cookie->value || undef;
+    SessionError->throw(msg => 'Please login1') unless defined $cookie;
+    my $session_id = $cookie->value;
+    SessionError->throw(msg => 'Please login2') unless defined $session_id;
     return $session_id;
 }
 
-#TODO: remove CGI
 sub delete_cookie($) {
     my ($cgi) = @_;
     my $cookie = $cgi->cookie(
@@ -128,31 +104,25 @@ sub delete_cookie($) {
         -value   => '',
         -expires => '+1s'
     );
-    print $cgi->header( -cookie => $cookie );
-    return 1;
+    print $cgi->header(-cookie => $cookie);
 }
 
 # read and write server-side session data
 # timeout is in seconds
 sub create_session ($$$) {
     my ($config, $user, $timeout) = @_;
-    my $session_id = user_sessions::start( 
-        $config, {
-            user       => $user,
-            timeout    => $timeout,
+    return my $session_id = user_sessions::start(
+        $config,
+        {
+            user    => $user,
+            timeout => $timeout,
         }
     );
-    return $session_id;
 }
 
 sub read_session($$) {
     my ($config, $session_id) = @_;
-
-    return undef unless defined $session_id;
-
-    my $session = user_sessions::check( $config, { session_id => $session_id } );
-    return undef unless defined $session;
-
+    my $session = user_sessions::check($config, { session_id => $session_id });
     return {
         user    => $session->{user},
         expires => $session->{expires_at}
@@ -162,8 +132,7 @@ sub read_session($$) {
 sub delete_session($$) {
     my ($config, $session_id) = @_;
     return unless defined $session_id;
-    user_sessions::stop( $config, { session_id => $session_id } );
-    return 1;
+    user_sessions::stop($config, { session_id => $session_id });
 }
 
 #check user authentication
@@ -178,39 +147,28 @@ sub authenticate($$$) {
 		where 	name=?
 	};
     my $bind_values = [$user];
-
-    my $users = db::get( $dbh, $query, $bind_values );
-
-    if ( scalar(@$users) != 1 ) {
-        print STDERR "auth: did not find user '$user'\n";
-        return undef;
-    }
+    my $users       = db::get($dbh, $query, $bind_values);
+    LoginError->throw(user => $user, msg => 'Could not authenticate you')
+        if scalar(@$users) != 1;
 
     my $salt = $users->[0]->{salt};
-    my $ppr = Authen::Passphrase::BlowfishCrypt->from_crypt( $users->[0]->{pass}, $users->[0]->{salt} );
+    my $ppr = Authen::Passphrase::BlowfishCrypt->from_crypt($users->[0]->{pass},
+        $users->[0]->{salt});
+    LoginError->throw(user => $user, msg => 'Could not authenticate you')
+        unless $ppr->match($password);
+    LoginError->throw(user => $user, msg => 'Could not authenticate you')
+        if $users->[0]->{disabled} == 1;
 
-    return undef unless $ppr->match($password);
-    if ( $users->[0]->{disabled} == 1 ) {
-        print STDERR "user '$user' is disabled\n";
-        return undef;
-    }
-
-    # timeout in seconds
-    my $timeout = $users->[0]->{session_timeout} || 120;
+    my $timeout = $users->[0]->{session_timeout} || $defaultExpiration;
     $timeout = 60 if $timeout < 60;
-
-    return {
-        timeout => $timeout,
-        login   => 1
-    };
+    return $timeout;
 }
 
 sub show_login_form ($$) {
     my ($user, $message) = @_;
-    my $uri     = $ENV{HTTP_REFERER} || '';
+    my $uri          = $ENV{HTTP_REFERER} || '';
     my $requestReset = '';
-
-    if ( ( $user ne '' ) && ( $message ne '' ) ) {
+    if ($user and $message) {
         $requestReset = qq{
             <a href="request-password.cgi?user=$user">Passwort vergessen?</a>
         };

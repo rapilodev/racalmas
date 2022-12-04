@@ -36,7 +36,8 @@
 </TMPL_IF>
 
 <div id="newSeries">
-<TMPL_LOOP newSeries>
+<TMPL_LOOP series>
+    <TMPL_IF is_new>
 	<a 
         onclick="view_series_details('<TMPL_VAR series_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR .project_id escape=js>')"
         href="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>&action=show"
@@ -44,6 +45,7 @@
 		<b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b> 
         <TMPL_IF title> <br> <TMPL_VAR title></TMPL_IF>
 	</a>
+    </TMPL_IF>
 </TMPL_LOOP>
 </div>
 
@@ -52,13 +54,15 @@
 </div>
 
 <div id="oldSeries" style="display:none;">
-<TMPL_LOOP oldSeries>
+<TMPL_LOOP series>
+    <TMPL_IF is_old>
 	<a onclick="view_series_details('<TMPL_VAR series_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR .project_id escape=js>')"
         href="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>&action=show"
     >
 		<b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b> 
         <TMPL_IF title> <br> <TMPL_VAR title></TMPL_IF>
 	</a>
+    </TMPL_IF>
 </TMPL_LOOP>
 </div>
 

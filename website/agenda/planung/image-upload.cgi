@@ -5,6 +5,8 @@ use warnings;
 no warnings 'redefine';
 use utf8;
 use Data::Dumper;
+use Scalar::Util qw( blessed );
+use Try::Tiny;
 
 use Apache2::Request;
 use Apache2::Upload;
@@ -318,10 +320,13 @@ if ( defined $r ) {
     $params = \%params;
     print STDERR "fallback\n";
 }
-print STDERR Dumper($params);
 
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+my ($user, $expires) = try {
+    auth::get_user($config, $params, $cgi)
+} catch {
+    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
+};
+return unless $user;
 
 my $user_presets = uac::get_user_presets(
     $config,

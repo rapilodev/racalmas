@@ -7,6 +7,8 @@ no warnings 'redefine';
 use Data::Dumper;
 use URI::Escape();
 use Encode();
+use Scalar::Util qw( blessed );
+use Try::Tiny;
 
 use params();
 use config();
@@ -31,8 +33,12 @@ my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( !defined $user ) || ( $user eq '' );
+my ($user, $expires) = try {
+    auth::get_user($config, $params, $cgi)
+} catch {
+    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
+};
+return unless $user;
 
 my $user_presets = uac::get_user_presets(
     $config,
