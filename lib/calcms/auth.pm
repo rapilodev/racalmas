@@ -6,15 +6,13 @@ no warnings 'redefine';
 
 use CGI::Simple();
 use CGI::Cookie();
-use Try::Tiny;
 use Exception::Class (
     'AuthError',
-    'SessionError' => { isa => 'AuthError', fields => ['msg'] },
-    'LoginError'   => { isa => 'AuthError', fields => [ 'user', 'msg' ] },
-    'LogoutError'  => { isa => 'AuthError', fields => [ 'user', 'msg' ] },
+    'SessionError' => { isa => 'AuthError' },
+    'LoginError'   => { isa => 'AuthError', fields => [ 'user' ] },
+    'LogoutError'  => { isa => 'AuthError', fields => [ 'user' ] },
     'LogoutDone'   => { isa => 'AuthError' }
 );
-use Scalar::Util qw( blessed );
 use Authen::Passphrase::BlowfishCrypt();
 use user_sessions ();
 
@@ -29,12 +27,12 @@ sub get_user($$$) {
             login($config, $params->{user}, $params->{password});
             $cgi->delete('user', 'password', 'uri', 'authAction')
                 if defined $cgi;
-            return $params->{user};
+            return ($params->{user});
         } elsif ($params->{authAction} eq 'logout') {
             $cgi = new CGI::Simple() unless defined $cgi;
             logout($config, $cgi);
             $cgi->delete('user', 'password', 'uri', 'authAction');
-            return;
+            return ();
         }
     }
     my $session_id = read_cookie();
@@ -59,9 +57,13 @@ sub crypt_password($) {
 
 sub login($$$) {
     my ($config, $user, $password) = @_;
+    print STDERR "l1\n";
     my $timeout    = authenticate($config, $user, $password);
+    print STDERR "l2\n";
     my $session_id = create_session($config, $user, $timeout * 60);
+    print STDERR "l3\n";
     create_cookie($session_id, '+' . $timeout . 'm');
+    print STDERR "l4\n";
 }
 
 #TODO: remove cgi
@@ -78,6 +80,7 @@ sub logout($$) {
 #read and write data from browser, http://perldoc.perl.org/CGI/Cookie.html
 sub create_cookie($$) {
     my ($session_id, $timeout) = @_;
+    use Data::Dumper;print STDERR Dumper($timeout);
     my $cookie = CGI::Cookie->new(
         -name     => 'sessionID',
         -value    => $session_id,
@@ -85,15 +88,20 @@ sub create_cookie($$) {
         -secure   => 1,
         -samesite => "Lax"
     );
-    print "Set-Cookie: " . $cookie->as_string . "\n";
+    print STDERR "Set-Cookie: " . $cookie->as_string . "\n";
+    #print "HTTP/1.1 200 OK\nSet-Cookie: " . $cookie->as_string . "\n";
+    #print "HTTP1/1 200 OK\n".
+    #"Set-Cookie: " . $cookie->as_string . "\n";
+    my $cgi = CGI::Simple->new();
+    print $cgi->header(-cookie => $cookie);
 }
 
 sub read_cookie() {
     my %cookie = CGI::Cookie->fetch;
     my $cookie = $cookie{'sessionID'};
-    SessionError->throw(msg => 'Please login1') unless defined $cookie;
+    SessionError->throw(message => 'Please login1') unless defined $cookie;
     my $session_id = $cookie->value;
-    SessionError->throw(msg => 'Please login2') unless defined $session_id;
+    SessionError->throw(message => 'Please login2') unless defined $session_id;
     return $session_id;
 }
 
@@ -148,15 +156,15 @@ sub authenticate($$$) {
 	};
     my $bind_values = [$user];
     my $users       = db::get($dbh, $query, $bind_values);
-    LoginError->throw(user => $user, msg => 'Could not authenticate you')
+    LoginError->throw(user => $user, message => 'Could not authenticate you')
         if scalar(@$users) != 1;
 
     my $salt = $users->[0]->{salt};
     my $ppr = Authen::Passphrase::BlowfishCrypt->from_crypt($users->[0]->{pass},
         $users->[0]->{salt});
-    LoginError->throw(user => $user, msg => 'Could not authenticate you')
+    LoginError->throw(user => $user, message => 'Could not authenticate you')
         unless $ppr->match($password);
-    LoginError->throw(user => $user, msg => 'Could not authenticate you')
+    LoginError->throw(user => $user, message => 'Could not authenticate you')
         if $users->[0]->{disabled} == 1;
 
     my $timeout = $users->[0]->{session_timeout} || $defaultExpiration;

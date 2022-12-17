@@ -6,7 +6,7 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use JSON();
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use config();
@@ -23,9 +23,10 @@ my $r = shift;
 
 my $config = config::get('../config/config.cgi');
 my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
+    auth::get_user($config, $params, $cgi);
 } catch {
-    auth::show_login_form('',$_->msg) if blessed $_ and $_->isa('AuthError');
+    print STDERR Dumper($_);
+    auth::show_login_form('',$_->message) if blessed $_ and $_->isa('AuthError');
 };
 return unless $user;
 

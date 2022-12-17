@@ -4,9 +4,13 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
+use Data::Dumper;
+use Exception::Class (
+    'ParamError',
+);
+
 use config();
 use template();
-use Data::Dumper;
 
 #use base 'Exporter';
 our @EXPORT_OK = qw(get insert update insert_or_update delete delete_files);
@@ -153,18 +157,9 @@ sub insert ($$) {
 sub update($$) {
     my ($dbh, $image) = @_;
 
-    unless ( defined $image->{studio_id} ) {
-        print STDERR "missing studio_id at images::update\n";
-        return undef;
-    }
-    unless ( defined $image->{project_id} ) {
-        print STDERR "missing project_id at image::update\n";
-        return undef;
-    }
-    unless ( defined $image->{filename} ) {
-        print STDERR "missing filename at image::update\n";
-        return undef;
-    }
+    for ('studio_id', 'project_id', 'filename') {
+        ParamError->throw("missing $_") unless defined $image->{$_}
+    };
 
     $image->{modified_at} = time::time_to_datetime();
 
@@ -211,18 +206,9 @@ sub update($$) {
 sub delete($$) {
     my ($dbh, $image) = @_;
 
-    unless ( defined $image->{project_id} ) {
-        print STDERR "missing project_id at images::delete\n";
-        return undef;
-    }
-    unless ( defined $image->{studio_id} ) {
-        print STDERR "missing studio_id at images::delete\n";
-        return undef;
-    }
-    unless ( defined $image->{filename} ) {
-        print STDERR "missing filename at images::delete\n";
-        return undef;
-    }
+    for ('studio_id', 'project_id', 'filename') {
+        ParamError->throw("missing $_") unless defined $image->{$_}
+    };
 
     my $project_id = $image->{project_id};
     my $studio_id  = $image->{studio_id};

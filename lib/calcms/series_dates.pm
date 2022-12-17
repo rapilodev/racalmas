@@ -6,6 +6,10 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc();
+use Exception::Class (
+    'ParamError',
+);
+
 use time();
 use db();
 use log();
@@ -108,10 +112,9 @@ sub get ($;$) {
 sub is_event_scheduled($$) {
     my ($request, $options) = @_;
 
-    return 0 unless defined $options->{project_id};
-    return 0 unless defined $options->{studio_id};
-    return 0 unless defined $options->{series_id};
-    return 0 unless defined $options->{start_at};
+    for ('project_id', 'studio_id', 'series_id', 'start_at') {
+        ParamError->throw("missing $_") unless defined $options->{$_}
+    };
 
     my $config    = $request->{config};
     my $schedules = series_dates::get(
@@ -281,9 +284,9 @@ sub addSeriesScheduleAttributes ($$) {
 sub update($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
 
@@ -351,7 +354,6 @@ sub update($$) {
         }
     }
 
-    #print STDERR "$i series_dates updates\n";
     return $j . " dates out of studio times, " . $i;
 }
 
@@ -457,8 +459,6 @@ sub get_dates($$$$) {
     my @start_date = ( $start[0], $start[1], $start[2] );
     my $start_time = sprintf( '%02d:%02d:%02d', $start[3], $start[4], $start[5] );
 
-    #print STDERR "$start_datetime,$end_date,$duration,$frequency\n";
-
     #return on single date
     my $date = {};
     $date->{start} = sprintf( "%04d-%02d-%02d", @start_date ) . ' ' . $start_time;
@@ -505,9 +505,9 @@ sub get_dates($$$$) {
 sub delete ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{project_id};
-    return unless defined $entry->{studio_id};
-    return unless defined $entry->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
 
@@ -525,10 +525,9 @@ sub delete ($$) {
 sub getDatesWithoutEvent ($$) {
     my ($config, $options) = @_;
 
-    return unless defined $options->{project_id};
-    return unless defined $options->{studio_id};
-    return unless defined $options->{from};
-    return unless defined $options->{till};
+    for ('project_id', 'studio_id', 'form', 'till') {
+        ParamError->throw("missing $_") unless defined $options->{$_}
+    };
 
     my $dbh = db::connect($config);
     my $cond = $options->{series_id} ? 'and sd.series_id = ?' : '';
@@ -555,11 +554,6 @@ sub getDatesWithoutEvent ($$) {
     my $entries = db::get( $dbh, $query, $bind_values );
     return $entries;
 
-}
-
-sub error($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

@@ -6,6 +6,10 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc();
+use Exception::Class (
+    'ParamError',
+);
+
 use db();
 use time();
 use series_events();
@@ -19,12 +23,9 @@ sub get_columns ($) {
     return db::get_columns_hash( $dbh, 'calcms_playout' );
 }
 
-
-
 # get playout entries
 sub get_scheduled($$) {
     my ($config, $condition) = @_;
-    return undef unless defined $condition->{studio_id};
 
     my $date_range_include = 0;
     $date_range_include = 1
@@ -127,8 +128,9 @@ sub get_scheduled($$) {
 # get playout entries
 sub get($$) {
     my ($config, $condition) = @_;
-
-    return undef unless defined $condition->{studio_id};
+    for ('studio_id') {
+        ParamError->throw("missing $_") unless defined $condition->{$_}
+    };
 
     my $date_range_include = 0;
     $date_range_include = 1
@@ -227,11 +229,9 @@ sub get($$) {
 sub sync ($$) {
     my ($config, $options) = @_;
 
-    return undef unless defined $options->{project_id};
-    return undef unless defined $options->{studio_id};
-    return undef unless defined $options->{from};
-    return undef unless defined $options->{till};
-    return undef unless defined $options->{events};
+    for ('project_id', 'studio_id', 'from', 'till', 'events') {
+        ParamError->throw("missing $_") unless defined $options->{$_}
+    };
 
     my $project_id = $options->{project_id};
     my $studio_id  = $options->{studio_id};
@@ -355,7 +355,7 @@ sub update ($$$$) {
 
     my $entry = $oldEntry;
     my $day_start = $config->{date}->{day_starting_hour};
-    $entry->{end} = playout::getEnd( $entry->{start}, $entry->{duration} );
+    $entry->{end} = playout::get_end( $entry->{start}, $entry->{duration} );
     $entry->{start_date} = time::add_hours_to_datetime( $entry->{start}, -$day_start );
     $entry->{end_date}   = time::add_hours_to_datetime( $entry->{end},   -$day_start );
 
@@ -384,14 +384,12 @@ sub update ($$$$) {
 sub insert ($$$) {
     my ($config, $dbh, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{start};
-    return undef unless defined $entry->{duration};
-    return undef unless defined $entry->{file};
+    for ('project_id', 'studio_id', 'start', 'duration', 'file') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $day_start = $config->{date}->{day_starting_hour};
-    $entry->{end} = playout::getEnd( $entry->{start}, $entry->{duration} );
+    $entry->{end} = playout::get_end( $entry->{start}, $entry->{duration} );
     $entry->{start_date} = time::add_hours_to_datetime( $entry->{start}, -$day_start );
     $entry->{end_date}   = time::add_hours_to_datetime( $entry->{end},   -$day_start );
 
@@ -431,10 +429,9 @@ sub insert ($$$) {
 # delete playout entry
 sub delete($$$) {
     my ($config, $dbh, $entry) = @_;
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{start};
-
+    for ('project_id', 'studio_id', 'start') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
     my $query = qq{
 		delete 
 		from calcms_playout
@@ -444,8 +441,9 @@ sub delete($$$) {
     return db::put( $dbh, $query, $bind_values );
 }
 
-sub getEnd ($$) {
+sub get_end ($$) {
     my ($start, $duration) = @_;
+
     # calculate end from start + duration
     my @start = @{ time::datetime_to_array($start) };
     next unless @start >= 6;
@@ -456,11 +454,6 @@ sub getEnd ($$) {
         0, 0, 0, int($duration)             # delta days, hours, minutes, seconds
     );
     return time::array_to_datetime( \@end_datetime );
-}
-
-sub error($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

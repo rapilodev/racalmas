@@ -9,9 +9,11 @@ $Data::Dumper::Sortkeys=1;
 use MIME::Base64();
 use Encode();
 use Storable 'dclone';
-
 use DBI();
 use template();
+use Exception::Class (
+    'ParamError',
+);
 
 use config();
 use time();
@@ -641,9 +643,11 @@ sub set_listen_key{
 
 sub set_upload_status($$){
     my ($config, $event) = @_; 
-
-    return undef unless defined $event->{event_id};
-    return undef unless defined $event->{upload_status};
+                    
+    for ('event_id', 'upload_status') {
+        ParamError->throw("missing $_") unless defined $event->{$_}
+    };
+    
     my $bindValues = [ $event->{upload_status}, $event->{event_id}, $event->{upload_status} ];
 
     my $query = qq{

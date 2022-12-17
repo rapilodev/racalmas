@@ -5,6 +5,10 @@ use warnings;
 no warnings 'redefine';
 
 use Digest::MD5();
+use Exception::Class (
+    'SessionError',
+    'ParamError'
+);
 
 use time;
 use Exception::Class ('SessionError');
@@ -77,8 +81,9 @@ sub get($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    SessionError->throw unless defined $entry->{user};
-    SessionError->throw unless defined $entry->{timeout};
+    for ('user', 'timeout') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     unless (defined $entry->{session_id}) {
         my $md5 = Digest::MD5->new();
@@ -97,8 +102,9 @@ sub insert ($$) {
 sub start($$) {
     my ($config, $entry) = @_;
 
-    SessionError->throw unless defined $entry->{user};
-    SessionError->throw unless defined $entry->{timeout};
+    for ('user', 'timeout') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $id = insert(
         $config,

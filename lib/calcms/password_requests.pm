@@ -26,7 +26,6 @@ sub get ($$) {
     my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
-
     my @conditions  = ();
     my @bind_values = ();
 
@@ -55,9 +54,9 @@ sub get ($$) {
 
 sub update($$) {
     my ($config, $entry) = @_;
-
-    return unless defined $entry->{user};
-
+    for ('user') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
     my $dbh         = db::connect($config);
     my @keys        = sort keys %$entry;
     my $values      = join( ",", map { $_ . '=?' } @keys);
@@ -74,9 +73,9 @@ sub update($$) {
 
 sub insert ($$) {
     my ($config, $entry) = @_;
-
-    return undef unless defined $entry->{user};
-
+    for ('user') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_password_requests', $entry );
 }
@@ -125,7 +124,7 @@ sub sendToken ($$) {
         my $createdAt = $oldEntry->{created_at};
         my $age = time() - time::datetime_to_time($createdAt);
         if ( $age < 60 ) {
-            print STDERR "too many requests";
+            print STDERR "too many requests\n";
             return undef;
         }
         print STDERR "age=$age\n";

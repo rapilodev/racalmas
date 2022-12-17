@@ -72,7 +72,7 @@ return unless uac::check( $config, $params, $user_presets ) == 1;
 
 my $permissions = $request->{permissions};
 unless ( $permissions->{scan_series_events} == 1 ) {
-    uac::permissions_denied('scan_series_events');
+    PermissionsError->throw('scan_series_events');
     return;
 }
 
@@ -87,7 +87,7 @@ sub show_events {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{assign_series_events} == 1 ) {
-        uac::permissions_denied('assign_series_events');
+        PermissionsError->throw('assign_series_events');
         return;
     }
 
@@ -98,7 +98,6 @@ sub show_events {
 
     my $studios = studios::get( $config, { project_id => $params->{project_id}, studio_id => $params->{studio_id} } );
     my $studio = $studios->[0];
-
     return unless ( @$studios == 1 );
 
     my $project_name = $project->{name};
@@ -190,7 +189,7 @@ sub assign_events {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{assign_series_events} == 1 ) {
-        uac::permissions_denied('assign_series_events');
+        PermissionsError->throw('assign_series_events');
         return;
     }
 
@@ -199,7 +198,7 @@ sub assign_events {
         if ( defined $params->{$attr} ) {
             $entry->{$attr} = $params->{$attr};
         } else {
-            uac::print_error( $attr . ' not given!' );
+            ParamError->throw( $attr . ' not given!' );
             return;
         }
     }
@@ -233,13 +232,6 @@ sub assign_events {
 "event not found for project $entry->{project_id}, studio $entry->{studio_id}, series $entry->{series_id}, event $entry->{event_id}\n";
             next;
         }
-        print STDERR "'"
-          . $event->{event_id} . "' '"
-          . $event->{series_name} . "' '"
-          . $event->{title} . "' '"
-          . $event->{episode} . "'\n";
-
-        #next;
 
         #check if series is assigned to project/studio
         my $series = series::get(

@@ -5,6 +5,11 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+#use Try::Tiny qw(try catch finally);
+use Exception::Class (
+    'ParamError',
+);
+use Scalar::Util qw( blessed );
 
 # table:   calcms_user_day_start
 # columns:  user, project_id, studio_id, series_id, day_start
@@ -22,9 +27,9 @@ sub get ($$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    return unless defined $condition->{user};
-    return unless defined $condition->{project_id};
-    return unless defined $condition->{studio_id};
+    for ('user', 'project_id', 'studio_id') {
+        ParamError->throw("missing $_") unless defined $condition->{$_}
+    };
 
     for my $field ('user', 'project_id', 'studio_id'){
         if ( ( defined $condition->{$field} ) && ( $condition->{$field} ne '' ) ) {
@@ -59,13 +64,11 @@ sub insert_or_update($$){
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
-    return unless defined $entry->{project_id};
-    return unless defined $entry->{studio_id};
-    return unless defined $entry->{day_start};
+    for ('user', 'project_id', 'studio_id', 'day_start') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
-    print STDERR "insert".Dumper($entry );
     return db::insert( $dbh, 'calcms_user_day_start', $entry );
 }
 
@@ -74,7 +77,7 @@ sub update($$) {
 
     my $fields = [ 'user', 'project_id', 'studio_id' ];
     for (@$fields){
-        return unless defined $entry->{$_}
+        ParamError->throw("missing $_") unless defined $entry->{$_}
     };
 
     my @keys        = sort keys %$entry;
@@ -88,7 +91,6 @@ sub update($$) {
 		where  $conditions
 	};
 
-    print STDERR "update".Dumper($query ).Dumper(\@bind_values);
     my $dbh = db::connect($config);
     return db::put( $dbh, $query, \@bind_values );
 }
@@ -96,9 +98,9 @@ sub update($$) {
 sub delete ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
-    return unless defined $entry->{project_id};
-    return unless defined $entry->{studio_id};
+    for ('user', 'project_id', 'studio_id') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $query = qq{
 		delete 

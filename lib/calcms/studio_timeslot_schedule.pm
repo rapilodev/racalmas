@@ -5,6 +5,10 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use Exception::Class (
+    'ParamError',
+);
+
 use studio_timeslot_dates();
 
 # table:   calcms_studio_timeslot_schedule
@@ -63,11 +67,9 @@ sub get($$) {
 sub insert($$) {
     my ($config, $entry) = @_;
 
-	return unless defined $entry->{project_id};
-	return unless defined $entry->{studio_id};
-	return unless defined $entry->{start};
-	return unless defined $entry->{end};
-	return unless defined $entry->{frequency};
+    for ('project_id', 'studio_id', 'start', 'end', 'frequency') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
 	my $dbh = db::connect($config);
 	return db::insert( $dbh, 'calcms_studio_timeslot_schedule', $entry );
@@ -77,12 +79,9 @@ sub insert($$) {
 sub update($$) {
     my ($config, $entry) = @_;
 
-	return unless defined $entry->{project_id};
-	return unless defined $entry->{studio_id};
-	return unless defined $entry->{schedule_id};
-	return unless defined $entry->{start};
-	return unless defined $entry->{end};
-	return unless defined $entry->{frequency};
+    for ('project_id', 'studio_id', 'schedule_id', 'start', 'end', 'frequency') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
 	$entry->{id} = $entry->{schedule_id};
 	delete $entry->{schedule_id};
@@ -100,8 +99,6 @@ sub update($$) {
 	};
 	db::put( $dbh, $query, \@bind_values );
 
-	#print "done\n";
-
 	$entry->{schedule_id} = $entry->{id};
 	delete $entry->{id};
 
@@ -111,7 +108,9 @@ sub update($$) {
 sub delete ($$){
     my ($config, $entry) = @_;
 
-	return unless defined $entry->{schedule_id};
+    for ('schedule_id') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
 	my $dbh = db::connect($config);
 

@@ -5,6 +5,9 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use Exception::Class (
+    'ParamError',
+);
 
 # table:   calcms_user_selected_events
 # columns:  user, project_id, studio_id, series_id, <- selection
@@ -24,10 +27,9 @@ sub get ($$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    return unless defined $condition->{user};
-    return unless defined $condition->{project_id};
-    return unless defined $condition->{studio_id};
-    return unless defined $condition->{series_id};
+    for ('user', 'project_id', 'studio_id', 'series_id', 'selected_event') {
+        ParamError->throw(error => "user_selected_event:get: missing $_") unless defined $condition->{$_}
+    };
 
     for my $field ('user', 'project_id', 'studio_id', 'series_id',
         'filter_project_studio', 'filter_series'
@@ -55,14 +57,11 @@ sub get ($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
-    return unless defined $entry->{project_id};
-    return unless defined $entry->{studio_id};
-    return unless defined $entry->{series_id};
-    return unless defined $entry->{selected_event};
+    for ('user', 'project_id', 'studio_id', 'series_id', 'selected_event') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
-    print STDERR "insert".Dumper($entry );
     return db::insert( $dbh, 'calcms_user_selected_events', $entry );
 }
 
@@ -73,8 +72,8 @@ sub update($$) {
         'user', 'project_id', 'studio_id', 'series_id', 
         'filter_project_studio', 'filter_series' 
     ];
-    for (@$fields){
-        return unless defined $entry->{$_}
+    for (@$fields) {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
     };
 
     my @keys        = sort keys %$entry;
@@ -96,10 +95,9 @@ sub update($$) {
 sub delete ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
-    return unless defined $entry->{project_id};
-    return unless defined $entry->{studio_id};
-    return unless defined $entry->{series_id};
+    for ('user', 'project_id', 'studio_id', 'series_id') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $query = qq{
 		delete 
@@ -110,11 +108,6 @@ sub delete ($$) {
 
     my $dbh = db::connect($config);
     return db::put( $dbh, $query, $bind_values );
-}
-
-sub error ($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

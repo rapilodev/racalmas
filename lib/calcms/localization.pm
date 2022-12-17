@@ -5,6 +5,12 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use Try::Tiny;
+use Exception::Class (
+    'LocalizationError'
+);
+use Scalar::Util qw( blessed );
+
 use uac();
 use user_settings();
 
@@ -21,8 +27,7 @@ sub get($$) {
 
     #get pot file
     unless ( defined $options->{file} ) {
-        print STDERR "missing po file\n";
-        return $options->{loc} || {};
+        LocalizationError->throw(error=> "missing po file\n");
     }
 
     my $language = undef;
@@ -46,17 +51,8 @@ sub get($$) {
 
     #get all comma separated po files
     for my $file ( split /\,/, $files ) {
-
-        #read default language
-        #my $po_file=$config->{locations}->{admin_pot_dir}.'/en/'.$file.'.po';
-        #$loc=read_po_file($po_file, $loc);
-
-        #read selected language
-        #if($language ne 'en'){
         my $po_file = $config->{locations}->{admin_pot_dir} . '/' . $language . '/' . $file . '.po';
         $loc = read_po_file( $po_file, $loc );
-
-        #}
     }
     return $loc;
 }
@@ -65,11 +61,11 @@ sub read_po_file($$) {
     my ($po_file, $loc) = @_;
 
     unless ( -e $po_file ) {
-        print STDERR "po file $po_file does not exist\n";
+        LocalizationError->throw(error=> "po file $po_file does not exist\n");
         return $loc;
     }
     unless ( -r $po_file ) {
-        print STDERR "cannot read po file $po_file\n";
+        LocalizationError->throw(error=> "cannot read po file $po_file\n");
         return $loc;
     }
 
@@ -79,7 +75,6 @@ sub read_po_file($$) {
     while (<$file>) {
         my $line = $_;
 
-        #print STDERR $line;
         if ( $line =~ /^msgid\s*\"(.*)\"\s*$/ ) {
             $key = $1;
             $key =~ s/\'//g;

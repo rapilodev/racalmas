@@ -5,6 +5,9 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use Exception::Class (
+    'ParamError',
+);
 
 # table:   calcms_user_default_studios
 # columns: user, project_id, studio_id
@@ -52,7 +55,7 @@ sub get ($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
+    ParamError->throw("missing user") unless defined $entry->{user};
 
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_user_default_studios', $entry );
@@ -61,7 +64,8 @@ sub insert ($$) {
 sub update($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
+    ParamError->throw("missing user") unless defined $entry->{user};
+    ParamError->throw("missing project_id") unless defined $entry->{project_id};
 
     my @keys        = sort keys %$entry;
     my $values      = join( ",", map { $_ . '=?' } @keys );
@@ -83,7 +87,7 @@ sub update($$) {
 sub delete ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
+    ParamError->throw("missing user") unless defined $entry->{user};
 
     my $query = qq{
 		delete 
@@ -94,11 +98,6 @@ sub delete ($$) {
 
     my $dbh = db::connect($config);
     return db::put( $dbh, $query, $bind_values );
-}
-
-sub error ($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

@@ -5,9 +5,12 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
-use images();
+use Exception::Class (
+    'ParamError',
+    'StudioError',
+);
 
-#use base 'Exporter';
+use images();
 our @EXPORT_OK = qw(get_columns get get_by_id insert update delete check check_studio);
 
 sub get_columns($) {
@@ -74,8 +77,9 @@ sub get($;$) {
 sub getImageById($$) {
     my ($config, $conditions) = @_;
 
-    return undef unless defined $conditions->{project_id};
-    return undef unless defined $conditions->{studio_id};
+    for ('project_id', 'studio_id') {
+        ParamError->throw("missing $_") unless defined $conditions->{$_}
+    };
     my $studios = studios::get( $config, $conditions );
     return undef if scalar(@$studios) != 1;
     return $studios->[0]->{image};
@@ -134,21 +138,14 @@ sub check_studio($$) {
 
 sub check ($$) {
     my ($config, $options) = @_;
-
-    return "missing studio_id" unless defined $options->{studio_id};
-    return "Please select a studio" if ( $options->{studio_id} eq '-1' );
-    return "Please select a studio" if ( $options->{studio_id} eq '' );
+    ParamError->throw(error => "missing studio_id") unless defined $options->{studio_id};
+    ParamError->throw(error => "Please select a studio") if ( $options->{studio_id} eq '-1' );
+    ParamError->throw(error => "Please select a studio") if ( $options->{studio_id} eq '' );
     my $studios = studios::get( $config, { studio_id => $options->{studio_id} } );
-    return "Sorry. unknown studio" unless defined $studios;
-    return "Sorry. unknown studio" unless scalar @$studios == 1;
+    StudioError->throw(error => "unknown studio") unless defined $studios;
+    StudioError->throw(error => "unknown studio") unless scalar @$studios == 1;
     return 1;
-}
-
-sub error {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!
 1;
-

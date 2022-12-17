@@ -6,6 +6,10 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc;
+use Exception::Class (
+    'ParamError',
+    'ProjectError',
+);
 
 use config();
 use log();
@@ -73,7 +77,10 @@ sub get ($;$) {
 sub getImageById($$) {
     my ($config, $conditions) = @_;
 
-    return undef unless defined $conditions->{project_id};
+    for ('project_id') {
+        ParamError->throw("missing $_") unless defined $conditions->{$_}
+    };
+
     my $projects = project::get( $config, $conditions );
     return undef if scalar(@$projects) != 1;
     return $projects->[0]->{image};
@@ -146,7 +153,9 @@ sub delete ($$) {
 sub get_studios($$) {
     my ($config, $options) = @_;
 
-    return undef unless defined $options->{project_id};
+    for ('project_id') {
+        ParamError->throw("missing $_") unless defined $options->{$_}
+    };
     my $project_id = $options->{project_id};
 
     my $query = qq{
@@ -218,8 +227,9 @@ sub is_studio_assigned ($$) {
 sub assign_studio($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
+    for ('project_id', 'studio_id') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
     my $project_id = $entry->{project_id};
     my $studio_id  = $entry->{studio_id};
 
@@ -236,8 +246,9 @@ sub assign_studio($$) {
 sub unassign_studio($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
+    for ('project_id', 'studio_id') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
     my $project_id = $entry->{project_id};
     my $studio_id  = $entry->{studio_id};
 
@@ -251,8 +262,9 @@ sub unassign_studio($$) {
 sub get_series ($$) {
     my ($config, $options) = @_;
 
-    return undef unless defined $options->{project_id};
-    return undef unless defined $options->{studio_id};
+    for ('project_id', 'studio_id') {
+        ParamError->throw("missing $_") unless defined $options->{$_}
+    };
     my $project_id = $options->{project_id};
     my $studio_id  = $options->{studio_id};
 
@@ -333,9 +345,9 @@ sub is_series_assigned ($$) {
 sub assign_series($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $project_id = $entry->{project_id};
     my $studio_id  = $entry->{studio_id};
@@ -356,9 +368,9 @@ sub assign_series($$) {
 sub unassign_series ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $project_id = $entry->{project_id};
     my $studio_id  = $entry->{studio_id};
@@ -452,17 +464,12 @@ sub get_months ($$;$) {
 # check project_id
 sub check ($$) {
     my ($config, $options) = @_;
-    return "missing project_id at checking project" unless defined $options->{project_id};
-    return "Please select a project" if ( $options->{project_id} eq '-1' );
-    return "Please select a project" if ( $options->{project_id} eq '' );
+    ParamError->throw(error=> "missing project_id at checking project") unless defined $options->{project_id};
+    ParamError->throw(error=> "Please select a project") if ( $options->{project_id} eq '-1' );
+    ParamError->throw(error=> "Please select a project") if ( $options->{project_id} eq '' );
     my $projects = project::get( $config, { project_id => $options->{project_id} } );
-    return "Sorry. unknown project" unless defined $projects;
+    ProjectError->throw(error=> "Unknown project") unless defined $projects;
     return 1;
-}
-
-sub error($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

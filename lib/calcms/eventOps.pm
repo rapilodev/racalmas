@@ -4,6 +4,11 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
+use Exception::Class (
+    'ParamError',
+    'StudioError'
+);
+
 use uac();
 use events();
 use series();
@@ -148,10 +153,7 @@ sub getNewEvent($$$) {
 
 	my $event = {};
 	for my $attr (@$required_fields) {
-		unless ( defined $params->{$attr} ) {
-			uac::print_error( "missing " . $attr );
-			return undef;
-		}
+        ParamError->throw( error => "missing " . $attr ) unless defined $params->{$attr};
 		$event->{$attr} = $params->{$attr};
 	}
 
@@ -253,10 +255,7 @@ sub createEvent($$$) {
 			studio_id  => $event->{studio_id}
 		}
 	);
-	unless ( defined $studios ) {
-		uac::print_error("studio not found");
-		return undef;
-	}
+    StudioError->throw(error => "studios not found $_") unless defined $studios;
 	unless ( scalar @$studios == 1 ) {
 		uac::print_error("studio not found");
 		return undef;

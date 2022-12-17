@@ -5,6 +5,10 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use Exception::Class (
+    'SessionError',
+);
+
 use series_dates();
 
 # table:   calcms_user_settings
@@ -166,7 +170,9 @@ sub get ($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
+    for ('user') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
    
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_user_settings', $entry );
@@ -175,7 +181,9 @@ sub insert ($$) {
 sub update($$) {
     my ($config, $entry) = @_;
 
-    return unless ( defined $entry->{user} );
+    for ('user') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh         = db::connect($config);
     my @keys        = sort keys %$entry;
@@ -190,13 +198,15 @@ sub update($$) {
 	};
 
     db::put( $dbh, $query, \@bind_values );
-    print "done\n";
+    #print "done\n";
 }
 
 sub delete ($$) {
     my ($config, $entry) = @_;
 
-    return unless ( defined $entry->{user} );
+    for ('user') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
 
@@ -208,11 +218,6 @@ sub delete ($$) {
     my $bind_values = [ $entry->{user} ];
 
     db::put( $dbh, $query, $bind_values );
-}
-
-sub error ($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

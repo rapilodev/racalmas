@@ -8,6 +8,11 @@ use feature 'state';
 use DBD::mysql();
 use Digest::MD5 qw();
 use Data::Dumper;
+use Try::Tiny;
+use Exception::Class (
+    'DatabaseError',
+);
+use Scalar::Util qw( blessed );
 
 #use base 'Exporter';
 our @EXPORT_OK = qw(
@@ -50,7 +55,7 @@ sub connect($;$) {
     return $connections->{$key} if defined $connections->{$key} and $connections->{$key}->ping;
 
     my $dbh = DBI->connect( $dsn, $username, $password, { mysql_enable_utf8 => 1 } )
-      || die "could not connect to database: $DBI::errstr";
+      || DatabaseError->throw("could not connect to database: $DBI::errstr");
     $dbh->{RaiseError} = 1;
     $dbh->{HandleError} = sub{
         print STDERR join(",",(caller($_))[0..3])."\n" for (1..2);
@@ -83,10 +88,10 @@ sub get($$;$) {
         my $result = $sth->execute(@$bind_values);
         unless ($result) {
             print STDERR $sql . "\n";
-            die "db: $DBI::errstr $sql" if ( $read == 1 );
+            DatabaseError->throw( "db: $DBI::errstr $sql") if ( $read == 1 );
         }
     } else {
-        $sth->execute() or die "db: $DBI::errstr $sql" if $read == 1;
+        $sth->execute() or DatabaseError->throw("db: $DBI::errstr $sql") if $read == 1;
     }
 
     my $results = $sth->fetchall_arrayref({});

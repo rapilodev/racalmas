@@ -4,9 +4,20 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
+#use Try::Tiny qw(try catch finally);
+use Exception::Class (
+    'UacError',
+    'UserError',
+    'ParamError',
+    'PermissionError'
+);
+use Scalar::Util qw( blessed );
+
 use CGI::Session qw(-ip-match);
 use CGI::Cookie();
 use Data::Dumper;
+use List::Util qw(none all);
+
 use auth();
 use db();
 use template();
@@ -41,10 +52,7 @@ sub get_user($$) {
 
     my $dbh = db::connect($config);
     my $users = db::get( $dbh, $query, $bind_values );
-    if ( scalar @$users != 1 ) {
-        print STDERR "cannot find user '$user'\n";
-        return undef;
-    }
+    UserError->throw(error => "cannot find user '$user'\n") if scalar @$users != 1;
     return $users->[0];
 }
 
@@ -404,10 +412,7 @@ sub get_user_roles($$) {
     my $admin_roles = get_admin_user_roles( $config, $condition );
 
     #add admin roles to user roles
-    my @user_roles = ( @$admin_roles, @$user_roles );
-    $user_roles = \@user_roles;
-
-    return $user_roles;
+    return [@$admin_roles, @$user_roles];
 }
 
 #return admin user roles for given conditions: project_id, studio_id, user, user_id
@@ -528,10 +533,9 @@ sub get_role_id ($$) {
 sub assign_user_role($$) {
     my ($config, $options) = @_;
 
-    return undef unless defined $options->{project_id};
-    return undef unless defined $options->{studio_id};
-    return undef unless defined $options->{user_id};
-    return undef unless defined $options->{role_id};
+    for ('project_id', 'studio_id', 'user_id', 'role_id') {
+        ParamError->throw(error=>"missing $_") unless defined $options->{$_} 
+    }
 
     #return if already exists
     my $query = qq{
@@ -560,10 +564,9 @@ sub assign_user_role($$) {
 sub remove_user_role($$) {
     my ($config, $options) = @_;
 
-    return undef unless defined $options->{project_id};
-    return undef unless defined $options->{studio_id};
-    return undef unless defined $options->{user_id};
-    return undef unless defined $options->{role_id};
+    for ('project_id', 'studio_id', 'user_id', 'role_id') {
+        ParamError->throw(error=>"missing $_") unless defined $options->{$_} 
+    }
 
     my $query = qq{
 		delete
@@ -583,10 +586,10 @@ sub is_user_assigned_to_studio ($$) {
     my ($request, $options) = @_;
 
     my $config = $request->{config};
-
-    return 0 unless defined $request->{user};
-    return 0 unless defined $options->{studio_id};
-    return 0 unless defined $options->{project_id};
+    for ('project_id', 'studio_id') {
+        ParamError->throw(error=>"is_user_assigned_to_studio: missing $_") unless defined $options->{$_} 
+    }
+    ParamError->throw(error=>"is_user_assigned_to_studio: missing user") unless defined $request->{user};
 
     my $options2 = {
         user       => $request->{user},
@@ -595,30 +598,21 @@ sub is_user_assigned_to_studio ($$) {
     };
 
     my $user_studios = uac::get_studios_by_user( $config, $options2 );
-    return 1 if scalar @$user_studios == 1;
-    return 0;
+    return (@$user_studios == 1);
 }
 
 # print errors at get_user_presets and check for project id and studio id
 # call after header is printed
 sub check($$$) {
     my ($config, $params, $user_presets) = @_;
-    if ( defined $user_presets->{error} ) {
-        uac::print_error( $user_presets->{error} );
-        return 0;
-    }
+    UacError->throw( error => $user_presets->{error}) if defined $user_presets->{error};
 
     my $project_check = project::check( $config, { project_id => $params->{project_id} } );
-    if ( $project_check ne '1' ) {
-        uac::print_error($project_check);
-        return 0;
-    }
+    UacError->throw( error => $project_check) if $project_check ne '1';
 
     my $studio_check = studios::check( $config, { studio_id => $params->{studio_id} } );
-    if ( $studio_check ne '1' ) {
-        uac::print_error($studio_check);
-        return 0;
-    }
+    UacError->throw( error => $studio_check) if $studio_check ne '1';
+
     return 1;
 }
 
@@ -630,7 +624,7 @@ sub get_user_presets($$) {
 
     my $user = $options->{user} || '';
     my $error = undef;
-    return { error => "no user selected" } if ( $user eq '' );
+    UacError->throw(error => "no user selected") if $user eq '';
 
     my $project_id = $options->{project_id} || '';
     my $studio_id  = $options->{studio_id}  || '';
@@ -646,43 +640,31 @@ sub get_user_presets($$) {
 
     #get all projects by user
     my $projects = uac::get_projects_by_user( $config, { user => $user } );
-    return { error => "no project is assigned to user" } if scalar @$projects == 0;
+    UacError->throw(error => "no project is assigned to user") if scalar @$projects == 0;
 
     $projects = project::get($config) if ( @$admin_roles > 0 );
     my @projects = reverse sort { $a->{end_date} cmp $b->{end_date} } (@$projects);
     $projects = \@projects;
 
     if ( $project_id ne '' && $project_id ne '-1' ) {
-        my $projectFound = 0;
-        for my $project (@$projects) {
-            if ( $project->{project_id} eq $project_id ) {
-                $projectFound = 1;
-                last;
-            }
-        }
-        return { error => "project is not assigned to user" } if ( $projectFound == 0 );
+        UacError->throw( error => "project $project_id is not assigned to user $user") 
+        if none { $_->{project_id} eq $project_id } @projects;
     } else {
         $project_id = $projects->[0]->{project_id};
     }
 
     #check if studios are assigned to project
     my $studios = project::get_studios( $config, { project_id => $project_id } );
-    $error = "no studio is assigned to project" if scalar @$studios == 0;
+    UacError->throw(error => "no studio is assigned to project") if scalar @$studios == 0;
 
     if ( scalar @$admin_roles == 0 ) {
 
         #get all studios by user
         $studios = uac::get_studios_by_user( $config, { user => $user, project_id => $project_id } );
-        $error = "no studio is assigned to user" if scalar @$studios == 0;
+        UacError->throw(error =>"no studio is assigned to user") if scalar @$studios == 0;
         if ( ( $studio_id ne '' ) && ( $studio_id ne '-1' ) ) {
-            my $studioFound = 0;
-            for my $studio (@$studios) {
-                if ( $studio->{id} eq $studio_id ) {
-                    $studioFound = 1;
-                    last;
-                }
-            }
-            $error = "studio is not assigned to user" if ( $studioFound == 0 );
+            UacError->throw(error=>"studio is not assigned to user") 
+            if none { $_->{id} eq $studio_id } @$studios;
         } else {
             $studio_id = $studios->[0]->{id} unless defined $studio_id;
         }
@@ -691,14 +673,8 @@ sub get_user_presets($$) {
         #for admin get studios by project
         $studios = studios::get( $config, { project_id => $project_id } );
         if ( ( $studio_id ne '' ) && ( $studio_id ne '-1' ) ) {
-            my $studioFound = 0;
-            for my $studio (@$studios) {
-                if ( $studio->{id} eq $studio_id ) {
-                    $studioFound = 1;
-                    last;
-                }
-            }
-            $error = "studio is not assigned to project" if ( $studioFound == 0 );
+            UacError->throw(error=>"studio $studio_id is not assigned to project $project_id") 
+            if none { $_->{id} eq $studio_id } @$studios;
         } else {
             $studio_id = $studios->[0]->{id} unless defined $studio_id;
         }
@@ -711,11 +687,6 @@ sub get_user_presets($$) {
             $permissions->{$key} = 1;
         }
     }
-
-    #only admin is allowed to select all projects
-    #    if($permissions->{is_admin}==1){
-    #        $projects=project::get($config);
-    #    }
 
     #set studios and projects as selected, TODO:do in JS
     my $selectedProject = {};
@@ -753,7 +724,6 @@ sub get_user_presets($$) {
         permissions => $permissions,      # from parameter or default
         config      => $config
     };
-    $result->{error} = $error if defined $error;
     return $result;
 }
 
@@ -802,8 +772,7 @@ sub set_template_permissions ($$) {
 sub permissions_denied($) {
     my ($message) = @_;
     $message =~ s/_/ /g;
-    print '<div class="error">Sorry! Missing permissions to ' . $message . '</div>' . "\n";
-    print STDERR 'Sorry! Missing permissions to ' . $message . "\n";
+    PermissionError->throw(error=>'Sorry! Missing permissions to ' . $message);
 }
 
 sub print_info($) {

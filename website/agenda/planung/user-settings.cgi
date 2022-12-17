@@ -77,10 +77,6 @@ sub show_settings {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    #	unless ($permissions->{read_user}==1){
-    #		uac::permissions_denied('read_user');
-    #		return;
-    #	}
     my $user = $params->{presets}->{user};
     my $colors = user_settings::getColors( $config, { user => $user } );
 

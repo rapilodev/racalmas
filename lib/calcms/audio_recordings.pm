@@ -5,6 +5,11 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use Data::Dumper;
+use Exception::Class (
+    'ParamError',
+);
+
 use db();
 
 #use base 'Exporter';
@@ -164,10 +169,9 @@ sub update($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{event_id};
-    return undef unless defined $entry->{path};
+    for ('project_id', 'studio_id', 'event_id', 'path') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
     $entry = {
@@ -194,10 +198,9 @@ sub insert ($$) {
 sub delete ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{event_id};
-    return undef unless defined $entry->{path};
+    for ('project_id', 'studio_id', 'event_id', 'path') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
     my $query = qq{
@@ -212,9 +215,35 @@ sub delete ($$) {
     return $result;
 }
 
-sub error($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
+sub update_active($$$) {
+    my ($config, $dbh, $entry) = @_;
+
+    for ('project_id', 'studio_id', 'event_id') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
+
+    my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{event_id} ];
+    my $query = qq{
+        update calcms_audio_recordings
+        set    active=0
+        where  project_id=? and studio_id=? and event_id=? and active=1
+    };
+    db::put( $dbh, $query, $bind_values );
+
+    $query = qq{
+        select max(id) id from calcms_audio_recordings
+        where  project_id=? and studio_id=? and event_id=?
+    };
+    my $entries = db::get( $dbh, $query, $bind_values );
+    my $max = $entries->[0];
+    return undef unless defined $max->{id};
+
+    $query = qq{
+        update calcms_audio_recordings
+        set    active=1
+        where  id=?
+    };
+    return db::put( $dbh, $query, [$max->{id}] );
 }
 
 #do not delete last line!

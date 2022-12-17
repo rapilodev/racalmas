@@ -5,6 +5,10 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
+use Exception::Class (
+    'ParamError',
+);
+
 use series_dates();
 
 # table:   calcms_work_schedule
@@ -82,9 +86,9 @@ sub get($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{start};
+    for ('project_id', 'studio_id', 'start' ) {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_work_schedule', $entry );
 }
@@ -93,10 +97,9 @@ sub insert ($$) {
 sub update ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{schedule_id};
-    return undef unless defined $entry->{start};
+    for ('project_id', 'studio_id', 'schedule_id', 'start' ) {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh         = db::connect($config);
     my @keys        = sort keys %$entry;
@@ -113,16 +116,16 @@ sub update ($$) {
 		where  project_id=? and studio_id=? and schedule_id=?
 	};
     return db::put( $dbh, $query, \@bind_values );
-    print "done\n";
+    #print "done\n";
 }
 
 #map schedule id to id
 sub delete($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{schedule_id};
+    for ('project_id', 'studio_id', 'schedule_id' ) {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
 
@@ -134,11 +137,6 @@ sub delete($$) {
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{schedule_id} ];
 
     return db::put( $dbh, $query, $bind_values );
-}
-
-sub error($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

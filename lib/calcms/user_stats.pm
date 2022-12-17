@@ -3,7 +3,11 @@ package user_stats;
 use strict;
 use warnings;
 no warnings 'redefine';
+
 use Data::Dumper;
+use Exception::Class (
+    'ParamError',
+);
 
 #use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get update insert get_stats increase);
@@ -129,10 +133,9 @@ sub get_stats($$) {
 sub insert($$) {
     my ($config, $stats) = @_;
 
-    return undef unless defined $stats->{project_id};
-    return undef unless defined $stats->{studio_id};
-    return undef unless defined $stats->{series_id};
-    return undef unless defined $stats->{user};
+    for ('user', 'project_id', 'studio_id', 'series_id', ) {
+        ParamError->throw("missing $_") unless defined $stats->{$_}
+    };
 
     #TODO:filter for existing attributes
     my $columns = get_columns($config);
@@ -151,10 +154,9 @@ sub insert($$) {
 sub update ($$) {
     my ($config, $stats) = @_;
 
-    return undef unless defined $stats->{project_id};
-    return undef unless defined $stats->{studio_id};
-    return undef unless defined $stats->{series_id};
-    return undef unless defined $stats->{user};
+    for ('user', 'project_id', 'studio_id', 'series_id', ) {
+        ParamError->throw("missing $_") unless defined $stats->{$_}
+    };
 
     my $columns = get_columns($config);
     my $entry   = {};
@@ -185,10 +187,9 @@ sub increase ($$$) {
     my ($config, $usecase, $options) = @_;
 
     return undef unless defined $usecase;
-    return undef unless defined $options->{project_id};
-    return undef unless defined $options->{studio_id};
-    return undef unless defined $options->{series_id};
-    return undef unless defined $options->{user};
+    for ('user', 'project_id', 'studio_id', 'series_id', ) {
+        ParamError->throw("missing $_") unless defined $options->{$_}
+    };
 
     my $columns = get_columns($config);
     return undef unless exists $columns->{$usecase};
@@ -232,11 +233,6 @@ sub get_active_users{
     };
     my $results = db::get( $dbh, $query, [] );
     return $results;    
-}
-
-sub error ($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

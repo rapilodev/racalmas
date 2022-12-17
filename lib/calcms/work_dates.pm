@@ -6,6 +6,10 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc();
+use Exception::Class (
+    'ParamError',
+);
+
 use time();
 use db();
 use log();
@@ -118,9 +122,9 @@ sub get ($$) {
 sub update($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{schedule_id};
+    for ('project_id', 'studio_id', 'schedule_id' ) {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
 
@@ -183,15 +187,12 @@ sub update($$) {
             $entry->{start_date} = time::add_hours_to_datetime( $entry->{start}, -$day_start );
             $entry->{end_date}   = time::add_hours_to_datetime( $entry->{end},   -$day_start );
             db::insert( $dbh, 'calcms_work_dates', $entry );
-
-            #print STDERR "$entry->{start_date}\n";
             $i++;
         } else {
             $j++;
         }
     }
 
-    #print STDERR "$i work_dates updates\n";
     return $j . " dates out of studio times, " . $i;
 }
 
@@ -286,8 +287,6 @@ sub get_dates($$$$) {
     my @start_date = ( $start[0], $start[1], $start[2] );
     my $start_time = sprintf( '%02d:%02d:%02d', $start[3], $start[4], $start[5] );
 
-    #print STDERR "$start_datetime,$end_date,$duration,$frequency\n";
-
     #return on single date
     my $date = {};
     $date->{start} = sprintf( "%04d-%02d-%02d", @start_date ) . ' ' . $start_time;
@@ -338,9 +337,9 @@ sub get_dates($$$$) {
 sub delete($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{schedule_id};
+    for ('project_id', 'studio_id', 'schedule_id') {
+        ParamError->throw("missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
 
@@ -351,11 +350,6 @@ sub delete($$) {
 	};
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{schedule_id} ];
     return db::put( $dbh, $query, $bind_values );
-}
-
-sub error($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

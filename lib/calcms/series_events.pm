@@ -6,8 +6,11 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc;
-use markup();
+use Exception::Class (
+    'ParamError',
+);
 
+use markup();
 use db();
 use log();
 use time();
@@ -427,7 +430,6 @@ sub insert_event ($$) {
         location => $studio->{location},    # location from studio
     };
 
-    #print '<pre>';
     $event = series_events::add_event_dates( $config, $event, $params );
 
     #get event content from series
@@ -508,8 +510,6 @@ sub update_series_images ($$) {
     return "missing series_id"    unless defined $options->{series_id};
     return "missing series_image" unless defined $options->{series_image};
 
-    #print "save $options->{series_image}\n";
-
     my $events = series::get_events(
         $config,
         {
@@ -523,11 +523,6 @@ sub update_series_images ($$) {
         $event->{series_image} = $options->{series_image};
         series_events::save_content( $config, $event );
     }
-}
-
-sub error ($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

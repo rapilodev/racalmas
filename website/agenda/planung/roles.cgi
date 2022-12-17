@@ -421,12 +421,6 @@ sub sort_groups {
         $i += 100;
     }
 
-    #print "<pre>";
-    #for my $group (sort {$groups->{$a} <=> $groups->{$b}} (keys %$groups)){
-    #    print "$groups->{$group}\t$group\n";
-    #}
-    #print "</pre>";
-
     return $groups;
 }
 

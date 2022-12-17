@@ -479,6 +479,7 @@ function initCalendarMenu(){
     setDatePicker();
     initTodayButton();
     resizeCalendarMenu();
+    console.log("calendar initialized")
 }
 
 function createId(prefix) {
