@@ -156,12 +156,13 @@ function updateUrls(url){
     url=removeUrlParameter(url, 'part');    
 
     //replace current in history
+    url = url.replace("calendar-content.cgi","calendar.cgi");
     history.pushState(null, null, url);
     appendHistory(url,'replace');
 }
 
 function updateUrlParameters(url){
-
+    url = url.replace("calendar-content.cgi","calendar.cgi");
     var range=$('#range').val();
     if (range=='events'){
         url=setUrlParameter(url, 'list', 1);
@@ -285,10 +286,12 @@ function getNearestDatetime(){
             var distance=Math.abs(delta);
             if (distance<yMin){
                 yMin=delta;
-                hour= $(this).attr('time');
+                hour= $(this).attr('time').substr(0,2);
                 minute='30';
                 if(delta<0) minute='00';
             }
+                console.log(hour)
+                console.log(minute)
         }
     );
 
@@ -308,11 +311,12 @@ function getNearestDatetime(){
             var distance=Math.abs(delta);
             if (distance<yMin){
                 yMin=delta;
-                hour= $(this).attr('time');
+                hour= $(this).attr('time').substr(0,2);
                 var height=$(this).height()+14;
                 var m=((delta+height*1.5)-8) % height;
                 m=m*60/height;
                 minute=Math.floor(m/5)*5;
+                minute = (minute + 60) %60;
                 if (minute<10)minute='0'+minute;
             }
         }
@@ -335,7 +339,8 @@ function showMouse(){
     );
 
     // Get a reference to the last interval, then clean all
-    var interval_id = window.setInterval("", 9999); 
+    var interval_id = window.setInterval("", 9999);
+    console.log(interval_id);
     for (var i = 1; i < interval_id; i++)
         window.clearInterval(i);
 
@@ -371,23 +376,57 @@ function show_not_assigned_to_series_dialog(){
 }
 
 function show_schedule_series_dialog(project_id, studio_id, series_id, start_date){
-    showDialog({
-        title   : loc['label_schedule_series'],
-        content : $('#series').html(),
-        width   : "50rem",
-        height  : "15rem",
-        buttons : {
-            "Schedule": function() {
-                var series_id  = $('#dialog #series_select').val();
-                var duration   = $('#dialog #series_duration').val();
-                var start_date = $('#dialog #series_date').val();
-                var url='series.cgi?project_id='+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&start='+escape(start_date)+'&duration='+duration+'&show_hint_to_add_schedule=1#tabs-schedule';
-                load(url);
-            },
-            Cancel : function() { $(this).parent().remove(); }
+    jQuery.getJSON(
+        "series.cgi?&json=1&project_id="+getProjectId()+"&studio_id="+getStudioId()
+    ).done(function(data) {
+        var html = '';
+        html += "<table><tr><td>" + loc['label_series'] + "</td>";
+        html += '<td><select id="series_select" name="series_id">';
+        for (const serie of data["series"]) {
+            let id       = serie["series_id"]   || -1;
+            let duration = serie["duration"]    || 0;
+            let name     = serie["series_name"] || '';
+            let title    = serie["title"]       || '';
+            if (serie['has_single_events'] == '1') name = loc['single_events'];
+            if (title != '') title = ' - ' + title;
+            html += '<option value="' + id + '" duration="' + duration + '">' + name + title + '</option>' + "\n";
         }
+        html+= '</select></td></tr>';
+        html+= '<tr>';
+        html+= '    <td>' + loc["label_date"] + "</td>";
+        html+= '    <td><input id="series_date" name="start_date" value=""></td>';
+        html+= '</tr>';
+        html+= '<tr>';
+        html+= '    <td>' + loc["label_duration"] + '</td>';
+        html+= '    <td><input id="series_duration" value="60"></td>';
+        html+= '</tr>';
+        html+= '</table>';
+
+        showDialog({
+            title   : loc['label_schedule_series'],
+            content : html,
+            width   : "50rem",
+            height  : "15rem",
+            buttons : {
+                "Schedule": function() {
+                    var series_id  = $('#dialog #series_select').val();
+                    var duration   = $('#dialog #series_duration').val();
+                    var start_date = $('#dialog #series_date').val();
+                    var url='series.cgi?project_id='+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&start='+escape(start_date)+'&duration='+duration+'&show_hint_to_add_schedule=1#tabs-schedule';
+                    load(url);
+                },
+                Cancel : function() { $(this).parent().remove(); }
+            }
+        });
+        $('#series_date').attr('value',start_date);
+        var date=parseDateTime(start_date);
+        showDateTimePicker('#series_date', {
+            date: start_date
+        });
+
+    }).fail(function( jqxhr, textStatus, error ) {
+        alert(error);
     });
-    showDateTimePicker('#dialog #series_date');
 }
 
 function setDatePicker(){
@@ -595,6 +634,7 @@ function loadCalendar(url, mouseButton){
         url=updateUrlParameters(url);
     }
     url=setUrlParameter(url, 'part', '1');
+    url=url.replace("calendar.cgi","calendar-content.cgi");
     updateContainer('calendarTable', url, function(){ 
         updateTable(); 
         $('#calendarTable').css('opacity','1.0');
@@ -863,13 +903,6 @@ function handleGrid(id){
     if (studio_id<0)    return;
 
     var start_date = getNearestDatetime();
-    $('#series_date').attr('value',start_date);
-    var date=parseDateTime(start_date);
-    showDateTimePicker('#series_date', {
-        date: start_date
-    });
-    
-
     show_schedule_series_dialog(project_id, studio_id, series_id, start_date);
 }
 
@@ -919,7 +952,6 @@ function adjustColors(){
 
 $(document).ready(function(){
     initCalendarMenu();
-
     if(calendarTable==1){
         loadCalendar();
     }else{
