@@ -55,7 +55,7 @@ sub get ($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    ParamError->throw("missing user") unless defined $entry->{user};
+    ParamError->throw("missing user on inserting default studio") unless defined $entry->{user};
 
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_user_default_studios', $entry );
@@ -64,8 +64,8 @@ sub insert ($$) {
 sub update($$) {
     my ($config, $entry) = @_;
 
-    ParamError->throw("missing user") unless defined $entry->{user};
-    ParamError->throw("missing project_id") unless defined $entry->{project_id};
+    ParamError->throw("missing user on updating default studio") unless defined $entry->{user};
+    ParamError->throw("missing project_id on updating default studio") unless defined $entry->{project_id};
 
     my @keys        = sort keys %$entry;
     my $values      = join( ",", map { $_ . '=?' } @keys );
@@ -87,7 +87,7 @@ sub update($$) {
 sub delete ($$) {
     my ($config, $entry) = @_;
 
-    ParamError->throw("missing user") unless defined $entry->{user};
+    ParamError->throw("missing user on deleting default studio") unless defined $entry->{user};
 
     my $query = qq{
 		delete 

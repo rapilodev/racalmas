@@ -170,7 +170,7 @@ sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'event_id', 'path') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("audio-recordings: missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -199,7 +199,7 @@ sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'event_id', 'path') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("audio-recordings: missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -219,7 +219,7 @@ sub update_active($$$) {
     my ($config, $dbh, $entry) = @_;
 
     for ('project_id', 'studio_id', 'event_id') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("audio-recordings: missing $_") unless defined $entry->{$_}
     };
 
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{event_id} ];

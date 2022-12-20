@@ -171,8 +171,8 @@ sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('user') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
-    };
+        ParamError->throw(error=>"user_settings:insert: missing $_") unless defined $entry->{$_};
+    }
    
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_user_settings', $entry );
@@ -182,8 +182,8 @@ sub update($$) {
     my ($config, $entry) = @_;
 
     for ('user') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
-    };
+        ParamError->throw(error=>"user_settings:update: missing $_") unless defined $entry->{$_};
+    }
 
     my $dbh         = db::connect($config);
     my @keys        = sort keys %$entry;
@@ -205,8 +205,8 @@ sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('user') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
-    };
+        ParamError->throw(error=>"user_settings:delete: missing $_") unless defined $entry->{$_};
+    }
 
     my $dbh = db::connect($config);
 

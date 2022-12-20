@@ -78,7 +78,7 @@ sub getImageById($$) {
     my ($config, $conditions) = @_;
 
     for ('project_id', 'studio_id') {
-        ParamError->throw("missing $_") unless defined $conditions->{$_}
+        ParamError->throw("getImageById: missing $_") unless defined $conditions->{$_}
     };
     my $studios = studios::get( $config, $conditions );
     return undef if scalar(@$studios) != 1;

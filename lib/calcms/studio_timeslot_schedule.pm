@@ -68,7 +68,7 @@ sub insert($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'start', 'end', 'frequency') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("studio_timeslot_schedule:insert: missing $_") unless defined $entry->{$_}
     };
 
 	my $dbh = db::connect($config);
@@ -80,7 +80,7 @@ sub update($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'schedule_id', 'start', 'end', 'frequency') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("studio_timeslot_schedule:update: missing $_") unless defined $entry->{$_}
     };
 
 	$entry->{id} = $entry->{schedule_id};
@@ -109,7 +109,7 @@ sub delete ($$){
     my ($config, $entry) = @_;
 
     for ('schedule_id') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("studio_timeslot_schedule:delete $_") unless defined $entry->{$_}
     };
 
 	my $dbh = db::connect($config);

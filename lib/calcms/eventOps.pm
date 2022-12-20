@@ -153,7 +153,7 @@ sub getNewEvent($$$) {
 
 	my $event = {};
 	for my $attr (@$required_fields) {
-        ParamError->throw( error => "missing " . $attr ) unless defined $params->{$attr};
+        ParamError->throw( error => "eventOps: missing " . $attr ) unless defined $params->{$attr};
 		$event->{$attr} = $params->{$attr};
 	}
 

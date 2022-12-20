@@ -119,7 +119,7 @@ sub update {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'schedule_id') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("studio_timeslots:update: missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -269,7 +269,7 @@ sub delete {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'schedule_id') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("studio_timeslots:delete: missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -293,7 +293,7 @@ sub can_studio_edit_events {
     my @bind_values = ();
 
     for ('studio_id', 'start', 'end') {
-        ParamError->throw("missing $_") unless defined $condition->{$_}
+        ParamError->throw("studio_timeslots:can_studio_edit_events: missing $_") unless defined $condition->{$_}
     };
 
     if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
@@ -353,7 +353,7 @@ sub getMergedDays {
     my @bind_values = ();
 
     for ('studio_id', 'start', 'end') {
-        ParamError->throw("missing $_") unless defined $condition->{$_}
+        ParamError->throw("studio_timeslots:getMergedDays missing $_") unless defined $condition->{$_}
     };
 
     if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {

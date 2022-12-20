@@ -82,7 +82,7 @@ sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'timeout') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw(error=>"user_sessions:insert: $_") unless defined $entry->{$_}
     };
 
     unless (defined $entry->{session_id}) {
@@ -103,7 +103,7 @@ sub start($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'timeout') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw(error=>"user_sessions:start $_") unless defined $entry->{$_}
     };
 
     my $id = insert(

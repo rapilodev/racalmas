@@ -27,7 +27,7 @@ sub get ($$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    for ('user', 'project_id', 'studio_id', 'series_id', 'selected_event') {
+    for ('user', 'project_id', 'studio_id', 'series_id') {
         ParamError->throw(error => "user_selected_event:get: missing $_") unless defined $condition->{$_}
     };
 
@@ -58,7 +58,7 @@ sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'project_id', 'studio_id', 'series_id', 'selected_event') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("user_selected_event:insert; missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -73,7 +73,7 @@ sub update($$) {
         'filter_project_studio', 'filter_series' 
     ];
     for (@$fields) {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("user_selected_event:update: missing $_") unless defined $entry->{$_}
     };
 
     my @keys        = sort keys %$entry;
@@ -96,7 +96,7 @@ sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'project_id', 'studio_id', 'series_id') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("user_selected_event:delete: $_") unless defined $entry->{$_}
     };
 
     my $query = qq{

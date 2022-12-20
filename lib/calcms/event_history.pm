@@ -23,7 +23,7 @@ sub get ($$){
     my ($config, $condition) = @_;
 
     for ('studio_id') {
-        ParamError->throw("missing $_") unless defined $condition->{$_}
+        ParamError->throw("event_history: missing $_") unless defined $condition->{$_}
     };
     my $dbh = db::connect($config);
 
@@ -117,7 +117,7 @@ sub insert_by_event_id ($$){
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'event_id', 'user') {
-        ParamError->throw("missing $_") unless defined $options->{$_}
+        ParamError->throw("event_history: missing $_") unless defined $options->{$_}
     };
 
     my $sql = q{

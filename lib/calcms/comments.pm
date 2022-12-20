@@ -593,9 +593,9 @@ sub check_params ($$) {
         $comment->{type} = 'tree';
     }
 
-    log::error( $config, 'missing parameter a' ) if ( defined $params->{limit} )    && ( $comment->{limit} eq '' );
-    log::error( $config, 'missing parameter b' ) if ( defined $params->{event_id} ) && ( $comment->{event_id} eq '' );
-    log::error( $config, 'missing parameter c' )
+    log::error( $config, 'comments: missing parameter a' ) if ( defined $params->{limit} )    && ( $comment->{limit} eq '' );
+    log::error( $config, 'comments: missing parameter b' ) if ( defined $params->{event_id} ) && ( $comment->{event_id} eq '' );
+    log::error( $config, 'comments: missing parameter c' )
       if ( defined $params->{event_start} ) && ( $comment->{event_start} eq '' );
 
     my $delta_days = 1;

@@ -129,7 +129,7 @@ sub insert ($$) {
     my ($config, $series) = @_;
 
     for ('project_id', 'studio_id') {
-        ParamError->throw("missing $_") unless defined $series->{$_};
+        ParamError->throw("series:insert: missing $_") unless defined $series->{$_};
     };
 
     my $project_id = $series->{project_id};
@@ -167,7 +167,7 @@ sub update ($$) {
     my ($config, $series) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        ParamError->throw("missing $_") unless defined $series->{$_}
+        ParamError->throw("series:update: missing $_") unless defined $series->{$_}
     };
 
     my $columns = series::get_columns($config);
@@ -203,7 +203,7 @@ sub delete($$) {
     my ($config, $series) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        ParamError->throw("missing $_") unless defined $series->{$_}
+        ParamError->throw("series:delete: $_") unless defined $series->{$_}
     };
 
     my $project_id = $series->{project_id};
@@ -333,7 +333,7 @@ sub add_user ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'user_id', 'user') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("series:add_user: missing $_") unless defined $entry->{$_}
     };
 
     my $query = qq{
@@ -361,7 +361,7 @@ sub remove_user ($$) {
     my ($config, $condition) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        ParamError->throw("missing $_") unless defined $condition->{$_}
+        ParamError->throw("series:remove_user: missing $_") unless defined $condition->{$_}
     };
 
     my @conditions  = ();
@@ -614,7 +614,7 @@ sub get_event_age($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id') {
-        ParamError->throw("missing $_") unless defined $options->{$_}
+        ParamError->throw("series:get_event_age: missing $_") unless defined $options->{$_}
     };
 
     my @conditions  = ();
@@ -737,7 +737,7 @@ sub get_images ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        ParamError->throw("missing $_") unless defined $options->{$_}
+        ParamError->throw("series:get_images: missing $_") unless defined $options->{$_}
     };
 
     #get images from all events of the series
@@ -797,7 +797,7 @@ sub assign_event($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'event_id') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("series:assign_event: missing $_") unless defined $entry->{$_}
     };
     $entry->{manual} = 0 unless ( defined $entry->{manual} ) && ( $entry->{manual} eq '1' );
 
@@ -838,7 +838,7 @@ sub unassign_event($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'event_id') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw("series:unassign_event: missing $_") unless defined $entry->{$_}
     };
 
     my $conditions = '';
@@ -910,7 +910,7 @@ sub set_event_ids ($$$$$) {
 
     my $serie_id = $serie->{series_id};
     for ('project_id', 'studio_id', 'series_id', 'event_id') {
-        ParamError->throw("missing $_") unless defined $serie->{$_}
+        ParamError->throw("series: set_event_ids: missing $_") unless defined $serie->{$_}
     };
 
     #make lookup table from events
@@ -1033,7 +1033,7 @@ sub is_event_assigned_to_user ($$) {
     my $config = $request->{config};
 
     for ('user', 'project_id', 'studio_id', 'series_id', 'event_id') {
-        ParamError->throw("missing $_") unless defined $options->{$_}
+        ParamError->throw("series:is_event_assigned_to_user: missing $_") unless defined $options->{$_}
     };
 
     #check roles
@@ -1078,7 +1078,7 @@ sub get_rebuilt_episodes ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        ParamError->throw("missing $_") unless defined $options->{$_}
+        ParamError->throw("series:get_rebuild_episodes missing $_") unless defined $options->{$_}
     };
 
     # ignore project and studio as series can be used in multiple studios
@@ -1148,7 +1148,7 @@ sub update_recurring_events ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'event_id') {
-        ParamError->throw("missing $_") unless defined $options->{$_}
+        ParamError->throw("series:update_recurring:events: missing $_") unless defined $options->{$_}
     };
 
     my $events = series::get_events(
@@ -1217,7 +1217,7 @@ sub update_recurring_event($$) {
     my ($config, $event) = @_;
 
     for ('event_id', 'recurrence', 'recurrence_count', 'rerun') {
-        ParamError->throw("missing $_") unless defined $event->{$_}
+        ParamError->throw("series:update_recurring_event: missing $_") unless defined $event->{$_}
     };
 
     return unless $event->{event_id} =~ /^\d+$/;
