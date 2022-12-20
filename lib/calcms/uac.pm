@@ -534,7 +534,7 @@ sub assign_user_role($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'user_id', 'role_id') {
-        ParamError->throw(error=>"missing $_") unless defined $options->{$_} 
+        ParamError->throw(error=>"assign_user_role: missing $_") unless defined $options->{$_} 
     }
 
     #return if already exists
@@ -565,7 +565,7 @@ sub remove_user_role($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'user_id', 'role_id') {
-        ParamError->throw(error=>"missing $_") unless defined $options->{$_} 
+        ParamError->throw(error=>"remove_user_role: missing $_") unless defined $options->{$_} 
     }
 
     my $query = qq{
@@ -772,7 +772,7 @@ sub set_template_permissions ($$) {
 sub permissions_denied($) {
     my ($message) = @_;
     $message =~ s/_/ /g;
-    PermissionError->throw(error=>'Sorry! Missing permissions to ' . $message);
+    PermissionError->throw(error=>'Missing permissions to ' . $message);
 }
 
 sub print_info($) {
@@ -797,6 +797,5 @@ sub print_error ($) {
       . $message
       . '</div>' . "\n";
 }
-
 #do not delete last line!
 1;

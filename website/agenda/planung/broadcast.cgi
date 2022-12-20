@@ -11,7 +11,8 @@ use MIME::Base64();
 use Encode::Locale();
 use File::Basename qw(basename);
 use Scalar::Util qw( blessed );
-use Try::Tiny;
+#use Try::Tiny;
+use Try::Tiny qw(try catch finally);
 
 use params();
 use config();
@@ -48,71 +49,78 @@ my ($user, $expires) = try {
 };
 return unless $user;
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        user       => $user,
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id}
-    }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
-
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
+try {
+    main();
+} catch {
+    uac::error_handler($r,@_);   
 };
 
-#set user at params->presets->user
-$request = uac::prepare_request( $request, $user_presets );
-
-$params = $request->{params}->{checked};
-
-my $show_header = ! (params::isJson() or $params->{action} eq 'download_audio');
-
-if ( $show_header ) {
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check( $config, 'event-header.html' ), $headerParams ); 
-}
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-if ( defined $params->{action} ) {
-    if (   ( $params->{action} eq 'show_new_event' )
-        || ( $params->{action} eq 'show_new_event_from_schedule' ) )
-    {
-        show_new_event( $config, $request );
-        return;
+sub main {
+    my $user_presets = uac::get_user_presets(
+        $config,
+        {
+            user       => $user,
+            project_id => $params->{project_id},
+            studio_id  => $params->{studio_id}
+        }
+    );
+    $params->{default_studio_id} = $user_presets->{studio_id};
+    $params = uac::setDefaultStudio( $params, $user_presets );
+    $params = uac::setDefaultProject( $params, $user_presets );
+    
+    my $request = {
+        url => $ENV{QUERY_STRING} || '',
+        params => {
+            original => $params,
+            checked  => check_params( $config, $params ),
+        },
+    };
+    
+    #set user at params->presets->user
+    $request = uac::prepare_request( $request, $user_presets );
+    $params = $request->{params}->{checked};
+    my $show_header = ! (params::isJson() or $params->{action} eq 'download_audio');
+    
+    my $out;
+    if ( $show_header ) {
+        my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+        $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
+        template::process( $config, $out, template::check( $config, 'event-header.html' ), $headerParams ); 
     }
-
-    if (   ( $params->{action} eq 'create_event' )
-        || ( $params->{action} eq 'create_event_from_schedule' ) )
-    {
-        $params->{event_id} = create_event( $config, $request );
-        unless ( defined $params->{event_id} ) {
-            uac::print_error("failed");
+    return unless uac::check( $config, $params, $user_presets ) == 1;
+    
+    if ( defined $params->{action} ) {
+        if (   ( $params->{action} eq 'show_new_event' )
+            || ( $params->{action} eq 'show_new_event_from_schedule' ) )
+        {
+            show_new_event( $config, $request );
             return;
         }
+    
+        if (   ( $params->{action} eq 'create_event' )
+            || ( $params->{action} eq 'create_event_from_schedule' ) )
+        {
+            $params->{event_id} = create_event( $config, $request );
+            unless ( defined $params->{event_id} ) {
+                uac::print_error("failed");
+                return;
+            }
+        }
+        if ( $params->{action} eq 'get_json' ) {
+            getJson( $config, $request );
+            return;
+        }
+        if ( $params->{action} eq 'delete' ) { delete_event( $config, $request ) }
+        if ( $params->{action} eq 'save' ) { save_event( $config, $request ) }
+        if ( $params->{action} eq 'download' ) { download( $config, $request ) }
+        if ( $params->{action} eq 'download_audio' ) { 
+            download_audio( $config, $request );
+            return; 
+        }
     }
-    if ( $params->{action} eq 'get_json' ) {
-        getJson( $config, $request );
-        return;
-    }
-    if ( $params->{action} eq 'delete' ) { delete_event( $config, $request ) }
-    if ( $params->{action} eq 'save' ) { save_event( $config, $request ) }
-    if ( $params->{action} eq 'download' ) { download( $config, $request ) }
-    if ( $params->{action} eq 'download_audio' ) { 
-        download_audio( $config, $request );
-        return; 
-    }
+    $config->{access}->{write} = 0;
+    show_event( $config, $request );
 }
-$config->{access}->{write} = 0;
-show_event( $config, $request );
 
 #show existing event for edit
 sub show_event {
