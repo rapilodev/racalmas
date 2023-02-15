@@ -19,20 +19,20 @@ Please change the passwords config after "INDENTIFIED BY" !
 #### create admin account
 
     CREATE USER 'calcms_admin'@'localhost' IDENTIFIED BY 'taes9Cho';
-    GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON *.* TO 'calcms_admin'@'localhost' IDENTIFIED BY 'taes9Cho';
-    GRANT ALL PRIVILEGES ON `calcms_test`.* TO 'calcms_admin'@'localhost';
+    GRANT ALL PRIVILEGES ON calcms.* TO 'calcms_admin'@'localhost';
+    GRANT ALL PRIVILEGES ON calcms_test.* TO 'calcms_admin'@'localhost';
 
 #### create editor account
 
     CREATE USER 'calcms_write'@'localhost' IDENTIFIED BY 'Toothok8';
-    GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'calcms_write'@'localhost' IDENTIFIED BY 'Toothok8';
-    GRANT ALL PRIVILEGES ON `calcms_test`.* TO 'calcms_write'@'localhost';
+    GRANT SELECT, INSERT, UPDATE, DELETE ON calcms.* TO 'calcms_write'@'localhost';
+    GRANT ALL PRIVILEGES ON calcms_test.* TO 'calcms_write'@'localhost';
 
 #### create read-only account
 
     CREATE USER 'calcms_read'@'localhost' IDENTIFIED BY 'Ro2chiya';
-    GRANT SELECT ON *.* TO 'calcms_read'@'localhost' IDENTIFIED BY 'Ro2chiya' ;
-    GRANT ALL PRIVILEGES ON `calcms_test`.* TO 'calcms_read'@'localhost';
+    GRANT SELECT ON calcms.* TO 'calcms_read'@'localhost';
+    GRANT ALL PRIVILEGES ON calcms_test.* TO 'calcms_read'@'localhost';
 
 ### import database content
 
