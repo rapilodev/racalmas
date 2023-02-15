@@ -635,7 +635,7 @@ CREATE TABLE `calcms_roles` (
 
 LOCK TABLES `calcms_roles` WRITE;
 /*!40000 ALTER TABLE `calcms_roles` DISABLE KEYS */;
-INSERT INTO `calcms_roles` VALUES (7,'Admin',1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,1,1,1,'0000-00-00 00:00:00','2017-07-30 14:32:32',1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);/*!40000 ALTER TABLE `calcms_roles` ENABLE KEYS */;
+INSERT INTO `calcms_roles` VALUES (1,1,1,'Admin',1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,'0000-00-00 00:00:00',1,'0000-00-00 00:00:00',1);
 UNLOCK TABLES;
 
 --
@@ -682,7 +682,7 @@ CREATE TABLE `calcms_series` (
 
 LOCK TABLES `calcms_series` WRITE;
 /*!40000 ALTER TABLE `calcms_series` DISABLE KEYS */;
-INSERT INTO `calcms_series` VALUES (223,'_single_',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2016-05-16 13:54:02','',NULL,'2016-05-16 13:54:02',NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,1);
+INSERT INTO `calcms_series` VALUES (223,'_single_',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'0000-00-00 00:00:00','','0000-00-00 00:00:00',NULL,NULL,NULL,NULL,0,NULL,NULL,1,0,NULL,NULL);
 /*!40000 ALTER TABLE `calcms_series` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -895,7 +895,7 @@ CREATE TABLE `calcms_studios` (
 
 LOCK TABLES `calcms_studios` WRITE;
 /*!40000 ALTER TABLE `calcms_studios` DISABLE KEYS */;
-INSERT INTO `calcms_studios` VALUES (1,'MeinStudio','Studio','studio','','',NULL,'2016-05-16 13:54:02','');
+INSERT INTO `calcms_studios` VALUES (1,'MeinStudio','Studio','studio','','','','0000-00-00 00:00:00','');
 /*!40000 ALTER TABLE `calcms_studios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1017,7 +1017,7 @@ CREATE TABLE `calcms_user_roles` (
 
 LOCK TABLES `calcms_user_roles` WRITE;
 /*!40000 ALTER TABLE `calcms_user_roles` DISABLE KEYS */;
-INSERT INTO `calcms_user_roles` VALUES (1,4,7,1,NULL,'2013-04-14 11:06:38',1);
+INSERT INTO `calcms_user_roles` VALUES (1,4,7,1,1,'0000-00-00 00:00:00',1);
 /*!40000 ALTER TABLE `calcms_user_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1115,7 +1115,7 @@ CREATE TABLE `calcms_user_settings` (
 
 LOCK TABLES `calcms_user_settings` WRITE;
 /*!40000 ALTER TABLE `calcms_user_settings` DISABLE KEYS */;
-INSERT INTO `calcms_user_settings` VALUES (27,'ccAdmin','#content .event=#eeeeee\n#content .schedule=#aaaaaa\n#content .event.published=#88ff88\n#content .event.no_series=#aa8822\n#content .event.marked=#0066aa\n#content.conflicts .event.error=#ff0000\n#content.conflicts .schedule.error=#ee4422\n#content .work=#cc00cc','en','month',12);
+INSERT INTO `calcms_user_settings` VALUES (27,'ccAdmin','#content .event=#eeeeee\n#content .schedule=#aaaaaa\n#content .event.published=#88ff88\n#content .event.no_series=#aa8822\n#content .event.marked=#0066aa\n#content.conflicts .event.error=#ff0000\n#content.conflicts .schedule.error=#ee4422\n#content .work=#cc00cc','en','month',12, NULL, NULL);
 /*!40000 ALTER TABLE `calcms_user_settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1186,7 +1186,7 @@ CREATE TABLE `calcms_users` (
 
 LOCK TABLES `calcms_users` WRITE;
 /*!40000 ALTER TABLE `calcms_users` DISABLE KEYS */;
-INSERT INTO `calcms_users` VALUES (4,'ccAdmin','Admin','Edt6Gt8VQk/pXQ1uWRZ8pu','$2a$08$Edt6Gt8VQk/pXQ1uWRZ8pu/KIe/qVFP/lYkbS64/D8URYEm6KshIG','info@localhost','2014-12-23 13:46:06',NULL,0,60,NULL);
+INSERT INTO `calcms_users` VALUES (4,'ccAdmin','Admin','info@localhost','Edt6Gt8VQk/pXQ1uWRZ8pu','$2a$08$Edt6Gt8VQk/pXQ1uWRZ8pu/KIe/qVFP/lYkbS64/D8URYEm6KshIG',0,120,NULL,'0000-00-00 00:00:00','0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `calcms_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
