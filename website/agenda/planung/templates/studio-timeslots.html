@@ -21,7 +21,7 @@
     <!-- schedule -->
     <TMPL_IF .allow.update_schedule>
     <div id="tabs-schedule" class="panel">
-        
+
 	    <!-- edit schedule -->
 		<div id="edit_schedule" class="editor">
 			<div class="row">
@@ -54,7 +54,7 @@
 					</div>
 					<div class="cell weekday"></div>
 					<div class="cell"> <input name="end_date"   value="<TMPL_VAR end_date>"   class="datetimepicker end_date"/>   </div>
-                    <div class="cell"> 
+                    <div class="cell">
                             <select name="schedule_studio_id" class="studio">
                                 <TMPL_LOOP studios>
                                     <option value="<TMPL_VAR id>" <TMPL_IF selected>selected="selected"</TMPL_IF>><TMPL_VAR name></option>
@@ -65,9 +65,9 @@
 					<div class="cell"> <button type="submit" name="action" value="save_schedule"><TMPL_VAR .loc.button_save></button>   </div>
 					<TMPL_IF .allow.delete_schedule>
 					<div class="cell">
-                        <button class="text" type="submit" name="action" value="delete_schedule" 
+                        <button class="text" type="submit" name="action" value="delete_schedule"
                             onclick="commitForm('form_schedule_<TMPL_VAR schedule_id escape=js>','delete_schedule','<TMPL_VAR .loc.button_delete escape=js>');return false;"
-                        ><TMPL_VAR .loc.button_delete></button> 
+                        ><TMPL_VAR .loc.button_delete></button>
                     </div>
 					</TMPL_IF>
 				</form>
@@ -93,7 +93,7 @@
 					</div>
 					<div class="cell weekday"></div>
 					<div class="cell"> <input name="end_date"  value="<TMPL_VAR end_date>"   class="datetimepicker end_date"/>   </div>
-                    <div class="cell"> 
+                    <div class="cell">
                             <select name="schedule_studio_id" >
                                 <TMPL_LOOP studios>
                                     <option value="<TMPL_VAR id>" <TMPL_IF selected>selected="selected"</TMPL_IF>><TMPL_VAR name></option>
@@ -115,12 +115,12 @@
         <div class="show_schedule_head"> <TMPL_VAR loc.label_select_range>
             <div id="show_date"> </div>
         </div>
-        
+
         <div id="show_schedule" class="show_schedule">
 	    </div>
     </div>
 
-</div>	    
+</div>	
 </body>
 </html>
 

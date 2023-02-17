@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -7,6 +7,10 @@ no warnings 'redefine';
 use Data::Dumper;
 use Scalar::Util qw( blessed );
 use Try::Tiny;
+use Exception::Class (
+    'ParamError',
+    'PermissionError'
+);
 
 use params();
 use config();
@@ -23,46 +27,17 @@ use user_selected_events();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
-} catch {
-    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
+    $params = uac::set_template_permissions( $request->{permissions}, $params );
+    $params->{loc} = localization::get( $config, { user => $session->{user}, file => 'select-event' } );
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id},
-        user       => $user
-    }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
-
-#process header
-print "Content-type:text/html; charset=UTF-8;\n\n";
-
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
-
-$params = $request->{params}->{checked};
-$params = uac::set_template_permissions( $request->{permissions}, $params );
-$params->{loc} = localization::get( $config, { user => $user, file => 'select-event' } );
-
-return unless uac::check( $config, $params, $user_presets ) == 1;
-show_events( $config, $request );
+    uac::check($config, $params, $user_presets);
+    return show_events( $config, $request );
+}
 
 #TODO: filter by published, draft
 sub show_events {
@@ -71,8 +46,7 @@ sub show_events {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{read_event} == 1 ) {
-        uac::permissions_denied('read_event');
-        return;
+        PermissionError->throw(error=>'Missing permission to read_event');
     }
 
     my $entry = {
@@ -84,7 +58,7 @@ sub show_events {
         filter_series           => $params->{selectSeries},
     };
     my $preset = user_selected_events::get($config, $entry);
-    
+
     # get user projects
     my $user_projects = uac::get_projects_by_user( $config, { user => $request->{user} } );
     my $project_by_id = {};
@@ -102,7 +76,7 @@ sub show_events {
             $studio->{selected} = 1 if $project_id eq $preset->{selected_project} and $studio_id eq $preset->{selected_studio};
         } else {
             $studio->{selected} = 1 if $project_id eq $params->{p_id} and $studio_id eq $params->{s_id};
-        }   
+        }
     }
 
     # get series
@@ -123,7 +97,7 @@ sub show_events {
             } else {
                 $serie->{selected} = 1 if $serie->{series_id} eq $params->{series_id};
             }
-        } 
+        }
         $serie->{series_name} = 'Einzelsendung' if $serie->{series_name} eq '_single_';
     }
 
@@ -162,22 +136,19 @@ sub show_events {
     $params->{series}  = $series;
     $params->{events}  = $events;
     $params->{years}   = $years;
-    template::process( $config, 'print', $params->{template}, $params );
-    return;
+    return template::process( $config, $params->{template}, $params );
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
 
     entry::set_numbers( $checked, $params, [
         'id', 'project_id', 'studio_id', 'series_id', 'event_id', 'p_id', 's_id'
     ]);
 
-    entry::set_bools( $checked, $params, 
-        [ 'selectProjectStudio', 'selectSeries', 'selectRange' ] 
+    entry::set_bools( $checked, $params,
+        [ 'selectProjectStudio', 'selectSeries', 'selectRange' ]
     );
 
     for my $param ('resultElemId') {

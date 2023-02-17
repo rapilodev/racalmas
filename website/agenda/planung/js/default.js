@@ -29,14 +29,14 @@ function set_studio(id){
             if(! pair.match(/^studio_id=/)) params.push(pair);
         }
     }
-    //add studio id 
+    //add studio id
     if(id==null)id=-1;
     if(id=='')id=-1;
     params.push('studio_id='+id);
     //append parameters to url
     url+='?'+params.join('&');
     if ((comment!=null)&&(comment!='')) url+='#'+comment;
-    window.location.href=url;
+    window.location = url;
 }
 
 function set_project(id){
@@ -68,30 +68,92 @@ function set_project(id){
     //append parameters to url
     url+='?'+params.join('&');
     if ((comment!=null)&&(comment!='')) url+='#'+comment;
-    window.location.href=url;
+    window.location = url;
 }
 
 function contains(s,t){
     if (s==false) return false;
     if (t==false) return false;
-    return s.indexOf(t) != -1; 
+    return s.indexOf(t) != -1;
 }
 
-function updateContainer(id, url, callback){
+function updateContainer2(id, url, callback){
     if (id==null) return;
     if ($("#"+id).length==0) return;
-    url = parseUrl(url);
-    $("#"+id).load(url, callback);
+    if (callback instanceof Function){
+        $("#"+id).load(url, callback);
+    }else{
+        $("#"+id).load(url, callback);
+    }
 }
 
-function load(url){
-    window.location = parseUrl(url);
+function showError(s) {
+   if ($('#error').length){
+       $('#error').html(s);
+   } else {
+       showToast(s, {color:"white", background:"red", duration:30000})
+   }
 }
 
-function parseUrl(uri){
+function showInfo(s) {
+   if ($('#info').length){
+       $('#info').html(s);
+   } else {
+       showToast(s, {color:"white", background:"green"})
+   }
+}
+
+function showToast(s, options){
+    $('#toast').remove();
+    let duration = options.duration || 1000;
+    let color = options.color || "#000";
+    let background = options.background || '#ccc';
+    $('body').append("<div class='toast' id='toast'>"+s+"</div>");
+    $('#toast').hide().css({
+        "z-index" : 9,
+        "color": color,
+        "background" : background,
+        "position" : "fixed",
+        "bottom" : "3rem",
+        "width" : "100%",
+        "padding" : "1rem",
+        "border-radius" : "6px"
+    }).fadeIn();
+    $('#toast').on("click", () => $('#toast').remove());
+    setTimeout( function(){
+        $('#toast').fadeOut(
+            () => $('#toast').remove()
+        );
+    }, duration);
+}
+
+async function updateContainer(id, url, callback){
+    console.log("updateContainer2: "+url)
+    if (id==null) return;
+    if ($("#"+id).length==0) return;
+    let response = await fetch(url, {"cache": "no-store"});
+    if(!response.headers.has("content-type")){
+        showError("No content type");
+        console.error(response);
+        return;
+    }
+    let type = response.headers.get("content-type").split(";")[0];
+    if (type == "text/html"){
+       let text = await response.text();
+       $("#"+id).html(text);
+       if (callback != null) callback();
+    } else if (type == "application/json"){
+       let json = await response.json();
+       showError(json.error);
+    }
+}
+
+function loadUrl(uri){
     if (uri.startsWith("/")) {
+        // relative to base
         uri = window.location.origin + uri;
     } else if (!uri.startsWith("http")) {
+        // relative to directory
         var path = window.location.pathname.replace(/\/$/, "");
         path = path.split("/");
         path.pop();
@@ -99,7 +161,8 @@ function parseUrl(uri){
     }
     var url = new URL(uri);
     url.searchParams.append("_", Date.now());
-    return url.toString();
+    window.location = url;
+    $('body').css('cursor','wait');
 }
 
 function postContainer(url, parameters, callback){
@@ -138,21 +201,21 @@ function setTextWidth(select, minValue){
 function commitAction (title, action){
     if ( title  == null )  { alert("missing title");return;  }
     if ( action == null ) { alert("missing action");return; }
-
-    showDialog({
+    return showDialog({
         title   : '<img src="image/alert.svg">Are you sure?</p>',
         buttons : {
             OK     : function(){ action(); },
-            Cancel : function(){ $(this).parent().remove(); }
+            Cancel : function(){ $(this).closest('div#dialog').hide().remove(); }
         }
     });
+
 }
 
 function showDialog(options){
     if ($("#dialog").length>0) $("#dialog").remove();
     $("#content").append(
         '<div id="dialog" class="panel">'
-        + (options.title ? '<div>'+options.title+'</div>' :'')
+        + (options.title ? '<div id="title">'+options.title+'</div>' :'')
         + (options.content ? options.content :'')
         +'</div>'
     );
@@ -160,9 +223,11 @@ function showDialog(options){
     if (options.width)  dialog.css("width",  options.width);
     if (options.height) dialog.css("height", options.height);
     if (options.buttons) {
+        dialog.append('<div id="buttons">');
+        let buttons = $('#content #dialog #buttons');
         Object.keys(options.buttons).forEach( function (key) {
             var value = options.buttons[key];
-            dialog.append("<button>"+key+"</button");
+            buttons.append("<button>"+key+"</button");
             var button=$("#content #dialog button").last();
             button.on("click", value);
             button.addClass( 'dialog-'+key.toLowerCase().replace( /[^a-zA-Z0-9]/g, '-') )
@@ -173,19 +238,21 @@ function showDialog(options){
 }
 
 // set action=<action> at form and submit the form after confirmation
-function commitForm ( formElement, action, title){
+function commitForm ( formElement, action, title, callback){
     if (formElement==null)  { alert("missing id");return }
     if (action==null)       { alert("missing action");return }
     if (title==null)        { alert("missing title");return }
     formElement='#'+formElement;
     if ($(formElement).length!=1)    {alert("id "+formElement+" exists not only once, but "+$(formElement).length+" times");return}
     if ($(formElement).is('form')==0) {alert("id "+formElement+" this is not a form");return}
-    commitAction(title, 
-        function(){
+    if (callback == null){
+        callback = function() {
+            alert("trigger form submit (missing callback!)")
             $(formElement).append('<input type="hidden" name="action" value="'+action+'">');
             $(formElement).submit();
         }
-    );
+    }
+    commitAction(title, callback);
 }
 
 function setUrlParameter(url, name, value){
@@ -203,7 +270,7 @@ function setUrlParameter(url, name, value){
     //add comments
     if ((comments!=null) && (comments!='') )url+='#'+comments;
 
-    return url;    
+    return url;
 }
 
 function removeUrlParameter(url, name){
@@ -211,7 +278,7 @@ function removeUrlParameter(url, name){
     url=url.replace(r,'?');
     var r = new RegExp("&"+name+"=[^&#]*");
     url=url.replace(r,'');
-    return url;    
+    return url;
 }
 
 function getUrlParameter(name){
@@ -236,14 +303,11 @@ function handleBars(){
 var oldWidth=0;
 function setupMenu(update){
     var xmax=960;
-
     var menu = $('#calcms_nav');
     var width = menu.width();
-
     if ( (width < xmax)  && (oldWidth >= xmax) ) update=1;
     if ( (width >= xmax) && (oldWidth <  xmax) ) update=1;
     if (oldWidth==0) update=1;
-
     if (update == 1){
         if (menu.width() < 960){
             $('#calcms_nav>div').hide();
@@ -254,31 +318,19 @@ function setupMenu(update){
             menu.removeClass('mobile');
         }
     }
-
     oldWidth = width;
 }
 
 // will be overridden by calendar.js
-function setupMenuHeight(){
-
+function setupMenuHeight() {
+    /*
     var content=$('#content');
     content.css("position", "relative");
-
     var menu=$('#calcms_nav');
     var top = menu.height();
-    content.css("top", top);
-
-    /*    
-    console.log($(window).width()+" "+$(document).width()+" "+$('#content').width());
-    var left=0;
-    if( $(window).width() >= $(document).width() ){
-        left=$(document).width() - $('#content').width();
-        left/=2;
-        if (left<40)left=0;
-    }
-    $('#content').css("left", left);    
-    */
+    content.css("top", top+"px");
     return top;
+    */
 }
 
 function getProjectId(){
@@ -290,7 +342,7 @@ function getStudioId(){
 }
 
 
-//set project id and studio id 
+//set project id and studio id
 function setMissingUrlParameters(){
     console.log("check");
     var project_id=$('#project_id').val();
@@ -314,7 +366,7 @@ function setMissingUrlParameters(){
         }
         url=setUrlParameter(url, 'project_id', project_id);
         url=setUrlParameter(url, 'studio_id',  studio_id);
-        load(url);
+        loadUrl(url);
     }
 }
 
@@ -333,11 +385,11 @@ function checkSession(){
             var expiry = Math.floor((date1.getTime() - now) / 1000);
             $('#logout').attr('title', "session expires in "+expiry+" seconds");
 
-            if (expiry<120){ 
+            if (expiry<120){
                 alert("session expires soon!");
             }
 
-            if (expiry<0){ 
+            if (expiry<0){
                 alert("session expired!");
                 clearInterval(intervalID);
             }
@@ -424,11 +476,7 @@ $(document).ready(
     function(){
         setupMenu();
         checkSession();
-
         setMissingUrlParameters();
-
-        // will be done implicitely on adding back button
-        //setupMenuHeight();
 
         $(window).resize(function() {
             setupMenuHeight();

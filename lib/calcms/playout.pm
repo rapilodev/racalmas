@@ -114,7 +114,7 @@ sub get_scheduled($$) {
 		where   p.start=e.start
 		and     e.id=se.event_id
         and     p.studio_id=se.studio_id
-        and     p.project_id=se.project_id 
+        and     p.project_id=se.project_id
 		$conditions
 		order by $order
         $limit
@@ -129,7 +129,7 @@ sub get_scheduled($$) {
 sub get($$) {
     my ($config, $condition) = @_;
     for ('studio_id') {
-        ParamError->throw("missing $_") unless defined $condition->{$_}
+        ParamError->throw(error => "missing $_") unless defined $condition->{$_}
     };
 
     my $date_range_include = 0;
@@ -230,7 +230,7 @@ sub sync ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'from', 'till', 'events') {
-        ParamError->throw("missing $_") unless defined $options->{$_}
+        ParamError->throw(error => "missing $_") unless defined $options->{$_}
     };
 
     my $project_id = $options->{project_id};
@@ -369,10 +369,10 @@ sub update ($$$$) {
     ];
     my $query = qq{
         update calcms_playout
-        set    end=?, duration=?, file=?, errors=?, 
-               start_date=?, end_date=?, 
+        set    end=?, duration=?, file=?, errors=?,
+               start_date=?, end_date=?,
                channels=?, format=?, format_version=?, format_profile=?, format_settings=?, stream_size=?,
-               bitrate=?, bitrate_mode=?, sampling_rate=?, writing_library=?, 
+               bitrate=?, bitrate_mode=?, sampling_rate=?, writing_library=?,
                rms_left=?, rms_right=?, rms_image=?,
                replay_gain=?, modified_at=?
         where  project_id=? and studio_id=? and start=?
@@ -385,7 +385,7 @@ sub insert ($$$) {
     my ($config, $dbh, $entry) = @_;
 
     for ('project_id', 'studio_id', 'start', 'duration', 'file') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
     my $day_start = $config->{date}->{day_starting_hour};
@@ -430,10 +430,10 @@ sub insert ($$$) {
 sub delete($$$) {
     my ($config, $dbh, $entry) = @_;
     for ('project_id', 'studio_id', 'start') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
     my $query = qq{
-		delete 
+		delete
 		from calcms_playout
 		where project_id=? and studio_id=? and start=?
 	};

@@ -1,3 +1,0 @@
-Options -Indexes +FollowSymLinks +MultiViews -ExecCGI
-deny from all
-

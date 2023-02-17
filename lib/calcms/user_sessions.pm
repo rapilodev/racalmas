@@ -190,7 +190,7 @@ sub update ($$) {
     push @bind_values, $entry->{session_id};
 
     my $query = qq{
-        update calcms_user_sessions 
+        update calcms_user_sessions
         set    $values
         where  session_id=?
     };
@@ -205,8 +205,8 @@ sub delete($$) {
 
     my $dbh   = db::connect($config);
     my $query = qq{
-        delete 
-        from calcms_user_sessions 
+        delete
+        from calcms_user_sessions
         where session_id=?
     };
     my $bind_values = [ $entry->{session_id} ];

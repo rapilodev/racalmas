@@ -7,6 +7,10 @@ use utf8;
 use Data::Dumper;
 use Scalar::Util qw( blessed );
 use Try::Tiny;
+use Exception::Class (
+    'ParamError',
+    'PermissionError'
+);
 
 use File::stat();
 use Time::localtime();
@@ -32,65 +36,40 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
-} catch {
-    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        user       => $user,
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id}
+    #show header
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+
+    if ( $params->{search} ) {
+        print template::process( $config, template::check( $config, 'default.html' ), $headerParams );
+    } else {
+        print template::process( $config, template::check( $config, 'ajax-header.html' ), $headerParams );
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
 
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
+    uac::check($config, $params, $user_presets);
+
+    my $local_media_dir = $config->{locations}->{local_media_dir};
+    my $local_media_url = $config->{locations}->{local_media_url};
+
+    log::error( $config, 'cannot locate media dir ' . $local_media_dir ) unless -e $local_media_dir;
+    PermissionError->throw(error=>'Missing permission to reading from local media dir') unless -r $local_media_dir;
+    PermissionError->throw(error=>'Missing permission to writing to local media dir')   unless -w $local_media_dir;
+
+    if ( $params->{delete_image} ne '' ) {
+        delete_image( $config, $request, $session->{user}, $local_media_dir );
+        return;
+    } elsif ( $params->{save_image} ne '' ) {
+        save_image( $config, $request, $session->{user} );
+        return;
     }
-};
-$request = uac::prepare_request( $request, $user_presets );
-$params = $request->{params}->{checked};
-
-#show header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-
-if ( $params->{search} ) {
-    template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
-} else {
-    template::process( $config, 'print', template::check( $config, 'ajax-header.html' ), $headerParams );
+    show_image( $config, $request, $session->{user}, $local_media_url );
 }
-
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-my $local_media_dir = $config->{locations}->{local_media_dir};
-my $local_media_url = $config->{locations}->{local_media_url};
-
-log::error( $config, 'cannot locate media dir ' . $local_media_dir ) unless -e $local_media_dir;
-uac::permissions_denied('reading from local media dir') unless -r $local_media_dir;
-uac::permissions_denied('writing to local media dir')   unless -w $local_media_dir;
-
-if ( $params->{delete_image} ne '' ) {
-    delete_image( $config, $request, $user, $local_media_dir );
-    return;
-} elsif ( $params->{save_image} ne '' ) {
-    save_image( $config, $request, $user );
-    return;
-}
-show_image( $config, $request, $user, $local_media_url );
 
 sub show_image {
     my $config          = shift;
@@ -102,16 +81,15 @@ sub show_image {
     my $permissions = $request->{permissions};
 
     unless ( defined $params->{project_id} ) {
-        uac::print_error("missing project id");
-        return undef;
+        ParamError->throw(error=> "missing project id");
     }
     unless ( defined $params->{studio_id} ) {
-        uac::print_error("missing studio id");
+        ParamError->throw(error=> "missing studio id");
         return undef;
     }
 
     if ( $permissions->{read_image} ne '1' ) {
-        uac::permissions_denied("read image");
+        PermissionError->throw(error=>"Missing permission to read image");
         return 0;
     }
 
@@ -214,7 +192,7 @@ sub show_image {
 
     my $search = $params->{search} || '';
     $search =~ s/\%+/ /g;
-    
+
     $params->{target} //= '';
 
     my $template_params = {
@@ -248,7 +226,7 @@ sub show_image {
       $template_params->{allow}->{update_image_own} || $template_params->{allow}->{update_image_others};
     $template_params->{allow}->{delete_image} =
       $template_params->{allow}->{delete_image_own} || $template_params->{allow}->{delete_image_others};
-    template::process( $config, 'print', $params->{template}, $template_params );
+    print template::process( $config, $params->{template}, $template_params );
 }
 
 sub print_js_error {
@@ -331,8 +309,7 @@ sub delete_image {
     my $permissions = $request->{permissions};
 
     unless ( check_permission( $config, $user, $permissions, 'delete_image', $params->{delete_image} ) eq '1' ) {
-        uac::permissions_denied('delete image');
-        return 0;
+        PermissionError->throw(error=>'Missing permission to delete image');
     }
 
     $config->{access}->{write} = 1;
@@ -342,14 +319,8 @@ sub delete_image {
         studio_id  => $params->{studio_id},
         filename   => $params->{delete_image},
     };
-    my $result = images::delete( $dbh, $image );
-
+    images::delete( $dbh, $image );
     return;
-
-    #my $action_result = '';
-    #my $errors        = '';
-    #$result = images::delete_files( $config, $local_media_dir, $params->{delete_image}, $action_result, $errors );
-    #print "deleted<br />$action_result<br />$errors\n";
 }
 
 sub check_permission {
@@ -415,14 +386,12 @@ sub modify_results {
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = { template => template::check( $config, $params->{template}, 'image.html' ) };
 
     $checked->{limit} = 100;
     entry::set_numbers( $checked, $params, [
-        'project_id', 'studio_id', 'series_id', 'event_id', 'pid', 'default_studio_id', 'limit' 
+        'project_id', 'studio_id', 'series_id', 'event_id', 'pid', 'default_studio_id', 'limit'
     ]);
 
     if ( defined $checked->{studio_id} ) {

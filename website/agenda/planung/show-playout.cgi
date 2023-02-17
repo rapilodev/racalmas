@@ -8,6 +8,9 @@ use Data::Dumper;
 use ModPerl::Util ();
 use Scalar::Util qw( blessed );
 use Try::Tiny;
+use Exception::Class (
+    'ParamError'
+};
 
 use config;
 use log;
@@ -24,59 +27,31 @@ use entry;
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
-} catch {
-    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id},
-        user       => $user
+    #process header
+    unless ( params::isJson() ) {
+        my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+        $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+        print template::process( $config, template::check( $config, 'show-playout-header.html' ),
+            $headerParams );
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
+    uac::check($config, $params, $user_presets);
 
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
-$params = $request->{params}->{checked};
+    my $permissions = $request->{permissions};
+    $params->{action} = '' unless defined $params->{action};
 
-#process header
-unless ( params::isJson() ) {
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check( $config, 'show-playout-header.html' ), 
-        $headerParams );
+    showPlayout( $config, $request );
+
+    print STDERR "$0 ERROR: " . $params->{error} . "\n" if $params->{error} ne '';
+    $params->{loc} =
+      localization::get( $config, { user => $params->{presets}->{user}, file => 'event,comment' } );
+    print template::process( $config, $params->{template}, $params );
 }
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-my $permissions = $request->{permissions};
-$params->{action} = '' unless defined $params->{action};
-$params->{error} = $error || '';
-
-showPlayout( $config, $request );
-
-print STDERR "$0 ERROR: " . $params->{error} . "\n" if $params->{error} ne '';
-$params->{loc} =
-  localization::get( $config, { user => $params->{presets}->{user}, file => 'event,comment' } );
-template::process( $config, 'print', $params->{template}, $params );
-
-exit;
 
 sub showPlayout {
     my ($config, $request) = @_;
@@ -86,8 +61,7 @@ sub showPlayout {
 
     for my $attr ( 'project_id', 'studio_id' ) {
         unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to show playout" );
-            return;
+            ParamError->throw(error=> "missing $attr to show playout" );
         }
     }
 
@@ -132,9 +106,7 @@ sub showPlayout {
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
     $checked->{error} = '';
     $checked->{template} = template::check( $config, $params->{template}, 'show-playout' );

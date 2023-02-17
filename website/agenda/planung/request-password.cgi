@@ -48,10 +48,8 @@ sub error{
 
 if ( defined $params->{user} ) {
     sendToken( $config, $params );
-    return;
 } else {
-    my $result = checkToken( $config, $params );
-    return;
+    checkToken( $config, $params );
 }
 
 sub sendToken {
@@ -153,9 +151,7 @@ sub printForm {
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
 
     entry::set_strings( $checked, $params, [

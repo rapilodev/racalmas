@@ -12,6 +12,10 @@ use Time::Local();
 use File::Temp();
 use Scalar::Util qw( blessed );
 use Try::Tiny;
+use Exception::Class (
+    'ParamError',
+    'PermissionError'
+);
 
 use config();
 use log();
@@ -89,10 +93,10 @@ $params = $request->{params}->{checked};
 
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
+print template::process( $config, template::check( $config, 'default.html' ), $headerParams );
 
 exit unless uac::check( $config, $params, $user_presets ) == 1;
-template::process( $config, 'print', template::check( $config, 'audio-recordings-header.html' ), $headerParams )
+print template::process( $config, template::check( $config, 'audio-recordings-header.html' ), $headerParams )
     unless params::isJson;
 
 my $permissions = $request->{permissions};
@@ -110,7 +114,7 @@ showAudioRecordings( $config, $request );
 print STDERR "$0 ERROR: " . $params->{error} . "\n" if $params->{error} ne '';
 $params->{loc} =
   localization::get( $config, { user => $params->{presets}->{user}, file => 'event,comment' } );
-template::process( $config, 'print', $params->{template}, $params );
+print template::process( $config, $params->{template}, $params );
 
 exit;
 
@@ -122,14 +126,12 @@ sub uploadRecording {
     my $permissions = $request->{permissions};
 
     unless ( $permissions->{upload_audio_recordings} == 1 ) {
-        uac::permissions_denied('upload_audio_recordings');
-        return;
+        PermissionError->throw(error=>'Missing permission to upload_audio_recordings');
     }
 
     for my $attr ( 'project_id', 'studio_id', 'series_id', 'event_id' ) {
         unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to upload productions" );
-            return;
+            ParamError->throw(error=> "missing $attr to upload productions" );
         }
     }
 
@@ -148,7 +150,6 @@ sub uploadRecording {
             events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploaded' });
         }
         $config->{access}->{write} = 0;
-        
     } else {
         print STDERR "could not get file handle\n";
         $params->{error} .= 'Could not get file handle';
@@ -199,8 +200,7 @@ sub deleteRecording {
     my $permissions = $request->{permissions};
 
     unless ( $permissions->{delete_audio_recordings} == 1 ) {
-        uac::permissions_denied('delete_audio_recordings');
-        return;
+        PermissionError->throw(error=>'Missing permission to delete_audio_recordings');
     }
 
     for my $attr (
@@ -211,8 +211,7 @@ sub deleteRecording {
       )
     {
         unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to delete production" );
-            return;
+            ParamError->throw(error=> "missing " . $attr . " to delete production" );
         }
     }
 
@@ -272,7 +271,7 @@ sub showAudioRecordings {
 
     for my $attr ( 'project_id', 'studio_id', 'series_id', 'event_id' ) {
         unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to show productions" );
+            ParamError->throw(error=> "missing " . $attr . " to show productions" );
             return;
         }
     }
@@ -583,8 +582,7 @@ sub getEventDuration {
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
+    my ($config, $params) = @_;
 
     my $checked = {};
     $checked->{error} = '';

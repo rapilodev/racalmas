@@ -1,3 +1,5 @@
+var green = "#6f6";
+
 function updateCalendarLink(){
     var link=$('a#menu_calendar');
     var url=link.attr('href');
@@ -15,7 +17,7 @@ function onDateModified(){
     var startDate=parseDateTime($('#start_date').val());
     var weekday=getWeekday(startDate);
     $('#start_date_weekday').html(weekday);
-    
+
     updateCalendarLink();
 }
 
@@ -34,7 +36,7 @@ function hideSelectRerun(resultSelector, tillDate){
     $('#import_rerun').hide();
 
     $('.buttons').show();
-    $('#edit_event').show();    
+    $('#edit_event').show();
 }
 
 function selectOldEventFromSeries(resultSelector, tillDate){
@@ -43,15 +45,17 @@ function selectOldEventFromSeries(resultSelector, tillDate){
     $('#import_rerun_header').show('slideUp');
     if ($('#import_rerun_header').css('display')=='none')return;
 
-    var url='select-event.cgi?'
-    url+='project_id='+getProjectId();
-    url+='&studio_id='+getStudioId();
-    url+='&series_id='+getUrlParameter('series_id');
-    url+='&event_id='+getUrlParameter('event_id');
-    url+="&resultElemId="+encodeURIComponent(resultSelector);
-    url+="&till_date="+tillDate;
-    url+="&selectRange=1";
-    
+    var url='select-event.cgi?' + new URLSearchParams({
+        action : "edit",
+        project_id : getProjectId(),
+        studio_id : getStudioId(),
+        series_id : getUrlParameter('series_id'),
+        event_id : getUrlParameter('event_id'),
+        resultElemId: resultSelector,
+        till_date: tillDate,
+        selectRange: 1
+    }).toString();
+
     updateContainer('import_rerun', url);
 }
 
@@ -61,16 +65,16 @@ function selectOtherEvent(resultSelector){
     $('#import_rerun_header').show('slideUp');
     if ($('#import_rerun_header').css('display')=='none')return;
 
-    var url='select-event.cgi?'
-    url+='project_id='+getProjectId();
-    url+='&studio_id='+getStudioId();
-    url+='&series_id='+getUrlParameter('series_id');
-    url+='&event_id='+getUrlParameter('event_id');
-    url+="&resultElemId="+encodeURIComponent(resultSelector);
-    url+="&selectRange=1";
-    url+="&selectProjectStudio=1";
-    url+="&selectSeries=1";
-    
+    var url='select-event.cgi?' + new URLSearchParams({
+        project_id : getProjectId(),
+        studio_id : getStudioId(),
+        series_id : getUrlParameter('series_id'),
+        event_id : getUrlParameter('event_id'),
+        resultElemId: resultSelector,
+        selectRange: 1,
+        selectProjectStudio: 1,
+        selectSeries: 1,
+    }).toString();
     updateContainer('import_rerun', url);
 }
 
@@ -101,16 +105,17 @@ function copyFromEvent(resultSelector){
 
 function loadEvent(projectId,studioId,seriesId,eventId, callback){
 
-    var url="broadcast.cgi";
-    url+="?project_id="+projectId;
-    url+="&studio_id="+studioId;
-    url+="&series_id="+seriesId;
-    url+="&event_id="+eventId;
-    url+="&action=get_json";
-    url+="&json=1";
-    url+="&get_rerun=1";
+    var url="broadcast.cgi" + new URLSearchParams({
+        action: "get_json",
+        project_id : projectId,
+        studio_id : studioId,
+        series_id : seriesId,
+        event_id : eventId,
+        json: 1,
+        get_rerun: 1,
+    }).toString();
     console.log("loadEvent: "+url)
-    
+
     $.getJSON(url)
     .done( function(event) {
         $("#edit_event input[name='title']").attr('value', event.title)
@@ -134,7 +139,7 @@ function loadEvent(projectId,studioId,seriesId,eventId, callback){
         $("#edit_event input[name='archive_url']").attr('value', event.archive_url);
 
         updateDuration("#edit_event #duration", event.duration);
-        
+
         if (callback != null) callback();
         console.log("loadEvent done")
     }).fail( function(jqxhr, textStatus, error) {
@@ -145,13 +150,14 @@ function loadEvent(projectId,studioId,seriesId,eventId, callback){
 
 // load series selection
 function selectChangeSeries(resultSelector){
-    var url='select-series.cgi?'
-    url+='project_id='+getProjectId();
-    url+='&studio_id='+getStudioId();
-    url+='&series_id='+getUrlParameter('series_id');
-    url+="&resultElemId="+encodeURIComponent(resultSelector);
-    url+="&selectSeries=1";
-    //console.log(url);
+    var url='select-series.cgi?' + new URLSearchParams({
+        project_id : getProjectId(),
+        studio_id : getStudioId(),
+        series_id : getUrlParameter('series_id'),
+        resultElemId: resultSelector,
+        selectSeries: 1,
+    }).toString();
+    console.log(url);
     updateContainer('changeSeriesContainer', url, function(){
         $('#selectSeries').removeClass('panel');
         $('#selectChangeSeries').addClass('panel');
@@ -179,27 +185,24 @@ function changeSeries(seriesId){
     $('#selectChangeSeries').hide('slideUp');
 
     console.log('move to '+projectId+', '+studioId+', '+seriesId+', '+eventId+' -> series '+newSeriesId);
-
-    var url='series.cgi?';
-    url += '&project_id='+projectId;
-    url += '&studio_id='+studioId;
-    url += '&series_id='+seriesId;
-    url += '&event_id='+eventId;
-    url += '&new_series_id='+newSeriesId;
-    url += '&action=reassign_event';
-    //alert(url);
-    
     $.post(
-        url, 
+        url="series.cgi?" + new URLSearchParams({
+            action: "reassign_event",
+            project_id : projectId,
+            studio_id : studioId,
+            series_id : seriesId,
+            event_id : eventId,
+            new_series_id: newSeriesId,
+        }).toString(),
         function(data){
-            var url='broadcast.cgi?';
-            url += '&project_id='+projectId;
-            url += '&studio_id='+studioId;
-            url += '&series_id='+newSeriesId;
-            url += '&event_id='+eventId;
-            url += '&action=edit';
-            window.location.href = url;
-        } 
+            loadUrl("broadcast.cgi?" + new URLSearchParams({
+                action: "edit",
+                project_id : projectId,
+                studio_id : studioId,
+                series_id : newSeriesId,
+                event_id : eventId,
+            }).toString());
+        }
     );
     return false;
 }
@@ -298,6 +301,107 @@ function copyEventToClipboard(){
     copyText.select();
     copyText.setSelectionRange(0, 99999);
     document.execCommand("copy");
+    $(copyText).remove();
+    showInfo("copied")
+}
+
+function listEvents(project_id, studio_id, series_id) {
+    loadUrl( 'calendar.cgi?' + new URLSearchParams({
+        project_id: project_id,
+        studio_id: studio_id,
+        series_id: series_id,
+        list: 1,
+    }).toString());
+}
+
+function deleteFromSchedule(project_id, studio_id, series_id, start) {
+    loadUrl( 'series.cgi?' + new URLSearchParams({
+        project_id: project_id,
+        studio_id: studio_id,
+        series_id: series_id,
+        start: start,
+        exclude: 1,
+        show_hint_to_add_schedule: 1
+    }).toString() + '#tabs-schedule');
+}
+
+async function modifyEvent(elem, action, callback){
+    let form = elem.closest('form');
+    let url = form.attr('action');
+    let data = new URLSearchParams();
+    data.append("action",action);
+    for (let pair of new FormData(form.get(0))) {
+        data.append(pair[0], pair[1]);
+    }
+    console.log("modifyEvent:" + url);
+    let response = await fetch(url, {
+        method: 'POST',
+        body: data,
+        cache: "no-store",
+    });
+    let json = await response.json();
+    console.log(json)
+    if (json.error) showError(json.error);
+    else callback(json);
+}
+
+function createEvent2(elem, action){
+    modifyEvent(elem, action, function(json){
+        if (json.status == "created"){
+            showInfo("created");
+            let event = json.entry;
+            let url="event.cgi?" + new URLSearchParams({
+                action : "edit",
+                project_id : event.project_id,
+                studio_id : event.studio_id,
+                series_id : event.series_id,
+                event_id : event.event_id
+            }).toString();
+            loadUrl(url);
+        } else showError("Could not create event");
+    })
+}
+
+async function saveEvent(elem, action){
+    console.log("saveEvent")
+    modifyEvent(elem, action, function(json){
+        if (json.status == "saved") showInfo("event saved");
+        else showError(json.error);
+    })
+}
+
+async function deleteEvent(elem, action){
+    console.log("deleteElem");
+    let form = elem.closest('form');
+    let event_id = form.find("input[name='event_id']").val();
+    commitForm('event_'+event_id, 'delete', 'delete event', function(){
+        modifyEvent(elem, action, function(json) {
+            if (json.status == "deleted") {
+                showInfo("Event deleted");
+                $('#content').remove();
+                getBack();
+            } else showError(json.error);
+        })
+    })
+}
+
+function uploadRecording(project_id, studio_id, series_id, event_id){
+    loadUrl( "audio-recordings.cgi?" + new URLSearchParams({
+        project_id : project_id,
+        studio_id : studio_id,
+        series_id : series_id,
+        event_id : event_id
+    }).toString());
+}
+
+function downloadRecording(project_id, studio_id, series_id, event_id){
+    loadUrl( "event.cgi?" + new URLSearchParams({
+        action: "download",
+        project_id : project_id,
+        studio_id : studio_id,
+        series_id : series_id,
+        event_id : event_id
+    }).toString());
 }
 
 $(document).ready(
@@ -312,7 +416,7 @@ $(document).ready(
                     $(this).attr('value','1');
                 }
             }
-        );    
+        );
 
         if($('#calendar').length==0){
             $('#back_to_calendar').hide();
@@ -322,7 +426,7 @@ $(document).ready(
         checkFields();
 
         $('textarea').autosize();
-        
+
         // unset published on setting draft
         $("#edit_event input[name='draft']").change(
             function(){

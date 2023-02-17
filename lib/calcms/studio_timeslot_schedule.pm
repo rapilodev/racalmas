@@ -68,7 +68,7 @@ sub insert($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'start', 'end', 'frequency') {
-        ParamError->throw("studio_timeslot_schedule:insert: missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "studio_timeslot_schedule:insert: missing $_") unless defined $entry->{$_}
     };
 
 	my $dbh = db::connect($config);
@@ -80,7 +80,7 @@ sub update($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'schedule_id', 'start', 'end', 'frequency') {
-        ParamError->throw("studio_timeslot_schedule:update: missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "studio_timeslot_schedule:update: missing $_") unless defined $entry->{$_}
     };
 
 	$entry->{id} = $entry->{schedule_id};
@@ -93,7 +93,7 @@ sub update($$) {
 	push @bind_values, $entry->{id};
 
 	my $query = qq{
-		update calcms_studio_timeslot_schedule 
+		update calcms_studio_timeslot_schedule
 		set    $values
 		where  id=?
 	};
@@ -109,24 +109,19 @@ sub delete ($$){
     my ($config, $entry) = @_;
 
     for ('schedule_id') {
-        ParamError->throw("studio_timeslot_schedule:delete $_") unless defined $entry->{$_}
+        ParamError->throw(error => "studio_timeslot_schedule:delete $_") unless defined $entry->{$_}
     };
 
 	my $dbh = db::connect($config);
 
 	my $query = qq{
-		delete 
-		from calcms_studio_timeslot_schedule 
+		delete
+		from calcms_studio_timeslot_schedule
 		where id=?
 	};
 	my $bind_values = [ $entry->{schedule_id} ];
 
 	db::put( $dbh, $query, $bind_values );
-}
-
-sub error($) {
-	my $msg = shift;
-	print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

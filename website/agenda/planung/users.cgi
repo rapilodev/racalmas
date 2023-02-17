@@ -7,6 +7,10 @@ no warnings 'redefine';
 use Data::Dumper;
 use Scalar::Util qw( blessed );
 use Try::Tiny;
+use Exception::Class (
+    'ParamError',
+    'PermissionError'
+);
 
 use config();
 use entry();
@@ -22,57 +26,33 @@ use password_requests();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
-} catch {
-    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
+uac::init($r, \&check_params, \&main);
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        user       => $user,
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id}
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
+
+    #process header
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    print template::process( $config, template::check( $config, 'default.html' ), $headerParams );
+    uac::check($config, $params, $user_presets);
+
+    our $errors = [];
+
+    if ( defined $params->{action} ) {
+        update_user_roles( $config, $request ) if ( $params->{action} eq 'assign' );
+        update_user( $config, $request ) if ( $params->{action} eq 'save' );
+        delete_user( $config, $request ) if ( $params->{action} eq 'delete' );
+        if ( $params->{action} eq 'change_password' ) {
+            change_password( $config, $request, $session->{user} );
+            $config->{access}->{write} = 0;
+            return;
+        }
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
-
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
-$params = $request->{params}->{checked};
-
-#process header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-our $errors = [];
-
-if ( defined $params->{action} ) {
-    update_user_roles( $config, $request ) if ( $params->{action} eq 'assign' );
-    update_user( $config, $request ) if ( $params->{action} eq 'save' );
-    delete_user( $config, $request ) if ( $params->{action} eq 'delete' );
-    if ( $params->{action} eq 'change_password' ) {
-        change_password( $config, $request, $user );
-        $config->{access}->{write} = 0;
-        return;
-    }
+    $config->{access}->{write} = 0;
+    show_users( $config, $request );
 }
-$config->{access}->{write} = 0;
-show_users( $config, $request );
 
 sub show_users {
     my ($config, $request) = @_;
@@ -82,7 +62,7 @@ sub show_users {
     my $permissions = $request->{permissions};
 
     unless ( ( defined $permissions->{read_user} ) && ( $permissions->{read_user} == 1 ) ) {
-        uac::permissions_denied('read_user');
+        PermissionError->throw(error=>'Missing permission to read_user');
         return;
     }
 
@@ -167,11 +147,10 @@ sub show_users {
     $params->{users}       = \@users;
     $params->{studios}     = $studios;
     $params->{permissions} = $permissions;
-    $params->{errors}      = $errors;
     $params->{loc}         = localization::get( $config, { user => $params->{presets}->{user}, file => 'users' } );
     uac::set_template_permissions( $permissions, $params );
 
-    template::process( $config, 'print', $params->{template}, $params );
+    print template::process( $config, $params->{template}, $params );
 
 }
 
@@ -194,7 +173,7 @@ sub update_user {
 
     if ( ( !defined $user->{id} ) || ( $user->{id} eq '' ) ) {
         unless ( $permissions->{create_user} == 1 ) {
-            uac::permissions_denied('create_user');
+            PermissionError->throw(error=>'Missing permission to create_user');
             return;
         }
 
@@ -225,7 +204,7 @@ sub update_user {
         uac::insert_user( $config, $user );
     } else {
         unless ( $permissions->{update_user} == 1 ) {
-            uac::permissions_denied('update_user');
+            PermissionError->throw(error=>'Missing permission to update_user');
             return;
         }
         $user->{modified_at} = time::time_to_datetime( time() );
@@ -249,7 +228,7 @@ sub change_password {
     $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'users' } );
     uac::set_template_permissions( $permissions, $params );
 
-    template::process( $config, 'print', template::check( $config, 'change-password' ), $params );
+    print template::process( $config, template::check( $config, 'change-password' ), $params );
 }
 
 sub delete_user {
@@ -257,7 +236,7 @@ sub delete_user {
 
     my $permissions = $request->{permissions};
     unless ( $permissions->{delete_user} == 1 ) {
-        uac::permissions_denied('delete_user');
+        PermissionError->throw(error=>'Missing permission to delete_user');
         return;
     }
 
@@ -273,7 +252,7 @@ sub update_user_roles {
 
     my $permissions = $request->{permissions};
     unless ( $permissions->{update_user_role} == 1 ) {
-        uac::permissions_denied('update_user_role');
+        PermissionError->throw(error=>'Missing permission to update_user_role');
         return;
     }
     my $params     = $request->{params}->{checked};
@@ -338,10 +317,10 @@ sub update_user_roles {
               if ( ( $role_by_id->{ $user_role->{role_id} }->{level} < $max_level )
                 && ( $max_user_level < $max_level ) );
             if ( $update == 0 ) {
-                uac::permissions_denied($message);
+                PermissionError->throw(error=>"Missing permission to $message");
                 next;
             }
-            my $result = uac::remove_user_role(
+            uac::remove_user_role(
                 $config,
                 {
                     project_id => $project_id,
@@ -350,14 +329,6 @@ sub update_user_roles {
                     role_id    => $user_role_id
                 }
             );
-            unless ( defined $result ) {
-                uac::print_error("missing parameter on remove user role");
-                return;
-            }
-            if ( $result == 0 ) {
-                uac::print_error("no changes");
-                return;
-            }
             uac::print_info($message);
         }
     }
@@ -376,7 +347,7 @@ sub update_user_roles {
               if ( ( $role_by_id->{ $role->{id} }->{level} < $max_level )
                 && ( $max_user_level < $max_level ) );
             if ( $update == 0 ) {
-                uac::permissions_denied($message);
+                PermissionError->throw(error=>"Missing permission to $message");
                 next;
             }
             uac::assign_user_role(
@@ -395,9 +366,7 @@ sub update_user_roles {
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
 
     my $template = '';
@@ -406,18 +375,18 @@ sub check_params {
 
     entry::set_numbers( $checked, $params, [
         'project_id', 'user_id', 'default_studio_id', 'studio_id', 'disabled']);
-        
+
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;
     }
 
-    entry::set_strings( $checked, $params, 
+    entry::set_strings( $checked, $params,
         [ 'user_name', 'user_full_name', 'user_email', 'user_password', 'user_password2' ]
     );
 
-    $checked->{action} = entry::element_of( $params->{action}, 
+    $checked->{action} = entry::element_of( $params->{action},
         ['save', 'assign', 'delete', 'change_password']);
 
     if ( $params->{action} eq 'assign' ) {
@@ -429,8 +398,3 @@ sub check_params {
 
     return $checked;
 }
-
-sub error {
-    push @$errors, { error => $_[0] };
-}
-

@@ -34,7 +34,7 @@ function loadComments(eventId, callback){
         url,
         function(){
             showComments(elemId);
-            
+
             if(callback!=null){
                 //console.log("callback");
                 callback();
@@ -88,10 +88,10 @@ function setCommentStatusRead(commentId, eventId, status){
     url += '&comment_id='+commentId;
     //console.log(url);
     $("#event_"+eventId+"_comments").load(
-        url, 
+        url,
         function(){
             loadComments(
-                eventId, 
+                eventId,
                 function(){
                     scrollToComment(eventId);
                 }
@@ -112,10 +112,10 @@ function setCommentStatusLock(commentId,eventId,status){
     //console.log(url);
 
     $("#event_"+eventId+"_comments").load(
-        url, 
+        url,
         function(){
             loadComments(
-                eventId, 
+                eventId,
                 function(){
                     scrollToComment(eventId);
                 }

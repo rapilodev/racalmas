@@ -4,7 +4,7 @@ function download(id, name){
         'archive.cgi?get_link='+name,
         function(data){
             //alert(data);
-            $.each(data, 
+            $.each(data,
                 function(key, val) {
                     $('#'+id).html(val);
                 }

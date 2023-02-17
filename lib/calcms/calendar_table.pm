@@ -10,14 +10,8 @@ use Date::Calc();
 use template();
 use events();
 
-#use base 'Exporter';
-#our @EXPORT_OK = qw(init get_cached_or_render get render get_calendar_weeks configure_cache);
-
 sub break_dates {
-    my $dates        = shift;
-    my $start_of_day = shift;
-
-    #return $dates if $start_of_day eq '0';
+    my ($dates, $start_of_day) = @_;
 
     for my $date (@$dates) {
         next unless defined $date;
@@ -51,9 +45,7 @@ sub break_dates {
 
 # check if event breaks the start of day (e.g. 06:00)
 sub breaks_day {
-    my $start        = shift;
-    my $end          = shift;
-    my $start_of_day = shift;
+    my ($start, $end, $start_of_day) = @_;
 
     my $starts    = time::datetime_to_array($start);
     my $startDate = time::array_to_date($starts);
@@ -83,8 +75,7 @@ sub breaks_day {
 
 # merge events with same seriesId and eventId at 00:00
 sub join_dates {
-    my $dates        = shift;
-    my $start_of_day = shift;
+    my ($dates, $start_of_day) = @_;
 
     return $dates if $start_of_day == 0;
     @$dates = sort {$a->{start} cmp $b->{start}} @$dates;
@@ -118,9 +109,7 @@ sub join_dates {
 }
 
 sub filterEvents {
-    my $events       = shift;
-    my $options      = shift;
-    my $start_of_day = shift;
+    my ($events, $options, $start_of_day) = @_;
 
     return [] unless defined $options->{from};
     return [] unless defined $options->{till};
@@ -140,9 +129,7 @@ sub filterEvents {
 }
 
 sub getCalendar {
-    my $config   = shift;
-    my $params   = shift;
-    my $language = shift;
+    my ($config, $params, $language) = @_;
 
     my $from_date = getFromDate($config, $params);
     my $till_date = getTillDate($config, $params);
@@ -178,8 +165,7 @@ sub getCalendar {
 }
 
 sub getFromDate {
-    my $config = shift;
-    my $params = shift;
+    my ($config, $params) = @_;
 
     if ($params->{from_date} ne '') {
         return $params->{from_date};
@@ -208,8 +194,8 @@ sub getFromDate {
 }
 
 sub getTillDate {
-    my $config = shift;
-    my $params = shift;
+    my ($config, $params) = @_;
+
     if ($params->{till_date} ne '') {
         return $params->{till_date};
     }
@@ -235,7 +221,7 @@ sub getTillDate {
 }
 
 sub getFrequency {
-    my $event = shift;
+    my ($event) = @_;
 
     my $period_type = $event->{period_type};
     return undef unless defined $period_type;
@@ -256,8 +242,7 @@ sub getFrequency {
 }
 
 sub calc_positions {
-    my $events      = $_[0];
-    my $cal_options = $_[1];
+    my ($events, $cal_options) = @_;
 
     my $start_of_day = $cal_options->{start_of_day};
 
@@ -277,7 +262,7 @@ sub calc_positions {
 }
 
 sub find_errors {
-    my $events = $_[0];
+    my ($events) = @_;
 
     for my $event (@$events) {
         next if defined $event->{grid};
@@ -358,7 +343,7 @@ sub find_errors {
 
 
 sub getTime {
-    my $time = shift;
+    my ($time) = @_;
     if ($time =~ /^(\d\d)\:(\d\d)/) {
         return ($1, $2);
     }
@@ -366,10 +351,7 @@ sub getTime {
 }
 
 sub showEventList {
-    my $config        = shift;
-    my $permissions   = shift;
-    my $params        = shift;
-    my $events_by_day = shift;
+    my ($config, $permissions, $params, $events_by_day) = @_;
     my $language      = $params->{language};
 
     my $rerunIcon =
@@ -410,8 +392,8 @@ qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
                  </tr>
             </thead>
             <tbody>
-    } if $params->{part} == 0;
-    my $i = 1;
+    };# if $params->{part} == 0;
+    #my $i = 1;
 
     my $scheduled_events = {};
     for my $date (reverse sort (keys %$events_by_day)) {
@@ -527,8 +509,8 @@ qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
 
             my $studio_name = $event->{studio_name} // '-';
 
-            my $format = { "markdown" => "-", "creole" => "Lang Belta" }
-                ->{ $event->{content_format} // '' } // 'Lang Belta';
+            my $format = { "markdown" => "-", "creole" => "Creole" }
+                ->{ $event->{content_format} // '' } // 'Creole';
             $out .=
                   qq!<tr id="$id" class="$class" start="$event->{start}" >!
                 . qq!<td class="day_of_year">!
@@ -552,17 +534,13 @@ qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
                 . qq!<td>$format</td>!
                 . qq!</tr>! . "\n";
         }
-        $i++;
-        if ($i % 100 == 0) {
-            print $out;
-            $out = '';
-        }
+    #    $i++;
     }
     $out .= qq{
                 </tbody>
             </table>
         </div>
-    } if $params->{part} == 0;
+    };# if $params->{part} == 0;
 
     my $project_id = $params->{project_id};
     my $studio_id  = $params->{studio_id};
@@ -577,10 +555,10 @@ qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
             }
         );
         $out .= q{<div id="event_no_series" style="display:none">};
-        $out .= print_assign_events_to_series_form($series, $params)
+        $out .= get_assign_events_to_series_form($series, $params)
             if (defined $permissions->{assign_series_events})
             && ($permissions->{assign_series_events} eq '1');
-        $out .= print_create_series_form($params)
+        $out .= get_create_series_form($params)
             if (defined $permissions->{create_series})
             && ($permissions->{create_series} eq '1');
         $out .= q{</div>};
@@ -601,19 +579,14 @@ qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
             </script>
         </body>
     </html>
-    } if $params->{part} == 0;
+    };# if $params->{part} == 0;
 
-    print $out;
+    return $out;
 
 }
 
 sub calcCalendarTable {
-    my $config        = shift;
-    my $permissions   = shift;
-    my $params        = shift;
-    my $calendar      = shift;
-    my $events_by_day = shift;
-    my $cal_options   = shift;
+    my ($config, $permissions, $params, $calendar, $events_by_day, $cal_options) = @_;
 
     my $start_of_day = $cal_options->{start_of_day};
     my $end_of_day   = $cal_options->{end_of_day};
@@ -687,11 +660,8 @@ sub calcCalendarTable {
 
 }
 
-sub printTableHeader {
-    my $config      = shift;
-    my $permissions = shift;
-    my $params      = shift;
-    my $cal_options = shift;
+sub getTableHeader {
+    my ($config, $permissions, $params, $cal_options) = @_;
 
     my $days          = $cal_options->{days};
     my $events_by_day = $cal_options->{events_by_day};
@@ -714,15 +684,15 @@ sub printTableHeader {
             var days=$numberOfDays;
         </script>
         <style>
-            #calendar div.time, 
-            #calendar_weekdays div.date, 
-            #calendar div.event, 
-            #calendar div.schedule, 
-            #calendar div.work, 
+            #calendar div.time,
+            #calendar_weekdays div.date,
+            #calendar div.event,
+            #calendar div.schedule,
+            #calendar div.work,
             #calendar div.play,
             #calendar div.grid {
                 width: $width%
-            }        
+            }
         </style>
     !;
 
@@ -790,7 +760,7 @@ sub printTableHeader {
         };
 
         calc_positions([$event], $cal_options);
-        $out .= print_event($params, $event, $ypos, $yoffset, $yzoom);
+        $out .= get_event($params, $event, $ypos, $yoffset, $yzoom);
 
         $out .= '</td>';
     }
@@ -800,14 +770,11 @@ sub printTableHeader {
             </table>
         </div>
     };
-    print $out;
+    return $out;
 }
 
-sub printTableBody {
-    my $config      = shift;
-    my $permissions = shift;
-    my $params      = shift;
-    my $cal_options = shift;
+sub getTableBody {
+    my ($config, $permissions, $params, $cal_options) = @_;
 
     my $days          = $cal_options->{days};
     my $events_by_day = $cal_options->{events_by_day};
@@ -817,11 +784,12 @@ sub printTableBody {
     my $project_id = $params->{project_id};
     my $studio_id  = $params->{studio_id};
 
+    my $out;
     if (scalar(@{$days}) == 0) {
-        uac::print_info("no dates found at the selected time span");
+        $out .= uac::print_error("no dates found at the selected time span");
     }
 
-    my $out = q{
+    $out = q{
         <div id="calendar" style="display:none">
             <table>
                 <tbody>
@@ -908,7 +876,7 @@ sub printTableBody {
                 $event->{content} .= '</span>';
             }
 
-            $out .= print_event($params, $event, $ypos, $yoffset, $yzoom);
+            $out .= get_event($params, $event, $ypos, $yoffset, $yzoom);
 
             $ypos++;
         }
@@ -921,14 +889,11 @@ sub printTableBody {
                        </div><!--table-->
     };
 
-    print $out;
+    return $out;
 }
 
-sub printSeries {
-    my $config      = shift;
-    my $permissions = shift;
-    my $params      = shift;
-    my $cal_options = shift;
+sub getSeries {
+    my ($config, $permissions, $params, $cal_options) = @_;
 
     my $project_id = $params->{project_id};
     my $studio_id  = $params->{studio_id};
@@ -944,10 +909,10 @@ sub printSeries {
     my $out = '';
     if (($params->{studio_id} ne '') && ($params->{studio_id} ne '-1')) {
         $out .= q{<div id="event_no_series" style="display:none">};
-        $out .= print_assign_events_to_series_form($series, $params)
+        $out .= get_assign_events_to_series_form($series, $params)
             if ((defined $permissions->{assign_series_events})
             && ($permissions->{assign_series_events} eq '1'));
-        $out .= print_create_series_form($params)
+        $out .= get_create_series_form($params)
             if ((defined $permissions->{create_series})
             && ($permissions->{create_series} eq '1'));
         $out .= q{</div>};
@@ -958,14 +923,11 @@ sub printSeries {
             } . $params->{loc}->{label_no_studio_selected} . q{
         </div>
     };
-    print $out;
+    return $out;
 }
 
-sub printJavascript {
-    my $config      = shift;
-    my $permissions = shift;
-    my $params      = shift;
-    my $cal_options = shift;
+sub getJavascript {
+    my ($config, $permissions, $params, $cal_options) = @_;
 
     my $startOfDay = $cal_options->{min_hour} % 24;
 
@@ -983,14 +945,13 @@ sub printJavascript {
             var label_pin='} . $params->{loc}->{label_pin} . q{';
         </script>
     };
-    print $out;
+    return $out;
 }
 
 
 # create form to add events to series (that are not assigned to series, yet)
-sub print_assign_events_to_series_form {
-    my $series = shift;
-    my $params = shift;
+sub get_assign_events_to_series_form {
+    my ($series, $params) = @_;
 
     return unless defined $series;
     return unless scalar @$series > 0;
@@ -1032,7 +993,7 @@ sub print_assign_events_to_series_form {
     $out .= q{
                         </select>
                         </td>
-                    </tr>                
+                    </tr>
                     <tr><td></td>
                         <td>
                             <button type="submit" name="action" value="assign_event">}
@@ -1047,7 +1008,7 @@ sub print_assign_events_to_series_form {
 }
 
 # insert form to create series on not assigned events
-sub print_create_series_form {
+sub get_create_series_form {
     my $params = shift;
 
     my $project_id = $params->{project_id};
@@ -1077,12 +1038,8 @@ sub print_create_series_form {
     };
 }
 
-sub print_event {
-    my $params  = shift;
-    my $event   = shift;
-    my $ypos    = shift;
-    my $yoffset = shift;
-    my $yzoom   = shift;
+sub get_event {
+    my ($params, $event, $ypos, $yoffset, $yzoom) = @_;
 
     $event->{project_id} = '-1' unless defined $event->{project_id};
     $event->{studio_id}  = '-1' unless defined $event->{studio_id};
@@ -1231,10 +1188,7 @@ qq{<div class="text" style="$height">$content</div><div class="icons">$icons</di
 
 
 sub getSeriesEvents {
-    my $config  = shift;
-    my $request = shift;
-    my $options = shift;
-    my $params  = shift;
+    my ($config, $request, $options, $params) = @_;
 
     #get events by series id
     if (defined $request->{params}->{checked}->{series_id}) {

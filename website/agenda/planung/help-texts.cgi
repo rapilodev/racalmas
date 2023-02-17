@@ -50,7 +50,7 @@ return get_help( $config, $request )    if $params->{action} eq 'get';
 #process header
 my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
 $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
+print template::process( $config, template::check( $config, 'default.html' ), $headerParams );
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
 if ( defined $params->{action} ) {
@@ -188,7 +188,7 @@ sub edit_help {
     }];
 
     $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'edit-help-texts' } );
-    template::process( $config, 'print', $params->{template}, $params );
+    print template::process( $config, $params->{template}, $params );
 }
 
 sub get_help{

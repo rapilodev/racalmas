@@ -106,9 +106,9 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
     $list->{project_title} = '' unless defined $list->{project_title};
     $content =~ s/(<(div|span)\s+id="calcms_title".*?>).*?(<\/(div|span)>)/$list->{project_title}/g;
 
-    my $title = join ' - ', grep {defined $_ and $_ ne ''} ( 
-        $list->{'series_name'}, $list->{'title'}, 
-        $list->{'location'}, 'Programm ' . $list->{project_title} 
+    my $title = join ' - ', grep {defined $_ and $_ ne ''} (
+        $list->{'series_name'}, $list->{'title'},
+        $list->{'location'}, 'Programm ' . $list->{project_title}
     );
     $content =~ s/(<title>)(.*?)(<\/title>)/$1$title$3/;
 
@@ -127,7 +127,7 @@ sub load_file {
     my ($filename) = @_;
     state $cache;
     my $cached = $cache->{$filename};
-    return $cached->{content} if defined $cached and $cached->{updated} > time - 60;  
+    return $cached->{content} if defined $cached and $cached->{updated} > time - 60;
     open my $fh, '<:utf8', $filename or return qq{cannot load '$filename'};
     local $/ = undef;
     my $content = <$fh>;

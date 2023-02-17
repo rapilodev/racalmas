@@ -28,8 +28,8 @@ pre {
     height: 24px;
 }
 
-#content .edit_event input, 
-#content .edit_event select, 
+#content .edit_event input,
+#content .edit_event select,
 #content .edit_event textarea {
     padding: 0.5em;
 }
@@ -73,3 +73,13 @@ div#edit_new table{
     padding-right:1rem;
 }
 
+div.buttons{
+    display:flex;
+    flex-wrap: wrap;
+    align-items:center;
+    justify-content: center;
+}
+
+div.buttons button{
+    max-width:12rem;
+}

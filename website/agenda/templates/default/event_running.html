@@ -22,7 +22,7 @@ Access-Control-Allow-Origin: *
             overflow:hidden;
         }
     </style>
-	<div class="content" style="clear:both"> 
+	<div class="content" style="clear:both">
 
 	    <h1 class="summary title">
 	        <TMPL_VAR events_title>
@@ -57,7 +57,7 @@ Access-Control-Allow-Origin: *
 				<span class="submitted"><TMPL_VAR weekday_name>, <TMPL_VAR start_date_name> -
 				<TMPL_VAR start_time_name> bis <TMPL_VAR end_time_name> Uhr <TMPL_IF program>(<TMPL_VAR program>)</TMPL_IF></span><br />
 			</div>
-			<div class="content" > 
+			<div class="content" >
 				<TMPL_COMMENT>
 				<div class="image-attach-teaser" style="width: 150px;">
 					<a href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">

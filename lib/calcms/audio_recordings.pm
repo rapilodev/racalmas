@@ -73,7 +73,7 @@ sub get($$) {
     $whereClause = " where " . join( " and ", @$conditions ) if ( scalar @$conditions > 0 );
 
     my $query = qq{
-		select	id 
+		select	id
 		        ,project_id
 				,studio_id
 				,event_id
@@ -148,11 +148,11 @@ sub update($$) {
 
     my $query = qq{
         update calcms_audio_recordings
-        set    path=?, size=?, 
-               created_by=?, created_at=?, 
+        set    path=?, size=?,
+               created_by=?, created_at=?,
                modified_at=?,
                processed=?, mastered=?,
-               eventDuration=?, audioDuration=?, 
+               eventDuration=?, audioDuration=?,
                rmsLeft=?, rmsRight=?
         where  project_id=? and studio_id=? and event_id=?
     };
@@ -170,7 +170,7 @@ sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'event_id', 'path') {
-        ParamError->throw("audio-recordings: missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "audio-recordings: missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -199,7 +199,7 @@ sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'event_id', 'path') {
-        ParamError->throw("audio-recordings: missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "audio-recordings: missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -219,7 +219,7 @@ sub update_active($$$) {
     my ($config, $dbh, $entry) = @_;
 
     for ('project_id', 'studio_id', 'event_id') {
-        ParamError->throw("audio-recordings: missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "audio-recordings: missing $_") unless defined $entry->{$_}
     };
 
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{event_id} ];

@@ -28,7 +28,7 @@ sub get ($$) {
     my @bind_values = ();
 
     for ('user', 'project_id', 'studio_id') {
-        ParamError->throw("user_day_start:get missing $_") unless defined $condition->{$_}
+        ParamError->throw(error => "user_day_start:get missing $_") unless defined $condition->{$_}
     };
 
     for my $field ('user', 'project_id', 'studio_id'){
@@ -65,7 +65,7 @@ sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'project_id', 'studio_id', 'day_start') {
-        ParamError->throw("user_day_start:insert: missing $_") unless defined $entry->{$_};
+        ParamError->throw(error => "user_day_start:insert: missing $_") unless defined $entry->{$_};
     }
 
     my $dbh = db::connect($config);
@@ -77,7 +77,7 @@ sub update($$) {
 
     my $fields = [ 'user', 'project_id', 'studio_id' ];
     for (@$fields){
-        ParamError->throw("user_day_start:update: missing $_") unless defined $entry->{$_};
+        ParamError->throw(error => "user_day_start:update: missing $_") unless defined $entry->{$_};
     }
 
     my @keys        = sort keys %$entry;
@@ -86,7 +86,7 @@ sub update($$) {
     my $conditions  = join (' and ', map { $_.'=?' } @$fields );
 
     my $query = qq{
-		update calcms_user_day_start 
+		update calcms_user_day_start
 		set    $values
 		where  $conditions
 	};
@@ -99,11 +99,11 @@ sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'project_id', 'studio_id') {
-        ParamError->throw("user_day_start:delete: missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "user_day_start:delete: missing $_") unless defined $entry->{$_}
     };
 
     my $query = qq{
-		delete 
+		delete
 		from calcms_user_day_start
 		where user=? and project_id=? and studio_id=?
 	};
@@ -111,11 +111,6 @@ sub delete ($$) {
 
     my $dbh = db::connect($config);
     return db::put( $dbh, $query, $bind_values );
-}
-
-sub error ($) {
-    my $msg = shift;
-    print "ERROR: $msg<br/>\n";
 }
 
 #do not delete last line!

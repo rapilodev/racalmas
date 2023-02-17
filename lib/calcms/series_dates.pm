@@ -113,7 +113,7 @@ sub is_event_scheduled($$) {
     my ($request, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'start_at') {
-        ParamError->throw("missing $_") unless defined $options->{$_}
+        ParamError->throw(error => "missing $_") unless defined $options->{$_}
     };
 
     my $config    = $request->{config};
@@ -285,7 +285,7 @@ sub update($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -506,14 +506,14 @@ sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete 
-		from calcms_series_dates 
+		delete
+		from calcms_series_dates
 		where project_id=? and studio_id=? and series_id=?
 	};
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id} ];
@@ -526,7 +526,7 @@ sub getDatesWithoutEvent ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'form', 'till') {
-        ParamError->throw("missing $_") unless defined $options->{$_}
+        ParamError->throw(error => "missing $_") unless defined $options->{$_}
     };
 
     my $dbh = db::connect($config);
@@ -535,10 +535,10 @@ sub getDatesWithoutEvent ($$) {
     my $query = qq{
         SELECT sd.* 
         FROM calcms_series_dates sd LEFT JOIN calcms_events e
-        on (sd.start = e.start) 
+        on (sd.start = e.start)
         where e.start is null
         and sd.exclude != 1
-        and sd.project_id = ? 
+        and sd.project_id = ?
         and sd.studio_id  = ?
         $cond
         and sd.start      > ? 

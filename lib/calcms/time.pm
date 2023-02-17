@@ -170,7 +170,6 @@ sub format_time($) {
 sub datetime_to_time ($){
     my $datetime = $_[0];
 
-    #	print $datetime."\n";
     if ( $datetime =~ /(\d\d\d\d)\-(\d+)\-(\d+)[T\s](\d+)\:(\d+)(\:(\d+))?/ ) {
         my $year   = $1;
         my $month  = $2 - 1;
@@ -178,7 +177,7 @@ sub datetime_to_time ($){
         my $hour   = $4;
         my $minute = $5;
         my $second = $8 || 0;
-        return (Time::Local::timelocal( $second, $minute, $hour, $day, $month, $year ) 
+        return (Time::Local::timelocal( $second, $minute, $hour, $day, $month, $year )
             or TimeCalcError->throw(error=> "datetime_to_time: no valid date time found! ($datetime)\n"));
 
     } else {
@@ -550,7 +549,6 @@ sub get_event_date($) {
     my $datetime = time::time_to_datetime( time() );
     my $hour     = ( time::datetime_to_array($datetime) )->[3];
 
-    #print STDERR "datetime=$datetime hour=$hour\n";
     #today: between 0:00 and starting_hour show last day
     if ( $hour < $config->{date}->{day_starting_hour} ) {
         my $date = time::datetime_to_array( time::add_days_to_datetime( $datetime, -1 ) );

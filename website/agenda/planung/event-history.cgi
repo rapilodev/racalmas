@@ -29,65 +29,38 @@ use utf8;
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
-} catch {
-    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        user       => $user,
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id}
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
+
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    print template::process( $config, template::check( $config, 'default.html' ), $headerParams );
+    uac::check($config, $params, $user_presets);
+
+    print q{
+        <style>
+            pre{
+                font-family:monospace;
+            }
+            textarea{
+                height:fit-content;
+                min-height:500px;
+                width:50%;
+            }
+        </style>
+    };
+
+    $config->{access}->{write} = 0;
+    if ( $params->{action} eq 'diff' ) {
+        compare( $config, $request );
+        return;
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
-
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-
-#set user at params->presets->user
-$request = uac::prepare_request( $request, $user_presets );
-
-$params = $request->{params}->{checked};
-
-#show header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-print q{
-    <style>
-        pre{
-            font-family:monospace;
-        }
-        textarea{
-            height:fit-content;
-            min-height:500px;
-            width:50%;
-        }
-    </style>
-};
-
-$config->{access}->{write} = 0;
-if ( $params->{action} eq 'diff' ) {
-    compare( $config, $request );
+    show_history( $config, $request );
     return;
 }
-show_history( $config, $request );
 
 #show existing event history
 sub show_history {
@@ -97,14 +70,12 @@ sub show_history {
     my $permissions = $request->{permissions};
     for my $attr ('studio_id') {    # 'series_id','event_id'
         unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to show changes" );
-            return;
+            ParamError->throw(error=> "missing " . $attr . " to show changes" );
         }
     }
 
     unless ( $permissions->{read_event} == 1 ) {
-        uac::print_error("missing permissions to show changes");
-        return;
+        PermissionError->throw(error=>"missing permissions to show changes");
     }
 
     my $options = {
@@ -125,7 +96,7 @@ sub show_history {
     }
     $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event-history' } );
 
-    template::process( $config, 'print', template::check( $config, 'event-history' ), $params );
+    print template::process( $config, template::check( $config, 'event-history' ), $params );
 }
 
 #show existing event history
@@ -136,14 +107,12 @@ sub compare {
     my $permissions = $request->{permissions};
     for my $attr ( 'project_id', 'studio_id', 'event_id', 'v1', 'v2' ) {
         unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to show changes" );
-            return;
+            ParamError->throw(error=> "missing $attr to show changes" );
         }
     }
 
     unless ( $permissions->{read_event} == 1 ) {
-        uac::print_error("missing permissions to show changes");
-        return;
+        PermissionError->throw(error=>"missing permissions to show changes");
     }
 
     if ( $params->{v1} > $params->{v2} ) {
@@ -227,13 +196,13 @@ b.BBLU {background-color: #0000aa}
 b.BMAG {background-color: #aa00aa}
 b.BCYN {background-color: #00aaaa}
 b.BWHI {background-color: #aaaaaa}
-    </style>        
+    </style>
     };
     my $diff = qx{$cmd};
     $diff = substr($diff, index($diff, "<body>")+6);
     $diff = substr($diff, 0, index($diff, "</body>"));
     print "$diff\n";
-    
+
 }
 
 sub eventToText {
@@ -245,14 +214,12 @@ sub eventToText {
     $s .= $event->{topic} . "\n";
     $s .= $event->{content} . "\n";
 
-    #print STDERR "DUMP\n$s";
     return $s;
 
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
+    my ($config, $params) = @_;
 
     my $checked  = {};
     my $template = '';

@@ -78,7 +78,7 @@ sub getImageById($$) {
     my ($config, $conditions) = @_;
 
     for ('project_id', 'studio_id') {
-        ParamError->throw("getImageById: missing $_") unless defined $conditions->{$_}
+        ParamError->throw(error => "getImageById: missing $_") unless defined $conditions->{$_}
     };
     my $studios = studios::get( $config, $conditions );
     return undef if scalar(@$studios) != 1;
@@ -115,7 +115,7 @@ sub update ($$) {
     push @bind_values, $entry->{id};
 
     my $query = qq{
-		update calcms_studios 
+		update calcms_studios
 		set $values
 		where id=?
 	};
@@ -144,7 +144,6 @@ sub check ($$) {
     my $studios = studios::get( $config, { studio_id => $options->{studio_id} } );
     StudioError->throw(error => "unknown studio") unless defined $studios;
     StudioError->throw(error => "unknown studio") unless scalar @$studios == 1;
-    return 1;
 }
 
 #do not delete last line!

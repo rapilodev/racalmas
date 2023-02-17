@@ -132,8 +132,8 @@
 			<tr>
 				<td>
 				<TMPL_LOOP roles>
-					<input type="checkbox" 
-						name="role_<TMPL_VAR id>" 
+					<input type="checkbox"
+						name="role_<TMPL_VAR id>"
 						<TMPL_IF assigned>checked="checked"</TMPL_IF>
 					><TMPL_VAR role><br>
 				</TMPL_LOOP>
@@ -174,7 +174,7 @@
 			<TMPL_if .allow.read_user>
 			<tr>	<td><TMPL_VAR .loc.label_email></td>	   <td><input name="user_email" value="<TMPL_VAR email>"></td></tr>
 			</TMPL_IF>
-			<tr>	<td><TMPL_VAR .loc.label_disabled></td>  
+			<tr>	<td><TMPL_VAR .loc.label_disabled></td>
 				<td>
 					<TMPL_IF allow.disable_user>
 					<input type="checkbox" name="disabled" value="1" <TMPL_IF disabled>checked="checked"</TMPL_IF> >

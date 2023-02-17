@@ -29,6 +29,7 @@ our @EXPORT_OK = qw(
 our $read  = 1;
 our $write = 1;
 
+my $database;
 # connect to database
 my $database;
 sub connect($;$) {
@@ -50,12 +51,11 @@ sub connect($;$) {
 
     my $dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
     my $key = Digest::MD5::md5_hex($dsn.$username.$password);
-    return $options->{connections}->{$key} if defined $options->{connections}->{$key}; 
-    state $connections = {};
+    return $options->{connections}->{$key} if defined $options->{connections}->{$key};    state $connections = {};
     return $connections->{$key} if defined $connections->{$key} and $connections->{$key}->ping;
 
     my $dbh = DBI->connect( $dsn, $username, $password, { mysql_enable_utf8 => 1 } )
-      || DatabaseError->throw("could not connect to database: $DBI::errstr");
+      || DatabaseError->throw(error => "could not connect to database: $DBI::errstr");
     $dbh->{RaiseError} = 1;
     $dbh->{HandleError} = sub{
         print STDERR join(",",(caller($_))[0..3])."\n" for (1..2);
@@ -88,10 +88,10 @@ sub get($$;$) {
         my $result = $sth->execute(@$bind_values);
         unless ($result) {
             print STDERR $sql . "\n";
-            DatabaseError->throw( "db: $DBI::errstr $sql") if ( $read == 1 );
+            DatabaseError->throw(error => "db: $DBI::errstr $sql") if ( $read == 1 );
         }
     } else {
-        $sth->execute() or DatabaseError->throw("db: $DBI::errstr $sql") if $read == 1;
+        $sth->execute() or DatabaseError->throw(error => "db: $DBI::errstr $sql") if $read == 1;
     }
 
     my $results = $sth->fetchall_arrayref({});
@@ -192,8 +192,7 @@ sub next_id ($$){
     my $query = qq{
 		select max(id) id
 		from $table
-		where 1 
-	};
+		where 1	};
     my $results = get( $dbh, $query );
     return $results->[0]->{id} + 1;
 }
@@ -205,8 +204,7 @@ sub get_max_id($$) {
     my $query = qq{
 		select max(id) id
 		from $table
-		where 1 
-	};
+		where 1	};
     my $results = get( $dbh, $query );
     return $results->[0]->{id};
 }

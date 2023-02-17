@@ -7,6 +7,10 @@ no warnings 'redefine';
 use Data::Dumper;
 use Scalar::Util qw( blessed );
 use Try::Tiny;
+use Exception::Class (
+    'ParamError',
+    'PermissionError'
+);
 
 use params();
 use config();
@@ -21,53 +25,21 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
-} catch {
-    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
+    $params = uac::set_template_permissions( $request->{permissions}, $params );
+    $params->{loc} = localization::get( $config, { user => $session->{user}, file => 'select-series' } );
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id},
-        user       => $user
-    }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
-
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
-
-$params = $request->{params}->{checked};
-$params = uac::set_template_permissions( $request->{permissions}, $params );
-$params->{loc} = localization::get( $config, { user => $user, file => 'select-series' } );
-
-#process header
-print "Content-type:text/html; charset=UTF-8;\n\n";
-
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-my $permissions = $request->{permissions};
-unless ( $permissions->{read_series} == 1 ) {
-    uac::permissions_denied('read_series');
-    return;
+    #process header
+    print "Content-type:text/html; charset=UTF-8;\n\n";
+    uac::check($config, $params, $user_presets);
+    my $permissions = $request->{permissions};
+    PermissionError->throw(error=>'Missing permission to read_series')unless $permissions->{read_series};
+    show_series( $config, $request );
 }
-
-show_series( $config, $request );
 
 sub show_series {
     my ($config, $request) = @_;
@@ -75,8 +47,7 @@ sub show_series {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{read_series} == 1 ) {
-        uac::permissions_denied('read_series');
-        return;
+        PermissionError->throw(error=>'Missing permission to read_series');
     }
 
     # get user projects
@@ -109,14 +80,12 @@ sub show_series {
     $params->{studios} = $user_studios;
     $params->{series}  = $series;
 
-    template::process( $config, 'print', $params->{template}, $params );
+    print template::process( $config, $params->{template}, $params );
     return;
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
 
     entry::set_numbers( $checked, $params, [

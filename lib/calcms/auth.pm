@@ -16,29 +16,29 @@ use Exception::Class (
 use Authen::Passphrase::BlowfishCrypt();
 use user_sessions ();
 
-our @EXPORT_OK = qw(get_user login logout crypt_password);
+#our @EXPORT_OK = qw(get_user login logout crypt_password);
 my $defaultExpiration = 60;
 
-sub get_user($$$) {
+sub get_session($$$) {
     my ($config, $params, $cgi) = @_;
 
     if (defined $params->{authAction}) {
         if ($params->{authAction} eq 'login') {
-            login($config, $params->{user}, $params->{password});
+            my $header = login($config, $params->{user}, $params->{password});
             $cgi->delete('user', 'password', 'uri', 'authAction')
                 if defined $cgi;
-            return ($params->{user});
+            return {header => $header, user => $params->{user}};
         } elsif ($params->{authAction} eq 'logout') {
             $cgi = new CGI::Simple() unless defined $cgi;
             logout($config, $cgi);
             $cgi->delete('user', 'password', 'uri', 'authAction');
-            return ();
+            return {};
         }
     }
     my $session_id = read_cookie();
     my $session    = read_session($config, $session_id);
     $params->{$_} = $session->{$_} for qw (user expires);
-    return $session->{user}, $session->{expires};
+    return $session;
 }
 
 sub crypt_password($) {
@@ -57,13 +57,9 @@ sub crypt_password($) {
 
 sub login($$$) {
     my ($config, $user, $password) = @_;
-    print STDERR "l1\n";
     my $timeout    = authenticate($config, $user, $password);
-    print STDERR "l2\n";
     my $session_id = create_session($config, $user, $timeout * 60);
-    print STDERR "l3\n";
-    create_cookie($session_id, '+' . $timeout . 'm');
-    print STDERR "l4\n";
+    return create_cookie($session_id, '+' . $timeout . 'm');
 }
 
 #TODO: remove cgi
@@ -80,7 +76,6 @@ sub logout($$) {
 #read and write data from browser, http://perldoc.perl.org/CGI/Cookie.html
 sub create_cookie($$) {
     my ($session_id, $timeout) = @_;
-    use Data::Dumper;print STDERR Dumper($timeout);
     my $cookie = CGI::Cookie->new(
         -name     => 'sessionID',
         -value    => $session_id,
@@ -88,20 +83,16 @@ sub create_cookie($$) {
         -secure   => 1,
         -samesite => "Lax"
     );
-    print STDERR "Set-Cookie: " . $cookie->as_string . "\n";
-    #print "HTTP/1.1 200 OK\nSet-Cookie: " . $cookie->as_string . "\n";
-    #print "HTTP1/1 200 OK\n".
-    #"Set-Cookie: " . $cookie->as_string . "\n";
     my $cgi = CGI::Simple->new();
-    print $cgi->header(-cookie => $cookie);
+    return $cgi->header(-cookie => $cookie);
 }
 
 sub read_cookie() {
     my %cookie = CGI::Cookie->fetch;
     my $cookie = $cookie{'sessionID'};
-    SessionError->throw(message => 'Please login1') unless defined $cookie;
+    SessionError->throw(message => 'Please login') unless defined $cookie;
     my $session_id = $cookie->value;
-    SessionError->throw(message => 'Please login2') unless defined $session_id;
+    SessionError->throw(message => 'Please login') unless defined $session_id;
     return $session_id;
 }
 
@@ -182,12 +173,12 @@ sub show_login_form ($$) {
         };
     }
 
-    print qq{Content-type:text/html
+    return qq{Content-type:text/html
 
-<!DOCTYPE HTML>        
+<!DOCTYPE HTML>
 <html>
 <head>
-<meta charset="UTF-8"> 
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style type="text/css">
     *{
@@ -202,7 +193,7 @@ sub show_login_form ($$) {
     }
 
     body{
-        display: table; 
+        display: table;
         margin: 0 auto;
     }
 
@@ -216,8 +207,8 @@ sub show_login_form ($$) {
 
     .container{
         height: 100%;
-        display: table-cell;   
-        vertical-align: middle;    
+        display: table-cell;
+        vertical-align: middle;
     }
 
     input{
@@ -253,7 +244,7 @@ sub show_login_form ($$) {
         margin-bottom:0;
 	}
     input.button{
-        padding:1rem;        
+        padding:1rem;
         color:#fff;
         background:#39a1f4;
         border:0;
@@ -277,7 +268,6 @@ sub show_login_form ($$) {
         00%   { box-shadow: 0rem 0rem 1rem #eee; transform: translateX(1rem) translateY(1rem);}
         100% { box-shadow: 1rem 1rem 1rem #eee; transform: translateX(0) translateY(0);}
     }
-    
 </style>
 </head>
 <body>
@@ -306,7 +296,6 @@ sub show_login_form ($$) {
 </body>
 </html>
 };
-    return undef;
 }
 
 #do not delete last line!

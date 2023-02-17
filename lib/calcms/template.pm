@@ -10,7 +10,6 @@ use HTML::Template::Compiled();
 use HTML::Template::Compiled::Plugin::XMLEscape();
 use HTML::Template::Compiled::Plugin::Hyphen();
 
-#use HTML::Template::JIT();
 use JSON();
 use Cwd();
 use Digest::MD5 qw(md5_hex);
@@ -19,12 +18,11 @@ use params();
 use project();
 use log();
 
-#use base 'Exporter';
-our @EXPORT_OK = qw(check process exit_on_missing_permission clear_cache);
+our @EXPORT_OK = qw(check process clear_cache);
 
 # TODO:config
-sub process($$$$) {
-    my ($config, $output, $filename, $params) = @_;
+sub process($$$) {
+    my ($config, $filename, $params) = @_;
 
     #TODO: get config
     for my $key ( keys %{ $config->{locations} } ) {
@@ -49,12 +47,7 @@ sub process($$$$) {
         my $json = JSON->new->pretty(1)->canonical()->encode($params);
 
         $json = $header . $params->{json_callback} . $json;
-        if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
-            print $json. "\n";
-        } else {
-            $_[1] = $json . "\n";
-        }
-        return;
+        return $json. "\n";
     }
 
     unless ( -r $filename ) {
@@ -72,11 +65,7 @@ sub process($$$$) {
     $out =~ s{(src="js/.*\.js)"}{$1$version"}g;
     $out =~ s{(href="css/.*\.css)"}{$1$version"}g;
     $out =~ s{(src="image/.*\.svg)"}{$1$version"}g;
-    if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
-        print $out;
-    } else {
-        $_[1] = $out;
-    }
+    return $out;
 }
 
 sub initTemplate($) {

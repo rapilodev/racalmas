@@ -55,7 +55,7 @@ sub get ($$) {
 sub update($$) {
     my ($config, $entry) = @_;
     for ('user') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
     my $dbh         = db::connect($config);
     my @keys        = sort keys %$entry;
@@ -64,7 +64,7 @@ sub update($$) {
     push @bind_values, $entry->{token};
 
     my $query = qq{
-		update calcms_password_requests 
+		update calcms_password_requests
 		set    $values
 		where  token=?
 	};
@@ -74,7 +74,7 @@ sub update($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
     for ('user') {
-        ParamError->throw("missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_password_requests', $entry );
@@ -102,8 +102,8 @@ sub delete ($$) {
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete 
-		from calcms_password_requests 
+		delete
+		from calcms_password_requests
         $conditions
 	};
 
@@ -115,7 +115,7 @@ sub sendToken ($$) {
 
     return undef unless defined $entry->{user};
 
-    my $user = uac::get_user( $config, $entry->{user} );
+    my $user = uac::get_user($config, $entry->{user})->{user};
     return undef unless defined $user;
 
     # check age of existing entry
@@ -164,7 +164,7 @@ sub changePassword ($$$) {
         return { error => 'The User could not be found.' };
     }
 
-    my $user = uac::get_user( $config, $userName );
+    my $user = uac::get_user( $config, $userName )->{user};
 
     unless ( ( defined $user ) && ( defined $user->{id} ) && ( $user->{id} ne '' ) ) {
         return { error => 'Te User ID could not be found.' };

@@ -40,8 +40,7 @@ $template_parameters->{projects}         = getProjects( $dbh, $config, $params )
 
 #output template
 my $template = $params->{template};
-my $out      = '';
-template::process( $config, $out, $params->{template}, $template_parameters );
+my $out      = template::process( $config, $params->{template}, $template_parameters );
 print $out;
 
 $out = undef;
@@ -134,7 +133,7 @@ sub getSeriesNames {
     }
 
     my $query = qq{
-        select series_name, count(series_name) sum 
+        select series_name, count(series_name) sum
         from calcms_events
         $where
         group by series_name

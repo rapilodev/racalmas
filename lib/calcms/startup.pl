@@ -12,7 +12,9 @@ local $SIG{__WARN__} = \&Apache2::ServerRec::warn;
 use Data::Dumper;
 use Time::Local();
 use Date::Calc();
-use Calendar::Simple qw(date_span);
+use Calendar::Simple ();
+use Scalar::Util ();
+use Try::Tiny ();
 
 use config();
 use log();

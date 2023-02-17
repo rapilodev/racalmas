@@ -7,6 +7,10 @@ use utf8;
 use Data::Dumper;
 use Scalar::Util qw( blessed );
 use Try::Tiny;
+use Exception::Class (
+    'ParamError',
+    'PermissionError'
+);
 
 use Apache2::Request;
 use Apache2::Upload;
@@ -350,15 +354,14 @@ my $request = {
 
 $request = uac::prepare_request( $request, $user_presets );
 $params = $request->{params}->{checked};
-return unless uac::check( $config, $params, $user_presets ) == 1;
+uac::check($config, $params, $user_presets);
 
 my $permissions = $request->{permissions};
 
 $params->{action} = '' unless defined $params->{action};
 
 if ( $permissions->{create_image} ne '1' ) {
-    uac::permissions_denied("create image");
-    return 0;
+    PermissionError->throw(error=>"Missing permission to create image");
 }
 
 my $file_info = undef;
@@ -379,7 +382,7 @@ if ( $error ne '' ) {
 
 print STDERR "upload error: $params->{error}\n" if $params->{error};
 $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'image' } );
-template::process( $config, 'print', $params->{template}, $params );
+print template::process( $config, $params->{template}, $params );
 
 print $cgi->cgi_error() if ( defined $cgi ) && ( defined $cgi->cgi_error() );
 return if $params->{action} eq '';

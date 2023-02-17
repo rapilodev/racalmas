@@ -7,6 +7,9 @@ no warnings 'redefine';
 use URI::Escape();
 use Encode();
 use Scalar::Util qw( blessed );
+use Exception::Class (
+    'ParamError'
+};
 use Try::Tiny;
 
 use params();
@@ -29,57 +32,28 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
-} catch {
-    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
 
-#print STDERR $params->{project_id}."\n";
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id},
-        user       => $user
+    #process header
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    print template::process( $config, template::check( $config, 'assignments-header.html' ), $headerParams );
+    uac::check($config, $params, $user_presets);
+
+    my $permissions = $request->{permissions};
+    unless ( $permissions->{scan_series_events} == 1 ) {
+        PermissionsError->throw(error => 'scan_series_events');
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
 
-#print STDERR $params->{project_id}."\n";
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params($params),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
-
-$params = $request->{params}->{checked};
-
-#process header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'assignments-header.html' ), $headerParams );
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-my $permissions = $request->{permissions};
-unless ( $permissions->{scan_series_events} == 1 ) {
-    PermissionsError->throw('scan_series_events');
-    return;
+    if ( defined $params->{action} ) {
+        return assign_events( $config, $request ) if ( $params->{action} eq 'assign_events' );
+    }
+    return show_events( $config, $request );
 }
-
-if ( defined $params->{action} ) {
-    assign_events( $config, $request ) if ( $params->{action} eq 'assign_events' );
-}
-show_events( $config, $request );
 
 sub show_events {
     my ($config, $request) = @_;
@@ -87,18 +61,17 @@ sub show_events {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{assign_series_events} == 1 ) {
-        PermissionsError->throw('assign_series_events');
-        return;
+        PermissionsError->throw(error => 'assign_series_events');
     }
 
     my $projects = project::get( $config, { project_id => $params->{project_id} } );
     my $project = $projects->[0];
 
-    return unless ( @$projects == 1 );
+    ExistError->throw(error=>"expect one project") unless scalar @$projects == 1;
 
     my $studios = studios::get( $config, { project_id => $params->{project_id}, studio_id => $params->{studio_id} } );
     my $studio = $studios->[0];
-    return unless ( @$studios == 1 );
+    ExistError->throw(error=>"expect one studio") unless scalar @$studios == 1;
 
     my $project_name = $project->{name};
     my $studio_name  = $studio->{location};
@@ -106,8 +79,8 @@ sub show_events {
     #get series_names
     my $dbh   = db::connect($config);
     my $query = q{
-        select project_id, studio_id, series_id, series_name, title 
-        from   calcms_series s, calcms_project_series ps 
+        select project_id, studio_id, series_id, series_name, title
+        from   calcms_series s, calcms_project_series ps
         where  s.id=ps.series_id
         order  by series_name, title
     };
@@ -148,7 +121,7 @@ sub show_events {
     }
     $conditions = ' and ' . join( ' and ', @$conditions ) if scalar(@$conditions) > 0;
     $query = qq{
-        select   e.id, program, project, location, start, series_name, title, episode, rerun 
+        select   e.id, program, project, location, start, series_name, title, episode, rerun
         from     calcms_events e left join calcms_series_events se on se.event_id =e.id
         where    se.event_id is null
         $conditions
@@ -180,7 +153,7 @@ sub show_events {
     $params->{project_name}      = $project_name;
     $params->{studio_name}       = $studio_name;
 
-    template::process( $config, 'print', $params->{template}, $params );
+    return template::process( $config, $params->{template}, $params );
 }
 
 sub assign_events {
@@ -189,8 +162,7 @@ sub assign_events {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{assign_series_events} == 1 ) {
-        PermissionsError->throw('assign_series_events');
-        return;
+        PermissionsError->throw(error => 'assign_series_events');
     }
 
     my $entry = {};
@@ -198,8 +170,7 @@ sub assign_events {
         if ( defined $params->{$attr} ) {
             $entry->{$attr} = $params->{$attr};
         } else {
-            ParamError->throw( $attr . ' not given!' );
-            return;
+            ParamError->throw(error => $attr . ' not given!' );
         }
     }
 
@@ -323,10 +294,6 @@ sub assign_events {
                 manual     => 1
             }
         );
-        unless ( defined $result ) {
-            uac::print_error("error on assigning event to series");
-            return undef;
-        }
     }
 
     $config->{access}->{write} = 0;
@@ -336,7 +303,7 @@ sub assign_events {
 }
 
 sub check_params {
-    my $params = shift;
+    my ($config, $params) = @_;
 
     my $checked = {};
 
@@ -370,7 +337,7 @@ sub check_params {
     entry::set_numbers( $checked, $params, [
         'frequency', 'duration', 'default_duration', 'create_events', 'publish_events', 'live']);
 
-    entry::set_strings( $checked, $params, 
+    entry::set_strings( $checked, $params,
         [ 'search', 'from', 'till' ]);
 
     return $checked;

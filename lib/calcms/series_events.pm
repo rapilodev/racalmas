@@ -8,6 +8,8 @@ use Data::Dumper;
 use Date::Calc;
 use Exception::Class (
     'ParamError',
+    'PermissionError',
+    'AssignError'
 );
 
 use markup();
@@ -43,7 +45,9 @@ sub get_content_columns($) {
 # all changed columns are returned for history handling
 sub save_content($$) {
     my ($config, $entry) = @_;
-    return undef unless defined $entry->{id};
+    for ('id') {
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
+    };
 
     for my $attr ( keys %$entry ) {
         next unless defined $entry->{$attr};
@@ -81,39 +85,33 @@ sub save_content($$) {
 
     push @bind_values, $entry->{id};
     my $query = qq{
-		update calcms_events 
+		update calcms_events
 		set    $values
 		where  id=?
 	};
 
     my $dbh = db::connect($config);
     my $result = db::put( $dbh, $query, \@bind_values );
-    unless ( defined $result ) {
-        print STDERR "error on updating event\n";
-        return undef;
-    }
-
+    EventError->throw(error => "Could not save event content") unless $result;
     return $entry;
 }
 
 sub set_episode{
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{id};
-    return undef unless defined $entry->{episode};
+    for ('id', 'episode') {
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
+    };
 
     my $query = qq{
-		update calcms_events 
+		update calcms_events
 		set    episode=?
 		where  id=?
 	};
     my $bind_values= [ $entry->{episode}, $entry->{id} ];
     my $dbh = db::connect($config);
     my $result = db::put( $dbh, $query, $bind_values );
-    unless ( defined $result ) {
-        print STDERR "error on setting episode in event\n";
-        return undef;
-    }
+    EventError->throw(error => "Could not set episodes") unless $result;
     return $entry;
 }
 
@@ -123,9 +121,9 @@ sub set_episode{
 sub save_event_time($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{id};
-    return undef unless defined $entry->{duration};
-    return undef unless defined $entry->{start_date};
+    for ('id', 'duration', 'start_date') {
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh   = db::connect($config);
     my $event = {
@@ -164,7 +162,6 @@ sub save_event_time($$) {
 		where	id=?
 	};
     push @$bind_values, $event->{id};
-
     db::put( $dbh, $update_sql, $bind_values );
     return $event;
 }
@@ -172,18 +169,16 @@ sub save_event_time($$) {
 sub set_playout_status ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{start};
-    return undef unless defined $entry->{playout};
+    for ('project_id', 'studio_id', 'start', 'playout') {
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
-
     # check if event is assigned to project and studio
     my $sql = qq{
 		select  se.event_id event_id
 		from calcms_series_events se, calcms_events e
-        where 
+        where
             se.event_id=e.id
         and e.start=?
 		and se.project_id=?
@@ -202,6 +197,8 @@ sub set_playout_status ($$) {
 	};
     $bind_values = [ $entry->{playout}, $event_id, $entry->{start} ];
     my $result = db::put( $dbh, $sql, $bind_values );
+    EventError->throw(error => "Could not create event") unless defined $result;
+
     return $result;
 }
 
@@ -209,15 +206,13 @@ sub set_playout_status ($$) {
 sub is_event_assigned($$) {
     my ($config, $entry) = @_;
 
-    return 0 unless defined $entry->{project_id};
-    return 0 unless defined $entry->{studio_id};
-    return 0 unless defined $entry->{series_id};
-    return 0 unless defined $entry->{event_id};
+    for ('project_id', 'studio_id', 'series_id', 'event_id') {
+        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
-
     my $sql = q{
-        select * from calcms_series_events 
+        select * from calcms_series_events
         where project_id=? and studio_id=? and series_id=? and event_id=?
     };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id} ];
@@ -230,17 +225,15 @@ sub is_event_assigned($$) {
 sub delete_event ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{series_id};
-    return undef unless defined $entry->{event_id};
-    return undef unless defined $entry->{user};
+    for ('project_id', 'studio_id', 'series_id', 'event_id', 'user') {
+        ParamError->throw(error=>"missing $_") unless defined $entry->{$_}
+    };
 
     #is event assigned to project, studio and series?
     unless ( is_event_assigned( $config, $entry ) == 1 ) {
-        print STDERR
-"cannot delete event with project_id=$entry->{project_id}, studio_id=$entry->{studio_id}, series_id=$entry->{series_id}, event_id=$entry->{event_id}";
-        return 0;
+        AssignError->throw(error=>
+"cannot delete event with project_id=$entry->{project_id}, studio_id=$entry->{studio_id}, series_id=$entry->{series_id}, event_id=$entry->{event_id}"
+        );
     }
 
     event_history::insert_by_event_id( $config, $entry );
@@ -251,13 +244,12 @@ sub delete_event ($$) {
     # delete the event
     my $dbh = db::connect($config);
     my $sql = q{
-        delete from calcms_events 
+        delete from calcms_events
         where id=?
     };
     my $bind_values = [ $entry->{event_id} ];
-    db::put( $dbh, $sql, $bind_values );
-
-    return 1;
+    my $result = db::put( $dbh, $sql, $bind_values );
+    EventError->throw(error => "cannot delete event") unless defined $result;
 }
 
 #check permissions
@@ -268,30 +260,25 @@ sub delete_event ($$) {
 sub check_permission($$) {
     my ($request, $options) = @_;
 
-    return "missing permission at check" unless defined $options->{permission};
-    return "missing check_for at check"  unless defined $options->{check_for};
-    return "missing user at check"       unless defined $request->{user};
-    return "missing project_id at check" unless defined $options->{project_id};
-    return "missing studio_id at check"  unless defined $options->{studio_id};
-    return "missing series_id at check"  unless defined $options->{series_id};
+    ParamError->throw(error => "missing permission at check") unless defined $options->{permission};
+    ParamError->throw(error => "missing check_for at check")  unless defined $options->{check_for};
+    ParamError->throw(error => "missing user at check")       unless defined $request->{user};
+    ParamError->throw(error => "missing project_id at check") unless defined $options->{project_id};
+    ParamError->throw(error => "missing studio_id at check")  unless defined $options->{studio_id};
+    ParamError->throw(error => "missing series_id at check")  unless defined $options->{series_id};
 
     my $permissions = $request->{permissions};
     my $config      = $request->{config};
 
     my $studio_check = studios::check( $config, $options );
-    return $studio_check if ( $studio_check ne '1' );
-    print STDERR "check studio ok\n";
-
     my $project_check = project::check( $config, $options );
-    return $project_check if ( $project_check ne '1' );
-    print STDERR "check project ok\n";
 
     #check if permissions are set (like create_event)
     my $found = 0;
     for my $permission ( split /\,/, $options->{permission} ) {
         $found = 1 if ( defined $permissions->{$permission} ) && ( $permissions->{$permission} ) eq '1';
     }
-    return 'missing permission to ' . $options->{permission} if $found == 0;
+    PermissionError->throw(error => 'missing permission to ' . $options->{permission}) if $found == 0;
     delete $options->{permission};
 
     #convert check list to hash
@@ -299,7 +286,7 @@ sub check_permission($$) {
     delete $options->{check_for};
 
     # is project assigned to studio
-    return "studio is not assigned to project" unless project::is_studio_assigned( $config, $options ) == 1;
+    AssignError->throw(error => "studio is not assigned to project") unless project::is_studio_assigned( $config, $options ) == 1;
 
     #get studio names
     my $studios = studios::get(
@@ -309,8 +296,8 @@ sub check_permission($$) {
             studio_id  => $options->{studio_id}
         }
     );
-    return "unknown studio" unless defined $studios;
-    return "unknown studio" unless scalar @$studios == 1;
+    ExistError->throw(error =>  "unknown studio") unless defined $studios;
+    ExistError->throw(error =>  "unknown studio") unless scalar @$studios == 1;
     my $studio = $studios->[0];
     my $studio_name = $studio->{name} || '';
 
@@ -331,36 +318,37 @@ sub check_permission($$) {
 
     #check all items from checklist
     if ( ( defined $check->{user} ) && ( uac::is_user_assigned_to_studio( $request, $options ) == 0 ) ) {
-        return "User '$request->{user}' is not assigned to studio $studio_name ($options->{studio_id})";
+        AssignError->throw(error =>
+            "User '$request->{user}' is not assigned to studio $studio_name ($options->{studio_id})");
     }
 
     if ( ( defined $check->{studio} ) && ( project::is_series_assigned( $config, $options ) == 0 ) ) {
-        return
-"Series '$series_name' ($options->{series_id}) is not assigned to studio '$studio_name' ($options->{studio_id})";
+        AssignError->throw(error =>
+            "Series '$series_name' ($options->{series_id}) is not assigned to studio '$studio_name' ($options->{studio_id})");
     }
 
     # check series and can user update events
     if ( ( defined $check->{series} ) && ( series::can_user_update_events( $request, $options ) == 0 ) ) {
-        return "unknown series" unless defined $series;
-        return "User $request->{user} cannot update events for series '$series_name' ($options->{series_id})";
+        PermissionError->throw(error => "unknown series") unless defined $series;
+        PermissionError->throw(error => "User $request->{user} cannot update events for series '$series_name' ($options->{series_id})");
     }
 
     # check series and can user create events
     if ( ( defined $check->{create_events} ) && ( series::can_user_create_events( $request, $options ) == 0 ) ) {
-        return "unknown series" unless defined $series;
-        return "User $request->{user} cannot create events for series '$series_name' ($options->{series_id})";
+        PermissionError->throw(error => "unknown series") unless defined $series;
+        PermissionError->throw(error => "User $request->{user} cannot create events for series '$series_name' ($options->{series_id})");
     }
 
     if (   ( $draft == 0 )
         && ( defined $check->{studio_timeslots} )
-        && ( studio_timeslot_dates::can_studio_edit_events( $config, $options ) == 0 ) )
-    {
-        return "requested time is not assigned to studio '$studio_name' ($options->{studio_id})";
+        && ( studio_timeslot_dates::can_studio_edit_events( $config, $options ) == 0 )
+    ) {
+        PermissionError->throw(error => "requested time is not assigned to studio '$studio_name' ($options->{studio_id})");
     }
 
     #check if event is assigned to user,project,studio,series,location
     if ( defined $check->{events} ) {
-        return "missing event_id" unless defined $options->{event_id};
+        PermissionError->throw(error => "missing event_id") unless defined $options->{event_id};
         my $result = series::is_event_assigned_to_user( $request, $options );
         return $result if $result ne '1';
     }
@@ -380,7 +368,7 @@ sub check_permission($$) {
             ) == 1
           )
         {
-            return "show is over for more than 2 weeks"
+            PermissionError->throw(error => "show is over for more than 2 weeks")
               unless ( ( defined $permissions->{update_event_after_week} )
                 && ( $permissions->{update_event_after_week} eq '1' ) );
         }
@@ -388,16 +376,15 @@ sub check_permission($$) {
 
     #check if schedule event exists for given date
     if ( ( $draft == 0 ) && ( defined $check->{schedule} ) ) {
-        return "unknown series" unless defined $series;
-        return "missing start_at at check_permission" unless defined $options->{start_date};
+        PermissionError->throw(error =>  "unknown series") unless defined $series;
+        ParamError->throw(error =>  "missing start_at at check_permission") unless defined $options->{start_date};
 
         #TODO: check "is_event_scheduled" if start_at could be moved to start_date
         $options->{start_at} = $options->{start_date};
-        return "No event scheduled for series '$series_name' ($options->{series_id})"
-          if ( series_dates::is_event_scheduled( $request, $options ) == 0 );
+        PermissionError->throw(error =>  "No event scheduled for series '$series_name' ($options->{series_id})")
+          if series_dates::is_event_scheduled( $request, $options ) == 0;
     }
 
-    return '1';
 }
 
 #not handled, yet:
@@ -407,22 +394,21 @@ sub check_permission($$) {
 sub insert_event ($$) {
     my ($config, $options) = @_;
 
+    for ('project_id', 'studio', 'serie', 'event', 'user') {
+        ParamError->throw(error => "missing $_") unless defined $options->{$_}
+    };
+
     my $project_id = $options->{project_id};
     my $studio     = $options->{studio};
     my $serie      = $options->{serie};
     my $params     = $options->{event};
     my $user       = $options->{user};
 
-    return 0 unless defined $studio;
-    return 0 unless defined $serie;
-    return 0 unless defined $params;
-    return 0 unless defined $user;
-    return 0 unless defined $studio->{location};
+    ParamError->throw(error => "missing studio location") unless defined $studio->{location};
 
     my $projects = project::get( $config, { project_id => $project_id } );
     if ( scalar @$projects == 0 ) {
-        print STDERR "project not found at insert event\n";
-        return 0;
+        ProjectError->throw(error=>"project not found at insert event\n");
     }
     my $projectName = $projects->[0]->{name};
     my $event       = {
@@ -452,7 +438,7 @@ sub insert_event ($$) {
     {
         $event->{$attr} = $params->{$attr} if defined $params->{$attr};
     }
-    
+
     if (($event->{'content_format'}//'') eq 'markdown'){
         $event->{'html_content'} = markup::markdown_to_html( $event->{'content'} ) if defined $event->{'content'};
         $event->{'html_topic'}   = markup::markdown_to_html( $event->{'topic'} )   if defined $event->{'topic'};
@@ -477,13 +463,15 @@ sub insert_event ($$) {
 
     my $dbh = db::connect($config);
     my $event_id = db::insert( $dbh, 'calcms_events', $event );
+    EventError->throw(error => "Could not create event") unless $event_id;
 
     #add to history
     $event->{project_id} = $project_id;
     $event->{studio_id}  = $studio->{id};
     $event->{series_id}  = $serie->{series_id};
     $event->{event_id}   = $event_id;
-    event_history::insert( $config, $event );
+    event_history::insert( $config, $event ) or EventError->throw(error=>"Could not create event history");
+
     return $event_id;
 }
 
@@ -505,10 +493,9 @@ sub add_event_dates($$$) {
 sub update_series_images ($$) {
     my ($config, $options) = @_;
 
-    return "missing project_id"   unless defined $options->{project_id};
-    return "missing studio_id"    unless defined $options->{studio_id};
-    return "missing series_id"    unless defined $options->{series_id};
-    return "missing series_image" unless defined $options->{series_image};
+    for ('project_id', 'studio', 'series_id', 'series_image') {
+        ParamError->throw(error => "missing $_") unless defined $options->{$_}
+    };
 
     my $events = series::get_events(
         $config,

@@ -53,7 +53,7 @@
             <div>
                 <table class="event_comments"><tbody><tr>
                     <td class="event_show_comments" >
-                        <a href="#event_<TMPL_VAR id>_comments" onclick="showEventComments('<TMPL_VAR id escape=js>');return false;" title="zeige Kommentare">    
+                        <a href="#event_<TMPL_VAR id>_comments" onclick="showEventComments('<TMPL_VAR id escape=js>');return false;" title="zeige Kommentare">
                             <TMPL_VAR comment_count> <TMPL_VAR .loc.label_comments>
                         </a>
                     </td>
@@ -71,7 +71,7 @@
             <div class="event" id="event_<TMPL_VAR id>_comments" style="line-height:100%;display:none;"> </div>
         </TMPL_LOOP>
     </TMPL_IF>
-</div>    
+</div>
 </body>
 <TMPL_ELSE>
 missing permission to read comment

@@ -20,7 +20,7 @@ sub handler {
 
     my $path = $ENV{LISTENER_DIR} . File::Basename::basename( $r->uri() );
     my $file = readlink $path;
-    
+
     # granted access by temporary symlinks only
     return $FORBIDDEN unless ($file);
 
@@ -45,7 +45,7 @@ __END__
 # The filename links to a file starting with "yyyy-mm-dd hh_mm" in file name.
 #
 # Access to links starting with "shared-" are allowed up to 7 days after creation.
-# 
+#
 # <Directory ${archive_dir}/${domain}>
 #        PerlSetEnv PERL5LIB ${perl_lib}/calcms
 #        PerlSetEnv LISTENER_DIR ${archive_dir}/${domain}/

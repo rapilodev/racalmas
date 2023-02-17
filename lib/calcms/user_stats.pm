@@ -103,7 +103,7 @@ sub get_stats($$) {
     $conditions = " where " . join( " and ", @conditions ) if ( @conditions > 0 );
 
     my $query = qq{
-		select	user, project_id, studio_id, 
+		select	user, project_id, studio_id,
 		        max(modified_at)   modified_at,
 		        sum(create_events) create_events,
 		        sum(update_events) update_events,
@@ -134,7 +134,7 @@ sub insert($$) {
     my ($config, $stats) = @_;
 
     for ('user', 'project_id', 'studio_id', 'series_id', ) {
-        ParamError->throw("missing $_") unless defined $stats->{$_}
+        ParamError->throw(error => "missing $_") unless defined $stats->{$_}
     };
 
     #TODO:filter for existing attributes
@@ -155,7 +155,7 @@ sub update ($$) {
     my ($config, $stats) = @_;
 
     for ('user', 'project_id', 'studio_id', 'series_id', ) {
-        ParamError->throw("missing $_") unless defined $stats->{$_}
+        ParamError->throw(error => "missing $_") unless defined $stats->{$_}
     };
 
     my $columns = get_columns($config);
@@ -174,7 +174,7 @@ sub update ($$) {
     push @bind_values, $entry->{series_id};
 
     my $query = qq{
-		update calcms_user_stats 
+		update calcms_user_stats
 		set $values
 		where user=? and project_id=? and studio_id=? and series_id=?
 	};
@@ -188,7 +188,7 @@ sub increase ($$$) {
 
     return undef unless defined $usecase;
     for ('user', 'project_id', 'studio_id', 'series_id', ) {
-        ParamError->throw("missing $_") unless defined $options->{$_}
+        ParamError->throw(error => "missing $_") unless defined $options->{$_}
     };
 
     my $columns = get_columns($config);
@@ -221,18 +221,18 @@ sub get_active_users{
     my $dbh = db::connect($config);
 
     my $query=qq{
-        select u.name login, u.full_name, 
-            s.last_login, s.login_count, 
-            u.disabled, u.created_at, u.created_by 
+        select u.name login, u.full_name,
+            s.last_login, s.login_count,
+            u.disabled, u.created_at, u.created_by
         from calcms_users u left join (
             SELECT user , max(start) last_login, count(user) login_count
             FROM calcms_user_sessions
             group by user
-        ) s on s.user=u.name 
+        ) s on s.user=u.name
         order by u.disabled, s.last_login desc, u.created_at desc
     };
     my $results = db::get( $dbh, $query, [] );
-    return $results;    
+    return $results;
 }
 
 #do not delete last line!

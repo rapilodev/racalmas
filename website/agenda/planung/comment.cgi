@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w 
+#! /usr/bin/perl -w
 
 use strict;
 use warnings;
@@ -11,6 +11,10 @@ use MIME::Base64();
 use Encode::Locale();
 use Scalar::Util qw( blessed );
 use Try::Tiny;
+use Exception::Class (
+    'ParamError',
+    'PermissionError'
+);
 
 use params();
 use config();
@@ -31,69 +35,41 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
-} catch {
-    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        user       => $user,
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id}
+    #show header
+    if ( ( params::isJson() ) || ( defined $params->{action} ) ) {
+        print "Content-Type:text/html; charset=utf-8;\n\n";
+    } else {
+        my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+        $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+        print template::process( $config, template::check( $config, 'default.html' ), $headerParams );
+        print template::process( $config, template::check( $config, 'comment-header.html' ), $headerParams )
+            unless (params::isJson);
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
+    uac::check($config, $params, $user_presets);
 
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-
-#set user at params->presets->user
-$request = uac::prepare_request( $request, $user_presets );
-
-$params = $request->{params}->{checked};
-
-#show header
-if ( ( params::isJson() ) || ( defined $params->{action} ) ) {
-    print "Content-Type:text/html; charset=utf-8;\n\n";
-} else {
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
-    template::process( $config, 'print', template::check( $config, 'comment-header.html' ), $headerParams ) 
-        unless (params::isJson);
+    if ( defined $params->{action} ) {
+        if ( $params->{action} eq 'get_json' ) {
+            getJson( $config, $request );
+            return;
+        }
+        if ( $params->{action} eq 'setLock' ) {
+            setLock( $config, $request );
+            return;
+        }
+        if ( $params->{action} eq 'setRead' ) {
+            setRead( $config, $request );
+            return;
+        }
+    }
+    $config->{access}->{write} = 0;
+    showComments( $config, $request );
 }
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-if ( defined $params->{action} ) {
-    if ( $params->{action} eq 'get_json' ) {
-        getJson( $config, $request );
-        return;
-    }
-    if ( $params->{action} eq 'setLock' ) {
-        setLock( $config, $request );
-        return;
-    }
-    if ( $params->{action} eq 'setRead' ) {
-        setRead( $config, $request );
-        return;
-    }
-}
-$config->{access}->{write} = 0;
-showComments( $config, $request );
 
 sub showComments {
     my ($config, $request) = @_;
@@ -101,14 +77,12 @@ sub showComments {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{read_comment} == 1 ) {
-        uac::permissions_denied('read_comment');
-        return;
+        PermissionError->throw(error=>'Missing permission to read_comment');
     }
 
     for my $attr ( 'project_id', 'studio_id' ) {
         unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to show comment" );
-            return;
+            ParamError->throw(error=> "missing $attr to show comment" );
         }
     }
 
@@ -162,7 +136,7 @@ sub showComments {
       localization::get( $config, { user => $params->{presets}->{user}, file => 'comment' } );
 
     #fill and output template
-    template::process( $config, 'print', $params->{template}, $template_parameters );
+    print template::process( $config, $params->{template}, $template_parameters );
 }
 
 sub modify_comments {
@@ -185,8 +159,7 @@ sub setLock {
     my $permissions = $request->{permissions};
 
     unless ( $permissions->{update_comment_status_lock} == 1 ) {
-        uac::permissions_denied('update_comment_status_lock');
-        return;
+        PermissionError->throw(error=>'Missing permission to update_comment_status_lock');
     }
 
     my $comment = $params->{comment};
@@ -213,8 +186,7 @@ sub setRead {
     my $permissions = $request->{permissions};
 
     unless ( $permissions->{update_comment_status_read} == 1 ) {
-        uac::permissions_denied('update_comment_status_read');
-        return;
+        PermissionError->throw(error=>'Missing permission to update_comment_status_read');
     }
 
     $config->{access}->{write} = 1;
@@ -236,12 +208,11 @@ sub setRead {
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
+    my ($config, $params) = @_;
 
     my $checked = {};
 
-    $checked->{action} = entry::element_of($params->{action}, 
+    $checked->{action} = entry::element_of($params->{action},
         [ 'setLock', 'setRead', 'showComment', 'update', 'delete']);
 
     #template
@@ -256,7 +227,7 @@ sub check_params {
 
     entry::set_numbers( $checked, $params, [
         'project_id', 'studio_id', 'default_studio_id']);
-        
+
     if ( defined $checked->{studio_id} ) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {

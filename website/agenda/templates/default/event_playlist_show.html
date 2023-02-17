@@ -22,7 +22,7 @@ Access-Control-Allow-Origin: *
 			<TMPL_VAR weekday_short_name> <TMPL_VAR start_time_name>
 			<span class="title" title="<TMPL_VAR full_title escape=url>, <TMPL_VAR excerpt escape=url>">
 				<a	target="top"
-		                        href="<TMPL_VAR base_url><TMPL_VAR .controllers.event>/<TMPL_VAR event_id>/<TMPL_VAR event_uri escape=url>" 
+		                        href="<TMPL_VAR base_url><TMPL_VAR .controllers.event>/<TMPL_VAR event_id>/<TMPL_VAR event_uri escape=url>"
 				>
 					<TMPL_IF series_name><TMPL_VAR series_name><TMPL_ELSE><TMPL_VAR title></TMPL_IF>
 				</a>

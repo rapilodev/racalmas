@@ -195,7 +195,7 @@ var calcms_settings = new Array();
         $('div.event-base').first().prepend('<a class="load-prev">davor</a>');
         $('a.load-prev').on( "click", function(){
             var url = "/programm/sendung/"+id+'.html';
-            window.location.href=url;
+            window.location=url;
         })
     }
 
@@ -224,7 +224,7 @@ var calcms_settings = new Array();
         $('div.event-base').last().append('<a class="load-next">danach</a>');
         $('a.load-next').on( "click", function(){
             var url = "/programm/sendung/"+id+'.html';
-            window.location.href=url;
+            window.location = url;
         });
     }
 

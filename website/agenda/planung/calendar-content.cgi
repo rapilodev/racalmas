@@ -13,7 +13,11 @@ use DateTime();
 
 #use Scalar::Util qw( blessed );
 use Try::Tiny qw(try catch);
-use Exception::Class ('ApplError');
+use Exception::Class (
+    'ApplError',
+    'ParamError',
+    'PermissionError'
+);
 
 use utf8();
 use params();
@@ -25,7 +29,6 @@ use calendar();
 use calendar_table();
 use auth();
 use uac();
-use roles();
 use project();
 use studios();
 use events();
@@ -42,118 +45,82 @@ use audio();
 use user_day_start();
 
 binmode STDOUT, ":utf8";
-$| = 1;
-
-sub error_handler {
-    if (ref $_[0]) {
-        print STDERR "DIE 200 @_\n";
-        print "Content-type:application/json;charset:utf8;\n\n";
-
-        #printf encode_json {"error" => $_[0]->error // $_[0]->message };
-        return;
-    } else {
-        print STDERR "DIE @_\n";
-        die @_;
-    }
-         #die @_;
-}
 
 my $r = shift;
-(my $cgi, my $params, my $error) = params::get($r);
-
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    return auth::get_user($config, $params, $cgi);
-} catch {
-    auth::show_login_form('', $_->message) if ref $_ and $_->isa('AuthError') or $_->isa('SessionError');
-             #$SIG{__DIE__} = &error_handler;
-    return undef, undef;
-};
-
-return unless $user;
-$config->{user} = $user;
-my $user_presets;
-try {
-    $user_presets = uac::get_user_presets(
+print try {
+    (my $cgi, my $params) = params::get($r);
+    my $config = config::get('../config/config.cgi');
+    my $session = try {
+        return auth::get_session($config, $params, $cgi);
+    } catch {
+        print auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
+        return undef;
+    };
+    return unless $session;
+    my $user_presets = uac::get_user_presets(
         $config,
         {
-            user       => $user,
+            user       => $session->{user},
             project_id => $params->{project_id},
             studio_id  => $params->{studio_id}
         }
     );
     $params->{default_studio_id} = $user_presets->{studio_id};
-    $params            = uac::setDefaultStudio($params, $user_presets);
-    $params->{expires} = $expires;
-};
+    $params = uac::setDefaultStudio($params, $user_presets);
+    $params->{expires} = $session->{expires};
 
-#add "all" studio to select box
-unshift @{ $user_presets->{studios} },
-    {
-    id   => -1,
-    name => '-all-'
+    #add "all" studio to select box
+    unshift @{ $user_presets->{studios} },
+        {
+        id   => -1,
+        name => '-all-'
+        };
+
+    # select studios, TODO: do in JS
+    if ($params->{studio_id} eq '-1') {
+        for my $studio (@{ $user_presets->{studios} }) {
+            delete $studio->{selected};
+            $studio->{selected} = 1 if $params->{studio_id} eq $studio->{id};
+        }
+    }
+    my $request = {
+        url    => $ENV{QUERY_STRING} || '',
+        params => {
+            original => $params,
+            checked  => check_params($config, $params),
+        },
     };
 
-# select studios, TODO: do in JS
-if ($params->{studio_id} eq '-1') {
-    for my $studio (@{ $user_presets->{studios} }) {
-        delete $studio->{selected};
-        $studio->{selected} = 1 if $params->{studio_id} eq $studio->{id};
-    }
-}
-my $request = {
-    url    => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params($config, $params),
-    },
+    $request = uac::prepare_request($request, $user_presets);
+    $params = $request->{params}->{checked};
+    ApplError->throw(error => $user_presets->{error}) if defined $user_presets->{error};
+
+    my $p = $request->{params}->{checked};
+    $config->{access}->{write} = 0;
+    ApplError->throw(error => "Please select a project") unless defined $p->{project_id};
+
+    project::check($config, { project_id => $p->{project_id} }) if $p->{project_id} ne '-1';
+    ApplError->throw(error => "Please select a studio") unless defined $p->{studio_id};
+    studios::check($config, {studio_id => $p->{studio_id}}) if $p->{studio_id} ne '-1';
+
+    my $start_of_day = $params->{day_start};
+    my $end_of_day   = $start_of_day;
+    $end_of_day += 24 if ($end_of_day <= $start_of_day);
+    our $hour_height = 60;
+    our $yzoom       = 1.5;
+
+    return showCalendar(
+        $config, $request,
+        {
+            hour_height  => $hour_height,
+            yzoom        => $yzoom,
+            start_of_day => $start_of_day,
+            end_of_day   => $end_of_day,
+        }
+    );
+} catch {
+    return uac::error_handler($r,@_);
 };
-
-$request = uac::prepare_request($request, $user_presets);
-$params = $request->{params}->{checked};
-print "Content-type:text/html; charset=UTF-8;\n\n";
-
-if (defined $user_presets->{error}) {
-    print "<br><br>";
-    ApplError->throw(error => $user_presets->{error});
-}
-
-my $p = $request->{params}->{checked};
-$config->{access}->{write} = 0;
-unless (defined $p->{project_id}) {
-    ApplError->throw(error => "Please select a project");
-}
-
-if ($p->{project_id} ne '-1') {
-    if (project::check($config, { project_id => $p->{project_id} }) ne '1') {
-        ApplError->throw(error => "invalid project");
-    }
-}
-
-unless (defined $p->{studio_id}) {
-    ApplError->throw(error => "Please select a studio");
-}
-if ($p->{studio_id} ne '-1') {
-    if (studios::check($config, { studio_id => $p->{studio_id} }) ne '1') {
-        ApplError->throw(error => "invalid studio");
-    }
-}
-
-my $start_of_day = $params->{day_start};
-my $end_of_day   = $start_of_day;
-$end_of_day += 24 if ($end_of_day <= $start_of_day);
-our $hour_height = 60;
-our $yzoom       = 1.5;
-
-showCalendar(
-    $config, $request,
-    {
-        hour_height  => $hour_height,
-        yzoom        => $yzoom,
-        start_of_day => $start_of_day,
-        end_of_day   => $end_of_day,
-    }
-);
 
 sub showCalendar {
     my $config      = shift;
@@ -167,10 +134,7 @@ sub showCalendar {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions} || {};
-    unless ($permissions->{read_series} == 1) {
-        uac::permissions_denied('read_series');
-        return;
-    }
+    PermissionError->throw(error=>'Missing permission to read_series') unless $permissions->{read_series} == 1;
 
     #get range from user settings
     my $user_settings =
@@ -490,8 +454,9 @@ sub showCalendar {
         }
     }
 
-    print qq{
-        <script> 
+    my $out = "Content-type:text/html; charset=utf-8;\n\n";
+    $out .= qq{
+        <script>
             var current_date="$calendar->{month} $calendar->{year}";
             var previous_date="$calendar->{previous_date}";
             var next_date="$calendar->{next_date}";
@@ -554,22 +519,23 @@ sub showCalendar {
     }
 
     if ($params->{list} == 1) {
-        calendar_table::showEventList($config, $permissions, $params, $events_by_day);
+        return $out . calendar_table::showEventList($config, $permissions, $params, $events_by_day);
     } else {
         calendar_table::calcCalendarTable($config, $permissions, $params, $calendar,
             $events_by_day, $cal_options);
-        calendar_table::printTableHeader($config, $permissions, $params, $cal_options);
-        calendar_table::printTableBody($config, $permissions, $params, $cal_options);
+        $out .= calendar_table::getTableHeader($config, $permissions, $params, $cal_options);
+        $out .= calendar_table::getTableBody($config, $permissions, $params, $cal_options);
         if ($params->{part} == 0) {
             #TODO: load dynamically
-            calendar_table::printSeries($config, $permissions, $params, $cal_options);
-            print qq{
+            $out .= calendar_table::getSeries($config, $permissions, $params, $cal_options);
+            $out.= qq{
                     </main>
             };
         }
 
         # time has to be set when events come in
-        calendar_table::printJavascript($config, $permissions, $params, $cal_options);
+        $out .= calendar_table::getJavascript($config, $permissions, $params, $cal_options);
+        return $out;
     }
 }
 

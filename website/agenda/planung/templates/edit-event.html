@@ -3,9 +3,9 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title><TMPL_VAR .doc.title></title>
-    <link href="css/event.css" type="text/css" rel="stylesheet"/> 
-    <link type="text/css" href="css/comment.css" rel="stylesheet"/>    
-    <link rel="stylesheet" href="css/flatpickr.min.css" type="text/css" />    
+    <link href="css/event.css" type="text/css" rel="stylesheet"/>
+    <link type="text/css" href="css/comment.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/flatpickr.min.css" type="text/css" />
 
     <!-- for edit series-->
     <script src="js/flatpickr.js" type="text/javascript"></script>
@@ -57,51 +57,39 @@
 <div class="warn head"><TMPL_VAR loc.label_edit_lock></div>
 </TMPL_IF>
 
-<!-- edit -->
-<div class="editor">
-
 <!-- buttons -->
 <div class="buttons">
     <TMPL_IF series_id>
         <TMPL_IF .allow.read_series>
-        <button 
-            onclick="view_series_details('<TMPL_VAR series_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR .project_id escape=js>')" 
-            style="float:left"
-            ><TMPL_VAR .loc.button_edit_series>
-        </button>
+        <button
+            onclick="view_series_details('<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR series_id escape=js>')"
+        ><TMPL_VAR .loc.button_edit_series></button>
         </TMPL_IF>
     </TMPL_IF>
 
     <TMPL_IF .allow.read_event>
-            <button 
-                onclick="window.location='calendar.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>&list=1'"
-                style="float:left"
+            <button
+                onclick="listEvents('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>')"
             ><TMPL_VAR .loc.button_event_list></button>
     </TMPL_IF>
-        
+
     <TMPL_IF new_event>
-    	<TMPL_IF .allow.delete_schedule>
-            <button
-                class="text"
-                onclick="load('series.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&series_id=<TMPL_VAR series_id>&start=<TMPL_VAR start escape=url>&exclude=1&show_hint_to_add_schedule=1#tabs-schedule')"
+        <TMPL_IF .allow.delete_schedule>
+            <button class="text"
+                onclick="deleteFromSchedule('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>','<TMPL_VAR start escape=url>');return false;"
             ><TMPL_VAR .loc.button_delete_from_schedule></button>
         </TMPL_IF>
     <TMPL_ELSE>
         <TMPL_IF .allow.assign_series_events>
-            <button 
-                class="text"
-                onclick="selectChangeSeries('changeSeriesId');return false;"
+            <button class="text"
+                onclick="selectChangeSeries('changeSeriesId');"
             ><TMPL_VAR loc.button_assign_series></button>
         </TMPL_IF>
     </TMPL_IF>
 
     <TMPL_UNLESS new_event>
     <TMPL_IF .allow.update_event>
-        <!--
-        <button onclick="$('#copy_from_source').toggle();$('#change_series').hide();return false;"><TMPL_VAR .loc.button_copy_existing_event></button>
-        -->
-        <button 
-            class="text"
+        <button class="text"
             onclick="selectRerun('rerunEventId', <TMPL_VAR start_date>)"
         ><TMPL_VAR .loc.button_rerun></button>
     </TMPL_IF>
@@ -110,35 +98,21 @@
     <TMPL_UNLESS new_event>
         <TMPL_UNLESS is_over>
         <TMPL_IF .allow.upload_audio_recordings>
-            <form style="float:right" action="audio-recordings.cgi">
-                <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-                <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
-                <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">    
-                <input type="hidden" name="event_id"   value="<TMPL_VAR .event_id>">
-                <button 
-                    class="text"
-                    type="submit"><TMPL_VAR .loc.button_upload></button>
-            </form>
+            <button class="text"
+                onclick="uploadRecording('<TMPL_VAR .project_id>',<TMPL_VAR .studio_id>,'<TMPL_VAR .series_id>','<TMPL_VAR .event_id>');"
+            ><TMPL_VAR .loc.button_upload></button>
         </TMPL_IF>
         </TMPL_UNLESS>
 
         <TMPL_IF is_over>
         <TMPL_IF .allow.create_download>
-            <form style="float:right">
-                <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-                <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
-                <input type="hidden" name="event_id"   value="<TMPL_VAR .event_id>">
-                <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">    
-                <input type="hidden" name="action"     value="download">    
-                <button 
-                    class="text"
-                    type="submit"><TMPL_VAR .loc.button_download></button>
-            </form>
+            <button class="text"
+                onclick="downloadRecording('<TMPL_VAR .project_id>',<TMPL_VAR .studio_id>,'<TMPL_VAR .series_id>','<TMPL_VAR .event_id>');"
+            ><TMPL_VAR .loc.button_download></button>
         </TMPL_IF>
         </TMPL_IF>
     </TMPL_UNLESS>
 
-    <TMPL_UNLESS new_event>
     <TMPL_UNLESS show_new_event>
         <TMPL_IF .allow.read_event>
             <button target="_blank" class="text"
@@ -152,9 +126,10 @@
             ><TMPL_VAR .loc.label_comments></button>
         </TMPL_IF>
     </TMPL_UNLESS>
-    </TMPL_UNLESS>
-
 </div>
+
+<!-- edit -->
+<div class="editor">
 
 <div>
     <!-- import rerun from old event of series or any event of any project -->
@@ -162,7 +137,7 @@
         <div id="selectRerun" style="display:none;" class="select panel">
 
             <div class="panel-header">
-                
+
                 <b><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time_name></b>,
                 <TMPL_VAR .loc.label_overwrite_event> <TMPL_VAR .loc.label_rerun>
             </div>
@@ -171,7 +146,7 @@
                 <div onclick="selectOldEventFromSeries('rerunEventId','<TMPL_VAR start_date escape=js>'); updateCheckBox($(this).find('input:radio'),true);"
                     class="option"
                 >
-                    <input type="radio" name="group" class="default"> 
+                    <input type="radio" name="group" class="default">
                     <TMPL_VAR .loc.label_rerun_select_old>
                 </div>
 
@@ -181,7 +156,7 @@
                     <input type="radio" name="group">
                     <TMPL_VAR .loc.label_rerun_select_other>
                 </div>
-                                
+
                 <input id="rerunEventId" value="-1" style="display:none" onchange="">
 
                 <div id="import_rerun" class="active text" style="display:none;"></div>
@@ -215,9 +190,9 @@
 >
     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
     <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
-    <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">    
+    <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
     <TMPL_UNLESS new_event>
-    <input type="hidden" name="event_id"   value="<TMPL_VAR .event_id>">    
+    <input type="hidden" name="event_id"   value="<TMPL_VAR .event_id>">
     </TMPL_UNLESS>
 
     <!-- header buttons -->
@@ -225,46 +200,46 @@
     <div class="buttons" style="text-align:center;clear:both">
         <TMPL_IF show_new_event_from_schedule>
             <TMPL_IF .allow.create_event_from_schedule>
-                <button type="submit" name="action" value="create_event_from_schedule" class="primary"
-                    onclick="leavePage();return true"
+                <button class="primary"
+                    onclick="createEvent2($(this), 'create_event_from_schedule');leavePage();return false"
                 ><TMPL_VAR .loc.button_create></button>
              </TMPL_IF>
         <TMPL_ELSIF show_new_event>
             <TMPL_IF .allow.create_event>
-                <button type="submit" name="action" value="create_event" class="primary"
-                    onclick="leavePage();return true"
+                <button class="primary"
+                    onclick="createEvent2($(this), 'create_event');leavePage();return false"
                 ><TMPL_VAR .loc.button_create></button>
              </TMPL_IF>
         <TMPL_ELSE>
             <TMPL_IF .allow.update_event>
-                <button type="submit" name="action" value="save" class="primary"
-                    onclick="leavePage();return true"
+                <button class="primary"
+                    onclick="saveEvent($(this), 'save');return false"
                 ><TMPL_VAR .loc.button_save></button>
             </TMPL_IF>
         </TMPL_IF>
         <TMPL_IF .allow.delete_event>
             <TMPL_UNLESS new_event>
-                <button type="submit" name="action" value="delete"  class="text"
-                    onclick="commitForm('event_<TMPL_VAR event_id>','delete','delete event');return false;"
+                <button class="text"
+                    onclick="var elem = $(this); deleteEvent($(this), 'delete'); return false;"
                 ><TMPL_VAR .loc.button_delete></button>
             </TMPL_UNLESS>
         </TMPL_IF>
     </div>
     </TMPL_UNLESS>
+
     <!-- download output -->
     <TMPL_IF download>
         <div type="hidden" class="panel" name="event_id" ><TMPL_VAR download escape=none></div>
     </TMPL_IF>
 
-
     <!-- edit event time -->
     <!-- <TMPL_UNLESS new_event>style="display:none"</TMPL_UNLESS> -->
     <table id="edit_time_<TMPL_VAR event_id>" class="edit_event" >
-        <tr> 
+        <tr>
             <td class="label"><strong>
                 <TMPL_IF has_single_events><TMPL_VAR .loc.single_event><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF>
                 </strong>
-            </td> 
+            </td>
             <td>
                 <TMPL_IF .allow.update_event_field_title>
                     <input name="title" value="<TMPL_VAR title>" placeholder="<TMPL_VAR .loc.label_title>">
@@ -289,18 +264,20 @@
                 </strong>
             </td>
         </tr>
+
+        <TMPL_UNLESS show_new_event>
         <tr>
             <td class="label"></td>
             <td>
                 <TMPL_VAR start> - <TMPL_VAR full_title>
             </td>
         </tr>
-
+        </TMPL_UNLESS>
 
         <TMPL_IF .allow.update_event_time>
         <!-- event time edit -->
-        <tr> 
-            <td class="label"><TMPL_VAR .loc.label_when></td> 
+        <tr>
+            <td class="label"><TMPL_VAR .loc.label_when></td>
             <td>
                 <span class="label"><TMPL_VAR .loc.label_start>:</span>
                 <span id="start_date_weekday"></span>
@@ -322,8 +299,8 @@
             <!-- event time read -->
             <TMPL_IF .allow.read_event>
                 <TMPL_UNLESS new_event></TMPL_UNLESS>
-                <tr> 
-                    <td class="label"><TMPL_VAR .loc.label_when></td> 
+                <tr>
+                    <td class="label"><TMPL_VAR .loc.label_when></td>
                     <td><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time_name> - <TMPL_VAR end_time>
                         <input type="hidden" id="start_date" name="start_date" value="<TMPL_VAR start>" >
                         <TMPL_LOOP durations><TMPL_IF selected><input type="hidden" name="duration" value="<TMPL_VAR value>" ></TMPL_IF></TMPL_LOOP>
@@ -332,8 +309,8 @@
             </TMPL_IF>
         </TMPL_IF>
 
-        <tr> 
-            <td class="label"><TMPL_VAR .loc.label_status></td> 
+        <tr>
+            <td class="label"><TMPL_VAR .loc.label_status></td>
             <td>
                 <TMPL_IF .allow.update_event_status_live>
                     <input type="checkbox" name="live"        <TMPL_IF live>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF> > <TMPL_VAR .loc.label_live>
@@ -392,7 +369,7 @@
 
     <!-- edit event content -->
     <table id="edit_content_<TMPL_VAR event_id>" class="edit_event" >
-        <tr id="excerpt"> 
+        <tr id="excerpt">
             <td class="label"><TMPL_VAR .loc.label_excerpt></td>
             <td>
                 <div id="excerpt_too_long" class="error" style="display:none"><TMPL_VAR .loc.label_excerpt_too_long></div>
@@ -432,7 +409,7 @@
             </td>
         </tr>
 
-        <tr> 
+        <tr>
             <td class="label"><TMPL_VAR .loc.label_description></td>
             <td class="edit_content">
                 <TMPL_IF .allow.update_event_field_description>
@@ -442,12 +419,12 @@
                 </TMPL_IF>
             </td>
         </tr>
-        
+
         <TMPL_IF .allow.read_image>
-        <tr> 
+        <tr>
             <td class="label">
-                <TMPL_VAR .loc.label_image> 
-            </td> 
+                <TMPL_VAR .loc.label_image>
+            </td>
             <td>
                 <TMPL_IF .allow.update_event_field_image>
                     <button onclick="selectImage('<TMPL_VAR series_name escape=js>', '<TMPL_VAR image escape=js>', 'event', '<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR series_id escape=js>','<TMPL_VAR event_id escape=js>'); return false;"
@@ -456,16 +433,16 @@
                         <img id="imagePreview" src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&filename=<TMPL_VAR image>&type=icon">
                     </button>
                     <input id="image_<TMPL_VAR event_id>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.label_image>">
-                    <input type="hidden" name="series_image" value="<TMPL_VAR series_image>" > 
+                    <input type="hidden" name="series_image" value="<TMPL_VAR series_image>" >
                 </TMPL_IF>
             </td>
         </tr>
         </TMPL_IF>
 
-        <tr> 
+        <tr>
             <td class="label">
-                <TMPL_VAR .loc.label_podcast_url> 
-            </td> 
+                <TMPL_VAR .loc.label_podcast_url>
+            </td>
             <td>
                 <TMPL_IF .allow.update_event_field_podcast_url>
                     <input name="podcast_url" value="<TMPL_VAR podcast_url>" class="url" placeholder="<TMPL_VAR .loc.label_podcast_url>">
@@ -475,10 +452,10 @@
             </td>
         </tr>
 
-        <tr> 
+        <tr>
             <td class="label">
-                <TMPL_VAR .loc.label_archive_url> 
-            </td> 
+                <TMPL_VAR .loc.label_archive_url>
+            </td>
             <td>
                 <TMPL_IF .allow.update_event_field_archive_url>
                     <input name="archive_url" value="<TMPL_VAR archive_url>" class="url" placeholder="<TMPL_VAR .loc.label_archive_url>">
@@ -487,9 +464,9 @@
                 </TMPL_IF>
             </td>
         </tr>
-        
-        <tr> 
-            <td class="label"><TMPL_VAR .loc.label_content_format></td>     
+
+        <tr>
+            <td class="label"><TMPL_VAR .loc.label_content_format></td>
             <td>
                 <TMPL_IF .allow.update_event_field_content_format>
                 <select name="content_format" value="<TMPL_VAR content_format>">
@@ -510,20 +487,20 @@
     <div class="buttons" style="text-align:center;clear:both">
         <TMPL_IF show_new_event_from_schedule>
             <TMPL_IF .allow.create_event_from_schedule>
-                <button type="submit" name="action" value="create_event_from_schedule"
-                    onclick="leavePage();return true"
+                <button class="primary"
+                    onclick="createEvent2($(this), 'create_event_from_schedule');leavePage();return false"
                 ><TMPL_VAR .loc.button_create></button>
              </TMPL_IF>
         <TMPL_ELSIF show_new_event>
             <TMPL_IF .allow.create_event>
-                <button type="submit" name="action" value="create_event"
-                    onclick="leavePage();return true"
+                <button class="primary"
+                    onclick="createEvent2($(this), 'create_event');leavePage();return false"
                 ><TMPL_VAR .loc.button_create></button>
              </TMPL_IF>
         <TMPL_ELSE>
             <TMPL_IF .allow.update_event>
-                <button type="submit" class="primary" name="action" value="save"
-                    onclick="leavePage();return true"
+                <button class="primary"
+                    onclick="saveEvent($(this), 'save');return false"
                 ><TMPL_VAR .loc.button_save></button>
             </TMPL_IF>
         </TMPL_IF>
@@ -539,8 +516,8 @@
     <div class="event" id="event_<TMPL_VAR id>_comments" style="line-height:100%;display:none;"> </div>
 </div>
 </TMPL_IF>
-
 </div>
+
 <TMPL_UNLESS new_event>
 <div class="buttons">
     <TMPL_UNLESS show_new_event>

@@ -7,6 +7,7 @@ no warnings 'redefine';
 use Data::Dumper;
 use Exception::Class (
     'ParamError',
+    'AssignError'
 );
 
 use events();
@@ -129,7 +130,7 @@ sub insert ($$) {
     my ($config, $series) = @_;
 
     for ('project_id', 'studio_id') {
-        ParamError->throw("series:insert: missing $_") unless defined $series->{$_};
+        ParamError->throw(error => "series:insert: missing $_") unless defined $series->{$_};
     };
 
     my $project_id = $series->{project_id};
@@ -167,7 +168,7 @@ sub update ($$) {
     my ($config, $series) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        ParamError->throw("series:update: missing $_") unless defined $series->{$_}
+        ParamError->throw(error => "series:update: missing $_") unless defined $series->{$_}
     };
 
     my $columns = series::get_columns($config);
@@ -203,7 +204,7 @@ sub delete($$) {
     my ($config, $series) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        ParamError->throw("series:delete: $_") unless defined $series->{$_}
+        ParamError->throw(error => "series:delete: $_") unless defined $series->{$_}
     };
 
     my $project_id = $series->{project_id};
@@ -211,8 +212,7 @@ sub delete($$) {
     my $series_id  = $series->{series_id};
 
     unless ( project::is_series_assigned( $config, $series ) == 1 ) {
-        print STDERR "series is not assigned to project $project_id and studio $studio_id\n";
-        return undef;
+        AssignError->throw(error=>"series is not assigned to project $project_id and studio $studio_id\n");
     }
 
     my $query       = undef;
@@ -272,8 +272,7 @@ sub delete($$) {
         }
     );
     if ( scalar @$series_assignments > 1 ) {
-        print STDERR "do not delete series, due to assigned to other project or studio";
-        return;
+        AssignError->throw(error=> "do not delete series, due to assigned to other project or studio");
     }
 
     $bind_values = [$series_id];
@@ -333,7 +332,7 @@ sub add_user ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'user_id', 'user') {
-        ParamError->throw("series:add_user: missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "series:add_user: missing $_") unless defined $entry->{$_}
     };
 
     my $query = qq{
@@ -346,14 +345,15 @@ sub add_user ($$) {
     my $dbh = db::connect($config);
     my $results = db::get( $dbh, $query, $bind_values );
     return unless scalar @$results == 0;
-
+    print STDERR "add-user:@$results\n";
     $query = qq{
 		insert calcms_user_series
-		set    project_id=?, studio_id=?, series_id=?, user_id=?, modified_by=?, modified_at=now()
+		set    project_id=?, studio_id=?, series_id=?, user_id=?, modified_by=?, modified_at=now(), active=?
 	};
     $bind_values =
-      [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{user_id}, $entry->{user} ];
+      [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{user_id}, $entry->{user}, '' ];
     db::put( $dbh, $query, $bind_values );
+    print STDERR "add-usered:@$results\n";
 }
 
 # remove user(s) from series.
@@ -361,7 +361,7 @@ sub remove_user ($$) {
     my ($config, $condition) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        ParamError->throw("series:remove_user: missing $_") unless defined $condition->{$_}
+        ParamError->throw(error => "series:remove_user: missing $_") unless defined $condition->{$_}
     };
 
     my @conditions  = ();
@@ -557,22 +557,18 @@ sub get_event ($$) {
 
     unless ( defined $options->{allow_any} ) {
         if ( $project_id eq '' ) {
-            uac::print_error("missing project_id");
-            return undef;
+            ParamError->throw(error=>"missing project_id");
         }
         if ( $studio_id eq '' ) {
-            uac::print_error("missing studio_id");
-            return undef;
+            ParamError->throw(error=>"missing studio_id");
         }
         if ( $series_id eq '' ) {
-            uac::print_error("missing series_id");
-            return undef;
+            ParamError->throw(error=>"missing series_id");
         }
     }
 
     if ( $event_id eq '' ) {
-        uac::print_error("missing event_id");
-        return undef;
+        ParamError->throw(error=>"missing event_id");
     }
 
     my $queryOptions = {};
@@ -585,12 +581,12 @@ sub get_event ($$) {
     my $events = series::get_events( $config, $queryOptions );
 
     unless ( defined $events ) {
-        uac::print_error("error on loading event");
+        ParamError->throw(error=>"error on loading event");
         return undef;
     }
 
     if ( scalar(@$events) == 0 ) {
-        uac::print_error("event not found");
+        ParamError->throw(error=>"event not found");
         return undef;
     }
 
@@ -614,7 +610,7 @@ sub get_event_age($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id') {
-        ParamError->throw("series:get_event_age: missing $_") unless defined $options->{$_}
+        ParamError->throw(error => "series:get_event_age: missing $_") unless defined $options->{$_}
     };
 
     my @conditions  = ();
@@ -697,9 +693,9 @@ sub is_event_older_than_days ($$) {
 sub get_next_episode($$) {
     my ($config, $options) = @_;
 
-    return 0 unless defined $options->{project_id};
-    return 0 unless defined $options->{studio_id};
-    return 0 unless defined $options->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        ParamError->throw(error => "missing $_") unless defined $options->{$_}
+    };
 
     #return if episodes should not be counted for this series
     my $query = q{
@@ -737,7 +733,7 @@ sub get_images ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        ParamError->throw("series:get_images: missing $_") unless defined $options->{$_}
+        ParamError->throw(error => "series:get_images: missing $_") unless defined $options->{$_}
     };
 
     #get images from all events of the series
@@ -797,7 +793,7 @@ sub assign_event($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'event_id') {
-        ParamError->throw("series:assign_event: missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "series:assign_event: missing $_") unless defined $entry->{$_}
     };
     $entry->{manual} = 0 unless ( defined $entry->{manual} ) && ( $entry->{manual} eq '1' );
 
@@ -813,14 +809,14 @@ sub assign_event($$) {
     my $results     = db::get( $dbh, $query, $bind_values );
 
     if ( scalar @$results > 1 ) {
-        print STDERR
-"multiple assignments of project_id=$entry->{project_id}, studio_id=$entry->{studio_id}, series_id=$entry->{series_id}, event_id=$entry->{event_id}\n";
-        return;
+        AssignError->throw( error =>
+            "multiple assignments of project_id=$entry->{project_id}, studio_id=$entry->{studio_id}, series_id=$entry->{series_id}, event_id=$entry->{event_id}"
+        );
     }
     if ( scalar @$results == 1 ) {
-        print STDERR
-"already assigned: project_id=$entry->{project_id}, studio_id=$entry->{studio_id}, series_id=$entry->{series_id}, event_id=$entry->{event_id}\n";
-        return;
+        AssignError->throw( error =>
+            "already assigned: project_id=$entry->{project_id}, studio_id=$entry->{studio_id}, series_id=$entry->{series_id}, event_id=$entry->{event_id}"
+        )
     }
 
     $query = qq{
@@ -830,7 +826,7 @@ sub assign_event($$) {
     $bind_values =
       [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id}, $entry->{manual} ];
 
-    return db::put( $dbh, $query, $bind_values );
+    db::put( $dbh, $query, $bind_values ) || AssignError->throw( error => "could not assign event");
 }
 
 #unassign event from series
@@ -838,7 +834,7 @@ sub unassign_event($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'event_id') {
-        ParamError->throw("series:unassign_event: missing $_") unless defined $entry->{$_}
+        ParamError->throw(error => "series:unassign_event: missing $_") unless defined $entry->{$_}
     };
 
     my $conditions = '';
@@ -852,7 +848,7 @@ sub unassign_event($$) {
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id} ];
 
     my $dbh = db::connect($config);
-    return db::put( $dbh, $query, $bind_values );
+    return db::put( $dbh, $query, $bind_values ) || AssignError->throw( error => "could not assign event");
 }
 
 # put series id to given events (for legacy handling)
@@ -910,7 +906,7 @@ sub set_event_ids ($$$$$) {
 
     my $serie_id = $serie->{series_id};
     for ('project_id', 'studio_id', 'series_id', 'event_id') {
-        ParamError->throw("series: set_event_ids: missing $_") unless defined $serie->{$_}
+        ParamError->throw(error => "series: set_event_ids: missing $_") unless defined $serie->{$_}
     };
 
     #make lookup table from events
@@ -969,10 +965,10 @@ sub can_user_update_events ($$) {
     my $config      = $request->{config};
     my $permissions = $request->{permissions};
 
-    return 0 unless defined $request->{user};
-    return 0 unless defined $options->{project_id};
-    return 0 unless defined $options->{studio_id};
-    return 0 unless defined $options->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        ParamError->throw(error => "can_user_update_events: missing $_") unless defined $options->{$_}
+    };
+    ParamError->throw(error => "can_user_update_events: missing user") unless defined $request->{user};
 
     return 1 if ( defined $permissions->{update_event_of_others} ) && ( $permissions->{update_event_of_others} eq '1' );
     return 1 if ( defined $permissions->{is_admin} )               && ( $permissions->{is_admin} eq '1' );
@@ -989,10 +985,10 @@ sub can_user_create_events ($$) {
     my $config      = $request->{config};
     my $permissions = $request->{permissions};
 
-    return 0 unless defined $request->{user};
-    return 0 unless defined $options->{project_id};
-    return 0 unless defined $options->{studio_id};
-    return 0 unless defined $options->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        ParamError->throw(error => "can_user_create_events: missing $_") unless defined $options->{$_}
+    };
+    ParamError->throw(error => "can_user_create_events: missing user") unless defined $request->{user};
 
     return 1 if ( defined $permissions->{create_event} ) && ( $permissions->{create_event} eq '1' );
     return 1 if ( defined $permissions->{is_admin} )     && ( $permissions->{is_admin} eq '1' );
@@ -1007,10 +1003,10 @@ sub is_series_assigned_to_user ($$) {
     my $config      = $request->{config};
     my $permissions = $request->{permissions};
 
-    return 0 unless defined $options->{project_id};
-    return 0 unless defined $options->{studio_id};
-    return 0 unless defined $options->{series_id};
-    return 0 unless defined $request->{user};
+    for ('project_id', 'studio_id', 'series_id') {
+        ParamError->throw(error => "is_series_assigned_to_user: missing $_") unless defined $options->{$_}
+    };
+    ParamError->throw(error => "is_series_assigned_to_user: missing user") unless defined $request->{user};
 
     my $series_users = series::get_users(
         $config,
@@ -1031,10 +1027,10 @@ sub is_event_assigned_to_user ($$) {
     my ($request, $options) = @_;
 
     my $config = $request->{config};
-
-    for ('user', 'project_id', 'studio_id', 'series_id', 'event_id') {
-        ParamError->throw("series:is_event_assigned_to_user: missing $_") unless defined $options->{$_}
+    for ('project_id', 'studio_id', 'series_id', 'event_id') {
+        ParamError->throw(error => "series:is_event_assigned_to_user: missing $_") unless defined $options->{$_}
     };
+    ParamError->throw(error => "series:is_event_assigned_to_user: missing user") unless defined $request->{user};
 
     #check roles
     my $user_studios = uac::get_studios_by_user(
@@ -1078,7 +1074,7 @@ sub get_rebuilt_episodes ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
-        ParamError->throw("series:get_rebuild_episodes missing $_") unless defined $options->{$_}
+        ParamError->throw(error => "series:get_rebuild_episodes missing $_") unless defined $options->{$_}
     };
 
     # ignore project and studio as series can be used in multiple studios
@@ -1148,7 +1144,7 @@ sub update_recurring_events ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'event_id') {
-        ParamError->throw("series:update_recurring:events: missing $_") unless defined $options->{$_}
+        ParamError->throw(error => "series:update_recurring:events: missing $_") unless defined $options->{$_}
     };
 
     my $events = series::get_events(
@@ -1217,7 +1213,7 @@ sub update_recurring_event($$) {
     my ($config, $event) = @_;
 
     for ('event_id', 'recurrence', 'recurrence_count', 'rerun') {
-        ParamError->throw("series:update_recurring_event: missing $_") unless defined $event->{$_}
+        ParamError->throw(error => "series:update_recurring_event: missing $_") unless defined $event->{$_}
     };
 
     return unless $event->{event_id} =~ /^\d+$/;

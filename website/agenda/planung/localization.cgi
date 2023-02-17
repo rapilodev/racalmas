@@ -1,4 +1,4 @@
-#! /usr/bin/perl 
+#! /usr/bin/perl
 
 use strict;
 use warnings;
@@ -7,7 +7,6 @@ no warnings 'redefine';
 use Data::Dumper;
 use JSON();
 use Scalar::Util qw(blessed);
-use Try::Tiny;
 
 use config();
 use params();
@@ -19,42 +18,20 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi);
-} catch {
-    print STDERR Dumper($_);
-    auth::show_login_form('',$_->message) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
-
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    }
-};
-$params = $request->{params}->{checked};
-my $loc = localization::get( $config, { user => $user, file => $params->{usecase} } );
-my $header = "Content-type:application/json; charset=UTF-8;\n\n";
-$loc->{usecase} = $params->{usecase};
-my $json = JSON::to_json( $loc, { pretty => 1 } );
-my @json_lines = ();
-
-for my $line ( split /\n/, $json ) {
-    push @json_lines, "'" . $line . "'\n";
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
+    my $loc = localization::get( $config, { user => $session->{user}, file => $params->{usecase} } );
+    my $header = "Content-type:application/json; charset=utf-8;\n\n";
+    $loc->{usecase} = $params->{usecase};
+    my $json = JSON::to_json( $loc, { pretty => 1 } );
+    return $header . $json;
 }
 
-$json = $header . $json;
-print $json;
-
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = { usecase => '' };
 
     if ( defined $params->{usecase} ) {

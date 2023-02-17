@@ -32,9 +32,9 @@ function showDates(){
     url+='&studio_id='+getStudioId();
     url+='&action=show_dates';
     url+='&show_date='+date;
-    
+
     updateContainer(
-        'show_schedule', 
+        'show_schedule',
         url,
         function(){
             initTable();
@@ -95,7 +95,7 @@ $(document).ready(
             showDates();
         }
     });
-    showDates();                
+    showDates();
 });
 
 

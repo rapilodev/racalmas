@@ -173,7 +173,7 @@ sub insert ($$) {
     for ('user') {
         ParamError->throw(error=>"user_settings:insert: missing $_") unless defined $entry->{$_};
     }
-   
+
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_user_settings', $entry );
 }
@@ -192,13 +192,12 @@ sub update($$) {
     push @bind_values, $entry->{user};
 
     my $query = qq{
-		update calcms_user_settings 
+		update calcms_user_settings
 		set    $values
 		where  user=?
 	};
 
     db::put( $dbh, $query, \@bind_values );
-    #print "done\n";
 }
 
 sub delete ($$) {
@@ -211,8 +210,8 @@ sub delete ($$) {
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete 
-		from calcms_user_settings 
+		delete
+		from calcms_user_settings
 		where user=?
 	};
     my $bind_values = [ $entry->{user} ];

@@ -13,7 +13,9 @@ use DateTime();
 use Scalar::Util qw( blessed );
 use Try::Tiny;
 use Exception::Class (
-    'ApplError'
+    'ApplError',
+    'ParamError',
+    'PermissionError'
 );
 
 use params();
@@ -28,106 +30,77 @@ use user_settings();
 use user_day_start();
 
 binmode STDOUT, ":utf8";
-$|=1;
-
-sub error_handler{
-    if (blessed $_[0]) {
-        print STDERR "DIE 200 @_\n";
-        print "Content-type:application/json;charset:utf8;\n\n"; 
-        #printf encode_json {"error" => $_[0]->error // $_[0]->message };
-        return;
-    }else{
-        print STDERR "DIE @_\n";
-        die @_;
-    }
-    #die @_;
-};
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = 
-try {
-    return auth::get_user($config, $params, $cgi);
-} catch {
-    auth::show_login_form('',$_->message);# if ref $_;# and $_->isa('AuthError') or $_->isa('SessionError');
-    #$SIG{__DIE__} = &error_handler;
-    #return Apache2::Const::OK;
-    return undef,undef;
-};
-
-return unless $user;
-$config->{user} = $user;
-my $user_presets;
-try{
-    $user_presets = uac::get_user_presets(
+print try {
+    (my $cgi, my $params) = params::get($r);
+    my $config = config::get('../config/config.cgi');
+    my $session = try {
+        return auth::get_session($config, $params, $cgi);
+    } catch {
+        print auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
+        return undef;
+    };
+    return unless $session;
+    my $user_presets = uac::get_user_presets(
         $config,
         {
-            user       => $user,
+            user       => $session->{user},
             project_id => $params->{project_id},
             studio_id  => $params->{studio_id}
         }
     );
     $params->{default_studio_id} = $user_presets->{studio_id};
-    $params = uac::setDefaultStudio( $params, $user_presets );
-    $params->{expires} = $expires;
-};
+    $params = uac::setDefaultStudio($params, $user_presets);
+    $params->{expires} = $session->{expires};
 
-my $scriptName = 'calendar.cgi';
-#add "all" studio to select box
-unshift @{ $user_presets->{studios} },
-  {
-    id   => -1,
-    name => '-all-'
-  };
-
-# select studios, TODO: do in JS
-if ( $params->{studio_id} eq '-1' ) {
-    for my $studio ( @{ $user_presets->{studios} } ) {
-        delete $studio->{selected};
-        $studio->{selected} = 1 if $params->{studio_id} eq $studio->{id};
-    }
-}
-
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-
-$request = uac::prepare_request( $request, $user_presets );
-
-$params = $request->{params}->{checked};
-#print "Content-type:text/html; charset=UTF-8;\n\n";
-    #process header
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check( $config, 'calendar-header.html' ),
-        $headerParams );
-##//    if ( $params->{list} eq '1' ) {
-        print q{
-            <script src="js/jquery.tablesorter.min.js"></script>
+    #add "all" studio to select box
+    unshift @{ $user_presets->{studios} },
+        {
+        id   => -1,
+        name => '-all-'
         };
-##    }
-#            <style>#content{ top:5rem; position:relative; }</style>
 
-my $start_of_day = $params->{day_start};
-my $end_of_day   = $start_of_day;
-$end_of_day += 24 if ( $end_of_day <= $start_of_day );
-our $hour_height = 60;
-our $yzoom       = 1.5;
-
-showCalendar(
-    $config, $request,
-    {
-        hour_height  => $hour_height,
-        yzoom        => $yzoom,
-        start_of_day => $start_of_day,
-        end_of_day   => $end_of_day,
+    # select studios, TODO: do in JS
+    if ($params->{studio_id} eq '-1') {
+        for my $studio (@{ $user_presets->{studios} }) {
+            delete $studio->{selected};
+            $studio->{selected} = 1 if $params->{studio_id} eq $studio->{id};
+        }
     }
-);
+    my $request = {
+        url    => $ENV{QUERY_STRING} || '',
+        params => {
+            original => $params,
+            checked  => check_params($config, $params),
+        },
+    };
+
+    $request = uac::prepare_request( $request, $user_presets );
+    $params = $request->{params}->{checked};
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+
+    my $start_of_day = $params->{day_start};
+    my $end_of_day   = $start_of_day;
+    $end_of_day += 24 if ( $end_of_day <= $start_of_day );
+    our $hour_height = 60;
+    our $yzoom       = 1.5;
+
+    my $out = $session->{header} if $session->{header};
+    $out .= template::process( $config, template::check( $config, 'calendar-header.html' ), $headerParams );
+    return $out . showCalendar(
+        $config, $request,
+        {
+            hour_height  => $hour_height,
+            yzoom        => $yzoom,
+            start_of_day => $start_of_day,
+            end_of_day   => $end_of_day,
+        }
+    );
+} catch {
+    return uac::error_handler($r,@_);
+};
 
 sub showCalendar {
     my $config      = shift;
@@ -142,8 +115,7 @@ sub showCalendar {
     my $params = $request->{params}->{checked};
     my $permissions = $request->{permissions} || {};
     unless ( $permissions->{read_series} == 1 ) {
-        uac::permissions_denied('read_series');
-        return;
+        PermissionError->throw(error=>'Missing permission to read_series');
     }
 
     #get range from user settings
@@ -151,63 +123,42 @@ sub showCalendar {
     $params->{range} = $user_settings->{range} unless defined $params->{range};
     $params->{range} = 28 unless defined $params->{range};
 
+    my $out = '';
     #get colors from user settings
-    print user_settings::getColorCss( $config, { user => $params->{presets}->{user} } );
+    $out .= user_settings::getColorCss( $config, { user => $params->{presets}->{user} } );
 
     $params->{loc} =
       localization::get( $config, { user => $params->{presets}->{user}, file => 'all,calendar' } );
     my $language = $user_settings->{language} || 'en';
     $params->{language} = $language;
-    print localization::getJavascript( $params->{loc} );
+    $out .=  localization::getJavascript( $params->{loc} );
 
     my $calendar = calendar_table::getCalendar( $config, $params, $language );
     my $options  = {};
     my $events   = [];
 
-    #output
-    printToolbar( $config, $params, $calendar );
-    print qq{<div id="calendarTable"> </div>};
-    print qq{
+    $out .= getToolbar( $config, $params, $calendar );
+    $out .=  qq{<div id="calendarTable"> </div>};
+    $out .=  qq{
             </main>
     };
     # time has to be set when events come in
-    printJavascript($config, $permissions, $params, $cal_options);
-    print qq{
-        <script> 
+    $out .= calendar_table::getJavascript($config, $permissions, $params, $cal_options);
+    $out .= qq{
+        <script>
             var current_date="$calendar->{month} $calendar->{year}";
             var previous_date="$calendar->{previous_date}";
             var next_date="$calendar->{next_date}";
         </script>
         </body>
     };
-    print qq{
+    $out .= qq{
             </body>
         </html>
     };
+    return $out;
 }
 
-sub printJavascript {
-    my $config      = shift;
-    my $permissions = shift;
-    my $params      = shift;
-    my $cal_options = shift;
-
-    my $startOfDay = $cal_options->{min_hour} % 24;
-    my $out = q{
-        <script>
-            var region='} . $params->{loc}->{region} . q{';
-            var calendarTable=1;
-            var startOfDay=} . $startOfDay . q{;
-            var label_events='} . $params->{loc}->{label_events} . q{';
-            var label_schedule='} . $params->{loc}->{label_schedule} . q{';
-            var label_worktime='} . $params->{loc}->{label_worktime} . q{';
-            var label_descriptions='} . $params->{loc}->{label_descriptions} . q{';
-            var label_playout='} . $params->{loc}->{label_playout} . q{';
-            var label_pin='} . $params->{loc}->{label_pin} . q{';
-        </script>
-    };
-    print $out;
-}
 
 sub addCalendarButton {
     my $params   = shift;
@@ -224,7 +175,7 @@ sub addCalendarButton {
     return $content;
 }
 
-sub printToolbar {
+sub getToolbar {
     my $config   = shift;
     my $params   = shift;
     my $calendar = shift;
@@ -322,7 +273,7 @@ sub printToolbar {
         </div>
     };
 
-    print $toolbar;
+    return $toolbar;
 }
 
 
@@ -385,7 +336,7 @@ sub check_params {
         'program',     'image',   'user_content'
       ]);
 
-    $checked->{action} = entry::element_of( $params->{action}, 
+    $checked->{action} = entry::element_of( $params->{action},
         [ 'add_user', 'remove_user', 'delete', 'save', 'details', 'show', 'edit_event', 'save_event' ]
     );
 

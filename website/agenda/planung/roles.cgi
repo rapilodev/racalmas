@@ -6,7 +6,6 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use Scalar::Util qw( blessed );
-use Try::Tiny;
 
 use config();
 use params();
@@ -18,18 +17,7 @@ use uac();
 use studios();
 use localization();
 
-binmode STDOUT, ":utf8";
-
-my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
-
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
-} catch {
-    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
+binmode STDOUT, ":encoding(utf8)";
 
 our $actions = {
     read    => 1,
@@ -42,43 +30,26 @@ our $actions = {
     delete  => 8,
 };
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        user       => $user,
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id}
+my $r = shift;
+uac::init($r, \&check_params, \&main);
+
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+
+    #process header
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    print template::process( $config, template::check( $config, 'roles.html' ), $headerParams );
+    uac::check( $config, $params, $user_presets ) == 1;
+
+    if ( defined $params->{action} ) {
+        return save_roles( $config, $request ) if ( $params->{action} eq 'save' );
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params->{project_id} = $user_presets->{project_id};
 
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
-$params = $request->{params}->{checked};
-
-#process header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'roles.html' ), $headerParams );
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-if ( defined $params->{action} ) {
-    save_roles( $config, $request ) if ( $params->{action} eq 'save' );
+    #show current roles
+    $config->{access}->{write} = 0;
+    reutrn show_roles( $config, $request );
 }
-
-#show current roles
-$config->{access}->{write} = 0;
-show_roles( $config, $request );
-
-return;
 
 # update roles in database:
 # role can be changed only
@@ -93,8 +64,7 @@ sub save_roles {
     my $permissions = $request->{permissions};
 
     unless ( $permissions->{update_role} == 1 ) {
-        uac::permissions_denied('update_role');
-        return;
+        PermissionError->throw(error=>'Missing permission to update_role');
     }
 
     my $studio_id  = $params->{studio_id};
@@ -150,8 +120,7 @@ sub save_roles {
                     if ( check_level( $permissions, $value ) == 1 ) {
                         $values->{$id}->{$column} = $value;
                     } else {
-                        uac::permissions_denied("change the level of role!");
-                        return;
+                        PermissionError->throw(error=>'Missing permission to change the level of role!');
                     }
                 } elsif ( $column eq 'role' ) {
                     $values->{$id}->{$column} = $value;
@@ -182,15 +151,15 @@ sub save_roles {
         next if check_level( $permissions, $role->{level} ) == 0;
 
         if ( $role->{project_id} eq '' ) {
-            uac::print_error('missing parameter project_id!');
+            ParamError->throw(error=> 'missing parameter project_id!');
             next;
         }
         if ( $role->{studio_id} eq '' ) {
-            uac::print_error('missing parameter studio_id!');
+            ParamError->throw(error=> 'missing parameter studio_id!');
             next;
         }
         if ( ( $role->{role} eq '' ) && ( $id ne '' ) ) {
-            uac::print_error('missing parameter role!');
+            ParamError->throw(error=> 'missing parameter role!');
             next;
         }
 
@@ -202,7 +171,7 @@ sub save_roles {
             #insert role
             next if $role->{role} eq '';
             if ( defined $role_from_db ) {
-                uac::print_error("a role with name '$role->{role}' already exists!");
+                ExistError->throw(error=> "a role with name '$role->{role}' already exists!");
                 next;
             }
             $role->{level} = 0;
@@ -214,7 +183,7 @@ sub save_roles {
 
             #update role
             if ( ( defined $role_from_db ) && ( $id ne $role_from_db->{id} ) ) {
-                uac::print_error( 'you cannot rename role to existing role!'
+                ExistError->throw( 'you cannot rename role to existing role!'
                       . " '$role->{role}' ($id) != '$role_from_db->{role}' ($role_from_db->{id})" );
                 next;
             }
@@ -264,7 +233,7 @@ sub show_roles {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{read_role} == 1 ) {
-        uac::permissions_denied('read_role');
+        PermissionError->throw(error=>'Missing permission to read_role');
         return;
     }
 
@@ -425,9 +394,7 @@ sub sort_groups {
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
 
     #template

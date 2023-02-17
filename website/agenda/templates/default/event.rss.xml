@@ -17,7 +17,7 @@ Content-type:application/rss+xml; charset=UTF-8
 	    <link>http:<TMPL_VAR base_domain><TMPL_VAR widget_render_url>/event.rss.xml</link>
 	    <title><TMPL_VAR project_title></title>
 	</image>
-    
+
 
 <TMPL_LOOP events>
 	<item>

@@ -18,7 +18,7 @@ function cancel_edit_project_assignments(name){
 }
 
 function edit_project(elem, name){
-    
+
     if ($('#edit_'+name).css('display')=='none'){
         $('#view_'+name).hide();
         $('#assign_'+name).hide();

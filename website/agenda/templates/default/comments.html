@@ -11,7 +11,7 @@ Access-Control-Allow-Origin: *
 <body>
 	<a name="comments" />
 	<TMPL_IF allow.new_comments>
-		<a href="#comments" 
+		<a href="#comments"
 		   onclick="calcms.showCommentForm('calcms_add_comment','','<TMPL_VAR event_id escape=js>','<TMPL_VAR event_start escape=js>');return false;"
 		>Neuen Kommentar schreiben</a>
 	<div>
@@ -34,7 +34,7 @@ Access-Control-Allow-Origin: *
 		<div class="comment level<TMPL_VAR level>" style="float:clear;" >
 			<a name="comment_<TMPL_VAR id>" />
 			<div class="w1"><div class="w2"><div class="w3"><div class="w4">
-				<span class="author"><TMPL_VAR author escape=none></span>, 
+				<span class="author"><TMPL_VAR author escape=none></span>,
 				<span class="date"><TMPL_VAR start_date_name> - <TMPL_VAR start_time_name></span>
 				<div class="content"><TMPL_VAR content escape=none></div>
 				<TMPL_IF allow.new_comments>

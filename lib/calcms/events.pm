@@ -598,7 +598,7 @@ sub get_listen_key($$){
 
     my $archive_dir = $config->{locations}->{local_archive_dir};
     my $archive_url = $config->{locations}->{listen_url};
-    return $event->{listen_url} = $archive_url . '/' . $event->{listen_key} if 
+    return $event->{listen_url} = $archive_url . '/' . $event->{listen_key} if
         defined $event->{listen_key} and -l $archive_dir .'/'. $event->{listen_key};
     set_listen_key($config, $event) unless $event->{listen_key};
 }
@@ -627,14 +627,14 @@ sub set_listen_key{
     symlink $audio_file, $link or die "cannot create $link, $!";
     $event->{listen_url} = $archive_url . '/' . $key;
     $event->{listen_key} = $key;
-                    
+
     return undef unless defined $event->{event_id};
     return undef unless defined $event->{listen_key};
     my $bindValues = [ $event->{listen_key}, $event->{event_id} ];
 
     my $query = qq{
         update calcms_events
-        set listen_key=? 
+        set listen_key=?
         where id=?;
     };
     my $dbh = db::connect($config);
@@ -642,17 +642,17 @@ sub set_listen_key{
 }
 
 sub set_upload_status($$){
-    my ($config, $event) = @_; 
-                    
+    my ($config, $event) = @_;
+
     for ('event_id', 'upload_status') {
-        ParamError->throw("missing $_") unless defined $event->{$_}
+        ParamError->throw(error => "missing $_") unless defined $event->{$_}
     };
-    
+
     my $bindValues = [ $event->{upload_status}, $event->{event_id}, $event->{upload_status} ];
 
     my $query = qq{
         update calcms_events
-        set upload_status=? 
+        set upload_status=?
         where id=? and upload_status!=?;
     };
     my $dbh = db::connect($config);
@@ -1195,7 +1195,7 @@ sub get_query($$$) {
 }
 
 sub render($$$$;$) {
-    my ($response, $config, $request, $results, $root_params) = @_; 
+    my ($response, $config, $request, $results, $root_params) = @_;
 
     my $params = $request->{params}->{checked};
     if ( ref($root_params) eq 'HASH' ) {
@@ -1281,7 +1281,7 @@ sub render($$$$;$) {
         $tparams->{$attr} = $config->{$attr};
     }
 
-    template::process( $config, $_[0], $params->{template}, $tparams );
+    $_[0] = template::process( $config, $params->{template}, $tparams );
 
     return $_[0];
 }
@@ -1398,7 +1398,7 @@ sub get_next_event_of_series ($$$) {
     $conditions = join( ' and ', @$conditions );
 
     my $query = qq{
-        select  id 
+        select  id
         from    calcms_events
         where   $conditions
         order by start
@@ -1473,7 +1473,7 @@ sub get_by_date_range ($$$$$) {
 
     my $query = qq{
         select   $select
-        from     calcms_events 
+        from     calcms_events
         where    $conditions
     };
 
@@ -1828,7 +1828,7 @@ sub get_keys($) {
 
     # separation between <series> and <title>
     my $stkey = ( length($series_name) and length($te) ) ? ' - ' : '';
-    
+
     return {
         skey                            => $series_name,
         stkey                           => $stkey,

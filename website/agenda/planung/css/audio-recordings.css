@@ -35,8 +35,8 @@ tr.inactive{
     transition : width 1s ease;
 }
 
-#content div.ok, 
-#content div.warn, 
+#content div.ok,
+#content div.warn,
 #content div.error {
     padding-top: 3px;
     padding-bottom: 3px;

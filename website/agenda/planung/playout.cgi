@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -8,6 +8,10 @@ use Data::Dumper;
 use URI::Escape();
 use Scalar::Util qw( blessed );
 use Try::Tiny;
+use Exception::Class (
+    'ParamError',
+    'PermissionError'
+);
 
 use localization();
 use params();
@@ -30,55 +34,24 @@ use playout();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
-} catch {
-    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
 
-print "Content-type:text/html; charset=UTF-8;\n\n";
+    #process header
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id},
-        user       => $user
+    uac::check($config, $params, $user_presets);
+
+    if ( defined $params->{action} ) {
+        deleteFromPlayout( $config, $request ) if ( $params->{action} eq 'delete' );
+    } else {
+        print "missing action\n";
     }
-);
-
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
-
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
-
-$params = $request->{params}->{checked};
-
-#process header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-
-#template::process($config, 'print', template::check($config, 'default.html'), $headerParams);
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-if ( defined $params->{action} ) {
-    deleteFromPlayout( $config, $request ) if ( $params->{action} eq 'delete' );
-} else {
-    print "missing action\n";
 }
-return;
 
 sub deleteFromPlayout {
     my ($config, $request) = @_;
@@ -86,21 +59,19 @@ sub deleteFromPlayout {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{update_event_status_playout} == 1 ) {
-        uac::permissions_denied('update_event_status_playout');
-        return;
+        PermissionError->throw(error=>'Missing permission to update_event_status_playout');
     }
 
     for my $attr ( 'project_id', 'studio_id', 'start_date' ) {
         unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to show event" );
-            return;
+            ParamError->throw(error=>"missing $attr");
         }
     }
 
     $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
 
-    my $result = playout::delete(
+    playout::delete(
         $config, $dbh,
         {
             project_id => $params->{project_id},
@@ -109,13 +80,10 @@ sub deleteFromPlayout {
         }
     );
     $config->{access}->{write} = 0;
-
-    print "result:$result\n";
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
+    my ($config, $params) = @_;
 
     my $checked = {};
 

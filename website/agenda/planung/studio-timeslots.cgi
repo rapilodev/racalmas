@@ -8,6 +8,10 @@ use Data::Dumper;
 use URI::Escape();
 use Scalar::Util qw( blessed );
 use Try::Tiny;
+use Exception::Class (
+    'ParamError',
+    'PermissionError'
+);
 
 use params();
 use config();
@@ -26,68 +30,42 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
-} catch {
-    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        user       => $user,
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id}
+    #process header
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'all,menu' } );
+
+    my $action = $params->{action} || '';
+    if ( $action eq 'show_dates' ) {
+        #print "Content-type:text/html\n\n";
+    } else {
+        print template::process( $config, template::check( $config, 'default.html' ), $headerParams );
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
+    uac::check($config, $params, $user_presets);
 
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
-$params = $request->{params}->{checked};
-
-#process header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'all,menu' } );
-
-my $action = $params->{action} || '';
-if ( $action eq 'show_dates' ) {
-    #print "Content-type:text/html\n\n";
-} else {
-    template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
-}
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-if ( $action eq 'show_dates' ) {
-    print "Content-Type:text/html\n\n";
-} else {
-    template::process( $config, 'print', template::check( $config, 'studio-timeslots-header.html' ), $headerParams );
-}
-
-if ( defined $params->{action} ) {
-    save_schedule( $config, $request ) if ( $params->{action} eq 'save_schedule' );
-    delete_schedule( $config, $request ) if ( $params->{action} eq 'delete_schedule' );
-    if ( $params->{action} eq 'show_dates' ) {
-        showDates( $config, $request );
-        return;
+    if ( $action eq 'show_dates' ) {
+        print "Content-Type:text/html\n\n";
+    } else {
+        print template::process( $config, template::check( $config, 'studio-timeslots-header.html' ), $headerParams );
     }
-}
 
-$config->{access}->{write} = 0;
-showTimeslotSchedule( $config, $request );
-return;
+    if ( defined $params->{action} ) {
+        save_schedule( $config, $request ) if ( $params->{action} eq 'save_schedule' );
+        delete_schedule( $config, $request ) if ( $params->{action} eq 'delete_schedule' );
+        if ( $params->{action} eq 'show_dates' ) {
+            showDates( $config, $request );
+            return;
+        }
+    }
+
+    $config->{access}->{write} = 0;
+    showTimeslotSchedule( $config, $request );
+}
 
 #insert or update a schedule and update all schedule dates
 sub save_schedule {
@@ -95,7 +73,7 @@ sub save_schedule {
 
     my $permissions = $request->{permissions};
     unless ( $permissions->{update_studio_timeslot_schedule} == 1 ) {
-        uac::permissions_denied('update_studio_timeslot_schedule');
+        PermissionError->throw(error=>'Missing permission to update_studio_timeslot_schedule');
         return;
     }
 
@@ -103,7 +81,7 @@ sub save_schedule {
 
     for my $attr ( 'project_id', 'studio_id', 'start', 'end', 'end_date', 'schedule_studio_id' ) {
         unless ( defined $params->{$attr} ) {
-            uac::print_error( $attr . ' not given!' );
+            ParamError->throw(error=> "missing $attr" );
             return;
         }
     }
@@ -142,7 +120,7 @@ sub delete_schedule {
 
     my $permissions = $request->{permissions};
     unless ( $permissions->{update_studio_timeslot_schedule} == 1 ) {
-        uac::permissions_denied('update_studio_timeslot_schedule');
+        PermissionError->throw(error=>'Missing permission to update_studio_timeslot_schedule');
         return;
     }
 
@@ -153,8 +131,7 @@ sub delete_schedule {
         if ( defined $params->{$attr} ) {
             $entry->{$attr} = $params->{$attr};
         } else {
-            uac::print_error( $attr . ' not given!' );
-            return;
+            ParamError->throw(error=> "missing $attr" );
         }
     }
 
@@ -173,13 +150,13 @@ sub showTimeslotSchedule {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{read_studio_timeslot_schedule} == 1 ) {
-        uac::permissions_denied('read_studio_timeslot_schedule');
+        PermissionError->throw(error=>'Missing permission to read_studio_timeslot_schedule');
         return;
     }
 
     for my $param ( 'project_id', 'studio_id' ) {
         unless ( defined $params->{$param} ) {
-            uac::print_error("missing $param");
+            ParamError->throw(error=>"missing $param");
             return;
         }
     }
@@ -245,7 +222,7 @@ sub showTimeslotSchedule {
     }
 
     #print '<pre>'.Dumper($params).'</pre>';
-    template::process( $config, 'print', $params->{template}, $params );
+    print template::process( $config, $params->{template}, $params );
 }
 
 sub showDates {
@@ -256,13 +233,13 @@ sub showDates {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{read_studio_timeslot_schedule} == 1 ) {
-        uac::permissions_denied('read_studio_timeslot_schedule');
+        PermissionError->throw(error=>'Missing permission to read_studio_timeslot_schedule');
         return;
     }
 
     for my $param ( 'project_id', 'studio_id' ) {
         unless ( defined $params->{$param} ) {
-            uac::print_error("missing $param");
+            ParamError->throw(error=>"missing $param");
             return;
         }
     }
@@ -337,13 +314,11 @@ sub showDates {
     }
 
     my $template = template::check( $config, 'studio-timeslot-dates' );
-    template::process( $config, 'print', $template, $params );
+    print template::process( $config, $template, $params );
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
 
     #actions and roles

@@ -23,7 +23,7 @@ sub get ($$){
     my ($config, $condition) = @_;
 
     for ('studio_id') {
-        ParamError->throw("event_history: missing $_") unless defined $condition->{$_}
+        ParamError->throw(error => "event_history: missing $_") unless defined $condition->{$_}
     };
     my $dbh = db::connect($config);
 
@@ -117,19 +117,18 @@ sub insert_by_event_id ($$){
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'event_id', 'user') {
-        ParamError->throw("event_history: missing $_") unless defined $options->{$_}
+        ParamError->throw(error => "event_history: missing $_") unless defined $options->{$_}
     };
 
     my $sql = q{
-        select * from calcms_events 
+        select * from calcms_events
         where id=?
     };
     my $bind_values = [ $options->{event_id} ];
     my $dbh         = db::connect($config);
     my $results     = db::get( $dbh, $sql, $bind_values );
     if ( @$results != 1 ) {
-        print STDERR "cannot find event with event_id=$options->{event_id}";
-        return 0;
+        EventError->throw(error=>"cannot find event with event_id=$options->{event_id}");
     }
 
     # add to history

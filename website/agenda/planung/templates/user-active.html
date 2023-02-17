@@ -1,33 +1,13 @@
+<link rel="stylesheet" href="css/user-stats.css" type="text/css" />
 <script src="js/jquery.tablesorter.min.js"></script>
-
-<script type="text/javascript">
-$(document).ready(
-    function(){
-        $('table#user_stats_table').tablesorter({
-            widgets: ["filter"],
-  	        usNumberFormat : false
-        });
-    }
-);
-</script>
-
-<style>
-div.col {
-    float:left;
-    width:10px;
-    height:10px;
-}
-table#user_stats_table input{
-    max-width:6em;
-}
-</style>
+<script src="js/user-stats.js" type="text/javascript"></script>
 
 <h2><TMPL_VAR loc.title></h2>
-<hr>
 <TMPL_INCLUDE status.html>
 
-    <button onclick="load('user-stats.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&action=show-user-stats')">
-        <TMPL_VAR .loc.button_show_user_stats>
+    <button
+        onclick="loadUrl('user-stats.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&action=show-user-stats')"
+        ><TMPL_VAR .loc.button_show_user_stats>
     </button>
 
     <form method="post">
@@ -35,6 +15,7 @@ table#user_stats_table input{
         <input type="hidden" name="studio_id" value="<TMPL_VAR studio_id>">
     </form>
 
+<div class="panel">
     <table id="user_stats_table">
         <thead>
             <tr>
@@ -61,5 +42,6 @@ table#user_stats_table input{
             </TMPL_LOOP>
         </tbody>
     </table>
+</div>
 </body>
 </html>

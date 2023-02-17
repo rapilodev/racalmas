@@ -98,7 +98,7 @@ sub formatLoudness {
     $class = 'error' if $value > -16.0;
     $class = 'warn'  if $value < -24.0;
     $class = 'error' if $value < -27.0;
-    $value = int($value+0.5) if $round; 
+    $value = int($value+0.5) if $round;
 
     return qq{<div class="badge-$class">$prefix$value dB</div>};
 }

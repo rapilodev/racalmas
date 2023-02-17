@@ -13,6 +13,10 @@ use File::Temp();
 use File::Copy();
 use Scalar::Util qw( blessed );
 use Try::Tiny;
+use Exception::Class (
+    'ParamError',
+    'PermissionError'
+);
 
 use config();
 use log();
@@ -57,46 +61,21 @@ $error  = $cgi->cgi_error() || '';
 my $params = \%params;
 binmode $fh if defined $fh;
 
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
-} catch {
-    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
+my $r = shift;
+uac::init($r, \&check_params, \&main);
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        user       => $user,
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id}
-    }
-);
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
 
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
 
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params( $config, $params ),
-    },
-};
+    exit unless uac::check( $config, $params, $user_presets ) == 1;
+    print q{Content-type: text/plain; char-set:utf-8;\n\n};
 
-$request = uac::prepare_request( $request, $user_presets );
-
-$params = $request->{params}->{checked};
-
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-
-exit unless uac::check( $config, $params, $user_presets ) == 1;
-print q{Content-type: text/plain; char-set:utf-8;\n\n};
-
-uploadRecording( $config, $request );
-exit;
+    uploadRecording( $config, $request );
+}
 
 sub uploadRecording {
     my $config  = shift;
@@ -106,30 +85,30 @@ sub uploadRecording {
     my $permissions = $request->{permissions};
 
     unless ( $permissions->{upload_audio_recordings} == 1 ) {
-        uac::permissions_denied('upload_audio_recordings');
+        PermissionError->throw(error=>'Missing permission to upload_audio_recordings');
         return;
     }
 
     for my $attr ( 'project_id', 'studio_id', 'series_id', 'event_id' ) {
         unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to upload productions" );
+            ParamError->throw(error=> "missing " . $attr . " to upload productions" );
             return;
         }
     }
 
     if ( defined $fh ) {
         print STDERR "upload\n";
-        
+
         events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploading' });
 
-        my $fileInfo = uploadFile( $config, $fh, $params->{event_id}, $user, $params->{upload} );
+        my $fileInfo = uploadFile( $config, $fh, $params->{event_id}, $session->{user}, $params->{upload} );
         $params->{error} .= $fileInfo->{error} if defined $fileInfo->{error};
         $params->{path} = $fileInfo->{path};
         $params->{size} = $fileInfo->{size};
 
         if ($params->{error} eq ''){
             events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploaded' });
-            $params = updateDatabase( $config, $params, $user );
+            $params = updateDatabase( $config, $params, $session->{user} );
         }else{
             events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'upload failed' });
         }
@@ -263,10 +242,7 @@ sub getEventDuration {
     my $config  = shift;
     my $eventId = shift;
 
-    if ( $eventId < 1 ) {
-        print STDERR "invalid eventId $eventId\n";
-        return 0;
-    }
+    InvalidIdError->throw(error=>"invalid eventId $eventId\n") if $eventId<=0;
 
     my $request = {
         params => {
@@ -293,9 +269,7 @@ sub getEventDuration {
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
     $checked->{error} = '';
     $checked->{template} = template::check( $config, $params->{template}, 'upload-audio-recordings2' );

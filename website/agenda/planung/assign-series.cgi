@@ -9,6 +9,10 @@ use URI::Escape();
 use Encode();
 use Scalar::Util qw( blessed );
 use Try::Tiny;
+use Exception::Class (
+    'ParamError',
+    'PermissionError'
+);
 
 use params();
 use config();
@@ -30,56 +34,29 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+uac::init($r, \&check_params, \&main);
 
-my $config = config::get('../config/config.cgi');
-my ($user, $expires) = try {
-    auth::get_user($config, $params, $cgi)
-} catch {
-    auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-};
-return unless $user;
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
 
-my $user_presets = uac::get_user_presets(
-    $config,
-    {
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id},
-        user       => $user
+    #process header
+    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    print template::process( $config, template::check( $config, 'assign-series-header.html' ), $headerParams );
+    uac::check($config, $params, $user_presets);
+
+    my $permissions = $request->{permissions};
+    unless ( $permissions->{scan_series_events} == 1 ) {
+        PermissionError->throw(error=>'Missing permission to scan_series_events');
     }
-);
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
 
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params($params),
-    },
-};
-$request = uac::prepare_request( $request, $user_presets );
-
-$params = $request->{params}->{checked};
-
-#process header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'assign-series-header.html' ), $headerParams );
-return unless uac::check( $config, $params, $user_presets ) == 1;
-
-my $permissions = $request->{permissions};
-unless ( $permissions->{scan_series_events} == 1 ) {
-    uac::permissions_denied('scan_series_events');
-    return;
+    if ( defined $params->{action} ) {
+        assign_series(   $config, $request ) if $params->{action} eq 'assign_series';
+        unassign_series( $config, $request ) if $params->{action} eq 'unassign_series';
+    }
+    show_series( $config, $request );
 }
-
-if ( defined $params->{action} ) {
-    assign_series(   $config, $request ) if $params->{action} eq 'assign_series';
-    unassign_series( $config, $request ) if $params->{action} eq 'unassign_series';
-}
-show_series( $config, $request );
 
 sub show_series {
     my ($config, $request) = @_;
@@ -87,8 +64,7 @@ sub show_series {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{assign_series_events} == 1 ) {
-        uac::permissions_denied('assign_series_events');
-        return;
+        PermissionError->throw(error=>'Missing permission to assign_series_events');
     }
 
     my $projects = project::get( $config, { project_id => $params->{project_id} } );
@@ -106,8 +82,8 @@ sub show_series {
     #get series_names
     my $dbh   = db::connect($config);
     my $query = q{
-        select project_id, studio_id, series_id, series_name, title 
-        from   calcms_series s, calcms_project_series ps 
+        select project_id, studio_id, series_id, series_name, title
+        from   calcms_series s, calcms_project_series ps
         where  s.id=ps.series_id
         order  by series_name, title
     };
@@ -139,7 +115,7 @@ sub show_series {
     $params->{project_name} = $project_name;
     $params->{studio_name}  = $studio_name;
 
-    template::process( $config, 'print', $params->{template}, $params );
+    print template::process( $config, $params->{template}, $params );
 }
 
 sub assign_series {
@@ -148,8 +124,7 @@ sub assign_series {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{assign_series_events} == 1 ) {
-        uac::permissions_denied('assign_series_events');
-        return;
+        PermissionError->throw(error=>'Missing permission to assign_series_events');
     }
 
     my $entry = {};
@@ -157,8 +132,7 @@ sub assign_series {
         if ( defined $params->{$attr} ) {
             $entry->{$attr} = $params->{$attr};
         } else {
-            uac::print_error( $attr . ' not given!' );
-            return;
+            ParamError->throw(error=> "missing $attr" );
         }
     }
 
@@ -201,8 +175,7 @@ sub unassign_series {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{assign_series_events} == 1 ) {
-        uac::permissions_denied('assign_series_events');
-        return;
+        PermissionError->throw(error=>'Missing permission to assign_series_events');
     }
 
     my $entry = {};
@@ -210,8 +183,7 @@ sub unassign_series {
         if ( defined $params->{$attr} ) {
             $entry->{$attr} = $params->{$attr};
         } else {
-            uac::print_error( $attr . ' not given!' );
-            return;
+            ParamError->throw(error=> "missing $attr" );
         }
     }
 
@@ -249,8 +221,7 @@ sub unassign_series {
 }
 
 sub check_params {
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
 
     $checked->{action} = entry::element_of( $params->{action}, ['assign_series','unassign_series'] );

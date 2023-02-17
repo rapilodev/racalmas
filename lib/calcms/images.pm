@@ -158,7 +158,7 @@ sub update($$) {
     my ($dbh, $image) = @_;
 
     for ('studio_id', 'project_id', 'filename') {
-        ParamError->throw("missing $_") unless defined $image->{$_}
+        ParamError->throw(error => "missing $_") unless defined $image->{$_}
     };
 
     $image->{modified_at} = time::time_to_datetime();
@@ -191,7 +191,7 @@ sub update($$) {
     my $set = join( ",", @set );
     $conditions = join( ' and ', @$conditions );
     my $query = qq{
-		update calcms_images 
+		update calcms_images
 		set	   $set
 		where  $conditions
 	};
@@ -207,7 +207,7 @@ sub delete($$) {
     my ($dbh, $image) = @_;
 
     for ('studio_id', 'project_id', 'filename') {
-        ParamError->throw("missing $_") unless defined $image->{$_}
+        ParamError->throw(error => "missing $_") unless defined $image->{$_}
     };
 
     my $project_id = $image->{project_id};
@@ -225,7 +225,7 @@ sub delete($$) {
 
     $conditions = join( ' and ', @$conditions );
     my $query = qq{
-		delete from calcms_images 
+		delete from calcms_images
 		where  $conditions
 	};
     return db::put( $dbh, $query, $bind_values );
@@ -457,7 +457,7 @@ sub setEventLabels($$) {
     }
 
     my $query = qq{
-        update calcms_events 
+        update calcms_events
         set    image_label=?
         where  image=?
     };
@@ -483,7 +483,7 @@ sub setSeriesLabels($$) {
     }
 
     my $query = qq{
-        update calcms_events 
+        update calcms_events
         set    series_image_label=?
         where  series_image=?
     };
