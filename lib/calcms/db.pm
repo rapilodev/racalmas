@@ -25,6 +25,7 @@ our $read  = 1;
 our $write = 1;
 
 # connect to database
+my $database;
 sub connect($;$) {
     my ($options, $request) = @_;
 
@@ -33,7 +34,7 @@ sub connect($;$) {
     my $access_options = $options->{access};
     my $hostname = $access_options->{hostname};
     my $port     = $access_options->{port};
-    my $database = $access_options->{database};
+    $database    = $access_options->{database};
     my $username = $access_options->{username};
     my $password = $access_options->{password};
 
@@ -92,18 +93,24 @@ sub get($$;$) {
 
 # get list of table columns
 sub get_columns($$) {
-    my ($dbh, $table) =@_;
-
-    my $columns = db::get( $dbh, 'select column_name from information_schema.columns where table_name=?', [$table] );
-    return [ map { $_->{column_name} } @$columns ];
+    my ($dbh, $table) = @_;
+    my $columns = db::get( $dbh,
+        qq{
+            select column_name from information_schema.columns
+            where table_schema=?
+            and table_name = ?
+            order by ordinal_position
+        },
+        [$database, $table]
+    );
+    return [ map { values %$_ } @$columns ];
 }
 
 # get hash with table columns as keys
 sub get_columns_hash($$) {
-    my ($dbh, $table) =@_;
-
-    my $columns = db::get( $dbh, 'select column_name from information_schema.columns where table_name=?', [$table] );
-    return { map { $_->{column_name} => 1 } @$columns };
+    my ($dbh, $table) = @_;
+    my $columns = get_columns($dbh, $table);
+    return { map { $_ => 1 } @$columns };
 }
 
 #returns last inserted id
