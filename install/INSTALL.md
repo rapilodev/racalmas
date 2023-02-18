@@ -46,6 +46,12 @@ install apache2
     
     apt install apache2
 
+enable prefork mode
+
+    a2dismod mpm_event
+    a2enmod mpm_prefork
+    /etc/init.d/apache2 restart
+
 install apache2 rewrite
 
     apt-get install libapache2-rewrite
