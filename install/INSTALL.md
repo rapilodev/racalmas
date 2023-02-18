@@ -153,12 +153,16 @@ apt-get install <deb-package>
 
     mariadb-server 
     build-essentials
+    imagemagick
     libapreq2-3
+    libapache2-request-perl
     libapache-dbi-perl
     libauthen-passphrase-blowfish-perl
     libcalendar-simple-perl
+    libcrypt-blowfish-perl
     libcgi-pm-perl
     libcgi-session-perl
+    libcgi-simple-perl
     libconfig-general-perl
     libdatetime-perl
     libdate-calc-perl
@@ -172,6 +176,9 @@ apt-get install <deb-package>
     libhtml-template-perl
     libhtml-template-compiled-perl
     libmime-base64-urlsafe-perl
+    libmime-lite-perl
+    libsession-token-perl
+    libtext-multimarkdown-perl
     libtext-wikicreole-perl
     liburi-escape-xs-perl
     perlmagick
