@@ -240,6 +240,10 @@ https://<localhost>/agenda/planung/
 ccAdmin
 shug!3Lu
 
+If you need to reset the default admin account run
+
+    update calcms_users set pass='$2a$08$oLiwMC1vYD8ZzfjKdpTG3OBFAXbiKslWIe0w005ysdxO0kE/A/12G', salt='oLiwMC1vYD8ZzfjKdpTG3O' where name='ccAdmin';
+
 # inject calcms into your website
 
 calcms uses a copy of your web page as a template to have the same layout as your web site.  
