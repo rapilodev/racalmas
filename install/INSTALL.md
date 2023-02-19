@@ -62,12 +62,6 @@ install mod_perl2
     apt install libapache2-mod-perl2 libapache2-reload-perl libapache2-request-perl
     a2enmod perl
 
-or via cpan
-
-    cpan install Apache2::Reload Apache2::Request
-    a2enmod perl
-
-
 ### Apache Configuration
 
 Virtual host configuration has to be placed at /etc/conf/apache2/.
