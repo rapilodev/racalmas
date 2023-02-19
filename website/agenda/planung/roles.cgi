@@ -128,7 +128,9 @@ sub save_roles {
                     || $column eq 'role'
                     || $column eq 'id'
                     || $column eq 'project_id'
-                    || $column eq 'studio_id' );
+                    || $column eq 'studio_id'
+                    || $column eq 'created_at'
+                    );
                 $values->{$id}->{$column} = 0;
             }
         }
