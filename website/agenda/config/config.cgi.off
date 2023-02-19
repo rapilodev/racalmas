@@ -5,12 +5,12 @@ __END__
 
 <config>
 
-Define DOMAIN               your-domain.org
-Define BASE_DIR             /home/calcms/website
-Define LOG_DIR              /home/radio/log
+Define DOMAIN               my-radio.org
+Define BASE_DIR             /home/calcms/racalmas/website
+Define LOG_DIR              /home/calcms/log
 
 # default project from database
-project                     Corax
+project                     my-project
 domain                      ${DOMAIN}
 
 <filter>
@@ -52,7 +52,7 @@ domain                      ${DOMAIN}
     temp_dir                ${BASE_DIR}/temp/
 
     # URLs of the program page the agenda should be injected into (done by preload_agenda.pl)
-    # this is the page containing calcms_menu, and other ids 
+    # this is the page containing calcms_menu, and other ids
     source_url_http         http://${DOMAIN}/programm.html
     source_url_https        https://${DOMAIN}/programm.html
 
@@ -69,8 +69,8 @@ domain                      ${DOMAIN}
     static_files_url        /agenda/
 
     # images
-    local_media_dir         ${BASE_DIR}/agenda_files/media/
-    local_media_url         /agenda_files/media/
+    local_media_dir         ${BASE_DIR}/media/
+    local_media_url         /media/
     thumbs_url              /thumbs/
 
     # archives
@@ -94,22 +94,22 @@ domain                      ${DOMAIN}
     result_limit            500
 
     # limit creating comments in days before and after start of event
-    no_new_comments_before  10 
+    no_new_comments_before  10
     no_new_comments_after   60
-    
+
     hide_event_images       0
 </permissions>
 
 <access>
-    hostname                localhost
+    hostname                127.0.0.1
     port                    3306
     database                calcms
 
     username                calcms_read
-    password                xxx
+    password                calread000
 
     username_write          calcms_write
-    password_write          xxx
+    password_write          calwrite000
 </access>
 
 <date>
