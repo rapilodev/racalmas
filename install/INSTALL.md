@@ -38,6 +38,15 @@ Please change the passwords config after "INDENTIFIED BY" !
 
     mysql -u calcms_admin -p calcms < ./install/create.sql 
 
+### socket connection issues
+
+If you use a local database connection and see the error message
+"could not connect to database: Can't connect to local MySQL server through socket"
+the user "www-data" cannot connect to socket due to missing permissions to the socket
+file /var/run/mysqld/mysqld.sock. You can either change the directory/file permissions
+or use host "127.0.0.1" in bind-address at /etc/mysql/* for client and server and
+additionally as hostname in config.cgi.
+
 ## Apache HTTP Server Setup 
 
 ### install mod_perl
