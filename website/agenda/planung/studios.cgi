@@ -170,7 +170,8 @@ sub save_studio {
                 studio_id         => $studio_id,
                 has_single_events => 1,
                 count_episodes    => 0,
-                series_name       => '_single_'
+                series_name       => '_single_',
+                modified_by       => $params->{presets}->{user}
             }
         );
     }
