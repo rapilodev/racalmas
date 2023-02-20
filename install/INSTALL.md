@@ -151,10 +151,6 @@ To edit your radio programm open http://<localhost>/agenda/planung/
 ccAdmin
 shug!3Lu
 
-If you need to reset the default admin account run
-
-    update calcms_users set pass='$2a$08$oLiwMC1vYD8ZzfjKdpTG3OBFAXbiKslWIe0w005ysdxO0kE/A/12G', salt='oLiwMC1vYD8ZzfjKdpTG3O' where name='ccAdmin';
-
 # inject calcms into your website
 
 calcms uses a copy of your web page as a template to have the same layout as your web site.  
@@ -181,3 +177,10 @@ if using plesk, use
     # for example: `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     cat migrate | mysql -u root calcms
     
+## reset the default admin account run
+
+    update calcms_users set pass='$2a$08$oLiwMC1vYD8ZzfjKdpTG3OBFAXbiKslWIe0w005ysdxO0kE/A/12G', salt='oLiwMC1vYD8ZzfjKdpTG3O' where name='ccAdmin';
+
+## Image::Magick::Square
+
+If installation of Image::Magick::Square fails, you probably need to install a recent version of Image::Magick.
