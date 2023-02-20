@@ -188,7 +188,7 @@ var calcms_settings = new Array();
         if (elem==null)     return;
         if (offset==null)   offset=0;
         if (duration==null) duration=500;
-        $([document.documentElement, document.body]).scrollTop( elem.offset().top+offset )
+        try { $([document.documentElement, document.body]).scrollTop( elem.offset().top+offset ) } catch(e){};
     }
 
     function addPrevEvent(id){
