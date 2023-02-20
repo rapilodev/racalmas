@@ -142,11 +142,12 @@ apt-get install <deb-package>
 
 #### Configuration
 
-edit configuration at website/config/config.cgi
+Copy the configuration from website/config/config.cgi.off to website/config/config.cgi.
+Setup the domain and database connection.
 
-Now you can connect to web gui 
+Now you can open the web gui at http://<localhost>/programm/
 
-https://<localhost>/agenda/planung/
+To edit your radio programm open http://<localhost>/agenda/planung/
 ccAdmin
 shug!3Lu
 

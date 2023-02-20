@@ -5,9 +5,8 @@ __END__
 
 <config>
 
-Define DOMAIN               my-radio.org
+Define DOMAIN               localhost
 Define BASE_DIR             /home/calcms/racalmas/website
-Define LOG_DIR              /home/calcms/log
 
 # default project from database
 project                     my-project
@@ -51,8 +50,7 @@ domain                      ${DOMAIN}
 <locations>
     temp_dir                ${BASE_DIR}/temp/
 
-    # URLs of the program page the agenda should be injected into (done by preload_agenda.pl)
-    # this is the page containing calcms_menu, and other ids
+    # source website to inject calcms widgets into
     source_url_http         http://${DOMAIN}/programm.html
     source_url_https        https://${DOMAIN}/programm.html
 
@@ -72,6 +70,7 @@ domain                      ${DOMAIN}
     local_media_dir         ${BASE_DIR}/media/
     local_media_url         /media/
     thumbs_url              /thumbs/
+    icons_url               /icons/
 
     # archives
     local_archive_dir       /home/calcms/archive/
@@ -81,12 +80,12 @@ domain                      ${DOMAIN}
     listen_dir              /home/calcms/${DOMAIN}/
     listen_url              https://${DOMAIN}/listen/
 
-    local_audio_recordings_dir ${BASE_DIR}/recordings/
-    local_audio_recordings_url /agenda_files/recordings/
+    # upload
+    local_audio_recordings_dir ${BASE_DIR}/recordings/recordings/
+    local_audio_recordings_url /recordings/
 
     # multi language support
     admin_pot_dir           ${BASE_DIR}/agenda/planung/pot/
-
     email                   info@${DOMAIN}
 </locations>
 
@@ -101,7 +100,7 @@ domain                      ${DOMAIN}
 </permissions>
 
 <access>
-    hostname                127.0.0.1
+    hostname                localhost
     port                    3306
     database                calcms
 
@@ -122,6 +121,4 @@ no_result_message           Radio ${DOMAIN}
 events_title                Radio ${DOMAIN}
 events_description          Hört mehr Radio
 
-
 </config>
-
