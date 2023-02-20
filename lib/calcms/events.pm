@@ -116,8 +116,8 @@ sub get($$) {
         and  my $event_id = $request->{params}->{original}->{event_id}
     ){
         my $event = $results->[0];
-        $event->{prev_event_id} = get_prev($config, $event)->{event_id};
-        $event->{next_event_id} = get_next($config, $event)->{event_id};
+        $event->{prev_event_id} = (get_prev($config, $event)//{})->{event_id};
+        $event->{next_event_id} = (get_next($config, $event)//{})->{event_id};
     }
 
     return $results;
