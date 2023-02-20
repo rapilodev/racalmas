@@ -1,44 +1,22 @@
 
 # setup database
 
-## create database
+Edit the file "init.sql" and change the passwords of the three user accounts (calcms_admin, calcms_write and calcms_read).
+We use different accounts for different purposes.
 
-    mysqladmin -u root -p create calcms
+## run init script with root permissions
 
-### start mysql with root permissions
+    mysql -u root -p < ./install/init.sql
 
-    mysql -u root -p
+## if using plesk, use
 
-if using plesk, use
+    mysql -u admin mysql -p`cat /etc/psa/.psa.shadow` < ./install/init.sql
 
-    mysql -u admin mysql -p`cat /etc/psa/.psa.shadow`
-
-We use different accounts for different purposes. 
-Please change the passwords config after "INDENTIFIED BY" ! 
-
-#### create admin account
-
-    CREATE USER 'calcms_admin'@'localhost' IDENTIFIED BY 'taes9Cho';
-    GRANT ALL PRIVILEGES ON calcms.* TO 'calcms_admin'@'localhost';
-    GRANT ALL PRIVILEGES ON calcms_test.* TO 'calcms_admin'@'localhost';
-
-#### create editor account
-
-    CREATE USER 'calcms_write'@'localhost' IDENTIFIED BY 'Toothok8';
-    GRANT SELECT, INSERT, UPDATE, DELETE ON calcms.* TO 'calcms_write'@'localhost';
-    GRANT ALL PRIVILEGES ON calcms_test.* TO 'calcms_write'@'localhost';
-
-#### create read-only account
-
-    CREATE USER 'calcms_read'@'localhost' IDENTIFIED BY 'Ro2chiya';
-    GRANT SELECT ON calcms.* TO 'calcms_read'@'localhost';
-    GRANT ALL PRIVILEGES ON calcms_test.* TO 'calcms_read'@'localhost';
-
-### import database content
+## import database content
 
     mysql -u calcms_admin -p calcms < ./install/create.sql 
 
-### socket connection issues
+## socket connection issues
 
 If you use a local database connection and see the error message
 "could not connect to database: Can't connect to local MySQL server through socket"
