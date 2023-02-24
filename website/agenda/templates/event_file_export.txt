@@ -60,7 +60,6 @@ $events=[
 	'start_minute'		=> q|<TMPL_VAR start_minute>|,
 	'start'			=> q|<TMPL_VAR start>|,
 	'static_files_url'	=> q|<TMPL_VAR static_files_url>|,
-	'time_of_day'		=> q|<TMPL_VAR time_of_day>|,
 	'title'			=> q|<TMPL_VAR title>|,
 	'week_of_year'		=> q|<TMPL_VAR week_of_year>|,
 	'weekday_name'		=> q|<TMPL_VAR weekday_name>|,
