@@ -123,9 +123,13 @@ var calcms = (function($) {
         }
 
         if (field == 'month') {
-            if (month != '') {
-                from_date = month;
-                till_date = month.substring(0, month.length - 2) + "31";
+            if (month != null && month != '') {
+                let date = month;
+                let year = date.substring(0,4);
+                let mon = date.substring(5,7);
+                from_date = date;
+                till_date = date.substring(0, date.length - 2) +
+                    new Date(year, mon , 0).getDate();
             }
             weekday = '';
             date = '';
