@@ -87,6 +87,7 @@ domain                      ${DOMAIN}
     # multi language support
     admin_pot_dir           ${BASE_DIR}/agenda/planung/pot/
     email                   info@${DOMAIN}
+    theme                   default
 </locations>
 
 <permissions>

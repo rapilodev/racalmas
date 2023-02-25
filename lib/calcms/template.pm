@@ -169,8 +169,6 @@ sub setRelativeUrls {
     return $params;
 }
 
-#requires read config
-#TODO:add config
 sub check($;$$) {
     my $config   = shift;
     my $template = shift || '';
@@ -195,12 +193,14 @@ sub check($;$$) {
     }
 
     $template = ( split( /\//, $template ) )[-1];
-    my $cwd = Cwd::getcwd();
-
     $template .= '.html' unless ( $template =~ /\./ );
-    log::error( $config, "template not found: '$cwd/$template'" ) 
-        unless -e $cwd . '/templates/' . $template;
-    $template = $cwd . '/templates/' . $template;
+    my $dir = "templates";
+    my $cwd = Cwd::getcwd();
+    my $theme = $config->{locations}->{theme} //= 'default';
+    $dir .= "/$theme" if $cwd =~ m{/agenda$} && $theme;
+    log::error( $config, "template not found: '$dir'" )
+        unless -e "$cwd/$dir/$template";
+    $template = "$cwd/$dir/$template";
 
     return $template;
 }
