@@ -43,7 +43,6 @@ domain                      ${DOMAIN}
 </system>
 
 <cache>
-    use_client_cache        0
     base_url                /programm
 </cache>
 

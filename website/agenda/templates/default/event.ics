@@ -1,5 +1,4 @@
-<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
-</TMPL_IF>Content-Type:text/calendar; charset="UTF-8"
+Content-Type:text/calendar; charset="UTF-8"
 Content-Disposition: attachment; filename="<TMPL_VAR project_title>-programm.ics"
 Access-Control-Allow-Origin: *
 

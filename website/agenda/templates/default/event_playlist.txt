@@ -1,5 +1,4 @@
-<TMPL_IF use_client_cache>Cache-Control: max-age=600, must-revalidate
-</TMPL_IF>Content-type:text/plain; charset=UTF-8;
+Content-type:text/plain; charset=UTF-8;
 Access-Control-Allow-Origin: *
 
 <TMPL_IF no_result>Andere Veranstalter</TMPL_IF><TMPL_LOOP NAME=events><a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri>" ><TMPL_VAR full_title></a></TMPL_LOOP>
