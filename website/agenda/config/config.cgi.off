@@ -31,10 +31,6 @@ domain                      ${DOMAIN}
     rss                     rss
 </controllers>
 
-<system>
-    config_file             ${BASE_DIR}/agenda/config/config.cgi
-</system>
-
 <locations>
     temp_dir                ${BASE_DIR}/temp/
 
