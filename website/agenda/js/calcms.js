@@ -93,7 +93,6 @@ var calcms = (function($) {
         if (field != null && value != null && field != '') set(field, value);
 
         // read fields
-        var debug = my.get('debug');
         var from_date = my.get('from_date');
         var till_date = my.get('till_date');
         var date = my.get('date');
@@ -201,10 +200,6 @@ var calcms = (function($) {
 
         if (field == 'print') {
             url += "&print=1";
-        }
-
-        if (debug != '') {
-            url += '&debug=' + debug;
         }
 
         return url;
@@ -401,18 +396,13 @@ var calcms = (function($) {
 
     // load calendar content
     my.showCalendar = function showCalendar(target, field) {
-        var calendar_debug = my.get('calendar_debug');
         var calendar_url = my.get('calendar_url');
-        var debug = my.get('debug');
         var date = my.get('month');
 
         var url = calendar_url;
 
         if (field == 'month') {
             url += '/' + date + '/';
-        }
-        if (debug != '') {
-            url += '&debug=' + debug;
         }
 
         if (target == 'window') {
@@ -421,9 +411,6 @@ var calcms = (function($) {
             my.updateContainer('calcms_calendar', url);
         }
 
-        if (calendar_debug != null) {
-            calendar_debug.innerHTML = url;
-        }
         return false;
     }
 
@@ -545,7 +532,6 @@ var calcms = (function($) {
         if (my.get('preloaded') == '') {
             var program_url = my.get('program_url');
             var series_name_url = my.get('series_name_url');
-            var debug = my.get('debug');
 
             if (program_url != null && program_url != '')
                 my.updateContainer('calcms_programs', program_url);

@@ -22,7 +22,6 @@ my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
-my $debug  = $config->{system}->{debug};
 
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( $user eq '' );

@@ -15,7 +15,6 @@ my $cgi=new CGI();
 my $params=$cgi->Vars();
 
 my $config		=config::get('../../piradio.de/agenda/config/config.cgi');
-my $debug		=$config->{system}->{debug};
 
 $params=check_params($params);
 our $errors=[];

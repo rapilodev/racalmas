@@ -33,7 +33,6 @@ my $r   = shift;
 my $cgi = undef;
 
 my $config = config::get('../config/config.cgi');
-our $debug = $config->{system}->{debug};
 my $base_dir     = $config->{locations}->{base_dir};
 my $tmp_dir      = '/var/tmp';
 my $upload_limit = 2048 * 1000;

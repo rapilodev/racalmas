@@ -20,8 +20,6 @@ binmode STDOUT, ":encoding(UTF-8)";
 
 if ( $0 =~ /comments.*?\.cgi$/ ) {
     my $config = config::get('config/config.cgi');
-    my $debug  = $config->{system}->{debug};
-
     my $request = {
         url    => $ENV{QUERY_STRING},
         params => {

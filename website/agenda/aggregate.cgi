@@ -31,8 +31,6 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
     }
 
     my $config = config::getFromScriptLocation();
-
-    my $debug    = $config->{system}->{debug};
     my $base_dir = $config->{locations}->{base_dir};
 
     my $output_header = '';

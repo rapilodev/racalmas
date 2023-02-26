@@ -19,7 +19,6 @@ binmode STDOUT, ":utf8";
 my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
 my $config = config::getFromScriptLocation();
-my $debug  = $config->{system}->{debug};
 
 #get request
 my $request = {
@@ -38,7 +37,6 @@ my $dbh = db::connect($config);
 #fill template
 my $template_parameters = {};
 $template_parameters->{projects}         = getProjects( $dbh, $config, $params );
-$template_parameters->{debug}            = $config->{system}->{debug};
 $template_parameters->{server_cache}     = $config->{cache}->{server_cache} if $config->{cache}->{server_cache};
 
 #output template
@@ -96,7 +94,6 @@ sub getSeriesNames {
     my $project = shift;
     my $params  = shift;
 
-    my $debug       = $config->{system}->{debug};
     my $bind_values = [];
 
     my @conds = ();

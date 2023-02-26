@@ -32,7 +32,6 @@ my $r = shift;
 ( my $cgi, my $params, my $error ) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
-my $debug  = $config->{system}->{debug};
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( !defined $user ) || ( $user eq '' );
 
@@ -148,7 +147,6 @@ sub showComments {
 
     $template_parameters->{search}        = markup::fix_utf8( $request->{params}->{original}->{search} );
     $template_parameters->{events}        = $events;
-    $template_parameters->{debug}         = $config->{system}->{debug};
     $template_parameters->{event_count}   = scalar(@$events);
     $template_parameters->{comment_count} = $comment_count;
     $template_parameters->{is_empty}      = 1 if scalar @$events == 0;

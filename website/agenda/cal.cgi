@@ -19,8 +19,6 @@ if ( $0 =~ /cal.*?\.cgi$/ ) {
     ( my $cgi, my $params, my $error ) = params::get($r);
 
     my $config = config::getFromScriptLocation();
-    my $debug  = $config->{system}->{debug};
-
     my $request = {
         url    => $ENV{QUERY_STRING},
         params => {

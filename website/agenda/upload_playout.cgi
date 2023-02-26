@@ -30,7 +30,6 @@ if ( $0 =~ /upload_playout.*?\.cgi$/ ) {
     ( my $cgi, my $params, my $error ) = params::get($r);
 
     my $config = config::getFromScriptLocation();
-    my $debug  = $config->{system}->{debug};
     print "Content-type:text/plain\n\n";
 
     my $json = JSON::decode_json($content);

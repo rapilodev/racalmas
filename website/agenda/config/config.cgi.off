@@ -33,13 +33,6 @@ domain                      ${DOMAIN}
 
 <system>
     config_file             ${BASE_DIR}/agenda/config/config.cgi
-
-    log_file                /var/www/vhosts/${DOMAIN}/logs/error_log
-    log_debug_file          ${LOG_DIR}/${DOMAIN}/calcms.log
-    log_debug_memory_file   ${LOG_DIR}/${DOMAIN}/calcms-mem.log
-
-    debug_memory            0
-    debug                   0
 </system>
 
 <cache>

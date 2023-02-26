@@ -32,7 +32,6 @@ binmode STDOUT, ":utf8";
 my $useCgi = 0;
 
 our $config = config::get('../config/config.cgi');
-our $debug  = $config->{system}->{debug};
 my $base_dir = $config->{locations}->{base_dir};
 
 my $tempDir     = '/var/tmp';
