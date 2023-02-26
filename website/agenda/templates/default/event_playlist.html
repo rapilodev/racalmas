@@ -20,7 +20,7 @@ div.event div.title div{
 </style>
 
 <TMPL_LOOP NAME=events>
-<a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>" 
+<a href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>" 
 > 
     <div id="event_playlist_<TMPL_VAR event_id>" class="event"  title="<TMPL_VAR full_title><TMPL_IF excerpt>. <TMPL_VAR excerpt escape=url></TMPL_IF>">
 		<TMPL_COMMENT>

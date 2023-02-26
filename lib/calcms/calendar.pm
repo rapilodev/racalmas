@@ -267,7 +267,7 @@ sub get($$) {
         start_month      => $start_month,
         start_year       => $start_year,
         base_url         => $config->{locations}->{base_url},
-        cache_base_url   => $config->{cache}->{base_url},
+        widget_render_url=> $config->{locations}->{widget_render_url},
         controllers      => $config->{controllers},
     };
 
@@ -283,7 +283,7 @@ sub render($$$$) {
     my $parms = $request->{params}->{checked};
     my $template_parameters = $calendar;
     $template_parameters->{base_url}         = $config->{locations}->{base_url};
-    $template_parameters->{cache_base_url}   = $config->{cache}->{base_url};
+    $template_parameters->{widget_render_url}= $config->{locations}->{widget_render_url};
     $template_parameters->{server_cache}     = $config->{cache}->{server_cache} if ( $config->{cache}->{server_cache} );
     $template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache}
       if ( $config->{cache}->{use_client_cache} );

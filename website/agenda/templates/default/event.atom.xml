@@ -3,7 +3,7 @@ Access-Control-Allow-Origin: *
 
 <?xml version='1.0' encoding='UTF-8'?>
 <feed xmlns='http://www.w3.org/2005/Atom' xmlns:gCal='http://schemas.google.com/gCal/2005'>
-<id><TMPL_VAR cache_base_url></id>
+<id><TMPL_VAR widget_render_url></id>
 
 <title type='text'><TMPL_VAR project_title></title>
 <updated><TMPL_VAR modified_at></updated>
@@ -15,14 +15,14 @@ Access-Control-Allow-Origin: *
 	<email><TMPL_VAR project_email></email>
 </author>
 <link rel='alternate' type='text/html' href='<TMPL_VAR source_base_url>'/>
-<link rel='self' type='application/atom+xml' href='<TMPL_VAR cache_base_url>/feed/'/>
+<link rel='self' type='application/atom+xml' href='<TMPL_VAR widget_render_url>/feed/'/>
 
 <generator version='0.1' uri='http://radiopiloten.de'>calcms</generator>
 <gCal:timezone value='<TMPL_VAR time_zone>'/>
 <gCal:timesCleaned value='0'/>
 <TMPL_LOOP events>
 <entry>
-<id><TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html</id>
+<id><TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html</id>
 <published><TMPL_VAR created_at></published>
 <updated><TMPL_VAR modified_at></updated>
 
@@ -31,8 +31,8 @@ Access-Control-Allow-Origin: *
 <summary type='text'><TMPL_VAR excerpt></summary>
 <content type='html'><![CDATA[<TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name> - <TMPL_VAR start_time_name> - <TMPL_VAR end_time_name> | <TMPL_VAR full_title><p><TMPL_VAR content_html>]]></content>
 
-<link rel='alternate' type='text/html' href='<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>' title='alternate'/>
-<link rel='self' type='application/atom+xml' href='<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>'/>
+<link rel='alternate' type='text/html' href='<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>' title='alternate'/>
+<link rel='self' type='application/atom+xml' href='<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>'/>
 <TMPL_IF media_url><link rel="enclosure" type="audio/mpeg" href="<TMPL_VAR media_url>"/>
 </TMPL_IF>
 <TMPL_IF project_title><author>

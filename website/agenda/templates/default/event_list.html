@@ -22,18 +22,18 @@ Content-type:text/html; charset=utf-8;
         </div>
     </TMPL_IF>
     <div id="event_<TMPL_VAR event_id>" class="event<TMPL_IF location_css> <TMPL_VAR location_css></TMPL_IF><TMPL_IF is_running> running</TMPL_IF>"
-    onclick="window.location.href='<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>'"
+    onclick="window.location.href='<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>'"
     >
         <span class="time"><TMPL_VAR start_time_name><TMPL_IF name="__last__"> - <TMPL_VAR end_time_name></TMPL_IF></span>
         <span class="summary" title="Mehr Infos zur Sendung">
-            <a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
+            <a href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
                 <span class="title"><TMPL_VAR skey></span>
                 <span class="subtitle"><TMPL_VAR stkey><TMPL_VAR tkey></span>
                 <span class="episode"><TMPL_VAR ekey></span>
             </a>
             <div class="excerpt"><TMPL_VAR excerpt> <TMPL_VAR user_excerpt> </div>
             <TMPL_UNLESS no_comment>
-            <a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri>#comments"
+            <a href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri>#comments"
             >
                 <span class="submitted<TMPL_IF comment_count> comments</TMPL_IF>"><TMPL_VAR comment_count> Kommentar<TMPL_UNLESS one_comment>e</TMPL_UNLESS></span>
             </a>

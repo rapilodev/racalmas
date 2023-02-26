@@ -35,7 +35,7 @@ Feed = {
   "openSearch$totalResults" : { "$t" : "<TMPL_VAR event_count>" },
 <TMPL_LOOP events>
   "entry" : [ {
-    "id" : { "$t" : "<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html/" },
+    "id" : { "$t" : "<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html/" },
     "published" : { "$t": "<TMPL_VAR created_at>" },
     "updated" : { "$t": "<TMPL_VAR modified_at>" },
     "category" : [ {
@@ -49,11 +49,11 @@ Feed = {
     "link" : [ {
       "rel" : "alternate",
       "type" : "text/html",
-      "href" : "<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri>"
+      "href" : "<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri>"
       },{
       "rel" : "self",
       "type" : "application/atom+xml",
-      "href" : "<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri>"
+      "href" : "<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri>"
     } ],
     "author" : [ {
       "name" : { "$t" : "<TMPL_VAR project_email>" },

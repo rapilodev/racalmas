@@ -35,10 +35,6 @@ domain                      ${DOMAIN}
     config_file             ${BASE_DIR}/agenda/config/config.cgi
 </system>
 
-<cache>
-    base_url                /programm
-</cache>
-
 <locations>
     temp_dir                ${BASE_DIR}/temp/
 
@@ -50,6 +46,7 @@ domain                      ${DOMAIN}
     source_base_url         https://${DOMAIN}/
     local_base_url          /agenda/
     editor_base_url         /agenda/planung/
+    widget_render_url       /programm
 
     # ajax
     base_domain             https://${DOMAIN}/

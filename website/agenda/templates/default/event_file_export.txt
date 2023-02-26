@@ -5,7 +5,7 @@ $events=[
 {
 	'__last__'		=> q|<TMPL_VAR __last__>|,
 	'base_url'		=> q|<TMPL_VAR base_url>|,
-	'cache_base_url'	=> q|<TMPL_VAR cache_base_url>|,
+	'widget_render_url'	=> q|<TMPL_VAR widget_render_url>|,
 	'comment_count'		=> q|<TMPL_VAR comment_count>|,
 	'.controllers.event'	=> q|<TMPL_VAR .controllers.event>|,
 	'.controllers.events'	=> q|<TMPL_VAR .controllers.events>|,

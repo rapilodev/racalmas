@@ -173,7 +173,7 @@ sub modify_results($$$) {
             $result->{short_content} = $result->{content};
         }
         $result->{base_url}       = $config->{locations}->{base_url};
-        $result->{cache_base_url} = $config->{cache}->{base_url};
+        $result->{widget_render_url} = $config->{locations}->{widget_render_url};
 
         if ( $params->{template} =~ /\.xml/ ) {
 

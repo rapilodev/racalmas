@@ -215,7 +215,7 @@ sub getMail {
     $mail->{Data} .= "nur zur Erinnerung...\n\n";
     $mail->{Data} .= "am $event->{weekday_name} ist die naechste '$event->{series_name}'-Sendung.\n\n";
     $mail->{Data} .=
-      "$event->{source_base_url}$event->{cache_base_url}/$config->{controllers}->{event}/$event->{event_id}.html\n\n";
+      "$event->{source_base_url}$event->{widget_render_url}/$config->{controllers}->{event}/$event->{event_id}.html\n\n";
     $mail->{Data} .= "Gruss, $request->{user}\n";
     return $mail;
 }

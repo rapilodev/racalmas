@@ -50,7 +50,7 @@ Access-Control-Allow-Origin: *
 			<div class="date<TMPL_IF is_running> running</TMPL_IF>">
 				<p>
 				<h1 class="summary title">
-					Aktuelle Sendung: <a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
+					Aktuelle Sendung: <a href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
 						<TMPL_VAR full_title>
 					</a>
 				</h1>
@@ -60,14 +60,14 @@ Access-Control-Allow-Origin: *
 			<div class="content" > 
 				<TMPL_COMMENT>
 				<div class="image-attach-teaser" style="width: 150px;">
-					<a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
+					<a href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
 						<img class="image image-thumbnail" src="<TMPL_VAR image>" width="150" height="150" />
 					</a>
 				</div>
 				</TMPL_COMMENT>
 				<TMPL_VAR excerpt >
 			</div>
-				<a 	href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#comments">
+				<a 	href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#comments">
 					<span><TMPL_VAR comment_count> Kommentar<TMPL_UNLESS one_comment>e</TMPL_UNLESS></span>
 				</a>	
 			</div>

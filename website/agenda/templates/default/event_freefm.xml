@@ -69,7 +69,7 @@ Content-type:text/xml; charset=UTF-8
     </categories>
     <feed>
         <title>Sendebeschreibung</title>
-        <url>https://piradio.de<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url></url>
+        <url>https://piradio.de<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url></url>
     </feed>
     <transmit-times>
         <transmit-time date-from="<TMPL_VAR start_datetime_utc>" date-to="<TMPL_VAR end_datetime_utc>" recurrence="false" rerun="<TMPL_IF rerun>true<TMPL_ELSE>false</TMPL_IF>" />

@@ -108,7 +108,7 @@ Access-Control-Allow-Origin: *
 <body>
 <div id="playlist_container" class="dragscroll">
 <TMPL_LOOP NAME=events>
-    <a href="<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>" > 
+    <a href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>" > 
     	<div id="event_playlist_<TMPL_VAR event_id>" class="eventContainer event">
 		    <div class="top" title="<TMPL_VAR full_title><TMPL_IF excerpt>. <TMPL_VAR excerpt></TMPL_IF>">
 				    <TMPL_VAR weekday_short_name> <TMPL_VAR start_time_name>

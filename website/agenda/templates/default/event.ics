@@ -41,7 +41,7 @@ LOCATION:<TMPL_VAR location_mapped>
 SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:<TMPL_VAR full_title>
-URL:<TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri>
+URL:<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri>
 TRANSP:OPAQUE
 CATEGORIES:<TMPL_VAR project_title>
 END:VEVENT

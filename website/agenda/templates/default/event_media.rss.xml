@@ -9,7 +9,7 @@ Content-type:application/rss+xml; charset=UTF-8
 
 <channel>
     <atom:link href="http:<TMPL_VAR base_domain>agenda/rss-media/rss" rel="self" type="application/rss+xml" />
-	<link>http:<TMPL_VAR base_domain><TMPL_VAR cache_base_url>/event.rss.xml</link>
+	<link>http:<TMPL_VAR base_domain><TMPL_VAR widget_render_url>/event.rss.xml</link>
 	<title><TMPL_VAR project_title></title>
 	<description><TMPL_VAR project_subtitle></description>
     <itunes:owner>

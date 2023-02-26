@@ -4,8 +4,8 @@ Content-type:application/rss+xml; charset=UTF-8
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
 
 <channel>
-    <atom:link href="http:<TMPL_VAR base_domain><TMPL_VAR cache_base_url>/rss" rel="self" type="application/rss+xml" />
-	<link>http:<TMPL_VAR base_domain><TMPL_VAR cache_base_url>/event.rss.xml</link>
+    <atom:link href="http:<TMPL_VAR base_domain><TMPL_VAR widget_render_url>/rss" rel="self" type="application/rss+xml" />
+	<link>http:<TMPL_VAR base_domain><TMPL_VAR widget_render_url>/event.rss.xml</link>
 	<title><TMPL_VAR project_title></title>
 	<description><TMPL_VAR project_subtitle></description>
 	<language>de-de</language>
@@ -14,7 +14,7 @@ Content-type:application/rss+xml; charset=UTF-8
     <ttl>3600</ttl>
 	<image>
 		<url>http:<TMPL_VAR base_domain>sites/default/files/images/piradio-logo-kreis.preview.gif</url>
-	    <link>http:<TMPL_VAR base_domain><TMPL_VAR cache_base_url>/event.rss.xml</link>
+	    <link>http:<TMPL_VAR base_domain><TMPL_VAR widget_render_url>/event.rss.xml</link>
 	    <title><TMPL_VAR project_title></title>
 	</image>
     
@@ -23,8 +23,8 @@ Content-type:application/rss+xml; charset=UTF-8
 	<item>
 		<title><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name> - <TMPL_VAR start_time_name> - <TMPL_VAR end_time_name> | <TMPL_VAR full_title></title>
 		<description><TMPL_VAR excerpt></description>
-		<link>http:<TMPL_VAR base_domain><TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url></link>
-		<guid>http:<TMPL_VAR base_domain><TMPL_VAR cache_base_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html</guid>
+		<link>http:<TMPL_VAR base_domain><TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url></link>
+		<guid>http:<TMPL_VAR base_domain><TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html</guid>
 		<pubDate><TMPL_VAR modified_at></pubDate>
 		<comments>http:<TMPL_VAR base_domain><TMPL_VAR cache_base_domain>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#comments</comments>
 		<media:content url="http:<TMPL_VAR base_domain><TMPL_VAR image>" medium="image">
