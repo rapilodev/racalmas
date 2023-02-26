@@ -284,9 +284,6 @@ sub render($$$$) {
     my $template_parameters = $calendar;
     $template_parameters->{base_url}         = $config->{locations}->{base_url};
     $template_parameters->{widget_render_url}= $config->{locations}->{widget_render_url};
-    $template_parameters->{server_cache}     = $config->{cache}->{server_cache} if ( $config->{cache}->{server_cache} );
-    $template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache}
-      if ( $config->{cache}->{use_client_cache} );
 
     template::process( $config, $_[0], $parms->{template}, $template_parameters );
 }

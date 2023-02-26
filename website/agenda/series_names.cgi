@@ -37,7 +37,6 @@ my $dbh = db::connect($config);
 #fill template
 my $template_parameters = {};
 $template_parameters->{projects}         = getProjects( $dbh, $config, $params );
-$template_parameters->{server_cache}     = $config->{cache}->{server_cache} if $config->{cache}->{server_cache};
 
 #output template
 my $template = $params->{template};

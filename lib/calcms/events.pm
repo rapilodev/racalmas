@@ -1204,10 +1204,6 @@ sub render($$$$;$) {
     my %tparams = %$params;
     my $tparams = \%tparams;
     $tparams->{events}       = $results;
-    $tparams->{server_cache} = $config->{cache}->{server_cache}
-      if ( $config->{cache}->{server_cache} );
-    $tparams->{use_client_cache} = $config->{cache}->{use_client_cache}
-      if ( $config->{cache}->{use_client_cache} );
 
     if ( scalar @$results > 0 ) {
         my $result = $results->[0];

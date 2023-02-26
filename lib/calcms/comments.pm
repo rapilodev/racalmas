@@ -223,10 +223,6 @@ sub render($$$$) {
 
     $template_parameters->{event_id}    = $params->{event_id};
     $template_parameters->{event_start} = $params->{event_start};
-
-    $template_parameters->{server_cache} = $config->{cache}->{server_cache} if ( $config->{cache}->{server_cache} );
-    $template_parameters->{use_client_cache} = $config->{cache}->{use_client_cache}
-      if ( $config->{cache}->{use_client_cache} );
     $template_parameters->{controllers} = $config->{controllers};
     template::process( $config, $_[0], $params->{template}, $template_parameters );
 }
