@@ -17,6 +17,10 @@
 <a href="#"><img src="image/more.svg">&nbsp;More...&nbsp;</a>
 <div class="dropdown-content">
 
+<TMPL_IF allow.create_event_from_schedule>
+<div><a href="create-events.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/create-events.svg">&nbsp;<TMPL_VAR .loc.create-events></a></div>
+</TMPL_IF>
+
 <TMPL_IF .allow.read_playout>
 <div><a href="show-playout.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/play-circle.svg">&nbsp;<TMPL_VAR .loc.playout></a></div>
 </TMPL_IF>

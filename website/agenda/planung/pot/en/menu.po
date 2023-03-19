@@ -61,3 +61,6 @@ msgstr "Preview"
 msgid "user-stats"
 msgstr "User Stats"
 
+msgid "create-events"
+msgstr "Create Events"
+

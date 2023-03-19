@@ -61,3 +61,6 @@ msgstr "Vorschau"
 msgid "user-stats"
 msgstr "Nutzeraktivität"
 
+msgid "create-events"
+msgstr "Sendungen anlegen"
+
