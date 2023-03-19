@@ -650,7 +650,7 @@ a.load-prev, a.load-next{
 
 #calcms_search select {
     background: white;
-    background-image: url("/agenda/image/select.png");
+    background-image: url("/agenda/images/select.png");
     background-position: right center;
     background-repeat: no-repeat;
 }

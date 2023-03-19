@@ -39,7 +39,7 @@ Content-type:application/rss+xml; charset=UTF-8
 		<comments>http:<TMPL_VAR base_domain>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#comments</comments>
         <enclosure url="https:<TMPL_VAR listen_url>" length="<TMPL_VAR size>" type="audio/mpeg" />
         <itunes:duration><TMPL_VAR duration></itunes:duration>
-		<media:content url="http:<TMPL_VAR base_domain>media/image/<TMPL_VAR image>" medium="image">
+		<media:content url="http:<TMPL_VAR base_domain>media/images/<TMPL_VAR image>" medium="image">
 			<media:title type="html"><TMPL_VAR full_title></media:title>
 		</media:content>
         <media:content url="https:<TMPL_VAR listen_url>" medium="audio" />
