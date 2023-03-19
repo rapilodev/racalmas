@@ -8,6 +8,7 @@ use feature 'state';
 use Data::Dumper;
 use HTML::Template::Compiled();
 use HTML::Template::Compiled::Plugin::XMLEscape();
+use HTML::Template::Compiled::Plugin::Hyphen();
 
 #use HTML::Template::JIT();
 use JSON();
@@ -119,6 +120,7 @@ sub initTemplate($) {
         default_escape    => $default_escape,
         cache             => 1,
         utf8              => 1,
+        plugin            => [qw(HTML::Template::Compiled::Plugin::Hyphen)]
     );
 }
 
