@@ -77,6 +77,7 @@ sub save_content($$) {
     {
         push @keys, $key if defined $entry->{$key};
     }
+    $entry->{rerun}     = 0 unless $entry->{rerun};
     $entry->{episode}   = undef if ( defined $entry->{episode} ) && ( $entry->{episode} eq '0' );
     $entry->{published} = 0     if ( defined $entry->{draft} )   && ( $entry->{draft} eq '1' );
 

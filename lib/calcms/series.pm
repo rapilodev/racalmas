@@ -174,6 +174,9 @@ sub update ($$) {
     for my $column ( keys %$columns ) {
         $entry->{$column} = $series->{$column} if defined $series->{$column};
     }
+    for my $column ('live', 'count_episodes', 'predecessor_id') {
+        $entry->{$column} = 0 unless $entry->{$column};
+    }
 
     $entry->{image}       = images::normalizeName( $entry->{image} ) if defined $entry->{image};
     $entry->{id}          = $series->{series_id};
