@@ -64,3 +64,6 @@ msgstr "User Stats"
 msgid "create-events"
 msgstr "Create Events"
 
+msgid "edit-help-texts"
+msgstr "Edit Help"
+

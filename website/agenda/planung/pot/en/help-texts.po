@@ -1,0 +1,12 @@
+msgid "save_button"
+msgstr "save"
+
+msgid "delete_button"
+msgstr "delete"
+
+msgid "table"
+msgstr "Table"
+
+msgid "column"
+msgstr "Column"
+

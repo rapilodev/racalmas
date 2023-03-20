@@ -620,6 +620,7 @@ CREATE TABLE `calcms_roles` (
   `delete_audio_recordings` tinyint unsigned NOT NULL,
   `read_playout` tinyint unsigned NOT NULL,
   `create_download` tinyint unsigned NOT NULL,
+  `edit_help_texts` INT(1) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `role_2` (`role`),
   KEY `project_id` (`project_id`),
@@ -1768,3 +1769,13 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2023-02-19 23:01:42
+
+CREATE TABLE `calcms_help_texts` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `project_id` INT UNSIGNED NOT NULL,
+  `studio_id` INT UNSIGNED NOT NULL,
+  `lang` VARCHAR(5) NOT NULL,
+  `table` VARCHAR(45) NOT NULL,
+  `column` VARCHAR(45) NOT NULL,
+  `text` TEXT(500) NOT NULL,
+  PRIMARY KEY (`id`));

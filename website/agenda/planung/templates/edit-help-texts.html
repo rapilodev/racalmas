@@ -1,0 +1,21 @@
+<script src="js/edit-help-texts.js" type="text/javascript"></script>
+<link rel="stylesheet" href="css/edit-help-texts.css" type="text/css" /> 
+
+<TMPL_LOOP tables>
+Table <TMPL_VAR name>
+<table>
+    <TMPL_LOOP columns>
+    <tr>
+        <form action="help-texts.cgi" method=post>
+            <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+            <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+            <input type="hidden" name="table" value="<TMPL_VAR table>">
+            <input type="hidden" name="column" value="<TMPL_VAR column>">
+            <td><TMPL_VAR column></td>
+            <td><textarea name="text" style="width:80ch;height:8rem;"><TMPL_VAR value></textarea></td>
+            <td><input type="submit" name="action" value="save"></td>
+        </form>
+    </tr>
+    </TMPL_LOOP>
+</table>
+</TMPL_LOOP>

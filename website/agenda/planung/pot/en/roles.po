@@ -256,3 +256,6 @@ msgstr "delete audio recordings"
 msgid "label_read_playout"
 msgstr "show playout"
 
+msgid "label_edit_help_texts"
+msgstr "edit help texts"
+

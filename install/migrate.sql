@@ -289,3 +289,15 @@ DROP INDEX `category` ;
 ;
 
 ALTER TABLE calcms_user_series DROP COLUMN active;
+
+CREATE TABLE `calcms_help_texts` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `project_id` INT UNSIGNED NOT NULL,
+  `studio_id` INT UNSIGNED NOT NULL,
+  `lang` VARCHAR(5) NOT NULL,
+  `table` VARCHAR(45) NOT NULL,
+  `column` VARCHAR(45) NOT NULL,
+  `text` TEXT(500) NOT NULL,
+  PRIMARY KEY (`id`));
+
+ALTER TABLE `calcms_roles` ADD COLUMN `edit_help_texts` INT(1) UNSIGNED NOT NULL;

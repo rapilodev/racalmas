@@ -57,6 +57,10 @@
 <div><a href="user-stats.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>&action=show-user-stats"><img src="image/activity.svg">&nbsp;<TMPL_VAR .loc.user-stats></a></div>
 </TMPL_IF>
 
+<TMPL_IF .allow.edit_help_texts>
+<div><a id="edit_help_texts" href="help-texts.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&action=edit"><img src="image/help.svg">&nbsp;<TMPL_VAR .loc.edit-help-texts></a></div>
+</TMPL_IF>
+
 <div title="<TMPL_VAR .loc.profile>"><a href="user-settings.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/settings.svg">&nbsp;<TMPL_VAR .loc.profile></a></div>
 
 <div title="<TMPL_VAR .loc.help>"><a href="help.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>"><img src="image/help.svg">&nbsp;<TMPL_VAR .loc.help></a></div>

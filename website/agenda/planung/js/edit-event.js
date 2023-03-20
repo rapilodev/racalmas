@@ -333,7 +333,22 @@ $(document).ready(
                     updateCheckBox("#edit_event input[name='published']", 0);
                 }
             }
-        )        
+        )
+
+        jQuery.getJSON("help-texts.cgi?project_id="+getProjectId()+"&studio_id="+getStudioId()+"&action=get", 
+        function(data){
+            for (col in data){
+                let value = data[col];
+                console.log(col+" "+value)
+                $(`input[name="${col}"]`).hover(function() {
+                    $(this).attr("title",value)
+                });
+                $(`textarea[class="${col}"]`).hover(function() {
+                    $(this).attr("title",value)
+                });
+            }
+        });
+
         console.log("done")
     }
 );
