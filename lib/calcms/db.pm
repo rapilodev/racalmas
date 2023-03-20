@@ -118,11 +118,11 @@ sub insert ($$$){
     my ($dbh, $table, $entry) =@_;
 
     my @keys = sort keys %$entry;
-    my $keys = join( ",", @keys );
+    my $keys = join( ",", map {"`$table`.`$_`"} @keys );
     my $values = join( ",", map { '?' } @keys );
     my @bind_values = map { $entry->{$_} } @keys;
 
-    my $sql = "insert into $table \n ($keys) \n values  ($values);\n";
+    my $sql = "insert into `$table` \n ($keys) \n values ($values);\n";
     put( $dbh, $sql, \@bind_values );
     my $result = get( $dbh, 'SELECT LAST_INSERT_ID() id;' );
     return $result->[0]->{id} if $result->[0]->{id} > 0;
