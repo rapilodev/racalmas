@@ -1525,7 +1525,6 @@ CREATE TABLE `calcms_user_series` (
   `studio_id` int unsigned NOT NULL,
   `series_id` int unsigned NOT NULL,
   `user_id` int unsigned NOT NULL,
-  `active` char(1) NOT NULL,
   `modified_by` varchar(100) DEFAULT NULL,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -1533,7 +1532,6 @@ CREATE TABLE `calcms_user_series` (
   KEY `studio_id` (`studio_id`),
   KEY `series_id` (`series_id`),
   KEY `user_id` (`user_id`),
-  KEY `active` (`active`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1019 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

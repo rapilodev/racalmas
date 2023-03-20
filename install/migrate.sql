@@ -288,3 +288,4 @@ DROP COLUMN `category`,
 DROP INDEX `category` ;
 ;
 
+ALTER TABLE calcms_user_series DROP COLUMN active;
