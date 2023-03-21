@@ -456,7 +456,7 @@ sub get_admin_user_roles ($$) {
     my $query = qq{
 		select	distinct r.*, ur.studio_id, ur.project_id
 		from 	calcms_users u, calcms_user_roles ur, calcms_roles r
-		where 	ur.user_id=u.id and ur.role_id=r.id and r.role='Admin' 
+		where 	ur.user_id=u.id and ur.role_id=r.id and r.admin=1
 			$conditions
 		limit 1
 	};
@@ -735,6 +735,11 @@ sub get_user_presets($$) {
 
     my $permissions =
       uac::get_user_permissions( $config, { user => $user, project_id => $project_id, studio_id => $studio_id } );
+    if ($permissions->{admin} == 1) {
+        for my $key (keys %$permissions) {
+            $permissions->{$key} = 1;
+        }
+    }
 
     #only admin is allowed to select all projects
     #    if($permissions->{is_admin}==1){

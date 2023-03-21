@@ -151,8 +151,14 @@ sub save_roles {
                     }
                 } elsif ( $column eq 'role' ) {
                     $values->{$id}->{$column} = $value;
+                } elsif ( $column eq 'admin' ) {
+                    if ( $permissions->{is_admin} ){
+                        $values->{$id}->{$column} = $value;
+                    } else {
+                        uac::permissions_denied("set admin!");
+                        return;
+                    }
                 } elsif ( $column eq 'id' || $column eq 'project_id' || $column eq 'studio_id' ) {
-
                     #id and studio id will be set later
                 } else {
                     $values->{$id}->{$column} = 1 if ( $value =~ /^\d+$/ );
@@ -309,7 +315,6 @@ sub show_roles {
     }
 
     for my $role (@$roles) {
-
         my $id    = $role->{id}   || '';
         my $value = $role->{role} || '';
         my $style = '';

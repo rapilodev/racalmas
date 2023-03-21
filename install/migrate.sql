@@ -300,3 +300,7 @@ CREATE TABLE `calcms_help_texts` (
   PRIMARY KEY (`id`));
 
 ALTER TABLE `calcms_roles` ADD COLUMN `edit_help_texts` INT(1) UNSIGNED NOT NULL;
+
+-- admin roles
+ALTER TABLE `calcms_roles` ADD COLUMN `admin` INT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `level`;
+update calcms_roles set admin=1 where role = 'Admin';
