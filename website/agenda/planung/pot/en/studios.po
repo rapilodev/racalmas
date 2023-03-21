@@ -39,7 +39,3 @@ msgstr "image"
 
 msgid "label_stream"
 msgstr "stream"
-
-msgid "label_google_calendar"
-msgstr "google_calendar"
-

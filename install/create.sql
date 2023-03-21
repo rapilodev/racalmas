@@ -1307,7 +1307,6 @@ CREATE TABLE `calcms_studios` (
   `location` varchar(100) NOT NULL,
   `stream` varchar(100) NOT NULL,
   `image` varchar(200) NOT NULL,
-  `google_calendar` varchar(100) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
@@ -1323,7 +1322,7 @@ CREATE TABLE `calcms_studios` (
 
 LOCK TABLES `calcms_studios` WRITE;
 /*!40000 ALTER TABLE `calcms_studios` DISABLE KEYS */;
-INSERT INTO `calcms_studios` (`id`, `name`, `description`, `location`, `stream`, `image`, `google_calendar`, `created_at`, `modified_at`) VALUES (1,'My Studio','My Radio Studio','studio','','','https://my-radio.org',NULL,'2023-02-19 21:17:18');
+INSERT INTO `calcms_studios` (`id`, `name`, `description`, `location`, `stream`, `image`, `created_at`, `modified_at`) VALUES (1,'My Studio','My Radio Studio','studio','','',NULL,'2023-02-19 21:17:18');
 /*!40000 ALTER TABLE `calcms_studios` ENABLE KEYS */;
 UNLOCK TABLES;
 

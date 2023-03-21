@@ -218,7 +218,7 @@ sub check_params {
     $checked->{action} = entry::element_of( $params->{action}, ['save', 'delete']);
 
     entry::set_strings( $checked, $params, [
-        'name', 'description', 'location', 'stream', 'google_calendar', 'image', 'setImage' ]);
+        'name', 'description', 'location', 'stream', 'image', 'setImage' ]);
 
     entry::set_numbers( $checked, $params, [
         'project_id', 'studio_id', 'default_studio_id', 'id'
