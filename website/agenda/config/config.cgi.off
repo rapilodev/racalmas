@@ -72,6 +72,7 @@ domain                      ${DOMAIN}
     # multi language support
     admin_pot_dir           ${BASE_DIR}/agenda/planung/pot/
     email                   info@${DOMAIN}
+    event_sender_email      programm@${DOMAIN}
     theme                   default
 </locations>
 

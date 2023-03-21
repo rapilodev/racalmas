@@ -202,12 +202,12 @@ sub getMail {
         $event->{noRecipient} = 1;
         return;
     }
-
+    my $sender = $config->{location}->{event_sender_email};
     my $mail = {
-        'From'     => 'programm@radiopiloten.de',
+        'From'     => $sender,
         'To'       => join( ', ', @$userMails ),
-        'Cc'       => 'programm@radiopiloten.de',
-        'Reply-To' => 'programm@radiopiloten.de',
+        'Cc'       => $sender,
+        'Reply-To' => $sender,
         'Subject'  => "$event->{start} - $event->{full_title}",
         'Data'     => "Hallo " . join( ' und ', @$userNames ) . ",\n\n"
     };
