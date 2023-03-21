@@ -18,7 +18,6 @@ use config();
 use params();
 use project();
 use log();
-use roles();
 
 #use base 'Exporter';
 our @EXPORT_OK = qw(check process exit_on_missing_permission clear_cache);
@@ -44,26 +43,6 @@ sub process($$$$) {
     }
 
     $params->{user} = $ENV{REMOTE_USER} unless defined $params->{user};
-
-    my $user_permissions = roles::get_user_permissions($config);
-    for my $permission ( keys %$user_permissions ) {
-        $params->{$permission} = $user_permissions->{$permission}
-          if ( $user_permissions->{$permission} eq '1' );
-    }
-
-    $params->{jobs} = roles::get_user_jobs($config);
-    if ( ( $filename =~ /json\-p/ ) || (params::isJson) ) {
-        my $header = "Content-type:application/json; charset=utf-8\n\n";
-        my $json = JSON->new->pretty(1)->canonical()->encode($params);
-
-        $json = $header . $params->{json_callback} . $json;
-        if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
-            print $json. "\n";
-        } else {
-            $_[1] = $json . "\n";
-        }
-        return;
-    }
 
     unless ( -r $filename ) {
         log::error( $config, qq{template "$filename" does not exist} ) unless -e $filename;
@@ -205,23 +184,6 @@ sub check($;$$) {
     $template = "$cwd/$dir/$template";
 
     return $template;
-}
-
-#deprecated (for old admin only)
-sub exit_on_missing_permission($$) {
-    my $config     = shift;
-    my $permission = shift;
-
-    my $user_permissions = roles::get_user_permissions($config);
-    if ( $user_permissions->{$permission} ne '1' ) {
-        print STDERR "missing permission to $permission\n";
-        template::process(
-            $config, 'print',
-            template::check( $config, 'default.html' ),
-            { error => 'sorry, missing permission!' }
-        );
-        die();
-    }
 }
 
 #do not delete last line!

@@ -12,7 +12,6 @@ use params();
 use log();
 use template();
 use auth();
-use roles();
 use uac();
 use studios();
 use series();
@@ -26,7 +25,6 @@ my $config = config::get('../config/config.cgi');
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( $user eq '' );
 
-my $permissions  = roles::get_user_permissions($config);
 my $user_presets = uac::get_user_presets(
     $config,
     {
