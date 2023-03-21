@@ -274,19 +274,18 @@ ADD COLUMN `listen_key` VARCHAR(100) NULL;
 ALTER TABLE `calcms_audio_recordings`
 ADD COLUMN `active` TINYINT(1) NOT NULL DEFAULT 0 AFTER `event_id`;
 
-ALTER TABLE `calcms`.`calcms_audio_recordings`
+ALTER TABLE `calcms_audio_recordings`
 ADD INDEX `active_index` (`active`);
 
-ALTER TABLE `calcms`.`calcms_events` 
+ALTER TABLE `calcms_events`
 DROP COLUMN `category_count`,
 DROP COLUMN `category`,
 DROP INDEX `category` ;
-;
-ALTER TABLE `calcms`.`calcms_event_history` 
+
+ALTER TABLE `calcms_event_history`
 DROP COLUMN `category_count`,
 DROP COLUMN `category`,
 DROP INDEX `category` ;
-;
 
 ALTER TABLE calcms_user_series DROP COLUMN active;
 
