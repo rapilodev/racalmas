@@ -44,6 +44,19 @@ sub process($$$$) {
 
     $params->{user} = $ENV{REMOTE_USER} unless defined $params->{user};
 
+    if ( ( $filename =~ /json\-p/ ) || (params::isJson) ) {
+        my $header = "Content-type:application/json; charset=utf-8\n\n";
+        my $json = JSON->new->pretty(1)->canonical()->encode($params);
+
+        $json = $header . $params->{json_callback} . $json;
+        if ( ( defined $_[1] ) && ( $_[1] eq 'print' ) ) {
+            print $json. "\n";
+        } else {
+            $_[1] = $json . "\n";
+        }
+        return;
+    }
+
     unless ( -r $filename ) {
         log::error( $config, qq{template "$filename" does not exist} ) unless -e $filename;
         log::error( $config, qq{missing permissions to read "$filename"} );
