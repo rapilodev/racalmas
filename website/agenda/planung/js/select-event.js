@@ -83,6 +83,8 @@ function updateEventSelection(resultElemId){
     }
     
     var elem=$("#selectEvent").parent();
+    url = parseUrl(url);
+    console.log(url);
     $(elem).load(url);
 }
 

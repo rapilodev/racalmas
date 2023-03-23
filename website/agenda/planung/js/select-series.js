@@ -36,7 +36,9 @@ function updateSeriesSelection(resultElemId){
         url+="&selectProjectStudio=1";
     }
 
+    url = parseUrl(url);
     var elem=$("#selectSeries").parent();
+    console.log(url);
     $(elem).load(url);
 }
 

@@ -78,14 +78,28 @@ function contains(s,t){
 }
 
 function updateContainer(id, url, callback){
-    //alert(id+":"+url);
     if (id==null) return;
     if ($("#"+id).length==0) return;
+    url = parseUrl(url);
     $("#"+id).load(url, callback);
 }
 
 function load(url){
-    window.location=url;
+    window.location = parseUrl(url);
+}
+
+function parseUrl(uri){
+    if (uri.startsWith("/")) {
+        uri = window.location.origin + uri;
+    } else if (!uri.startsWith("http")) {
+        var path = window.location.pathname.replace(/\/$/, "");
+        path = path.split("/");
+        path.pop();
+        uri = window.location.origin + path.join("/") + "/" + uri;
+    }
+    var url = new URL(uri);
+    url.searchParams.append("_", Date.now());
+    return url.toString();
 }
 
 function postContainer(url, parameters, callback){
