@@ -21,6 +21,7 @@ use studios();
 use series();
 use template();
 use audio_recordings();
+use series_events();
 use events();
 use audio();
 use time();
@@ -434,12 +435,52 @@ sub updateDatabase {
         $entry->{rmsRight}      = 0.0;
         $entry->{audioDuration} = 0.0;
         $entry->{modified_at}   = time();
-        $params->{id}           = audio_recordings::insert( $config, $dbh, $entry );
+        $entry->{id} = audio_recordings::insert( $config, $dbh, $entry );
+        $params->{id} = $entry->{id};
     }
+    call_hooks($config, $entry, $params);
     $config->{access}->{write} = 0;
     $params->{action_result} = 'done!';
 
     return $params;
+}
+
+sub call_hooks {
+    my ($config, $entry, $params) = @_;
+    print STDERR Dumper($config->{"audio-upload-hooks"});
+    my $dbh = db::connect($config);
+
+    $entry = audio_recordings::get(
+        $config, {
+            project_id => $entry->{project_id},
+            studio_id  => $entry->{studio_id},
+            event_id   => $entry->{event_id},
+            path       => $entry->{path}
+        }
+    )->[0] or die;
+
+    for my $cmd (sort values %{$config->{"audio-upload-hooks"}}) {
+        my $audio_file = $config->{locations}->{local_audio_recordings_dir}.'/'.$entry->{path};
+        open(my $fh, '-|', $cmd, $audio_file) or die "Failed to execute hook: $!";
+        while (defined (my $line = (<$fh>))) {
+            if ($line =~ m/^calcms_audio_recordings\.([a-zA-Z0-9_-]+)\s*=\s*(\S+)/) {
+                my ($key, $value) = ($1, $2);
+                $entry->{$key} = $value;
+                die "invalid column $key for table calcms_audio_recordings"
+                    unless exists audio_recordings::get_columns($config)->{$key};
+                audio_recordings::update( $config, $dbh, $entry );
+            } elsif ($line =~ m/^calcms_events\.([a-zA-Z0-9_-]+)\s*=\s*(\S+)/) {
+                my ($key, $value) = ($1, $2);
+                die "invalid column $key for calcms_events\n"
+                    unless exists {map {$_=>1} series_events::get_content_columns($config)}->{$key};
+                series_events::save_content($config, {
+                    id   => $entry->{event_id},
+                    $key => $value
+                });
+            }
+        }
+        close $fh or die $!;
+    }
 }
 
 # return filename, filehandle and optionally error from upload

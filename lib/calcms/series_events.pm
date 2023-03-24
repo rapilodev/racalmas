@@ -22,15 +22,18 @@ use images();
 
 # check permissions, insert and update events related to series
 
-#use base 'Exporter';
-our @EXPORT_OK = qw(
-  check_permission
-  save_content
-  save_event_time
-  insert_event
-  delete_event
-  set_playout_status
-);
+sub get_content_columns($) {
+    my ($config) = @_;
+    return (
+    'series_name',  'title',              'excerpt',            'content',
+    'html_content', 'user_title',         'user_excerpt',       'topic',
+    'html_topic',   'episode',            'image',              'image_label',
+    'series_image', 'series_image_label', 'podcast_url',        'archive_url',
+    'live',         'published',          'playout',            'archived',
+    'rerun',        'draft',              'disable_event_sync', 'modified_by',
+    'content_format'
+    );
+}
 
 # update main fields of the event by id
 # do not check for project,studio,series
@@ -65,16 +68,7 @@ sub save_content($$) {
 
     #TODO: double check series_name (needed for reassignment but not for editing...)
     my @keys = ();
-    for my $key (
-        'series_name',  'title',              'excerpt',            'content',
-        'html_content', 'user_title',         'user_excerpt',       'topic',
-        'html_topic',   'episode',            'image',              'image_label',
-        'series_image', 'series_image_label', 'podcast_url',        'archive_url',
-        'live',         'published',          'playout',            'archived',
-        'rerun',        'draft',              'disable_event_sync', 'modified_by',
-        'content_format'
-      )
-    {
+    for my $key (get_content_columns($config)) {
         push @keys, $key if defined $entry->{$key};
     }
     $entry->{rerun}     = 0 unless $entry->{rerun};

@@ -76,6 +76,19 @@ domain                      ${DOMAIN}
     theme                   default
 </locations>
 
+# Hooks can be used to automate the process of updating database columns
+#   when new audio files are uploaded.
+# A hook command
+#   reads the path of an audio file and
+#   output a list of database columns to be updated with their respective values.
+# Currently, the only supported database tables are calcms_events and calcms_audio_recordings.
+
+<audio-upload-hooks>
+    command1 ${BASE_DIR}/../tools/audio-upload-hooks/set-size.sh
+    command2 ${BASE_DIR}/../tools/audio-upload-hooks/set-loudness-duration.pl
+#    command3 ${BASE_DIR}/../tools/audio-upload-hooks/set-podcast-url.sh
+</audio-upload-hooks>
+
 <permissions>
     result_limit            500
 
