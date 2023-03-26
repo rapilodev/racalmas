@@ -1,17 +1,24 @@
-<TMPL_IF .allow.read_event> <script type="text/javascript">
-    <TMPL_IF .getBack>
-    $(document).ready(function() {
-        getBack()
-    });
-    </TMPL_IF>
+<TMPL_IF .allow.read_event>
+<script type="text/javascript">
+<TMPL_IF .getBack>
+$(document).ready(function() {
+    getBack()
+});
+</TMPL_IF>
 </script>
 
+<script src="js/create-events.js" type="text/javascript"></script>
+<link rel="stylesheet" href="css/create-events.css" type="text/css" />
+
+<script>
+var series_id=0;
+</script>
 <h1>create events from schedule</h1>
 <div class="panel">
 <form id="create_event_form" method="post">
-    <input type="hidden" name="project_id"
-        value="<TMPL_VAR .project_id>"> <input type="hidden"
-        name="studio_id" value="<TMPL_VAR .studio_id>"> schedule events for
+    <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+    <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>"> schedule events for
+    <input type="hidden" id="select_series_id" name="series_id" value="<TMPL_VAR .series_id>"> schedule events for
     <select name="duration">
         <option value="1" <TMPL_VAR duration1>>today</option>
         <option value="7" <TMPL_VAR duration7>>1 week</option>
@@ -20,6 +27,8 @@
         <option value="28" <TMPL_VAR duration28>>4 weeks</option>
         <option value="56" <TMPL_VAR duration56>>8 weeks</option>
     </select>
+
+    <div id="seriesContainer"></div>
 
     <TMPL_IF .allow.read_event>
     <button target="_blank" type='submit' name="action" value="show_events">Show schedule</button>
@@ -45,8 +54,9 @@
     </TMPL_LOOP> </view>
 
 </div>
-    </body>
-    </html>
+</body>
+</html>
 
-    <TMPL_ELSE> missing permission to read events 
+<TMPL_ELSE>
+missing permission to read events
 </TMPL_IF>

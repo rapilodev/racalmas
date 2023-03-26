@@ -1,0 +1,11 @@
+@charset "UTF-8";
+
+#content td.label {
+    max-width: none;
+}
+
+#content #seriesContainer {
+    max-width: 80ch;
+    overflow:clip;
+    text-overflow: ellipsis;
+}

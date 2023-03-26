@@ -130,6 +130,7 @@ sub getDates {
 
     my $project_id = $params->{project_id};
     my $studio_id  = $params->{studio_id};
+    my $series_id  = $params->{series_id};
     my $from_date  = $params->{from_date};
     my $till_date  = $params->{till_date};
     my $duration   = $params->{duration};
@@ -154,13 +155,15 @@ sub getDates {
         {
             project_id => $project_id,
             studio_id  => $studio_id,
+            $series_id ? (series_id  => $series_id) : (),
             from       => $from_date,
-            till       => $till_date
+            till       => $till_date,
         }
     );
     my $series = series::get( $config, {
             project_id => $project_id,
-            studio_id  => $studio_id
+            studio_id  => $studio_id,
+            $series_id ? (series_id => $series_id) : ()
     });
     my %series_by_id = map { $_->{series_id} => $_ } @$series;
     for  my $date (@$dates) {
@@ -209,7 +212,7 @@ sub check_params {
     $checked->{exclude}  = 0;
     $checked->{duration} = 28;
     entry::set_numbers( $checked, $params, [
-        'id', 'project_id', 'studio_id', 'duration']);
+        'id', 'project_id', 'studio_id', 'series_id', 'duration']);
     $checked->{"duration".$checked->{duration}}='selected="selected"';
 
     if ( defined $checked->{studio_id} ) {

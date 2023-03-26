@@ -548,8 +548,9 @@ sub getDatesWithoutEvent ($$) {
     return unless defined $options->{till};
 
     my $dbh = db::connect($config);
+    my $cond = $options->{series_id} ? 'and sd.series_id = ?' : '';
 
-    my $query = q{
+    my $query = qq{
         SELECT sd.* 
         FROM calcms_series_dates sd LEFT JOIN calcms_events e
         on (sd.start = e.start) 
@@ -557,12 +558,17 @@ sub getDatesWithoutEvent ($$) {
         and sd.exclude != 1
         and sd.project_id = ? 
         and sd.studio_id  = ?
+        $cond
         and sd.start      > ? 
         and sd.end        < ?
         order by sd.start
     };
 
-    my $bind_values = [ $options->{project_id}, $options->{studio_id}, $options->{from}, $options->{till} ];
+    my $bind_values = [
+        $options->{project_id}, $options->{studio_id},
+        $options->{series_id} ? $options->{series_id} : (),
+        $options->{from}, $options->{till}
+    ];
     my $entries = db::get( $dbh, $query, $bind_values );
     return $entries;
 
