@@ -86,6 +86,8 @@ sub show_events {
     $params->{events} = $events;
     $params->{total}  = scalar(@$events);
     $params->{action} = 'show';
+    $params->{loc} =
+      localization::get( $config, { user => $params->{presets}->{user}, file => 'create-events' } );
     template::process( $config, 'print', $params->{template}, $params );
 
 }
@@ -114,6 +116,8 @@ sub create_events {
     $params->{events} = $events;
     $params->{total}  = scalar(@$events);
     $params->{action} = 'created';
+    $params->{loc} =
+      localization::get( $config, { user => $params->{presets}->{user}, file => 'create-events' } );
     template::process( $config, 'print', $params->{template}, $params );
 }
 

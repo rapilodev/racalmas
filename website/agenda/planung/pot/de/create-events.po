@@ -1,0 +1,30 @@
+msgid "title"
+msgstr "Geplante Sendungen anlegen"
+
+msgid "create_till"
+msgstr "Zeitraum"
+
+msgid "show_button"
+msgstr "Vorschau"
+
+msgid "create_button"
+msgstr "Anlegen"
+
+msgid "today"
+msgstr "Heute"
+
+msgid "1week"
+msgstr "1 Woche"
+
+msgid "2week"
+msgstr "2 Wochen"
+
+msgid "3week"
+msgstr "3 Wochen"
+
+msgid "4week"
+msgstr "4 Wochen"
+
+msgid "8week"
+msgstr "8 Wochen"
+

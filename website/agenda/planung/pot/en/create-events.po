@@ -1,0 +1,30 @@
+msgid "title"
+msgstr "Create events from schedule"
+
+msgid "create_till"
+msgstr "Create Until"
+
+msgid "show_button"
+msgstr "Preview"
+
+msgid "create_button"
+msgstr "Create Events"
+
+msgid "today"
+msgstr "Today"
+
+msgid "1week"
+msgstr "1 week"
+
+msgid "2week"
+msgstr "2 weeks"
+
+msgid "3week"
+msgstr "3 weeks"
+
+msgid "4week"
+msgstr "4 weeks"
+
+msgid "8week"
+msgstr "8 weeks"
+

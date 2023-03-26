@@ -27,4 +27,3 @@ AddOutputFilterByType DEFLATE text/css
 AddOutputFilterByType DEFLATE text/javascript
 AddOutputFilterByType DEFLATE text/html
 AddOutputFilterByType DEFLATE text/plain
-

@@ -13,29 +13,29 @@ $(document).ready(function() {
 <script>
 var series_id=0;
 </script>
-<h1>create events from schedule</h1>
+<h1><TMPL_VAR loc.title></h1>
 <div class="panel">
 <form id="create_event_form" method="post">
     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-    <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>"> schedule events for
-    <input type="hidden" id="select_series_id" name="series_id" value="<TMPL_VAR .series_id>"> schedule events for
+    <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>"> 
+    <input type="hidden" id="select_series_id" name="series_id" value="<TMPL_VAR .series_id>"> 
+    <TMPL_VAR loc.create_till>
     <select name="duration">
-        <option value="1" <TMPL_VAR duration1>>today</option>
-        <option value="7" <TMPL_VAR duration7>>1 week</option>
-        <option value="14" <TMPL_VAR duration14>>2 weeks</option>
-        <option value="21" <TMPL_VAR duration21>>3 weeks</option>
-        <option value="28" <TMPL_VAR duration28>>4 weeks</option>
-        <option value="56" <TMPL_VAR duration56>>8 weeks</option>
+        <option value="1" <TMPL_VAR duration1>><TMPL_VAR loc.today></option>
+        <option value="7" <TMPL_VAR duration7>><TMPL_VAR loc.1week></option>
+        <option value="14" <TMPL_VAR duration14>><TMPL_VAR loc.2week></option>
+        <option value="21" <TMPL_VAR duration21>><TMPL_VAR loc.3week></option>
+        <option value="28" <TMPL_VAR duration28>><TMPL_VAR loc.4week></option>
+        <option value="56" <TMPL_VAR duration56>><TMPL_VAR loc.8week></option>
     </select>
 
     <div id="seriesContainer"></div>
 
     <TMPL_IF .allow.read_event>
-    <button target="_blank" type='submit' name="action" value="show_events">Show schedule</button>
+    <button target="_blank" type='submit' name="action" value="show_events"><TMPL_VAR loc.show_button></button>
     </TMPL_IF>
     <TMPL_IF .allow.assign_series_events>
-    <button target="_blank" type='submit' name="action"
-        value="create_events">Create events</button>
+    <button target="_blank" type='submit' name="action" value="create_events"><TMPL_VAR loc.create_button></button>
     </TMPL_IF>
 </form>
 </div>
