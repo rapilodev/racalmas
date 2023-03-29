@@ -137,7 +137,6 @@ var calcms_settings = new Array();
             var pattern = new RegExp(key);
             var matchs = pattern.exec(url);
             if ((matchs != null) && (matchs.length > 0)) {
-                console.log("matchs " + url)
                 $('div.entry-content').append('<div id="result"> </div>')
                 calcms.updateContainer("#result", editorsUrl);
             }

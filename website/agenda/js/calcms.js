@@ -278,7 +278,6 @@ var calcms = (function($) {
                 url += escapeString(seriesName) + '/';
             if (archive != null && archive == 0) url += 'kommende/';
             if (archive != null && archive == 1) url += 'vergangene/';
-            console.log(url)
             my.updateContainer('calcms_list', url);
         }
     }
@@ -437,7 +436,6 @@ var calcms = (function($) {
             event_id, event_start) {
         var url = my.get('comments_url') || '/agenda/kommentare/';
         if (event_id == '' || event_start == '' || url == '') return false;
-        console.log("showCommentsByEventIdOrEventStart url=" + url);
 
         my.set('comments_event_start', event_start);
         my.set('comments_event_id', event_id);
