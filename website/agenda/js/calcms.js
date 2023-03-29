@@ -248,16 +248,20 @@ var calcms = (function($) {
         $('#calcms_archive').on('click', action);
     }
 
+    function escapeString(s){
+        return encodeURIComponent(s.replaceAll(" ","+"));
+    }
+
     // show all events for a given project
     my.showSearchResultsByProject = function showSearchResultsByProject(
             project, value, archive) {
         if (value != null && value != '') {
             var url = my.get('search_url');
             if (project != '' && project != null)
-                url += escape(project) + '/';
+                url += encodeURIComponent(project) + '/';
             else
                 url += 'all/';
-            if (value != '' && value != null) url += escape(value) + '/';
+            if (value != '' && value != null) url += escapeString(value) + '/';
             if (archive != null && archive == 0) url += 'kommende/';
             if (archive != null && archive == 1) url += 'vergangene/';
             my.updateContainer('calcms_list', url);
@@ -269,11 +273,12 @@ var calcms = (function($) {
             project, seriesName, archive) {
         if (seriesName != '' && seriesName != null) {
             var url = my.get('search_series_name_url');
-            if (project != '' && project != null) url += escape(project) + '/';
+            if (project != '' && project != null) url += escapeString(project) + '/';
             if (seriesName != '' && seriesName != null)
-                url += escape(seriesName) + '/';
+                url += escapeString(seriesName) + '/';
             if (archive != null && archive == 0) url += 'kommende/';
             if (archive != null && archive == 1) url += 'vergangene/';
+            console.log(url)
             my.updateContainer('calcms_list', url);
         }
     }
@@ -282,7 +287,8 @@ var calcms = (function($) {
     my.showEventsBySeriesName = function showEventsBySeriesName(value) {
         if (value != '' && value != null) {
             my.updateContainer('calcms_list', my.get('search_series_name_url')
-                    + escape(value) + '/');
+                + escapeString(value) + '/'
+            );
         }
     }
 
