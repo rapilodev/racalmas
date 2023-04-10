@@ -1,3 +1,30 @@
+msgid "title"
+msgstr "Redaktionen an ihre Sendungen erinnern"
+
 msgid "button_send"
 msgstr "Senden"
+
+msgid "subject"
+msgstr "Betreff"
+
+msgid "to"
+msgstr "Empfänger"
+
+msgid "from"
+msgstr "Absender"
+
+msgid "cc"
+msgstr "Kopie"
+
+msgid "bcc"
+msgstr "Blindkopie"
+
+msgid "reply-to"
+msgstr "Antwort an"
+
+msgid "body"
+msgstr "Inhalt"
+
+msgid "show_details"
+msgstr "Zeige Details"
 

@@ -79,7 +79,7 @@ sub show_events {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    for my $attr ( 'project_id', 'studio_id', 'duration' ) {    # 'series_id','event_id'
+    for my $attr ( 'project_id', 'studio_id') {    # 'series_id','event_id'
         unless ( defined $params->{$attr} ) {
             uac::print_error( "missing " . $attr . " to show changes" );
             return;
@@ -92,7 +92,7 @@ sub show_events {
     }
 
     # get events
-    my $duration = $params->{duration};
+    my $duration = $params->{duration} // 7;
     my $options  = {
         project_id => $params->{project_id},
         studio_id  => $params->{studio_id},
@@ -108,6 +108,8 @@ sub show_events {
     for my $event (@$events) {
         my $mail = getMail( $config, $request, $event );
         $event->{mail} = $mail;
+        $event->{start} = substr($event->{start}, 0, 16);
+        $event->{preproduction} = !$event->{live};
     }
 
     return unless defined $events;
@@ -202,13 +204,13 @@ sub getMail {
         $event->{noRecipient} = 1;
         return;
     }
-    my $sender = $config->{location}->{event_sender_email};
+    my $sender = $config->{locations}->{event_sender_email};
     my $mail = {
         'From'     => $sender,
         'To'       => join( ', ', @$userMails ),
         'Cc'       => $sender,
         'Reply-To' => $sender,
-        'Subject'  => "$event->{start} - $event->{full_title}",
+        'Subject'  => substr($event->{start},0,16) . " - $event->{full_title}",
         'Data'     => "Hallo " . join( ' und ', @$userNames ) . ",\n\n"
     };
 

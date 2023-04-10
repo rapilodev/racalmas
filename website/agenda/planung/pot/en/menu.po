@@ -64,6 +64,9 @@ msgstr "User Stats"
 msgid "create-events"
 msgstr "Create Events"
 
+msgid "notify-events"
+msgstr "Remind Of Editors Broadcasts"
+
 msgid "edit-help-texts"
 msgstr "Edit Help"
 

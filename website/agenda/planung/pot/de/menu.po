@@ -67,4 +67,6 @@ msgstr "Sendungen anlegen"
 msgid "edit-help-texts"
 msgstr "Hilfe bearbeiten"
 
+msgid "notify-events"
+msgstr "Erinnerungen verschicken"
 

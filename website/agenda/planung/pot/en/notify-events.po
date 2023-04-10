@@ -1,3 +1,30 @@
+msgid "title"
+msgstr "Remind Editors For Their Programme"
+
 msgid "button_send"
 msgstr "Send"
+
+msgid "subject"
+msgstr "Subject"
+
+msgid "to"
+msgstr "Recipient"
+
+msgid "from"
+msgstr "Sender"
+
+msgid "cc"
+msgstr "Copy"
+
+msgid "bcc"
+msgstr "Blind copy"
+
+msgid "reply-to"
+msgstr "Reply To"
+
+msgid "body"
+msgstr "Content"
+
+msgid "show_details"
+msgstr "Show Details"
 

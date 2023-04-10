@@ -23,7 +23,7 @@
 </head>
 <body>
 <div id="result" style="display:none"> </div>
-
+<h1><TMPL_VAR loc.title></h1>
 <div id="forms">
 <TMPL_LOOP events>
     <form id="event_<TMPL_VAR event_id>">
@@ -33,63 +33,66 @@
         <input type="hidden" name="event_id" value="<TMPL_VAR event_id>">
         <input type="hidden" name="action" value="send">
 
-    <table id="events">
+    <table id="events" id="event_<TMPL_VAR event_id>" class="panel">
     <tr id="header_<TMPL_VAR event_id>" class="mailHeader">
         <td><b><TMPL_VAR start></b></td>
-        <td><b><TMPL_VAR full_title></b> | <TMPL_IF live>live</TMPL_IF> <TMPL_IF preproduction>preproduction</TMPL_IF> <TMPL_IF playout>playout</TMPL_IF></td>
+        <td><b><TMPL_VAR full_title></b><td>
+        <td>
+            <TMPL_IF live><img src="image/mic.svg" title="live"></TMPL_IF>
+            <TMPL_IF preproduction><img src="image/mic_off.svg" title="preproduction"></TMPL_IF>
+            <TMPL_IF playout><img src="image/play.svg" title="playout"></TMPL_IF>
+        </td>
 
     <TMPL_IF noRecipient>
         <td></td>
-    </tr>
+        </tr>
 
-    <tr>
-        <td>Warning</td>
-        <td><div class="error">no recipient configured at series!</div></td>
-    </tr>
-
+        <tr>
+            <td>Warning</td>
+            <td><div class="error">no recipient configured at series!</div></td>
+        </tr>
     <TMPL_ELSE>
-
         <td class="action"><button type="submit"><TMPL_VAR .loc.button_send></button></td>
     </tr>
 
-    <TMPL_IF mail.Subject>
-    <tr>
-        <td>Subject</td>
-        <td class="mailSubject"><input name="subject" value="<TMPL_VAR mail.Subject>"></td>
-    </tr>
-    </TMPL_IF>
-    
     <TMPL_IF mail.To>
-    <tr>
-        <td>To</td>
-        <td><input name="to" value="<TMPL_VAR mail.To>"></td>
+    <t>
+        <td><TMPL_VAR .loc.to></td>
+        <td colspan="2"><input name="to" value="<TMPL_VAR mail.To>"></td>
+        <td><img class="toggle" title="<TMPL_VAR .loc.show_details>" src="image/arrow-down.svg"></td>
     </tr>
     </TMPL_IF>
 
+    <TMPL_IF mail.Subject>
+    <tr class="subject details">
+        <td><TMPL_VAR .loc.subject></td>
+        <td class="mailSubject"><input name="subject" value="<TMPL_VAR mail.Subject>"></td>
+    </tr>
+    </TMPL_IF>
     <TMPL_IF mail.From>
-    <tr>
-        <td>From</td>
+    <tr class="details">
+        <td><TMPL_VAR .loc.from></td>
         <td><TMPL_VAR mail.From></td>
     </tr>
     </TMPL_IF>
 
     <TMPL_IF mail.Cc>
-    <tr>
-        <td>Cc</td>
+    <tr class="details">
+        <td><TMPL_VAR .loc.cc></td>
         <td><input name="cc" value="<TMPL_VAR mail.Cc>"></td>
     </tr>
     </TMPL_IF>
 
     <TMPL_IF mail.Reply-To>
-    <tr>
-        <td>Reply-To</td>
+    <tr class="details">
+        <td><TMPL_VAR .loc.reply-to></td>
         <td><TMPL_VAR mail.Reply-To></td>
     </tr>
     </TMPL_IF>
 
     <TMPL_IF mail.data>
-    <tr>
-        <td>Content</td>
+    <tr class="details">
+        <td><TMPL_VAR .loc.content></td>
         <td class="mailBody"><textarea name="content" ><TMPL_VAR mail.data></textarea></td>
     </tr>
     </TMPL_IF>
