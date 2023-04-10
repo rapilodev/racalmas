@@ -240,7 +240,7 @@ select#project_id::after {
     text-align: left;
     vertical-align:middle;
     background: #004f9b;
-    min-width: 10rem;
+    min-width: 30ch;
 }
 
 #calcms_nav .dropdown-content a {
