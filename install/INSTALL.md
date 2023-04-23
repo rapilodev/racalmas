@@ -85,14 +85,13 @@ apt-get install <deb-package>
     libdate-manip-perl
     libdbi-perl
     libdbd-mysql-perl
+    libemail-sender-perl
     libencode-perl
     libjson-perl
     libhtml-formattext-withlinks-andtables-perl
     libhtml-parser-perl
     libhtml-template-perl
     libhtml-template-compiled-perl
-    libmime-base64-urlsafe-perl
-    libmime-lite-perl
     libsession-token-perl
     libtext-multimarkdown-perl
     libtext-wikicreole-perl
@@ -132,7 +131,6 @@ apt-get install <deb-package>
     Image::Magick
     Image::Magick::Square
     JSON
-    MIME::Lite
     ModPerl::Util
     Session::Token
     Text::Diff::FormatedHtml

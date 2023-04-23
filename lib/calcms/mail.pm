@@ -4,22 +4,24 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
-use MIME::Lite();
+use Email::Sender::Simple();
+use Email::Simple();
 
 sub send($) {
-    my $mail = shift;
+    my ($mail) = @_;
 
-    my $msg = MIME::Lite->new(
-        'From'     => $mail->{'From'},
-        'To'       => $mail->{'To'},
-        'Cc'       => $mail->{'Cc'},
-        'Reply-To' => $mail->{'Reply-To'},
-        'Subject'  => $mail->{'Subject'},
-        'Data'     => $mail->{'Data'},
+    my $email = Email::Simple->create(
+        'Content-Type' => 'text/plain; charset=utf-8',
+        header => [
+            'From'     => $mail->{'From'},
+            'To'       => $mail->{'To'},
+            'Cc'       => $mail->{'Cc'},
+            'Reply-To' => $mail->{'Reply-To'},
+            'Subject'  => $mail->{'Subject'}
+        ],
+        body => $mail->{'Data'},
     );
-
-    $msg->print( \*STDERR );
-    $msg->send;
+    Email::Sender::Simple->send($email);
 }
 
 # do not delete next line

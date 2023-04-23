@@ -3,10 +3,9 @@
 use strict;
 use warnings;
 no warnings 'redefine';
+use utf8;
 
-use URI::Escape();
 use Data::Dumper;
-use MIME::Lite();
 
 use params();
 use config();
@@ -21,6 +20,7 @@ use markup();
 use studios();
 use series();
 use localization();
+use mail();
 
 binmode STDOUT, ":utf8";
 
@@ -164,20 +164,7 @@ sub sendMail {
     $mail->{Cc}      = $params->{cc}      if defined $params->{cc};
     $mail->{Subject} = $params->{subject} if defined $params->{subject};
     $mail->{Data}    = $params->{content} if defined $params->{content};
-
-    my $msg = MIME::Lite->new(
-        'From'     => $mail->{'From'},
-        'To'       => $mail->{'To'},
-        'Cc'       => $mail->{'Cc'},
-        'Reply-To' => $mail->{'Reply-To'},
-        'Subject'  => $mail->{'Subject'},
-        'Data'     => $mail->{'Data'},
-    );
-
-    print '<pre>';
-    $msg->print( \*STDOUT );
-    print '</pre>';
-    $msg->send;
+    mail::send($mail);
 }
 
 sub getMail {
@@ -215,10 +202,10 @@ sub getMail {
     };
 
     $mail->{Data} .= "nur zur Erinnerung...\n\n";
-    $mail->{Data} .= "am $event->{weekday_name} ist die naechste '$event->{series_name}'-Sendung.\n\n";
+    $mail->{Data} .= "am $event->{weekday_name} ist die nächste '$event->{series_name}'-Sendung.\n\n";
     $mail->{Data} .=
       "$event->{source_base_url}$event->{widget_render_url}/$config->{controllers}->{event}/$event->{event_id}.html\n\n";
-    $mail->{Data} .= "Gruss, $request->{user}\n";
+    $mail->{Data} .= "Gruß, $request->{user}\n";
     return $mail;
 }
 
