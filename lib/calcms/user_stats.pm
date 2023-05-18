@@ -9,8 +9,7 @@ use Data::Dumper;
 our @EXPORT_OK = qw(get_columns get update insert get_stats increase);
 
 sub get_columns($) {
-    my $config = shift;
-
+    my ($config) = @_;
     my $dbh = db::connect($config);
     return db::get_columns_hash( $dbh, 'calcms_user_stats' );
 }
@@ -130,8 +129,7 @@ sub get_stats($$) {
 }
 
 sub insert($$) {
-    my $config = shift;
-    my $stats  = shift;
+    my ($config, $stats) = @_;
 
     return undef unless defined $stats->{project_id};
     return undef unless defined $stats->{studio_id};
@@ -153,8 +151,7 @@ sub insert($$) {
 
 # update project
 sub update ($$) {
-    my $config = shift;
-    my $stats  = shift;
+    my ($config, $stats) = @_;
 
     return undef unless defined $stats->{project_id};
     return undef unless defined $stats->{studio_id};

@@ -17,8 +17,7 @@ use db;
 use auth;
 
 sub get_columns ($) {
-    my $config = shift;
-
+    my ($config) = @_;
     my $dbh     = db::connect($config);
     return db::get_columns_hash( $dbh, 'calcms_password_requests' );
 }
@@ -56,8 +55,7 @@ sub get ($$) {
 }
 
 sub update($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return unless defined $entry->{user};
 
@@ -76,8 +74,7 @@ sub update($$) {
 }
 
 sub insert ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{user};
 
@@ -117,8 +114,7 @@ sub delete ($$) {
 }
 
 sub sendToken ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{user};
 

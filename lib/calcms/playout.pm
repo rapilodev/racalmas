@@ -14,8 +14,7 @@ use series_events();
 our @EXPORT_OK = qw(get_columns get sync);
 
 sub get_columns ($) {
-    my $config = shift;
-
+    my ($config) = @_;
     my $dbh = db::connect($config);
     return db::get_columns_hash( $dbh, 'calcms_playout' );
 }
@@ -24,9 +23,7 @@ sub get_columns ($) {
 
 # get playout entries
 sub get_scheduled($$) {
-    my $config    = shift;
-    my $condition = shift;
-
+    my ($config, $condition) = @_;
     return undef unless defined $condition->{studio_id};
 
     my $date_range_include = 0;
@@ -129,8 +126,7 @@ sub get_scheduled($$) {
 
 # get playout entries
 sub get($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     return undef unless defined $condition->{studio_id};
 
@@ -229,8 +225,7 @@ sub get($$) {
 # update playout entries for a given date span
 # insert, update and delete entries
 sub sync ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return undef unless defined $options->{project_id};
     return undef unless defined $options->{studio_id};
@@ -329,9 +324,7 @@ sub sync ($$) {
 }
 
 sub has_changed ($$) {
-    my $oldEntry = shift;
-    my $newEntry = shift;
-
+    my ($oldEntry, $newEntry) = @_;
     for my $key (
         'duration',        'errors',         'file',           'channels',
         'format',          'format_version', 'format_profile', 'format_settings',
@@ -346,13 +339,7 @@ sub has_changed ($$) {
 
 # update playout entry if differs to old values
 sub update ($$$$) {
-    my $config   = shift;
-    my $dbh      = shift;
-    my $oldEntry = shift;
-    my $newEntry = shift;
-
-    #return if has_changed( $oldEntry, $newEntry ) == 0;
-
+    my ($config, $dbh, $oldEntry, $newEntry) = @_;
     for my $key (
         'duration',        'errors',         'file',           'channels',
         'format',          'format_version', 'format_profile', 'format_settings',
@@ -395,9 +382,7 @@ sub update ($$$$) {
 
 # insert playout entry
 sub insert ($$$) {
-    my $config = shift;
-    my $dbh    = shift;
-    my $entry  = shift;
+    my ($config, $dbh, $entry) = @_;
 
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};
@@ -445,10 +430,7 @@ sub insert ($$$) {
 
 # delete playout entry
 sub delete($$$) {
-    my $config = shift;
-    my $dbh    = shift;
-    my $entry  = shift;
-
+    my ($config, $dbh, $entry) = @_;
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};
     return undef unless defined $entry->{start};
@@ -463,9 +445,7 @@ sub delete($$$) {
 }
 
 sub getEnd ($$) {
-    my $start    = shift;
-    my $duration = shift;
-
+    my ($start, $duration) = @_;
     # calculate end from start + duration
     my @start = @{ time::datetime_to_array($start) };
     next unless @start >= 6;

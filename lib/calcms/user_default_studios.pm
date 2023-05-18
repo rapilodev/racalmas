@@ -10,7 +10,7 @@ use Data::Dumper;
 # columns: user, project_id, studio_id
 
 sub get_columns($) {
-    my $config = shift;
+    my ($config) = @_;
 
     my $dbh  = db::connect($config);
     return db::get_columns_hash( $dbh, 'calcms_user_default_studios' );
@@ -51,8 +51,7 @@ sub get ($$) {
 }
 
 sub insert ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return unless defined $entry->{user};
 
@@ -61,8 +60,7 @@ sub insert ($$) {
 }
 
 sub update($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return unless defined $entry->{user};
 
@@ -84,8 +82,7 @@ sub update($$) {
 }
 
 sub delete ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return unless defined $entry->{user};
 

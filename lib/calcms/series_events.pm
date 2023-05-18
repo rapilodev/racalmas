@@ -39,9 +39,7 @@ sub get_content_columns($) {
 # do not check for project,studio,series
 # all changed columns are returned for history handling
 sub save_content($$) {
-    my $config = shift;
-    my $entry  = shift;
-
+    my ($config, $entry) = @_;
     return undef unless defined $entry->{id};
 
     for my $attr ( keys %$entry ) {
@@ -96,8 +94,7 @@ sub save_content($$) {
 }
 
 sub set_episode{
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{id};
     return undef unless defined $entry->{episode};
@@ -121,8 +118,7 @@ sub set_episode{
 # do not check project, studio, series
 # for history handling all changed columns are returned
 sub save_event_time($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{id};
     return undef unless defined $entry->{duration};
@@ -171,8 +167,7 @@ sub save_event_time($$) {
 }
 
 sub set_playout_status ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};
@@ -209,8 +204,7 @@ sub set_playout_status ($$) {
 
 # is event assigned to project, studio and series?
 sub is_event_assigned($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return 0 unless defined $entry->{project_id};
     return 0 unless defined $entry->{studio_id};
@@ -231,8 +225,7 @@ sub is_event_assigned($$) {
 }
 
 sub delete_event ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};
@@ -270,8 +263,7 @@ sub delete_event ($$) {
 # key check_for:     user, studio, series, events, schedule
 # return error text or 1 if okay
 sub check_permission($$) {
-    my $request = shift;
-    my $options = shift;
+    my ($request, $options) = @_;
 
     return "missing permission at check" unless defined $options->{permission};
     return "missing check_for at check"  unless defined $options->{check_for};
@@ -410,8 +402,7 @@ sub check_permission($$) {
 
 #insert event
 sub insert_event ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     my $project_id = $options->{project_id};
     my $studio     = $options->{studio};
@@ -496,9 +487,7 @@ sub insert_event ($$) {
 
 #set start, end, start-date, end_date to an event
 sub add_event_dates($$$) {
-    my $config = shift;
-    my $event  = shift;
-    my $params = shift;
+    my ($config, $event, $params) = @_;
 
     #start and end datetime
     $event->{start} = $params->{start_date};
@@ -512,8 +501,7 @@ sub add_event_dates($$$) {
 }
 
 sub update_series_images ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return "missing project_id"   unless defined $options->{project_id};
     return "missing studio_id"    unless defined $options->{studio_id};

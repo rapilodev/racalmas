@@ -11,14 +11,14 @@ use images();
 our @EXPORT_OK = qw(get_columns get get_by_id insert update delete check check_studio);
 
 sub get_columns($) {
-    my $config = shift;
+    my ($config) = @_;
 
     my $dbh = db::connect($config);
     return db::get_columns_hash( $dbh, 'calcms_studios' );
 }
 sub get($;$) {
-    my $config = shift;
-    my $condition = shift || {};
+    my ($config, $condition) = @_;
+    $condition ||= {};
 
     my @conditions  = ();
     my @bind_values = ();
@@ -72,8 +72,7 @@ sub get($;$) {
 }
 
 sub getImageById($$) {
-    my $config     = shift;
-    my $conditions = shift;
+    my ($config, $conditions) = @_;
 
     return undef unless defined $conditions->{project_id};
     return undef unless defined $conditions->{studio_id};
@@ -83,8 +82,7 @@ sub getImageById($$) {
 }
 
 sub insert ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     $entry->{created_at}  = time::time_to_datetime( time() );
     $entry->{modified_at} = time::time_to_datetime( time() );
@@ -96,8 +94,7 @@ sub insert ($$) {
 }
 
 sub update ($$) {
-    my $config = shift;
-    my $studio = shift;
+    my ($config, $studio) = @_;
 
     $studio->{modified_at} = time::time_to_datetime( time() );
 
@@ -124,17 +121,14 @@ sub update ($$) {
 }
 
 sub delete ($$) {
-    my $config = shift;
-    my $studio = shift;
-
+    my ($config, $studio) = @_;
     my $dbh = db::connect($config);
     db::put( $dbh, 'delete from calcms_studios where id=?', [ $studio->{id} ] );
 }
 
 #TODO rename to check
 sub check_studio($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
     return check( $config, $options );
 }
 

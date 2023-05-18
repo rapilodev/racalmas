@@ -16,7 +16,7 @@ use time();
 our @EXPORT_OK   = qw(get_columns get insert update delete get_dates);
 
 sub get_columns ($){
-    my $config = shift;
+    my ($config) = @_;
 
     my $dbh = db::connect($config);
     return db::get_columns_hash( $dbh, 'calcms_studio_timeslot_dates' );
@@ -113,8 +113,7 @@ sub get ($$){
 
 #get all studio_timeslot_schedules for studio_id and update studio_timeslot_dates
 sub update {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{schedule_id};
 
@@ -264,8 +263,7 @@ sub get_dates {
 
 #remove all studio_timeslot_dates for studio_id and schedule_id
 sub delete {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return unless defined $entry->{project_id};
     return unless defined $entry->{studio_id};

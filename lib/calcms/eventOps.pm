@@ -24,9 +24,7 @@ our @EXPORT_OK = qw(
 
 # functions: to be separated
 sub setAttributesFromSeriesTemplate($$$) {
-	my $config = shift;
-	my $params = shift;
-	my $event  = shift;
+    my ($config, $params, $event) = @_;
 
 	#get attributes from series
 	my $series = series::get(
@@ -57,9 +55,7 @@ sub setAttributesFromSeriesTemplate($$$) {
 }
 
 sub setAttributesFromSchedule ($$$){
-	my $config = shift;
-	my $params = shift;
-	my $event  = shift;
+    my ($config, $params, $event) = @_;
 
 	#set attributes from schedule
 	my $schedules = series_dates::get(
@@ -89,9 +85,7 @@ sub setAttributesFromSchedule ($$$){
 }
 
 sub setAttributesFromOtherEvent ($$$){
-	my $config = shift;
-	my $params = shift;
-	my $event  = shift;
+    my ($config, $params, $event) = @_;
 
 	my $event2 = series::get_event(
 		$config,
@@ -121,8 +115,7 @@ sub setAttributesFromOtherEvent ($$$){
 }
 
 sub setAttributesForCurrentTime ($$){
-	my $serie = shift;
-	my $event = shift;
+    my ($serie, $event) = @_;
 
 	#on new event not from schedule use current time
 	if ( $event->{start} eq '' ) {
@@ -140,16 +133,14 @@ sub setAttributesForCurrentTime ($$){
 
 # get recurrence base id
 sub getRecurrenceBaseId ($){
-	my $event = shift;
+	my ($event) = @_;
 	return $event->{recurrence} if ( defined $event->{recurrence} ) && ( $event->{recurrence} ne '' ) && ( $event->{recurrence} ne '0' );
 	return $event->{event_id};
 }
 
 # get a new event for given series
 sub getNewEvent($$$) {
-	my $config = shift;
-	my $params = shift;
-	my $action = shift;
+	my ($config, $params, $action) = @_;
 
 	# check for missing parameters
 	my $required_fields = [ 'project_id', 'studio_id', 'series_id' ];
@@ -206,9 +197,7 @@ sub getNewEvent($$$) {
 
 # add user, action
 sub createEvent($$$) {
-	my $request = shift;
-	my $event   = shift;
-	my $action  = shift;
+    my ($request, $event, $action) = @_;
 
 	my $config      = $request->{config};
 	my $permissions = $request->{permissions};

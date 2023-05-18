@@ -10,15 +10,14 @@ use Data::Dumper;
 our @EXPORT_OK   = qw(get_columns get get_by_id insert insert_by_event_id delete);
 
 sub get_columns ($){
-    my $config = shift;
+    my ($config) = @_;
 
     my $dbh = db::connect($config);
     return db::get_columns_hash( $dbh, 'calcms_event_history' );
 }
 
 sub get ($$){
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     return undef unless defined $condition->{studio_id};
 
@@ -78,9 +77,7 @@ sub get ($$){
 }
 
 sub get_by_id($$) {
-    my $config = shift;
-    my $id     = shift;
-
+    my ($config, $id) = @_;
     my $dbh = db::connect($config);
 
     my $query = qq{
@@ -95,8 +92,7 @@ sub get_by_id($$) {
 }
 
 sub insert($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     $entry->{modified_at} = time::time_to_datetime( time() );
 
@@ -150,8 +146,7 @@ sub insert_by_event_id ($$){
 }
 
 sub delete ($$){
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     my $dbh = db::connect($config);
     db::put( $dbh, 'delete from calcms_event_history where event_id=?', [ $entry->{id} ] );

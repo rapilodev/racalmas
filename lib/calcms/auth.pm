@@ -52,7 +52,7 @@ sub get_user($$$) {
 }
 
 sub crypt_password($) {
-    my $password = shift;
+    my ($password) = @_;
 
     my $ppr = Authen::Passphrase::BlowfishCrypt->new(
         cost        => 8,
@@ -66,10 +66,7 @@ sub crypt_password($) {
 }
 
 sub login($$$) {
-    my $config   = shift;
-    my $user     = shift;
-    my $password = shift;
-
+    my ($config, $user, $password) = @_;
     my $result = authenticate( $config, $user, $password );
 
     return show_login_form( $user, 'Could not authenticate you' ) unless defined $result;
@@ -86,9 +83,7 @@ sub login($$$) {
 
 #TODO: remove cgi
 sub logout($$) {
-    my $config = shift;
-    my $cgi = shift;
-
+    my ($config, $cgi) = @_;
     my $session_id = read_cookie();
     unless ( delete_session($config, $session_id) ) {
         return show_login_form( 'Cant delete session', 'logged out' );
@@ -104,9 +99,7 @@ sub logout($$) {
 
 #read and write data from browser, http://perldoc.perl.org/CGI/Cookie.html
 sub create_cookie($$) {
-    my $session_id = shift;
-    my $timeout    = shift;
-
+    my ($session_id, $timeout) = @_;
     my $cookie = CGI::Cookie->new(
         -name    => 'sessionID',
         -value   => $session_id,
@@ -129,8 +122,7 @@ sub read_cookie() {
 
 #TODO: remove CGI
 sub delete_cookie($) {
-    my $cgi = shift;
-
+    my ($cgi) = @_;
     my $cookie = $cgi->cookie(
         -name    => 'sessionID',
         -value   => '',
@@ -143,10 +135,7 @@ sub delete_cookie($) {
 # read and write server-side session data
 # timeout is in seconds
 sub create_session ($$$) {
-    my $config     = shift;
-    my $user       = shift;
-    my $timeout    = shift;
-
+    my ($config, $user, $timeout) = @_;
     my $session_id = user_sessions::start( 
         $config, {
             user       => $user,
@@ -157,8 +146,7 @@ sub create_session ($$$) {
 }
 
 sub read_session($$) {
-    my $config     = shift;
-    my $session_id = shift;
+    my ($config, $session_id) = @_;
 
     return undef unless defined $session_id;
 
@@ -172,20 +160,15 @@ sub read_session($$) {
 }
 
 sub delete_session($$) {
-    my $config = shift;
-    my $session_id = shift;
-
-    return undef unless defined $session_id;
-    
+    my ($config, $session_id) = @_;
+    return unless defined $session_id;
     user_sessions::stop( $config, { session_id => $session_id } );
     return 1;
 }
 
 #check user authentication
 sub authenticate($$$) {
-    my $config   = shift;
-    my $user     = shift;
-    my $password = shift;
+    my ($config, $user, $password) = @_;
 
     $config->{access}->{write} = 0;
     my $dbh   = db::connect($config);
@@ -223,9 +206,8 @@ sub authenticate($$$) {
 }
 
 sub show_login_form ($$) {
-    my $user    = shift              || '';
+    my ($user, $message) = @_;
     my $uri     = $ENV{HTTP_REFERER} || '';
-    my $message = shift              || '';
     my $requestReset = '';
 
     if ( ( $user ne '' ) && ( $message ne '' ) ) {

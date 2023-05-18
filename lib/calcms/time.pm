@@ -551,7 +551,7 @@ sub weekday($$$) {
 #get current date, related to starting day_starting_hour
 #TODO: remove config dependency
 sub get_event_date($) {
-    my $config = shift;
+    my ($config) = @_;
 
     my $datetime = time::time_to_datetime( time() );
     my $hour     = ( time::datetime_to_array($datetime) )->[3];

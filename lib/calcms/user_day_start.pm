@@ -10,7 +10,7 @@ use Data::Dumper;
 # columns:  user, project_id, studio_id, series_id, day_start
 
 sub get_columns($) {
-    my $config = shift;
+    my ($config) = @_;
 
     my $dbh  = db::connect($config);
     return db::get_columns_hash( $dbh, 'calcms_user_day_start' );
@@ -60,8 +60,7 @@ sub insert_or_update($$){
 }
 
 sub insert ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return unless defined $entry->{user};
     return unless defined $entry->{project_id};
@@ -74,8 +73,7 @@ sub insert ($$) {
 }
 
 sub update($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     my $fields = [ 'user', 'project_id', 'studio_id' ];
     for (@$fields){
@@ -99,8 +97,7 @@ sub update($$) {
 }
 
 sub delete ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return unless defined $entry->{user};
     return unless defined $entry->{project_id};

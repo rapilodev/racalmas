@@ -454,8 +454,7 @@ sub depublish ($$) {
 }
 
 sub checkLicence ($$) {
-    my $config = shift;
-    my $result = shift;
+    my ($config, $result) = @_;
 
     print STDERR "depublish\n";
     return undef unless defined $config;

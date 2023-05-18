@@ -30,8 +30,7 @@ our @EXPORT_OK = qw(
 
 # get user by name
 sub get_user($$) {
-    my $config = shift;
-    my $user   = shift;
+    my ($config, $user) = @_;
 
     my $query = qq{
 		select	id, name, full_name, email, disabled, modified_at, created_at
@@ -51,8 +50,7 @@ sub get_user($$) {
 
 # get all users
 sub get_users($;$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my @conditions  = ();
     my @bind_values = ();
@@ -84,9 +82,7 @@ sub get_users($;$) {
 # get all users of a given studio id
 # used at series (previously named get_studio_users)
 sub get_users_by_studio ($$) {
-    my $config    = shift;
-    my $condition = shift;
-
+    my ($config, $condition) = @_;
     return unless defined $condition->{studio_id};
 
     my @conditions  = ();
@@ -119,8 +115,7 @@ sub get_users_by_studio ($$) {
 
 # get projects a user is assigned by name
 sub get_projects_by_user ($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my @conditions  = ();
     my @bind_values = ();
@@ -158,8 +153,7 @@ sub get_projects_by_user ($$) {
 # get all studios a user is assigned to by role
 # used at series (previously named get_user_studios)
 sub get_studios_by_user ($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my @conditions  = ();
     my @bind_values = ();
@@ -194,8 +188,7 @@ sub get_studios_by_user ($$) {
 }
 
 sub insert_user($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     $entry->{created_at}  = time::time_to_datetime( time() );
     $entry->{modified_at} = time::time_to_datetime( time() );
@@ -205,8 +198,7 @@ sub insert_user($$) {
 }
 
 sub update_user($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     $entry->{modified_at} = time::time_to_datetime( time() );
 
@@ -226,8 +218,7 @@ sub update_user($$) {
 }
 
 sub delete_user($$) {
-    my $config = shift;
-    my $id     = shift;
+    my ($config, $id) = @_;
     return unless ( defined $id && ( $id =~ /^\d+$/ ) );
 
     my $query = qq{
@@ -241,8 +232,7 @@ sub delete_user($$) {
 # get all roles used by all users of a studio
 # available conditions: project_id, studio_id
 sub get_studio_roles($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     return [] if ( $condition->{studio_id} eq '' );
 
@@ -276,7 +266,7 @@ sub get_studio_roles($$) {
 
 # get role columns (for external use only)
 sub get_role_columns($) {
-    my $config  = shift;
+    my ($config) = @_;
     my $dbh     = db::connect($config);
     my $columns = db::get_columns_hash( $dbh, 'calcms_roles' );
     return $columns;
@@ -285,8 +275,7 @@ sub get_role_columns($) {
 # get roles
 # filter: studio_id project_id
 sub get_roles($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my @conditions  = ();
     my @bind_values = ();
@@ -316,8 +305,7 @@ sub get_roles($$) {
 
 #insert role to database, set created_at and modified_at
 sub insert_role ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     $entry->{created_at}  = time::time_to_datetime( time() );
     $entry->{modified_at} = time::time_to_datetime( time() );
@@ -333,8 +321,7 @@ sub insert_role ($$) {
 
 #update role, set modified_at
 sub update_role($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     $entry->{modified_at} = time::time_to_datetime( time() );
 
@@ -356,8 +343,7 @@ sub update_role($$) {
 
 # delete role from database
 sub delete_role($$) {
-    my $config = shift;
-    my $id     = shift;
+    my ($config, $id) = @_;
 
     return unless ( defined $id && ( $id =~ /^\d+$/ ) );
 
@@ -372,8 +358,7 @@ sub delete_role($$) {
 # get all roles for given conditions: project_id, studio_id, user_id, name
 # includes global admin user role
 sub get_user_roles($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my @conditions  = ();
     my @bind_values = ();
@@ -427,8 +412,7 @@ sub get_user_roles($$) {
 
 #return admin user roles for given conditions: project_id, studio_id, user, user_id
 sub get_admin_user_roles ($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my @conditions  = ();
     my @bind_values = ();
@@ -470,9 +454,7 @@ sub get_admin_user_roles ($$) {
 # return user_permissions
 # studio_id, user_id, name
 sub get_user_permissions ($$;$) {
-    my $config           = shift;
-    my $conditions       = shift;
-    my $user_permissions = shift;
+    my ($config, $conditions, $user_permissions) = @_;
 
     my $user_roles = get_user_roles( $config, $conditions );
     my $admin_roles = get_admin_user_roles( $config, $conditions );
@@ -512,9 +494,7 @@ sub get_user_permissions ($$;$) {
 
 #get user id by user name
 sub get_user_id ($$) {
-    my $config = shift;
-    my $user   = shift;
-
+    my ($config, $user) = @_;
     return undef unless defined $user;
 
     my $query = qq{
@@ -530,9 +510,7 @@ sub get_user_id ($$) {
 
 #get role id by role name
 sub get_role_id ($$) {
-    my $config = shift;
-    my $role   = shift;
-
+    my ($config, $role) = @_;
     return undef unless defined $role;
 
     my $query = qq{
@@ -581,8 +559,7 @@ sub assign_user_role($$) {
 
 # unassign a user from a role of (for a studio)
 sub remove_user_role($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return undef unless defined $options->{project_id};
     return undef unless defined $options->{studio_id};
@@ -604,8 +581,7 @@ sub remove_user_role($$) {
 
 #checks
 sub is_user_assigned_to_studio ($$) {
-    my $request = shift;
-    my $options = shift;
+    my ($request, $options) = @_;
 
     my $config = $request->{config};
 
@@ -627,10 +603,7 @@ sub is_user_assigned_to_studio ($$) {
 # print errors at get_user_presets and check for project id and studio id
 # call after header is printed
 sub check($$$) {
-    my $config       = shift;
-    my $params       = shift;
-    my $user_presets = shift;
-
+    my ($config, $params, $user_presets) = @_;
     if ( defined $user_presets->{error} ) {
         uac::print_error( $user_presets->{error} );
         return 0;
@@ -654,8 +627,7 @@ sub check($$$) {
 # set permissions for selected project and studio
 # return request
 sub get_user_presets($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     my $user = $options->{user} || '';
     my $error = undef;
@@ -787,8 +759,7 @@ sub get_user_presets($$) {
 }
 
 sub setDefaultProject ($$) {
-    my $params       = shift;
-    my $user_presets = shift;
+    my ($params, $user_presets) = @_;
 
     $params->{project_id} = $user_presets->{project_id}
       if ( !defined $params->{authAction} ) || ( $params->{authAction} eq '' ) || ( $params->{authAction} eq 'login' );
@@ -806,8 +777,7 @@ sub setDefaultStudio($$) {
 
 #set user preset properties to request
 sub prepare_request ($$) {
-    my $request      = shift;
-    my $user_presets = shift;
+    my ($request, $user_presets) = @_;
 
     for my $key ( keys %$user_presets ) {
         $request->{$key} = $user_presets->{$key};
@@ -822,8 +792,7 @@ sub prepare_request ($$) {
 
 #TODO: shift to permissions sub entry
 sub set_template_permissions ($$) {
-    my $permissions = shift;
-    my $params      = shift;
+    my ($permissions, $params) = @_;
 
     for my $usecase ( keys %$permissions ) {
         $params->{'allow'}->{$usecase} = 1 if ( $permissions->{$usecase} eq '1' );

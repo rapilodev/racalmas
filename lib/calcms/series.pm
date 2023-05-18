@@ -28,7 +28,7 @@ our @EXPORT_OK = qw(
 
 # get series columns
 sub get_columns ($) {
-    my $config = shift;
+    my ($config) = @_;
 
     my $dbh = db::connect($config);
     return db::get_columns_hash( $dbh, 'calcms_series' );
@@ -36,8 +36,7 @@ sub get_columns ($) {
 
 # get series content
 sub get ($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my @conditions  = ();
     my @bind_values = ();
@@ -124,8 +123,7 @@ sub get ($$) {
 
 # insert series
 sub insert ($$) {
-    my $config = shift;
-    my $series = shift;
+    my ($config, $series) = @_;
 
     return undef unless defined $series->{project_id};
     return undef unless defined $series->{studio_id};
@@ -162,8 +160,7 @@ sub insert ($$) {
 
 # update series
 sub update ($$) {
-    my $config = shift;
-    my $series = shift;
+    my ($config, $series) = @_;
 
     return undef unless defined $series->{project_id};
     return undef unless defined $series->{studio_id};
@@ -199,8 +196,7 @@ sub update ($$) {
 # delete series, its schedules and series dates
 # unassign its users and events
 sub delete($$) {
-    my $config = shift;
-    my $series = shift;
+    my ($config, $series) = @_;
 
     return undef unless defined $series->{project_id};
     return undef unless defined $series->{studio_id};
@@ -287,8 +283,7 @@ sub delete($$) {
 
 # get users directly assigned to project, studio, series (editors)
 sub get_users ($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my @conditions  = ();
     my @bind_values = ();
@@ -331,8 +326,7 @@ sub get_users ($$) {
 
 # assign user to series
 sub add_user ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return unless defined $entry->{project_id};
     return unless defined $entry->{studio_id};
@@ -362,8 +356,7 @@ sub add_user ($$) {
 
 # remove user(s) from series.
 sub remove_user ($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     return unless defined $condition->{project_id};
     return unless defined $condition->{studio_id};
@@ -406,9 +399,7 @@ sub remove_user ($$) {
 #search events by series_name and title (for events not assigned yet)
 #TODO: add location
 sub search_events ($$$) {
-    my $config  = shift;
-    my $request = shift;
-    my $options = shift;
+    my ($config, $request, $options) = @_;
 
     my $series_name = $options->{series_name} || '';
     my $title       = $options->{title}       || '';
@@ -449,8 +440,7 @@ sub search_events ($$$) {
 
 #get events (only assigned ones) by project_id,studio_id,series_id,
 sub get_events ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return [] if defined( $options->{series_id} ) && ( $options->{series_id} <= 0 );
 
@@ -555,8 +545,7 @@ sub get_events ($$) {
 # helper for gui - errors are written to gui output
 # return undef on error
 sub get_event ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     my $project_id = $options->{project_id} || '';
     my $studio_id  = $options->{studio_id}  || '';
@@ -620,8 +609,7 @@ sub get_event ($$) {
 
 # get name and title of series and age in days ('days_over')
 sub get_event_age($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return undef unless defined $options->{project_id};
     return undef unless defined $options->{studio_id};
@@ -675,8 +663,7 @@ sub get_event_age($$) {
 
 # is event older than max_age days
 sub is_event_older_than_days ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return 1 unless defined $options->{project_id};
     return 1 unless defined $options->{studio_id};
@@ -705,8 +692,7 @@ sub is_event_older_than_days ($$) {
 }
 
 sub get_next_episode($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return 0 unless defined $options->{project_id};
     return 0 unless defined $options->{studio_id};
@@ -745,8 +731,7 @@ sub get_next_episode($$) {
 }
 
 sub get_images ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return undef unless defined $options->{project_id};
     return undef unless defined $options->{studio_id};
@@ -806,8 +791,7 @@ sub get_images ($$) {
 #assign event to series
 #TODO: manual assign needs to update automatic one
 sub assign_event($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};
@@ -849,8 +833,7 @@ sub assign_event($$) {
 
 #unassign event from series
 sub unassign_event($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return unless defined $entry->{project_id};
     return unless defined $entry->{studio_id};
@@ -875,8 +858,7 @@ sub unassign_event($$) {
 # used by calendar
 # TODO: optionally add project_id and studio_id to conditions
 sub add_series_ids_to_events ($$) {
-    my $config = shift;
-    my $events = shift;
+    my ($config, $events) = @_;
 
     #get event ids from given events
     my @event_ids = ();
@@ -923,11 +905,7 @@ sub add_series_ids_to_events ($$) {
 # add event_ids to series and remove all event ids from series, not given event_ids
 # for scan only, used at series
 sub set_event_ids ($$$$$) {
-    my $config     = shift;
-    my $project_id = shift;
-    my $studio_id  = shift;
-    my $serie      = shift;
-    my $event_ids  = shift;
+    my ($config, $project_id, $studio_id, $serie, $event_ids) = @_;
 
     my $serie_id = $serie->{series_id};
     return unless defined $project_id;
@@ -988,8 +966,7 @@ sub set_event_ids ($$$$$) {
 # check if user allowed to update series events
 # evaluate permissions and consider editors directly assigned to series
 sub can_user_update_events ($$) {
-    my $request = shift;
-    my $options = shift;
+    my ($request, $options) = @_;
 
     my $config      = $request->{config};
     my $permissions = $request->{permissions};
@@ -1009,8 +986,7 @@ sub can_user_update_events ($$) {
 # check if user allowed to create series events
 # evaluate permissions and consider editors directly assigned to series
 sub can_user_create_events ($$) {
-    my $request = shift;
-    my $options = shift;
+    my ($request, $options) = @_;
 
     my $config      = $request->{config};
     my $permissions = $request->{permissions};
@@ -1028,8 +1004,7 @@ sub can_user_create_events ($$) {
 }
 
 sub is_series_assigned_to_user ($$) {
-    my $request = shift;
-    my $options = shift;
+    my ($request, $options) = @_;
 
     my $config      = $request->{config};
     my $permissions = $request->{permissions};
@@ -1055,8 +1030,7 @@ sub is_series_assigned_to_user ($$) {
 # check if user is assigned to studio where location matchs to event
 # return 1 on success or error text
 sub is_event_assigned_to_user ($$) {
-    my $request = shift;
-    my $options = shift;
+    my ($request, $options) = @_;
 
     my $config = $request->{config};
 
@@ -1105,8 +1079,7 @@ sub is_event_assigned_to_user ($$) {
 }
 
 sub get_rebuilt_episodes ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return "missing project_id" unless defined $options->{project_id};
     return "missing studio_id"  unless defined $options->{studio_id};
@@ -1157,7 +1130,7 @@ sub get_rebuilt_episodes ($$) {
 # to find multiple recurrences this does not include the recurrence_count
 # use events::get_key to add the recurrence
 sub get_event_key ($) {
-    my $event = shift;
+    my ($event) = @_;
 
     my $program     = $event->{program}     || '';
     my $series_name = $event->{series_name} || '';
@@ -1176,8 +1149,7 @@ sub get_event_key ($) {
 }
 
 sub update_recurring_events ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return "missing project_id" unless defined $options->{project_id};
     return "missing studio_id"  unless defined $options->{studio_id};
@@ -1247,8 +1219,7 @@ sub update_recurring_events ($$) {
 }
 
 sub update_recurring_event($$) {
-    my $config = shift;
-    my $event  = shift;
+    my ($config, $event) = @_;
 
     return undef unless defined $event->{event_id};
     return undef unless defined $event->{recurrence};

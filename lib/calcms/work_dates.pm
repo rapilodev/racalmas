@@ -20,8 +20,7 @@ use work_schedule();
 our @EXPORT_OK = qw(get_columns get insert update delete get_dates);
 
 sub get_columns($) {
-    my $config = shift;
-
+    my ($config) = @_;
     my $dbh = db::connect($config);
     return db::get_columns_hash( $dbh, 'calcms_work_dates' );
 }
@@ -118,8 +117,7 @@ sub get ($$) {
 
 #update work dates for all schedules of a work and studio_id
 sub update($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};
@@ -348,8 +346,7 @@ sub get_dates($$$$) {
 
 #remove all work_dates for studio_id and schedule_id
 sub delete($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};

@@ -22,7 +22,7 @@ use time;
 our @EXPORT_OK = qw(get_columns get insert update delete);
 
 sub get_columns($) {
-    my $config = shift;
+    my ($config) = @_;
 
     my $dbh = db::connect($config);
     return db::get_columns_hash( $dbh, 'calcms_user_sessions' );
@@ -30,8 +30,7 @@ sub get_columns($) {
 
 #map schedule id to id
 sub get($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
 
@@ -74,8 +73,7 @@ sub get($$) {
 
 # insert entry and return database id
 sub insert ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{user};
     return undef unless defined $entry->{timeout};
@@ -95,8 +93,7 @@ sub insert ($$) {
 
 # start session and return generated session id
 sub start($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{user};
     return undef unless defined $entry->{timeout};
@@ -121,8 +118,7 @@ sub start($$) {
 
 # expand session by timeout
 sub keep_alive ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry;
 
@@ -135,8 +131,7 @@ sub keep_alive ($$) {
 
 # get session by session id and expand session if valid
 sub check($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry;
     my $entries = get( $config, { session_id => $entry->{session_id} } );
@@ -158,8 +153,7 @@ sub check($$) {
 
 # stop session
 sub stop ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry;
 
@@ -177,8 +171,7 @@ sub stop ($$) {
 
 #schedule id to id
 sub update ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{session_id};
 
@@ -199,8 +192,7 @@ sub update ($$) {
 
 #map schedule id to id
 sub delete($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{session_id};
 

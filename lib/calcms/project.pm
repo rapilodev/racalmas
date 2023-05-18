@@ -24,7 +24,7 @@ our @EXPORT_OK = qw(
 
 # get project columns
 sub get_columns ($) {
-    my $config = shift;
+    my ($config) = @_;
 
     my $dbh = db::connect($config);
     return db::get_columns_hash( $dbh, 'calcms_projects' );
@@ -32,8 +32,7 @@ sub get_columns ($) {
 
 # get projects
 sub get ($;$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
 
@@ -72,8 +71,7 @@ sub get ($;$) {
 
 # requires at least project_id
 sub getImageById($$) {
-    my $config     = shift;
-    my $conditions = shift;
+    my ($config, $conditions) = @_;
 
     return undef unless defined $conditions->{project_id};
     my $projects = project::get( $config, $conditions );
@@ -82,7 +80,7 @@ sub getImageById($$) {
 }
 
 sub get_date_range($) {
-    my $config = shift;
+    my ($config) = @_;
 
     my $query = qq{
         select min(start_date) start_date, max(end_date) end_date 
@@ -96,8 +94,7 @@ sub get_date_range($) {
 
 # insert project
 sub insert($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     my $columns = get_columns($config);
     my $project = {};
@@ -114,8 +111,7 @@ sub insert($$) {
 
 # update project
 sub update($$) {
-    my $config  = shift;
-    my $project = shift;
+    my ($config, $project) = @_;
 
     my $columns = project::get_columns($config);
     my $entry   = {};
@@ -141,17 +137,14 @@ sub update($$) {
 
 # delete project
 sub delete ($$) {
-    my $config = shift;
-    my $entry  = shift;
-
+    my ($config, $entry) = @_;
     my $dbh = db::connect($config);
     db::put( $dbh, 'delete from calcms_projects where project_id=?', [ $entry->{project_id} ] );
 }
 
 # get studios of a project
 sub get_studios($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return undef unless defined $options->{project_id};
     my $project_id = $options->{project_id};
@@ -168,8 +161,7 @@ sub get_studios($$) {
 }
 
 sub get_studio_assignments($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     my @conditions  = ();
     my @bind_values = ();
@@ -201,8 +193,7 @@ sub get_studio_assignments($$) {
 
 # is studio assigned to project
 sub is_studio_assigned ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return 0 unless defined $entry->{project_id};
     return 0 unless defined $entry->{studio_id};
@@ -225,8 +216,7 @@ sub is_studio_assigned ($$) {
 
 # assign studio to project
 sub assign_studio($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};
@@ -244,8 +234,7 @@ sub assign_studio($$) {
 
 # unassign studio from project
 sub unassign_studio($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};
@@ -260,8 +249,7 @@ sub unassign_studio($$) {
 
 # get series by project and studio
 sub get_series ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return undef unless defined $options->{project_id};
     return undef unless defined $options->{studio_id};
@@ -281,8 +269,7 @@ sub get_series ($$) {
 }
 
 sub get_series_assignments ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     my @conditions  = ();
     my @bind_values = ();
@@ -319,8 +306,7 @@ sub get_series_assignments ($$) {
 
 # is series assigned to project and studio
 sub is_series_assigned ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return 0 unless defined $entry->{project_id};
     return 0 unless defined $entry->{studio_id};
@@ -345,8 +331,7 @@ sub is_series_assigned ($$) {
 
 # assign series to project and studio
 sub assign_series($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};
@@ -369,8 +354,7 @@ sub assign_series($$) {
 # unassign series from project
 # TODO: remove series _single_ if no event is assigned to
 sub unassign_series ($$) {
-    my $config = shift;
-    my $entry  = shift;
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};
@@ -387,8 +371,7 @@ sub unassign_series ($$) {
 }
 
 sub get_with_dates($;$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     my $language = $config->{date}->{language} || 'en';
     my $projects = project::get( $config, {} );
@@ -404,7 +387,7 @@ sub get_with_dates($;$) {
 
 #TODO: add config
 sub get_sorted($) {
-    my $config   = shift;
+    my ($config) = @_;
     my $projects = project::get( $config, {} );
     my @projects = reverse sort { $a->{end_date} cmp $b->{end_date} } (@$projects);
 
@@ -421,9 +404,8 @@ sub get_sorted($) {
 
 # internal
 sub get_months ($$;$) {
-    my $config   = shift;
-    my $project  = shift;
-    my $language = shift || $config->{date}->{language} || 'en';
+    my ($config, $project, $language) = @_;
+    $language ||= $config->{date}->{language} || 'en';
 
     my $start = $project->{start_date};
     my $end   = $project->{end_date};
@@ -469,8 +451,7 @@ sub get_months ($$;$) {
 
 # check project_id
 sub check ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
     return "missing project_id at checking project" unless defined $options->{project_id};
     return "Please select a project" if ( $options->{project_id} eq '-1' );
     return "Please select a project" if ( $options->{project_id} eq '' );

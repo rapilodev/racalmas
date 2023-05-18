@@ -289,9 +289,7 @@ sub render($$$$) {
 }
 
 sub get_calendar_weeks($$$) {
-    my $config = shift;
-    my $start  = shift;
-    my $end    = shift;
+    my ($config, $start, $end) = @_;
 
     $start = time::date_to_array($start);
     $end   = time::date_to_array($end);
@@ -407,8 +405,7 @@ sub getWeeksOfMonth($$) {
 }
 
 sub check_params($$) {
-    my $config = shift;
-    my $params = shift;
+    my ($config, $params) = @_;
 
     #get start and stop from projects
     my $range      = project::get_date_range($config);

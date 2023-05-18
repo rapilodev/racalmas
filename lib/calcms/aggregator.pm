@@ -138,8 +138,7 @@ sub get_newest_comments($$) {
 }
 
 sub check_params($$) {
-    my $config = shift;
-    my $params = shift;
+    my ($config, $params) = @_;
 
     #get start and stop from projects
     my $range      = project::get_date_range($config);
