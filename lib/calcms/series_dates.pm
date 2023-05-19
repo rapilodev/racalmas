@@ -29,8 +29,7 @@ sub get_columns ($) {
 # get all series_dates for studio_id and series_id within given time range
 # calculate start_date, end_date, weeday, day from start and end(datetime)
 sub get ($;$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
 
@@ -107,8 +106,7 @@ sub get ($;$) {
 
 #check if event is scheduled (on permission check)
 sub is_event_scheduled($$) {
-    my $request = shift;
-    my $options = shift;
+    my ($request, $options) = @_;
 
     return 0 unless defined $options->{project_id};
     return 0 unless defined $options->{studio_id};
@@ -131,8 +129,7 @@ sub is_event_scheduled($$) {
 
 #get all series for given studio_id, time range and search
 sub get_series($;$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my $date_range_include = 0;
     $date_range_include = 1
@@ -251,8 +248,7 @@ sub get_series($;$) {
 }
 
 sub addSeriesScheduleAttributes ($$) {
-    my $config  = shift;
-    my $entries = shift;
+    my ($config, $entries) = @_;
 
     # get series schedule ids used at entries
     my $scheduleIds = { map { $_->{series_schedule_id} => 1 } @$entries };
@@ -360,8 +356,7 @@ sub update($$) {
 }
 
 sub get_schedule_dates($$) {
-    my $schedule = shift;
-    my $options  = shift;
+    my ($schedule, $options) = @_;
 
     my $is_exclude = $options->{exclude} || 0;
     my $dates = [];
@@ -389,13 +384,8 @@ sub get_schedule_dates($$) {
 }
 
 sub get_week_of_month_dates ($$$$$$$) {
-    my $start     = shift;    # datetime string
-    my $end       = shift;    # datetime string
-    my $duration  = shift;    # in minutes
-    my $week      = shift;    # every nth week of month
-    my $weekday   = shift;    # weekday [1..7]
-    my $frequency = shift;    # every 1st,2nd,3th time
-    my $nextDay   = shift;    # add 24 hours to start, (for night hours at last weekday of month)
+    my ($start, $end, $duration, $week, $weekday, $frequency, $nextDay) = @_; 
+    #datetime, datetime, minutes, every nth week of month, weekday [1..7], every 1st,2nd,3th time, add 24 hours to start, (for night hours at last weekday of month)
 
     return undef if $start eq '';
     return undef if $end eq '';
@@ -440,8 +430,7 @@ sub get_week_of_month_dates ($$$$$$$) {
 
 #add duration to a single date
 sub get_single_date ($$) {
-    my $start_datetime = shift;
-    my $duration       = shift;
+    my ($start_datetime, $duration) = @_;
 
     my @start = @{ time::datetime_to_array($start_datetime) };
     return unless @start >= 6;
@@ -460,11 +449,8 @@ sub get_single_date ($$) {
 
 #calculate all dates between start_datetime and end_date with duration(minutes) and frequency(days)
 sub get_dates($$$$) {
-    my $start_datetime = shift;
-    my $end_date       = shift;
-    my $duration       = shift;    # in minutes
-    my $frequency      = shift;    # in days
-         #print "start_datetime:$start_datetime end_date:$end_date duration:$duration frequency:$frequency\n";
+    my ($start_datetime, $end_date, $duration, $frequency) = @_;
+    # in minutes, in days
 
     my @start = @{ time::datetime_to_array($start_datetime) };
     return unless @start >= 6;
@@ -537,8 +523,7 @@ sub delete ($$) {
 
 # get all series dates where no event has been created for
 sub getDatesWithoutEvent ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return unless defined $options->{project_id};
     return unless defined $options->{studio_id};

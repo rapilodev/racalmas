@@ -113,8 +113,7 @@ sub insert($$) {
 
 # insert event
 sub insert_by_event_id ($$){
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return undef unless defined $options->{project_id};
     return undef unless defined $options->{studio_id};

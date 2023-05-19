@@ -28,8 +28,7 @@ sub get_columns($) {
 # get all work_dates for studio_id and schedule_id within given time range
 # calculate start_date, end_date, weeday, day from start and end(datetime)
 sub get ($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my $date_range_include = 0;
     $date_range_include = 1
@@ -197,8 +196,7 @@ sub update($$) {
 }
 
 sub get_schedule_dates($$) {
-    my $schedule = shift;
-    my $options  = shift;
+    my ($schedule, $options) = @_;
 
     my $is_exclude = $options->{exclude} || 0;
     my $dates = [];
@@ -221,12 +219,8 @@ sub get_schedule_dates($$) {
 }
 
 sub get_week_of_month_dates($$$$$$) {
-    my $start     = shift;    # datetime string
-    my $end       = shift;    # datetime string
-    my $duration  = shift;    # in minutes
-    my $week      = shift;    # every nth week of month
-    my $weekday   = shift;    # weekday [1..7]
-    my $frequency = shift;    # every 1st,2nd,3th time
+    my ($start, $end, $duration, $week, $weekday, $frequency) = @_;
+    # datetime, datetime, minutes, every nth week of month, weekday [1..7], every 1st,2nd,3th time
 
     return undef if $start eq '';
     return undef if $end eq '';
@@ -265,8 +259,7 @@ sub get_week_of_month_dates($$$$$$) {
 
 #add duration to a single date
 sub get_single_date($$) {
-    my $start_datetime = shift;
-    my $duration       = shift;
+    my ($start_datetime, $duration) = @_;
 
     my @start = @{ time::datetime_to_array($start_datetime) };
     return unless @start >= 6;
@@ -285,11 +278,8 @@ sub get_single_date($$) {
 
 #calculate all dates between start_datetime and end_date with duration(minutes) and frequency(days)
 sub get_dates($$$$) {
-    my $start_datetime = shift;
-    my $end_date       = shift;
-    my $duration       = shift;    # in minutes
-    my $frequency      = shift;    # in days
-         #print "start_datetime:$start_datetime end_date:$end_date duration:$duration frequency:$frequency\n";
+    my ($start_datetime, $end_date, $duration, $frequency) = @_;
+    #duration in seconds, frequency in minutes
 
     my @start = @{ time::datetime_to_array($start_datetime) };
     return unless @start >= 6;

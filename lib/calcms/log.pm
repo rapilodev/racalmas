@@ -23,7 +23,7 @@ sub error($$) {
 }
 
 sub load_file($) {
-    my $filename = shift;
+    my ($filename) = @_;
 
     my $content = '';
     if ( -e $filename ) {
@@ -36,8 +36,7 @@ sub load_file($) {
 }
 
 sub save_file($$) {
-    my $filename = shift;
-    my $content  = shift;
+    my ($filename, $content) = @_;
 
     #check if directory is writeable
     if ( $filename =~ /^(.+?)\/[^\/]+$/ ) {
@@ -57,8 +56,7 @@ sub save_file($$) {
 }
 
 sub append_file($$) {
-    my $filename = shift;
-    my $content  = shift;
+    my ($filename, $content) = @_;
 
     unless ( ( defined $filename ) && ( $filename ne '' ) && ( -e $filename ) ) {
         print STDERR "cannot append, file '$filename' does not exist\n";

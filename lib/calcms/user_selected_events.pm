@@ -19,8 +19,7 @@ sub get_columns($) {
 }
 
 sub get ($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my @conditions  = ();
     my @bind_values = ();

@@ -27,8 +27,7 @@ sub get_cached_or_render($$$) {
 }
 
 sub get($$) {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params = $request->{params}->{checked};
     my $language = $config->{date}->{language} || 'en';
@@ -315,8 +314,8 @@ sub get_calendar_weeks($$$) {
 }
 
 sub getWeeksOfMonth($$) {
-    my $thisYear  = shift;
-    my $thisMonth = shift;
+    my ($thisYear, $thisMonth) = @_;
+
     my $thisDay   = 1;
 
     # get weekday of 1st of month

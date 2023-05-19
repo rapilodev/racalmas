@@ -70,8 +70,7 @@ sub get_cached_or_render($$$;$) {
 }
 
 sub get($$) {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params = $request->{params}->{checked};
     my $dbh = db::connect( $config, $request );
@@ -81,9 +80,7 @@ sub get($$) {
 }
 
 sub get_query($$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $request = shift;
+    my ($dbh, $config, $request) = @_;
 
     my $params = $request->{params}->{checked};
 
@@ -229,9 +226,7 @@ sub render($$$$) {
 
 #check if comment exists already
 sub check ($$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $comment = shift;
+    my ($dbh, $config, $comment) = @_;
 
     my $query = qq{
         select  id
@@ -259,9 +254,7 @@ sub check ($$$) {
 
 #used for insert
 sub get_level($$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $comment = shift;
+    my ($dbh, $config, $comment) = @_;
 
     my $parent_id = $comment->{parent_id};
     return 0 unless defined $parent_id;
@@ -294,9 +287,7 @@ sub get_level($$$) {
 }
 
 sub get_by_event($$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $request = $_[0];
+    my ($dbh, $config, $request) = @_;
 
     my $params = $request->{params}->{checked}->{comment};
 
@@ -336,9 +327,7 @@ sub get_by_event($$$) {
 }
 
 sub get_by_time($$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $comment = shift;
+    my ($dbh, $config, $comment) = @_;
 
     my $where       = '';
     my $bind_values = [];
@@ -375,10 +364,7 @@ sub get_by_time($$$) {
 }
 
 sub get_events($$$$) {
-    my $dbh      = shift;
-    my $config   = shift;
-    my $request  = shift;
-    my $comments = shift;
+    my ($dbh, $config, $request, $comments) = @_;
 
     my $params = $request->{params}->{checked}->{comment};
 
@@ -438,9 +424,7 @@ sub get_events($$$$) {
 }
 
 sub insert ($$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $comment = shift;
+    my ($dbh, $config, $comment) = @_;
 
     $comment->{level} = comments::get_level( $dbh, $config, $comment );
 
@@ -461,9 +445,7 @@ sub insert ($$$) {
 }
 
 sub set_lock_status ($$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $comment = shift;
+    my ($dbh, $config, $comment) = @_;
 
     my $id          = $comment->{id};
     my $lock_status = $comment->{set_lock_status};
@@ -489,9 +471,7 @@ sub set_lock_status ($$$) {
 }
 
 sub set_news_status($$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $comment = shift;
+    my ($dbh, $config, $comment) = @_;
 
     my $id          = $comment->{id};
     my $news_status = $comment->{set_news_status};
@@ -505,9 +485,7 @@ sub set_news_status($$$) {
 }
 
 sub update_comment_count ($$$) {
-    my $dbh     = shift;
-    my $config  = shift;
-    my $comment = shift;
+    my ($dbh, $config, $comment) = @_;
 
     my $query = qq{
         select  count(id) count
@@ -530,9 +508,7 @@ sub update_comment_count ($$$) {
 }
 
 sub sort_childs {
-    my $node         = shift;
-    my $nodes        = shift;
-    my $sorted_nodes = shift;
+    my ($node, $nodes, $sorted_nodes) = @_;
 
     #push node into list of sorted nodes
     push @{$sorted_nodes}, $node;
@@ -549,8 +525,7 @@ sub sort_childs {
 
 #precondition: results are presorted by creation date (by sql)
 sub sort($$) {
-    my $config  = shift;
-    my $results = shift;
+    my ($config, $results) = @_;
 
     #define parent nodes
     my $nodes = {};
@@ -578,8 +553,7 @@ sub sort($$) {
 }
 
 sub check_params ($$) {
-    my $config  = shift;
-    my $params  = shift;
+    my ($config, $params) = @_;
     my $comment = {};
 
     $comment->{event_start} = '';

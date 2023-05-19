@@ -526,8 +526,7 @@ sub get_role_id ($$) {
 
 # assign a role to an user (for a studio)
 sub assign_user_role($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     return undef unless defined $options->{project_id};
     return undef unless defined $options->{studio_id};
@@ -767,8 +766,7 @@ sub setDefaultProject ($$) {
 }
 
 sub setDefaultStudio($$) {
-    my $params       = shift;
-    my $user_presets = shift;
+    my ($params, $user_presets) = @_;
 
     $params->{studio_id} = $user_presets->{studio_id}
       if ( !defined $params->{authAction} ) || ( $params->{authAction} eq '' ) || ( $params->{authAction} eq 'login' );
@@ -802,7 +800,7 @@ sub set_template_permissions ($$) {
 
 #print error message
 sub permissions_denied($) {
-    my $message = shift;
+    my ($message) = @_;
     $message =~ s/_/ /g;
     print '<div class="error">Sorry! Missing permissions to ' . $message . '</div>' . "\n";
     print STDERR 'Sorry! Missing permissions to ' . $message . "\n";
@@ -823,7 +821,7 @@ sub print_warn($) {
 }
 
 sub print_error ($) {
-    my $message = shift;
+    my ($message) = @_;
     print STDERR "ERROR:" . $message . "\n";
     print '<div class="error" head>'
       . '<span class="ui-icon ui-icon-alert" style="float:left"></span>&nbsp;'

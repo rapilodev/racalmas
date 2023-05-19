@@ -14,7 +14,7 @@ my $config = undef;
 
 
 sub get($) {
-    my $filename = shift;
+    my ($filename) = @_;
     return read_config($filename);
 }
 
@@ -25,7 +25,7 @@ sub getFromScriptLocation() {
 }
 
 sub read_config {
-    my $file = $_[0];
+    my ($file) = @_;
 
     my $vars  = {};
     my @stack = ();

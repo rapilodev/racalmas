@@ -14,9 +14,7 @@ use Date::Calc;
 our @EXPORT_OK = qw(get_cache configure_cache put_cache get_list check_params);
 
 sub get_list($$) {
-    my $config  = shift;
-    my $request = shift;
-
+    my ($config, $request) = @_;
     my $params = $request->{params}->{checked};
 
     #customize prefiltered request parameters
@@ -63,10 +61,7 @@ sub get_list($$) {
 }
 
 sub get_menu($$$$) {
-    my $config  = shift;
-    my $request = shift;
-    my $date    = shift;
-    my $results = shift;
+    my ($config, $request, $date, $results) = @_;
 
     my $params = $request->{params}->{checked};
 
@@ -89,9 +84,7 @@ sub get_menu($$$$) {
 }
 
 sub get_calendar($$$) {
-    my $config  = shift;
-    my $request = shift;
-    my $date    = shift;
+    my ($config, $request, $date) = @_;
 
     my $params = $request->{params}->{checked};
 
@@ -114,8 +107,7 @@ sub get_calendar($$$) {
 }
 
 sub get_newest_comments($$) {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params = {
         template => 'comments_newest.html',

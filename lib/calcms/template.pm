@@ -120,8 +120,8 @@ sub initTemplate($) {
 sub setRelativeUrls;
 
 sub setRelativeUrls {
-    my $params = shift;
-    my $depth = shift || 0;
+    my ($params, $depth) = @_;
+    $depth ||= 0;
 
     return unless defined $params;
 
@@ -164,10 +164,9 @@ sub setRelativeUrls {
 }
 
 sub check($;$$) {
-    my $config   = shift;
-    my $template = shift || '';
-    my $default  = shift;
+    my ($config, $template, $default) = @_;
 
+    $template ||= '';
     if ( $template =~ /json\-p/ ) {
         $template =~ s/[^a-zA-Z0-9\-\_\.]//g;
         $template =~ s/\.{2,99}/\./g;

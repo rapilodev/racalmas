@@ -13,8 +13,7 @@ our @EXPORT_OK =
 
 #convert creole wiki text to event
 sub extractEventFromWikiText($;$) {
-    my $params = shift;
-    my $event  = shift;
+    my ($params, $event) = @_;
     $event = {} unless defined $event;
 
     my $title           = $params->{title}           || '';
@@ -111,7 +110,7 @@ s/\{\{\s*thumbs\/+(.*?)\s*\|\s*(.*?)\s*\}\}/\[\[$local_media_url\/images\/$1\|\{
 }
 
 sub eventToWikiText($$) {
-    my $event = shift;
+    my ($event) = @_;
     my $local_media_url = $event->{local_media_url} || '';
 
     $event->{program} =~ s/^\s+|\s+$//g;
@@ -163,8 +162,7 @@ s/\[\[.*?\/+media\/+images\/+(.*?)\s*\|.*?\{\{.*?\/+media\/+thumbs\/+(.*?)\s*\|\
 
 #extrace meta tags from comment text
 sub extractMeta ($$) {
-    my $comments = shift;
-    my $meta     = shift;
+    my ($comments, $meta) = @_;
 
     $meta = [] unless defined $meta;
 
@@ -202,7 +200,8 @@ sub extractMeta ($$) {
 
 #remove meta tags from comment text
 sub removeMeta($) {
-    my $comments = shift || '';
+    my ($comments) = @_;
+    $comments ||= '';
 
     my $result = '';
     for my $line ( split( /\n/, $comments ) ) {
@@ -216,7 +215,7 @@ sub removeMeta($) {
 
 #add meta tags to comment text
 sub metaToWiki {
-    my $meta = shift;
+    my ($meta) = @_;
 
     my $result = '';
     for my $pair (@$meta) {

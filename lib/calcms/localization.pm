@@ -17,8 +17,7 @@ our @EXPORT_OK = qw(get getJavascript);
 #    user     : get from user settings
 #    loc      : add to existing localization, optional
 sub get($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     #get pot file
     unless ( defined $options->{file} ) {
@@ -63,8 +62,7 @@ sub get($$) {
 }
 
 sub read_po_file($$) {
-    my $po_file = shift;
-    my $loc     = shift;
+    my ($po_file, $loc) = @_;
 
     unless ( -e $po_file ) {
         print STDERR "po file $po_file does not exist\n";
@@ -99,7 +97,7 @@ sub read_po_file($$) {
 }
 
 sub getJavascript ($){
-    my $loc = shift;
+    my ($loc) = @_;
 
     my $out = '<script>';
     $out .= "var loc={};\n";

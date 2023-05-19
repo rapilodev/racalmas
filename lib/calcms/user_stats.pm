@@ -15,8 +15,7 @@ sub get_columns($) {
 }
 
 sub get ($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
 
@@ -64,8 +63,7 @@ sub get ($$) {
 }
 
 sub get_stats($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
 
@@ -184,9 +182,7 @@ sub update ($$) {
 }
 
 sub increase ($$$) {
-    my $config  = shift;
-    my $usecase = shift;
-    my $options = shift;
+    my ($config, $usecase, $options) = @_;
 
     return undef unless defined $usecase;
     return undef unless defined $options->{project_id};
@@ -219,7 +215,7 @@ sub increase ($$$) {
 }
 
 sub get_active_users{
-    my $config    = shift;
+    my ($config) = @_;
 
     my $dbh = db::connect($config);
 

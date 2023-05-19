@@ -19,8 +19,7 @@ my $sql_columns = [
 ];
 
 sub get($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     my @cond        = ();
     my $bind_values = [];
@@ -99,8 +98,7 @@ sub get($$) {
 }
 
 sub insert_or_update($$) {
-    my $dbh   = shift;
-    my $image = shift;
+    my ($dbh, $image) = @_;
 
     $image->{name} = 'new' if $image->{name} eq '';
     my $entry = get_by_filename( $dbh, $image->{filename} );
@@ -112,8 +110,7 @@ sub insert_or_update($$) {
 }
 
 sub insert ($$) {
-    my $dbh   = shift;
-    my $image = shift;
+    my ($dbh, $image) = @_;
 
     my @sql_columns = @$sql_columns;
 
@@ -154,8 +151,7 @@ sub insert ($$) {
 }
 
 sub update($$) {
-    my $dbh   = shift;
-    my $image = shift;
+    my ($dbh, $image) = @_;
 
     unless ( defined $image->{studio_id} ) {
         print STDERR "missing studio_id at images::update\n";
@@ -213,8 +209,7 @@ sub update($$) {
 }
 
 sub delete($$) {
-    my $dbh   = shift;
-    my $image = shift;
+    my ($dbh, $image) = @_;
 
     unless ( defined $image->{project_id} ) {
         print STDERR "missing project_id at images::delete\n";
@@ -252,11 +247,7 @@ sub delete($$) {
 
 # deactivated
 sub delete_files($$$$$) {
-    my $config          = $_[0];
-    my $local_media_dir = $_[1];
-    my $filename        = $_[2];
-    my $action_result   = $_[3];
-    my $errors          = $_[4];
+    my ($config, $local_media_dir, $filename, $action_result, $errors) = @_;
 
     return undef;
 
@@ -320,8 +311,7 @@ sub delete_file ($$$$) {
 }
 
 sub getPath {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     my $dir = $config->{locations}->{local_media_dir};
     return undef unless defined $dir;
@@ -340,8 +330,7 @@ sub getPath {
 }
 
 sub getInternalPath ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
 
     my $dir = $config->{locations}->{local_media_dir};
     return undef unless defined $dir;
@@ -360,14 +349,16 @@ sub getInternalPath ($$) {
 }
 
 sub normalizeName (;$) {
-    my $name = shift;
+    my ($name) = @_;
+
     return undef unless defined $name;
     $name =~ s/.*\///g;
     return $name;
 }
 
 sub readFile($) {
-    my $path    = shift;
+    my ($path) = @_;
+
     my $content = '';
 
     print STDERR "read '$path'\n";
@@ -382,8 +373,7 @@ sub readFile($) {
 }
 
 sub writeFile ($$) {
-    my $path    = shift;
-    my $content = shift;
+    my ($path, $content) = @_;
 
     print STDERR "save '$path'\n";
     open my $fh, '> :raw', $path or return { error => 'could not save image. ' . $! . " $path" };
@@ -394,7 +384,8 @@ sub writeFile ($$) {
 }
 
 sub deleteFile($) {
-    my $path = shift;
+    my ($path) = @_;
+
     return { error => "source '$path' does not exist" } unless -e $path;
 
     #unlink $path;
@@ -403,9 +394,7 @@ sub deleteFile($) {
 }
 
 sub copyFile ($$$) {
-    my $source = shift;
-    my $target = shift;
-    my $errors = shift;
+    my ($source, $target, $errors) = @_;
 
     my $read = images::readFile($source);
     return $read if defined $read->{error};
@@ -415,8 +404,7 @@ sub copyFile ($$$) {
 }
 
 sub publish($$) {
-    my $config   = shift;
-    my $filename = shift;
+    my ($config, $filename) = @_;
 
     print STDERR "publish\n";
     return undef unless defined $config;
@@ -435,8 +423,7 @@ sub publish($$) {
 }
 
 sub depublish ($$) {
-    my $config   = shift;
-    my $filename = shift;
+    my ($config, $filename) = @_;
 
     print STDERR "depublish\n";
     return undef unless defined $config;
@@ -468,8 +455,7 @@ sub checkLicence ($$) {
 }
 
 sub setEventLabels($$) {
-    my $dbh   = shift;
-    my $image = shift;
+    my ($dbh, $image) = @_;
 
     unless ( defined $image->{project_id} ) {
         print STDERR "missing project_id at images::setEventLabels\n";
@@ -495,8 +481,7 @@ sub setEventLabels($$) {
 }
 
 sub setSeriesLabels($$) {
-    my $dbh   = shift;
-    my $image = shift;
+    my ($dbh, $image) = @_;
 
     unless ( defined $image->{project_id} ) {
         print STDERR "missing project_id at images::setSeriesLabels\n";

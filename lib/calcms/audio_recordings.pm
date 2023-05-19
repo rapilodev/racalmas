@@ -24,8 +24,7 @@ sub get_columns($) {
 
 # get playout entries
 sub get($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my $date_range_include = 0;
     $date_range_include = 1

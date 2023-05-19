@@ -17,8 +17,7 @@ sub get_columns($) {
 }
 
 sub get ($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my @conditions  = ();
     my @bind_values = ();
@@ -49,9 +48,7 @@ sub get ($$) {
 }
 
 sub insert_or_update($$){
-    my $config = shift;
-    my $entry  = shift;
-        print STDERR Dumper $entry;
+    my ($config, $entry) = @_;
     if ( get($config, $entry) ){
         update ($config, $entry);
     } else {

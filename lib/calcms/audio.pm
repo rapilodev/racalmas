@@ -3,7 +3,7 @@ use warnings;
 use strict;
 
 sub durationToSeconds($) {
-    my $duration = shift;
+    my ($duration) = @_;
 
     if ( $duration =~ /(\d+):(\d\d):(\d\d).(\d\d)/ ) {
         return $1 * 3600 + $2 * 60 + $3 + $4 / 100;
@@ -12,10 +12,7 @@ sub durationToSeconds($) {
 }
 
 sub formatDuration($$$;$) {
-    my $audioDuration = shift;
-    my $eventDuration = shift;
-    my $value         = shift;
-    my $mouseOver     = shift;
+    my ($audioDuration, $eventDuration, $value, $mouseOver) = @_;
 
     return '' unless $audioDuration;
     return '' unless $eventDuration;
@@ -52,7 +49,8 @@ sub formatDuration($$$;$) {
 }
 
 sub formatChannels($) {
-    my $channels = shift;
+    my ($channels) = @_;
+
     return '' unless $channels;
     my $class = "ok";
     $class = "error" if $channels != 2;
@@ -60,7 +58,8 @@ sub formatChannels($) {
 }
 
 sub formatSamplingRate($) {
-    my $samplingRate = shift;
+    my ($samplingRate) = @_;
+
     return '' unless $samplingRate;
     my $class = "ok";
     $class = "error" if $samplingRate != 44100;
@@ -68,7 +67,8 @@ sub formatSamplingRate($) {
 }
 
 sub formatBitrate($) {
-    my $bitrate = shift;
+    my ($bitrate) = @_;
+
     return '' unless $bitrate;
     my $class = 'ok';
     $class = 'warn'  if $bitrate >= 200;
@@ -77,7 +77,8 @@ sub formatBitrate($) {
 }
 
 sub formatBitrateMode($) {
-    my $mode = shift;
+    my ($mode) = @_;
+
     return '' unless $mode;
     my $class = 'ok';
     $class = 'error' if $mode ne 'CBR';
@@ -85,9 +86,9 @@ sub formatBitrateMode($) {
 }
 
 sub formatLoudness {
-    my $value = shift;
-    my $prefix = shift || '';
-    my $round = shift || '';
+    my ($value, $prefix, $round) = @_;
+    $prefix ||= '';
+    $round ||= '';
     return '' unless $value;
 
     $value = sprintf( "%.1f", $value );
@@ -103,8 +104,7 @@ sub formatLoudness {
 }
 
 sub formatFile{
-    my $file     = shift;
-    my $event_id = shift;
+    my ($file, $event_id) = @_;
 
     return '' unless $file;
 

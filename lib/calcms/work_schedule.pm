@@ -28,8 +28,7 @@ sub get_columns($) {
 
 #map schedule id to id
 sub get($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
 

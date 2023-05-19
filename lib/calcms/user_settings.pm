@@ -66,8 +66,7 @@ our $defaultColors = [
 ];
 
 sub getColors($$) {
-    my $config     = shift;
-    my $conditions = shift;
+    my ($config, $conditions) = @_;
 
     return unless defined $conditions->{user};
     my $user = $conditions->{user};
@@ -101,8 +100,8 @@ sub getColors($$) {
 }
 
 sub getColorCss ($$) {
-    my $config     = shift;
-    my $conditions = shift;
+    my ($config, $conditions) = @_;
+
     return unless defined $conditions->{user};
 
     my $shift = 20;
@@ -139,8 +138,7 @@ sub get_columns($) {
 }
 
 sub get ($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
 

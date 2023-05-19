@@ -79,28 +79,33 @@ sub getDurations() {
 }
 
 sub getWeekdayNames(;$) {
-    my $language = shift || 'en';
+    my ($language) = @_;
+    $language ||= 'en';
     return $NAMES->{$language}->{weekdays};
 }
 
 sub getWeekdayNamesShort(;$) {
-    my $language = shift || 'en';
+    my ($language) = @_;
+    $language ||= 'en';
     return $NAMES->{$language}->{weekdays_abbr};
 }
 
 sub getMonthNames(;$) {
-    my $language = shift || 'en';
+    my ($language) = @_;
+    $language ||= 'en';
     return $NAMES->{$language}->{months};
 }
 
 sub getMonthNamesShort(;$) {
-    my $language = shift || 'en';
+    my ($language) = @_;
+    $language ||= 'en';
     return $NAMES->{$language}->{months_abbr};
 }
 
 
 sub getWeekdayIndex(;$) {
-    my $weekday = shift || '';
+    my ($weekday) = @_;
+    $weekday ||= '';
     return $WEEKDAY_INDEX->{$weekday};
 }
 
@@ -130,7 +135,7 @@ sub getWeekdays {
 
 #deprecated, for wordpress sync
 sub format_datetime(;$) {
-    my $datetime = shift;
+    my ($datetime) = @_;
     return $datetime if ( $datetime eq '' );
     return add_hours_to_datetime( $datetime, 0 );
 }
@@ -184,40 +189,35 @@ sub datetime_to_rfc822($) {
 
 #get seconds from epoch
 sub datetime_to_utc($$) {
-    my $datetime  = shift;
-    my $time_zone = shift;
+    my ($datetime, $time_zone) = @_;
     $datetime = get_datetime( $datetime, $time_zone );
     return $datetime->epoch();
 }
 
 # get full utc datetime including timezone offset
 sub datetime_to_utc_datetime($$) {
-    my $datetime  = shift;
-    my $time_zone = shift;
+    my ($datetime, $time_zone) = @_;
     $datetime = get_datetime( $datetime, $time_zone );
     return $datetime->format_cldr("yyyy-MM-ddTHH:mm:ssZZZZZ");
 }
 
 #add hours to datetime string
 sub add_hours_to_datetime($;$) {
-    my $datetime = shift;
-    my $hours    = shift;
+    my ($datetime, $hours) = @_;
     $hours = 0 unless defined $hours;
     return time_to_datetime( datetime_to_time($datetime) + ( 3600 * $hours ) );
 }
 
 #add minutes to datetime string
 sub add_minutes_to_datetime($;$) {
-    my $datetime = shift;
-    my $minutes  = shift;
+    my ($datetime, $minutes) = @_;
     $minutes = 0 unless defined $minutes;
     return time_to_datetime( datetime_to_time($datetime) + ( 60 * $minutes ) );
 }
 
 #add days to datetime string
 sub add_days_to_datetime($;$) {
-    my $datetime = shift;
-    my $days     = shift;
+    my ($datetime, $days) = @_;
     $days = 0 unless defined $days;
     my $time = datetime_to_array($datetime);
 
@@ -226,8 +226,7 @@ sub add_days_to_datetime($;$) {
 }
 
 sub add_days_to_date($;$) {
-    my $datetime = shift;
-    my $days     = shift;
+    my ($datetime, $days) = @_;
     $days = 0 unless defined $days;
     my $date = date_to_array($datetime);
     ( $date->[0], $date->[1], $date->[2] ) = Date::Calc::Add_Delta_Days( $date->[0] + 0, $date->[1] + 0, $date->[2] + 0, $days );
@@ -236,7 +235,7 @@ sub add_days_to_date($;$) {
 
 # convert unix time to datetime format
 sub time_to_datetime(;$) {
-    my $time = shift;
+    my ($time) = @_;
     $time = time() unless ( defined $time ) && ( $time ne '' );
     my @t = localtime($time);
     return sprintf( '%04d-%02d-%02d %02d:%02d:%02d', $t[5] + 1900, $t[4] + 1, $t[3], $t[2], $t[1], $t[0] );
@@ -244,7 +243,7 @@ sub time_to_datetime(;$) {
 
 # convert unix time to date format
 sub time_to_date(;$) {
-    my $time = shift;
+    my ($time) = @_;
     $time = time() unless ( defined $time ) && ( $time ne '' );
     my @t = localtime($time);
     return sprintf( '%04d-%02d-%02d', $t[5] + 1900, $t[4] + 1, $t[3] );
@@ -252,7 +251,8 @@ sub time_to_date(;$) {
 
 # convert datetime to a array of date/time values
 sub datetime_to_array(;$) {
-    my $datetime = $_[0] || '';
+    my ($datetime) = @_;
+    $datetime ||= '';
     if ( $datetime =~ /(\d\d\d\d)\-(\d+)\-(\d+)([T\s]+(\d+)\:(\d+)(\:(\d+))?)?/ ) {
         my $year   = $1;
         my $month  = $2;
@@ -279,58 +279,55 @@ sub datetime_to_date(;$) {
 
 #convert datetime array or single value to datetime string
 sub array_to_datetime(;$) {
-    my $date = shift;
+    my ($date, $month, $day, $hour, $minute, $second) = @_;
+
     if ( ref($date) eq 'ARRAY' ) {
         return sprintf( "%04d-%02d-%02d %02d:%02d:%02d", $date->[0], $date->[1], $date->[2], $date->[3], $date->[4], $date->[5] );
     }
-    my $month  = shift;
-    my $day    = shift;
-    my $hour   = shift || '0';
-    my $minute = shift || '0';
-    my $second = shift || '0';
+
+    $hour ||= '0';
+    $minute ||= '0';
+    $second ||= '0';
     return sprintf( "%04d-%02d-%02d %02d:%02d:%02d", $date, $month, $day, $hour, $minute, $second );
 }
 
 #convert date array or single values to date string
 sub array_to_date($;$$) {
-    my $date = shift;
+    my ($date, $month, $day) = @_;
     if ( ref($date) eq 'ARRAY' ) {
         return sprintf( "%04d-%02d-%02d", $date->[0], $date->[1], $date->[2] );
     }
-    my $month = shift;
-    my $day   = shift;
     return sprintf( "%04d-%02d-%02d", $date, $month, $day );
 }
 
 sub array_to_time(;$) {
-    my $date = shift;
+    my ($date, $minute, $second) = @_;
     if ( ref($date) eq 'ARRAY' ) {
         return sprintf( "%02d:%02d:%02d", $date->[3], $date->[4], $date->[5] );
     }
-    my $minute = shift || 0;
-    my $second = shift || 0;
+    $minute ||= '0';
+    $second ||= '0';
     return sprintf( "%02d:%02d:%02d", $date, $minute, $second );
 }
 
 sub array_to_time_hm(;$) {
-    my $date = shift;
+    my ($date, $minute) = @_;
     if ( ref($date) eq 'ARRAY' ) {
         return sprintf( "%02d:%02d", $date->[3], $date->[4] );
     }
-    my $minute = shift || 0;
+    $minute ||= '0';
     return sprintf( "%02d:%02d", $date, $minute );
 }
 
 # get number of days between two days
 sub days_between($$) {
-    my $today      = $_[0];
-    my $date       = $_[1];
+    my ($today, $date) = @_;
     my $delta_days = eval { Date::Calc::Delta_Days( $today->[0], $today->[1], $today->[2], $date->[0], $date->[1], $date->[2] ) };
     return $delta_days;
 }
 
 sub dayOfYear($) {
-    my $datetime = $_[0];
+    my ($datetime) = @_;
     if ( $datetime =~ /(\d\d\d\d)\-(\d+)\-(\d+)/ ) {
         my $year  = $1;
         my $month = $2;
@@ -342,9 +339,7 @@ sub dayOfYear($) {
 
 # get duration in minutes
 sub get_duration($$$) {
-    my $start    = shift;
-    my $end      = shift;
-    my $timezone = shift;
+    my ($start, $end, $timezone) = @_;
     $start = time::get_datetime( $start, $timezone );
     $end   = time::get_datetime( $end,   $timezone );
     my $duration = $end->epoch() - $start->epoch();
@@ -353,9 +348,8 @@ sub get_duration($$$) {
 
 # get duration in seconds
 sub get_duration_seconds($$;$) {
-    my $start    = shift;
-    my $end      = shift;
-    my $timezone = shift || 'UTC';
+    my ($start, $end, $timezone) = @_;
+    $timezone ||= 'UTC';
 
     unless ( defined $start ) {
         print STDERR "time::get_duration_seconds(): start is missing\n";
@@ -395,7 +389,7 @@ sub date_to_array($) {
 # parse date string and return date string
 # pass 'today', return '' on parse error
 sub date_cond($) {
-    my $date = shift;
+    my ($date) = @_;
 
     return '' if ( $date eq '' );
     if ( $date =~ /(\d\d\d\d)\-(\d\d?)\-(\d\d?)/ ) {
@@ -411,7 +405,7 @@ sub date_cond($) {
 #parse time and return time string hh:mm:ss
 #return hh:00 if time is 'now'
 sub time_cond($) {
-    my $time = shift;
+    my ($time) = @_;
 
     return '' if ( $time eq '' );
     if ( $time =~ /(\d\d?)\:(\d\d?)(\:(\d\d))?/ ) {
@@ -432,7 +426,7 @@ sub time_cond($) {
 
 #parse date and time string and return yyyy-mm-ddThh:mm:ss
 sub datetime_cond($) {
-    my $datetime = shift;
+    my ($datetime) = @_;
 
     return '' if ( $datetime eq '' );
     ( my $date, my $time ) = split /[ T]/, $datetime;
@@ -445,7 +439,7 @@ sub datetime_cond($) {
 }
 
 sub check_date($) {
-    my $date = shift;
+    my ($date) = @_;
 
     return "" if ( !defined $date ) || ( $date eq '' );
     if ( $date =~ /(\d\d\d\d)\-(\d\d?)\-(\d\d?)/ ) {
@@ -460,7 +454,7 @@ sub check_date($) {
 }
 
 sub check_time($) {
-    my $time = shift;
+    my ($time) = @_;
     return "" if ( !defined $time ) || ( $time eq '' );
     return $time if ( $time eq 'now' ) || ( $time eq 'future' );
     if ( $time =~ /(\d\d?)\:(\d\d?)/ ) {
@@ -470,7 +464,7 @@ sub check_time($) {
 }
 
 sub check_datetime($) {
-    my $date = shift;
+    my ($date) = @_;
 
     return "" if ( !defined $date ) || ( $date eq '' );
     if ( $date =~ /(\d\d\d\d)\-(\d\d?)\-(\d\d?)[T ](\d\d?)\:(\d\d?)/ ) {
@@ -480,7 +474,7 @@ sub check_datetime($) {
 }
 
 sub check_year_month($) {
-    my $date = shift;
+    my ($date) = @_;
     return -1 unless defined $date;
     return $date if ( $date eq '' );
     if ( $date =~ /(\d\d\d\d)\-(\d\d?)/ ) {
@@ -491,9 +485,8 @@ sub check_year_month($) {
 
 #TODO: remove config dependency
 sub date_time_format($$;$) {
-    my $config   = shift;
-    my $datetime = shift;
-    my $language = shift || $config->{date}->{language} || 'en';
+    my ($config, $datetime, $language) = @_;
+    $language ||= $config->{date}->{language} || 'en';
     if ( defined $datetime && $datetime =~ /(\d\d\d\d)\-(\d\d?)\-(\d\d?)[\sT](\d\d?\:\d\d?)/ ) {
         my $time  = $4;
         my $day   = $3;
@@ -509,9 +502,8 @@ sub date_time_format($$;$) {
 #format datetime to date string
 #TODO: remove config dependency
 sub date_format($$;$) {
-    my $config   = shift;
-    my $datetime = shift;
-    my $language = shift || $config->{date}->{language} || 'en';
+    my ($config, $datetime, $language) = @_;
+    $language ||= $config->{date}->{language} || 'en';
 
     if ( defined $datetime && $datetime =~ /(\d\d\d\d)\-(\d\d?)\-(\d\d?)/ ) {
         my $day   = $3;
@@ -525,7 +517,7 @@ sub date_format($$;$) {
 
 #format datetime to time string
 sub time_format($) {
-    my $datetime = shift;
+    my ($datetime) = @_;
     if ( defined $datetime && $datetime =~ /(\d\d?\:\d\d?)/ ) {
         return $1;
     }
@@ -534,7 +526,7 @@ sub time_format($) {
 
 #get offset from given time_zone
 sub utc_offset($) {
-    my $time_zone = shift;
+    my ($time_zone) = @_;
 
     my $datetime = DateTime->now();
     $datetime->set_time_zone($time_zone);
@@ -571,8 +563,7 @@ sub get_event_date($) {
 
 #get datetime object from datetime string
 sub get_datetime(;$$) {
-    my $datetime = shift;
-    my $timezone = shift;
+    my ($datetime, $timezone) = @_;
 
     return unless defined $datetime;
     return if $datetime eq '';
@@ -599,10 +590,8 @@ sub get_datetime(;$$) {
 
 #get list of nth weekday in month from start to end
 sub get_nth_weekday_in_month(;$$$$) {
-    my $start   = shift;    # datetime string
-    my $end     = shift;    # datetime string
-    my $nth     = shift;    # every nth week of month
-    my $weekday = shift;    # weekday [1..7,'Mo'-'Su','Mo'-'Fr']
+    my ($start, $end, $nth, $weekday) = @_;
+    #datetime, datetime, every nth week of month, weekday [1..7,'Mo'-'Su','Mo'-'Fr']
 
     return [] unless defined $start;
     return [] unless defined $end;

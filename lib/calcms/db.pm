@@ -150,8 +150,7 @@ sub put($$$) {
 
 # deprecated
 sub quote($$) {
-    my $dbh = shift;
-    my $sql = shift;
+    my ($dbh, $sql) = @_;
 
     $sql =~ s/\_/\\\_/g;
     return $dbh->quote($sql);
@@ -159,9 +158,7 @@ sub quote($$) {
 
 #subtract hours, deprecated(!)
 sub shift_date_by_hours($$$) {
-    my $dbh    = shift;
-    my $date   = shift;
-    my $offset = shift;
+    my ($dbh, $date, $offset) = @_;
 
     my $query       = 'select date(? - INTERVAL ? HOUR) date';
     my $bind_values = [ $date, $offset ];
@@ -171,9 +168,7 @@ sub shift_date_by_hours($$$) {
 
 #add minutes, deprecated(!)
 sub shift_datetime_by_minutes($$$) {
-    my $dbh      = shift;
-    my $datetime = shift;
-    my $offset   = shift;
+    my ($dbh, $datetime, $offset) = @_;
 
     my $query       = "select ? + INTERVAL ? MINUTE date";
     my $bind_values = [ $datetime, $offset ];

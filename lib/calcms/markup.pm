@@ -19,14 +19,14 @@ our @EXPORT_OK =
   qw(fix_line_ends html_to_creole creole_to_html creole_to_plain plain_to_ical ical_to_plain ical_to_xml html_to_plain fix_utf8 uri_encode compress base26);
 
 sub fix_line_ends ($) {
-    my $s = shift;
+    my ($s) = @_;
     $s =~ s/\r?\n|\r/\n/g;
     return $s;
 }
 
 # convert 1..26 to a..z, 27 to aa, inspired by ConvertAA
 sub base26($) {
-    my $num = shift;
+    my ($num) = @_;
     return '' if $num <= 0;
 
     my $s = "";
@@ -39,7 +39,7 @@ sub base26($) {
 }
 
 sub html_to_creole($) {
-    my $s = shift;
+    my ($s) = @_;
 
     #remove elements
     $s =~ s/\<\!\-\-[\s\S]*?\-\-\>//gi;
@@ -153,7 +153,7 @@ sub markdown_to_html($){
 }
 
 sub creole_to_plain($) {
-    my $s = shift;
+    my ($s) = @_;
 
     $s =~ s/\<p\>/\n/gi;
     $s =~ s/\{\{\{((\W+|\w+)+?)\}\}\}/<blockquote>$1<\/blockquote>/g;
@@ -174,7 +174,8 @@ sub creole_to_plain($) {
 }
 
 sub html_to_plain ($) {
-    my $s = shift;
+    my ($s) = @_;
+
     return '' unless defined $s;
     my $tree = HTML::Parse::parse_html( '<body>' . $s . '</body>' );
     my $formatter = HTML::FormatText->new( leftmargin => 0, rightmargin => 2000 );
@@ -381,7 +382,7 @@ my %entity = (
 my $entities = join( '|', keys %entity );
 
 sub encode_xml_element($) {
-    my $text = shift;
+    my ($text) = @_;
 
     my $encoded_text = '';
 
@@ -394,7 +395,7 @@ sub encode_xml_element($) {
 }
 
 sub encode_xml_element_text ($) {
-    my $text = shift;
+    my ($text) = @_;
 
     $text =~ s/&(?!(#[0-9]+|#x[0-9a-fA-F]+|\w+);)/&amp;/g;
     $text =~ s/&($entities);/$entity{$1}/g;
@@ -405,7 +406,8 @@ sub encode_xml_element_text ($) {
 }
 
 sub escapeHtml($) {
-    my $s = shift;
+    my ($s) = @_;
+
     return HTML::Entities::encode_entities( $s, q{&<>"'} );
 }
 

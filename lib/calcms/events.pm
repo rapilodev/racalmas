@@ -482,11 +482,10 @@ sub add_recurrence_dates {
 }
 
 sub calc_dates {
-    my $config          = shift;
-    my $result          = shift;
-    my $params          = shift || {};
-    my $previous_result = shift || {};
-    my $time_diff       = shift || '';
+    my ($config, $result, $params, $previous_result, $time_diff) = @_;
+    $params          ||= {};
+    $previous_result ||= {};
+    $time_diff       ||= '';
 
     $result->{utc_offset} = $time_diff;
     $result->{time_zone}  = $config->{date}->{time_zone};
@@ -642,8 +641,7 @@ sub set_listen_key{
 
 sub set_upload_status($$){
     my ($config, $event) = @_; 
-                    
-    print STDERR "set upload_status=$event->{upload_status} for ".$event->{event_id}."\n";
+
     return undef unless defined $event->{event_id};
     return undef unless defined $event->{upload_status};
     my $bindValues = [ $event->{upload_status}, $event->{event_id}, $event->{upload_status} ];
@@ -1500,9 +1498,7 @@ sub get_by_image ($$$) {
 # deleting an event is currently disabled
 sub delete ($$$) {
     return;
-    my $request  = shift;
-    my $config   = shift;
-    my $event_id = shift;
+    my ($request, $config, $event_id) = @_;
 
     my $params = $request->{params}->{checked};
     my $dbh = db::connect($config);
@@ -1523,7 +1519,7 @@ sub delete ($$$) {
 
 sub get_duration ($$) {
     my ($config, $event) = @_;
-    
+
     my $timezone = $config->{date}->{time_zone};
     my $start    = time::get_datetime( $event->{start}, $timezone );
     my $end      = time::get_datetime( $event->{end}, $timezone );

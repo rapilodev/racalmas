@@ -17,7 +17,7 @@ sub isJson () {
 }
 
 sub get ($) {
-    my $r = shift;
+    my ($r) = @_;
 
     my $tmp_dir      = '/var/tmp/';
     my $upload_limit = 1000 * 1024;

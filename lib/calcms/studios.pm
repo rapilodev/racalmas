@@ -133,8 +133,8 @@ sub check_studio($$) {
 }
 
 sub check ($$) {
-    my $config  = shift;
-    my $options = shift;
+    my ($config, $options) = @_;
+
     return "missing studio_id" unless defined $options->{studio_id};
     return "Please select a studio" if ( $options->{studio_id} eq '-1' );
     return "Please select a studio" if ( $options->{studio_id} eq '' );

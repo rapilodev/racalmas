@@ -12,7 +12,7 @@ use Apache2::Connection ();
 use Apache2::Const -compile => qw(FORBIDDEN OK);
 
 sub handler {
-    my $r = shift;
+    my ($r) = @_;
 
     my $DAYS = 24 * 60 * 60;
     my $OK = Apache2::Const::OK;

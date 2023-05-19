@@ -23,8 +23,7 @@ sub get_columns ($) {
 }
 
 sub get ($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
 
@@ -83,8 +82,7 @@ sub insert ($$) {
 }
 
 sub delete ($$) {
-    my $config    = shift;
-    my $condition = shift;
+    my ($config, $condition) = @_;
 
     my @conditions  = ();
     my @bind_values = ();
@@ -157,9 +155,7 @@ sub sendToken ($$) {
 }
 
 sub changePassword ($$$) {
-    my $config   = shift;
-    my $request  = shift;
-    my $userName = shift;
+    my ($config, $request, $userName) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -194,7 +190,7 @@ sub changePassword ($$$) {
 }
 
 sub isPasswordInvalid($) {
-    my $password = shift;
+    my ($password) = @_;
     unless ( defined $password || $password eq '' ) {
         return "The password must not be empty.";
     }
