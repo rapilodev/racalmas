@@ -3,9 +3,11 @@ package mail;
 use strict;
 use warnings;
 no warnings 'redefine';
+use utf8;
 
 use Email::Sender::Simple();
 use Email::Simple();
+use MIME::Words qw(encode_mimeword);
 
 sub send($) {
     my ($mail) = @_;
@@ -17,7 +19,7 @@ sub send($) {
             'To'       => $mail->{'To'},
             'Cc'       => $mail->{'Cc'},
             'Reply-To' => $mail->{'Reply-To'},
-            'Subject'  => $mail->{'Subject'}
+            'Subject'  => encode_mimeword($mail->{'Subject'}, 'b', 'UTF-8')
         ],
         body => $mail->{'Data'},
     );
