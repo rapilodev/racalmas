@@ -92,6 +92,7 @@ apt-get install <deb-package>
     libhtml-parser-perl
     libhtml-template-perl
     libhtml-template-compiled-perl
+    libmime-tools-perl
     libsession-token-perl
     libtext-multimarkdown-perl
     libtext-wikicreole-perl
