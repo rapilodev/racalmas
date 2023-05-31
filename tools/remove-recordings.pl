@@ -30,7 +30,7 @@ for my $file (sort glob("$dir/*")) {
     next if -M $file < 14;
     my $filename = normalize($file);
     unless (exists $paths{$filename}) {
-        print "                    --- $filename\n";
+        print "$filename\n";
         unlink $file or die $! if $delete;
     }
 }
