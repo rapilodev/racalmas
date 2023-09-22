@@ -710,7 +710,7 @@ ul.tabContainer li:last-child{
 }
 
 #content #dialog{
-    position:absolute;
+    position:fixed;
     z-index:1000;
     left: 0;
     right: 0;
