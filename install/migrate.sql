@@ -306,3 +306,37 @@ ALTER TABLE `calcms_roles` ADD COLUMN `admin` INT(1) UNSIGNED NOT NULL DEFAULT 0
 update calcms_roles set admin=1 where role = 'Admin';
 
 ALTER TABLE calcms_studios DROP COLUMN google_calendar;
+
+ALTER TABLE `calcms`.`calcms_users`
+CHANGE COLUMN `name` `name` VARCHAR(100) NOT NULL ,
+CHANGE COLUMN `full_name` `full_name` VARCHAR(100) NULL DEFAULT NULL ,
+CHANGE COLUMN `created_by` `created_by` VARCHAR(100) NULL DEFAULT NULL ;
+
+ALTER TABLE `calcms`.`calcms_user_sessions`
+CHANGE COLUMN `user` `user` VARCHAR(100) NOT NULL ;
+
+ALTER TABLE `calcms`.`calcms_user_settings`
+CHANGE COLUMN `user` `user` VARCHAR(100) CHARACTER SET 'latin1' NOT NULL ;
+
+ALTER TABLE `calcms`.`calcms_user_stats`
+CHANGE COLUMN `user` `user` VARCHAR(100) NOT NULL ;
+
+ALTER TABLE `calcms`.`calcms_user_default_studios`
+CHANGE COLUMN `user` `user` VARCHAR(100) NOT NULL ;
+
+ALTER TABLE `calcms`.`calcms_user_day_start`
+CHANGE COLUMN `user` `user` VARCHAR(100) NOT NULL ;
+
+ALTER TABLE `calcms`.`calcms_images`
+CHANGE COLUMN `created_by` `created_by` VARCHAR(100) NULL DEFAULT NULL ,
+CHANGE COLUMN `modified_by` `modified_by` VARCHAR(100) NULL DEFAULT NULL ;
+
+ALTER TABLE `calcms`.`calcms_events`
+CHANGE COLUMN `modified_by` `modified_by` VARCHAR(100) NULL DEFAULT NULL ;
+
+ALTER TABLE `calcms`.`calcms_event_history`
+CHANGE COLUMN `modified_by` `modified_by` VARCHAR(100) NULL DEFAULT NULL ;
+
+ALTER TABLE `calcms`.`calcms_comments`
+CHANGE COLUMN `author` `author` VARCHAR(100) NULL DEFAULT NULL ,
+CHANGE COLUMN `email` `email` VARCHAR(100) NULL DEFAULT NULL ;
