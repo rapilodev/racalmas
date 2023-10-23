@@ -145,6 +145,7 @@ sub sendToken ($$) {
 
     mail::send(
         {
+            "From"    => $config->{locations}->{email},
             "To"      => $user->{email},
             "Subject" => "request to change password for $baseUrl",
             "Data"    => $content
