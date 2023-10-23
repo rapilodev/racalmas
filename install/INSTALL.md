@@ -73,6 +73,7 @@ apt-get install <deb-package>
     libapreq2-3
     libapache2-request-perl
     libapache-dbi-perl
+    libauthen-sasl-perl
     libauthen-passphrase-blowfish-perl
     libcalendar-simple-perl
     libcrypt-blowfish-perl
