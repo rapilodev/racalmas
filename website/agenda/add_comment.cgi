@@ -18,7 +18,7 @@ use time();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+my ($params, $error) = params::get($r);
 
 my $config = config::getFromScriptLocation();
 my $request = {

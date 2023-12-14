@@ -19,25 +19,22 @@ use user_sessions ();
 #our @EXPORT_OK = qw(get_user login logout crypt_password);
 my $defaultExpiration = 60;
 
-sub get_session($$$) {
-    my ($config, $params, $cgi) = @_;
-
+sub get_session($$) {
+    my ($config, $params) = @_;
     if (defined $params->{authAction}) {
         if ($params->{authAction} eq 'login') {
-            my $header = login($config, $params->{user}, $params->{password});
-            $cgi->delete('user', 'password', 'uri', 'authAction')
-                if defined $cgi;
-            return {header => $header, user => $params->{user}};
+            my ($user, $password, $uri) = ($params->{user}, $params->{password}, $params->{uri});
+            print login($config, $user, $password) .  new CGI::Simple()->redirect($uri);
+            exit;
         } elsif ($params->{authAction} eq 'logout') {
-            $cgi = new CGI::Simple() unless defined $cgi;
-            logout($config, $cgi);
-            $cgi->delete('user', 'password', 'uri', 'authAction');
-            return {};
+            print logout($config);
+            exit;
         }
     }
     my $session_id = read_cookie();
     my $session    = read_session($config, $session_id);
     $params->{$_} = $session->{$_} for qw (user expires);
+    $session->{params} = $params;
     return $session;
 }
 
@@ -62,15 +59,14 @@ sub login($$$) {
     return create_cookie($session_id, '+' . $timeout . 'm');
 }
 
-#TODO: remove cgi
-sub logout($$) {
-    my ($config, $cgi) = @_;
+sub logout($) {
+    my ($config) = @_;
     my $session_id = read_cookie();
     delete_session($config, $session_id);
-    delete_cookie($cgi);
-    my $uri = $ENV{HTTP_REFERER} || '';
-    $uri =~ s/authAction=logout//g;
-    print $cgi->redirect($uri);
+    delete_cookie();
+    my $uri = params::get_uri() || '';
+    $uri =~ s/authAction=logout//;
+    return CGI::Simple->new()->redirect($uri);
 }
 
 #read and write data from browser, http://perldoc.perl.org/CGI/Cookie.html
@@ -83,8 +79,7 @@ sub create_cookie($$) {
         -secure   => 1,
         -samesite => "Lax"
     );
-    my $cgi = CGI::Simple->new();
-    return $cgi->header(-cookie => $cookie);
+    return CGI::Simple->new()->header(-cookie => $cookie);
 }
 
 sub read_cookie() {
@@ -96,14 +91,14 @@ sub read_cookie() {
     return $session_id;
 }
 
-sub delete_cookie($) {
-    my ($cgi) = @_;
-    my $cookie = $cgi->cookie(
+sub delete_cookie() {
+    my $cookie = CGI::Cookie->new(
         -name    => 'sessionID',
         -value   => '',
         -expires => '+1s'
-    );
-    print $cgi->header(-cookie => $cookie);
+        -secure   => 1,
+        -samesite => "Lax"
+    )->bake;
 }
 
 # read and write server-side session data
@@ -165,7 +160,8 @@ sub authenticate($$$) {
 
 sub show_login_form ($$) {
     my ($user, $message) = @_;
-    my $uri          = $ENV{HTTP_REFERER} || '';
+    my $uri = params::get_uri() // '';
+    $uri =~ s/_=\d+//;
     my $requestReset = '';
     if ($user and $message) {
         $requestReset = qq{
@@ -173,7 +169,11 @@ sub show_login_form ($$) {
         };
     }
 
-    return qq{Content-type:text/html
+    return qq{
+Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+Pragma: no-cache
+Expires: 0
+Content-type:text/html
 
 <!DOCTYPE HTML>
 <html>

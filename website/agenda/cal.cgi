@@ -16,7 +16,7 @@ my $r = shift;
 binmode STDOUT, ":encoding(UTF-8)";
 
 if ( $0 =~ /cal.*?\.cgi$/ ) {
-    ( my $cgi, my $params, my $error ) = params::get($r);
+    my ($params, $error) = params::get($r);
 
     my $config = config::getFromScriptLocation();
     my $request = {

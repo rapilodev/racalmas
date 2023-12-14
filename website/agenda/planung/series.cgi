@@ -39,7 +39,7 @@ sub main {
     $config->{access}->{write} = 0;
 
     #process header
-    if ($params->{action} =~ m/^(show_series|list_series)$/ && !params::isJson()) {
+    if ($params->{action} =~ m/^(show_series|list_series)$/ && !params::is_json()) {
         my $headerParams
             = uac::set_template_permissions($request->{permissions}, $params);
         $headerParams->{loc} = localization::get($config,

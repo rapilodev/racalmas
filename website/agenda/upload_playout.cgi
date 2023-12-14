@@ -27,7 +27,7 @@ if ( $0 =~ /upload_playout.*?\.cgi$/ ) {
     $content = "{}" unless $content;
 
     # parse GET content
-    ( my $cgi, my $params, my $error ) = params::get($r);
+    my ($params, $error) = params::get($r);
 
     my $config = config::getFromScriptLocation();
     print "Content-type:text/plain\n\n";

@@ -387,10 +387,11 @@ async function deleteEvent(elem, action){
 
 function uploadRecording(project_id, studio_id, series_id, event_id){
     loadUrl( "audio-recordings.cgi?" + new URLSearchParams({
+        action: "show",
         project_id : project_id,
         studio_id : studio_id,
         series_id : series_id,
-        event_id : event_id
+        event_id : event_id,
     }).toString());
 }
 

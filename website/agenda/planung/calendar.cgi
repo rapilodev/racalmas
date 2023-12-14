@@ -33,10 +33,10 @@ binmode STDOUT, ":utf8";
 
 my $r = shift;
 print try {
-    (my $cgi, my $params) = params::get($r);
+    my ($params, $error) = params::get($r);
     my $config = config::get('../config/config.cgi');
     my $session = try {
-        return auth::get_session($config, $params, $cgi);
+        return auth::get_session($config, $params);
     } catch {
         print auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
         return undef;

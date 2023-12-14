@@ -18,7 +18,7 @@ use password_requests();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+my ($params, $error) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
 $params = check_params( $config, $params );

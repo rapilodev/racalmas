@@ -29,7 +29,6 @@ our @EXPORT_OK = qw(
 our $read  = 1;
 our $write = 1;
 
-my $database;
 # connect to database
 my $database;
 sub connect($;$) {

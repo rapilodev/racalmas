@@ -22,6 +22,7 @@ use Data::Dumper;
 use List::Util qw(none all);
 
 use auth();
+use params();
 use db();
 use template();
 use project();
@@ -793,32 +794,44 @@ sub print_error ($) {
 
 sub json {
     my ($obj) = @_;
-    return "Content-Type:application/json; charset=utf-8\n\n"
-     . JSON->new->canonical->utf8(0)->encode($obj) . "\n";
+    return qq{Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+Pragma: no-cache
+Expires: 0
+Content-Type:application/json; charset=utf-8
+
+} . JSON->new->canonical->utf8(0)->encode($obj) . "\n";
 }
 
 sub error_handler {
+    print STDERR Dumper(\@_);
+    my $last = $_[-1];
+    if (blessed($last) and $last->isa("APR::Request::Error")){
+        print json({error => $last->{func}});    
+    }
     return json({
-            error => $_[0]->{message} // $_[0]->{error} //'',
+            error => ref $_[0] eq 'SCALAR' ? $_[0]: $_[0]->{message} // $_[0]->{error} //'',
             "status" => 200
         }, 200) if blessed $_[0];
     die @_;
 };
 
 sub init{
-    my ($r, $check_params, $main) = @_;
+    my ($r, $check_params, $main, $options) = @_;
     binmode STDOUT, ":encoding(utf8)";
     try {
-        (my $cgi, my $params) = params::get($r);
+        my ($params, $fh) = params::get($r, $options);
         my $config = config::get('../config/config.cgi');
         my $session = try {
-            return auth::get_session($config, $params, $cgi);
+            return auth::get_session($config, $params);
         } catch {
-            print auth::show_login_form('',$_->message // $_->error)
-                if blessed $_ and $_->isa('AuthError');
-            return undef;
+            if (blessed $_ and $_->isa('AuthError') and !params::is_json) {
+                print auth::show_login_form('',$_->message // $_->error);
+                exit;
+            }
+            AuthError->throw(error=>"session not found");
         };
-        return unless defined $session;
+        $params = $session->{params};
+
         my $user_presets = uac::get_user_presets(
             $config,
             {
@@ -841,9 +854,11 @@ sub init{
 
         #set user at params->presets->user
         $request = uac::prepare_request( $request, $user_presets );
-        print $main->($config, $session, $params, $user_presets, $request);# if $session->{user};
+        print $main->($config, $session, $params, $user_presets, $request, $fh);# if $session->{user};
     } catch {
         print STDERR uac::error_handler(@_);
+        exit if $_->isa ("APR::Error");
+        # ^ silent quit on exit
         print uac::error_handler(@_);
     };
 }

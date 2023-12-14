@@ -42,7 +42,7 @@ sub process($$$) {
 
     $params->{user} = $ENV{REMOTE_USER} unless defined $params->{user};
 
-    if ( ( $filename =~ /json\-p/ ) || (params::isJson) ) {
+    if ( ( $filename =~ /json\-p/ ) || (params::is_json) ) {
         my $header = "Content-type:application/json; charset=utf-8\n\n";
         my $json = JSON->new->pretty(1)->canonical()->encode($params);
 

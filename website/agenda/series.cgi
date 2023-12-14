@@ -17,7 +17,7 @@ binmode STDOUT, ":utf8";
 print "Content-Type: text/html; charset=utf-8\n\n";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+my ($params, $error) = params::get($r);
 
 my $config = config::getFromScriptLocation();
 $params = check_params( $config, $params );

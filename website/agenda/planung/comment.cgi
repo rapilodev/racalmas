@@ -42,14 +42,14 @@ sub main {
     $params = $request->{params}->{checked};
 
     #show header
-    if ( ( params::isJson() ) || ( defined $params->{action} ) ) {
+    if ( ( params::is_json() ) || ( defined $params->{action} ) ) {
         print "Content-Type:text/html; charset=utf-8;\n\n";
     } else {
         my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
         $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
         print template::process( $config, template::check( $config, 'default.html' ), $headerParams );
         print template::process( $config, template::check( $config, 'comment-header.html' ), $headerParams )
-            unless (params::isJson);
+            unless params::is_json();
     }
     uac::check($config, $params, $user_presets);
 

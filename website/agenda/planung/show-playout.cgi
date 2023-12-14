@@ -34,7 +34,7 @@ sub main {
     $params = $request->{params}->{checked};
 
     #process header
-    unless ( params::isJson() ) {
+    unless ( params::is_json() ) {
         my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
         $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
         print template::process( $config, template::check( $config, 'show-playout-header.html' ),

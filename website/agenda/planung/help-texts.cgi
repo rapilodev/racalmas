@@ -18,10 +18,10 @@ use JSON;
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+my ($params, $error) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
+my ( $user, $expires ) = auth::get_user( $config, $params);
 return if ( ( !defined $user ) || ( $user eq '' ) );
 
 my $user_presets = uac::get_user_presets(

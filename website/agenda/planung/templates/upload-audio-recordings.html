@@ -1,7 +1,7 @@
 
 <TMPL_IF .allow.upload_audio_recordings>
-    <div id="error" class="error" style="display:none"></div>
-    <div id="info" class="ok" style="display:none"></div>
+    <div translate="yes" id="error" class="error" style="display:none"></div>
+    <div translate="yes" id="info" class="ok" style="display:none"></div>
 
     <h2>
         <TMPL_VAR event.weekday_short_name>, <TMPL_VAR event.start_date_name> <TMPL_VAR event.start_time_name><br>
@@ -36,6 +36,7 @@
             <input type="hidden" name="series_id"  value="<TMPL_VAR series_id>" />
             <input type="hidden" name="event_id"   value="<TMPL_VAR event_id>" />
             <input type="hidden" name="action"     value="upload" />
+            <input type="hidden" name="json"       value="1" />
             <table>
                 <tr>
                     <td>Datei</td>
@@ -91,38 +92,21 @@
             <td><TMPL_VAR modified_at></td>
             <TMPL_IF .allow.delete_audio_recordings>
             <td>
-                <form method="post">
+                <form>
                     <input type="hidden" name="project_id" value="<TMPL_VAR project_id>" />
                     <input type="hidden" name="studio_id"  value="<TMPL_VAR studio_id>" />
                     <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>" />
                     <input type="hidden" name="event_id"   value="<TMPL_VAR event_id>" />
-                    <input type="hidden" name="path"   value="<TMPL_VAR path>" />
-                    <button type="submit" name="action" value="delete"><TMPL_VAR .loc.button_delete></button>
+                    <input type="hidden" name="path"       value="<TMPL_VAR path>" />
+                    <input type="hidden" name="action"     value="delete" />
+                    <input type="hidden" name="json"       value="1" />
+                    <button id="deleteButton"><TMPL_VAR .loc.button_delete></button>
                 </form>
             </td>
             </TMPL_IF>
         </tr>
     </TMPL_LOOP>
 </table>
-
-
-<!--
-
-    <pre>
-        name: <TMPL_VAR path>
-        size: <TMPL_VAR size>
-    </pre>
-    <TMPL_IF action>
-        <TMPL_IF error>
-            <div class="error" id="message"><TMPL_VAR error></div>
-        <TMPL_ELSE>
-            <div class="oky" id="message" style="display:none">
-                <TMPL_VAR action_result>
-                <TMPL_VAR filename>
-            </div>
-        </TMPL_IF>
-    </TMPL_IF>
--->
 
 </main>
 </body>

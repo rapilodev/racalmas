@@ -27,7 +27,7 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
             $params->{$key} = $value;
         }
     } else {
-        ( my $cgi, $params, my $error ) = params::get($r);
+        my ($params, $error) = params::get($r);
     }
 
     my $config = config::getFromScriptLocation();

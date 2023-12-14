@@ -14,7 +14,7 @@ use markup();
 use time();
 use log();
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+my ($params, $error) = params::get($r);
 
 binmode STDOUT, ":encoding(UTF-8)";
 
