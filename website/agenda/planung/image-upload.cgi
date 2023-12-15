@@ -328,7 +328,7 @@ if ( defined $r ) {
 my ($user, $expires) = try {
     auth::get_user($config, $params, $cgi)
 } catch {
-    print auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
+    print auth::show_login_form($config, '',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
 };
 return unless $user;
 

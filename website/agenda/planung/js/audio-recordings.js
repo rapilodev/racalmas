@@ -37,9 +37,9 @@ function hideError() {
 }
 
 function showInfoAndReload(s) {
-    $('#info').html(s);
     $('#info').show();
-    setTimeout(function() { window.location.reload() }, 1000);
+    $('#info').html(s);
+    window.location.reload();
 }
 
 function hideInfo() {
@@ -50,7 +50,6 @@ function roundSize(size) {
     const MB = 1000 * 1000;
     var value = Math.round(size / MB);
     value += '';
-    //if (value.indexOf('.')<0)value+='.0';
     return value;
 }
 
@@ -154,8 +153,9 @@ async function deleteFile(elem) {
     if (json.error) {
         showError(json.error);
     } else {
-        $('#deleteButton').show();
-        showInfoAndReload("recording deleted");
+        elem.closest('tr').fadeOut();
+        $('#info').html(s);
+        $('#info').show();
     }
 }
 

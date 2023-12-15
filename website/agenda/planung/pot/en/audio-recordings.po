@@ -10,3 +10,54 @@ msgstr "Delete"
 msgid "button_save"
 msgstr "Save"
 
+msgid "play"
+msgstr "Play"
+
+msgid "upload"
+msgstr "Upload"
+
+msgid "file"
+msgstr "File"
+
+msgid "upload_start"
+msgstr "The file is beeing uploaded"
+
+msgid "upload_message"
+msgstr ""
+
+msgid "action"
+msgstr "Action"
+
+msgid "filename"
+msgstr "Filename"
+
+msgid "uploaded_by"
+msgstr "uploaded by"
+
+msgid "uploaded_at"
+msgstr "uploaded at"
+
+msgid "size_in_bytes"
+msgstr "size in bytes"
+
+msgid "event_duration_in_seconds"
+msgstr "event duration (seconds)"
+
+msgid "Audio_duration_in_seconds"
+msgstr "audio duration (seconds)"
+
+msgid "RMS_L"
+msgstr "RMS left"
+
+msgid "RMS_R"
+msgstr "RMS right"
+
+msgid "processed"
+msgstr "processed"
+
+msgid "mastered"
+msgstr "mastered"
+
+msgid "modified_at"
+msgstr "modified at"
+

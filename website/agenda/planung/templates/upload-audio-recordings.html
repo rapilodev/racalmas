@@ -3,82 +3,77 @@
     <div translate="yes" id="error" class="error" style="display:none"></div>
     <div translate="yes" id="info" class="ok" style="display:none"></div>
 
-    <h2>
-        <TMPL_VAR event.weekday_short_name>, <TMPL_VAR event.start_date_name> <TMPL_VAR event.start_time_name><br>
-        <TMPL_VAR event.full_title><br>
-    </h2>
-
     <div class="panel">
-        <img src="<TMPL_VAR event.icon>"><TMPL_VAR event.excerpt><br>
-    </div>
+        <h2>
+            <TMPL_VAR event.full_title><br>
+            <TMPL_VAR event.weekday_short_name>, <TMPL_VAR event.start_date_name> <TMPL_VAR event.start_time_name><br>
+        </h2>
 
-    <hr/>
+        <div style="padding-top:1rem;padding-bottom:1rem;">
+        <TMPL_VAR event.excerpt>
+        </div>
 
-    <TMPL_UNLESS isOver>
-
-        <div id="progress" style="display:none;vertical-align:middle;background:#aaa;text-align:center;margin:1em;padding:1em;font-size:1em;font-weight:bold;color:#fff" >
-            <div>Ich lade jetzt die Datei hoch... Pieps.</div>
-            <div><img src="/agenda/planung/image/upload/bird9.gif" /></div>
-            <div>Ist das aufregend!</div>
-            <!--<progress id="progressBar"></progress>-->
+        <TMPL_UNLESS isOver>
+        <div id="progress">
+            <div><TMPL_VAR loc.upload_start></div>
+            <div><TMPL_VAR loc.upload_message></div>
 
             <div id="progress_container">
                 <div id="progress_done"></div>
                 <div id="progress_todo"></div>
             </div>
-
             <div id="progressLabel"></div>
         </div>
 
         <form name="audio_recordings_upload" id="audio_recordings_upload" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="project_id" value="<TMPL_VAR project_id>" />
-            <input type="hidden" name="studio_id"  value="<TMPL_VAR studio_id>" />
-            <input type="hidden" name="series_id"  value="<TMPL_VAR series_id>" />
-            <input type="hidden" name="event_id"   value="<TMPL_VAR event_id>" />
-            <input type="hidden" name="action"     value="upload" />
-            <input type="hidden" name="json"       value="1" />
-            <table>
-                <tr>
-                    <td>Datei</td>
+        <input type="hidden" name="project_id" value="<TMPL_VAR project_id>" />
+        <input type="hidden" name="studio_id"  value="<TMPL_VAR studio_id>" />
+        <input type="hidden" name="series_id"  value="<TMPL_VAR series_id>" />
+        <input type="hidden" name="event_id"   value="<TMPL_VAR event_id>" />
+        <input type="hidden" name="action"     value="upload" />
+        <input type="hidden" name="json"       value="1" />
 
-                    <td><input type="file" id="file" name="upload" size="20" /></td>
-<!-- accept="audio/*" maxlength="2000000000" -->
-                    <td colspan="2" style="text-align:right;padding-right:0.5em;" id="uploadSize"></td>
+        <div id="upload">
+            <div><TMPL_VAR loc.file></div>
 
-                    <td colspan="2" style="text-align:right;padding-right:0.5em;" >
-                        <button id="uploadButton" name="action" value="upload" tabindex="0">upload</button>
-                    </td>
+            <div><input type="file" id="file" name="upload" size="20" /></div>
+            <div colspan="2" style="text-align:right;padding-right:0.5em;" id="uploadSize"></div>
 
-                    <td>
-                        <TMPL_IF filename>
-                            <TMPL_VAR filename escape=none>"
-                        </TMPL_IF>
-                    </td>
+            <div colspan="2" style="text-align:right;padding-right:0.5em;" >
+                <button id="uploadButton" name="action" value="upload" tabindex="0"><TMPL_VAR loc.upload></button>
+            </div>
 
-                </tr>
-            </table>
+            <div>
+                <TMPL_IF filename>
+                    <TMPL_VAR filename escape=none>"
+                </TMPL_IF>
+            </div>
+        </div>
+
         </form>
-    </TMPL_UNLESS>
+        </TMPL_UNLESS>
+    </div>
+        
 </TMPL_IF>
 
 <table>
     <tr>
-        <th>action</th>
-        <th>name</th>
-        <th>uploaded by</th>
-        <th>uploaded at</th>
-        <th>size in bytes</th>
-        <th>event duration in seconds</th>
-        <th>audio duration in seconds</th>
-        <th>RMS L</th>
-        <th>RMS R</th>
-        <th>processed</th>
-        <th>mastered</th>
-        <th>modified at</th>
+        <th><TMPL_VAR loc.action></th>
+        <th><TMPL_VAR loc.name></th>
+        <th><TMPL_VAR loc.uploaded_by></th>
+        <th><TMPL_VAR loc.uploaded_at></th>
+        <th><TMPL_VAR loc.size_in_bytes></th>
+        <th><TMPL_VAR loc.event_duration_in_seconds></th>
+        <th><TMPL_VAR loc.audio_duration_in_seconds></th>
+        <th><TMPL_VAR loc.RMS_L></th>
+        <th><TMPL_VAR loc.RMS_R></th>
+        <th><TMPL_VAR loc.processed></th>
+        <th><TMPL_VAR loc.mastered></th>
+        <th><TMPL_VAR loc.modified_at></th>
     </tr>
     <TMPL_LOOP audio_recordings>
         <tr class="<TMPL_IF active>active<TMPL_ELSE>inactive</TMPL_IF>" >
-            <td><button onclick="playAudio('<TMPL_VAR path escape=js>');return false">play</button></td>
+            <td><button onclick="playAudio('<TMPL_VAR path escape=js>');return false"><TMPL_VAR .loc.play></button></td>
             <td><TMPL_VAR path></td>
             <td><TMPL_VAR created_by></td>
             <td><TMPL_VAR created_at></td>

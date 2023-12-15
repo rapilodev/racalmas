@@ -825,7 +825,7 @@ sub init{
             return auth::get_session($config, $params);
         } catch {
             if (blessed $_ and $_->isa('AuthError') and !params::is_json) {
-                print auth::show_login_form('',$_->message // $_->error);
+                print auth::show_login_form($config, '', $_->message // $_->error);
                 exit;
             }
             AuthError->throw(error=>"session not found");

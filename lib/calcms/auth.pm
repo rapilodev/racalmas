@@ -15,6 +15,7 @@ use Exception::Class (
 );
 use Authen::Passphrase::BlowfishCrypt();
 use user_sessions ();
+use localization ();
 
 #our @EXPORT_OK = qw(get_user login logout crypt_password);
 my $defaultExpiration = 60;
@@ -28,7 +29,7 @@ sub get_session($$) {
             exit;
         } elsif ($params->{authAction} eq 'logout') {
             print logout($config);
-            exit;
+            LogoutDone->throw;
         }
     }
     my $session_id = read_cookie();
@@ -85,9 +86,9 @@ sub create_cookie($$) {
 sub read_cookie() {
     my %cookie = CGI::Cookie->fetch;
     my $cookie = $cookie{'sessionID'};
-    SessionError->throw(message => 'Please login') unless defined $cookie;
+    SessionError->throw(message => 'please_login') unless defined $cookie;
     my $session_id = $cookie->value;
-    SessionError->throw(message => 'Please login') unless defined $session_id;
+    SessionError->throw(message => 'please_login') unless defined $session_id;
     return $session_id;
 }
 
@@ -142,15 +143,15 @@ sub authenticate($$$) {
 	};
     my $bind_values = [$user];
     my $users       = db::get($dbh, $query, $bind_values);
-    LoginError->throw(user => $user, message => 'Could not authenticate you')
+    LoginError->throw(user => $user, message => 'authentication_failed')
         if scalar(@$users) != 1;
 
     my $salt = $users->[0]->{salt};
     my $ppr = Authen::Passphrase::BlowfishCrypt->from_crypt($users->[0]->{pass},
         $users->[0]->{salt});
-    LoginError->throw(user => $user, message => 'Could not authenticate you')
+    LoginError->throw(user => $user, message => 'authentication_failed')
         unless $ppr->match($password);
-    LoginError->throw(user => $user, message => 'Could not authenticate you')
+    LoginError->throw(user => $user, message => 'authentication_failed')
         if $users->[0]->{disabled} == 1;
 
     my $timeout = $users->[0]->{session_timeout} || $defaultExpiration;
@@ -158,14 +159,15 @@ sub authenticate($$$) {
     return $timeout;
 }
 
-sub show_login_form ($$) {
-    my ($user, $message) = @_;
+sub show_login_form ($$$) {
+    my ($config, $user, $message) = @_;
+    my $loc = localization::get( $config, { user => $user, file => 'login' } );
     my $uri = params::get_uri() // '';
     $uri =~ s/_=\d+//;
     my $requestReset = '';
     if ($user and $message) {
         $requestReset = qq{
-            <a href="request-password.cgi?user=$user">Passwort vergessen?</a>
+            <a href="request-password.cgi?user=$user">$loc->{password_lost}</a>
         };
     }
 
@@ -226,8 +228,13 @@ Content-type:text/html
         animation-name:form;
         animation-duration: 1s;
         animation-timing-function:ease;
-
 	}
+
+    button:hover{
+        scale:1.1;
+        box-shadow: 1rem 1rem 1rem #eee;
+        transition: all 0.1s ease;
+    }
 
 	#login_form .field{
 		width:8rem;
@@ -243,12 +250,16 @@ Content-type:text/html
         margin:-1rem;
         margin-bottom:0;
 	}
-    input.button{
+    input.button,
+    button.button{
         padding:1rem;
+        margin-left:2rem;
+        margin-right:2rem;
         color:#fff;
         background:#39a1f4;
         border:0;
         font-weight:bold;
+        cursor:pointer;
     }
     a{
         text-decoration:none;
@@ -274,19 +285,19 @@ Content-type:text/html
 
 <div class="container">
     <div id="login_form">
-	    <div class="message">$message</div><br/>
+	    <div class="message">}.($loc->{$message}//$message).qq{</div><br/>
 	    <form method="post">
             <div class="row">
-		        <div class="field">user</div>
+		        <div class="field">$loc->{user}</div>
 		        <input name="user" value="$user"><br/>
             </div>
             <div class="row">
-		        <div class="field">password</div>
+		        <div class="field">$loc->{password}</div>
 		        <input type="password" name="password"><br/>
             </div>
             <div class="row">
-		        <input class="button" type="submit" name="authAction" value="login">
-		        <input class="button" type="submit" name="authAction" value="logout">
+		        <button class="button" type="submit" name="authAction" value="logout" style="opacity:0.5">$loc->{logout}</button>
+                <button class="button" type="submit" name="authAction" value="login">$loc->{login}</button>
             </div>
 		    <input type="hidden" name="uri" value="$uri">
 	    </form>

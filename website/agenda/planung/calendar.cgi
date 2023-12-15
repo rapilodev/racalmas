@@ -32,26 +32,11 @@ use user_day_start();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-print try {
-    my ($params, $error) = params::get($r);
-    my $config = config::get('../config/config.cgi');
-    my $session = try {
-        return auth::get_session($config, $params);
-    } catch {
-        print auth::show_login_form('',$_->message // $_->error) if blessed $_ and $_->isa('AuthError');
-        return undef;
-    };
-    return unless $session;
-    my $user_presets = uac::get_user_presets(
-        $config,
-        {
-            user       => $session->{user},
-            project_id => $params->{project_id},
-            studio_id  => $params->{studio_id}
-        }
-    );
-    $params->{default_studio_id} = $user_presets->{studio_id};
-    $params = uac::setDefaultStudio($params, $user_presets);
+uac::init($r, \&check_params, \&main);
+
+sub main {
+    my ($config, $session, $params, $user_presets, $request) = @_;
+    $params = $request->{params}->{checked};
     $params->{expires} = $session->{expires};
 
     #add "all" studio to select box
@@ -68,15 +53,6 @@ print try {
             $studio->{selected} = 1 if $params->{studio_id} eq $studio->{id};
         }
     }
-    my $request = {
-        url    => $ENV{QUERY_STRING} || '',
-        params => {
-            original => $params,
-            checked  => check_params($config, $params),
-        },
-    };
-
-    $request = uac::prepare_request( $request, $user_presets );
     $params = $request->{params}->{checked};
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
@@ -98,8 +74,6 @@ print try {
             end_of_day   => $end_of_day,
         }
     );
-} catch {
-    return uac::error_handler($r,@_);
 };
 
 sub showCalendar {

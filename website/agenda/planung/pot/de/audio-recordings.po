@@ -10,3 +10,54 @@ msgstr "Löschen"
 msgid "button_save"
 msgstr "Speichern"
 
+msgid "play"
+msgstr "Abspielen"
+
+msgid "upload"
+msgstr "Hochladen"
+
+msgid "file"
+msgstr "Datei"
+
+msgid "upload_start"
+msgstr "Die Datei wird hochgeladen"
+
+msgid "upload_message"
+msgstr ""
+
+msgid "action"
+msgstr "Aktion"
+
+msgid "filename"
+msgstr "Dateiname"
+
+msgid "uploaded_by"
+msgstr "von wem hochgeladen"
+
+msgid "uploaded_at"
+msgstr "wann hochgeladen"
+
+msgid "size_in_bytes"
+msgstr "Größe in Bytes"
+
+msgid "event_duration_in_seconds"
+msgstr "Sendungsdauer in Sekunden"
+
+msgid "Audio_duration_in_seconds"
+msgstr "Dateidauer in Sekunden"
+
+msgid "RMS_L"
+msgstr "RMS links"
+
+msgid "RMS_R"
+msgstr "RMS rechts"
+
+msgid "processed"
+msgstr "bearbeitet"
+
+msgid "mastered"
+msgstr "gemastert"
+
+msgid "modified_at"
+msgstr "letzte Änderung"
+

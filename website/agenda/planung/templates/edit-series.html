@@ -46,12 +46,6 @@
             ><TMPL_VAR .loc.button_create_event></button>
 	    </TMPL_IF>
 
-        <TMPL_IF .allow.read_event>
-            <button onclick="showHistory('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
-                target="_blank" class="text" style="float:left"
-            ><TMPL_VAR .loc.button_show_changes></button>
-        </TMPL_IF>
-
 	    <TMPL_IF .allow.update_event>
             <button onclick="previewRebuildEpisodes('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
                 class="text"

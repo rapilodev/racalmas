@@ -62,7 +62,7 @@ sub main {
         print STDERR "$0 ERROR: " . $params->{error} . "\n"
             if $params->{error} ne '';
         $params->{loc} = localization::get($config,
-            {user => $params->{presets}->{user}, file => 'event,comment'});
+            {user => $params->{presets}->{user}, file => 'audio-recordings'});
         $out .= template::process($config, $params->{template}, $params);
         return $out;
 
