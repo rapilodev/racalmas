@@ -11,6 +11,11 @@
     max-width: 2rem;
 }
 
+#content .editor td.label {
+    max-width: min-content;
+    padding-top:0.5rem;
+}
+
 #content .label {
     color: #555;
 }
@@ -57,7 +62,7 @@
     height: 24px;
 }
 
-#context textarea {
+#content textarea {
     width: 600px;
     height: 100px;
 }
