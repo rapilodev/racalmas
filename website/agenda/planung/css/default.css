@@ -94,6 +94,10 @@ body,
     font-size: 0.937rem;
 }
 
+#content .label {
+    font-family: Roboto condensed, Roboto, sans-serif;
+    }
+
 #content div.panel-header,
 #content button {
     font-size: 1rem;
@@ -299,7 +303,7 @@ a {
 }
 
 #content .panel {
-    background:white;
+    background:#fff;
     margin: 1rem;
     padding: 1rem;
 
@@ -352,6 +356,10 @@ td,
 tr,
 table {
     vertical-align: middle;
+}
+
+td.label{
+    vertical-align: top;
 }
 
 #content td {
@@ -586,7 +594,6 @@ table.tablesorter tr {
     border: none;
     border-bottom: 1px solid #ccc;
     color: #000;
-    background: #fefefe;
     box-sizing:border-box;
 }
 
@@ -607,7 +614,6 @@ table.tablesorter tr {
 #content textarea:hover,
 #content textarea:focus {
     border-bottom: 1px solid #03a9f4;
-    background:#fff;
 }
 
 #content select {

@@ -6,8 +6,9 @@
     padding:0;
 }
 
-#content td.label {
+#content .editor td.label {
     max-width: min-content;
+    padding-top:0.5rem;
 }
 
 #content .label {
@@ -56,7 +57,7 @@
     height: 24px;
 }
 
-#context textarea {
+#content textarea {
     width: 600px;
     height: 100px;
 }
