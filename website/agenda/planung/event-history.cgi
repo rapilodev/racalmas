@@ -85,8 +85,7 @@ show_history( $config, $request );
 
 #show existing event history
 sub show_history {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -125,8 +124,7 @@ sub show_history {
 
 #show existing event history
 sub compare {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

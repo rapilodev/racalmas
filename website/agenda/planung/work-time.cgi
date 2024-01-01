@@ -69,8 +69,7 @@ return;
 
 #insert or update a schedule and update all schedule dates
 sub save_schedule {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params = $request->{params}->{checked};
 
@@ -135,8 +134,7 @@ sub save_schedule {
 }
 
 sub delete_schedule {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -163,8 +161,7 @@ sub delete_schedule {
 }
 
 sub show_work_schedule {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     $config->{access}->{write} = 0;
 

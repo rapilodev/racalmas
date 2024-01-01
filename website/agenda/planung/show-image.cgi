@@ -54,8 +54,7 @@ showImage( $config, $request );
 
 #TODO: filter by published, draft
 sub showImage {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

@@ -66,8 +66,7 @@ $config->{access}->{write} = 0;
 show_settings( $config, $request );
 
 sub show_settings {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -119,8 +118,7 @@ sub show_settings {
 }
 
 sub updateDefaultProjectStudio {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -168,8 +166,7 @@ sub updateDefaultProjectStudio {
 }
 
 sub update_settings {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

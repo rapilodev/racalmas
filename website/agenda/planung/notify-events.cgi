@@ -73,8 +73,7 @@ show_events( $config, $request );
 
 #show existing event history
 sub show_events {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -126,8 +125,7 @@ sub show_events {
 }
 
 sub sendMail {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -169,9 +167,7 @@ sub sendMail {
 }
 
 sub getMail {
-    my $config  = shift;
-    my $request = shift;
-    my $event   = shift;
+    my ($config, $request, $event) = @_;
 
     my $users = series::get_users(
         $config,

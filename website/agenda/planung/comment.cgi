@@ -90,8 +90,7 @@ $config->{access}->{write} = 0;
 showComments( $config, $request );
 
 sub showComments {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -161,9 +160,7 @@ sub showComments {
 }
 
 sub modify_comments {
-    my $config  = shift;
-    my $request = shift;
-    my $results = shift;
+    my ($config, $request, $results) = @_;
 
     my $language = $config->{date}->{language} || 'en';
     for my $result (@$results) {
@@ -176,8 +173,7 @@ sub modify_comments {
 }
 
 sub setLock {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -205,8 +201,7 @@ sub setLock {
 }
 
 sub setRead {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

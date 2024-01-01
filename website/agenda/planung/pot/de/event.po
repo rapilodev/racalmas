@@ -15,13 +15,13 @@ msgid "button_upload"
 msgstr "Vorproduktion hochladen"
 
 msgid "button_create"
-msgstr "Anlegen"
+msgstr "Sendung anlegen"
 
 msgid "button_save"
-msgstr "Speichern"
+msgstr "Sendung speichern"
 
 msgid "button_delete"
-msgstr "Löschen"
+msgstr "Sendung löschen"
 
 msgid "button_apply"
 msgstr "Übernehmen"

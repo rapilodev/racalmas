@@ -85,8 +85,7 @@ return;
 
 #insert or update a schedule and update all schedule dates
 sub save_schedule {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $permissions = $request->{permissions};
     unless ( $permissions->{update_studio_timeslot_schedule} == 1 ) {
@@ -133,8 +132,7 @@ sub save_schedule {
 }
 
 sub delete_schedule {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $permissions = $request->{permissions};
     unless ( $permissions->{update_studio_timeslot_schedule} == 1 ) {
@@ -162,8 +160,7 @@ sub delete_schedule {
 }
 
 sub showTimeslotSchedule {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     $config->{access}->{write} = 0;
 
@@ -246,8 +243,7 @@ sub showTimeslotSchedule {
 }
 
 sub showDates {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     $config->{access}->{write} = 0;
 

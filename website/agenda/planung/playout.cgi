@@ -75,8 +75,7 @@ if ( defined $params->{action} ) {
 return;
 
 sub deleteFromPlayout {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

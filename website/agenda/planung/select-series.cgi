@@ -64,8 +64,7 @@ unless ( $permissions->{read_series} == 1 ) {
 show_series( $config, $request );
 
 sub show_series {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

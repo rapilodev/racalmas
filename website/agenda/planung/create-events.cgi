@@ -72,8 +72,7 @@ if ( $params->{action} eq 'create_events' ) {
 }
 
 sub show_events {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -93,8 +92,7 @@ sub show_events {
 }
 
 sub create_events {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -122,8 +120,7 @@ sub create_events {
 }
 
 sub getDates {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -180,9 +177,7 @@ sub getDates {
 }
 
 sub createEvent {
-    my $config  = shift;
-    my $request = shift;
-    my $date    = shift;
+    my ($config, $request, $date) = @_;
 
     my $permissions = $request->{permissions};
     my $user        = $request->{user};

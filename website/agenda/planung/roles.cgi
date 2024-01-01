@@ -82,8 +82,7 @@ return;
 # new roles will have role level 0 by default
 #
 sub save_roles {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -255,8 +254,7 @@ sub check_level {
 # user has to be assigned to studio
 # user needs to have permissions read_role
 sub show_roles {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

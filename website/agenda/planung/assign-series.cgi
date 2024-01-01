@@ -76,8 +76,7 @@ if ( defined $params->{action} ) {
 show_series( $config, $request );
 
 sub show_series {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -138,8 +137,7 @@ sub show_series {
 }
 
 sub assign_series {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -192,8 +190,7 @@ sub assign_series {
 }
 
 sub unassign_series {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

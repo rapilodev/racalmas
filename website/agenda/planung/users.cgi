@@ -68,8 +68,7 @@ $config->{access}->{write} = 0;
 show_users( $config, $request );
 
 sub show_users {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params = $request->{params}->{checked};
 
@@ -170,8 +169,7 @@ sub show_users {
 }
 
 sub update_user {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -248,8 +246,7 @@ sub change_password {
 }
 
 sub delete_user {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $permissions = $request->{permissions};
     unless ( $permissions->{delete_user} == 1 ) {
@@ -265,8 +262,7 @@ sub delete_user {
 # add or remove user from role for given studio_id
 # todo: assign/unassign role oly if max(change user rank) is < max(users rank)
 sub update_user_roles {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $permissions = $request->{permissions};
     unless ( $permissions->{update_user_role} == 1 ) {

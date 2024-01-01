@@ -64,8 +64,7 @@ $config->{access}->{write} = 0;
 show_projects( $config, $request );
 
 sub delete_project {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $permissions = $request->{permissions};
     unless ( $permissions->{delete_project} == 1 ) {
@@ -95,8 +94,7 @@ sub delete_project {
 }
 
 sub save_project {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -144,8 +142,7 @@ sub save_project {
 }
 
 sub assign_studio {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -175,8 +172,7 @@ sub assign_studio {
 
 # TODO: unassign series from studio
 sub unassign_studio {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -205,8 +201,7 @@ sub unassign_studio {
 }
 
 sub show_projects {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

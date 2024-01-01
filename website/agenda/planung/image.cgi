@@ -255,9 +255,7 @@ sub print_js_error {
 }
 
 sub save_image {
-    my $config  = shift;
-    my $request = shift;
-    my $user    = shift;
+    my ($config, $request, $user) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

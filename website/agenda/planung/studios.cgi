@@ -61,8 +61,7 @@ $config->{access}->{write} = 0;
 show_studios( $config, $request );
 
 sub delete_studio {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $permissions = $request->{permissions};
     unless ( $permissions->{update_studio} == 1 ) {
@@ -110,8 +109,7 @@ sub delete_studio {
 }
 
 sub save_studio {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -177,8 +175,7 @@ sub save_studio {
 }
 
 sub show_studios {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

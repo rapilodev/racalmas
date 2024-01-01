@@ -76,8 +76,7 @@ if ( defined $params->{action} ) {
 show_events( $config, $request );
 
 sub show_events {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -180,8 +179,7 @@ sub show_events {
 }
 
 sub assign_events {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

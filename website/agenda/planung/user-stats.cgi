@@ -67,8 +67,7 @@ if ($params->{action} eq 'show-user-stats'){
 };
 
 sub show_user_stats {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -87,8 +86,7 @@ sub show_user_stats {
 }
 
 sub show_active_users{
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

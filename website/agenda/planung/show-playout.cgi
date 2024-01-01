@@ -73,8 +73,7 @@ template::process( $config, 'print', $params->{template}, $params );
 exit;
 
 sub showPlayout {
-    my $config  = shift;
-    my $request = shift;
+    my ($config, $request) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
