@@ -58,7 +58,6 @@
 </TMPL_IF>
 
 <!-- edit -->
-<!--<aTMPL_IF .allow.update_event>-->
 <div class="editor">
 
 <!-- buttons -->
@@ -96,6 +95,7 @@
         </TMPL_IF>
     </TMPL_IF>
 
+    <TMPL_UNLESS new_event>
     <TMPL_IF .allow.update_event>
         <!--
         <button onclick="$('#copy_from_source').toggle();$('#change_series').hide();return false;"><TMPL_VAR .loc.button_copy_existing_event></button>
@@ -105,8 +105,10 @@
             onclick="selectRerun('rerunEventId', <TMPL_VAR start_date>)"
         ><TMPL_VAR .loc.button_rerun></button>
     </TMPL_IF>
+    </TMPL_UNLESS>
 
     <TMPL_UNLESS new_event>
+        <TMPL_UNLESS is_over>
         <TMPL_IF .allow.upload_audio_recordings>
             <form style="float:right" action="audio-recordings.cgi">
                 <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
@@ -118,7 +120,9 @@
                     type="submit"><TMPL_VAR .loc.button_upload></button>
             </form>
         </TMPL_IF>
+        </TMPL_UNLESS>
 
+        <TMPL_IF is_over>
         <TMPL_IF .allow.create_download>
             <form style="float:right">
                 <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
@@ -131,38 +135,24 @@
                     type="submit"><TMPL_VAR .loc.button_download></button>
             </form>
         </TMPL_IF>
-        
-        <button class="text" onclick="copyEventToClipboard();"><TMPL_VAR .loc.button_copy_to_clipboard></button>
+        </TMPL_IF>
     </TMPL_UNLESS>
 
-    <!--
-    <TMPL_IF .allow.update_event>
-        <a class="button"
-            href="mailto:<TMPL_VAR .series_users_email_list>?cc=programm@radiopiloten.de&reply-to=programm@radiopiloten.de&subject=<TMPL_VAR start> - <TMPL_VAR series_name><TMPL_IF title> - <TMPL_VAR title></TMPL_IF><TMPL_IF episode> #<TMPL_VAR episode></TMPL_IF>&body=Hallo <TMPL_VAR .series_user_names>,%0A%0Anur zur Erinnerung...%0A%0Aam <TMPL_VAR weekday_name> ist die naechste '<TMPL_VAR series_name>'-Sendung.%0A%0Ahttp:<TMPL_VAR source_base_url><TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html%0A%0AGruss, <TMPL_VAR user>"
-        ><button><TMPL_VAR .loc.button_reminder></button></a>
-    </TMPL_IF>
-    -->
+    <TMPL_UNLESS new_event>
+    <TMPL_UNLESS show_new_event>
+        <TMPL_IF .allow.read_event>
+            <button target="_blank" class="text"
+                onclick="window.open('/programm/sendung/<TMPL_VAR event_id>.html', '_blank');"
+            ><TMPL_VAR .loc.button_show_event></button>
+        </TMPL_IF>
 
-    <TMPL_IF .allow.read_event>
-        <button target="_blank"
-            class="text"
-            onclick="load('event-history.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&series_id=<TMPL_VAR series_id>&event_id=<TMPL_VAR event_id>');"
-        ><TMPL_VAR .loc.button_show_changes></button>
-    </TMPL_IF>
-
-    <TMPL_IF .allow.read_event>
-        <button target="_blank"
-            class="text"
-            onclick="window.open('/programm/sendung/<TMPL_VAR event_id>.html', '_blank');"
-        ><TMPL_VAR .loc.button_show_event></button>
-    </TMPL_IF>
-
-    <TMPL_IF .allow.read_comment>
-        <button id="showComment" 
-            class="text"
-            onclick="showEventComments('<TMPL_VAR id escape=js>')"
-        ><TMPL_VAR .loc.label_comments></button>
-    </TMPL_IF>
+        <TMPL_IF .allow.read_comment>
+            <button id="showComment" class="text"
+                onclick="showEventComments('<TMPL_VAR id escape=js>')"
+            ><TMPL_VAR .loc.label_comments></button>
+        </TMPL_IF>
+    </TMPL_UNLESS>
+    </TMPL_UNLESS>
 
 </div>
 
@@ -202,6 +192,7 @@
     </TMPL_IF>
 
     <!-- move to other series -->
+    <TMPL_IF show_new_event>
     <TMPL_IF .allow.assign_series_events>
         <div id="selectChangeSeries" class="active" style="display:none" class="panel">
             <div class="panel-header">
@@ -215,7 +206,7 @@
             </div>
         </div>
     </TMPL_IF>
-
+    </TMPL_IF>
 
     <!-- edit event -->
 <div id="edit_event" class="panel">    
@@ -338,9 +329,7 @@
                         <TMPL_LOOP durations><TMPL_IF selected><input type="hidden" name="duration" value="<TMPL_VAR value>" ></TMPL_IF></TMPL_LOOP>
                     </td>
                 </tr>
-                
             </TMPL_IF>
-
         </TMPL_IF>
 
         <tr> 
@@ -401,28 +390,6 @@
     </table>
 
 
-    <!-- show event content -->
-<!--
-    <TMPL_IF read_event>
-    <table id="show_content_<TMPL_VAR event_id>" <TMPL_IF new_event>style="display:none"</TMPL_IF> >
-        <tr> 
-            <td class="label">excerpt</td>
-            <td><TMPL_VAR excerpt><TMPL_VAR user_excerpt></td>
-        </tr>
-
-        <tr> 
-            <td class="label">description</td>
-            <td>
-                <img style="float:right;padding-left:1em" src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR image>">
-                   <div><TMPL_VAR topic</div>
-                   <div><TMPL_VAR html_content escape=none></div>
-            </td>
-        </tr>
-    </table>
-    </TMPL_IF>
--->
-
-    <!-- <TMPL_UNLESS new_event>style="display:none"</TMPL_UNLESS> -->
     <!-- edit event content -->
     <table id="edit_content_<TMPL_VAR event_id>" class="edit_event" >
         <tr id="excerpt"> 
@@ -540,8 +507,7 @@
     <!-- buttons -->
     <TMPL_UNLESS edit_lock>
 
-    
-    <div class="buttons" style="text-align:center">
+    <div class="buttons" style="text-align:center;clear:both">
         <TMPL_IF show_new_event_from_schedule>
             <TMPL_IF .allow.create_event_from_schedule>
                 <button type="submit" name="action" value="create_event_from_schedule"
@@ -562,7 +528,6 @@
             </TMPL_IF>
         </TMPL_IF>
     </div>
-
     </TMPL_UNLESS>
 
     </form>
@@ -576,11 +541,24 @@
 </TMPL_IF>
 
 </div>
-<TMPL_IF modified_at>
-    <div class="label right"><TMPL_VAR .loc.label_modified_at> <TMPL_VAR modified_at> <TMPL_VAR .loc.label_modified_by> <TMPL_VAR modified_by>.</div>
-</TMPL_IF>
+<TMPL_UNLESS new_event>
+<div class="buttons">
+    <TMPL_UNLESS show_new_event>
+        <TMPL_IF .allow.read_event>
+            <button target="_blank" class="text"
+                onclick="loadUrl('event-history.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&series_id=<TMPL_VAR series_id>&event_id=<TMPL_VAR event_id>');"
+            ><TMPL_VAR .loc.button_show_changes></button>
+        </TMPL_IF>
+    </TMPL_UNLESS>
 
-</main>	    
+    <button class="text" onclick="copyEventToClipboard();"><TMPL_VAR .loc.button_copy_to_clipboard></button>
 
+    <TMPL_IF modified_at>
+        <span class="label"><TMPL_VAR .loc.label_modified_at> <TMPL_VAR modified_at> <TMPL_VAR .loc.label_modified_by> <TMPL_VAR modified_by>.</span>
+    </TMPL_IF>
+</div>
+</TMPL_UNLESS>
+
+</main>	
 </body>
 </html>
