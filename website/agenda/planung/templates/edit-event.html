@@ -113,6 +113,7 @@
         </TMPL_IF>
     </TMPL_UNLESS>
 
+    <TMPL_UNLESS new_event>
     <TMPL_UNLESS show_new_event>
         <TMPL_IF .allow.read_event>
             <button target="_blank" class="text"
@@ -125,6 +126,7 @@
                 onclick="showEventComments('<TMPL_VAR id escape=js>')"
             ><TMPL_VAR .loc.label_comments></button>
         </TMPL_IF>
+    </TMPL_UNLESS>
     </TMPL_UNLESS>
 </div>
 
