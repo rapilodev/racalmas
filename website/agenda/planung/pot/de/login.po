@@ -1,0 +1,20 @@
+msgid "login"
+msgstr "Anmelden"
+
+msgid "logout"
+msgstr "Abmelden"
+
+msgid "please_login"
+msgstr "Bitte Anmelden"
+
+msgid "user"
+msgstr "Nutzer"
+
+msgid "password"
+msgstr "Password"
+
+msgid "password_lost"
+msgstr "Passwort vergessen?"
+
+msgid "authentication_failed"
+msgstr "Anmeldung fehlgeschlagen"
