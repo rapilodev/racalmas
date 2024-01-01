@@ -228,7 +228,8 @@ sub show_event {
         }
     }
     $event->{start} =~ s/(\d\d:\d\d)\:\d\d/$1/;
-    $event->{end} =~ s/(\d\d:\d\d)\:\d\d/$1/;
+    $event->{end}   =~ s/(\d\d:\d\d)\:\d\d/$1/;
+    $event->{is_over} = time::time_to_datetime() ge $event->{end} ? 1 : 0;
 
     if ( ( defined $params->{setImage} ) and ( $params->{setImage} ne $event->{image} ) ) {
         $event->{image}          = $params->{setImage};
