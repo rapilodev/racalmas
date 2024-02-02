@@ -56,7 +56,9 @@ if ( defined $params->{user} ) {
 sub sendToken {
     my $config = shift;
     my $params = shift;
+    $config->{access}->{write} = 1;
     my $entry  = password_requests::sendToken( $config, { user => $params->{user} } );
+    $config->{access}->{write} = 0;
     if ( defined $entry ) {
         info "Please check you mails.";
     } else {
@@ -83,7 +85,9 @@ sub checkToken {
     my $age = time() - time::datetime_to_time($created_at);
     if ( $age > 600 ) {
         error "The token is too old.";
+        $config->{access}->{write} = 1;
         password_requests::delete( $config, { token => $token } );
+        $config->{access}->{write} = 0;
         return undef;
     }
 
@@ -94,7 +98,9 @@ sub checkToken {
 
     if ( $entry->{max_attempts} > 10 ) {
         error "Too many failed attempts. Please request a new token by mail.";
+        $config->{access}->{write} = 1;
         password_requests::delete( $config, { token => $token } );
+        $config->{access}->{write} = 0;
         return undef;
     }
 
@@ -117,7 +123,9 @@ sub checkToken {
 
         if ( defined $result->{success} ) {
             info $result->{success};
+            $config->{access}->{write} = 1;
             password_requests::delete( $config, { user => $user } );
+            $config->{access}->{write} = 0;
             my $url = $config->{locations}->{editor_base_url};
             print qq{
                 <script type="text/javascript">
