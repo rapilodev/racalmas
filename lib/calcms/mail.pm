@@ -3,26 +3,26 @@ package mail;
 use strict;
 use warnings;
 no warnings 'redefine';
-use utf8;
 
 use Email::Sender::Simple();
 use Email::Simple();
 use MIME::Words qw(encode_mimeword);
-use Encode;
+use MIME::QuotedPrint qw(encode_qp);
 
 sub send($) {
     my ($mail) = @_;
 
     my $email = Email::Simple->create(
-        'Content-Type' => 'text/plain; charset=utf-8',
         header => [
+            'Content-Type' => 'text/plain;',
+            'Content-Transfer-Encoding' => 'quoted-printable',
             'From'     => $mail->{'From'},
             'To'       => $mail->{'To'},
             'Cc'       => $mail->{'Cc'},
             'Reply-To' => $mail->{'Reply-To'},
             'Subject'  => encode_mimeword($mail->{'Subject'}, 'b', 'UTF-8')
         ],
-        body => Encode::encode( utf8 => $mail->{'Data'} ),
+        body => encode_qp($mail->{'Data'}),
     );
     Email::Sender::Simple->send($email);
 }
