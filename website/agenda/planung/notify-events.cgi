@@ -164,7 +164,8 @@ sub sendMail {
     $mail->{Cc}      = $params->{cc}      if defined $params->{cc};
     $mail->{Subject} = $params->{subject} if defined $params->{subject};
     $mail->{Data}    = $params->{content} if defined $params->{content};
-    mail::send($mail);
+    my $result = mail::send($mail);
+    print "Content-type:text/plain\n\nresult:".Dumper($result);
 }
 
 sub getMail {
