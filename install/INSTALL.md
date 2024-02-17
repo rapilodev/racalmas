@@ -99,6 +99,8 @@ apt-get install <deb-package>
     libtext-wikicreole-perl
     liburi-escape-xs-perl
     perlmagick
+    sox
+    libsox-fmt-all
 
 #### Install CPAN packages
 
