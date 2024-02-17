@@ -209,7 +209,6 @@ sub deleteRecording {
         }
     }
 
-    my $dbh = db::connect($config);
     $config->{access}->{write} = 0;
 
     my $audioRecordings = audio_recordings::get(
@@ -245,7 +244,7 @@ sub deleteRecording {
 
     $config->{access}->{write} = 1;
     $audioRecordings = audio_recordings::delete(
-        $config, $dbh,
+        $config,
         {
             project_id => $params->{project_id},
             studio_id  => $params->{studio_id},
@@ -410,8 +409,6 @@ sub updateDatabase {
     };
 
     #connect
-    my $dbh = db::connect($config);
-
     my $entries = audio_recordings::get(
         $config,
         {
@@ -424,7 +421,7 @@ sub updateDatabase {
 
     if ( ( defined $entries ) && ( scalar @$entries > 0 ) ) {
         print STDERR "update\n";
-        audio_recordings::update( $config, $dbh, $entry );
+        audio_recordings::update( $config, $entry );
         my $entry = $entries->[0];
         $params->{id} = $entry->{id};
     } else {
@@ -436,7 +433,7 @@ sub updateDatabase {
         $entry->{rmsRight}      = 0.0;
         $entry->{audioDuration} = 0.0;
         $entry->{modified_at}   = time();
-        $entry->{id} = audio_recordings::insert( $config, $dbh, $entry );
+        $entry->{id} = audio_recordings::insert( $config, $entry );
         $params->{id} = $entry->{id};
     }
     call_hooks($config, $entry, $params);
@@ -448,7 +445,6 @@ sub updateDatabase {
 sub call_hooks {
     my ($config, $entry, $params) = @_;
     print STDERR Dumper($config->{"audio-upload-hooks"});
-    my $dbh = db::connect($config);
 
     $entry = audio_recordings::get(
         $config, {
@@ -468,7 +464,7 @@ sub call_hooks {
                 $entry->{$key} = $value;
                 die "invalid column $key for table calcms_audio_recordings"
                     unless exists audio_recordings::get_columns($config)->{$key};
-                audio_recordings::update( $config, $dbh, $entry );
+                audio_recordings::update( $config, $entry );
             } elsif ($line =~ m/^calcms_events\.([a-zA-Z0-9_-]+)\s*=\s*(\S+)/) {
                 my ($key, $value) = ($1, $2);
                 die "invalid column $key for calcms_events\n"

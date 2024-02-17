@@ -31,7 +31,6 @@ sub get($$) {
       if ( defined $condition->{date_range_include} ) && ( $condition->{date_range_include} == 1 );
 
     my $dbh = db::connect($config);
-
     my $conditions  = [];
     my $bind_values = [];
 
@@ -93,12 +92,45 @@ sub get($$) {
     return $entries;
 }
 
+sub update_active($$) {
+    my ($config, $entry) = @_;
+
+    return undef unless defined $entry->{project_id};
+    return undef unless defined $entry->{studio_id};
+    return undef unless defined $entry->{event_id};
+
+    my $dbh = db::connect($config);
+    my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{event_id} ];
+    my $query = qq{
+        update calcms_audio_recordings
+        set    active=0
+        where  project_id=? and studio_id=? and event_id=? and active=1
+    };
+    db::put( $dbh, $query, $bind_values );
+
+    $query = qq{
+        select max(id) id from calcms_audio_recordings
+        where  project_id=? and studio_id=? and event_id=?
+    };
+    my $entries = db::get( $dbh, $query, $bind_values );
+    my $max = $entries->[0];
+    return undef unless defined $max->{id};
+
+    $query = qq{
+        update calcms_audio_recordings
+        set    active=1
+        where  id=?
+    };
+    return db::put( $dbh, $query, [$max->{id}] );
+}
+
 # update playout entry if differs to old values
-sub update($$$) {
-    my ($config, $dbh, $entry) = @_;
+sub update($$) {
+    my ($config, $entry) = @_;
 
     my $day_start = $config->{date}->{day_starting_hour};
 
+    my $dbh = db::connect($config);
     my $bind_values = [
         $entry->{path},       $entry->{size},
         $entry->{created_by}, $entry->{created_at},
@@ -124,19 +156,20 @@ sub update($$$) {
         push @$bind_values, $entry->{id};
     }
     my $result = db::put( $dbh, $query, $bind_values );
-    update_active($config, $dbh, $entry);
+    update_active($config, $entry);
     return $result;
 }
 
 # insert playout entry
-sub insert ($$$) {
-    my ($config, $dbh, $entry) = @_;
+sub insert ($$) {
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};
     return undef unless defined $entry->{event_id};
     return undef unless defined $entry->{path};
 
+    my $dbh = db::connect($config);
     $entry = {
         project_id    => $entry->{project_id},
         studio_id     => $entry->{studio_id},
@@ -153,19 +186,20 @@ sub insert ($$$) {
     };
 
     my $result = db::insert( $dbh, 'calcms_audio_recordings', $entry );
-    update_active($config, $dbh, $entry);
+    update_active($config, $entry);
     return $result;
 }
 
 # delete playout entry
-sub delete ($$$) {
-    my ($config, $dbh, $entry) = @_;
+sub delete ($$) {
+    my ($config, $entry) = @_;
 
     return undef unless defined $entry->{project_id};
     return undef unless defined $entry->{studio_id};
     return undef unless defined $entry->{event_id};
     return undef unless defined $entry->{path};
 
+    my $dbh = db::connect($config);
     my $query = qq{
 		delete
 		from calcms_audio_recordings
@@ -174,39 +208,8 @@ sub delete ($$$) {
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{event_id}, $entry->{path} ];
     my $result =  db::put( $dbh, $query, $bind_values );
 
-    update_active($config, $dbh, $entry);
+    update_active($config, $entry);
     return $result;
-}
-
-sub update_active($$$) {
-    my ($config, $dbh, $entry) = @_;
-
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{event_id};
-
-    my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{event_id} ];
-    my $query = qq{
-        update calcms_audio_recordings
-        set    active=0
-        where  project_id=? and studio_id=? and event_id=? and active=1
-    };
-    db::put( $dbh, $query, $bind_values );
-
-    $query = qq{
-        select max(id) id from calcms_audio_recordings
-        where  project_id=? and studio_id=? and event_id=?
-    };
-    my $entries = db::get( $dbh, $query, $bind_values );
-    my $max = $entries->[0];
-    return undef unless defined $max->{id};
-
-    $query = qq{
-        update calcms_audio_recordings
-        set    active=1
-        where  id=?
-    };
-    return db::put( $dbh, $query, [$max->{id}] );
 }
 
 sub error($) {
