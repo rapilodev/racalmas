@@ -130,6 +130,7 @@ sub uploadRecording {
 
     if ( defined $fh ) {
         print STDERR "upload\n";
+        $config->{access}->{write} = 1;
         events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploading' });
         my $fileInfo = uploadFile( $config, $fh, $params->{event_id}, $user, $params->{upload} );
         $params->{error} .= $fileInfo->{error} if defined $fileInfo->{error};
@@ -141,6 +142,7 @@ sub uploadRecording {
             $params = updateDatabase( $config, $params, $user ) ;
             events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploaded' });
         }
+        $config->{access}->{write} = 0;
         
     } else {
         print STDERR "could not get file handle\n";
@@ -408,7 +410,6 @@ sub updateDatabase {
     };
 
     #connect
-    $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
 
     my $entries = audio_recordings::get(
@@ -439,7 +440,6 @@ sub updateDatabase {
         $params->{id} = $entry->{id};
     }
     call_hooks($config, $entry, $params);
-    $config->{access}->{write} = 0;
     $params->{action_result} = 'done!';
 
     return $params;
