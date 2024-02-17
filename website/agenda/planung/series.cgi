@@ -842,7 +842,7 @@ sub reassign_event {
     }
 
     my $url =
-        'event.cgi?project_id='
+        'broadcast.cgi?project_id='
       . $project_id
       . '&studio_id='
       . $studio_id
@@ -1378,7 +1378,7 @@ sub rebuild_episodes {
 
     for my $event (@$events) {
         print qq{<tr class="$event->{class}" onclick="window.location.href=\$(this).attr('href');"}
-          . qq{ href="event.cgi?action=edit&project_id=$event->{project_id}&studio_id=$event->{studio_id}&series_id=$series_id&event_id=$event->{id}"\n}
+          . qq{ href="broadcast.cgi?action=edit&project_id=$event->{project_id}&studio_id=$event->{studio_id}&series_id=$series_id&event_id=$event->{id}"\n}
           . qq{>}
           . join( "", map { "<td>" . ( $event->{$_} // '-' ) . "</td>" } @cols )
           . "</tr>\n";

@@ -101,7 +101,7 @@ function copyFromEvent(resultSelector){
 
 function loadEvent(projectId,studioId,seriesId,eventId, callback){
 
-    var url="event.cgi";
+    var url="broadcast.cgi";
     url+="?project_id="+projectId;
     url+="&studio_id="+studioId;
     url+="&series_id="+seriesId;
@@ -192,7 +192,7 @@ function changeSeries(seriesId){
     $.post(
         url, 
         function(data){
-            var url='event.cgi?';
+            var url='broadcast.cgi?';
             url += '&project_id='+projectId;
             url += '&studio_id='+studioId;
             url += '&series_id='+newSeriesId;

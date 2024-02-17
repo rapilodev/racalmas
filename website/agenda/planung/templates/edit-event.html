@@ -220,7 +220,7 @@
     <!-- edit event -->
 <div id="edit_event" class="panel">    
 <form id="event_<TMPL_VAR event_id>" method="post" 
-    action="event.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id><TMPL_UNLESS new_event>&event_id=<TMPL_VAR .event_id></TMPL_UNLESS>"
+    action="broadcast.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id><TMPL_UNLESS new_event>&event_id=<TMPL_VAR .event_id></TMPL_UNLESS>"
 >
     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
     <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">

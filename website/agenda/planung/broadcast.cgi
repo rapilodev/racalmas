@@ -767,14 +767,14 @@ sub download {
     if ( $datetime =~ /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d)\:(\d\d)/ ) {
         $datetime = $1 . '\ ' . $2 . '_' . $3;
     } else {
-        print STDERR "event.cgi::download no valid datetime found $datetime\n";
+        print STDERR "broadcast.cgi::download no valid datetime found $datetime\n";
         return;
     }
     my $archive_dir = $config->{locations}->{local_archive_dir};
     my $archive_url = $config->{locations}->{local_archive_url};
     print STDERR "archive_dir: " . $archive_dir . "\n";
     print STDERR "archive_url: " . $archive_url . "\n";
-    print STDERR "event.cgi::download look for : $archive_dir/$datetime*.mp3\n";
+    print STDERR "broadcast.cgi::download look for : $archive_dir/$datetime*.mp3\n";
     my @files = glob( $archive_dir . '/' . $datetime . '*.mp3' );
 
     if ( @files > 0 ) {
@@ -814,12 +814,12 @@ sub download_audio {
     if ( $datetime =~ /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d)\:(\d\d)/ ) {
         $datetime = $1 . '\ ' . $2 . '_' . $3;
     } else {
-        print STDERR "event.cgi::download no valid datetime found $datetime\n";
+        print STDERR "broadcast.cgi::download no valid datetime found $datetime\n";
         return;
     }
     my $archive_dir = $config->{locations}->{local_archive_dir};
     print STDERR "archive_dir: " . $archive_dir . "\n";
-    print STDERR "event.cgi::download look for : $archive_dir/$datetime*.mp3\n";
+    print STDERR "broadcast.cgi::download look for : $archive_dir/$datetime*.mp3\n";
     my @files = glob( $archive_dir . '/' . $datetime . '*.mp3' );
     if ( @files > 0 ) {
         my $file = $files[0];

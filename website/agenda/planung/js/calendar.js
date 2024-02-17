@@ -800,7 +800,7 @@ function handleEvent(id, event){
     if (series_id <0) return;
     if (event_id  <0) return;
 
-    var url="event.cgi?action=edit&project_id="+project_id+"&studio_id="+studio_id+"&series_id="+series_id+"&event_id="+event_id;
+    var url="broadcast.cgi?action=edit&project_id="+project_id+"&studio_id="+studio_id+"&series_id="+series_id+"&event_id="+event_id;
     if(event.which==1){
         load(url);
     }
@@ -840,7 +840,7 @@ function handleSchedule(id, start_date, event){
 
     if(event.which==1){
         //left click: create event from schedule
-        var url="event.cgi?action=show_new_event_from_schedule&project_id="+project_id+"&studio_id="+studio_id+"&series_id="+series_id+"&start_date="+start_date;
+        var url="broadcast.cgi?action=show_new_event_from_schedule&project_id="+project_id+"&studio_id="+studio_id+"&series_id="+series_id+"&start_date="+start_date;
         load(url);
     }
     if(event.which==3){
