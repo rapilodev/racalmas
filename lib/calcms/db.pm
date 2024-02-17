@@ -52,6 +52,10 @@ sub connect($;$) {
     my $dbh = DBI->connect( $dsn, $username, $password, { mysql_enable_utf8 => 1 } )
       || die "could not connect to database: $DBI::errstr";
     $dbh->{RaiseError} = 1;
+    $dbh->{HandleError} = sub{
+        print STDERR join(",",(caller($_))[0..3])."\n" for (1..2);
+        return 0;
+    };
     $dbh->{'mysql_enable_utf8'} = 1;
     put( $dbh, "set character set utf8", undef );
     put( $dbh, "set names utf8", undef );
