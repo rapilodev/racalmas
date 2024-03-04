@@ -287,7 +287,7 @@ function checkFields(){
 
 function copyEventToClipboard(){
     var text = $('textarea[name="excerpt"]').val()+"\n";
-    text += $('textarea[name="user_excerpt"]').val()+"\n";
+    if ($('textarea[name="user_excerpt"]').val()) text += $('textarea[name="user_excerpt"]').val()+"\n";
     text += $('textarea[name="topic"]').val()+"\n\n";
     text += $('textarea[name="content"]').val()+"\n";
 
@@ -319,8 +319,6 @@ $(document).ready(
         }
         onDateModified();
 
-        pageLeaveHandler();
-
         checkFields();
 
         $('textarea').autosize();
@@ -335,11 +333,10 @@ $(document).ready(
             }
         )
 
-        jQuery.getJSON("help-texts.cgi?project_id="+getProjectId()+"&studio_id="+getStudioId()+"&action=get", 
-        function(data){
+        jQuery.getJSON("help-texts.cgi?project_id="+getProjectId()+"&studio_id="+getStudioId()+"&action=get")
+        .done( function(data) {
             for (col in data){
                 let value = data[col];
-                console.log(col+" "+value)
                 $(`input[name="${col}"]`).hover(function() {
                     $(this).attr("title",value)
                 });
@@ -347,6 +344,10 @@ $(document).ready(
                     $(this).attr("title",value)
                 });
             }
+        })
+        .always( function() {
+            console.log("register page leave handler");
+            pageLeaveHandler();
         });
 
         console.log("done")
