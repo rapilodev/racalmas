@@ -437,8 +437,13 @@
             </td>
         </tr>
 
-        <tr id="user_excerpt"> 
-            <td class="label"><TMPL_VAR .loc.label_excerpt_extension></td>
+        <tr id="user_excerpt">
+            <td class="label">
+                <TMPL_IF .allow.update_event_field_excerpt_extension><TMPL_VAR .loc.label_excerpt_extension>
+                <TMPL_ELSE>
+                    <TMPL_IF user_excerpt><TMPL_VAR .loc.label_excerpt_extension></TMPL_IF>
+                </TMPL_IF>
+            </td>
             <td>
                 <div id="excerpt_extension_too_long" class="error" style="display:none"><TMPL_VAR .loc.label_excerpt_extension_too_long></div>
                 <TMPL_IF .allow.update_event_field_excerpt_extension>
