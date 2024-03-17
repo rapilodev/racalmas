@@ -340,3 +340,6 @@ CHANGE COLUMN `modified_by` `modified_by` VARCHAR(100) NULL DEFAULT NULL ;
 ALTER TABLE `calcms`.`calcms_comments`
 CHANGE COLUMN `author` `author` VARCHAR(100) NULL DEFAULT NULL ,
 CHANGE COLUMN `email` `email` VARCHAR(100) NULL DEFAULT NULL ;
+
+ALTER TABLE `calcms`.`calcms_user_selected_events`
+CHANGE COLUMN `user` `user` VARCHAR(100) NOT NULL ;
