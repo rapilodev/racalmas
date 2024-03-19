@@ -150,7 +150,9 @@ sub uploadRecording {
     }
 
     if ( $params->{error} ne '' ) {
+        $config->{access}->{write} = 1;
         events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'upload failed' });
+        $config->{access}->{write} = 0;
         if ( $params->{error} =~ /limit/ ) {
             $params->{error} .=
                 "audio file size is limited to "
