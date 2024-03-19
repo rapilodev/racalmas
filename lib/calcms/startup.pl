@@ -1,5 +1,7 @@
-use lib qw(/home/radio/calcms/calcms/);
-use lib qw(/home/calcms/lib/calcms/);
+BEGIN {
+    use File::Basename qw(dirname);
+    use lib dirname(__FILE__);
+}
 
 use Apache2::Log;
 local *CORE::GLOBAL::warn = \&Apache2::ServerRec::warn;
@@ -8,7 +10,6 @@ local $SIG{__WARN__} = \&Apache2::ServerRec::warn;
 #   see https://perl.apache.org/docs/2.0/api/Apache2/Log.html for details
 
 use Data::Dumper;
-#use Apache::DBI();
 use Time::Local();
 use Date::Calc();
 use Calendar::Simple qw(date_span);
