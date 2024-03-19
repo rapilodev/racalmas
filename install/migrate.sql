@@ -343,3 +343,13 @@ CHANGE COLUMN `email` `email` VARCHAR(100) NULL DEFAULT NULL ;
 
 ALTER TABLE `calcms`.`calcms_user_selected_events`
 CHANGE COLUMN `user` `user` VARCHAR(100) NOT NULL ;
+
+-- remove dirs from images
+update calcms_events set image = replace(image , '/agenda_files/media/images/', '') where image like '%/agenda_files/media/images/%';
+update calcms_events set image = replace(image , '/agenda_files/media/icons/', '')  where image like '%/agenda_files/media/icons/%';
+update calcms_events set image = replace(image , '/agenda_files/media/thumbs/', '') where image like '%/agenda_files/media/thumbs/%';
+
+update calcms_series set image = replace(image , '/agenda_files/media/images/', '') where image like '%/agenda_files/media/images/%';
+update calcms_series set image = replace(image , '/agenda_files/media/icons/', '')  where image like '%/agenda_files/media/icons/%';
+update calcms_series set image = replace(image , '/agenda_files/media/thumbs/', '') where image like '%/agenda_files/media/thumbs/%';
+
