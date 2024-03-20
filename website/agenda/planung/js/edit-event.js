@@ -103,7 +103,7 @@ function copyFromEvent(resultSelector){
     return 1;
 }
 
-function loadEvent(projectId,studioId,seriesId,eventId, callback){
+async function loadEvent(projectId,studioId,seriesId,eventId, callback){
 
     var url="broadcast.cgi" + new URLSearchParams({
         action: "get_json",
@@ -114,38 +114,42 @@ function loadEvent(projectId,studioId,seriesId,eventId, callback){
         json: 1,
         get_rerun: 1,
     }).toString();
-    console.log("loadEvent: "+url)
-
-    $.getJSON(url)
-    .done( function(event) {
-        $("#edit_event input[name='title']").attr('value', event.title)
-        $("#edit_event input[name='user_title']").attr('value', event.user_title)
-        $("#edit_event input[name='episode']").attr('value', event.episode)
-
-        updateCheckBox( "#edit_event input[name='live']", event.live);
-        updateCheckBox( "#edit_event input[name='published']", event.published);
-        updateCheckBox( "#edit_event input[name='archived']", event.archived);
-        updateCheckBox( "#edit_event input[name='rerun']", event.rerun);
-        updateCheckBox( "#edit_event input[name='playout']", event.playout);
-        updateCheckBox( "#edit_event input[name='draft']", event.draft);
-
-        $("#edit_event textarea[name='excerpt'").html(event.excerpt);
-        $("#edit_event textarea[name='user_excerpt'").html(event.user_excerpt);
-        $("#edit_event textarea[name='topic']").html(event.topic);
-        $("#edit_event textarea[name='content']").html(event.content);
-
-        updateImage("#edit_event input[name='image']", event.image);
-        $("#edit_event input[name='podcast_url']").attr('value', event.podcast_url);
-        $("#edit_event input[name='archive_url']").attr('value', event.archive_url);
-
-        updateDuration("#edit_event #duration", event.duration);
-
-        if (callback != null) callback();
-        console.log("loadEvent done")
-    }).fail( function(jqxhr, textStatus, error) {
-        var err = textStatus + ", " + error;
-        console.log("loadEvent failed: " + err);
+    console.log("modifyEvent:" + url);
+    let response = await fetch(url, {
+        method: 'GET',
+        cache: "no-store",
     });
+    let json = await response.json();
+    console.log(json)
+    if (json.error) showError(json.error);
+    else callback(json);
+
+    console.log("loadEvent: "+url)
+    var event = json;
+    $("#edit_event input[name='title']").attr('value', event.title)
+    $("#edit_event input[name='user_title']").attr('value', event.user_title)
+    $("#edit_event input[name='episode']").attr('value', event.episode)
+
+    updateCheckBox( "#edit_event input[name='live']", event.live);
+    updateCheckBox( "#edit_event input[name='published']", event.published);
+    updateCheckBox( "#edit_event input[name='archived']", event.archived);
+    updateCheckBox( "#edit_event input[name='rerun']", event.rerun);
+    updateCheckBox( "#edit_event input[name='playout']", event.playout);
+    updateCheckBox( "#edit_event input[name='draft']", event.draft);
+
+    $("#edit_event textarea[name='excerpt'").html(event.excerpt);
+    $("#edit_event textarea[name='user_excerpt'").html(event.user_excerpt);
+    $("#edit_event textarea[name='topic']").html(event.topic);
+    $("#edit_event textarea[name='content']").html(event.content);
+
+    updateImage("#edit_event input[name='image']", event.image);
+    $("#edit_event input[name='podcast_url']").attr('value', event.podcast_url);
+    $("#edit_event input[name='archive_url']").attr('value', event.archive_url);
+
+    updateDuration("#edit_event #duration", event.duration);
+
+    if (callback != null) callback();
+    console.log("loadEvent done")
 }
 
 // load series selection
@@ -179,7 +183,6 @@ function changeSeries(seriesId){
     if (seriesId <=0 ) return;
     if (eventId <=0 ) return;
     if (newSeriesId <=0 ) return;
-
 
     $('div.buttons').show();
     $('#selectChangeSeries').hide('slideUp');
@@ -234,6 +237,10 @@ function updateDuration(selector, value){
 }
 
 function updateImage(selector, value){
+    if (value == null) {
+        console.log("update image with null");
+        return;
+    }
     value=value.replace("http://","//");
     $(selector).attr('value', value);
     $(selector).parent().find('button img').attr('src',value);
@@ -405,8 +412,41 @@ function downloadRecording(project_id, studio_id, series_id, event_id){
     }).toString());
 }
 
+async function loadHelpTexts () {
+    var url = "help-texts.cgi?" + new URLSearchParams({
+        project_id : getProjectId(),
+        studio_id : getStudioId(),
+        action : "get_json",
+        json: 1,
+        get_rerun: 1,
+    }).toString();
+    console.log("modifyEvent:" + url);
+    let response = await fetch(url, {
+        method: 'GET',
+        cache: "no-store",
+    });
+    let json = await response.json();
+    console.log(json)
+    if (json.error){
+        showError(json.error);
+        return
+    }
+
+    var data = json;
+    for (col in data){
+        let value = data[col];
+        console.log(col+" "+value)
+        $(`input[name="${col}"]`).hover(function() {
+            $(this).attr("title",value)
+        });
+        $(`textarea[class="${col}"]`).hover(function() {
+            $(this).attr("title",value)
+        });
+    }
+}
+
 $(document).ready(
-    function(){
+    function() {
         showDateTimePicker('#start_date');
 
         $('input[type="checkbox"]').click(
@@ -437,25 +477,8 @@ $(document).ready(
                 }
             }
         )
-
-        jQuery.getJSON("help-texts.cgi?project_id="+getProjectId()+"&studio_id="+getStudioId()+"&action=get")
-        .done( function(data) {
-            for (col in data){
-                let value = data[col];
-                $(`input[name="${col}"]`).hover(function() {
-                    $(this).attr("title",value)
-                });
-                $(`textarea[class="${col}"]`).hover(function() {
-                    $(this).attr("title",value)
-                });
-            }
-        })
-        .always( function() {
-            console.log("register page leave handler");
-            pageLeaveHandler();
-        });
-
-        console.log("done")
+        loadHelpTexts();
+        console.log("done");
     }
 );
 
