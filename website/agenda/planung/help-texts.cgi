@@ -56,8 +56,9 @@ return unless uac::check( $config, $params, $user_presets ) == 1;
 if ( defined $params->{action} ) {
     save_help( $config, $request )   if $params->{action} eq 'save';
     delete_help( $config, $request ) if $params->{action} eq 'delete';
+    edit_help( $config, $request )   if $params->{action} eq 'edit';
+    get_help( $config, $request )    if $params->{action} eq 'get';
 }
-edit_help( $config, $request );
 
 $config->{access}->{write} = 0;
 
