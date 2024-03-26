@@ -483,7 +483,7 @@
             </td> 
             <td>
                 <TMPL_IF .allow.update_event_field_image>
-                    <button onclick="selectImage('<TMPL_VAR series_name escape=js>', '<TMPL_VAR image escape=js>', 'event', '<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR series_id escape=js>','<TMPL_VAR event_id escape=js>'); return false;"
+                    <button onclick="selectImage('<TMPL_VAR series_name escape=js>', '<TMPL_VAR image escape=js>', 'broadcast', '<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR series_id escape=js>','<TMPL_VAR event_id escape=js>'); return false;"
                         class="selectImage"
                     >
                         <img id="imagePreview" src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&filename=<TMPL_VAR image>&type=icon">

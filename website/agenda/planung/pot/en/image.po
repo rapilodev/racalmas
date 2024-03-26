@@ -86,6 +86,9 @@ msgstr "fill in licence to allow publishing the image"
 msgid "label_assign_to_event"
 msgstr "use image for event"
 
+msgid "label_assign_to_broadcast"
+msgstr "use image for event"
+
 msgid "label_assign_to_series"
 msgstr "use image for series"
 
@@ -97,6 +100,9 @@ msgstr "use image for project"
 
 msgid "label_assign_to_projects"
 msgstr "use image for project"
+
+msgid "label_warn_not_public_broadcast"
+msgstr "image must has been published before assigning to event"
 
 msgid "label_warn_not_public_event"
 msgstr "image must has been published before assigning to event"

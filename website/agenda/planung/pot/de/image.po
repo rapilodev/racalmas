@@ -85,6 +85,9 @@ msgstr "Angabe der Lizenz ermöglicht Veröffentlichung des Bildes"
 msgid "label_assign_to_event"
 msgstr "Dieses Bild für Sendung nutzen"
 
+msgid "label_assign_to_broadcast"
+msgstr "Dieses Bild für Sendung nutzen"
+
 msgid "label_assign_to_series"
 msgstr "Dieses Bild für Sendereihe nutzen"
 
@@ -96,6 +99,9 @@ msgstr "Dieses Bild für Projekt nutzen"
 
 msgid "label_assign_to_projects"
 msgstr "Dieses Bild für Projekt nutzen"
+
+msgid "label_warn_not_public_broadcast"
+msgstr "Bild muss veröffentlicht werden, um es in Sendebeschreibung zu nutzen."
 
 msgid "label_warn_not_public_event"
 msgstr "Bild muss veröffentlicht werden, um es in Sendebeschreibung zu nutzen."
