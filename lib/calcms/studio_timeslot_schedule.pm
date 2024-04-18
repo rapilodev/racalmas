@@ -67,7 +67,6 @@ sub insert($$) {
 	return unless defined $entry->{studio_id};
 	return unless defined $entry->{start};
 	return unless defined $entry->{end};
-	return unless defined $entry->{frequency};
 
 	my $dbh = db::connect($config);
 	return db::insert( $dbh, 'calcms_studio_timeslot_schedule', $entry );
@@ -82,7 +81,6 @@ sub update($$) {
 	return unless defined $entry->{schedule_id};
 	return unless defined $entry->{start};
 	return unless defined $entry->{end};
-	return unless defined $entry->{frequency};
 
 	$entry->{id} = $entry->{schedule_id};
 	delete $entry->{schedule_id};
@@ -99,8 +97,6 @@ sub update($$) {
 		where  id=?
 	};
 	db::put( $dbh, $query, \@bind_values );
-
-	#print "done\n";
 
 	$entry->{schedule_id} = $entry->{id};
 	delete $entry->{id};

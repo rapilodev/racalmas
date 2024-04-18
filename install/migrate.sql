@@ -353,3 +353,12 @@ update calcms_series set image = replace(image , '/agenda_files/media/images/', 
 update calcms_series set image = replace(image , '/agenda_files/media/icons/', '')  where image like '%/agenda_files/media/icons/%';
 update calcms_series set image = replace(image , '/agenda_files/media/thumbs/', '') where image like '%/agenda_files/media/thumbs/%';
 
+-- add day of month to studio schedules
+ALTER TABLE `calcms`.`calcms_studio_timeslot_schedule`
+ADD COLUMN `period_type` VARCHAR(45) NOT NULL AFTER `end_date`,
+ADD COLUMN `weekday` INT UNSIGNED NULL AFTER `period_type`,
+ADD COLUMN `week_of_month` INT UNSIGNED NULL AFTER `weekday`,
+ADD COLUMN `month` INT UNSIGNED NULL AFTER `week_of_month`,
+CHANGE COLUMN `frequency` `frequency` INT UNSIGNED NULL ;
+
+update `calcms_studio_timeslot_schedule` set period_type = 'days' where period_type = '';

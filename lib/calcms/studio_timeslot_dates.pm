@@ -4,7 +4,6 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
-use Data::Dumper;
 use Date::Calc();
 use time();
 
@@ -12,8 +11,7 @@ use time();
 # table:   calcms_studio_timeslot_dates
 # columns: id, studio_id, start(datetime), end(datetime)
 # TODO: delete column schedule_id
-#use base 'Exporter';
-our @EXPORT_OK   = qw(get_columns get insert update delete get_dates);
+our @EXPORT_OK = qw(get_columns get insert update delete get_dates);
 
 sub get_columns ($){
     my ($config) = @_;
@@ -124,34 +122,37 @@ sub update {
     my $day_start = $config->{date}->{day_starting_hour};
 
     #get the schedule with schedule id ordered by date
-    my $schedules = studio_timeslot_schedule::get(
-        $config,
-        {
-            schedule_id => $entry->{schedule_id}
-        }
+    my $schedules = studio_timeslot_schedule::get($config,
+        {schedule_id => $entry->{schedule_id}}
     );
 
     #add scheduled dates
     my $i     = 0;
     my $dates = {};
     for my $schedule (@$schedules) {
-
-        #calculate dates from start to end_date
-        my $dateList = get_dates( $schedule->{start}, $schedule->{end}, $schedule->{end_date}, $schedule->{frequency} );
+        my $dateList;
+        if ($schedule->{period_type} eq 'days') {
+            #calculate dates from start to end_date
+            $dateList = get_dates($schedule->{start}, $schedule->{end}, $schedule->{end_date}, $schedule->{frequency});
+        } elsif ($schedule->{period_type} eq 'week_of_month') {
+            my $timezone = $config->{date}->{time_zone};
+            $dateList = get_week_of_month_dates($timezone,
+                $schedule->{start},   $schedule->{end},   $schedule->{end_date},
+                $schedule->{week_of_month}, $schedule->{weekday}, $schedule->{month},
+                $schedule->{nextDay}
+            );
+        }
 
         for my $date (@$dateList) {
-            #set studio i from
-            $date->{project_id}                             = $schedule->{project_id};
-            $date->{studio_id}                              = $schedule->{studio_id};
-            $date->{schedule_id}                            = $schedule->{schedule_id};
-            $dates->{ $date->{start} . $date->{studio_id} } = $date;
+            $date->{project_id}  = $schedule->{project_id};
+            $date->{studio_id}   = $schedule->{studio_id};
+            $date->{schedule_id} = $schedule->{schedule_id};
+            $dates->{$date->{start} . $date->{studio_id}} = $date;
         }
     }
 
-    for my $date ( keys %$dates ) {
+    for my $date (sort keys %$dates) {
         my $timeslot_date = $dates->{$date};
-
-        #insert date
         my $entry = {
             project_id  => $timeslot_date->{project_id},
             studio_id   => $timeslot_date->{studio_id},
@@ -159,9 +160,9 @@ sub update {
             start       => $timeslot_date->{start},
             end         => $timeslot_date->{end},
         };
-        $entry->{start_date} = time::add_hours_to_datetime( $entry->{start}, -$day_start );
-        $entry->{end_date}   = time::add_hours_to_datetime( $entry->{end},   -$day_start );
-        db::insert( $dbh, 'calcms_studio_timeslot_dates', $entry );
+        $entry->{start_date} = time::add_hours_to_datetime($entry->{start}, -$day_start);
+        $entry->{end_date}   = time::add_hours_to_datetime($entry->{end},   -$day_start);
+        db::insert($dbh, 'calcms_studio_timeslot_dates', $entry);
         $i++;
     }
     return $i;
@@ -196,7 +197,6 @@ sub get_dates {
 
     my $dates = [];
     return $dates if ( $date->{end} le $date->{start} );
-
     return $dates if ( $stop_date lt $end_date );
 
     my $j = Date::Calc::Delta_Days( @start_date, @stop_date );
@@ -219,21 +219,19 @@ sub get_dates {
             my $start_date = sprintf( "%04d-%02d-%02d", @start_date );
             my @next_date = Date::Calc::Add_Delta_Days( $start[0], $start[1], $start[2], $i + 1 );
             my $next_date = sprintf( "%04d-%02d-%02d", @next_date );
-            push @$dates,
-              {
+            push @$dates, {
                 start => $start_date . ' 00:00:00',
                 end   => $next_date . ' 00:00:00',
-              };
-            last if ( $c > 1000 );
+            };
+            last if $c > 1000;
             $c++;
         }
 
         #end day
-        push @$dates,
-          {
+        push @$dates, {
             start => $end_date . ' 00:00:00',
             end   => $end_date . ' ' . $end_time,
-          } if ( $end_time ne '00:00:00' );
+        } if $end_time ne '00:00:00';
         return $dates;
     }
 
@@ -247,15 +245,58 @@ sub get_dates {
 
         my $start_date = sprintf( "%04d-%02d-%02d", @start_date );
         my $end_date   = sprintf( "%04d-%02d-%02d", @end_date );
-        push @$dates,
-          {
+        push @$dates, {
             start => $start_date . ' ' . $start_time,
             end   => $end_date . ' ' . $end_time,
-          };
-        last if ( $c > 1000 );
+        };
+        last if $c > 1000;
         $c++;
     }
     return $dates;
+}
+
+# based on series_dates but with (timezone, start, end) instead of (start, duration)
+sub get_week_of_month_dates ($$$$$$$$) {
+    my ($timezone, $start, $end, $end_date, $week, $weekday, $frequency, $nextDay) = @_;
+    #datetime, datetime, date, every nth week of month, weekday [1..7], every 1st,2nd,3th time, add 24 hours to start, (for night hours at last weekday of month)
+
+    return undef if $timezone eq '';
+    return undef if $start eq '';
+    return undef if $end eq '';
+    return undef if $end_date eq '';
+    return undef if $week eq '';
+    return undef if $weekday eq '';
+    return undef if $frequency eq '';
+    return undef if $frequency == 0;
+
+    my $start_dates = time::get_nth_weekday_in_month($start, $end_date, $week, $weekday);
+
+    if (defined $nextDay && $nextDay > 0) {
+        for (my $i = 0; $i < @$start_dates; $i++) {
+            $start_dates->[$i] = time::add_hours_to_datetime($start_dates->[$i], 24);
+        }
+    }
+
+    my $results = [];
+    my $duration = time::get_duration($start, $end, $timezone);
+    my $c = -1;
+    for my $start_datetime (@$start_dates) {
+        $c++;
+        my @start = @{ time::datetime_to_array($start_datetime) };
+        next unless @start >= 6;
+        next if ($c % $frequency) != 0;
+        my @end_datetime = Date::Calc::Add_Delta_DHMS(
+            $start[0], $start[1], $start[2],    # start date
+            $start[3], $start[4], $start[5],    # start time
+            0, 0, $duration, 0                  # delta days, hours, minutes, seconds
+        );
+        my $end_datetime = time::array_to_datetime( \@end_datetime );
+        push @$results, {
+            start => $start_datetime,
+            end   => $end_datetime
+        };
+    }
+    return $results;
 }
 
 #remove all studio_timeslot_dates for studio_id and schedule_id
@@ -269,8 +310,8 @@ sub delete {
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete 
-		from calcms_studio_timeslot_dates 
+		delete
+		from calcms_studio_timeslot_dates
         where schedule_id=?
 	};
     my $bind_values = [ $entry->{schedule_id} ];

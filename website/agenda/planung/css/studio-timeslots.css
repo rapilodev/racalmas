@@ -48,18 +48,17 @@
 #content .editor .cell {
     display: table-cell ;
     vertical-align:baseline;
-    text-align: center;
+    text-align: left;
 }
 
 #content .frequency {
     width: 6em;
 }
 
-#content div.weekday {
-    padding: 0;
-    width: 2em;
-    margin-right: -0.5em;
-    margin-top: 1.2em;
+#content .editor div.cell.weekday {
+    vertical-align: bottom;
+    width: 2.5ch;
+    padding-bottom: 9px;
 }
 
 #content div.show_schedule_head {

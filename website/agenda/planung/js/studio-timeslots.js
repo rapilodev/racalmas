@@ -61,6 +61,37 @@ function initTable(){
     $('.tablesorter-scroller-table table').css('width','95%');
 }
 
+// show/hide schedule fields depending on period type for a given schedule element
+function showScheduleFields(id){
+    var select='#'+id+' select[name="period_type"]';
+    var type=$(select).val();
+    //hide and show values for different schedule types
+    if (type=='days' || type=='') {
+        $('#'+id+' div.cell.frequency').show();
+        $('#'+id+' div.cell.end').show();
+        $('#'+id+' div.cell.schedule_weekday').hide();
+        $('#'+id+' div.cell.week_of_month').hide();
+        $('#'+id+' div.cell.schedule_month').hide();
+        $('#'+id+' div.cell.nextDay').hide();
+    }else if(type=='week_of_month'){
+        $('#'+id+' div.cell.frequency').hide();
+        $('#'+id+' div.cell.end').show();
+        $('#'+id+' div.cell.schedule_weekday').show();
+        $('#'+id+' div.cell.week_of_month').show();
+        $('#'+id+' div.cell.schedule_month').show();
+        $('#'+id+' div.cell.nextDay').show();
+    }else{
+        alert("invalid schedule type");
+    }
+}
+
+function initScheduleFields(){
+    $('div.row.schedule form').each(function(){
+        var id = $(this).attr('id');
+        if(contains(id,'schedule_'))showScheduleFields(id);
+    });
+}
+
 $(document).ready(
     function(){
     setupLocalization(function(){
@@ -88,6 +119,7 @@ $(document).ready(
         onSelect: function(){updateWeekdays();}
     });
 
+    initScheduleFields();
     setSelectedOptions();
 
     showYearPicker('#show_date', {
@@ -95,6 +127,7 @@ $(document).ready(
             showDates();
         }
     });
+
     showDates();                
 });
 
