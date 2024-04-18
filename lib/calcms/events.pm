@@ -107,7 +107,7 @@ sub get($$) {
 
     ( my $query, my $bind_values ) = events::get_query( $dbh, $config, $request );
     my $results = db::get( $dbh, $$query, $bind_values );
-    #$results = events::add_recordings($dbh, $config, $request, $results);
+    $results = events::add_recordings($dbh, $config, $request, $results) if $request->{params}->{checked}->{all_recordings};
     $results = events::modify_results( $dbh, $config, $request, $results );
 
     # get prev and next event
@@ -655,28 +655,14 @@ sub set_upload_status($$){
     my $recordings = db::put( $dbh, $query, $bindValues );
 }
 
+# returns all recordings for a event
 sub add_recordings($$$$) {
     my ($dbh, $config, $request, $events) = @_;
-
     return $events unless defined $events;
 
-    my $params = $request->{params}->{checked};
-    return $events unless defined $params;
-    return $events unless defined $params->{recordings};
-
-    my @ids        = ();
-    my $eventsById = {};
-
-    #my $events = $results;
-
-    for my $event (@$events) {
-        my $eventId = $event->{event_id};
-        push @ids, $eventId;
-        $eventsById->{$eventId} = $event;
-    }
-
-    my $qms        = join( ', ', ( map { '?' } @$events ) );
-    my $bindValues = join( ', ', ( map { $_->{event_id} } @$events ) );
+    my $eventsById = { map { $_->{event_id} => $_ } @$events };
+    my $qms        = join ', ', map { '?' } @$events;
+    my $bindValues = [map {$_->{event_id}} @$events];
 
     my $query = qq{
         select  *
@@ -687,12 +673,7 @@ sub add_recordings($$$$) {
 
     $dbh = db::connect($config) unless defined $dbh;
     my $recordings = db::get( $dbh, $query, $bindValues );
-
-    for my $entry (@$recordings) {
-        my $eventId = $entry->{event_id};
-        my $event   = $eventsById->{$eventId};
-        push @{ $event->{recordings} }, $entry;
-    }
+    push @{ $eventsById->{$_->{event_id}}->{recordings} }, $_ for @$recordings;
 
     return $events;
 }
@@ -859,12 +840,15 @@ sub getDateQueryConditions ($$$) {
 
 }
 
-# if recordings is set in params, recordings date and path will be included
+# if "all_recordings" is set in params, all event recordings will be included
+# if "active_recording" is set in params, recordings date and path will be included
 sub get_query($$$) {
     my ($dbh, $config, $request) = @_;
 
     my $params = $request->{params}->{checked};
-    $params->{recordings} = '' unless defined $params->{recordings};
+    $params->{all_recordings}   //= '';
+    $params->{active_recording} //= '';
+    $params->{only_active_recording} //= '';
 
     my $bind_values = [];
     my $where_cond  = [];
@@ -1154,13 +1138,11 @@ sub get_query($$$) {
     }
 
     # add recordings field and conditions
-    if ( $params->{recordings} eq '1' ) {
+    if ( $params->{active_recording} || $params->{only_active_recording} ) {
         $query .= ', ar.path';
         $query .= ', ar.size';
         $query .= ', ar.created_by uploaded_by';
         $query .= ', ar.modified_at uploaded_at';
-
-        #push @$where_cond,  'e.id=ar.event_id';
     }
 
     $query .= "\n from";
@@ -1175,8 +1157,8 @@ sub get_query($$$) {
     }
 
     # add recordings table
-    if ( $params->{recordings} ) {
-        my $type = $params->{only_recordings}//'' ? 'inner' : 'left';
+    if ( $params->{active_recording} || $params->{only_active_recording}) {
+        my $type = $params->{only_active_recording} ? 'inner' : 'left';
         $query .= "\n $type join calcms_audio_recordings ar on e.id=ar.event_id and ar.active=1";
     }
 
@@ -1746,11 +1728,10 @@ sub check_params ($$) {
     my $extern = 0;
     $extern = 1 if ( defined $params->{extern} ) && ( $params->{extern} eq '1' );
 
-    my $only_recordings = $params->{only_recordings} // '';
-    my $recordings = 0;
-    $recordings = 1 if $params->{recordings}//'';
-    $recordings = 1 if $only_recordings;
-    my $set_no_listen_keys = !$recordings ;
+    my $all_recordings = $params->{all_recordings};
+    my $active_recording = $params->{active_recording} // '';
+    my $only_active_recording = $params->{only_active_recording} // '';
+    my $set_no_listen_keys = !($active_recording or $only_active_recording);
 
     my $checked = {
         date                 => $date,
@@ -1787,8 +1768,9 @@ sub check_params ($$) {
         exclude_event_images => $exclude_event_images,
         disable_event_sync   => $disable_event_sync,
         extern               => $extern,
-        recordings           => $recordings,
-        only_recordings      => $only_recordings,
+        all_recordings       => $all_recordings,
+        active_recording     => $active_recording,
+        only_active_recordings => $only_active_recording,
         set_no_listen_keys   => $set_no_listen_keys,
         ro                   => ($params->{ro}//'') ? 1 : 0
     };

@@ -1922,7 +1922,7 @@ sub getSeriesEvents {
     #get events (directly from database to get the ones, not assigned, yet)
     delete $options->{studio_id};
     delete $options->{project_id};
-    $options->{recordings} = 1;
+    $options->{active_recording} = 1;
 
     my $request2 = {
         params => {

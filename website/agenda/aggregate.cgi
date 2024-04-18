@@ -42,7 +42,7 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
     $params->{exclude_projects}     = 1;
     $params->{exclude_event_images} = 1;
     $params->{ro} = 1;
-    $params->{recordings}           = 1;
+    $params->{active_recording}    = 1;
 
     my $request = {
         url    => $ENV{QUERY_STRING},
@@ -68,7 +68,7 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
     $list->{day} = $params->{from_date} if ( defined $params->{from_date} ) && ( $params->{from_date} ne '' );
     $list->{day} = 'today'              if $list->{day} eq '';
 
-    $params->{recordings} = 0;
+    $params->{active_recording} = 0;
     $menu = aggregator::get_menu( $config, $request, $list->{day}, $list->{results} );
 
     my $calendar = aggregator::get_calendar( $config, $request, $list->{day} );
