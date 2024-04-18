@@ -204,18 +204,18 @@
 					<input type="hidden" name="schedule_id" value="<TMPL_VAR schedule_id>" />
 
 					<div class="cell exclude"> 
-                        <TMPL_VAR .loc.exception><br/>
+                        <div class="label"><TMPL_VAR .loc.exception></div>
 					    <input name="exclude" value="<TMPL_VAR exclude>" type="checkbox" class="exclude">
 					</div>
 
 					<div class="cell weekday"></div>
 					<div class="cell start">
-                        <TMPL_VAR .loc.schedule_start><br/>
+                        <div class="label"><TMPL_VAR .loc.schedule_start></div>
 					    <input name="start" value="<TMPL_VAR start>" class="datetimepicker start" placeholder="<TMPL_VAR .loc.schedule_start>"/>
 					</div>
 
 					<div class="cell duration">
-                        <TMPL_VAR .loc.duration><br/>
+                        <div class="label"><TMPL_VAR .loc.duration></div>
                         <select name="duration" value="<TMPL_VAR duration>" class="duration"/>
                             <option value="30">30 <TMPL_VAR .loc.minutes></option>
                             <option value="60">1 <TMPL_VAR .loc.hour></option>
@@ -226,7 +226,7 @@
 					</div>
 
 					<div class="cell period_type"> 
-                        <TMPL_VAR .loc.period_type><br/>
+                        <div class="label"><TMPL_VAR .loc.period_type></div>
                         <select name="period_type" onchange="showScheduleFields('schedule_<TMPL_VAR schedule_id>')">
                             <option value="single" <TMPL_IF period_type_single>selected="selected"</TMPL_IF>
                             ><TMPL_VAR .loc.period_type_single></option>
@@ -238,12 +238,12 @@
 					</div>
 
 					<div class="cell end"> 
-                        <TMPL_VAR .loc.schedule_end><br/>
+                        <div class="label"><TMPL_VAR .loc.schedule_end></div>
 					    <input name="end"  value="<TMPL_VAR end>" class="datetimepicker end" placeholder="<TMPL_VAR .loc.schedule_end>"/>
 					</div>
 
 					<div class="cell frequency"> 
-                        <TMPL_VAR .loc.frequency><br/>
+                        <div class="label"><TMPL_VAR .loc.frequency></div>
 					    <select name="frequency" value="<TMPL_VAR frequency>" class="frequency">
                             <option value="1"><TMPL_VAR .loc.daily></option>
                             <option value="7"><TMPL_VAR .loc.weekly></option>
@@ -257,7 +257,7 @@
 					</div>
 
 					<div class="cell week_of_month"> 
-                        <TMPL_VAR .loc.week_of_month><br/>
+                        <div class="label"><TMPL_VAR .loc.week_of_month></div>
 					    <select name="week_of_month" value="<TMPL_VAR week_of_month>" class="week_of_month">
                             <option value="1"><TMPL_VAR .loc.week_1st></option>
                             <option value="2"><TMPL_VAR .loc.week_2nd></option>
@@ -268,7 +268,7 @@
 					</div>
 
 					<div class="cell schedule_weekday"> 
-                        <TMPL_VAR .loc.weekday><br/>
+                        <div class="label"><TMPL_VAR .loc.weekday></div>
 					    <select name="weekday" value="<TMPL_VAR weekday>" class="schedule_weekday"/>
                             <option value="1"><TMPL_VAR .loc.monday></option>
                             <option value="2"><TMPL_VAR .loc.tuesday></option>
@@ -281,7 +281,7 @@
 					</div>
 
 					<div class="cell schedule_month"> 
-                        <TMPL_VAR .loc.every_month><br/>
+                        <div class="label"><TMPL_VAR .loc.every_month></div>
 					    <select name="month" value="<TMPL_VAR month>" class="schedule_month"/>
                             <option value="1"><TMPL_VAR .loc.every_time></option>
                             <option value="2"><TMPL_VAR .loc.every_2nd_time></option>
@@ -291,7 +291,7 @@
 					</div>
 
 					<div class="cell nextDay"> 
-                        <TMPL_VAR .loc.nextDay><br/>
+                        <div class="label"><TMPL_VAR .loc.nextDay></div>
 					    <input name="nextDay" value="<TMPL_VAR nextDay>" type="checkbox" class="nextDay">
 					</div>
 
@@ -319,18 +319,18 @@
 					<input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>" />	
 
 					<div class="cell exclude"> 
-                        <TMPL_VAR .loc.exception><br/>
+                        <div class="label"><TMPL_VAR .loc.exception></div>
 					    <input name="exclude" value="<TMPL_VAR exclude>" type="checkbox" class="exclude" onclick="updateScheduleButtonName()"/>
 					</div>
 
 					<div class="cell weekday"></div>
 					<div class="cell start">
-                        <TMPL_VAR .loc.schedule_start><br/>
+                        <div class="label"><TMPL_VAR .loc.schedule_start></div>
 					    <input name="start" value="<TMPL_VAR start>" class="datetimepicker start" placeholder="<TMPL_VAR .loc.schedule_start>"/>
 					</div>
 
 					<div class="cell duration"> 
-                        <TMPL_VAR .loc.duration><br/>
+                        <div class="label"><TMPL_VAR .loc.duration></div>
                         <select name="duration" value="<TMPL_VAR duration>" class="duration"/>
                             <option value="30">30 <TMPL_VAR .loc.minutes></option>
                             <option value="60">1 <TMPL_VAR .loc.hour></option>
@@ -341,7 +341,7 @@
 					</div>
 
 					<div class="cell period_type"> 
-                        <TMPL_VAR .loc.period_type><br/>
+                        <div class="label"><TMPL_VAR .loc.period_type></div>
                         <select name="period_type" onchange="showScheduleFields('schedule_add')">
                             <option value="single" <TMPL_IF period_type_single>selected="selected"</TMPL_IF> 
                             ><TMPL_VAR .loc.period_type_single></option>
@@ -353,12 +353,12 @@
 					</div>
 
 					<div class="cell end"> 
-                        <TMPL_VAR .loc.schedule_end><br/>
+                        <div class="label"><TMPL_VAR .loc.schedule_end></div>
 					    <input name="end"  value="<TMPL_VAR end>" class="datetimepicker end" placeholder="<TMPL_VAR .loc.schedule_end>"/>
 					</div>
 
 					<div class="cell frequency"> 
-                        <TMPL_VAR .loc.frequency><br/>
+                        <div class="label"><TMPL_VAR .loc.frequency></div>
 					    <select name="frequency" value="<TMPL_VAR frequency>" class="frequency">
                             <option value="1"><TMPL_VAR .loc.daily></option>
                             <option value="7"><TMPL_VAR .loc.weekly></option>
@@ -372,7 +372,7 @@
 					</div>
 
 					<div class="cell week_of_month"> 
-                        <TMPL_VAR .loc.week_of_month><br/>
+                        <div class="label"><TMPL_VAR .loc.week_of_month></div>
 					    <select name="week_of_month" value="<TMPL_VAR week_of_month>" class="week_of_month">
                             <option value="1"><TMPL_VAR .loc.week_1st></option>
                             <option value="2"><TMPL_VAR .loc.week_2nd></option>
@@ -383,7 +383,7 @@
 					</div>
 
 					<div class="cell schedule_weekday"> 
-                        <TMPL_VAR .loc.weekday><br/>
+                        <div class="label"><TMPL_VAR .loc.weekday></div>
 					    <select name="weekday" value="<TMPL_VAR weekday>" class="schedule_weekday"/>
                             <option value="1"><TMPL_VAR .loc.monday></option>
                             <option value="2"><TMPL_VAR .loc.tuesday></option>
@@ -396,7 +396,7 @@
 					</div>
 
 					<div class="cell schedule_month"> 
-                        <TMPL_VAR .loc.every_month><br/>
+                        <div class="label"><TMPL_VAR .loc.every_month></div>
 					    <select name="month" value="<TMPL_VAR month>" class="schedule_month"/>
                             <option value="1"><TMPL_VAR .loc.every_time></option>
                             <option value="2"><TMPL_VAR .loc.every_2nd_time></option>
@@ -406,7 +406,7 @@
 					</div>
 
 					<div class="cell nextDay"> 
-                        <TMPL_VAR .loc.nextDay><br/>
+                        <div class="label"><TMPL_VAR .loc.nextDay></div>
 					    <input name="nextDay" value="<TMPL_VAR nextDay>" type="checkbox" class="nextDay">
 					</div>
 
