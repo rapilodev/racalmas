@@ -57,7 +57,7 @@ body {
 body #content {
     color: #000;
     text-align: left;
-    min-width: 480px;
+    min-width: min-content;
     max-width: 960px;
     margin-left: auto;
     margin-right: auto;
@@ -682,6 +682,15 @@ ul.tabContainer li.active{
 ul.tabContainer li:hover{
     border-bottom-color:#1678c2;
 }
+
+#content ul.tabContainer {
+    margin: 0 12px -14px 12px;
+}
+#content ul.tabContainer + div.panel {
+    border-top-left-radius:0;
+    border-top-right-radius:0;
+}
+
 #content ul.tabContainer li a:hover{
     text-decoration:none;
 }
@@ -703,10 +712,12 @@ ul.tabContainer li{
     margin-left:-3px;
     margin-bottom:-2px;
 }
+
 ul.tabContainer li:first-child{
     border-top-left-radius:0.5rem;
     margin-left:4px;
 }
+
 ul.tabContainer li:last-child{
     border-top-right-radius:0.5rem;
 }
