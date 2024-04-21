@@ -684,7 +684,7 @@ ul.tabContainer li:hover{
 }
 
 #content ul.tabContainer {
-    margin: 0 12px -14px 12px;
+    margin: 0 12px -14px 16px;
 }
 #content ul.tabContainer + div.panel {
     border-top-left-radius:0;
@@ -709,13 +709,12 @@ ul.tabContainer li{
     border: 1px solid rgba(0, 0, 0, .03);
     box-shadow: 0 2px 2px rgba(0, 0, 0, .24),
                 0 0   2px rgba(0, 0, 0, .12);
-    margin-left:-3px;
-    margin-bottom:-2px;
+    margin-bottom:2px;
+    margin-right:-2px;
 }
 
 ul.tabContainer li:first-child{
     border-top-left-radius:0.5rem;
-    margin-left:4px;
 }
 
 ul.tabContainer li:last-child{
