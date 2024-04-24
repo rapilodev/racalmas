@@ -6,8 +6,8 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc;
-use markup();
 
+use markup();
 use db();
 use log();
 use time();
@@ -40,7 +40,9 @@ sub get_content_columns($) {
 # all changed columns are returned for history handling
 sub save_content($$) {
     my ($config, $entry) = @_;
-    return undef unless defined $entry->{id};
+    for ('id') {
+        return undef unless defined $entry->{$_}
+    };
 
     for my $attr ( keys %$entry ) {
         next unless defined $entry->{$attr};
@@ -96,8 +98,9 @@ sub save_content($$) {
 sub set_episode{
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{id};
-    return undef unless defined $entry->{episode};
+    for ('id', 'episode') {
+        return undef unless defined $entry->{$_}
+    };
 
     my $query = qq{
 		update calcms_events 
@@ -120,9 +123,9 @@ sub set_episode{
 sub save_event_time($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{id};
-    return undef unless defined $entry->{duration};
-    return undef unless defined $entry->{start_date};
+    for ('id', 'duration', 'start_date') {
+        return undef unless defined $entry->{$_}
+    };
 
     my $dbh   = db::connect($config);
     my $event = {
@@ -161,7 +164,6 @@ sub save_event_time($$) {
 		where	id=?
 	};
     push @$bind_values, $event->{id};
-
     db::put( $dbh, $update_sql, $bind_values );
     return $event;
 }
@@ -169,13 +171,11 @@ sub save_event_time($$) {
 sub set_playout_status ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{start};
-    return undef unless defined $entry->{playout};
+    for ('project_id', 'studio_id', 'start', 'playout') {
+        return undef unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
-
     # check if event is assigned to project and studio
     my $sql = qq{
 		select  se.event_id event_id
@@ -206,10 +206,9 @@ sub set_playout_status ($$) {
 sub is_event_assigned($$) {
     my ($config, $entry) = @_;
 
-    return 0 unless defined $entry->{project_id};
-    return 0 unless defined $entry->{studio_id};
-    return 0 unless defined $entry->{series_id};
-    return 0 unless defined $entry->{event_id};
+    for ('project_id', 'studio_id', 'series_id', 'event_id') {
+        return 0 unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
 
@@ -227,11 +226,9 @@ sub is_event_assigned($$) {
 sub delete_event ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{series_id};
-    return undef unless defined $entry->{event_id};
-    return undef unless defined $entry->{user};
+    for ('project_id', 'studio_id', 'series_id', 'event_id', 'user') {
+        return undef unless defined $entry->{$_}
+    };
 
     #is event assigned to project, studio and series?
     unless ( is_event_assigned( $config, $entry ) == 1 ) {
@@ -404,16 +401,16 @@ sub check_permission($$) {
 sub insert_event ($$) {
     my ($config, $options) = @_;
 
+    for ('project_id', 'studio', 'serie', 'event', 'user') {
+        return 0 unless defined $options->{$_}
+    };
+
     my $project_id = $options->{project_id};
     my $studio     = $options->{studio};
     my $serie      = $options->{serie};
     my $params     = $options->{event};
     my $user       = $options->{user};
 
-    return 0 unless defined $studio;
-    return 0 unless defined $serie;
-    return 0 unless defined $params;
-    return 0 unless defined $user;
     return 0 unless defined $studio->{location};
 
     my $projects = project::get( $config, { project_id => $project_id } );
@@ -427,7 +424,6 @@ sub insert_event ($$) {
         location => $studio->{location},    # location from studio
     };
 
-    #print '<pre>';
     $event = series_events::add_event_dates( $config, $event, $params );
 
     #get event content from series

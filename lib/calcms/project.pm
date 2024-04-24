@@ -12,7 +12,6 @@ use log();
 use template();
 use images();
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(
   check get_columns get insert delete get_date_range
   get_studios assign_studio unassign_studio is_studio_assigned get_studio_assignments
@@ -73,7 +72,10 @@ sub get ($;$) {
 sub getImageById($$) {
     my ($config, $conditions) = @_;
 
-    return undef unless defined $conditions->{project_id};
+    for ('project_id') {
+        return undef unless defined $conditions->{$_};
+    };
+
     my $projects = project::get( $config, $conditions );
     return undef if scalar(@$projects) != 1;
     return $projects->[0]->{image};
@@ -146,7 +148,9 @@ sub delete ($$) {
 sub get_studios($$) {
     my ($config, $options) = @_;
 
-    return undef unless defined $options->{project_id};
+    for ('project_id') {
+        return undef unless defined $options->{$_}
+    };
     my $project_id = $options->{project_id};
 
     my $query = qq{
@@ -195,8 +199,9 @@ sub get_studio_assignments($$) {
 sub is_studio_assigned ($$) {
     my ($config, $entry) = @_;
 
-    return 0 unless defined $entry->{project_id};
-    return 0 unless defined $entry->{studio_id};
+    for ('project_id', 'studio_id') {
+        return 0 unless defined $entry->{$_}
+    };
 
     my $project_id = $entry->{project_id};
     my $studio_id  = $entry->{studio_id};
@@ -218,8 +223,9 @@ sub is_studio_assigned ($$) {
 sub assign_studio($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
+    for ('project_id', 'studio_id') {
+        return undef unless defined $entry->{$_}
+    };
     my $project_id = $entry->{project_id};
     my $studio_id  = $entry->{studio_id};
 
@@ -236,8 +242,9 @@ sub assign_studio($$) {
 sub unassign_studio($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
+    for ('project_id', 'studio_id') {
+        return undef unless defined $entry->{$_}
+    };
     my $project_id = $entry->{project_id};
     my $studio_id  = $entry->{studio_id};
 
@@ -251,8 +258,9 @@ sub unassign_studio($$) {
 sub get_series ($$) {
     my ($config, $options) = @_;
 
-    return undef unless defined $options->{project_id};
-    return undef unless defined $options->{studio_id};
+    for ('project_id', 'studio_id') {
+        return undef unless defined $options->{$_}
+    };
     my $project_id = $options->{project_id};
     my $studio_id  = $options->{studio_id};
 
@@ -308,9 +316,9 @@ sub get_series_assignments ($$) {
 sub is_series_assigned ($$) {
     my ($config, $entry) = @_;
 
-    return 0 unless defined $entry->{project_id};
-    return 0 unless defined $entry->{studio_id};
-    return 0 unless defined $entry->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        return undef unless defined $entry->{$_}
+    };
 
     my $project_id = $entry->{project_id};
     my $studio_id  = $entry->{studio_id};
@@ -333,9 +341,9 @@ sub is_series_assigned ($$) {
 sub assign_series($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        return undef unless defined $entry->{$_}
+    };
 
     my $project_id = $entry->{project_id};
     my $studio_id  = $entry->{studio_id};
@@ -356,9 +364,9 @@ sub assign_series($$) {
 sub unassign_series ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        return undef unless defined $entry->{$_}
+    };
 
     my $project_id = $entry->{project_id};
     my $studio_id  = $entry->{studio_id};

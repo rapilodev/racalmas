@@ -15,7 +15,6 @@ use studios();
 use user_settings();
 use user_default_studios();
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(
   get_user get_users update_user insert_user delete_user
   get_roles insert_role update_role  get_role_columns
@@ -404,10 +403,7 @@ sub get_user_roles($$) {
     my $admin_roles = get_admin_user_roles( $config, $condition );
 
     #add admin roles to user roles
-    my @user_roles = ( @$admin_roles, @$user_roles );
-    $user_roles = \@user_roles;
-
-    return $user_roles;
+    return [@$admin_roles, @$user_roles];
 }
 
 #return admin user roles for given conditions: project_id, studio_id, user, user_id
@@ -528,10 +524,9 @@ sub get_role_id ($$) {
 sub assign_user_role($$) {
     my ($config, $options) = @_;
 
-    return undef unless defined $options->{project_id};
-    return undef unless defined $options->{studio_id};
-    return undef unless defined $options->{user_id};
-    return undef unless defined $options->{role_id};
+    for ('project_id', 'studio_id', 'user_id', 'role_id') {
+        return undef unless defined $options->{$_}
+    }
 
     #return if already exists
     my $query = qq{
@@ -560,10 +555,9 @@ sub assign_user_role($$) {
 sub remove_user_role($$) {
     my ($config, $options) = @_;
 
-    return undef unless defined $options->{project_id};
-    return undef unless defined $options->{studio_id};
-    return undef unless defined $options->{user_id};
-    return undef unless defined $options->{role_id};
+    for ('project_id', 'studio_id', 'user_id', 'role_id') {
+        return undef unless defined $options->{$_}
+    }
 
     my $query = qq{
 		delete
@@ -583,20 +577,17 @@ sub is_user_assigned_to_studio ($$) {
     my ($request, $options) = @_;
 
     my $config = $request->{config};
-
+    for ('project_id', 'studio_id') {
+        return 0 unless defined $options->{$_}
+    }
     return 0 unless defined $request->{user};
-    return 0 unless defined $options->{studio_id};
-    return 0 unless defined $options->{project_id};
-
-    my $options2 = {
+ 
+    my $user_studios = uac::get_studios_by_user( $config, {
         user       => $request->{user},
         studio_id  => $options->{studio_id},
         project_id => $options->{project_id}
-    };
-
-    my $user_studios = uac::get_studios_by_user( $config, $options2 );
-    return 1 if scalar @$user_studios == 1;
-    return 0;
+    });
+    return (@$user_studios == 1);
 }
 
 # print errors at get_user_presets and check for project id and studio id
@@ -711,11 +702,6 @@ sub get_user_presets($$) {
             $permissions->{$key} = 1;
         }
     }
-
-    #only admin is allowed to select all projects
-    #    if($permissions->{is_admin}==1){
-    #        $projects=project::get($config);
-    #    }
 
     #set studios and projects as selected, TODO:do in JS
     my $selectedProject = {};

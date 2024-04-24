@@ -9,10 +9,8 @@ $Data::Dumper::Sortkeys=1;
 use MIME::Base64();
 use Encode();
 use Storable 'dclone';
-
 use DBI();
 use template();
-
 use config();
 use time();
 use db();
@@ -22,7 +20,6 @@ use log();
 use project();
 use studios();
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(
   init
   get_cached_or_render
@@ -184,12 +181,6 @@ sub modify_results ($$$$) {
                 $result->{excerpt} = '' unless defined( $result->{excerpt} );
                 $result->{excerpt} = "lass dich ueberraschen"
                   if ( $result->{excerpt} eq '' );
-
-                #                $result->{excerpt}    =markup::plain_to_xml($result->{excerpt});
-                #                $result->{title}    =markup::plain_to_xml($result->{title});
-                #                $result->{series_name}    =markup::plain_to_xml($result->{series_name});
-                #                $result->{program}    =markup::plain_to_xml($result->{program});
-                #print STDERR "created:$result->{created_at} modified:$result->{modified_at}\n";
                 $result->{modified_at} =
                   time::datetime_to_rfc822( $result->{modified_at} );
                 if ( $result->{created_at} =~ /[1-9]/ ) {
@@ -343,8 +334,6 @@ sub modify_results ($$$$) {
             }
         }
 
-        #$result->{'project_title'}=$project->{title} if (defined $project->{title} && $project->{title} ne '');
-
         for my $name ( keys %{ $config->{mapping}->{events} } ) {
             my $val = '';
             if (   ( defined $name )
@@ -356,10 +345,6 @@ sub modify_results ($$$$) {
                 $result->{ $name . '_mapped' } = $val if ( $val ne '' );
             }
         }
-
-        #for my $name (keys %{$config->{controllers}}){
-        #    $result->{"controller_$name"}=$config->{controllers}->{$name};
-        #}
 
         $previous_result = $result;
 
@@ -642,8 +627,10 @@ sub set_listen_key{
 sub set_upload_status($$){
     my ($config, $event) = @_; 
 
-    return undef unless defined $event->{event_id};
-    return undef unless defined $event->{upload_status};
+    for ('event_id', 'upload_status') {
+        return undef unless defined $event->{$_}
+    };
+
     my $bindValues = [ $event->{upload_status}, $event->{event_id}, $event->{upload_status} ];
 
     my $query = qq{
@@ -655,9 +642,9 @@ sub set_upload_status($$){
     my $recordings = db::put( $dbh, $query, $bindValues );
 }
 
-# returns all recordings for a event
 sub add_recordings($$$$) {
     my ($dbh, $config, $request, $events) = @_;
+
     return $events unless defined $events;
 
     my $eventsById = { map { $_->{event_id} => $_ } @$events };

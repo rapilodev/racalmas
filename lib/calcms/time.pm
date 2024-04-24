@@ -14,7 +14,6 @@ use Data::Dumper;
 
 use config();
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(
   format_datetime format_time
   date_format time_format
@@ -164,7 +163,6 @@ sub format_time($) {
 sub datetime_to_time ($){
     my $datetime = $_[0];
 
-    #	print $datetime."\n";
     if ( $datetime =~ /(\d\d\d\d)\-(\d+)\-(\d+)[T\s](\d+)\:(\d+)(\:(\d+))?/ ) {
         my $year   = $1;
         my $month  = $2 - 1;
@@ -548,7 +546,6 @@ sub get_event_date($) {
     my $datetime = time::time_to_datetime( time() );
     my $hour     = ( time::datetime_to_array($datetime) )->[3];
 
-    #print STDERR "datetime=$datetime hour=$hour\n";
     #today: between 0:00 and starting_hour show last day
     if ( $hour < $config->{date}->{day_starting_hour} ) {
         my $date = time::datetime_to_array( time::add_days_to_datetime( $datetime, -1 ) );

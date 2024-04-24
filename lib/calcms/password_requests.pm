@@ -8,7 +8,6 @@ use Data::Dumper;
 use Session::Token();
 
 # table:   calcms_password_requests
-#use base 'Exporter';
 our @EXPORT_OK = qw(get insert delete get_columns);
 
 use mail;
@@ -26,7 +25,6 @@ sub get ($$) {
     my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
-
     my @conditions  = ();
     my @bind_values = ();
 

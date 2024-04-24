@@ -10,7 +10,6 @@ use Data::Dumper;
 # columns: id, studio_id, series_id,
 # table, column, text
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get insert update delete);
 
 sub get_columns($) {

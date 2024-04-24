@@ -303,9 +303,9 @@ sub get_week_of_month_dates ($$$$$$$$) {
 sub delete {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{project_id};
-    return unless defined $entry->{studio_id};
-    return unless defined $entry->{schedule_id};
+    for ('project_id', 'studio_id', 'schedule_id') {
+        return unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
 
@@ -327,10 +327,9 @@ sub can_studio_edit_events {
     my @conditions  = ();
     my @bind_values = ();
 
-    #return 0 unless defined $condition->{project_id};
-    return 0 unless defined $condition->{studio_id};
-    return 0 unless defined $condition->{start};
-    return 0 unless defined $condition->{end};
+    for ('studio_id', 'start', 'end') {
+       return 0 unless defined $condition->{$_}
+    };
 
     if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
         push @conditions,  'project_id=?';
@@ -373,8 +372,6 @@ sub can_studio_edit_events {
         if (   ( $condition->{start} ge $timeslot->{start} )
             && ( $condition->{end} le $timeslot->{end} ) )
         {
-            #print STDERR "($condition->{start} ge $timeslot->{start}) ".($condition->{start} ge $timeslot->{start});
-            #print STDERR "($condition->{end}   le $timeslot->{end}) ".($condition->{end}   le $timeslot->{end});
             return 1;
         }
     }
@@ -390,10 +387,9 @@ sub getMergedDays {
     my @conditions  = ();
     my @bind_values = ();
 
-    #return 0 unless defined $condition->{project_id};
-    return 0 unless defined $condition->{studio_id};
-    return 0 unless defined $condition->{start};
-    return 0 unless defined $condition->{end};
+    for ('studio_id', 'start', 'end') {
+        return 0 unless defined $condition->{$_}
+    };
 
     if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
         push @conditions,  'project_id=?';

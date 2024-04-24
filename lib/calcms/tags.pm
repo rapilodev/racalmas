@@ -4,8 +4,6 @@ use strict;
 use warnings;
 no warnings 'redefine';
 use Data::Dumper;
-
-#use base 'Exporter';
 our @EXPORT_OK   = qw(get_tags);
 
 sub get_tags($) {

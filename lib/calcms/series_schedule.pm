@@ -18,7 +18,6 @@ use series_dates();
 # month
 # nextDay (add 24 hours to start)
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get insert update delete);
 
 sub get_columns ($) {
@@ -99,11 +98,9 @@ sub get($$) {
 
 sub insert($$) {
     my ($config, $entry) = @_;
-
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{series_id};
-    return undef unless defined $entry->{start};
+    for ('project_id', 'studio_id', 'series_id', 'start') {
+        return undef unless defined $entry->{$_}
+    };
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_series_schedule', $entry );
 }
@@ -112,11 +109,10 @@ sub insert($$) {
 sub update($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{series_id};
-    return undef unless defined $entry->{schedule_id};
-    return undef unless defined $entry->{start};
+    for ('project_id', 'studio_id', 'series_id', 'start', 'schedule_id') {
+        return undef unless defined $entry->{$_}
+    };
+
     $entry->{nextDay} = 0 unless defined $entry->{nextDay};
 
     $entry->{id} = $entry->{schedule_id};
@@ -145,10 +141,9 @@ sub update($$) {
 sub delete($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{series_id};
-    return undef unless defined $entry->{schedule_id};
+    for ('project_id', 'studio_id', 'series_id', 'schedule_id') {
+        return undef unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
 

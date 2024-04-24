@@ -10,7 +10,6 @@ use HTML::Template::Compiled();
 use HTML::Template::Compiled::Plugin::XMLEscape();
 use HTML::Template::Compiled::Plugin::Hyphen();
 
-#use HTML::Template::JIT();
 use JSON();
 use Cwd();
 use Digest::MD5 qw(md5_hex);
@@ -19,7 +18,6 @@ use params();
 use project();
 use log();
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(check process exit_on_missing_permission clear_cache);
 
 # TODO:config

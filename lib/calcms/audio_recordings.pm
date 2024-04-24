@@ -7,7 +7,6 @@ no warnings 'redefine';
 use Data::Dumper;
 use db();
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get);
 
 # columns:
@@ -164,10 +163,9 @@ sub update($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{event_id};
-    return undef unless defined $entry->{path};
+    for ('project_id', 'studio_id', 'event_id', 'path') {
+        return undef unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
     $entry = {
@@ -194,10 +192,9 @@ sub insert ($$) {
 sub delete ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{event_id};
-    return undef unless defined $entry->{path};
+    for ('project_id', 'studio_id', 'event_id', 'path') {
+        return undef unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
     my $query = qq{

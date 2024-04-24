@@ -6,7 +6,6 @@ no warnings 'redefine';
 
 use Data::Dumper;
 
-#use base 'Exporter';
 our @EXPORT_OK   = qw(get_columns get get_by_id insert insert_by_event_id delete);
 
 sub get_columns ($){
@@ -79,13 +78,11 @@ sub get ($$){
 sub get_by_id($$) {
     my ($config, $id) = @_;
     my $dbh = db::connect($config);
-
     my $query = qq{
 		select	*
 		from 	calcms_event_history
 		where	event_id=?
 	};
-
     my $studios = db::get( $dbh, $query, [$id] );
     return undef if ( @$studios != 1 );
     return $studios->[0];
@@ -95,7 +92,6 @@ sub insert($$) {
     my ($config, $entry) = @_;
 
     $entry->{modified_at} = time::time_to_datetime( time() );
-
     $entry->{event_id} = $entry->{id} if ( defined $entry->{id} ) && ( !( defined $entry->{event_id} ) );
     delete $entry->{id};
 
@@ -115,11 +111,9 @@ sub insert($$) {
 sub insert_by_event_id ($$){
     my ($config, $options) = @_;
 
-    return undef unless defined $options->{project_id};
-    return undef unless defined $options->{studio_id};
-    return undef unless defined $options->{series_id};
-    return undef unless defined $options->{event_id};
-    return undef unless defined $options->{user};
+    for ('project_id', 'studio_id', 'series_id', 'event_id', 'user') {
+        return undef unless defined $options->{$_}
+    };
 
     my $sql = q{
         select * from calcms_events 

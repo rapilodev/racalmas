@@ -13,7 +13,6 @@ use studios();
 use series_events();
 use user_stats();
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(
   setAttributesFromSeriesTemplate
   setAttributesFromSchedule
@@ -204,9 +203,7 @@ sub createEvent($$$) {
 	my $user        = $request->{user};
 
 	my $checklist = [ 'studio', 'user', 'create_events', 'studio_timeslots' ];
-	if ( $action eq 'create_event_from_schedule' ) {
-		push @$checklist, 'schedule' if $action eq 'create_event_from_schedule';
-	}
+    push @$checklist, 'schedule' if $action eq 'create_event_from_schedule';
 
 	my $start = $event->{start_date}, my $end = time::add_minutes_to_datetime( $event->{start_date}, $event->{duration} );
 

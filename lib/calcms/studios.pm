@@ -7,7 +7,6 @@ no warnings 'redefine';
 use Data::Dumper;
 use images();
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get get_by_id insert update delete check check_studio);
 
 sub get_columns($) {
@@ -74,8 +73,9 @@ sub get($;$) {
 sub getImageById($$) {
     my ($config, $conditions) = @_;
 
-    return undef unless defined $conditions->{project_id};
-    return undef unless defined $conditions->{studio_id};
+    for ('project_id', 'studio_id') {
+        return undef unless defined $conditions->{$_}
+    };
     my $studios = studios::get( $config, $conditions );
     return undef if scalar(@$studios) != 1;
     return $studios->[0]->{image};

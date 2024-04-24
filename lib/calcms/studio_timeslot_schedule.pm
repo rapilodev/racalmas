@@ -10,7 +10,6 @@ use studio_timeslot_dates();
 # table:   calcms_studio_timeslot_schedule
 # columns: id, project_id, studio_id, start(datetime), end(datetime), end_date(date),
 #          frequency(days), duration(minutes), create_events(days), publish_events(days)
-#use base 'Exporter';
 our @EXPORT_OK   = qw(get_columns get insert update delete);
 
 sub get_columns($) {
@@ -63,10 +62,9 @@ sub get($$) {
 sub insert($$) {
     my ($config, $entry) = @_;
 
-	return unless defined $entry->{project_id};
-	return unless defined $entry->{studio_id};
-	return unless defined $entry->{start};
-	return unless defined $entry->{end};
+    for ('project_id', 'studio_id', 'start', 'end') {
+        return unless defined $entry->{$_}
+    };
 
 	my $dbh = db::connect($config);
 	return db::insert( $dbh, 'calcms_studio_timeslot_schedule', $entry );
@@ -76,11 +74,9 @@ sub insert($$) {
 sub update($$) {
     my ($config, $entry) = @_;
 
-	return unless defined $entry->{project_id};
-	return unless defined $entry->{studio_id};
-	return unless defined $entry->{schedule_id};
-	return unless defined $entry->{start};
-	return unless defined $entry->{end};
+    for ('project_id', 'studio_id', 'schedule_id', 'start', 'end') {
+        return unless defined $entry->{$_}
+    };
 
 	$entry->{id} = $entry->{schedule_id};
 	delete $entry->{schedule_id};
@@ -107,7 +103,9 @@ sub update($$) {
 sub delete ($$){
     my ($config, $entry) = @_;
 
-	return unless defined $entry->{schedule_id};
+    for ('schedule_id') {
+        return unless defined $entry->{$_}
+    };
 
 	my $dbh = db::connect($config);
 

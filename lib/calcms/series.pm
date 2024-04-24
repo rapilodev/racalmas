@@ -5,11 +5,9 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
-
 use events();
 use images();
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(
   get_columns get insert update delete
   get_users add_user remove_user
@@ -125,8 +123,9 @@ sub get ($$) {
 sub insert ($$) {
     my ($config, $series) = @_;
 
-    return undef unless defined $series->{project_id};
-    return undef unless defined $series->{studio_id};
+    for ('project_id', 'studio_id') {
+        return undef unless defined $series->{$_}
+    };
 
     my $project_id = $series->{project_id};
     my $studio_id  = $series->{studio_id};
@@ -162,9 +161,9 @@ sub insert ($$) {
 sub update ($$) {
     my ($config, $series) = @_;
 
-    return undef unless defined $series->{project_id};
-    return undef unless defined $series->{studio_id};
-    return undef unless defined $series->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        return undef unless defined $series->{$_}
+    };
 
     my $columns = series::get_columns($config);
     my $entry = {};
@@ -198,9 +197,9 @@ sub update ($$) {
 sub delete($$) {
     my ($config, $series) = @_;
 
-    return undef unless defined $series->{project_id};
-    return undef unless defined $series->{studio_id};
-    return undef unless defined $series->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        return undef unless defined $series->{$_}
+    };
 
     my $project_id = $series->{project_id};
     my $studio_id  = $series->{studio_id};
@@ -328,11 +327,9 @@ sub get_users ($$) {
 sub add_user ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{project_id};
-    return unless defined $entry->{studio_id};
-    return unless defined $entry->{series_id};
-    return unless defined $entry->{user_id};
-    return unless defined $entry->{user};
+    for ('project_id', 'studio_id', 'series_id', 'user_id', 'user') {
+        return unless defined $entry->{$_}
+    };
 
     my $query = qq{
 		select	id
@@ -358,9 +355,9 @@ sub add_user ($$) {
 sub remove_user ($$) {
     my ($config, $condition) = @_;
 
-    return unless defined $condition->{project_id};
-    return unless defined $condition->{studio_id};
-    return unless defined $condition->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        return unless defined $condition->{$_}
+    };
 
     my @conditions  = ();
     my @bind_values = ();
@@ -441,7 +438,6 @@ sub search_events ($$$) {
 #get events (only assigned ones) by project_id,studio_id,series_id,
 sub get_events ($$) {
     my ($config, $options) = @_;
-
     return [] if defined( $options->{series_id} ) && ( $options->{series_id} <= 0 );
 
     my @conditions  = ();
@@ -611,8 +607,9 @@ sub get_event ($$) {
 sub get_event_age($$) {
     my ($config, $options) = @_;
 
-    return undef unless defined $options->{project_id};
-    return undef unless defined $options->{studio_id};
+    for ('project_id', 'studio_id') {
+        return undef unless defined $options->{$_}
+    };
 
     my @conditions  = ();
     my @bind_values = ();
@@ -694,9 +691,9 @@ sub is_event_older_than_days ($$) {
 sub get_next_episode($$) {
     my ($config, $options) = @_;
 
-    return 0 unless defined $options->{project_id};
-    return 0 unless defined $options->{studio_id};
-    return 0 unless defined $options->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        return 0 unless defined $options->{$_}
+    };
 
     #return if episodes should not be counted for this series
     my $query = q{
@@ -733,9 +730,9 @@ sub get_next_episode($$) {
 sub get_images ($$) {
     my ($config, $options) = @_;
 
-    return undef unless defined $options->{project_id};
-    return undef unless defined $options->{studio_id};
-    return undef unless defined $options->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        return undef unless defined $options->{$_}
+    };
 
     #get images from all events of the series
     my $dbh    = db::connect($config);
@@ -793,10 +790,9 @@ sub get_images ($$) {
 sub assign_event($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{series_id};
-    return undef unless defined $entry->{event_id};
+    for ('project_id', 'studio_id', 'series_id', 'event_id') {
+        return undef unless defined $entry->{$_}
+    };
     $entry->{manual} = 0 unless ( defined $entry->{manual} ) && ( $entry->{manual} eq '1' );
 
     my $conditions = '';
@@ -835,10 +831,9 @@ sub assign_event($$) {
 sub unassign_event($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{project_id};
-    return unless defined $entry->{studio_id};
-    return unless defined $entry->{series_id};
-    return unless defined $entry->{event_id};
+    for ('project_id', 'studio_id', 'series_id', 'event_id') {
+        return undef unless defined $entry->{$_}
+    };
 
     my $conditions = '';
     $conditions = 'and manual=1' if ( defined $entry->{manual} ) && ( $entry->{manual} eq '1' );
@@ -908,11 +903,10 @@ sub set_event_ids ($$$$$) {
     my ($config, $project_id, $studio_id, $serie, $event_ids) = @_;
 
     my $serie_id = $serie->{series_id};
-    return unless defined $project_id;
-    return unless defined $studio_id;
-    return unless defined $serie_id;
-    return unless defined $event_ids;
-
+    for ('project_id', 'studio_id', 'series_id', 'event_id') {
+        return unless defined $serie->{$_}
+    };
+ 
     #make lookup table from events
     my $event_id_hash = { map { $_ => 1 } @$event_ids };
 
@@ -933,7 +927,6 @@ sub set_event_ids ($$$$$) {
     #insert events from list, not found in db
     for my $event_id (@$event_ids) {
 
-        #print "insert event_id $event_id\n";
         series::assign_event(
             $config,
             {
@@ -947,7 +940,6 @@ sub set_event_ids ($$$$$) {
 
     #delete events found in db, but not in list
     for my $event_id ( keys %$found ) {
-
         #print "delete event_id $event_id\n";
         series::unassign_event(
             $config,
@@ -971,10 +963,10 @@ sub can_user_update_events ($$) {
     my $config      = $request->{config};
     my $permissions = $request->{permissions};
 
+    for ('project_id', 'studio_id', 'series_id') {
+        return 0 unless defined $options->{$_}
+    };
     return 0 unless defined $request->{user};
-    return 0 unless defined $options->{project_id};
-    return 0 unless defined $options->{studio_id};
-    return 0 unless defined $options->{series_id};
 
     return 1 if ( defined $permissions->{update_event_of_others} ) && ( $permissions->{update_event_of_others} eq '1' );
     return 1 if ( defined $permissions->{is_admin} )               && ( $permissions->{is_admin} eq '1' );
@@ -991,10 +983,10 @@ sub can_user_create_events ($$) {
     my $config      = $request->{config};
     my $permissions = $request->{permissions};
 
+    for ('project_id', 'studio_id', 'series_id') {
+        return 0 unless defined $options->{$_}
+    };
     return 0 unless defined $request->{user};
-    return 0 unless defined $options->{project_id};
-    return 0 unless defined $options->{studio_id};
-    return 0 unless defined $options->{series_id};
 
     return 1 if ( defined $permissions->{create_event} ) && ( $permissions->{create_event} eq '1' );
     return 1 if ( defined $permissions->{is_admin} )     && ( $permissions->{is_admin} eq '1' );
@@ -1009,9 +1001,9 @@ sub is_series_assigned_to_user ($$) {
     my $config      = $request->{config};
     my $permissions = $request->{permissions};
 
-    return 0 unless defined $options->{project_id};
-    return 0 unless defined $options->{studio_id};
-    return 0 unless defined $options->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        return 0 unless defined $options->{$_}
+    };
     return 0 unless defined $request->{user};
 
     my $series_users = series::get_users(
@@ -1034,11 +1026,10 @@ sub is_event_assigned_to_user ($$) {
 
     my $config = $request->{config};
 
-    return "missing user"       unless defined $request->{user};
-    return "missing project_id" unless defined $options->{project_id};
-    return "missing studio_id"  unless defined $options->{studio_id};
-    return "missing series_id"  unless defined $options->{series_id};
-    return "missing event_id"   unless defined $options->{event_id};
+    for ('project_id', 'studio_id', 'series_id', 'event_id') {
+        return "missing $_" unless defined $options->{$_}
+    };
+    return "missing user" unless defined $request->{user};
 
     #check roles
     my $user_studios = uac::get_studios_by_user(
@@ -1081,9 +1072,9 @@ sub is_event_assigned_to_user ($$) {
 sub get_rebuilt_episodes ($$) {
     my ($config, $options) = @_;
 
-    return "missing project_id" unless defined $options->{project_id};
-    return "missing studio_id"  unless defined $options->{studio_id};
-    return "missing series_id"  unless defined $options->{series_id};
+    for ('project_id', 'studio_id', 'series_id') {
+        return undef unless defined $options->{$_}
+    };
 
     # ignore project and studio as series can be used in multiple studios
     my $events = series::get_events(
@@ -1151,10 +1142,9 @@ sub get_event_key ($) {
 sub update_recurring_events ($$) {
     my ($config, $options) = @_;
 
-    return "missing project_id" unless defined $options->{project_id};
-    return "missing studio_id"  unless defined $options->{studio_id};
-    return "missing series_id"  unless defined $options->{series_id};
-    return "missing event_id"   unless defined $options->{event_id};
+    for ('project_id', 'studio_id', 'series_id', 'event_id') {
+        return "missing $_" unless defined $options->{$_};
+    };
 
     my $events = series::get_events(
         $config,
@@ -1221,10 +1211,9 @@ sub update_recurring_events ($$) {
 sub update_recurring_event($$) {
     my ($config, $event) = @_;
 
-    return undef unless defined $event->{event_id};
-    return undef unless defined $event->{recurrence};
-    return undef unless defined $event->{recurrence_count};
-    return undef unless defined $event->{rerun};
+    for ('event_id', 'recurrence', 'recurrence_count', 'rerun') {
+        return undef unless defined $event->{$_}
+    };
 
     return unless $event->{event_id} =~ /^\d+$/;
     return unless $event->{recurrence} =~ /^\d+$/;

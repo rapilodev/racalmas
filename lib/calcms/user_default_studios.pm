@@ -3,7 +3,6 @@ package user_default_studios;
 use strict;
 use warnings;
 no warnings 'redefine';
-
 use Data::Dumper;
 
 # table:   calcms_user_default_studios

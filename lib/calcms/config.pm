@@ -4,15 +4,10 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
-
 use FindBin();
-
-#use base 'Exporter';
 our @EXPORT_OK = qw(get set);
 
 my $config = undef;
-
-
 sub get($) {
     my ($filename) = @_;
     return read_config($filename);

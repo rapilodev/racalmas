@@ -17,7 +17,6 @@ use series_dates();
 # week_of_month (1..5)
 # month
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get insert update delete);
 
 sub get_columns($) {
@@ -82,9 +81,9 @@ sub get($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{start};
+    for ('project_id', 'studio_id', 'start' ) {
+        return undef unless defined $entry->{$_}
+    };
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_work_schedule', $entry );
 }
@@ -93,10 +92,9 @@ sub insert ($$) {
 sub update ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{schedule_id};
-    return undef unless defined $entry->{start};
+    for ('project_id', 'studio_id', 'schedule_id', 'start' ) {
+        return undef unless defined $entry->{$_}
+    };
 
     my $dbh         = db::connect($config);
     my @keys        = sort keys %$entry;
@@ -120,9 +118,9 @@ sub update ($$) {
 sub delete($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{schedule_id};
+    for ('project_id', 'studio_id', 'schedule_id' ) {
+        return undef unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
 

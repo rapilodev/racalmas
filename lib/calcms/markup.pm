@@ -14,7 +14,6 @@ use Text::Markdown();
 
 use log();
 
-#use base 'Exporter';
 our @EXPORT_OK =
   qw(fix_line_ends html_to_creole creole_to_html creole_to_plain plain_to_ical ical_to_plain ical_to_xml html_to_plain fix_utf8 uri_encode compress base26);
 

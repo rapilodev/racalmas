@@ -1,5 +1,4 @@
 package params;
-
 use strict;
 use warnings;
 no warnings 'redefine';
@@ -7,7 +6,6 @@ no warnings 'redefine';
 use Data::Dumper;
 use Apache2::Request();
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(get isJson);
 
 my $isJson = 0;

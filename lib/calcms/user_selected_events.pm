@@ -3,7 +3,6 @@ package user_selected_events;
 use strict;
 use warnings;
 no warnings 'redefine';
-
 use Data::Dumper;
 
 # table:   calcms_user_selected_events
@@ -24,10 +23,9 @@ sub get ($$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    return unless defined $condition->{user};
-    return unless defined $condition->{project_id};
-    return unless defined $condition->{studio_id};
-    return unless defined $condition->{series_id};
+    for ('user', 'project_id', 'studio_id', 'series_id') {
+        return unless defined $condition->{$_}
+    };
 
     for my $field ('user', 'project_id', 'studio_id', 'series_id',
         'filter_project_studio', 'filter_series'
@@ -55,11 +53,9 @@ sub get ($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
-    return unless defined $entry->{project_id};
-    return unless defined $entry->{studio_id};
-    return unless defined $entry->{series_id};
-    return unless defined $entry->{selected_event};
+    for ('user', 'project_id', 'studio_id', 'series_id', 'selected_event') {
+        return unless defined $entry->{$_}
+    };
 
     my $dbh = db::connect($config);
     print STDERR "insert".Dumper($entry );
@@ -96,10 +92,9 @@ sub update($$) {
 sub delete ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
-    return unless defined $entry->{project_id};
-    return unless defined $entry->{studio_id};
-    return unless defined $entry->{series_id};
+    for ('user', 'project_id', 'studio_id', 'series_id') {
+        return unless defined $entry->{$_}
+    };
 
     my $query = qq{
 		delete 

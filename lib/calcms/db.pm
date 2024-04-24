@@ -187,7 +187,7 @@ sub next_id ($$){
     my $query = qq{
 		select max(id) id
 		from $table
-		where 1 
+		where 1
 	};
     my $results = get( $dbh, $query );
     return $results->[0]->{id} + 1;
@@ -200,7 +200,7 @@ sub get_max_id($$) {
     my $query = qq{
 		select max(id) id
 		from $table
-		where 1 
+		where 1
 	};
     my $results = get( $dbh, $query );
     return $results->[0]->{id};

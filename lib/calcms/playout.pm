@@ -6,11 +6,11 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc();
+
 use db();
 use time();
 use series_events();
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(get_columns get sync);
 
 sub get_columns ($) {
@@ -18,8 +18,6 @@ sub get_columns ($) {
     my $dbh = db::connect($config);
     return db::get_columns_hash( $dbh, 'calcms_playout' );
 }
-
-
 
 # get playout entries
 sub get_scheduled($$) {
@@ -127,8 +125,9 @@ sub get_scheduled($$) {
 # get playout entries
 sub get($$) {
     my ($config, $condition) = @_;
-
-    return undef unless defined $condition->{studio_id};
+    for ('studio_id') {
+        return undef unless defined $condition->{$_}
+    };
 
     my $date_range_include = 0;
     $date_range_include = 1
@@ -227,11 +226,9 @@ sub get($$) {
 sub sync ($$) {
     my ($config, $options) = @_;
 
-    return undef unless defined $options->{project_id};
-    return undef unless defined $options->{studio_id};
-    return undef unless defined $options->{from};
-    return undef unless defined $options->{till};
-    return undef unless defined $options->{events};
+    for ('project_id', 'studio_id', 'from', 'till', 'events') {
+        return undef unless defined $options->{$_}
+    };
 
     my $project_id = $options->{project_id};
     my $studio_id  = $options->{studio_id};

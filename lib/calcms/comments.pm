@@ -11,7 +11,6 @@ use markup();
 use template();
 use time();
 
-#use base 'Exporter';
 our @EXPORT_OK =
   qw(init get_cached_or_render get modify_results render configure_cache get_query get_by_event get_level get_events check insert set_lock_status set_news_status lock update_comment_count sort);
 

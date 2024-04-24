@@ -3,11 +3,9 @@ package user_sessions;
 use strict;
 use warnings;
 no warnings 'redefine';
-
 use Digest::MD5();
 
 use time;
-
 # access user name by session id
 
 # table:   calcms_user_sessions
@@ -47,7 +45,8 @@ sub get($$) {
         push @bind_values, $condition->{user};
     }
 
-    if ( ( defined $condition->{session_id} ) && ( $condition->{session_id} ne '' ) ) {
+    if ((defined $condition->{session_id}) && ($condition->{session_id} ne ''))
+    {
         push @conditions,  'session_id=?';
         push @bind_values, $condition->{session_id};
     }
@@ -75,8 +74,9 @@ sub get($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{user};
-    return undef unless defined $entry->{timeout};
+    for ('user', 'timeout') {
+        return undef unless defined $entry->{$_}
+    };
 
     unless ( defined $entry->{session_id} ) {
         my $md5 = Digest::MD5->new();
@@ -95,8 +95,9 @@ sub insert ($$) {
 sub start($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{user};
-    return undef unless defined $entry->{timeout};
+    for ('user', 'timeout') {
+        return undef unless defined $entry->{$_}
+    };
 
     my $id = insert(
         $config,
@@ -179,7 +180,6 @@ sub update ($$) {
     my @keys        = sort keys %$entry;
     my $values      = join( ",", map { $_ . '=?' } @keys );
     my @bind_values = map { $entry->{$_} } @keys;
-
     push @bind_values, $entry->{session_id};
 
     my $query = qq{
@@ -197,14 +197,12 @@ sub delete($$) {
     return undef unless defined $entry->{session_id};
 
     my $dbh = db::connect($config);
-
     my $query = qq{
         delete 
         from calcms_user_sessions 
         where session_id=?
     };
     my $bind_values = [ $entry->{session_id} ];
-
     return db::put( $dbh, $query, $bind_values );
 }
 

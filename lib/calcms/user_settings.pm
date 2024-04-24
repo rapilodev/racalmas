@@ -9,7 +9,6 @@ use series_dates();
 
 # table:   calcms_user_settings
 # columns: user, colors
-#use base 'Exporter';
 our @EXPORT_OK = qw(getColors getColorCss get insert update delete get_columns defaultColors);
 
 our $defaultColors = [
@@ -166,7 +165,9 @@ sub get ($$) {
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
+    for ('user') {
+        return unless defined $entry->{$_};
+    }
    
     my $dbh = db::connect($config);
     return db::insert( $dbh, 'calcms_user_settings', $entry );
@@ -175,7 +176,9 @@ sub insert ($$) {
 sub update($$) {
     my ($config, $entry) = @_;
 
-    return unless ( defined $entry->{user} );
+    for ('user') {
+        return unless defined $entry->{$_};
+    }
 
     my $dbh         = db::connect($config);
     my @keys        = sort keys %$entry;
@@ -196,7 +199,9 @@ sub update($$) {
 sub delete ($$) {
     my ($config, $entry) = @_;
 
-    return unless ( defined $entry->{user} );
+    for ('user') {
+        return unless defined $entry->{$_};
+    }
 
     my $dbh = db::connect($config);
 

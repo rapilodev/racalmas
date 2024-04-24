@@ -3,7 +3,6 @@ package user_day_start;
 use strict;
 use warnings;
 no warnings 'redefine';
-
 use Data::Dumper;
 
 # table:   calcms_user_day_start
@@ -22,9 +21,9 @@ sub get ($$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    return unless defined $condition->{user};
-    return unless defined $condition->{project_id};
-    return unless defined $condition->{studio_id};
+    for ('user', 'project_id', 'studio_id') {
+        return unless defined $condition->{$_}
+    };
 
     for my $field ('user', 'project_id', 'studio_id'){
         if ( ( defined $condition->{$field} ) && ( $condition->{$field} ne '' ) ) {
@@ -59,10 +58,9 @@ sub insert_or_update($$){
 sub insert ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
-    return unless defined $entry->{project_id};
-    return unless defined $entry->{studio_id};
-    return unless defined $entry->{day_start};
+    for ('user', 'project_id', 'studio_id', 'day_start') {
+        return unless defined $entry->{$_};
+    }
 
     my $dbh = db::connect($config);
     print STDERR "insert".Dumper($entry );
@@ -96,9 +94,9 @@ sub update($$) {
 sub delete ($$) {
     my ($config, $entry) = @_;
 
-    return unless defined $entry->{user};
-    return unless defined $entry->{project_id};
-    return unless defined $entry->{studio_id};
+    for ('user', 'project_id', 'studio_id') {
+        return unless defined $entry->{$_}
+    };
 
     my $query = qq{
 		delete 

@@ -8,7 +8,6 @@ use Data::Dumper;
 use uac();
 use user_settings();
 
-#use base 'Exporter';
 our @EXPORT_OK = qw(get getJavascript);
 
 # get localisation
@@ -46,17 +45,8 @@ sub get($$) {
 
     #get all comma separated po files
     for my $file ( split /\,/, $files ) {
-
-        #read default language
-        #my $po_file=$config->{locations}->{admin_pot_dir}.'/en/'.$file.'.po';
-        #$loc=read_po_file($po_file, $loc);
-
-        #read selected language
-        #if($language ne 'en'){
         my $po_file = $config->{locations}->{admin_pot_dir} . '/' . $language . '/' . $file . '.po';
         $loc = read_po_file( $po_file, $loc );
-
-        #}
     }
     return $loc;
 }
@@ -79,7 +69,6 @@ sub read_po_file($$) {
     while (<$file>) {
         my $line = $_;
 
-        #print STDERR $line;
         if ( $line =~ /^msgid\s*\"(.*)\"\s*$/ ) {
             $key = $1;
             $key =~ s/\'//g;
