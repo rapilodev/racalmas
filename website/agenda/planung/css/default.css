@@ -561,7 +561,7 @@ table.tablesorter tr {
     min-width: 5rem;
     border-radius: 1rem;
     color: #fff;
-    height: 2.3rem;
+    min-height: 2.3rem;
     position: relative;
     transition: background-color .3s cubic-bezier(.05, .05, .05, 1),
         box-shadow .3s cubic-bezier(.05, .05, .05, 1);
