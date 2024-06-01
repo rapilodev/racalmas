@@ -17,7 +17,6 @@ if ( $0 =~ /all-events.*?\.cgi$/ ) {
     my $config = config::getFromScriptLocation();
 
     $params->{template} = '' unless defined $params->{template};
-    $params->{all_recordings} = 1 if $params->{template} =~ /events_playout/; # deprecated
     $params->{exclude_event_images} = 1;
 
     my $request = {
