@@ -468,100 +468,51 @@ sub add_recurrence_dates {
 
 sub calc_dates {
     my ($config, $result, $params, $previous_result, $time_diff) = @_;
-    $params          ||= {};
+
+    $params ||= {};
     $previous_result ||= {};
-    $time_diff       ||= '';
+    $time_diff ||= '';
 
-    $result->{utc_offset} = $time_diff;
-    $result->{time_zone}  = $config->{date}->{time_zone};
     my $language = $config->{date}->{language} || 'en';
+    $result->{utc_offset} = $time_diff;
+    $result->{time_zone} = $config->{date}->{time_zone};
+    $result->{start_datetime} = $result->{start} =~ s/ /T/r;
+    $result->{end_datetime} = $result->{end} =~ s/ /T/r;
+    $result->{dtstart} = $result->{start_datetime} =~ s/[:\-]//rg;
+    $result->{dtend} = $result->{end_datetime} =~ s/[:\-]//gr;
 
-    $result->{start_datetime} = $result->{start};
-    $result->{start_datetime} =~ s/ /T/gi;
-    if ( $result->{start_datetime} =~ /(\d\d\d\d)\-(\d\d)\-(\d\d)T(\d\d)\:(\d\d)/ ) {
-        $result->{start_year}   = $1;
-        $result->{start_month}  = $2;
-        $result->{start_day}    = $3;
-        $result->{start_hour}   = $4;
-        $result->{start_minute} = $5;
+    if ($result->{start_datetime} =~ /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/) {
+        @{$result}{qw(start_year start_month start_day start_hour start_minute)} = ($1, $2, $3, $4, $5);
     }
 
-    unless ( defined $result->{day} ) {
-        my $d    = time::datetime_to_array( $result->{start} );
-        my $hour = $d->[3];
-        if ( ( defined $hour ) && ( $hour < 6 ) ) {
-            $result->{day} = time::add_days_to_date( $result->{start}, -1 );
-        } else {
-            $result->{day} = time::datetime_to_date( $result->{start} );
-        }
-    }
-    unless ( defined $result->{start_date} ) {
-        $result->{start_date} = time::datetime_to_date( $result->{start} );
-    }
-    unless ( defined $result->{end_date} ) {
-        $result->{end_date} = time::datetime_to_date( $result->{end} );
-    }
+    $result->{day} = time::datetime_to_array($result->{start})->[3] < 6
+        ? time::add_days_to_date($result->{start}, -1)
+        : time::datetime_to_date($result->{start})
+        unless defined $result->{day};
 
-    $result->{dtstart} = $result->{start_datetime};
-    $result->{dtstart} =~ s/[\:\-]//gi;
+    $result->{start_date} ||= time::datetime_to_date($result->{start});
+    $result->{end_date} ||= time::datetime_to_date($result->{end});
 
-    if (   ( defined $params->{template} )
-        && ( $params->{template} =~ /(\.txt|\.json)/ ) )
-    {
-        $result->{start_utc_epoch} = time::datetime_to_utc( $result->{start_datetime}, $config->{date}->{time_zone} );
-    }
-    if (   ( defined $params->{template} )
-        && ( $params->{template} =~ /(\.xml)/ ) )
-    {
-        $result->{start_datetime_utc} =
-          time::datetime_to_utc_datetime( $result->{start_datetime}, $config->{date}->{time_zone} );
-    }
+    $result->{start_utc_epoch} = time::datetime_to_utc($result->{start_datetime}, $config->{date}->{time_zone});
+    $result->{start_datetime_utc} = time::datetime_to_utc_datetime($result->{start_datetime}, $config->{date}->{time_zone});
+    $result->{end_utc_epoch} = time::datetime_to_utc($result->{end_datetime}, $config->{date}->{time_zone});
+    $result->{end_datetime_utc} = time::datetime_to_utc_datetime($result->{end_datetime}, $config->{date}->{time_zone});
 
-    $result->{end_datetime} = $result->{end};
-    $result->{end_datetime} =~ s/ /T/gi;
-
-    $result->{dtend} = $result->{end_datetime};
-    $result->{dtend} =~ s/[\:\-]//gi;
-
-    if (   ( defined $params->{template} )
-        && ( $params->{template} =~ /(\.txt|\.json)/ ) )
-    {
-        $result->{end_utc_epoch} = time::datetime_to_utc( $result->{end_datetime}, $config->{date}->{time_zone} );
-    }
-    if (   ( defined $params->{template} )
-        && ( $params->{template} =~ /(\.xml)/ ) )
-    {
-        $result->{end_datetime_utc} =
-          time::datetime_to_utc_datetime( $result->{end_datetime}, $config->{date}->{time_zone} );
-    }
-
-    if (   ( defined $previous_result )
-        && ( defined $previous_result->{start_date} )
-        && ( $result->{start_date} ne $previous_result->{start_date} ) )
-    {
-        $result->{is_first_of_day}         = 1;
+    if (defined $previous_result && defined $previous_result->{start_date}
+      && $result->{start_date} ne $previous_result->{start_date}) {
+        $result->{is_first_of_day} = 1;
         $previous_result->{is_last_of_day} = 1;
     }
 
-    $result->{start_date_name} =
-      time::date_format( $config, $result->{start_date}, $language );
-    $result->{end_date_name} =
-      time::date_format( $config, $result->{end_date}, $language );
+    $result->{start_date_name} = time::date_format($config, $result->{start_date}, $language);
+    $result->{end_date_name} = time::date_format($config, $result->{end_date}, $language);
 
-    if ( $result->{start} =~ /(\d\d\:\d\d)\:\d\d/ ) {
-        $result->{start_time_name} = $1;
-        $result->{start_time}      = $1;
-    }
+    $result->{start_time} = $result->{start_time_name} = $1 if $result->{start} =~ /(\d{2}:\d{2}):\d{2}/;
+    $result->{end_time} = $result->{end_time_name} = $1 if $result->{end} =~ /(\d{2}:\d{2}):\d{2}/;
 
-    if ( $result->{end} =~ /(\d\d\:\d\d)\:\d\d/ ) {
-        $result->{end_time_name} = $1;
-        $result->{end_time}      = $1;
-    }
-
-    if ( defined $result->{weekday} ) {
-        my $language = $config->{date}->{language} || 'en';
-        my $weekdayIndex = time::getWeekdayIndex( $result->{weekday} ) || 0;
-        $result->{weekday_name}       = time::getWeekdayNames($language)->[$weekdayIndex];
+    if (defined $result->{weekday}) {
+        my $weekdayIndex = time::getWeekdayIndex($result->{weekday}) || 0;
+        $result->{weekday_name} = time::getWeekdayNames($language)->[$weekdayIndex];
         $result->{weekday_short_name} = time::getWeekdayNamesShort($language)->[$weekdayIndex];
     }
 
