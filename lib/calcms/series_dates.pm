@@ -521,7 +521,7 @@ sub delete ($$) {
 sub getDatesWithoutEvent ($$) {
     my ($config, $options) = @_;
 
-    for ('project_id', 'studio_id', 'form', 'till') {
+    for ('project_id', 'studio_id', 'from', 'till') {
         return unless defined $options->{$_}
     };
 
