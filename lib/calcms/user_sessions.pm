@@ -86,9 +86,11 @@ sub insert ($$) {
 
     $entry->{pid}        = $$;
     $entry->{expires_at} = time::time_to_datetime( time() + $entry->{timeout} );
-
+    $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
-    return db::insert( $dbh, 'calcms_user_sessions', $entry );
+    my $result =  db::insert( $dbh, 'calcms_user_sessions', $entry );
+    $config->{access}->{write} = 0;
+    return $result;
 }
 
 # start session and return generated session id
@@ -176,6 +178,7 @@ sub update ($$) {
 
     return undef unless defined $entry->{session_id};
 
+    $config->{access}->{write} = 1;
     my $dbh         = db::connect($config);
     my @keys        = sort keys %$entry;
     my $values      = join( ",", map { $_ . '=?' } @keys );
@@ -187,7 +190,9 @@ sub update ($$) {
         set    $values
         where  session_id=?
     };
-    return db::put( $dbh, $query, \@bind_values );
+    my $result = db::put( $dbh, $query, \@bind_values );
+    $config->{access}->{write} = 0;
+    return $result;
 }
 
 #map schedule id to id
