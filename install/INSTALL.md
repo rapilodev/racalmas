@@ -96,6 +96,7 @@ apt-get install <deb-package>
     libmime-tools-perl
     libsession-token-perl
     libtext-multimarkdown-perl
+    libtext-unidecode
     libtext-wikicreole-perl
     liburi-escape-xs-perl
     perlmagick
