@@ -2,8 +2,19 @@ table#events{
     transition:all 2s;
 }
 
-table#events.done{
-    background:#cfc;
+table#events div.error{
+    background: #f33;
+    color:white;
+    padding:1rem;
+    width: 30rem;
+}
+
+
+table#events div.done{
+    background: #3f3;
+    color:white;
+    padding:1rem;
+    width: 30rem;
 }
 
 table#events td:nth-of-type(1){

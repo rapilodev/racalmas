@@ -1,13 +1,20 @@
 function register_buttons() {
     $("#forms form").on('click', 'button', function( event ) {
         event.preventDefault();
-        var form = $(this).closest('form');
+        let form = $(this).closest('form');
+        let formId = form.attr('id');
+        let table = $('#' + formId+" table");
+        let  status = table.find("td.result div");
+        status.text('').removeClass("error").removeClass("done");
+
         $.post("notify-events.cgi", form.serialize())
-        .done( function(data) {
-            var content = $(data).find("#content");
-            $('#result').html(content);
-            var formId = form.attr('id');
-            $('#' + formId+" table").addClass("done");
+        .always( function(data) {
+            if (data.includes("done")){
+                status.text("ok").removeClass("error").addClass("done");
+            } else {
+                status.text(data).removeClass("ok").addClass("error");
+            }
+            table.find("tr.result").show();
         });
     });
 }

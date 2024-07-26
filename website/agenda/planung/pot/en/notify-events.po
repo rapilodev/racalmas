@@ -28,3 +28,5 @@ msgstr "Content"
 msgid "show_details"
 msgstr "Show Details"
 
+msgid "result"
+msgstr "Result"

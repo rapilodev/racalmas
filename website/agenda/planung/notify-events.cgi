@@ -6,6 +6,7 @@ no warnings 'redefine';
 use utf8;
 
 use Data::Dumper;
+use Try::Tiny;
 
 use params();
 use config();
@@ -53,11 +54,10 @@ my $request = {
 
 #set user at params->presets->user
 $request = uac::prepare_request( $request, $user_presets );
-
 $params = $request->{params}->{checked};
 
 #show header
-unless ( params::isJson() || ( $params->{template} =~ /\.txt/ ) ) {
+unless ( params::isJson() || ( $params->{template} =~ /\.txt/ ) || $params->{action}eq'send' ) {
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
     $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
     template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
@@ -162,8 +162,13 @@ sub sendMail {
     $mail->{Cc}      = $params->{cc}      if defined $params->{cc};
     $mail->{Subject} = $params->{subject} if defined $params->{subject};
     $mail->{Data}    = $params->{content} if defined $params->{content};
-    my $result = mail::send($mail);
-    print "Content-type:text/plain\n\nresult:".Dumper($result);
+
+    try {
+        my $result = mail::send($mail);
+        print "Content-type:text/plain\n\ndone:$result\n";
+    } catch {
+        printf "Content-type:text/plain\n\nresult:%s\n", $_->{message} // $_;
+    }
 }
 
 sub getMail {
@@ -214,8 +219,6 @@ sub eventToText {
     $s .= $event->{user_excerpt} . "\n";
     $s .= $event->{topic} . "\n";
     $s .= $event->{content} . "\n";
-
-    #print STDERR "DUMP\n$s";
     return $s;
 
 }

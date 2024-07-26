@@ -43,15 +43,15 @@
             <TMPL_IF playout><img src="image/play.svg" title="playout"></TMPL_IF>
         </td>
 
-    <TMPL_IF noRecipient>
+<TMPL_IF noRecipient>
         <td></td>
-        </tr>
+    </tr>
 
-        <tr>
-            <td>Warning</td>
-            <td><div class="error">no recipient configured at series!</div></td>
-        </tr>
-    <TMPL_ELSE>
+    <tr>
+        <td>Warning</td>
+        <td><div class="error">no recipient configured at series!</div></td>
+    </tr>
+<TMPL_ELSE>
         <td class="action"><button type="submit"><TMPL_VAR .loc.button_send></button></td>
     </tr>
 
@@ -63,12 +63,18 @@
     </tr>
     </TMPL_IF>
 
+    <tr class="result" style="display:none">
+        <td><TMPL_VAR .loc.result></td>
+        <td class="result"><div></div></td>
+    </tr>
+
     <TMPL_IF mail.Subject>
     <tr class="subject details">
         <td><TMPL_VAR .loc.subject></td>
         <td class="mailSubject"><input name="subject" value="<TMPL_VAR mail.Subject>"></td>
     </tr>
     </TMPL_IF>
+
     <TMPL_IF mail.From>
     <tr class="details">
         <td><TMPL_VAR .loc.from></td>
@@ -97,7 +103,7 @@
     </tr>
     </TMPL_IF>
 
-    </TMPL_IF>
+</TMPL_IF>
 </table>
 </form>
 </TMPL_LOOP>
