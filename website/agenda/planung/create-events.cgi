@@ -29,7 +29,6 @@ my $config = config::get('../config/config.cgi');
 my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
 return if ( ( !defined $user ) || ( $user eq '' ) );
 
-#print STDERR $params->{project_id}."\n";
 my $user_presets = uac::get_user_presets(
     $config,
     {
@@ -42,7 +41,6 @@ $params->{default_studio_id} = $user_presets->{studio_id};
 $params = uac::setDefaultStudio( $params, $user_presets );
 $params = uac::setDefaultProject( $params, $user_presets );
 
-#print STDERR $params->{project_id}."\n";
 my $request = {
     url => $ENV{QUERY_STRING} || '',
     params => {
@@ -80,7 +78,6 @@ sub show_events {
         uac::permissions_denied('read_events');
         return;
     }
-
     my $events = getDates( $config, $request );
     $params->{events} = $events;
     $params->{total}  = scalar(@$events);
@@ -107,8 +104,6 @@ sub create_events {
     print STDERR "<pre>found " . ( scalar @$dates ) . " dates\n";
     my $events = [];
     for my $date (@$dates) {
-
-        #print STDERR $date->{start}."\n";
         push @$events, createEvent( $config, $request, $date );
     }
     $params->{events} = $events;
