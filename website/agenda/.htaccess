@@ -38,6 +38,7 @@ RewriteRule ^playlistLong/(.*)$ 		events.cgi?template=event_playlist_long.html&t
 RewriteRule ^playlistUtc/(.*)$          events.cgi?template=event_utc_time.json&limit=1
 
 RewriteRule ^running_event/(.*)$ 		events.cgi?template=event_running.html&time=now&limit=1&$1 [L]
+RewriteRule ^running_event_id/(.*)$ 		events.cgi?template=event_running_id.html&time=now&limit=1&$1 [L]
 RewriteRule ^feed/(.*)$ 			events.cgi?template=event.atom.xml&time=future&limit=100&$1 [L]
 RewriteRule ^feed.xml[\?]?(.*)$                 events.cgi?template=event.atom.xml&time=future&limit=100&$1 [L]
 RewriteRule ^atom/(.*)$ 			events.cgi?template=event.atom.xml&time=future&limit=100&$1 [L]
@@ -106,15 +107,3 @@ Options -Indexes +FollowSymLinks +MultiViews +ExecCGI
 </IfModule>
 
 Require all granted
-
-## compress
-#<IfModule mod_headers.c>
-#	SetOutputFilter DEFLATE
-#	SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|zip|mp3)$ no-gzip dont-vary
-#	Header append Vary User-Agent env=!dont-vary
-#
-#    <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
-#        Header set Cache-Control "max-age=600, public"
-#    </FilesMatch>
-#</IfModule>
-
