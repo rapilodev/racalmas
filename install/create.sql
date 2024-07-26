@@ -1816,3 +1816,5 @@ CHANGE COLUMN `email` `email` VARCHAR(100) NULL DEFAULT NULL ;
 
 ALTER TABLE `calcms`.`calcms_user_selected_events`
 CHANGE COLUMN `user` `user` VARCHAR(100) NOT NULL ;
+
+CREATE INDEX idx_covering ON calcms_events (start, end, id);
