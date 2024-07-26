@@ -533,7 +533,7 @@ sub get_listen_key($$){
     my $archive_dir = $config->{locations}->{local_archive_dir};
     my $archive_url = $config->{locations}->{listen_url};
     return $event->{listen_url} = $archive_url . '/' . $event->{listen_key} if 
-        defined $event->{listen_key} and -l $archive_dir .'/'. $event->{listen_key};
+        defined $event->{listen_key} && -l $archive_dir .'/'. $event->{listen_key};
     set_listen_key($config, $event) unless $event->{listen_key};
 }
 
