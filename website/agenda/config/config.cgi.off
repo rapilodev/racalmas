@@ -91,7 +91,7 @@ domain                      ${DOMAIN}
 
 <permissions>
     result_limit            500
-
+    image_upload_limit      5 MB
     # limit creating comments in days before and after start of event
     no_new_comments_before  10
     no_new_comments_after   60

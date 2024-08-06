@@ -1,3 +1,8 @@
+function showError(error) {
+    if ($('div.error').length==0) $('#content').prepend('<div class="error"></div>');
+    $('div.error').html(error).show();
+}
+
 function initUploadDialog(){
     var url='image-upload.cgi?project_id='+ getProjectId()+"&studio_id="+getStudioId();
     updateContainer("image-tabs-upload", url, pageLeaveHandler);
@@ -7,16 +12,14 @@ function uploadImage(){
     console.log("upload")
     var form=$("#img_upload");
     var fd = new FormData(form[0]);
-    var rq = $.ajax({
+    $.ajax({
         url: 'image-upload.cgi',  
         type: 'POST',
         data: fd,
         cache: false,
         contentType: false,
         processData: false
-    });
-
-    rq.done( function(data){
+    }).done( function(data){
         $("#image-tabs-upload").html(data);
 
         var image_id = $("#upload_image_id").html();
@@ -44,12 +47,11 @@ function uploadImage(){
 
         console.log("done")
         return false;
-    });
-
-    rq.fail( function(){
+    }).fail( function(data){
+        showError("Upload failed");
+        console.log(data)
         console.log("Fail")
     });
 
     return false;
 };
-

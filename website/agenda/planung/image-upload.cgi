@@ -16,7 +16,7 @@ use Date::Calc();
 use Time::Local();
 use Image::Magick();
 use Image::Magick::Square;
-
+use Try::Tiny;
 use config();
 use entry();
 use auth();
@@ -35,7 +35,6 @@ my $cgi = undef;
 my $config = config::get('../config/config.cgi');
 my $base_dir     = $config->{locations}->{base_dir};
 my $tmp_dir      = '/var/tmp';
-my $upload_limit = 2048 * 1000;
 
 sub upload_file {
     my $config = shift;
@@ -277,6 +276,17 @@ sub check_params {
 my $params = {};
 my $upload = undef;
 my $error  = '';
+
+unless($config->{permissions}->{image_upload_limit}) {
+    print "Error: Missing configuraion at permissions/image_upload_limit\n";
+    exit;
+}
+my $upload_limit = try {
+    config::parse_size($config->{permissions}->{image_upload_limit});
+} catch {
+    print "Error: $_\n";
+    exit;
+};
 
 #get image from multiform before anything else
 if ( defined $r ) {
