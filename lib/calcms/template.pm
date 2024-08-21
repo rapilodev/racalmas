@@ -43,7 +43,11 @@ sub process($$$$) {
     $params->{user} = $ENV{REMOTE_USER} unless defined $params->{user};
 
     if ( ( $filename =~ /json\-p/ ) || (params::isJson) ) {
-        my $header = "Content-type:application/json; charset=utf-8\n\n";
+        my $header = join "\n",(
+            "Access-Control-Allow-Origin: *",
+            "Content-type:application/json; charset=utf-8",
+            ""
+        );
         my $json = JSON->new->pretty(1)->canonical()->encode($params);
 
         $json = $header . $params->{json_callback} . $json;
