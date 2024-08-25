@@ -60,8 +60,6 @@ if ( defined $params->{action} ) {
     get_help( $config, $request )    if $params->{action} eq 'get';
 }
 
-$config->{access}->{write} = 0;
-
 return;
 
 sub save_help {
@@ -94,7 +92,7 @@ sub save_help {
         table => $entry->{table},
         column => $entry->{column},
     });
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     if ( @$results ) {
         help_texts::update( $config, $entry );
         uac::print_info("help text saved.");
@@ -102,7 +100,6 @@ sub save_help {
         my $schedule_id = help_texts::insert( $config, $entry );
         uac::print_info("help text added.");
     }
-    $config->{access}->{write} = 0;
 }
 
 sub delete_help {
@@ -128,7 +125,7 @@ sub delete_help {
     my $user_settings = user_settings::get( $config, { user => $user } );
     $entry->{lang} = $user_settings->{language} || 'en',
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     help_texts::delete( $config, $entry );
     uac::print_info("help-text deleted");
 }
@@ -136,7 +133,6 @@ sub delete_help {
 sub edit_help {
     my ($config, $request) = @_;
 
-    $config->{access}->{write} = 0;
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{edit_help_texts} == 1 ) {

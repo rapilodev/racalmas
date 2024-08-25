@@ -109,7 +109,6 @@ sub show_image {
         return 0;
     }
 
-    $config->{access}->{write} = 0;
     my $dbh = db::connect( $config, undef );
 
     my $projectId        = $params->{project_id};
@@ -284,7 +283,7 @@ sub save_image {
 
     images::checkLicence( $config, $image );
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
 
     my $entries = images::get(
@@ -329,7 +328,7 @@ sub delete_image {
         return 0;
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $dbh   = db::connect($config);
     my $image = {
         project_id => $params->{project_id},
@@ -339,11 +338,6 @@ sub delete_image {
     my $result = images::delete( $dbh, $image );
 
     return;
-
-    #my $action_result = '';
-    #my $errors        = '';
-    #$result = images::delete_files( $config, $local_media_dir, $params->{delete_image}, $action_result, $errors );
-    #print "deleted<br />$action_result<br />$errors\n";
 }
 
 sub check_permission {

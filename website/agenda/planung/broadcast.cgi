@@ -105,7 +105,6 @@ if ( defined $params->{action} ) {
         return; 
     }
 }
-$config->{access}->{write} = 0;
 show_event( $config, $request );
 
 #show existing event for edit
@@ -508,7 +507,7 @@ sub delete_event {
         return undef;
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
 
     #set user to be added to history
     $event->{user} = $params->{presets}->{user};
@@ -645,7 +644,7 @@ sub save_event {
     $entry->{image}        = images::normalizeName( $entry->{image} );
     $entry->{series_image} = images::normalizeName( $serie->{series_image} );
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
 
     #update content
     if ( $found > 0 ) {
@@ -694,9 +693,6 @@ sub save_event {
             user       => $event->{user}
         }
     );
-
-    #print "error" unless (defined $result);
-    $config->{access}->{write} = 0;
     uac::print_info("event saved");
 }
 

@@ -26,6 +26,13 @@ use template();
 use images();
 use localization();
 
+local $SIG{__DIE__} = sub  {
+    my $error_message = shift;
+    print "200 OK\nContent-type:text/plain\n\nError: $error_message\n";
+    warn "Caught fatal error: $error_message\n";
+    #croak $error_message;
+};
+
 #binmode STDOUT, ":utf8"; #<! does not work here!
 print "Content-type:text/html; charset=UTF-8;\n\n";
 
@@ -101,7 +108,7 @@ sub update_database {
     };
 
     #connect
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
 
     my $entries = images::get(
@@ -122,7 +129,6 @@ sub update_database {
         $image->{created_by} = $user;
         $params->{image_id} = images::insert( $dbh, $image );
     }
-    $config->{access}->{write} = 0;
     $params->{action_result} = 'done!';
 
     return $params;

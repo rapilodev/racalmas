@@ -86,7 +86,6 @@ if ( defined $params->{action} ) {
         return;
     }
 }
-$config->{access}->{write} = 0;
 showComments( $config, $request );
 
 sub showComments {
@@ -106,7 +105,6 @@ sub showComments {
         }
     }
 
-    $config->{access}->{write} = 0;
     my $dbh = db::connect($config);
 
     my $comment             = $params->{comment};
@@ -193,7 +191,7 @@ sub setLock {
     $comment->{set_lock_status} = $comment->{lockStatus};
     $comment->{set_lock_status} = 'blocked' unless $comment->{set_lock_status} eq 'show';
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     print STDERR "setLock " . Dumper($comment);
     comments::set_lock_status( $dbh, $config, $comment );
@@ -211,7 +209,7 @@ sub setRead {
         return;
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
 
     my $comment = $params->{comment};

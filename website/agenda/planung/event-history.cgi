@@ -76,7 +76,6 @@ print q{
     </style>
 };
 
-$config->{access}->{write} = 0;
 if ( $params->{action} eq 'diff' ) {
     compare( $config, $request );
     return;

@@ -571,6 +571,7 @@ sub set_listen_key{
         set listen_key=? 
         where id=?;
     };
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     my $recordings = db::put( $dbh, $query, $bindValues );
 }

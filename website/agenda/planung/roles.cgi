@@ -69,8 +69,6 @@ if ( defined $params->{action} ) {
     save_roles( $config, $request ) if ( $params->{action} eq 'save' );
 }
 
-#show current roles
-$config->{access}->{write} = 0;
 show_roles( $config, $request );
 
 return;
@@ -202,9 +200,8 @@ sub save_roles {
             }
             $role->{level} = 0;
             print "insert $id $role->{role}<br>\n";
-            $config->{access}->{write} = 1;
+            local $config->{access}->{write} = 1;
             uac::insert_role( $config, $role );
-            $config->{access}->{write} = 0;
         } else {
 
             #update role
@@ -216,9 +213,8 @@ sub save_roles {
             print "update $role->{role}<br>\n";
 
             #print '<div style="height:3em;overflow:auto;white-space:pre">'.Dumper($role).'</div>';
-            $config->{access}->{write} = 1;
+            local $config->{access}->{write} = 1;
             uac::update_role( $config, $role );
-            $config->{access}->{write} = 0;
         }
     }
     print qq{<div class="ok head">changes saved</div>};

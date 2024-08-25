@@ -260,7 +260,7 @@ sub createEvent($$$) {
 	}
 	my $studio = $studios->[0];
 
-	$config->{access}->{write} = 1;
+	local $config->{access}->{write} = 1;
 
 	#insert event content and save history
 	my $event_id = series_events::insert_event(

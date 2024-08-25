@@ -625,7 +625,6 @@ sub get_user_presets($$) {
 
     my $project_id = $options->{project_id} || '';
     my $studio_id  = $options->{studio_id}  || '';
-    $config->{access}->{write} = 0;
 
     my $user_settings = user_settings::get( $config, { user => $user } );
     $project_id = $user_settings->{project_id} // '' if $project_id eq '';

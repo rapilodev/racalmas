@@ -64,7 +64,6 @@ unless ( params::isJson() || ( $params->{template} =~ /\.txt/ ) || $params->{act
 }
 return unless uac::check( $config, $params, $user_presets ) == 1;
 
-$config->{access}->{write} = 0;
 if ( $params->{action} eq 'send' ) {
     sendMail( $config, $request );
     return;

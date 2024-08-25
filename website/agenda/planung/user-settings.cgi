@@ -62,7 +62,6 @@ if ( defined $params->{action} ) {
     updateDefaultProjectStudio( $config, $request )
       if ( $params->{action} eq 'updateDefaultProjectStudio' );
 }
-$config->{access}->{write} = 0;
 show_settings( $config, $request );
 
 sub show_settings {
@@ -130,7 +129,7 @@ sub updateDefaultProjectStudio {
         studio_id  => $params->{studio_id},
     };
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     if (
         defined user_settings::get(
             $config,
@@ -161,8 +160,6 @@ sub updateDefaultProjectStudio {
         uac::print_info("insert user default studio");
         user_default_studios::insert( $config, $entry );
     }
-
-    $config->{access}->{write} = 0;
 }
 
 sub update_settings {
@@ -192,18 +189,16 @@ sub update_settings {
     };
 
     my $results = user_settings::get( $config, { user => $user } );
+    local $config->{access}->{write} = 1;
     if ( defined $results ) {
         uac::print_info("update user settings");
-        $config->{access}->{write} = 1;
         user_settings::update( $config, $settings );
     } else {
-        $config->{access}->{write} = 1;
         uac::print_info("insert user settings");
         $settings->{project_id} = $params->{project_id};
         $settings->{studio_id}  = $params->{studio_id};
         user_settings::insert( $config, $settings );
     }
-    $config->{access}->{write} = 0;
 }
 
 sub check_params {

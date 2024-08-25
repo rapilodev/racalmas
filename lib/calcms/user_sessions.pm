@@ -86,10 +86,9 @@ sub insert ($$) {
 
     $entry->{pid}        = $$;
     $entry->{expires_at} = time::time_to_datetime( time() + $entry->{timeout} );
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     my $result =  db::insert( $dbh, 'calcms_user_sessions', $entry );
-    $config->{access}->{write} = 0;
     return $result;
 }
 
@@ -178,7 +177,7 @@ sub update ($$) {
 
     return undef unless defined $entry->{session_id};
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $dbh         = db::connect($config);
     my @keys        = sort keys %$entry;
     my $values      = join( ",", map { $_ . '=?' } @keys );
@@ -191,7 +190,6 @@ sub update ($$) {
         where  session_id=?
     };
     my $result = db::put( $dbh, $query, \@bind_values );
-    $config->{access}->{write} = 0;
     return $result;
 }
 

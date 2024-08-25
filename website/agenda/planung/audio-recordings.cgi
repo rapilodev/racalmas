@@ -128,9 +128,9 @@ sub uploadRecording {
         }
     }
 
+    local $config->{access}->{write} = 1;
     if ( defined $fh ) {
         print STDERR "upload\n";
-        $config->{access}->{write} = 1;
         events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploading' });
         my $fileInfo = uploadFile( $config, $fh, $params->{event_id}, $user, $params->{upload} );
         $params->{error} .= $fileInfo->{error} if defined $fileInfo->{error};
@@ -142,7 +142,6 @@ sub uploadRecording {
             $params = updateDatabase( $config, $params, $user ) ;
             events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploaded' });
         }
-        $config->{access}->{write} = 0;
         
     } else {
         print STDERR "could not get file handle\n";
@@ -150,9 +149,7 @@ sub uploadRecording {
     }
 
     if ( $params->{error} ne '' ) {
-        $config->{access}->{write} = 1;
         events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'upload failed' });
-        $config->{access}->{write} = 0;
         if ( $params->{error} =~ /limit/ ) {
             $params->{error} .=
                 "audio file size is limited to "
@@ -211,8 +208,6 @@ sub deleteRecording {
         }
     }
 
-    $config->{access}->{write} = 0;
-
     my $audioRecordings = audio_recordings::get(
         $config,
         {
@@ -244,7 +239,7 @@ sub deleteRecording {
     my $isDeleted = deleteFile($file);
     return unless $isDeleted;
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     $audioRecordings = audio_recordings::delete(
         $config,
         {
@@ -254,8 +249,6 @@ sub deleteRecording {
             path       => $params->{path},
         }
     );
-    $config->{access}->{write} = 0;
-
 }
 
 sub showAudioRecordings {

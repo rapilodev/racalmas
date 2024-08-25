@@ -61,7 +61,6 @@ if ( defined $params->{action} ) {
     delete_schedule( $config, $request ) if ( $params->{action} eq 'delete_schedule' );
 }
 
-$config->{access}->{write} = 0;
 template::process( $config, 'print', template::check( $config, 'worktime-header.html' ), $headerParams );
 
 show_work_schedule( $config, $request );
@@ -114,7 +113,7 @@ sub save_schedule {
 
     #TODO: check if schedule is in studio_timeslots
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     if ( defined $params->{schedule_id} ) {
         $entry->{schedule_id} = $params->{schedule_id};
         work_schedule::update( $config, $entry );
@@ -130,7 +129,6 @@ sub save_schedule {
         my $updates = work_dates::update( $config, $entry );
         uac::print_info("schedule added. $updates dates added");
     }
-    $config->{access}->{write} = 0;
 }
 
 sub delete_schedule {
@@ -153,7 +151,7 @@ sub delete_schedule {
         }
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     $entry->{schedule_id} = $params->{schedule_id};
     work_schedule::delete( $config, $entry );
     work_dates::update( $config, $entry );
@@ -162,8 +160,6 @@ sub delete_schedule {
 
 sub show_work_schedule {
     my ($config, $request) = @_;
-
-    $config->{access}->{write} = 0;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

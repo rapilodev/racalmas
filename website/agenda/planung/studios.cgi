@@ -57,7 +57,6 @@ if ( defined $params->{action} ) {
     save_studio( $config, $request ) if ( $params->{action} eq 'save' );
     delete_studio( $config, $request ) if ( $params->{action} eq 'delete' );
 }
-$config->{access}->{write} = 0;
 show_studios( $config, $request );
 
 sub delete_studio {
@@ -81,7 +80,7 @@ sub delete_studio {
 
     my $studio_id = $entry->{id} || '';
     if ( $studio_id ne '' ) {
-        $config->{access}->{write} = 1;
+        local $config->{access}->{write} = 1;
 
         project::unassign_studio(
             $config,
@@ -127,7 +126,7 @@ sub save_studio {
         }
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     if ( ( defined $entry->{id} ) && ( $entry ne '' ) ) {
         studios::update( $config, $entry );
     } else {

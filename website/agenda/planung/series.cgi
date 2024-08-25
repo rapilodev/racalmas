@@ -94,8 +94,6 @@ if ( defined $params->{action} ) {
     }
 }
 
-$config->{access}->{write} = 0;
-
 if ( defined $params->{series_id} ) {
     template::process( $config, 'print', template::check( $config, 'show-series-header.html' ),{})
         unless params::isJson();
@@ -183,18 +181,17 @@ sub save_schedule {
             }
         );
         if ( scalar(@$schedules) > 0 ) {
-            $config->{access}->{write} = 1;
+            local $config->{access}->{write} = 1;
             for my $schedule (@$schedules) {
                 series_schedule::delete( $config, $schedule );
             }
             my $updates = series_dates::update( $config, $entry );
             uac::print_info("single schedule deleted. $updates dates scheduled");
-            $config->{access}->{write} = 0;
             return;
         }
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     if ( defined $params->{schedule_id} ) {
         $entry->{schedule_id} = $params->{schedule_id};
         series_schedule::update( $config, $entry );
@@ -209,7 +206,6 @@ sub save_schedule {
         my $updates = series_dates::update( $config, $entry );
         uac::print_info("schedule added. $updates dates added");
     }
-    $config->{access}->{write} = 0;
 }
 
 sub delete_schedule {
@@ -238,7 +234,7 @@ sub delete_schedule {
         return undef;
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     $entry->{schedule_id} = $params->{schedule_id};
     series_schedule::delete( $config, $entry );
     series_dates::update( $config, $entry );
@@ -276,7 +272,7 @@ sub delete_series {
     my $studio_id  = $params->{studio_id};
     my $series_id  = $entry->{series_id};
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     if ( $entry->{series_id} ne '' ) {
         my $result = series::delete( $config, $entry );
 
@@ -290,13 +286,11 @@ sub delete_series {
                 user       => $params->{presets}->{user}
             }
         );
-        $config->{access}->{write} = 0;
         unless ( $result == 1 ) {
             uac::print_error('could not delete series');
             return;
         }
     }
-    $config->{access}->{write} = 0;
     uac::print_info("series deleted");
 }
 
@@ -378,7 +372,7 @@ sub save_series {
             return;
         }
 
-        $config->{access}->{write} = 1;
+        local $config->{access}->{write} = 1;
         my $series_id = series::insert( $config, $entry );
 
         user_stats::increase(
@@ -391,8 +385,6 @@ sub save_series {
                 user       => $params->{presets}->{user}
             }
         );
-
-        $config->{access}->{write} = 0;
 
         unless ( defined $series_id ) {
             uac::print_error('could not insert series');
@@ -425,7 +417,7 @@ sub save_series {
             return;
         }
 
-        $config->{access}->{write} = 1;
+        local $config->{access}->{write} = 1;
         my $result = series::update( $config, $entry );
 
         series_events::update_series_images(
@@ -449,7 +441,6 @@ sub save_series {
             }
         );
 
-        $config->{access}->{write} = 0;
         unless ( defined $result ) {
             uac::print_error('could not update series');
             return;
@@ -495,9 +486,8 @@ sub save_scan {
         assign_event_title       => $params->{assign_event_title},
     };
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     series::update( $config, $entry );
-    $config->{access}->{write} = 0;
     uac::print_info("changes saved");
 }
 
@@ -513,7 +503,7 @@ sub scan_events {
         return;
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $series = series::get(
         $config,
         {
@@ -577,7 +567,6 @@ sub scan_events {
             $event_ids );
     }
     $params->{scan_results} .= "</table><hr>\n";
-    $config->{access}->{write} = 0;
     uac::print_info("events successfully assigned to all series");
 }
 
@@ -654,7 +643,7 @@ sub assign_event {
         return undef;
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     $result = series::assign_event(
         $config,
         {
@@ -719,7 +708,6 @@ sub assign_event {
 "no series title found for studio $entry->{studio_id} series $entry->{series_id}, event $entry->{event_id}\n";
     }
 
-    $config->{access}->{write} = 0;
     uac::print_info("event successfully assigned to series");
     $params->{getBack} = 1;
     return 1;
@@ -782,7 +770,7 @@ sub unassign_event {
         return undef;
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     $result = series::unassign_event(
         $config,
         {
@@ -792,7 +780,6 @@ sub unassign_event {
             event_id   => $entry->{event_id},
         }
     );
-    $config->{access}->{write} = 0;
     unless ( defined $result ) {
         uac::print_error("error on unassigning event from series");
         return undef;
@@ -878,7 +865,7 @@ sub add_user {
         return undef;
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     series::add_user(
         $config,
         {
@@ -916,7 +903,7 @@ sub remove_user {
         return undef;
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     series::remove_user(
         $config,
         {
@@ -932,8 +919,6 @@ sub remove_user {
 sub list_series {
     my $config  = shift;
     my $request = shift;
-
-    $config->{access}->{write} = 0;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -992,8 +977,6 @@ sub list_series {
 sub show_series {
     my $config  = shift;
     my $request = shift;
-
-    $config->{access}->{write} = 0;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -1226,8 +1209,6 @@ sub set_rebuilt_episodes {
     my $config  = shift;
     my $request = shift;
 
-    $config->{access}->{write} = 0;
-
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     unless ( $permissions->{read_series} == 1 ) {
@@ -1283,8 +1264,6 @@ sub set_rebuilt_episodes {
 sub rebuild_episodes {
     my $config  = shift;
     my $request = shift;
-
-    $config->{access}->{write} = 0;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

@@ -60,7 +60,6 @@ if ( defined $params->{action} ) {
     assign_studio( $config, $request ) if ( $params->{action} eq 'assign_studio' );
     unassign_studio( $config, $request ) if ( $params->{action} eq 'unassign_studio' );
 }
-$config->{access}->{write} = 0;
 show_projects( $config, $request );
 
 sub delete_project {
@@ -85,7 +84,7 @@ sub delete_project {
     my $project_id = $params->{pid} || '';
 
     if ( $project_id ne '' ) {
-        $config->{access}->{write} = 1;
+        local $config->{access}->{write} = 1;
         $entry->{project_id} = $project_id;
         delete $entry->{studio_id};
         project::delete( $config, $entry );
@@ -117,9 +116,8 @@ sub save_project {
         $entry->{project_id} = $project_id;
         delete $entry->{studio_id};
 
-        $config->{access}->{write} = 1;
+        local $config->{access}->{write} = 1;
         project::update( $config, $entry );
-        $config->{access}->{write} = 0;
         uac::print_info("project saved");
     } else {
         unless ( $permissions->{create_project} == 1 ) {
@@ -134,9 +132,8 @@ sub save_project {
         delete $entry->{project_id};
         delete $entry->{studio_id};
 
-        $config->{access}->{write} = 1;
+        local $config->{access}->{write} = 1;
         project::insert( $config, $entry );
-        $config->{access}->{write} = 0;
         uac::print_info("project created");
     }
 }
@@ -157,7 +154,7 @@ sub assign_studio {
             return;
         }
     }
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     project::assign_studio(
         $config,
         {
@@ -165,7 +162,6 @@ sub assign_studio {
             studio_id  => $params->{sid}
         }
     );
-    $config->{access}->{write} = 0;
     uac::print_info("project assigned");
 
 }
@@ -187,7 +183,7 @@ sub unassign_studio {
             return;
         }
     }
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     project::unassign_studio(
         $config,
         {
@@ -195,7 +191,6 @@ sub unassign_studio {
             studio_id  => $params->{sid}
         }
     );
-    $config->{access}->{write} = 0;
     uac::print_info("project unassigned");
 
 }

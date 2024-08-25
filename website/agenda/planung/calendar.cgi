@@ -114,7 +114,6 @@ if ( defined $user_presets->{error} ) {
     return;
 }
 
-$config->{access}->{write} = 0;
 unless ( defined $params->{project_id} ) {
     uac::print_error("Please select a project");
     return;

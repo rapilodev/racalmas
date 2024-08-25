@@ -91,7 +91,7 @@ sub deleteFromPlayout {
         }
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
 
     my $result = playout::delete(
@@ -102,7 +102,6 @@ sub deleteFromPlayout {
             start      => $params->{start_date}
         }
     );
-    $config->{access}->{write} = 0;
 
     print "result:$result\n";
 }

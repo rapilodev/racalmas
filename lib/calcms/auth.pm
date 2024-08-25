@@ -170,7 +170,6 @@ sub delete_session($$) {
 sub authenticate($$$) {
     my ($config, $user, $password) = @_;
 
-    $config->{access}->{write} = 0;
     my $dbh   = db::connect($config);
     my $query = qq{
 		select	*

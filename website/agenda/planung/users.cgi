@@ -60,11 +60,9 @@ if ( defined $params->{action} ) {
     delete_user( $config, $request ) if ( $params->{action} eq 'delete' );
     if ( $params->{action} eq 'change_password' ) {
         change_password( $config, $request, $user );
-        $config->{access}->{write} = 0;
         return;
     }
 }
-$config->{access}->{write} = 0;
 show_users( $config, $request );
 
 sub show_users {
@@ -214,7 +212,7 @@ sub update_user {
         $user->{modified_at} = time::time_to_datetime( time() );
         $user->{created_by}  = $params->{presets}->{user};
 
-        $config->{access}->{write} = 1;
+        local $config->{access}->{write} = 1;
         uac::insert_user( $config, $user );
     } else {
         unless ( $permissions->{update_user} == 1 ) {
@@ -222,7 +220,7 @@ sub update_user {
             return;
         }
         $user->{modified_at} = time::time_to_datetime( time() );
-        $config->{access}->{write} = 1;
+        local $config->{access}->{write} = 1;
         uac::update_user( $config, $user );
     }
 }
@@ -254,7 +252,7 @@ sub delete_user {
         return;
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $params = $request->{params}->{checked};
     uac::delete_user( $config, $params->{user_id} );
 }
@@ -314,7 +312,7 @@ sub update_user_roles {
         $max_user_level = $role->{level} if $max_user_level < $role->{level};
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
 
     #remove unchecked user roles
     for my $user_role_id ( keys %$user_role_by_id ) {
@@ -384,7 +382,6 @@ sub update_user_roles {
             uac::print_info($message);
         }
     }
-    $config->{access}->{write} = 0;
 }
 
 sub check_params {

@@ -36,7 +36,7 @@ print "Content-Type:text/plain\n\n";
 print STDERR "add comment: " . Dumper($params);
 my $comment = $params->{comment};
 
-$config->{access}->{write} = 1;
+local $config->{access}->{write} = 1;
 my $dbh = db::connect( $config, undef );
 
 print "ok\n";
