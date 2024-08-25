@@ -58,15 +58,13 @@ state $sths = {};
 sub get($$;$) {
     my ( $dbh, $sql, $bind_values ) = @_;
 
-    my $sth = $sths->{$sql} // ($sths->{$sql} = $dbh->prepare($sql));
+    my $sth = $sths->{$sql} // ($sths->{$sql}=$dbh->prepare($sql));
     if (ref($bind_values) eq 'ARRAY') {
         $sth->execute(@$bind_values) or die "db: $DBI::errstr $sql";
     } else {
         $sth->execute() or die "db: $DBI::errstr $sql";
     }
-    my $results = $sth->fetchall_arrayref({});
-    $sth->finish;
-    return $results;
+    return $sth->fetchall_arrayref({});
 }
 
 # get list of table columns
