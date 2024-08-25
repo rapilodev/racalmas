@@ -35,7 +35,8 @@ sub connect($;$) {
     my $cache = $connection->{$key};
     return $cache->{dbh} if defined $cache && ($cache->{expires}//0>time);# && $cache->{dbh}->ping;
     $database = $access_options->{database};
-    my $dsn = "DBI:mysql:database=$access_options->{database};host=$access_options->{hostname};port=$access_options->{port}";
+    my $dsn = "DBI:mysql:database=$access_options->{database};host=$access_options->{hostname};port=$access_options->{port};"
+            . "mysql_enable_utf8=1;mysql_init_command=SET time_zone='$options->{date}->{time_zone}'";
     my $username = $access_options->{write} ? $access_options->{username_write} : $access_options->{username};
     my $password = $access_options->{write} ? $access_options->{password_write} : $access_options->{password};
     my $dbh = DBI->connect($dsn, $username, $password, {
@@ -61,11 +62,9 @@ sub get($$;$) {
     if (ref($bind_values) eq 'ARRAY') {
         $sth->execute(@$bind_values) or die "db: $DBI::errstr $sql";
     } else {
-        $sth->execute() or die "db: $DBI::errstr $sql" if $read == 1;
+        $sth->execute() or die "db: $DBI::errstr $sql";
     }
-
     my $results = $sth->fetchall_arrayref({});
-
     $sth->finish;
     return $results;
 }
@@ -114,7 +113,7 @@ sub put($$$) {
 
     my $sth = $dbh->prepare($sql);
     if ( $write == 1 ) {
-        if ( ( defined $bind_values ) && ( ref($bind_values) eq 'ARRAY' ) ) {
+        if (ref($bind_values) eq 'ARRAY') {
             $sth->execute(@$bind_values);
         } else {
             $sth->execute();
