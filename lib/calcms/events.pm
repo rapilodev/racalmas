@@ -821,54 +821,34 @@ sub get_query($$$) {
         push @$where_cond, $date_cond if ( $date_cond ne '' );
     }
 
+    my $invalid = qr/[^a-zA-Z0-9\-\_,]/;
     # location
     my $location_cond = '';
-    if ( $params->{location} ne '' ) {
-        my $location = ( split( /\,/, $params->{location} ) )[0];
-        $location =~ s/[^a-zA-Z0-9\-\_]/%/g;
-        $location =~ s/%{2,99}/%/g;
-        if ( $location ne '' ) {
-            $location_cond = ' location like ? ';
-            push @$bind_values, $location;
-        }
+    if (my @locations = grep {$_ ne ''} split /,/, $params->{location} =~ s/$invalid/%/gr) {
+        $location_cond = ' location in (' . join(',', ('?') x @locations) . ')';
+        push @$bind_values, @locations;
     }
 
     # exclude location
     my $exclude_location_cond = '';
     if ( $params->{exclude_locations} eq '1' ) {
-        if ( $params->{locations_to_exclude} ne '' ) {
-            my @locations_to_exclude = split( /,/, $params->{locations_to_exclude} );
-            $exclude_location_cond = 'location not in (' . join( ",", map { '?' } @locations_to_exclude ) . ')';
-            for my $location (@locations_to_exclude) {
-                $location =~ s/^\s+//g;
-                $location =~ s/\s+$//g;
-                push @$bind_values, $location;
-            }
+        if (my @locations = grep {$_ ne ''} split /,/, $params->{locations_to_exclude} =~ s/$invalid/%/gr) {
+            $exclude_location_cond = 'location not in (' . join(',', ('?')x @locations) . ')';
+            push @$bind_values, @locations;
         }
     }
 
     # exclude project
     my $exclude_project_cond = '';
-    if ( $params->{exclude_projects} eq '1' ) {
-        if ( $params->{projects_to_exclude} ne '' ) {
-            my @projects_to_exclude = split( /,/, $params->{projects_to_exclude} );
-            $exclude_project_cond = 'project not in (' . join( ",", map { '?' } @projects_to_exclude ) . ')';
-            for my $project (@projects_to_exclude) {
-                $project =~ s/^\s+//g;
-                $project =~ s/\s+$//g;
-                push @$bind_values, $project;
-            }
-        }
+    if ($params->{exclude_projects} eq '1' &&  $params->{projects_to_exclude} ne '') {
+        my @projects_to_exclude = split  /,/, $params->{projects_to_exclude} =~s/$invalid/%/gr;
+        $exclude_project_cond = 'project not in (' . join( ",", ('?') x @projects_to_exclude) . ')';
+        push @$bind_values, @projects_to_exclude;
     }
 
     my $series_name_cond = '';
-    if (   ( defined $params->{series_name} )
-        && ( $params->{series_name} ne '' ) )
-    {
-        my $series_name = ( split( /\,/, $params->{series_name} ) )[0];
-        $series_name =~ s/[^a-zA-Z0-9]/%/g;
-        $series_name =~ s/%{2,99}/%/g;
-        if ( $series_name ne '' ) {
+    if (defined $params->{series_name} && $params->{series_name} ne '') {
+        if (my $series_name = (split( /\,/, $params->{series_name} =~ s/$invalid/%/gr ))[0]) {
             $series_name_cond = ' series_name like ? ';
             push @$bind_values, $series_name;
         }
@@ -880,9 +860,7 @@ sub get_query($$$) {
         my @tags = ( split( /\,/, $params->{tag} ) );
         if ( scalar @tags > 0 ) {
             my $tags = join ",", ( map { '?' } @tags );
-            for my $tag (@tags) {
-                push @$bind_values, $tag;
-            }
+            push @$bind_values, @tags;
             $tag_cond = qq{
                 id in(
                     select event_id from calcms_tags
@@ -891,40 +869,33 @@ sub get_query($$$) {
             };
         }
     }
-    $tag_cond = '';
 
     my $title_cond = '';
-    if ( ( defined $params->{title} ) && ( $params->{title} ne '' ) ) {
-        my $title = ( split( /\,/, $params->{title} ) )[0];
-        $title =~ s/[^a-zA-Z0-9]/%/g;
-        $title =~ s/%{2,99}/%/g;
-        $title =~ s/^\%//;
-        $title =~ s/\%$//;
-        $title = '%' . $title . '%';
+    if ( defined $params->{title} && $params->{title} ne '' ) {
+        my $title = $params->{title};
+        $title = (split /,/, $title)[0];
+        $title =~ s/[^a-zA-Z0-9]+/%/g;
+        $title =~ s/^%|%$//g;
         if ( $title ne '' ) {
-            $title_cond = ' title like ? ';
-            push @$bind_values, $title;
+            $title_cond = ' title LIKE ? ';
+            push @$bind_values, "%$title%";
         }
     }
 
     my $search_cond = '';
-    if ( ( defined $params->{search} ) && ( $params->{search} ne '' ) ) {
+    if ( defined $params->{search} && $params->{search} ne '' ) {
         my $search = lc $params->{search};
-        $search =~ s/(?=[\\%_])/\\/g;
-        $search =~ s/^[\%\s]+//;
-        $search =~ s/[\%\s]+$//;
+        $search =~ s/([\\%_])/\\$1/g;
+        $search =~ s/^[\%\s]+|[\%\s]+$//g;
         if ( $search ne '' ) {
-            $search = '%' . $search . '%';
-            my @attr = ( 'title', 'series_name', 'excerpt', 'content', 'topic' );
-            $search_cond = "(" . join( " or ", map { 'lower(' . $_ . ') like ?' } @attr ) . ")";
-            for my $attr (@attr) {
-                push @$bind_values, $search;
-            }
+            $search = "%$search%";
+            my @attributes = qw(title series_name excerpt content topic);
+            $search_cond = '(' . join(' OR ', map { "lower($_) LIKE ?" } @attributes) . ')';
+            push @$bind_values, ($search) x @attributes;
         }
     }
 
     my $project_cond = '';
-
     my $project = undef;
     $project = $params->{project}
       if ( defined $params->{project} ) && ( $params->{project} ne '' );
@@ -962,8 +933,6 @@ sub get_query($$$) {
         $disable_event_sync_cond = 'disable_event_sync=?';
         push @$bind_values, $disable_event_sync;
     }
-
-    #print STDERR $disable_event_sync_cond." ".$bind_values->[-1]."\n";
 
     #combine date, location, series_name, tag, search and project
 
@@ -1061,19 +1030,12 @@ sub get_query($$$) {
     }
 
     # add project id and series id
-    if ( ( $params->{project_id} ne '' ) || ( $params->{studio_id} ne '' ) ) {
-        if ( $params->{project_id} ne '' ) {
-            push @$where_cond,  'se.project_id=?';
-            push @$bind_values, $params->{project_id};
-            $query .= ', se.project_id';
+    for my $field (qw(project_id studio_id)) {
+        if ( defined $params->{$field} && $params->{$field} ne '' ) {
+            push @$where_cond, "se.$field = ?";
+            push @$bind_values, $params->{$field};
+            $query .= ", se.$field";
         }
-        if ( $params->{studio_id} ne '' ) {
-            push @$where_cond,  'se.studio_id=?';
-            push @$bind_values, $params->{studio_id};
-            $query .= ', se.studio_id';
-        }
-
-        #push @$where_cond, 'se.event_id=e.id';
     }
 
     # add recordings field and conditions
