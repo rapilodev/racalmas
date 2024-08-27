@@ -124,19 +124,17 @@ sub modify_results ($$$$) {
     my ($dbh, $config, $request, $results) = @_;
 
     my $params = $request->{params}->{checked};
-
-    my $running_event_id = 0;
     my $projects         = {};
     my $studios          = {};
 
-    my $time_diff = '';
-    if ( scalar @$results > 0 ) {
+    my $running_event_id = @$results ? events::get_running_event_id($dbh) : 0;
+    if (@$results) {
         $results->[0]->{__first__} = 1;
         $results->[-1]->{__last__} = 1;
-        $running_event_id          = events::get_running_event_id($dbh);
     }
 
-    if ( ( defined $params->{template} ) && ( $params->{template} =~ /\.xml/ ) ) {
+    my $time_diff = '';
+    if ($params->{template} && $params->{template} =~ /\.xml/) {
         $time_diff = time::utc_offset( $config->{date}->{time_zone} );
         $time_diff =~ s/(\d\d)(\d\d)/$1\:$2/g;
     }
@@ -146,71 +144,40 @@ sub modify_results ($$$$) {
     for my $result (@$results) {
         if ( defined $params->{template} ) {
             if ( $params->{template} =~ /\.ics$/ ) {
-                $result->{content_ical} =
-                  markup::plain_to_ical( $result->{content} );
-                $result->{title_ical} =
-                  markup::plain_to_ical( $result->{title} );
-                $result->{user_title_ical} =
-                  markup::plain_to_ical( $result->{user_title} );
-                $result->{excerpt_ical} =
-                  markup::plain_to_ical( $result->{excerpt} );
-                $result->{user_excerpt_ical} =
-                  markup::plain_to_ical( $result->{user_excerpt} );
-                $result->{series_name} =
-                  markup::plain_to_ical( $result->{series_name} );
-                $result->{created_at} =~ s/ /T/gi;
-                $result->{created_at} =~ s/[\:\-]//gi;
-                $result->{modified_at} =~ s/ /T/gi;
-                $result->{modified_at} =~ s/[\:\-]//gi;
-
-            } elsif ( $params->{template} =~ /\.atom\.xml/ ) {
-                $result->{excerpt} = '' unless defined( $result->{excerpt} );
-                $result->{excerpt} = "lass dich ueberraschen"
-                  if ( $result->{excerpt} eq '' );
-
-                #                $result->{excerpt}    =markup::plain_to_xml($result->{excerpt});
-                #                $result->{title}    =markup::plain_to_xml($result->{title});
-                #                $result->{series_name}    =markup::plain_to_xml($result->{series_name});
-                #                $result->{program}    =markup::plain_to_xml($result->{program});
-
-                $result->{created_at} =~ s/ /T/gi;
-                $result->{created_at} .= $time_diff;
-                $result->{modified_at} =~ s/ /T/gi;
-                $result->{modified_at} .= $time_diff;
-            } elsif ( $params->{template} =~ /\.rss\.xml/ ) {
-                $result->{excerpt} = '' unless defined( $result->{excerpt} );
-                $result->{excerpt} = "lass dich ueberraschen"
-                  if ( $result->{excerpt} eq '' );
-                $result->{modified_at} =
-                  time::datetime_to_rfc822( $result->{modified_at} );
-                if ( $result->{created_at} =~ /[1-9]/ ) {
-                    $result->{created_at} =
-                      time::datetime_to_rfc822( $result->{created_at} );
-                } else {
-                    $result->{created_at} = $result->{modified_at};
+                for my $key (qw(content title user_title excerpt user_excerpt series_name)) {
+                    $result->{"${key}_ical"} = markup::plain_to_ical($result->{$key});
                 }
-
+                for my $key (qw(created_at modified_at)) {
+                    $result->{$key} =~ s/ /T/;
+                    $result->{$key} =~ s/[\:\-]//g;
+                }
+          } elsif ( $params->{template} =~ /\.atom\.xml/ ) {
+                $result->{excerpt} =  "lass dich ueberraschen" unless $result->{excerpt};
+                for my $key (qw(created_at modified_at)) {
+                    $result->{$key} =~ s/ /T/;
+                    $result->{$key} .= $time_diff;
+                }
+            } elsif ( $params->{template} =~ /\.rss\.xml/ ) {
+                $result->{excerpt} ||= "lass dich ueberraschen";
+                $result->{modified_at} = time::datetime_to_rfc822($result->{modified_at});
+                $result->{created_at} = $result->{created_at} =~ /[1-9]/ ? time::datetime_to_rfc822($result->{created_at}) : $result->{modified_at};
             }
         }
         $result->{series_name} ||= '';
         $result->{series_name} = '' if $result->{series_name} eq '_single_';
+        $result->{rerun} //= '';
 
-        $result->{rerun} = '' unless defined $result->{rerun};
-
-        $result->{title} = '' unless defined $result->{title};
+        $result->{title} ||= '';
         if ( $result->{title} =~ /\#(\d+)([a-z])?\s*$/ ) {
-            $result->{episode} = $1 unless defined $result->{episode};
-            $result->{rerun} = $2 || '' unless ( $result->{rerun} =~ /\d/ );
+            $result->{episode} //= $1;
+            $result->{rerun} = $2 || '' unless $result->{rerun} =~ /\d/;
             $result->{title} =~ s/\#\d+[a-z]?\s*$//;
             $result->{title} =~ s/\s+$//;
         }
         $result->{rerun} = '' if ( $result->{rerun} eq '0' );
 
-        if (   ( defined $result->{recurrence_count} )
-            && ( $result->{recurrence_count} > 0 ) )
-        {
-            $result->{recurrence_count_alpha} =
-              markup::base26( $result->{recurrence_count} + 1 );
+        if (defined $result->{recurrence_count} && $result->{recurrence_count} > 0 ) {
+            $result->{recurrence_count_alpha} = markup::base26( $result->{recurrence_count} + 1 );
             $result->{recurrence_id} = $result->{recurrence};
         } else {
             $result->{recurrence_count_alpha} = '';
@@ -219,25 +186,11 @@ sub modify_results ($$$$) {
 
         # set title keys
         my $keys = get_keys($result);
-        for my $key ( keys %$keys ) {
-            $result->{$key} = $keys->{$key};
-        }
-
+        @$result{keys %$keys} = values %$keys;
         $result = calc_dates( $config, $result, $params, $previous_result, $time_diff );
         get_listen_key($config, $result) unless $params->{set_no_listen_keys};
 
-        $result->{event_uri} = '';
-        if ( ( defined $result->{program} ) && ( $result->{program} ne '' ) ) {
-            $result->{event_uri} .= $result->{program};
-            $result->{event_uri} .= '-'
-              if ( ( $result->{series_name} ne '' )
-                || ( $result->{title} ne '' ) );
-        }
-        if ( ($result->{series_name}//'') ne '' ) {
-            $result->{event_uri} .= $result->{series_name};
-            $result->{event_uri} .= '-' if ( $result->{title} ne '' );
-        }
-        $result->{event_uri} .= $result->{title} if length $result->{title};
+        $result->{event_uri} = join('-', grep { $_ ne '' } $result->{program} // '', $result->{series_name} // '', $result->{title} // '');
         $result->{event_uri} =~ s/\#/Nr./g;
         $result->{event_uri} =~ s/\&/und/g;
         $result->{event_uri} =~ s/\//\%2f/g;
@@ -262,8 +215,8 @@ sub modify_results ($$$$) {
             && $running_event_id eq $result->{event_id};
 
         if (defined $result->{comment_count}){
-            $result->{one_comment} = 1 if ( $result->{comment_count} == 1 );
-            $result->{no_comment}  = 1 if ( $result->{comment_count} == 0 );
+            $result->{one_comment} = 1 if $result->{comment_count} == 1;
+            $result->{no_comment}  = 1 if $result->{comment_count} == 0;
         }
 
         {
@@ -294,8 +247,6 @@ sub modify_results ($$$$) {
         # add project by name
         my $project_name = $result->{project};
         if ( defined $project_name ) {
-
-            #print STDERR "found project:$project_name\n";
             unless ( defined $projects->{$project_name} ) {
                 my $results = project::get( $config, { name => $project_name } );
                 $projects->{$project_name} = $results->[0] || {};
@@ -332,20 +283,14 @@ sub modify_results ($$$$) {
             for my $key ( keys %$studio ) {
                 $result->{ 'studio_' . $key } = $studio->{$key};
             }
-        }
+         }
 
         for my $name ( keys %{ $config->{mapping}->{events} } ) {
-            my $val = '';
-            if (   ( defined $name )
-                && ( defined $config->{mapping}->{events}->{$name} )
-                && ( defined $result->{$name} ) )
-            {
-                $val = $config->{mapping}->{events}->{$name}->{ $result->{$name} }
-                  || '';
-                $result->{ $name . '_mapped' } = $val if ( $val ne '' );
+            if (defined $result->{$name} && defined $config->{mapping}->{events}->{$name}) {
+                my $val = $config->{mapping}->{events}->{$name}->{$result->{$name}};
+                $result->{ $name . '_mapped' } = $val if $val;
             }
         }
-
         $previous_result = $result;
 
         $result->{ 'counter_' . $counter } = 1;
@@ -561,7 +506,7 @@ sub set_listen_key{
     symlink $audio_file, $link or die "cannot create $link, $!";
     $event->{listen_url} = $archive_url . '/' . $key;
     $event->{listen_key} = $key;
-                    
+
     return undef unless defined $event->{event_id};
     return undef unless defined $event->{listen_key};
     my $bindValues = [ $event->{listen_key}, $event->{event_id} ];
@@ -1707,7 +1652,6 @@ sub get_keys($) {
 
     # separation between <series> and <title>
     my $stkey = ( length($series_name) and length($te) ) ? ' - ' : '';
-    
     return {
         skey                            => $series_name,
         stkey                           => $stkey,
