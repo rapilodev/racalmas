@@ -192,20 +192,19 @@ sub ical_to_plain ($) {
     return $_[0];
 }
 
-sub plain_to_ical ($) {
-    return '' unless defined( $_[0] );
-
-    #remove images + links
-    $_[0] =~ s/\[\[.+?\|(.+?)\]\]/$1/g;
-    $_[0] =~ s/\{\{.+?\}\}//g;
-    $_[0] =~ s/^\s+//g;
-    $_[0] =~ s/\\/\\\\/gi;
-    $_[0] =~ s/\,/\\\,/gi;
-
-    #	$_[0]=~s/\./\\\./gi;
-    $_[0] =~ s/[\r\n]/\\n/gi;
-    $_[0] =~ s/\t/   /gi;
-    return $_[0];
+sub plain_to_ical {
+    my ($entry, @fields) = @_;
+    for (@fields) {
+        my $val = $entry->{$_}//'';
+        $val =~ s/\[\[.*?\|(.+?)\]\]/$1/g;
+        $val =~ s/\{\{.*?\}\}//g;
+        $val =~ s/^\s+//;
+        $val =~ s/([;,])/\\$1/g;
+        $val =~ tr/\r\n/\n/s;
+        $val =~ s/\n/\\n/g;
+        $val =~ tr/\t/ /;
+        $entry->{$_ . '_ical'} = $val;
+    }
 }
 
 sub plain_to_xml($) {

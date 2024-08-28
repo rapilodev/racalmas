@@ -18,10 +18,8 @@ Access-Control-Allow-Origin: *
 		<span class="dtstart"><TMPL_VAR start></span>
 		<TMPL_IF NAME=end><span class="dtend"><TMPL_VAR end></span></TMPL_IF>
 	    <span class="location"><TMPL_VAR location_mapped></span>
-	
 		<div class="date<TMPL_IF is_running> running</TMPL_IF>">
 			<TMPL_IF is_running> ... Diese Sendung l&auml;uft gerade ...<p></TMPL_IF>
-			
 			<h1 class="summary title">
 			    <TMPL_IF series_name>
 				<a href="#" onclick="calcms.showPrevSeriesEvent(<TMPL_VAR event_id>)" title="vorherige Sendung">&laquo;</a><TMPL_VAR series_name><a href="#" onclick="calcms.showNextSeriesEvent(<TMPL_VAR event_id>)" title="n&auml;chste Sendung">&raquo;</a>
@@ -34,7 +32,6 @@ Access-Control-Allow-Origin: *
 			    </div>
 
 			</h1>
-
 			<TMPL_IF program> (<TMPL_VAR program>)</TMPL_IF>
 		</div>
 		<div class="content description" > 
@@ -69,9 +66,7 @@ Access-Control-Allow-Origin: *
                 Wiederholung vom <TMPL_VAR recurrence_weekday_name>, <TMPL_VAR recurrence_date_name>, <TMPL_VAR recurrence_time_name> Uhr</a>
             </TMPL_IF>
 		</div>
-		
 	</div>
-
 	<hr>
 	<TMPL_VAR project_title> - <TMPL_VAR location_mapped>
 
