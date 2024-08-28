@@ -141,32 +141,36 @@ sub modify_results ($$$$) {
 
     my $previous_result = { start_date => '' };
     my $counter = 1;
+    my $is_ics = $params->{template} =~ /\.ics$/;
+    my $is_atom = $params->{template} =~ /\.atom\.xml/;
+    my $is_rss_xml = $params->{template} =~ /\.rss\.xml/;
     for my $result (@$results) {
         if ( defined $params->{template} ) {
-            if ( $params->{template} =~ /\.ics$/ ) {
-                for my $key (qw(content title user_title excerpt user_excerpt series_name)) {
-                    $result->{"${key}_ical"} = markup::plain_to_ical($result->{$key});
-                }
-                for my $key (qw(created_at modified_at)) {
-                    $result->{$key} =~ s/ /T/;
-                    $result->{$key} =~ s/[\:\-]//g;
-                }
-          } elsif ( $params->{template} =~ /\.atom\.xml/ ) {
-                $result->{excerpt} =  "lass dich ueberraschen" unless $result->{excerpt};
-                for my $key (qw(created_at modified_at)) {
-                    $result->{$key} =~ s/ /T/;
-                    $result->{$key} .= $time_diff;
-                }
-            } elsif ( $params->{template} =~ /\.rss\.xml/ ) {
+            if ( $is_ics ) {
+                markup::plain_to_ical($result, qw(content title user_title excerpt user_excerpt series_name));
+                $result->{created_at} =~ tr/ /T/;
+                $result->{created_at} =~ tr/\:\-//d;
+                $result->{modified_at} =~ tr/ /T/;
+                $result->{modified_at} =~ tr/\:\-//d;
+
+            } elsif ( $is_atom ) {
+                $result->{excerpt} ||= "lass dich ueberraschen";
+                $result->{created_at} =~ tr/ /T/;
+                $result->{created_at} .= $time_diff;
+                $result->{modified_at} =~ tr/ /T/;
+                $result->{modified_at} .= $time_diff;
+            } elsif ( $is_rss_xml ) {
                 $result->{excerpt} ||= "lass dich ueberraschen";
                 $result->{modified_at} = time::datetime_to_rfc822($result->{modified_at});
-                $result->{created_at} = $result->{created_at} =~ /[1-9]/ ? time::datetime_to_rfc822($result->{created_at}) : $result->{modified_at};
+                $result->{created_at} =
+                  $result->{created_at} =~ /[1-9]/
+                  ? time::datetime_to_rfc822( $result->{created_at} )
+                  : $result->{modified_at};
             }
         }
         $result->{series_name} ||= '';
         $result->{series_name} = '' if $result->{series_name} eq '_single_';
         $result->{rerun} //= '';
-
         $result->{title} ||= '';
         if ( $result->{title} =~ /\#(\d+)([a-z])?\s*$/ ) {
             $result->{episode} //= $1;
@@ -186,7 +190,7 @@ sub modify_results ($$$$) {
 
         # set title keys
         my $keys = get_keys($result);
-        @$result{keys %$keys} = values %$keys;
+        @{$result}{keys %$keys} = values %$keys;
         $result = calc_dates( $config, $result, $params, $previous_result, $time_diff );
         get_listen_key($config, $result) unless $params->{set_no_listen_keys};
 
