@@ -220,7 +220,6 @@ a.load-prev, a.load-next{
 }
 
 #calcms_list .icon {
-    width:20%;
     padding: 1rem;
     text-align: center;
     text-align:left;
@@ -338,11 +337,6 @@ a.load-prev, a.load-next{
 
 #calcms_list .content img {
     border: 0;
-}
-
-#calcms_list .icon img {
-    width:100%;
-    height:auto;
 }
 
 #calcms_list .content figure {
@@ -879,5 +873,76 @@ div#content header h1.entry-title {
         padding: 3rem;
         padding-top: 1rem;
         padding-bottom: 0rem;
+    }
+}
+
+#calcms_list .events-base .event {
+    min-height: 12rem;
+    margin: 1rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+#calcms_list .events-base .icon {
+    margin-left: auto;
+}
+
+#calcms_list .events-base img {
+    width: 10rem;
+}
+
+@media ( max-width : 400px) {
+    #calcms_list .events-base .event {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    #calcms_list .events-base .icon {
+        margin-right: auto;
+    }
+}
+
+#calcms_details .vevent a.nav {
+    text-decoration: none;
+}
+
+#calcms_details .vevent .dtstart, .vevent .dtend {
+    display: none;
+}
+
+#calcms_details .vevent .date {
+    margin: 1rem 0 1rem 0;
+}
+
+#calcms_details .vevent .excerpt {
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid black;
+    border-radius: 0;
+}
+
+#calcms_details .vevent .description {
+    display: flex;
+    flex-direction: column;
+}
+
+#calcms_details .vevent img {
+    min-width: min(600px, 30%);
+    max-width: min(600px, 50%);
+    float: right;
+    margin-left: 1rem;
+}
+
+@media ( max-width : 600px) {
+    #calcms_details .vevent img {
+        max-width: 100%;
+        float: none;
+        padding: 0 0 1rem 0;
+        margin-left: 0rem;
+    }
+    #calcms_details figure {
+        padding: 0;
+        margin: 0;
     }
 }

@@ -3,82 +3,94 @@ Access-Control-Allow-Origin: *
 
 <!DOCTYPE html>
 <html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><TMPL_VAR full_title></title>
+<style>
+body { font-family: sans-serif; }
+.vevent a.nav { text-decoration:none; }
+.vevent .dtstart, .vevent .dtend { display:none; }
+.vevent .date {margin: 1rem 0 1rem 0;}
+.vevent .excerpt { padding-bottom:1rem; border-bottom:1px solid black;}
+.vevent .description {display: flex; flex-direction:column;}
+.vevent img {max-width:min(600px , 40vw); float:right; padding-left: 1rem;}
+@media (max-width: 600px) {
+    .vevent img {max-width:96vw; width: 100vw; float:none; padding: 0;}
+    figure { padding: 0; margin: 0;}
+}
+</style>
+</head>
+
 <body>
-	<TMPL_IF no_result>
-	<div id="is_empty">
-			<TMPL_IF search>
-				<TMLP_VAR count> Treffer:
-			</TMPL_IF>
-	</div>
-	</TMPL_IF>
+<TMPL_IF no_result>
+<div id="is_empty">
+<TMPL_IF search><TMPL_VAR count> Treffer:</TMPL_IF>
+</div>
+</TMPL_IF>
 
 <TMPL_LOOP events>
-<div class="event-base" data-prev-event="<TMPL_VAR prev_event_id>" data-next-event="<TMPL_VAR next_event_id>">
-	<div class="vevent">
-		<span class="dtstart"><TMPL_VAR start></span>
-		<TMPL_IF NAME=end><span class="dtend"><TMPL_VAR end></span></TMPL_IF>
-	    <span class="location"><TMPL_VAR location_mapped></span>
-		<div class="date<TMPL_IF is_running> running</TMPL_IF>">
-			<TMPL_IF is_running> ... Diese Sendung l&auml;uft gerade ...<p></TMPL_IF>
-			<h1 class="summary title">
-			    <TMPL_IF series_name>
-				<a href="#" onclick="calcms.showPrevSeriesEvent(<TMPL_VAR event_id>)" title="vorherige Sendung">&laquo;</a><TMPL_VAR series_name><a href="#" onclick="calcms.showNextSeriesEvent(<TMPL_VAR event_id>)" title="n&auml;chste Sendung">&raquo;</a>
-				</TMPL_IF>
-			    <TMPL_VAR full_title_no_series>
-
-			    <div style="font-size:1rem">
-			    <TMPL_VAR weekday_name>, <TMPL_VAR start_date_name>, 
-			    <span style="font-size:1.5rem"><TMPL_VAR start_time_name></span> bis <TMPL_VAR end_time_name> Uhr
-			    </div>
-
-			</h1>
-			<TMPL_IF program> (<TMPL_VAR program>)</TMPL_IF>
-		</div>
-		<div class="content description" > 
-			<TMPL_VAR excerpt > <TMPL_VAR user_excerpt >
-            <TMPL_IF excerpt><hr><TMPL_ELSE><TMPL_IF user_excerpt><hr></TMPL_IF></TMPL_IF>
-
-            <TMPL_IF no_image_in_text>
-                <TMPL_IF .hide_event_images>
-                    <figure>
-                        <TMPL_IF series_thumb_url>
-                            <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR series_image_url>">
-                            <TMPL_IF series_image_label><figcaption>Bild: <TMPL_VAR series_image_label></figcaption></TMPL_IF>
-                        </TMPL_IF>
-                    </figure>
-                <TMPL_ELSE>
-                    <figure>
-                        <TMPL_IF thumb_url>
-                            <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR image_url>">
-                            <TMPL_IF image_label><figcaption>Bild: <TMPL_VAR image_label></figcaption></TMPL_IF>
-                        </TMPL_IF>
-                    </figure>
-                </TMPL_IF>
+<div id="calcms_details" class="event-base" data-prev-event="<TMPL_VAR prev_event_id>" data-next-event="<TMPL_VAR next_event_id>">
+<div class="vevent">
+    <h1 class="title">
+        <TMPL_IF series_name>
+        <a class="nav" href="#" onclick="calcms.showPrevSeriesEvent(<TMPL_VAR event_id>)" title="vorherige Sendung">&laquo;</a>
+        <TMPL_VAR series_name>
+        <a class="nav" href="#" onclick="calcms.showNextSeriesEvent(<TMPL_VAR event_id>)" title="nächste Sendung">&raquo;</a>
+        </TMPL_IF>
+        <TMPL_VAR full_title_no_series>
+    </h1>
+    <TMPL_IF is_running>
+        <div class="running">... Diese Sendung l&auml;uft gerade ...</div>
+    </TMPL_IF>
+    <div class="date">
+        <TMPL_VAR weekday_name>, <TMPL_VAR start_date_name>,
+        <span style="font-size:1.5rem"><TMPL_VAR start_time_name></span> bis <TMPL_VAR end_time_name> Uhr
+    </div>
+    <div class="meta">
+        <span class="dtstart"><TMPL_VAR start></span>
+        <TMPL_IF NAME=end><span class="dtend"><TMPL_VAR end></span></TMPL_IF>
+        <TMPL_IF location_mapped><span class="location"><TMPL_VAR location_mapped></span></TMPL_IF>
+        <TMPL_IF program> (<TMPL_VAR program>)</TMPL_IF>
+    </div>
+    <TMPL_IF excerpt><div class="excerpt"><TMPL_VAR excerpt ><TMPL_VAR user_excerpt></div></TMPL_IF>
+    <TMPL_IF no_image_in_text>
+        <TMPL_IF .hide_event_images>
+            <TMPL_IF series_thumb_url>
+                <figure>
+                    <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR series_image_url>">
+                    <TMPL_IF series_image_label><figcaption>Bild: <TMPL_VAR series_image_label></figcaption></TMPL_IF>
+                </figure>
             </TMPL_IF>
-
-			<TMPL_VAR topic escape=none><TMPL_VAR content escape=none>
-            <TMPL_IF listen_url><audio 
-                controls 
-                src="<TMPL_VAR listen_url>"
-                title="Sendung nachh&ouml;ren"
-                ></audio></TMPL_IF>
-			<TMPL_IF recurrence_date><a href="<TMPL_VAR recurrence>.html">
-                Wiederholung vom <TMPL_VAR recurrence_weekday_name>, <TMPL_VAR recurrence_date_name>, <TMPL_VAR recurrence_time_name> Uhr</a>
+        <TMPL_ELSE>
+            <TMPL_IF thumb_url>
+                <figure>
+                    <img alt="<TMPL_VAR series_name>" src="<TMPL_VAR image_url>">
+                    <TMPL_IF image_label><figcaption>Bild: <TMPL_VAR image_label></figcaption></TMPL_IF>
+                </figure>
             </TMPL_IF>
-		</div>
-	</div>
-	<hr>
-	<TMPL_VAR project_title> - <TMPL_VAR location_mapped>
-
-	<div id="calcms_comments">
-		<script>
-			jQuery(document).ready(
-				function() {
-					calcms.showCommentsByEventIdOrEventStart('<TMPL_VAR event_id escape=js>','<TMPL_VAR start_datetime escape=js>');
-				}
-			);
-		</script>
-	</div>
+        </TMPL_IF>
+    </TMPL_IF>
+    <TMPL_IF content><TMPL_VAR topic escape=none><TMPL_VAR content escape=none></TMPL_IF>
+    <TMPL_IF listen_url><audio class="listen"
+        controls
+        src="<TMPL_VAR listen_url>"
+        title="Sendung nachh&ouml;ren"
+        ></audio>
+    </TMPL_IF>
+    <TMPL_IF recurrence_date><a class="recurrence" href="<TMPL_VAR recurrence>.html">
+        Wiederholung vom <TMPL_VAR recurrence_weekday_name>, <TMPL_VAR recurrence_date_name>, <TMPL_VAR recurrence_time_name> Uhr</a>
+    </TMPL_IF>
+</div>
+<div id="calcms_comments">
+    <script>
+        jQuery(document).ready(
+            function() {
+                calcms.showCommentsByEventIdOrEventStart('<TMPL_VAR event_id escape=js>','<TMPL_VAR start_datetime escape=js>');
+            }
+        );
+    </script>
+</div>
 </div>
 </TMPL_LOOP>
 </body>
