@@ -81,8 +81,7 @@
         </TMPL_IF>
     <TMPL_ELSE>
         <TMPL_IF .allow.assign_series_events>
-            <button class="text"
-                onclick="selectChangeSeries('changeSeriesId');"
+            <button class="text" onclick="selectChangeSeries('changeSeriesId');"
             ><TMPL_VAR loc.button_assign_series></button>
         </TMPL_IF>
     </TMPL_IF>
@@ -186,8 +185,8 @@
     </TMPL_UNLESS>
 
     <!-- edit event -->
-<div id="edit_event" class="panel">    
-<form id="event_<TMPL_VAR event_id>" method="post" 
+<div id="edit_event" class="panel">
+<form id="event_<TMPL_VAR event_id>" method="post"
     action="broadcast.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id><TMPL_UNLESS new_event>&event_id=<TMPL_VAR .event_id></TMPL_UNLESS>"
 >
     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
@@ -525,7 +524,7 @@
     <TMPL_UNLESS show_new_event>
         <TMPL_IF .allow.read_event>
             <button target="_blank" class="text"
-                onclick="loadUrl('event-history.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&series_id=<TMPL_VAR series_id>&event_id=<TMPL_VAR event_id>');"
+                onclick="showHistory('<TMPL_VAR project_id>', '<TMPL_VAR studio_id>', '<TMPL_VAR series_id>', '<TMPL_VAR event_id>');"
             ><TMPL_VAR .loc.button_show_changes></button>
         </TMPL_IF>
     </TMPL_UNLESS>

@@ -342,12 +342,11 @@ sub add_user ($$) {
     print STDERR "add-user:@$results\n";
     $query = qq{
 		insert calcms_user_series
-		set    project_id=?, studio_id=?, series_id=?, user_id=?, modified_by=?, modified_at=now(), active=?
+		set    project_id=?, studio_id=?, series_id=?, user_id=?, modified_by=?, modified_at=now()
 	};
     $bind_values =
-      [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{user_id}, $entry->{user}, '' ];
+      [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{user_id}, $entry->{user} ];
     db::put( $dbh, $query, $bind_values );
-    print STDERR "add-usered:@$results\n";
 }
 
 # remove user(s) from series.
@@ -417,7 +416,7 @@ sub search_events ($$$) {
         $params->{till_date} = $options->{till_date} if defined $options->{till_date};
         $params->{location}  = $options->{location}  if defined $options->{location};
         $params->{limit}     = $options->{limit}     if defined $options->{limit};
-        $params->{archive}   = $options->{archive}   if defined $options->{archive};
+        $params->{phase}     = $options->{phase}     if defined $options->{phase};
         $params->{get}       = $options->{get}       if defined $options->{get};
     }
 

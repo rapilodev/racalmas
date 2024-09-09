@@ -69,10 +69,14 @@ sub get_menu($$$$) {
         $request->{params}->{original}->{template} = 'event_menu.html';
         $request->{params}->{original}->{event_id} = undef;
         $request->{params}->{original}->{date}     = $date;
+        $request->{params}->{original}->{excerpt}  = 'none';
+        $request->{params}->{original}->{content}  = 'none';
         $request->{params}->{checked} = events::check_params( $config, $request->{params}->{original} );
         $results = events::get( $config, $request );
     } else {
         $request->{params}->{checked}->{template} = template::check( $config, 'event_menu.html' );
+        $request->{params}->{original}->{excerpt}  = 'none';
+        $request->{params}->{original}->{content}  = 'none';
     }
 
     #events menu

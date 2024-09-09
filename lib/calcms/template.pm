@@ -5,7 +5,6 @@ use warnings;
 no warnings 'redefine';
 use feature 'state';
 
-use Data::Dumper;
 use HTML::Template::Compiled();
 use HTML::Template::Compiled::Plugin::XMLEscape();
 use HTML::Template::Compiled::Plugin::Hyphen();
@@ -17,8 +16,6 @@ use config();
 use params();
 use project();
 use log();
-
-our @EXPORT_OK = qw(check process clear_cache);
 
 # TODO:config
 sub process($$$) {
@@ -43,10 +40,12 @@ sub process($$$) {
     $params->{user} = $ENV{REMOTE_USER} unless defined $params->{user};
 
     if ( ( $filename =~ /json\-p/ ) || (params::is_json) ) {
-        my $header = "Content-type:application/json; charset=utf-8\n\n";
+        my $header = join("\n", (
+            "Content-type:application/json; charset=utf-8",
+            "Access-Control-Allow-Origin: *",
+        )) . "\n\n";
         my $json = JSON->new->pretty(1)->canonical()->encode($params);
         $json = $header . ($params->{json_callback}//'') . $json;
-        print STDERR Dumper($json);
         return $json. "\n";
     }
 

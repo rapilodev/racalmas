@@ -13,10 +13,10 @@ use DateTime();
 use Scalar::Util qw( blessed );
 use Try::Tiny;
 use Exception::Class qw(
-    ActionError AppError AssignError AuthError ConfigError DatabaseError 
-    DateTimeError  DbError EventError EventExistError ExistError InsertError 
-    InvalidIdError LocalizationError  LoginError ParamError PermissionError 
-    ProjectError SeriesError SessionError StudioError  TimeCalcError UacError 
+    ActionError AppError AssignError AuthError ConfigError DatabaseError
+    DateTimeError  DbError EventError EventExistError ExistError InsertError
+    InvalidIdError LocalizationError  LoginError ParamError PermissionError
+    ProjectError SeriesError SessionError StudioError  TimeCalcError UacError
     UpdateError UserError
 );
 

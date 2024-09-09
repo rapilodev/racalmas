@@ -16,9 +16,9 @@ sub error($$) {
     print STDERR $message;
     unless ( defined $config ) {
         print STDERR "missing config at log::error\n";
-        die();
+        die("missing config at log::error");
     }
-    die();
+    die($message);
 }
 
 sub load_file($) {

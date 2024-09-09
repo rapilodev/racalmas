@@ -63,7 +63,7 @@ tr.inactive {
 
 #progress_container #progress_done {
     background: rgb(22, 120, 194);
-    
+
 }
 
 #progress_container #progress_todo {
@@ -85,5 +85,5 @@ tr.inactive {
 #upload {
     display: flex;
     flex-direction: row;
-    align-items: center;    
+    align-items: center;
 }

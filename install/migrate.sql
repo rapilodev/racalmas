@@ -362,3 +362,5 @@ ADD COLUMN `month` INT UNSIGNED NULL AFTER `week_of_month`,
 CHANGE COLUMN `frequency` `frequency` INT UNSIGNED NULL ;
 
 update `calcms_studio_timeslot_schedule` set period_type = 'days' where period_type = '';
+
+CREATE INDEX idx_covering ON calcms_events (start, end, id);

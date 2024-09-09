@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w 
+#! /usr/bin/perl -w
 
 use warnings "all";
 use strict;
@@ -55,12 +55,11 @@ sub change_password{
     $user->{salt}=$crypt->{salt};
     $user->{pass}=$crypt->{crypt};
     #print '<pre>'.Dumper($user).'</pre>';
-    $config->{access}->{write}=1;
+    local $config->{access}->{write}=1;
     uac::update_user($config, $user);
-    $config->{access}->{write}=0;
     print STDERR "password changed for $userName\n";
     print STDERR Dumper($user);
-    
+
 }
 
 sub check_password{

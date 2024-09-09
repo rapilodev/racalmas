@@ -5,8 +5,8 @@ use warnings;
 no warnings 'redefine';
 
 use URI::Escape();
-use Data::Dumper;
 use MIME::Base64();
+use File::Temp qw(tempfile);
 use Scalar::Util qw( blessed );
 use Try::Tiny;
 
@@ -55,7 +55,8 @@ sub main {
 
     $config->{access}->{write} = 0;
     return $out . compare( $config, $request ) if $params->{action} eq 'diff';
-    return $out . show_history( $config, $request );
+    return $out . show_history( $config, $request ) if $params->{action} eq 'show';
+    ActionError->throw(error=>'Invalid action');
 }
 
 #show existing event history
@@ -65,7 +66,8 @@ sub show_history {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     for my $attr ('studio_id') {    # 'series_id','event_id'
-    ParamError->throw(error=> "missing " . $attr . " to show changes" ) unless defined $params->{$attr};
+        ParamError->throw(error=> "missing " . $attr . " to show changes" ) unless defined $params->{$attr};
+    }
     PermissionError->throw(error=>"missing permissions to show changes") unless $permissions->{read_event} == 1;
 
     my $options = {
@@ -77,7 +79,6 @@ sub show_history {
     $options->{event_id}  = $params->{event_id}  if defined $params->{event_id};
 
     my $events = event_history::get( $config, $options );
-
     return unless defined $events;
     $params->{events} = $events;
 
@@ -97,7 +98,7 @@ sub compare {
     my $permissions = $request->{permissions};
     for my $attr ( 'project_id', 'studio_id', 'event_id', 'v1', 'v2' ) {
         ParamError->throw(error=> "missing $attr to show changes" ) unless defined $params->{$attr};
-
+    }
     PermissionError->throw(error=>"missing permissions to show changes") unless $permissions->{read_event} == 1;
 
     if ( $params->{v1} > $params->{v2} ) {
@@ -131,15 +132,16 @@ sub compare {
         return "no changes\n";
     }
 
-    my $out = '';
-    $out .= '<textarea>' . $t1 . '</textarea>';
-    $out .= '<textarea>' . $t2 . '</textarea>';
+    my ($fh1,$f1) = tempfile();
+    my ($fh2,$f2) = tempfile();
+    #binmode $f1, ":utf8";
+    #binmode $f2, ":utf8";
+    print $fh1 $t1; close $fh1 or die;
+    print $fh2 $t2; close $fh2 or die;
 
-    my $cmd="/usr/bin/colordiff /tmp/diff-a.txt /tmp/diff-b.txt | ansi2html";
-    #print  "$cmd\n";
-    log::save_file('/tmp/diff-a.txt', $t1);
-    log::save_file('/tmp/diff-b.txt', $t2);
-    $out .= qq{
+    my $diff = qx{git diff -U10000 --diff-algorithm=minimal --no-prefix --no-index --minimal --color=always --word-diff=color $f1 $f2 | ansi2html};
+    $diff =~s{.*\@\@.*\n}{};
+    my $out = qq{
         <style>
         pre {
     font-weight: normal;
@@ -183,17 +185,16 @@ b.BCYN {background-color: #00aaaa}
 b.BWHI {background-color: #aaaaaa}
     </style>
     };
-    my $diff = qx{$cmd};
     $diff = substr($diff, index($diff, "<body>")+6);
     $diff = substr($diff, 0, index($diff, "</body>"));
-    $out .= "$diff\n";
+    $out .= qq{<div class="panel">$diff</div>};
 
 }
 
 sub eventToText {
     my $event = shift;
 
-    my $s = events::get_keys($event)->{full_title} . "\n";
+    my $s = "# " .events::get_keys($event)->{full_title} . "\n";
     $s .= $event->{excerpt} . "\n";
     $s .= $event->{user_excerpt} . "\n";
     $s .= $event->{topic} . "\n";

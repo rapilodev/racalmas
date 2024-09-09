@@ -12,7 +12,7 @@ use Try::Tiny;
 use Scalar::Util qw( blessed );
 
 our @EXPORT_OK = qw(
-  connect disconnect
+  connect
   get insert put
   next_id get_max_id
   shift_date_by_hours shift_datetime_by_minutes
@@ -27,73 +27,48 @@ our $write = 1;
 
 # connect to database
 my $database;
+state $connection = {};
+
 sub connect($;$) {
     my ($options, $request) = @_;
 
-    return $request->{connection} if defined $request and defined $request->{connection};
-
     my $access_options = $options->{access};
-    my $hostname = $access_options->{hostname};
-    my $port     = $access_options->{port};
-    $database    = $access_options->{database};
-    my $username = $access_options->{username};
-    my $password = $access_options->{password};
-
-    if ( ( defined $access_options->{write} ) && ( $access_options->{write} eq '1' ) ) {
-        $username = $access_options->{username_write};
-        $password = $access_options->{password_write};
-    }
-
-    my $dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
-    my $key = Digest::MD5::md5_hex($dsn.$username.$password);
-    return $options->{connections}->{$key} if defined $options->{connections}->{$key};
-    state $connections = {};
-    return $connections->{$key} if defined $connections->{$key} and $connections->{$key}->ping;
-
-    my $dbh = DBI->connect( $dsn, $username, $password, { mysql_enable_utf8 => 1 } )
-      || DatabaseError->throw(error => "could not connect to database: $DBI::errstr");
-    $dbh->{RaiseError} = 1;
-    $dbh->{HandleError} = sub{
+    my $key = Digest::MD5::md5_hex(sort values %$access_options);
+    my $cache = $connection->{$key};
+    return $cache->{dbh} if defined $cache && ($cache->{expires}//0>time);# && $cache->{dbh}->ping;
+    $database = $access_options->{database};
+    my $dsn = "DBI:mysql:database=$access_options->{database};host=$access_options->{hostname};port=$access_options->{port};"
+            . "mysql_enable_utf8=1;mysql_init_command=SET time_zone='$options->{date}->{time_zone}'";
+    my $username = $access_options->{write} ? $access_options->{username_write} : $access_options->{username};
+    my $password = $access_options->{write} ? $access_options->{password_write} : $access_options->{password};
+    my $dbh = DBI->connect($dsn, $username, $password, {
+        RaiseError => 1,
+        mysql_enable_utf8 => 1,
+        mysql_auto_reconnect => 1,
+        mysql_use_result=> 1
+    }) or die "could not connect to database: $DBI::errstr";
+    $dbh->{HandleError} = sub {
         print STDERR join(",",(caller($_))[0..3])."\n" for (1..2);
+        DatabaseError->throw(error => "could not connect to database: $DBI::errstr");
         return 0;
     };
-    $dbh->{'mysql_enable_utf8'} = 1;
-    put( $dbh, "set character set utf8", undef );
-    put( $dbh, "set names utf8", undef );
-    put( $dbh, "set time_zone='" . $options->{date}->{time_zone} . "'", undef );
-    $request->{connection} = $dbh;
-    #$options->{connections}->{$key} = $dbh;
-    $connections->{$key} = $dbh;
+    $connection->{$key} = {dbh => $dbh, expires => time + 60};
     return $dbh;
 }
 
-sub disconnect ($){
-    my ($request) = @_;
-    my $dbh     = $request->{connection};
-    $dbh->disconnect;
-    delete $request->{connection};
-    return;
-}
-
 # get all database entries of an sql query (as list of hashs)
+state $sths = {};
 sub get($$;$) {
     my ( $dbh, $sql, $bind_values ) = @_;
 
-    my $sth = $dbh->prepare($sql);
-    if ( ( defined $bind_values ) && ( ref($bind_values) eq 'ARRAY' ) ) {
-        my $result = $sth->execute(@$bind_values);
-        unless ($result) {
-            print STDERR $sql . "\n";
-            DatabaseError->throw(error => "db: $DBI::errstr $sql") if ( $read == 1 );
-        }
+    my $sth = $sths->{$sql} // ($sths->{$sql}=$dbh->prepare($sql));
+    if (ref($bind_values) eq 'ARRAY') {
+        $sth->execute(@$bind_values)
+            or DatabaseError->throw(error => "db: $DBI::errstr $sql");
     } else {
-        $sth->execute() or DatabaseError->throw(error => "db: $DBI::errstr $sql") if $read == 1;
+        $sth->execute() or DatabaseError->throw(error => "db: $DBI::errstr $sql");
     }
-
-    my $results = $sth->fetchall_arrayref({});
-
-    $sth->finish;
-    return $results;
+    return $sth->fetchall_arrayref({});
 }
 
 # get list of table columns
@@ -140,7 +115,7 @@ sub put($$$) {
 
     my $sth = $dbh->prepare($sql);
     if ( $write == 1 ) {
-        if ( ( defined $bind_values ) && ( ref($bind_values) eq 'ARRAY' ) ) {
+        if (ref($bind_values) eq 'ARRAY') {
             $sth->execute(@$bind_values);
         } else {
             $sth->execute();

@@ -3,7 +3,6 @@ package user_stats;
 use strict;
 use warnings;
 no warnings 'redefine';
-
 use Data::Dumper;
 
 our @EXPORT_OK = qw(get_columns get update insert get_stats increase);

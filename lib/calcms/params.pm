@@ -24,18 +24,6 @@ use Exception::Class ('ParamError');
     }
 }
 
-{
-    my $uri;
-
-    sub set_uri($) {
-        ($uri) = @_;
-    }
-
-    sub get_uri() {
-        return $uri;
-    }
-}
-
 sub get($;$) {
     my ($r, $options) = @_;
     my $MB           = 1000 * 1000;
@@ -48,9 +36,8 @@ sub get($;$) {
     set_uri(undef);
 
     # fallback to CGI::Simple if uploads can take more than 64 MB
-    if (defined $r and ($options->{upload}->{limit} // 0) < 64 * $MB) {
-        my $req = Apache2::Request->new(
-            $r,
+    if (defined $r && ($options->{upload}->{limit} // 0) < 64 * $MB) {
+        my $req = Apache2::Request->new($r,
             POST_MAX => $upload_limit,
             TEMP_DIR => $tmp_dir
         );

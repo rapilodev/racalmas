@@ -4,7 +4,6 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
-use Data::Dumper;
 use URI::Escape();
 use Encode();
 use Scalar::Util qw( blessed );
@@ -48,16 +47,16 @@ sub main {
         $out .= template::process($config,
             template::check($config, 'series-header.html'), $headerParams
         );
-        
+
         my $header_template = {
             'show_series' => 'show-series-header.html',
             'list_series' => 'list-series-header.html',
         }->{$params->{action}};
-        $out .= template::process($config, template::check($config, $header_template), {}) 
+        $out .= template::process($config, template::check($config, $header_template), {})
             if defined $header_template;
     }
     uac::check($config, $params, $user_presets);
-    
+
     my %actions = (
         show_series => \&show_series,
         list_series => \&list_series,
@@ -76,8 +75,8 @@ sub main {
     );
 
     my $action = $actions{$params->{action}};
-    return $out . $action->($config, $request) if defined $actions{$params->{action}};
-    ActionError->throw(error => "invalid action $params->{action}");
+    return $out . $action->($config, $request) if defined $action;
+    ActionError->throw(error => "invalid action <$params->{action}>");
 }
 
 #insert or update a schedule and update all schedule dates
@@ -89,7 +88,7 @@ sub save_schedule {
     PermissionError->throw(error => 'Missing permission to update_schedule')
         unless $permissions->{update_schedule} == 1;
 
-    ParamError->throw(error => "missing $_") for 
+    ParamError->throw(error => "missing $_") for
         uac::missing($params, 'project_id', 'studio_id', 'series_id', 'start');
 
     my $entry = {map {$_ => $params->{$_}} grep {defined $params->{$_}} (
@@ -98,7 +97,7 @@ sub save_schedule {
         'frequency',  'weekday',   'week_of_month', 'month',
         'nextDay'
     )};
-    
+
     AssignError->throw(error => 'series is not assigned to project!')
         unless project::is_series_assigned($config, $entry) == 1;
 
@@ -120,7 +119,7 @@ sub save_schedule {
             unless $permissions->{delete_schedule} == 1;
 
         #get single schedules
-        my $schedules = series_schedule::get($config, {   
+        my $schedules = series_schedule::get($config, {
             uac::set($entry, 'project_id', 'studio_id', 'series_id', 'start'),
                 period_type => 'single',
                 exclude     => 0
@@ -252,7 +251,7 @@ sub save_series {
     my $permissions = $request->{permissions};
     my $columns     = series::get_columns($config);
 
-    ParamError->throw(error => "save_series: missing $_") 
+    ParamError->throw(error => "save_series: missing $_")
         for uac::missing($params, 'project_id', 'studio_id');
 
     # fill series entry
@@ -280,8 +279,9 @@ sub save_series {
 
     # make sure name is not used anywhere else
     my $series_ids = series::get($config, {
-        uac::set($entry, 'project_id', 'studio_id', 'series_id', 'title'),
+        uac::set($entry, 'project_id', 'studio_id', 'series_name', 'title'),
     });
+    #print STDERR Dumper($series_ids);
 
     if ($params->{action} eq 'create_series') {
         PermissionError->throw(error => 'missing permission to create_series')
@@ -299,7 +299,7 @@ sub save_series {
             uac::set($entry, 'project_id', 'studio_id', 'series_id'),
             user => $params->{presets}->{user}
         });
-        return uac::json({   
+        return uac::json({
             "entry" => {uac::set($entry, 'project_id', 'studio_id', 'series_id')},
             "status" => "series created"
         });
@@ -334,7 +334,7 @@ sub save_series {
             user => $params->{presets}->{user}
         });
 
-        return uac::json({   
+        return uac::json({
             "entry" => { uac::set($entry, 'project_id', 'studio_id', 'series_id'), },
             "status" => "series saved"
         });
@@ -550,7 +550,7 @@ sub reassign_event {
     $request->{params}->{checked}->{series_id} = $params->{series_id};
     unassign_event($config, $request);
 
-    return uac::json({ 
+    return uac::json({
         "entry" => {uac::set($params, 'project_id', 'studio_id', 'series_id', 'event_id')},
         "status" => "event reassigned"
     });
@@ -1096,6 +1096,6 @@ sub check_params {
             $checked->{$attr} = $1;
         }
     }
-
+    use Data::Dumper;print STDERR Dumper($checked);
     return $checked;
 }

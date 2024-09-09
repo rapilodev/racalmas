@@ -488,9 +488,9 @@ sub add_event_dates($$$) {
 sub update_series_images ($$) {
     my ($config, $options) = @_;
 
-    ParamError->throw(error => "missing $_") for 
+    ParamError->throw(error => "missing $_") for
         grep uac::missings($options, 'project_id', 'studio_id', 'series_id', 'series_image');
-    
+
     my $events = series::get_events(
         $config, uac::set($options, qw(project_id studio_id series_id))
     );

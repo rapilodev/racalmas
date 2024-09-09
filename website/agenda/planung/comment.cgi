@@ -41,7 +41,7 @@ sub main {
     if (!params::is_json() && $params->{action} eq 'show') {
         my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
         $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
-        #$out = template::process($config, template::check($config, 'default.html'), $headerParams);
+        $out = template::process($config, template::check($config, 'header.html'), $headerParams);
         $out .= template::process($config, template::check($config, 'comment-header.html'), $headerParams);
     };
     uac::check($config, $params, $user_presets);
@@ -60,7 +60,7 @@ sub show {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    PermissionError->throw(error=>'Missing permission to read_comment') 
+    PermissionError->throw(error=>'Missing permission to read_comment')
         unless $permissions->{read_comment} == 1;
 
     for my $attr ('project_id', 'studio_id') {
@@ -111,7 +111,7 @@ sub show {
     $template_parameters->{loc} =
       localization::get($config, { user => $params->{presets}->{user}, file => 'comment' });
 
-    print STDERR Dumper($template_parameters);
+    #print STDERR Dumper($template_parameters);
     return template::process($config, $params->{template}, $template_parameters);
 }
 
@@ -134,7 +134,7 @@ sub setLock {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    PermissionError->throw(error=>'Missing permission to update_comment_status_lock') 
+    PermissionError->throw(error=>'Missing permission to update_comment_status_lock')
         unless $permissions->{update_comment_status_lock} == 1;
 
     my $comment = $params->{comment};
@@ -156,7 +156,7 @@ sub setRead {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    PermissionError->throw(error=>'Missing permission to update_comment_status_read') 
+    PermissionError->throw(error=>'Missing permission to update_comment_status_read')
         unless $permissions->{update_comment_status_read} == 1;
 
     $config->{access}->{write} = 1;

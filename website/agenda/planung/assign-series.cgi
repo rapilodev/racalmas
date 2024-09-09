@@ -42,15 +42,18 @@ sub main {
     uac::check($config, $params, $user_presets);
 
     my $permissions = $request->{permissions};
-    PermissionError->throw(error=>'Missing permission to scan_series_events') 
+    PermissionError->throw(error=>'Missing permission to scan_series_events')
         unless $permissions->{scan_series_events} == 1;
 
     if ( defined $params->{action} ) {
-        assign_series(   $config, $request ) if $params->{action} eq 'assign_series';
-        unassign_series( $config, $request ) if $params->{action} eq 'unassign_series';
+        return assign_series(   $config, $request ) if $params->{action} eq 'assign_series';
+        return unassign_series( $config, $request ) if $params->{action} eq 'unassign_series';
+        return  template::process( $config, template::check( $config, 'assign-series-header.html' ), $headerParams )
+                . show_series( $config, $request ) if $params->{action} eq 'get';
+
     }
-    my $out = template::process( $config, template::check( $config, 'assign-series-header.html' ), $headerParams );
-    return $out . show_series( $config, $request );
+    ActionError->throw(error => "invalid action");
+
 }
 
 sub show_series {

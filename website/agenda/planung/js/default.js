@@ -80,11 +80,7 @@ function contains(s,t){
 function updateContainer2(id, url, callback){
     if (id==null) return;
     if ($("#"+id).length==0) return;
-    if (callback instanceof Function){
-        $("#"+id).load(url, callback);
-    }else{
-        $("#"+id).load(url, callback);
-    }
+    $("#"+id).load(url, callback);
 }
 
 function showError(s) {
@@ -100,6 +96,14 @@ function showInfo(s) {
        $('#info').html(s);
    } else {
        showToast(s, {color:"white", background:"green"})
+   }
+}
+
+function showWarn(s) {
+   if ($('#warn').length){
+       $('#warn').html(s);
+   } else {
+       showToast(s, {color:"black", background:"yellow"})
    }
 }
 
@@ -128,21 +132,30 @@ function showToast(s, options){
 }
 
 async function updateContainer(id, url, callback){
-    console.log("updateContainer2: id:"+id+" url:" +url);
     if (id==null) throw Error(`id is null`);
-    if ($("#"+id).length ==0 ) throw Error(`id ${id} no found`);
-    console.log(url)
+    var target = id=='body' ? document.documentElement.innerHTML : document.getElementById(id);
+    if (target == null) throw Error(`id ${id} no found`);
     let response = await fetch(url, {"cache": "no-store"});
     if(!response.headers.has("content-type")){
         showError("No content type");
         console.error(response);
         return;
     }
+    if(response.status != 200) return showError(response.statusText);
     let type = response.headers.get("content-type").split(";")[0];
     if (type == "text/html"){
-       let text = await response.text();
-       $("#"+id).html(text);
-       if (callback != null) callback();
+        target.innerHTML = await response.text();
+        // load scripts from response
+        target.querySelectorAll('script').forEach(script => {
+            const newScript = document.createElement('script');
+            newScript.text = script.textContent;
+            Array.from(script.attributes).forEach(attr => {
+                newScript.setAttribute(attr.name, attr.value);
+            });
+            script.parentNode.replaceChild(newScript, script);       
+            console.log("load_script " + newScript.src);
+        });
+        if (callback != null) callback();
     } else if (type == "application/json"){
        let json = await response.json();
        showError(json.error);
@@ -165,6 +178,82 @@ function loadUrl(uri){
     window.location = url;
     $('body').css('cursor','wait');
 }
+
+function fmtDatetime(dateString, options = {}) {
+    try{
+        const date = new Date(dateString);
+        const defaultOptions = {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            "12hour" : false
+        };
+        const language = Intl.NumberFormat().resolvedOptions().locale;
+        return new Intl.DateTimeFormat(language, { ...defaultOptions, ...options }).format(date);
+    } catch(e) {
+        console.log(e)
+        showError(e)
+    }    
+}
+
+function fmtDate(dateString, options = {}) {
+    try{
+        const date = new Date(dateString);
+        const defaultOptions = {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric'
+        };
+        const mergedOptions = { ...defaultOptions, ...options };
+        const language = Intl.NumberFormat().resolvedOptions().locale;
+        return new Intl.DateTimeFormat(language, mergedOptions).format(date);
+    } catch(e) {
+        console.log(e)
+        showError(e)
+    }    
+}
+
+async function getJson(url, params){
+    params = Object.fromEntries(Object.entries(params).filter(([_,v]) => v));
+    if (params) url += new URLSearchParams(params).toString();
+    console.log("url:"+url)
+    let response = await fetch(url, {
+        method: 'GET',
+        cache: "no-store",
+        headers : {"accept" : 'application/json'}
+    });
+    if(response.status!=200) return showError(response.statusText);
+    if (!response.headers.get("content-type").startsWith("application/json")) return showError("invalid response type for "+url);
+    let json = await response.json();
+    if (json.error) return showError(json.error);
+    return json;
+}
+
+async function postJson(url, params){
+    let response = await fetch(url, {
+        method: 'POST',
+        cache: "no-store",
+        headers : {"accept" : 'application/json'},
+        body: new URLSearchParams(params)
+    });
+    if(response.status !=200 ) return showError(response.statusText);
+    let json = await response.json();
+    if (json.error) return showError(json.error);
+    return json;
+}
+
+function getFormValues(form, allowed){
+    return Object.fromEntries(
+        new FormData(form).filter(
+            ([name]) => allowed.includes(name)
+        )
+    )
+}
+
 
 function postContainer(url, parameters, callback){
     if (url!='') $.post(url, parameters, callback);
@@ -503,5 +592,3 @@ $(document).ready(
 
     }
 );
-
-

@@ -22,27 +22,27 @@ use Exception::Class(
     'LogoutError'  => { isa => 'AuthError', fields => [ 'user' ] },
     'LogoutDone'   => { isa => 'AuthError' },
     qw(
-    ActionError 
-    AppError 
-    AssignError 
-    ConfigError 
-    DatabaseError 
-    DateTimeError  
-    DbError 
-    EventError 
-    EventExistError 
-    ExistError 
-    InsertError 
-    InvalidIdError 
-    LocalizationError 
-    ParamError 
-    PermissionError 
-    ProjectError 
-    SeriesError 
-    StudioError  
-    TimeCalcError 
-    UacError 
-    UpdateError 
+    ActionError
+    AppError
+    AssignError
+    ConfigError
+    DatabaseError
+    DateTimeError
+    DbError
+    EventError
+    EventExistError
+    ExistError
+    InsertError
+    InvalidIdError
+    LocalizationError
+    ParamError
+    PermissionError
+    ProjectError
+    SeriesError
+    StudioError
+    TimeCalcError
+    UacError
+    UpdateError
     UserError
 ));
 use config();
@@ -51,7 +51,7 @@ use time();
 use db();
 use template();
 
-# build compile check include list: 
+# build compile check include list:
 # ls -1 lib/calcms/*.pm | perl -ne 'if (/([^\/]+).pm/){ print "use $1(); "}'
 
 #do not delete last line!

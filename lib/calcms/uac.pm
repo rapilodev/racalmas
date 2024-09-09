@@ -9,7 +9,6 @@ use JSON;
 use Try::Tiny qw(try catch finally);
 use CGI::Session qw(-ip-match);
 use CGI::Cookie();
-use Data::Dumper;
 use List::Util qw(none all);
 
 use auth();
@@ -440,7 +439,7 @@ sub get_admin_user_roles ($$) {
 		select	distinct r.*, ur.studio_id, ur.project_id
 		from 	calcms_users u, calcms_user_roles ur, calcms_roles r
 		where 	ur.user_id=u.id and ur.role_id=r.id and r.admin=1
-    			$conditions
+                $conditions
 		limit 1
 	};
 
@@ -612,7 +611,6 @@ sub get_user_presets($$) {
 
     my $project_id = $options->{project_id} || '';
     my $studio_id  = $options->{studio_id}  || '';
-    $config->{access}->{write} = 0;
 
     my $user_settings = user_settings::get( $config, { user => $user } );
     $project_id = $user_settings->{project_id} // '' if $project_id eq '';
@@ -793,10 +791,10 @@ Content-Type:application/json; charset=utf-8
 }
 
 sub error_handler {
-    print STDERR Dumper(\@_);
+    #print STDERR Dumper(\@_);
     my $last = $_[-1];
     if (blessed($last) and $last->isa("APR::Request::Error")){
-        print json({error => $last->{func}});    
+        print json({error => $last->{func}});
     }
     return json({
             error => ref $_[0] eq 'SCALAR' ? $_[0]: $_[0]->{message} // $_[0]->{error} //'',

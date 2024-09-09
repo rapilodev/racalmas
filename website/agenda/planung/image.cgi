@@ -55,8 +55,8 @@ sub main {
     my $local_media_url = $config->{locations}->{local_media_url};
 
     log::error( $config, 'cannot locate media dir ' . $local_media_dir ) unless -e $local_media_dir;
-    PermissionError->throw(error=>'Missing permission to reading from local media dir') unless -r $local_media_dir;
-    PermissionError->throw(error=>'Missing permission to writing to local media dir')   unless -w $local_media_dir;
+    PermissionError->throw(error=>'Missing permission to read from local media dir') unless -r $local_media_dir;
+    PermissionError->throw(error=>'Missing permission to write to local media dir' . $local_media_dir)   unless -w $local_media_dir;
 
     if ( $params->{delete_image} ne '' ) {
         delete_image( $config, $request, $session->{user}, $local_media_dir );

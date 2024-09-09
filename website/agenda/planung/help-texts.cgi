@@ -33,12 +33,15 @@ sub main {
         $headerParams);
     return unless uac::check($config, $params, $user_presets) == 1;
 
-    if (defined $params->{action}) {
-        return $out .= save_help( $config, $request, $session->{user}) if $params->{action} eq 'save';
-        return $out .= delete_help($config, $request, $session->{user}) if $params->{action} eq 'delete';
-        return $out .= edit_help($config, $request)   if $params->{action} eq 'edit';
-        return $out .= get_help($config, $request)    if $params->{action} eq 'get';
+    my $action = $params->{action};
+    if (defined $action) {
+        return $out .= save_help( $config, $request, $session->{user}) if $action eq 'save';
+        return $out .= delete_help($config, $request, $session->{user}) if $action eq 'delete';
+        return $out .= edit_help($config, $request)   if $action eq 'edit';
+        return $out .= get_help($config, $request)    if $action eq 'get';
     }
+    ActionError->throw(error => "invalid action");
+
 }
 
 sub save_help {

@@ -5,9 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
-
 use images();
-our @EXPORT_OK = qw(get_columns get get_by_id insert update delete check check_studio);
 
 sub get_columns($) {
     my ($config) = @_;

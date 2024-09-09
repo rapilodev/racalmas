@@ -67,6 +67,8 @@ sub main {
     } elsif ($params->{action} eq 'delete') {
         return delete_recording($config, $request);
     }
+    ActionError->throw(error => "invalid action");
+
 }
 
 sub upload_recording {

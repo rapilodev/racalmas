@@ -126,7 +126,6 @@ sub delete_session($$) {
 sub authenticate($$$) {
     my ($config, $user, $password) = @_;
 
-    $config->{access}->{write} = 0;
     my $dbh   = db::connect($config);
     my $query = qq{
 		select	*
@@ -134,7 +133,7 @@ sub authenticate($$$) {
 		where 	name=?
 	};
     my $bind_values = [$user];
-    my $users       = db::get($dbh, $query, $bind_values);
+    my $users = db::get($dbh, $query, $bind_values);
     LoginError->throw(user => $user, message => 'authentication_failed')
         if scalar(@$users) != 1;
 

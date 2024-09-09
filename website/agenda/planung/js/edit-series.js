@@ -230,6 +230,7 @@ async function addUser(form) {
             user_id: form.find("select[name='user_id'] option").filter(':selected').val(),
         })
     });
+    if(response.status!=200) showError(response.statusText);
     let json = await response.json();
     if (json.error) {
         showError(json.error);

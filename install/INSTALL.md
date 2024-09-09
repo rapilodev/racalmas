@@ -11,14 +11,7 @@ We use different accounts for different purposes.
 
     mysql -u admin mysql -p`cat /etc/psa/.psa.shadow` < ./install/init.sql
 
-if using plesk, use
-
-    mysql -u admin mysql -p`cat /etc/psa/.psa.shadow`
-
-We use different accounts for different purposes.
-Do not forget to use your own passwords!
-
-### import database content
+## import database content
 
     mysql -u calcms_admin -p calcms < ./install/create.sql
 
@@ -61,24 +54,6 @@ install mod_perl2
 ### Apache Configuration
 
 Copy Virtual host configuration apache2-sites/calcms.conf to /etc/conf/apache2/sites-enabled/.
-
-or via cpan
-
-    cpan install Apache2::Reload Apache2::Request
-    a2enmod perl
-
-set apeche to fork mode, required for preform registry
-
-    a2dismod mpm_event
-    a2enmod  mpm_fork
-
-### Apache Configuration
-
-Virtual host configuration has to be placed at /etc/conf/apache2/.
-
-    # adopt your settings here
-    Define domain   your-domain.org
-    Define base_dir /home/calcms
 
 * setup domain
 * setup database connection
@@ -123,6 +98,7 @@ apt-get install <deb-package>
     libmime-tools-perl
     libsession-token-perl
     libtext-multimarkdown-perl
+    libtext-unidecode
     libtext-wikicreole-perl
     liburi-escape-xs-perl
     perlmagick

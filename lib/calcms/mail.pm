@@ -3,11 +3,27 @@ package mail;
 use strict;
 use warnings;
 no warnings 'redefine';
+use utf8;
 
 use Email::Sender::Simple();
 use Email::Simple();
-use MIME::Words qw(encode_mimeword);
-use MIME::QuotedPrint qw(encode_qp);
+use Text::Unidecode qw(unidecode);
+
+sub to_ascii {
+    my ($s) = @_;
+    my %translate = qw(
+        Ä Ae
+        ä ae
+        Ö Oe
+        ö oe
+        Ü Ue
+        ü ue
+        ß ss
+    );
+    $s =~ s/([ÄäÖöÜüß])/$translate{$1}/g;
+    $s = unidecode $s;
+    return $s;
+}
 
 sub send($) {
     my ($mail) = @_;
@@ -15,14 +31,13 @@ sub send($) {
     my $email = Email::Simple->create(
         header => [
             'Content-Type' => 'text/plain;',
-            'Content-Transfer-Encoding' => 'quoted-printable',
             'From'     => $mail->{'From'},
             'To'       => $mail->{'To'},
             'Cc'       => $mail->{'Cc'},
             'Reply-To' => $mail->{'Reply-To'},
-            'Subject'  => encode_mimeword($mail->{'Subject'}, 'b', 'UTF-8')
+			'Subject' => to_ascii($mail->{'Subject'})
         ],
-        body => encode_qp($mail->{'Data'}),
+        body => to_ascii($mail->{'Data'})
     );
     Email::Sender::Simple->send($email);
 }

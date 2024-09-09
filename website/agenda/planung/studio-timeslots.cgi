@@ -110,7 +110,7 @@ sub delete_schedule {
     my ($config, $request) = @_;
 
     my $permissions = $request->{permissions};
-    PermissionError->throw(error=>'Missing permission to update_studio_timeslot_schedule') 
+    PermissionError->throw(error=>'Missing permission to update_studio_timeslot_schedule')
         unless $permissions->{update_studio_timeslot_schedule} == 1;
 
     my $params = $request->{params}->{checked};

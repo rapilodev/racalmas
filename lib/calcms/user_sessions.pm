@@ -87,7 +87,7 @@ sub insert ($$) {
 
     $entry->{pid}        = $$;
     $entry->{expires_at} = time::time_to_datetime(time() + $entry->{timeout});
-
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     return db::insert($dbh, 'calcms_user_sessions', $entry);
 }
@@ -136,7 +136,7 @@ sub check($$) {
     my ($config, $entry) = @_;
 
     SessionError->throw if !defined $entry or !defined $entry->{session_id};
-    my $entries = get($config, { session_id => $entry->{session_id} });
+    my $entries = get($config, {session_id => $entry->{session_id}});
     SessionError->throw unless defined $entries;
 
     $entry = $entries->[0];
@@ -147,7 +147,7 @@ sub check($$) {
     SessionError->throw unless defined $entry->{user};
 
     SessionError->throw if $entry->{expires_at} le $now;
-    SessionError->throw if $entry->{end} and $entry->{end} le $now;
+    SessionError->throw if $entry->{end} && $entry->{end} le $now;
 
     keep_alive($config, $entry);
     return $entry;
@@ -177,6 +177,7 @@ sub update ($$) {
 
     SessionError->throw unless defined $entry->{session_id};
 
+    local $config->{access}->{write} = 1;
     my $dbh         = db::connect($config);
     my @keys        = sort keys %$entry;
     my $values      = join ",", map {$_ . '=?'} @keys;
@@ -197,7 +198,7 @@ sub delete($$) {
 
     SessionError->throw unless defined $entry->{session_id};
 
-    my $dbh   = db::connect($config);
+    my $dbh = db::connect($config);
     my $query = qq{
         delete
         from calcms_user_sessions

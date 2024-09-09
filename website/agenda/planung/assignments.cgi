@@ -45,9 +45,11 @@ sub main {
 
     if ( defined $params->{action} ) {
         return assign_events( $config, $request ) if ( $params->{action} eq 'assign_events' );
+        return  template::process( $config, template::check( $config, 'assignments-header.html' ), $headerParams )
+            . show_events($config, $request) if $params->{action} eq 'get';
     }
-    my $out =  template::process( $config, template::check( $config, 'assignments-header.html' ), $headerParams );
-    return $out . show_events( $config, $request );
+    ActionError->throw(error => "invalid action");
+
 }
 
 sub show_events {

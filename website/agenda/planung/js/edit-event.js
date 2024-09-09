@@ -171,13 +171,13 @@ function selectChangeSeries(resultSelector){
 }
 
 // will be fired on updatine resultSelector of series selection
-function changeSeries(seriesId){
+function changeSeries(seriesId) {
     var projectId= $('#selectSeries #projectId').val();
     var studioId= $('#selectSeries #studioId').val();
     var seriesId= getUrlParameter('series_id');
     var eventId= getUrlParameter('event_id');
     var newSeriesId= $('#changeSeriesId').val();
-
+    console.log(`changeSeries ${seriesId}`)
     if (projectId <=0 ) return;
     if (studioId <=0 ) return;
     if (seriesId <=0 ) return;
@@ -296,6 +296,7 @@ function checkFields(){
 }
 
 function copyEventToClipboard(){
+    console.log(this)
     var text = $('textarea[name="excerpt"]').val()+"\n";
     if ($('textarea[name="user_excerpt"]').val()) text += $('textarea[name="user_excerpt"]').val()+"\n";
     text += $('textarea[name="topic"]').val()+"\n\n";
@@ -412,36 +413,40 @@ function downloadRecording(project_id, studio_id, series_id, event_id){
     }).toString());
 }
 
+function showHistory(project_id, studio_id, series_id, event_id) {
+    console.log(showHistory)
+    loadUrl("event-history.cgi?" + new URLSearchParams({
+        action: "show",
+        project_id : project_id,
+        studio_id : studio_id,
+        series_id : series_id,
+        event_id : event_id,
+    }).toString());
+}
+
 async function loadHelpTexts () {
     var url = "help-texts.cgi?" + new URLSearchParams({
         project_id : getProjectId(),
         studio_id : getStudioId(),
-        action : "get_json",
-        json: 1,
-        get_rerun: 1,
+        action : "get",
     }).toString();
-    console.log("modifyEvent:" + url);
     let response = await fetch(url, {
         method: 'GET',
         cache: "no-store",
     });
-    console.log("reponse:",response)
     let json = await response.json();
-    console.log(json)
-    if (json.error){
-        showError(json.error);
-        return
-    }
+
+    if (json.error) return showError(json.error);
 
     var data = json;
-    for (col in data){
-        let value = data[col];
-        console.log(col+" "+value)
-        $(`input[name="${col}"]`).hover(function() {
-            $(this).attr("title",value)
+    for (key in data){
+        let value = data[key];
+        console.log(key + "=" + value)
+        $(`input[name="${key}"]`).hover(function() {
+            $(this).attr("title", value)
         });
-        $(`textarea[class="${col}"]`).hover(function() {
-            $(this).attr("title",value)
+        $(`textarea[class="${key}"]`).hover(function() {
+            $(this).attr("title", value)
         });
     }
 }

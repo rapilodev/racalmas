@@ -182,9 +182,8 @@ sub changePassword ($$$) {
     $user->{salt} = $crypt->{salt};
     $user->{pass} = $crypt->{crypt};
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $result = uac::update_user( $config, $user );
-    $config->{access}->{write} = 0;
     return { success => "The password was changed for $userName." };
 }
 

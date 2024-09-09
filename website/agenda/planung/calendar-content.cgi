@@ -12,10 +12,10 @@ use URI::Escape();
 use DateTime();
 use Try::Tiny qw(try catch);
 use Exception::Class qw(
-    ActionError AppError AssignError AuthError ConfigError DatabaseError 
-    DateTimeError  DbError EventError EventExistError ExistError InsertError 
-    InvalidIdError LocalizationError  LoginError ParamError PermissionError 
-    ProjectError SeriesError SessionError StudioError  TimeCalcError UacError 
+    ActionError AppError AssignError AuthError ConfigError DatabaseError
+    DateTimeError  DbError EventError EventExistError ExistError InsertError
+    InvalidIdError LocalizationError  LoginError ParamError PermissionError
+    ProjectError SeriesError SessionError StudioError  TimeCalcError UacError
     UpdateError UserError
 );
 

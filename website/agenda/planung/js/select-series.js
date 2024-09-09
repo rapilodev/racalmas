@@ -44,7 +44,7 @@ function updateSeriesSelection(resultElemId){
 
 function selectSeriesAction(resultElemId){
     var seriesId=$('#selectSeries #selectSeriesId').val();
-    if (seriesId<=0) return;
+    //if (seriesId<=0) return;
     // set the result value
     $('#'+resultElemId).val( seriesId );
     // trigger the change event for invisble form elements
@@ -54,6 +54,7 @@ function selectSeriesAction(resultElemId){
 $(document).ready(
     function(){
         updateProjectStudioId();
+        console.log("yes")
     }
 );
 

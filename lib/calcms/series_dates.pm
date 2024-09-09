@@ -381,7 +381,7 @@ sub get_schedule_dates($$) {
 }
 
 sub get_week_of_month_dates ($$$$$$$) {
-    my ($start, $end, $duration, $week, $weekday, $frequency, $nextDay) = @_; 
+    my ($start, $end, $duration, $week, $weekday, $frequency, $nextDay) = @_;
     #datetime, datetime, minutes, every nth week of month, weekday [1..7], every 1st,2nd,3th time, add 24 hours to start, (for night hours at last weekday of month)
 
     return undef if $start eq '';
@@ -520,7 +520,7 @@ sub delete ($$) {
 sub getDatesWithoutEvent ($$) {
     my ($config, $options) = @_;
 
-    for ('project_id', 'studio_id', 'form', 'till') {
+    for ('project_id', 'studio_id', 'from', 'till') {
         ParamError->throw(error => "missing $_") unless defined $options->{$_}
     };
 
@@ -528,7 +528,7 @@ sub getDatesWithoutEvent ($$) {
     my $cond = $options->{series_id} ? 'and sd.series_id = ?' : '';
 
     my $query = qq{
-        SELECT sd.* 
+        SELECT sd.*
         FROM calcms_series_dates sd LEFT JOIN calcms_events e
         on (sd.start = e.start)
         where e.start is null
@@ -536,7 +536,7 @@ sub getDatesWithoutEvent ($$) {
         and sd.project_id = ?
         and sd.studio_id  = ?
         $cond
-        and sd.start      > ? 
+        and sd.start      > ?
         and sd.end        < ?
         order by sd.start
     };

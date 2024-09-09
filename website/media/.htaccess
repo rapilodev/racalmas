@@ -1,7 +1,3 @@
 Options -Indexes +FollowSymLinks +MultiViews -ExecCGI
-
-<IfModule mod_expires.c>
-ExpiresActive On
-ExpiresDefault "access plus 5 minutes"
-</IfModule>
+Require all granted
 

@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use warnings;
 use strict;
@@ -160,7 +160,7 @@ sub http_get{
     my $ua=shift;
     my $url=shift;
 
-    print STDERR "read url '$url'\n"; 
+    print STDERR "read url '$url'\n";
     my $request = HTTP::Request->new(GET => $url);
     my $response = $ua->request($request);
     return $response->{_content};

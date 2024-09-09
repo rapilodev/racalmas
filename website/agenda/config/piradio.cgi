@@ -35,7 +35,7 @@ domain                      ${DOMAIN}
     temp_dir                ${BASE_DIR}/temp/
 
     # URLs of the program page the agenda should be injected into (done by preload_agenda.pl)
-    # this is the page containing calcms_menu, and other ids 
+    # this is the page containing calcms_menu, and other ids
     source_url_http         https://${DOMAIN}/calcms/
     source_url_https        https://${DOMAIN}/calcms/
 
@@ -78,9 +78,9 @@ domain                      ${DOMAIN}
     result_limit            500
 
     # limit creating comments in days before and after start of event
-    no_new_comments_before  10 
+    no_new_comments_before  10
     no_new_comments_after   60
-    
+
     hide_event_images       1
 </permissions>
 

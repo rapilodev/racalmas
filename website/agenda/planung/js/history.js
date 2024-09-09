@@ -76,7 +76,7 @@ function appendHistory(url, rewrite){
     //showHistory();
 }
 
-function showHistory(){
+function debugShowHistory(){
     var history=getHistory();
     var s='<pre style="z-index:110;position:absolute;right:0;top:0;padding:0">';
     for (var i=5; i>=0;i--){

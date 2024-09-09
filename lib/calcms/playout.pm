@@ -439,7 +439,6 @@ sub delete($$$) {
 
 sub get_end ($$) {
     my ($start, $duration) = @_;
-
     # calculate end from start + duration
     my @start = @{ time::datetime_to_array($start) };
     next unless @start >= 6;

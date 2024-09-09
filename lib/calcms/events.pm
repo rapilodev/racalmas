@@ -54,7 +54,7 @@ sub get_prev{
     my $params = {
         till_date => time::check_date($event->{start}),
         till_time => time::check_time($event->{start}),
-        archive   => 'all',
+        phase     => 'all',
         order     => 'desc',
         limit     => 1,
         exclude_locations => 1,
@@ -78,7 +78,7 @@ sub get_next{
     my $params = {
         from_date => time::check_date($event->{end}),
         from_time => time::check_time($event->{end}),
-        archive   => 'all',
+        phase     => 'all',
         order     => 'asc',
         limit     => 1,
         exclude_locations => 1,
@@ -129,14 +129,14 @@ sub modify_results ($$$$) {
     my $projects         = {};
     my $studios          = {};
 
-    my $time_diff = '';
-    if ( scalar @$results > 0 ) {
+    my $running_event_id = @$results ? events::get_running_event_id($dbh) : 0;
+    if (@$results) {
         $results->[0]->{__first__} = 1;
         $results->[-1]->{__last__} = 1;
-        $running_event_id          = events::get_running_event_id($dbh);
     }
 
-    if ( ( defined $params->{template} ) && ( $params->{template} =~ /\.xml/ ) ) {
+    my $time_diff = '';
+    if ($params->{template} && $params->{template} =~ /\.xml/) {
         $time_diff = time::utc_offset( $config->{date}->{time_zone} );
         $time_diff =~ s/(\d\d)(\d\d)/$1\:$2/g;
     }
@@ -145,72 +145,42 @@ sub modify_results ($$$$) {
     my $counter = 1;
     for my $result (@$results) {
         if ( defined $params->{template} ) {
-            if ( $params->{template} =~ /\.ics$/ ) {
-                $result->{content_ical} =
-                  markup::plain_to_ical( $result->{content} );
-                $result->{title_ical} =
-                  markup::plain_to_ical( $result->{title} );
-                $result->{user_title_ical} =
-                  markup::plain_to_ical( $result->{user_title} );
-                $result->{excerpt_ical} =
-                  markup::plain_to_ical( $result->{excerpt} );
-                $result->{user_excerpt_ical} =
-                  markup::plain_to_ical( $result->{user_excerpt} );
-                $result->{series_name} =
-                  markup::plain_to_ical( $result->{series_name} );
-                $result->{created_at} =~ s/ /T/gi;
-                $result->{created_at} =~ s/[\:\-]//gi;
-                $result->{modified_at} =~ s/ /T/gi;
-                $result->{modified_at} =~ s/[\:\-]//gi;
+            if ( $is_ics ) {
+                markup::plain_to_ical($result, qw(content title user_title excerpt user_excerpt series_name));
+                $result->{created_at} =~ tr/ /T/;
+                $result->{created_at} =~ tr/\:\-//d;
+                $result->{modified_at} =~ tr/ /T/;
+                $result->{modified_at} =~ tr/\:\-//d;
 
-            } elsif ( $params->{template} =~ /\.atom\.xml/ ) {
-                $result->{excerpt} = '' unless defined( $result->{excerpt} );
-                $result->{excerpt} = "lass dich ueberraschen"
-                  if ( $result->{excerpt} eq '' );
-
-                #                $result->{excerpt}    =markup::plain_to_xml($result->{excerpt});
-                #                $result->{title}    =markup::plain_to_xml($result->{title});
-                #                $result->{series_name}    =markup::plain_to_xml($result->{series_name});
-                #                $result->{program}    =markup::plain_to_xml($result->{program});
-
-                $result->{created_at} =~ s/ /T/gi;
+            } elsif ( $is_atom ) {
+                $result->{excerpt} ||= "lass dich ueberraschen";
+                $result->{created_at} =~ tr/ /T/;
                 $result->{created_at} .= $time_diff;
-                $result->{modified_at} =~ s/ /T/gi;
+                $result->{modified_at} =~ tr/ /T/;
                 $result->{modified_at} .= $time_diff;
-            } elsif ( $params->{template} =~ /\.rss\.xml/ ) {
-                $result->{excerpt} = '' unless defined( $result->{excerpt} );
-                $result->{excerpt} = "lass dich ueberraschen"
-                  if ( $result->{excerpt} eq '' );
-                $result->{modified_at} =
-                  time::datetime_to_rfc822( $result->{modified_at} );
-                if ( $result->{created_at} =~ /[1-9]/ ) {
-                    $result->{created_at} =
-                      time::datetime_to_rfc822( $result->{created_at} );
-                } else {
-                    $result->{created_at} = $result->{modified_at};
-                }
-
+            } elsif ( $is_rss_xml ) {
+                $result->{excerpt} ||= "lass dich ueberraschen";
+                $result->{modified_at} = time::datetime_to_rfc822($result->{modified_at});
+                $result->{created_at} =
+                  $result->{created_at} =~ /[1-9]/
+                  ? time::datetime_to_rfc822( $result->{created_at} )
+                  : $result->{modified_at};
             }
         }
         $result->{series_name} ||= '';
         $result->{series_name} = '' if $result->{series_name} eq '_single_';
-
-        $result->{rerun} = '' unless defined $result->{rerun};
-
-        $result->{title} = '' unless defined $result->{title};
+        $result->{rerun} //= '';
+        $result->{title} ||= '';
         if ( $result->{title} =~ /\#(\d+)([a-z])?\s*$/ ) {
-            $result->{episode} = $1 unless defined $result->{episode};
-            $result->{rerun} = $2 || '' unless ( $result->{rerun} =~ /\d/ );
+            $result->{episode} //= $1;
+            $result->{rerun} = $2 || '' unless $result->{rerun} =~ /\d/;
             $result->{title} =~ s/\#\d+[a-z]?\s*$//;
             $result->{title} =~ s/\s+$//;
         }
         $result->{rerun} = '' if ( $result->{rerun} eq '0' );
 
-        if (   ( defined $result->{recurrence_count} )
-            && ( $result->{recurrence_count} > 0 ) )
-        {
-            $result->{recurrence_count_alpha} =
-              markup::base26( $result->{recurrence_count} + 1 );
+        if (defined $result->{recurrence_count} && $result->{recurrence_count} > 0 ) {
+            $result->{recurrence_count_alpha} = markup::base26( $result->{recurrence_count} + 1 );
             $result->{recurrence_id} = $result->{recurrence};
         } else {
             $result->{recurrence_count_alpha} = '';
@@ -219,25 +189,11 @@ sub modify_results ($$$$) {
 
         # set title keys
         my $keys = get_keys($result);
-        for my $key ( keys %$keys ) {
-            $result->{$key} = $keys->{$key};
-        }
-
+        @{$result}{keys %$keys} = values %$keys;
         $result = calc_dates( $config, $result, $params, $previous_result, $time_diff );
         get_listen_key($config, $result) unless $params->{set_no_listen_keys};
 
-        $result->{event_uri} = '';
-        if ( ( defined $result->{program} ) && ( $result->{program} ne '' ) ) {
-            $result->{event_uri} .= $result->{program};
-            $result->{event_uri} .= '-'
-              if ( ( $result->{series_name} ne '' )
-                || ( $result->{title} ne '' ) );
-        }
-        if ( ($result->{series_name}//'') ne '' ) {
-            $result->{event_uri} .= $result->{series_name};
-            $result->{event_uri} .= '-' if ( $result->{title} ne '' );
-        }
-        $result->{event_uri} .= $result->{title} if length $result->{title};
+        $result->{event_uri} = join('-', grep { $_ ne '' } $result->{program} // '', $result->{series_name} // '', $result->{title} // '');
         $result->{event_uri} =~ s/\#/Nr./g;
         $result->{event_uri} =~ s/\&/und/g;
         $result->{event_uri} =~ s/\//\%2f/g;
@@ -262,8 +218,8 @@ sub modify_results ($$$$) {
             && $running_event_id eq $result->{event_id};
 
         if (defined $result->{comment_count}){
-            $result->{one_comment} = 1 if ( $result->{comment_count} == 1 );
-            $result->{no_comment}  = 1 if ( $result->{comment_count} == 0 );
+            $result->{one_comment} = 1 if $result->{comment_count} == 1;
+            $result->{no_comment}  = 1 if $result->{comment_count} == 0;
         }
 
         {
@@ -294,8 +250,6 @@ sub modify_results ($$$$) {
         # add project by name
         my $project_name = $result->{project};
         if ( defined $project_name ) {
-
-            #print STDERR "found project:$project_name\n";
             unless ( defined $projects->{$project_name} ) {
                 my $results = project::get( $config, { name => $project_name } );
                 $projects->{$project_name} = $results->[0] || {};
@@ -335,38 +289,27 @@ sub modify_results ($$$$) {
         }
 
         for my $name ( keys %{ $config->{mapping}->{events} } ) {
-            my $val = '';
-            if (   ( defined $name )
-                && ( defined $config->{mapping}->{events}->{$name} )
-                && ( defined $result->{$name} ) )
-            {
-                $val = $config->{mapping}->{events}->{$name}->{ $result->{$name} }
-                  || '';
-                $result->{ $name . '_mapped' } = $val if ( $val ne '' );
+            if (defined $result->{$name} && defined $config->{mapping}->{events}->{$name}) {
+                my $val = $config->{mapping}->{events}->{$name}->{$result->{$name}};
+                $result->{ $name . '_mapped' } = $val if $val;
             }
         }
-
         $previous_result = $result;
 
         $result->{ 'counter_' . $counter } = 1;
         $counter++;
 
-        if (   ( defined $params->{template} )
-            && ( $params->{template} =~ /(list|details)/ ) )
-        {
-            if ( ( defined $result->{excerpt} ) && ( length( $result->{excerpt} ) > 250 ) ) {
-                $result->{excerpt} = substr( $result->{excerpt}, 0, 250 ) . '...';
-            }
-
-            if ( ( defined $result->{user_excerpt} ) && ( length( $result->{user_excerpt} ) > 250 ) ) {
-                $result->{user_excerpt} = substr( $result->{user_excerpt}, 0, 250 ) . '...';
+        if ($params->{excerpt} eq 'summary') {
+            for my $field (qw(excerpt user_excerpt)) {
+                $result->{$field} = substr( $result->{$field}, 0, 250 ) . '...'
+                    if length $result->{$field} > 250;
             }
         }
 
-        #build content
-        if ( ( defined $params->{template} ) && ( $params->{template} =~ /\.html/ ) ) {
-            $result->{html_content} = events::format($result, 'content') if defined $result->{content};
-            $result->{html_topic}   = events::format($result, 'topic') if defined $result->{topic};
+        if ($params->{description} eq 'html') {
+            for my $field (qw(content topic)) {
+                $result->{"html_$field"} = events::format($result, $field) if defined $result->{$field};
+            }
         }
 
         #detect if images are in content or topic field
@@ -379,18 +322,11 @@ sub modify_results ($$$$) {
           && ( $result->{topic} =~ /<img / );
         $result->{no_image_in_text} = 1 if $image_in_text == 0;
 
-        if (
-            ( defined $params->{template} )
-            && (   ( $params->{template} =~ /event_perl\.txt$/ )
-                || ( $params->{template} =~ /event_file_export\.txt$/ ) )
-
-          )
-        {
-            for my $key ( keys %$result ) {
-                $result->{$key} =~ s/\|/\\\|/g if defined $result->{$key};
-            }
-
-            #            $result->{content}='no';
+        if ( defined $params->{template} && (
+                $params->{template} =~ /event_perl\.txt$/
+             or $params->{template} =~ /event_file_export\.txt$/ )
+        ) {
+            $result->{$_} =~ s/\|/\\\|/g for (grep {defined $result->{$_}} keys %$result );
         }
 
     }    # end for results
@@ -437,7 +373,6 @@ sub add_recurrence_dates {
         from   calcms_events
         where  id in ($conditions)
     };
-
     my $dbh = db::connect($config);
     my $events = db::get( $dbh, $query, $bind_values );
 
@@ -461,107 +396,53 @@ sub add_recurrence_dates {
             $result->{recurrence_weekday_name}       = time::getWeekdayNames($language)->[$weekdayIndex];
             $result->{recurrence_weekday_short_name} = time::getWeekdayNamesShort($language)->[$weekdayIndex];
         }
-
     }
-
 }
 
 sub calc_dates {
     my ($config, $result, $params, $previous_result, $time_diff) = @_;
-    $params          ||= {};
+
+    $params ||= {};
     $previous_result ||= {};
-    $time_diff       ||= '';
+    $time_diff ||= '';
 
-    $result->{utc_offset} = $time_diff;
-    $result->{time_zone}  = $config->{date}->{time_zone};
     my $language = $config->{date}->{language} || 'en';
-
-    $result->{start_datetime} = $result->{start};
-    $result->{start_datetime} =~ s/ /T/gi;
-    if ( $result->{start_datetime} =~ /(\d\d\d\d)\-(\d\d)\-(\d\d)T(\d\d)\:(\d\d)/ ) {
-        $result->{start_year}   = $1;
-        $result->{start_month}  = $2;
-        $result->{start_day}    = $3;
-        $result->{start_hour}   = $4;
-        $result->{start_minute} = $5;
+    $result->{utc_offset} = $time_diff;
+    $result->{time_zone} = $config->{date}->{time_zone};
+    $result->{start_datetime} = $result->{start} =~ s/ /T/r;
+    $result->{end_datetime} = $result->{end} =~ s/ /T/r;
+    $result->{dtstart} = $result->{start_datetime} =~ s/[:\-]//rg;
+    $result->{dtend} = $result->{end_datetime} =~ s/[:\-]//gr;
+    if ($result->{start_datetime} =~ /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/) {
+        @{$result}{qw(start_year start_month start_day start_hour start_minute)} = ($1, $2, $3, $4, $5);
     }
+    $result->{day} = time::datetime_to_array($result->{start})->[3] < 6
+        ? time::add_days_to_date($result->{start}, -1)
+        : time::datetime_to_date($result->{start})
+        unless defined $result->{day};
 
-    unless ( defined $result->{day} ) {
-        my $d    = time::datetime_to_array( $result->{start} );
-        my $hour = $d->[3];
-        if ( ( defined $hour ) && ( $hour < 6 ) ) {
-            $result->{day} = time::add_days_to_date( $result->{start}, -1 );
-        } else {
-            $result->{day} = time::datetime_to_date( $result->{start} );
-        }
-    }
-    unless ( defined $result->{start_date} ) {
-        $result->{start_date} = time::datetime_to_date( $result->{start} );
-    }
-    unless ( defined $result->{end_date} ) {
-        $result->{end_date} = time::datetime_to_date( $result->{end} );
-    }
+    $result->{start_date} ||= time::datetime_to_date($result->{start});
+    $result->{end_date} ||= time::datetime_to_date($result->{end});
 
-    $result->{dtstart} = $result->{start_datetime};
-    $result->{dtstart} =~ s/[\:\-]//gi;
+    $result->{start_utc_epoch} = time::datetime_to_utc($result->{start_datetime}, $config->{date}->{time_zone});
+    $result->{start_datetime_utc} = time::datetime_to_utc_datetime($result->{start_datetime}, $config->{date}->{time_zone});
+    $result->{end_utc_epoch} = time::datetime_to_utc($result->{end_datetime}, $config->{date}->{time_zone});
+    $result->{end_datetime_utc} = time::datetime_to_utc_datetime($result->{end_datetime}, $config->{date}->{time_zone});
 
-    if (   ( defined $params->{template} )
-        && ( $params->{template} =~ /(\.txt|\.json)/ ) )
-    {
-        $result->{start_utc_epoch} = time::datetime_to_utc( $result->{start_datetime}, $config->{date}->{time_zone} );
-    }
-    if (   ( defined $params->{template} )
-        && ( $params->{template} =~ /(\.xml)/ ) )
-    {
-        $result->{start_datetime_utc} =
-          time::datetime_to_utc_datetime( $result->{start_datetime}, $config->{date}->{time_zone} );
-    }
-
-    $result->{end_datetime} = $result->{end};
-    $result->{end_datetime} =~ s/ /T/gi;
-
-    $result->{dtend} = $result->{end_datetime};
-    $result->{dtend} =~ s/[\:\-]//gi;
-
-    if (   ( defined $params->{template} )
-        && ( $params->{template} =~ /(\.txt|\.json)/ ) )
-    {
-        $result->{end_utc_epoch} = time::datetime_to_utc( $result->{end_datetime}, $config->{date}->{time_zone} );
-    }
-    if (   ( defined $params->{template} )
-        && ( $params->{template} =~ /(\.xml)/ ) )
-    {
-        $result->{end_datetime_utc} =
-          time::datetime_to_utc_datetime( $result->{end_datetime}, $config->{date}->{time_zone} );
-    }
-
-    if (   ( defined $previous_result )
-        && ( defined $previous_result->{start_date} )
-        && ( $result->{start_date} ne $previous_result->{start_date} ) )
-    {
-        $result->{is_first_of_day}         = 1;
+    if (defined $previous_result && defined $previous_result->{start_date}
+      && $result->{start_date} ne $previous_result->{start_date}) {
+        $result->{is_first_of_day} = 1;
         $previous_result->{is_last_of_day} = 1;
     }
 
-    $result->{start_date_name} =
-      time::date_format( $config, $result->{start_date}, $language );
-    $result->{end_date_name} =
-      time::date_format( $config, $result->{end_date}, $language );
+    $result->{start_date_name} = time::date_format($config, $result->{start_date}, $language);
+    $result->{end_date_name} = time::date_format($config, $result->{end_date}, $language);
+    $result->{start_time} = $result->{start_time_name} = $1 if $result->{start} =~ /(\d{2}:\d{2}):\d{2}/;
+    $result->{end_time} = $result->{end_time_name} = $1 if $result->{end} =~ /(\d{2}:\d{2}):\d{2}/;
 
-    if ( $result->{start} =~ /(\d\d\:\d\d)\:\d\d/ ) {
-        $result->{start_time_name} = $1;
-        $result->{start_time}      = $1;
-    }
-
-    if ( $result->{end} =~ /(\d\d\:\d\d)\:\d\d/ ) {
-        $result->{end_time_name} = $1;
-        $result->{end_time}      = $1;
-    }
-
-    if ( defined $result->{weekday} ) {
-        my $language = $config->{date}->{language} || 'en';
-        my $weekdayIndex = time::getWeekdayIndex( $result->{weekday} ) || 0;
-        $result->{weekday_name}       = time::getWeekdayNames($language)->[$weekdayIndex];
+    if (defined $result->{weekday}) {
+        my $weekdayIndex = time::getWeekdayIndex($result->{weekday}) || 0;
+        $result->{weekday_name} = time::getWeekdayNames($language)->[$weekdayIndex];
         $result->{weekday_short_name} = time::getWeekdayNamesShort($language)->[$weekdayIndex];
     }
 
@@ -582,7 +463,7 @@ sub get_listen_key($$){
     my $archive_dir = $config->{locations}->{local_archive_dir};
     my $archive_url = $config->{locations}->{listen_url};
     return $event->{listen_url} = $archive_url . '/' . $event->{listen_key} if
-        defined $event->{listen_key} and -l $archive_dir .'/'. $event->{listen_key};
+        defined $event->{listen_key} && -l $archive_dir .'/'. $event->{listen_key};
     set_listen_key($config, $event) unless $event->{listen_key};
 }
 
@@ -620,6 +501,7 @@ sub set_listen_key{
         set listen_key=?
         where id=?;
     };
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     my $recordings = db::put( $dbh, $query, $bindValues );
 }
@@ -670,30 +552,11 @@ sub getDateQueryConditions ($$$) {
 
     # conditions by date
     my $date_conds = [];
-
-    #date, today, tomorrow, yesterday
-    my $date = '';
-    $date = time::date_cond( $params->{date} ) if $params->{date} ne '';
-
-    my $from_date = '';
-    $from_date = time::date_cond( $params->{from_date} ) if $params->{from_date} ne '';
-
-    my $till_date = '';
-    $till_date = time::date_cond( $params->{till_date} ) if $params->{till_date} ne '';
-
-    my $from_time = '';
-    $from_time = time::time_cond( $params->{from_time} ) if $params->{from_time} ne '';
-
-    my $till_time = '';
-    $till_time = time::time_cond( $params->{till_time} ) if $params->{till_time} ne '';
-
-    my $time = $params->{time};
-    $time = '' unless defined $time;
-
     my $date_range_include = $params->{date_range_include};
     my $day_starting_hour  = $config->{date}->{day_starting_hour};
 
-    if ( $date eq 'today' ) {
+    my $date = ($params->{date} ne '') ? time::date_cond($params->{date}) : '';
+    if ($date eq 'today') {
         my $date = time::get_event_date($config);
         push @$date_conds,  ' ( start_date = ? ) ';
         push @$bind_values, $date;
@@ -702,10 +565,9 @@ sub getDateQueryConditions ($$$) {
 
     # given date
     my $start = time::datetime_cond( $date . 'T00:00:00' );
-    if ( $start ne '' ) {
+    if ($start ne '') {
         $start = time::add_hours_to_datetime( $start, $day_starting_hour );
         my $end = time::add_hours_to_datetime( $start, 24 );
-
         if ( $date_range_include eq '1' ) {
             push @$date_conds,  ' end > ? ';
             push @$bind_values, $start;
@@ -713,39 +575,27 @@ sub getDateQueryConditions ($$$) {
             push @$date_conds,  ' start >= ? ';
             push @$bind_values, $start;
         }
-
         push @$date_conds,  ' start < ? ';
         push @$bind_values, $end;
         return $date_conds;
     }
 
-    if ( $time eq 'now' ) {
+    if ($params->{phase} eq 'running') {
         push @$date_conds, qq{
-                 (
-                 ( unix_timestamp(end)   >  unix_timestamp(now() ) )
-                 and
-                 ( unix_timestamp(start) <= unix_timestamp(now() ) )
-                 )
-             };
+             (
+             ( unix_timestamp(end)   >  unix_timestamp(now() ) )
+             and
+             ( unix_timestamp(start) <= unix_timestamp(now() ) )
+             )
+        };
         return $date_conds;
     }
 
-    if ( $time eq 'future' ) {
-        push @$date_conds, qq{
-                    (
-                    ( unix_timestamp(end)   >  unix_timestamp(now() ) )
-                    and
-                    ( unix_timestamp(end) - unix_timestamp(now() ) ) < 7*24*3600
-                    )
-                };
-        return $date_conds;
-    }
-
-    #from_date and from_time is defined
-    if ( ( $from_date ne '' ) && ( $from_time ne '' ) ) {
-        my $datetime = time::datetime_cond( $from_date . 'T' . $from_time );
-        if ( $datetime ne '' ) {
-            if ( $date_range_include eq '1' ) {
+    my $from_date = ($params->{from_date} ne '') ? time::date_cond($params->{from_date}) : '';
+    my $from_time = ($params->{from_time} ne '') ? time::time_cond($params->{from_time}) : '';
+    if ($from_date ne '' && $from_time ne '') {
+        if ((my $datetime = time::datetime_cond($from_date . 'T' . $from_time)) ne '' ) {
+            if ($date_range_include eq '1') {
                 push @$date_conds,  ' end > ? ';
                 push @$bind_values, $datetime;
                 $from_date = '';
@@ -757,24 +607,12 @@ sub getDateQueryConditions ($$$) {
         }
     }
 
-    #till_date and till_time is defined
-    if ( ( $till_date ne '' ) && ( $till_time ne '' ) ) {
-        my $datetime = time::datetime_cond( $till_date . 'T' . $till_time );
-        if ( $datetime ne '' ) {
-            push @$date_conds,  ' start < ? ';
-            push @$bind_values, $datetime;
-            $till_date = '';
-        }
-    }
-
     # after start of daily broadcast
-    if ( ( $from_date ne '' ) && ( $from_time eq '' ) ) {
+    if ($from_date ne '' && $from_time eq '') {
         my $start = time::datetime_cond( $from_date . 'T00:00:00' );
         $start = time::add_hours_to_datetime( $start, $day_starting_hour );
-
         if ( $date_range_include eq '1' ) {
-
-            # end is after start
+            ## end is after start
             push @$date_conds,  ' ( end >= ? )';
             push @$bind_values, $start;
         } else {
@@ -783,13 +621,23 @@ sub getDateQueryConditions ($$$) {
         }
     }
 
+    my $till_date = ($params->{till_date} ne '') ? time::date_cond($params->{till_date}) : '';
+    my $till_time = ($params->{till_time} ne '') ? time::time_cond($params->{till_time}) : '';
+    #till_date and till_time is defined
+    if ($till_date ne '' && $till_time ne '') {
+        if ((my $datetime = time::datetime_cond( $till_date . 'T' . $till_time)) ne '') {
+            push @$date_conds,  ' start < ? ';
+            push @$bind_values, $datetime;
+            $till_date = '';
+        }
+    }
+
     # before end of daily broadcast
-    if ( ( $till_date ne '' ) && ( $till_time eq '' ) ) {
+    if ($till_date ne '' && $till_time eq '') {
         my $end = time::datetime_cond( $till_date . 'T00:00:00' );
         $end = time::add_hours_to_datetime( $end, $day_starting_hour );
         if ( $date_range_include eq '1' ) {
-
-            # start is before end
+            ## start is before end
             push @$date_conds,  ' ( start <= ? )';
             push @$bind_values, $end;
         } else {
@@ -798,42 +646,42 @@ sub getDateQueryConditions ($$$) {
         }
     }
 
-    if ( $params->{weekday} ne '' ) {
-        my $weekday = $params->{weekday};
+    if ($params->{weekday} ne '') {
+        my $weekday = int($params->{weekday});
         $weekday += 1;
-        $weekday -= 7 if ( $weekday > 7 );
+        $weekday -= 7 if $weekday > 7;
         push @$date_conds,  ' (dayofweek(start)= ?) ';
         push @$bind_values, $weekday;
     }
 
-    if ( $params->{last_days} ) {
+    if ($params->{last_days}) {
         my $d = int $params->{last_days};
         push @$date_conds,  qq{ ( end between date_sub(now(),INTERVAL $d DAY) and now() ) };
-    } elsif ( $params->{archive} eq 'past' ) {
-        my $date = time::get_event_date($config);
-        if ( $date ne '' ) {
+    } elsif ($params->{next_days}) {
+        my $d = int $params->{next_days};
+        push @$date_conds,  qq{ ( end between now() and date_add(now(),INTERVAL $d DAY) ) };
+    } elsif ( $params->{phase} eq 'past') {
+        if ((my $date = time::get_event_date($config)) ne '') {
             push @$date_conds,  ' ( start < ? ) ';
             push @$bind_values, $date;
-        }
-
-    } elsif ( $params->{archive} eq 'future' ) {
-        my $date = time::get_event_date($config);
-        if ( $date ne '' ) {
+        } else {die}
+    } elsif ($params->{phase} eq 'future') {
+        if ((my $date = time::get_event_date($config)) ne '') {
             push @$date_conds,  ' ( end >= ? ) ';
             push @$bind_values, $date;
-        }
+        } else {die}
     }
     return $date_conds;
-
 }
 
 # if "all_recordings" is set in params, all event recordings will be included
 # if "active_recording" is set in params, recordings date and path will be included
+my $invalid = qr/[^a-zA-Z0-9\-\_,]/;
 sub get_query($$$) {
     my ($dbh, $config, $request) = @_;
 
     my $params = $request->{params}->{checked};
-    $params->{all_recordings}   //= '';
+    $params->{all_recordings} //= '';
     $params->{active_recording} //= '';
     $params->{only_active_recording} //= '';
 
@@ -843,192 +691,118 @@ sub get_query($$$) {
     my $limit_cond  = '';
 
     if ( $params->{event_id} ne '' ) {
-
-        # conditions by event id
         push @$where_cond, 'e.id=?';
         $bind_values = [ $params->{event_id} ];
 
         #filter by published, default=1 to see published only, set published='all' to see all
-        my $published = $params->{published} || '1';
-        if ( ( $published eq '0' ) || ( $published eq '1' ) ) {
-            push @$where_cond,  'published=?';
-            push @$bind_values, $published;
+        if (($params->{published} // '1') =~ /^([01])$/) {
+            push @$where_cond, 'published=?';
+            push @$bind_values, $1;
         }
 
-        my $draft = $params->{draft} || '0';
-        if ( ( $draft eq '0' ) || ( $draft eq '1' ) ) {
-            push @$where_cond,  'draft=?';
-            push @$bind_values, $draft;
+        #filter by draft, default=0 to see drafts only, set draft='all' to see all
+        if (($params->{draft} // '0') =~ /^([01])$/) {
+            push @$where_cond, 'draft=?';
+            push @$bind_values, $1;
         }
-
     } else {
-
         my $date_conds = getDateQueryConditions( $config, $params, $bind_values );
         my $date_cond = join " and ", @$date_conds;
-
-        push @$where_cond, $date_cond if ( $date_cond ne '' );
+        push @$where_cond, $date_cond if $date_cond ne '';
     }
 
     # location
     my $location_cond = '';
-    if ( $params->{location} ne '' ) {
-        my $location = ( split( /\,/, $params->{location} ) )[0];
-        $location =~ s/[^a-zA-Z0-9\-\_]/%/g;
-        $location =~ s/%{2,99}/%/g;
-        if ( $location ne '' ) {
-            $location_cond = ' location like ? ';
-            push @$bind_values, $location;
-        }
+    if (my @locations = grep {$_ ne ''} split /,/, $params->{location} =~ s/$invalid/%/gr) {
+        $location_cond = ' location in (' . join(',', ('?') x @locations) . ')';
+        push @$bind_values, @locations;
     }
 
     # exclude location
     my $exclude_location_cond = '';
-    if ( $params->{exclude_locations} eq '1' ) {
-        if ( $params->{locations_to_exclude} ne '' ) {
-            my @locations_to_exclude = split( /,/, $params->{locations_to_exclude} );
-            $exclude_location_cond = 'location not in (' . join( ",", map { '?' } @locations_to_exclude ) . ')';
-            for my $location (@locations_to_exclude) {
-                $location =~ s/^\s+//g;
-                $location =~ s/\s+$//g;
-                push @$bind_values, $location;
-            }
-        }
+    if ( $params->{exclude_locations} eq '1' &&
+        (my @locations = grep {$_ ne ''} split /,/, $params->{locations_to_exclude} =~ s/$invalid/%/gr)
+    ) {
+        $exclude_location_cond = 'location not in (' . join(',', ('?')x @locations) . ')';
+        push @$bind_values, @locations;
     }
 
     # exclude project
     my $exclude_project_cond = '';
-    if ( $params->{exclude_projects} eq '1' ) {
-        if ( $params->{projects_to_exclude} ne '' ) {
-            my @projects_to_exclude = split( /,/, $params->{projects_to_exclude} );
-            $exclude_project_cond = 'project not in (' . join( ",", map { '?' } @projects_to_exclude ) . ')';
-            for my $project (@projects_to_exclude) {
-                $project =~ s/^\s+//g;
-                $project =~ s/\s+$//g;
-                push @$bind_values, $project;
-            }
-        }
+    if ($params->{exclude_projects} eq '1' &&  $params->{projects_to_exclude} ne '') {
+        my @projects_to_exclude = split /,/, $params->{projects_to_exclude} =~s/$invalid/%/gr;
+        $exclude_project_cond = 'project not in (' . join( ",", ('?') x @projects_to_exclude) . ')';
+        push @$bind_values, @projects_to_exclude;
     }
 
     my $series_name_cond = '';
-    if (   ( defined $params->{series_name} )
-        && ( $params->{series_name} ne '' ) )
-    {
-        my $series_name = ( split( /\,/, $params->{series_name} ) )[0];
-        $series_name =~ s/[^a-zA-Z0-9]/%/g;
-        $series_name =~ s/%{2,99}/%/g;
-        if ( $series_name ne '' ) {
-            $series_name_cond = ' series_name like ? ';
-            push @$bind_values, $series_name;
-        }
+    if ($params->{series_name} ne '' &&
+        (my $series_name = (split( /\,/, $params->{series_name} =~ s/$invalid/%/gr ))[0])
+    ) {
+        $series_name_cond = ' series_name like ? ';
+        push @$bind_values, $series_name;
     }
 
     #filter for tags
     my $tag_cond = '';
-    if ( ( defined $params->{tag} ) && ( $params->{tag} ne '' ) ) {
-        my @tags = ( split( /\,/, $params->{tag} ) );
-        if ( scalar @tags > 0 ) {
-            my $tags = join ",", ( map { '?' } @tags );
-            for my $tag (@tags) {
-                push @$bind_values, $tag;
-            }
-            $tag_cond = qq{
-                id in(
-                    select event_id from calcms_tags
-                    where name in($tags)
-                )
-            };
-        }
+    my @tags = split /\,/, $params->{tag};
+    if (scalar @tags > 0) {
+        my $tags = join ",", ( map { '?' } @tags );
+        push @$bind_values, @tags;
+        $tag_cond = qq{
+            id in(
+                select event_id from calcms_tags
+                where name in($tags)
+            )
+        };
     }
-    $tag_cond = '';
 
     my $title_cond = '';
-    if ( ( defined $params->{title} ) && ( $params->{title} ne '' ) ) {
-        my $title = ( split( /\,/, $params->{title} ) )[0];
-        $title =~ s/[^a-zA-Z0-9]/%/g;
-        $title =~ s/%{2,99}/%/g;
-        $title =~ s/^\%//;
-        $title =~ s/\%$//;
-        $title = '%' . $title . '%';
-        if ( $title ne '' ) {
-            $title_cond = ' title like ? ';
-            push @$bind_values, $title;
+    if ($params->{title}) {
+        my $title = $params->{title};
+        $title = (split /,/, $title)[0];
+        $title =~ s/[^a-zA-Z0-9]+/%/g;
+        $title =~ s/^%|%$//g;
+        if ($title) {
+            $title_cond = ' title LIKE ? ';
+            push @$bind_values, "%$title%";
         }
     }
 
     my $search_cond = '';
-    if ( ( defined $params->{search} ) && ( $params->{search} ne '' ) ) {
+    if ($params->{search} ne '' ) {
         my $search = lc $params->{search};
-        $search =~ s/(?=[\\%_])/\\/g;
-        $search =~ s/^[\%\s]+//;
-        $search =~ s/[\%\s]+$//;
-        if ( $search ne '' ) {
-            $search = '%' . $search . '%';
-            my @attr = ( 'title', 'series_name', 'excerpt', 'content', 'topic' );
-            $search_cond = "(" . join( " or ", map { 'lower(' . $_ . ') like ?' } @attr ) . ")";
-            for my $attr (@attr) {
-                push @$bind_values, $search;
-            }
-        }
+        $search =~ s/([\\%_])/\\$1/g;
+        $search =~ s/^[\%\s]+|[\%\s]+$//g;
+        $search = "%$search%";
+        my @attributes = qw(title series_name excerpt content topic);
+        $search_cond = '(' . join(' OR ', map { "lower($_) LIKE ?" } @attributes) . ')';
+        push @$bind_values, ($search) x @attributes;
     }
 
-    my $project_cond = '';
-
-    my $project = undef;
-    $project = $params->{project}
-      if ( defined $params->{project} ) && ( $params->{project} ne '' );
-
-    my $project_name = '';
-    $project_name = $project->{name}
-      if ( defined $project )
-      && ( defined $project->{name} )
-      && ( $project->{name} ne '' );
-
-    if ( ( $project_name ne '' ) && ( $project_name ne 'all' ) ) {
-        $project_cond = '(project=?)';
-        push @$bind_values, $project_name;
-    }
+    my $project_name = (($params || {})->{project} || {})->{name} || '';
+    my $project_cond = ($project_name && $project_name ne 'all') ? '(project=?)' : '';
+    push @$bind_values, $project_name if $project_cond;
 
     #filter by published, default =1, set to 'all' to see all
     my $published_cond = '';
-    my $published = $params->{published} || '1';
-    if ( ( $published eq '0' ) || ( $published eq '1' ) ) {
+    if (($params->{published} // '1') =~ /^([01])$/) {
         $published_cond = 'published=?';
-        push @$bind_values, $published;
+        push @$bind_values, $1;
     }
 
-    #filter by draft, default =1, set to 'all' to see all
+    #filter by draft, default=0, set to 'all' to see all
     my $draft_cond = '';
-    my $draft = $params->{draft} || '0';
-    if ( ( $draft eq '0' ) || ( $draft eq '1' ) ) {
+    if (($params->{draft} // '0') =~ /^([01])$/) {
         $draft_cond = 'draft=?';
-        push @$bind_values, $draft;
+        push @$bind_values, $1;
     }
-
-    my $disable_event_sync_cond = '';
-    my $disable_event_sync = $params->{disable_event_sync} || '';
-    if ( ( $disable_event_sync eq '0' ) || ( $disable_event_sync eq '1' ) ) {
-        $disable_event_sync_cond = 'disable_event_sync=?';
-        push @$bind_values, $disable_event_sync;
-    }
-
-    #print STDERR $disable_event_sync_cond." ".$bind_values->[-1]."\n";
 
     #combine date, location, series_name, tag, search and project
-
-    push @$where_cond, $location_cond if ( $location_cond =~ /\S/ );
-    push @$where_cond, $exclude_location_cond
-      if ( $exclude_location_cond =~ /\S/ );
-    push @$where_cond, $exclude_project_cond
-      if ( $exclude_project_cond =~ /\S/ );
-    push @$where_cond, $series_name_cond if ( $series_name_cond =~ /\S/ );
-    push @$where_cond, $tag_cond         if ( $tag_cond =~ /\S/ );
-    push @$where_cond, $title_cond       if ( $title_cond =~ /\S/ );
-    push @$where_cond, $search_cond      if ( $search_cond =~ /\S/ );
-    push @$where_cond, $project_cond     if ( $project_cond =~ /\S/ );
-    push @$where_cond, $published_cond   if ( $published_cond =~ /\S/ );
-    push @$where_cond, $draft_cond       if ( $draft_cond =~ /\S/ );
-    push @$where_cond, $disable_event_sync_cond
-      if ( $disable_event_sync_cond ne '' );
+    push @$where_cond, grep {length $_} ($location_cond, $exclude_location_cond, $exclude_project_cond,
+        $series_name_cond, $tag_cond, $title_cond, $search_cond, $project_cond, $published_cond,
+        $draft_cond
+    );
 
     #order is forced
     if ( $params->{order} eq 'asc' ) {
@@ -1036,18 +810,14 @@ sub get_query($$$) {
     } elsif ( $params->{order} eq 'desc' ) {
         $order_cond = 'order by start desc';
     } else {
-
-        #derivate order from archive flag
-        if ( $params->{archive} eq 'past' ) {
+        if ( $params->{phase} eq 'past' ) {
             $order_cond = 'order by start desc';
         } else {
             $order_cond = 'order by start';
         }
     }
 
-    if ( ( defined $params->{limit} ne '' ) && ( $params->{limit} ne '' ) ) {
-        $limit_cond = 'limit ' . $params->{limit};
-    }
+    $limit_cond = 'limit ' . $params->{limit} if $params->{limit};
 
     my $query = qq{
         select
@@ -1082,14 +852,12 @@ sub get_query($$$) {
             ,e.location
             ,e.project
             ,e.user_title
-            ,e.user_excerpt
             ,e.published
             ,e.draft
             ,e.playout
             ,e.archived
             ,e.rerun
             ,e.live
-            ,e.disable_event_sync
             ,e.episode
             ,e.listen_key
             ,e.upload_status
@@ -1097,31 +865,17 @@ sub get_query($$$) {
     };
     my $template = $params->{template} || '';
 
-    $query .= ',e.excerpt' unless ( $template =~ /menu/ );
-
-    #    $query.=',e.project'                 unless ($template=~/menu/ || $template=~/list/);
-
-    my $get = $params->{get} || '';
-    unless ( $get eq 'no_content' ) {
-        unless ( $template =~ /menu/ || $template =~ /list/ ) {
-            $query .= ', e.content, e.topic, e.html_content, e.html_topic';
-        }
-    }
+    $query .= ',e.excerpt, e.user_excerpt' if $params->{excerpt} =~/summary|detailed/;
+    $query .= ', e.content, e.topic, e.html_content, e.html_topic'
+        if $params->{description} eq 'html';
+    $query .= ', e.content, e.topic'
+        if $params->{description} eq 'text';
 
     # add project id and series id
-    if ( ( $params->{project_id} ne '' ) || ( $params->{studio_id} ne '' ) ) {
-        if ( $params->{project_id} ne '' ) {
-            push @$where_cond,  'se.project_id=?';
-            push @$bind_values, $params->{project_id};
-            $query .= ', se.project_id';
-        }
-        if ( $params->{studio_id} ne '' ) {
-            push @$where_cond,  'se.studio_id=?';
-            push @$bind_values, $params->{studio_id};
-            $query .= ', se.studio_id';
-        }
-
-        #push @$where_cond, 'se.event_id=e.id';
+    for my $field (grep {$params->{$_} =~ /^\d+$/ } ('project_id', 'studio_id')) {
+        push @$where_cond, "se.$field = ?";
+        push @$bind_values, $params->{$field};
+        $query .= ", se.$field";
     }
 
     # add recordings field and conditions
@@ -1134,10 +888,8 @@ sub get_query($$$) {
 
     $query .= "\n from";
 
-    # add tables
-    if ( ( $params->{project_id} ne '' ) || ( $params->{studio_id} ne '' ) ) {
-
-        # prepent series_events
+    # filter / join by project and studio
+    if ( $params->{project_id}=~/^\d+$/ or $params->{studio_id}=~/^\d+$/) {
         $query .= "\n calcms_series_events se inner join calcms_events e on se.event_id=e.id";
     } else {
         $query .= "\n calcms_events e";
@@ -1149,12 +901,9 @@ sub get_query($$$) {
         $query .= "\n $type join calcms_audio_recordings ar on e.id=ar.event_id and ar.active=1";
     }
 
-    if ( scalar @$where_cond > 0 ) {
-        $query .= "\nwhere " . join( ' and ', @$where_cond );
-    }
-
-    $query .= "\n" . $order_cond if ( $order_cond ne '' );
-    $query .= "\n" . $limit_cond if ( $limit_cond ne '' );
+    $query .= "\nwhere " . join(' and ', @$where_cond) if scalar @$where_cond > 0;
+    $query .= "\n" . $order_cond if $order_cond ne '';
+    $query .= "\n" . $limit_cond if $limit_cond ne '';
 
     return ( \$query, $bind_values );
 }
@@ -1491,15 +1240,10 @@ sub get_duration ($$) {
 
     my $timezone = $config->{date}->{time_zone};
     my $start    = time::get_datetime( $event->{start}, $timezone );
-    my $end      = time::get_datetime( $event->{end}, $timezone );
-
-    #my $seconds  = $end->subtract($start)->in_units("minutes");
-    #return $seconds;
     return undef unless defined $start;
+    my $end      = time::get_datetime( $event->{end}, $timezone );
     return undef unless defined $end;
     my $duration = $end->epoch() - $start->epoch();
-
-    #print STDERR "duration=$duration, end=".$end->datetime()." start=".$start->datetime()."\n";
     return $duration / 60;
 }
 
@@ -1507,8 +1251,8 @@ sub check_params ($$) {
     my ($config, $params) = @_;
 
     #define running at
-    my $running_at = $params->{running_at} || '';
-    if ( ( defined $running_at ) && ( $running_at ne '' ) ) {
+    my $running_at = $params->{running_at} // '';
+    if ($running_at) {
         my $run_date = time::check_date($running_at);
         my $run_time = time::check_time($running_at);
         if ( ( $run_date ne '' ) && ( $run_time ne '' ) ) {
@@ -1516,7 +1260,7 @@ sub check_params ($$) {
             $params->{till_time} = $run_time;
             $params->{order}     = 'asc';
             $params->{limit}     = 1;
-            $params->{archive}   = 'all';
+            $params->{phase}   = 'all';
         }
     }
 
@@ -1526,46 +1270,38 @@ sub check_params ($$) {
     my $till_time = time::check_time( $params->{till_time} );
 
     #set date
-    my $date      = '';
     my $from_date = time::check_date( $params->{from_date} );
     my $till_date = time::check_date( $params->{till_date} );
-    if ( ( $from_date eq '' ) && ( $till_date eq '' ) ) {
-        $date = time::check_date( $params->{date} );
-    }
+    my $date = ($from_date eq '' && $till_date eq '') ? time::check_date($params->{date}) : '';
 
     #set date interval (including)
-    my $date_range_include = 0;
-    $date_range_include = 1
-      if ( defined $params->{date_range_include} )
-      && ( $params->{date_range_include} eq '1' );
+    my $date_range_include = ($params->{date_range_include}//'') eq '1' ?0:1;
 
     my $order = '';
-    if ( defined $params->{order} ) {
-        $order = 'desc' if ( $params->{order} eq 'desc' );
-        $order = 'asc'  if ( $params->{order} eq 'asc' );
+    if (defined $params->{order}) {
+        $order = 'desc' if $params->{order} eq 'desc';
+        $order = 'asc'  if $params->{order} eq 'asc';
     }
 
-    my $weekday = $params->{weekday} || '';
-
-    if ( ( defined $weekday ) && ( $weekday ne '' ) ) {
-        if ( $weekday =~ /\d/ ) {
+    my $weekday = $params->{weekday} // '';
+    if ($weekday) {
+        if ($weekday =~ /\d/) {
             $weekday = int($weekday);
-            log::error( $config, 'invalid weekday' )
-              if ( $weekday < 1 || $weekday > 7 );
+            log::error( $config, 'invalid weekday' ) if $weekday < 1 or $weekday > 7;
         } else {
             log::error( $config, 'invalid weekday' );
         }
     }
 
-    my $tag = $params->{tag} || '';
-    if ( ( defined $tag ) && ( $tag ne '' ) ) {
-        log::error( $config, "invalid tag" ) if ( $tag =~ /\s/ );
-        log::error( $config, "invalid tag" ) if ( $tag =~ /\;/ );
+    my $tag = $params->{tag} // '';
+    if ($tag) {
+        log::error( $config, "invalid tag" ) if $tag =~ /\s/;
+        log::error( $config, "invalid tag" ) if $tag =~ /\;/;
         $tag =~ s/\'//gi;
     }
 
-    my $series_name = $params->{series_name} || '';
-    if ( ( defined $series_name ) && ( $series_name ne '' ) ) {
+    my $series_name = $params->{series_name} // '';
+    if ($series_name) {
         log::error( $config, "invalid series_name" )
           if ( $series_name =~ /\;/ );
         $series_name =~ s/^\s+//gi;
@@ -1573,17 +1309,17 @@ sub check_params ($$) {
         $series_name =~ s/\'//gi;
     }
 
-    my $title = $params->{title} || '';
-    if ( ( defined $title ) && ( $title ne '' ) ) {
-        log::error( $config, "invalid title" ) if ( $title =~ /\;/ );
+    my $title = $params->{title} // '';
+    if ($title) {
+        log::error( $config, "invalid title" ) if $title =~ /\;/;
         $title =~ s/^\s+//gi;
         $title =~ s/\s+$//gi;
         $title =~ s/\'//gi;
     }
 
-    my $location = $params->{location} || '';
-    if ( ( defined $location ) && ( $location ne '' ) ) {
-        log::error( $config, "invalid location" ) if ( $location =~ /\;/ );
+    my $location = $params->{location} // '';
+    if ($location) {
+        log::error( $config, "invalid location" ) if $location =~ /\;/;
         $location =~ s/^\s+//gi;
         $location =~ s/\s+$//gi;
         $location =~ s/\'//gi;
@@ -1608,59 +1344,50 @@ sub check_params ($$) {
     }
 
     #enable exclude locations filter
-    my $exclude_locations = 0;
-    $exclude_locations = 1 if ( defined $params->{exclude_locations} ) && ( $params->{exclude_locations} eq '1' );
-
-    my $exclude_projects = 0;
-    $exclude_projects = 1 if ( defined $params->{exclude_projects} ) && ( $params->{exclude_projects} eq '1' );
-
-    my $exclude_event_images = 0;
-    $exclude_event_images = 1
-      if ( defined $params->{exclude_event_images} ) && ( $params->{exclude_event_images} eq '1' );
+    my $exclude_locations = (($params->{exclude_locations}//'') eq '1' ) ?1:0;
+    my $exclude_projects = (($params->{exclude_projects}//'') eq '1' ) ?1:0;
+    my $exclude_event_images = (($params->{exclude_event_images}//'') eq '1') ?1:0;
 
     #show future events by default
-    my $archive = 'future';
-    if ( defined $params->{archive} ) {
-        $archive = 'all'    if ( $params->{archive} eq 'all' );
-        $archive = 'past'   if ( $params->{archive} eq 'gone' );
-        $archive = 'future' if ( $params->{archive} eq 'coming' );
+    my $phase = $params->{phase} // 'future';
+    if ($phase =~ /^(?:future|upcoming)$/) {
+        $phase = 'future';
+    } elsif ( $phase =~/^(?:ongoing|running)$/ ) {
+        $phase = 'ongoing';
+    } elsif ($phase eq 'all' or ($from_date ne '' && $till_date ne '')) {
+        $phase = 'all';
+    } elsif ($phase =~ /^(?:past|completed)$/) {
+        $phase = 'past'    ;
+    } else {
+        die "invalid phase";
     }
+    #show all on defined timespans
 
     my $last_days = defined $params->{last_days} ? int($params->{last_days}) : 0;
+    my $next_days = defined $params->{next_days} ? int($params->{next_days}) : 0;
 
-    my $disable_event_sync = '';
-    if (   ( defined $params->{disable_event_sync} )
-        && ( $params->{disable_event_sync} =~ /([01])/ ) )
-    {
-        $disable_event_sync = $1;
-    }
-
-    #show all on defined timespans
-    if ( ( $from_date ne '' ) && ( $till_date ne '' ) ) {
-        $archive = 'all';
-    }
-
-    my $event_id = $params->{event_id} || '';
-    if ( ( defined $event_id ) && ( $event_id ne '' ) ) {
-        if ( $event_id =~ /(\d+)/ ) {
+    my $event_id = '';
+    if ($params->{event_id}) {
+        if (($params->{event_id} // '') =~ /(\d+)/)  {
             $event_id = $1;
         } else {
             log::error( $config, "invalid event_id" );
         }
     }
 
-    my $get = 'all';
-    $get = 'no_content'
-      if ( defined $params->{get} ) && ( $params->{get} eq 'no_content' );
+    my $excerpt = $params->{excerpt}//'detailed';
+    die "invalid excerpt" unless $excerpt =~ /^(?:none|summary|detailed)$/;
 
-    my $search = $params->{search} || '';
-    if ( ( defined $search ) && ( $search ne '' ) ) {
-        $search = substr( $search, 0, 100 );
+    my $description = $params->{description}//'text';
+    die "invalid description" unless $description =~ /^(?:none|text|html)$/;
+
+    my $search = $params->{search} // '';
+    if ($search) {
+        $search = substr $search, 0, 100;
         $search =~ s/^\s+//gi;
         $search =~ s/\s+$//gi;
     }
 
-    #print STDERR $params->{template}."\n";
     my $template = '.html';
     if ( ($params->{template}//'') eq 'no' ) {
         $template = 'no';
@@ -1672,48 +1399,39 @@ sub check_params ($$) {
 
     my $limit_config = $config->{permissions}->{result_limit} || 100;
     my $limit = $params->{limit} || $limit_config;
-    log::error( $config, 'invalid limit!' ) if ( $limit =~ /\D/ );
+    log::error( $config, "invalid limit $limit." ) if ( $limit =~ /\D/ );
     $limit = $limit_config if ( $limit_config < $limit );
 
     #read project from configuration file
-    my $project_name = $config->{project} || '';
-    log::error( $config, 'no default project configured' )
-      if ( $project_name eq '' );
+    my $project_name = $config->{project} // '';
+    log::error( $config, 'no default project configured') if $project_name eq '';
 
     #get default project
     my $default_project = undef;
     my $projects = project::get( $config, { name => $project_name } );
     log::error( $config, "no configuration found for project '$project_name'" )
-      unless ( scalar(@$projects) == 1 );
+      unless scalar(@$projects) == 1;
     $default_project = $projects->[0];
 
     # get project from parameter (by name)
     my $project = '';
     if (   ( defined $params->{project} )
         && ( $params->{project} =~ /\w+/ )
-        && ( $params->{project} ne 'all' ) )
-    {
+        && ( $params->{project} ne 'all' )
+    ) {
         my $project_name = $params->{project};
         my $projects = project::get( $config, { name => $project_name } );
-        log::error( $config, 'invalid project ' . $project_name )
-          unless scalar(@$projects) == 1;
+        log::error( $config, 'invalid project ' . $project_name ) unless scalar(@$projects) == 1;
         $project = $projects->[0];
     }
-
     $project_name = $params->{project_name} || '';
     my $studio_name = $params->{studio_name} || '';
-
     my $project_id = $params->{project_id} || '';
     my $studio_id  = $params->{studio_id}  || '';
-
-    my $json_callback = $params->{json_callback} || '';
-    if ( $json_callback ne '' ) {
-        $json_callback =~ s/[^a-zA-Z0-9\_]//g;
-    }
+    my $json_callback = ($params->{json_callback}//'') =~ s/[^a-zA-Z0-9\_]//gr;
 
     # use relative links
-    my $extern = 0;
-    $extern = 1 if ( defined $params->{extern} ) && ( $params->{extern} eq '1' );
+    my $extern = (($params->{extern}//'') eq '1' ) ? 1:0;
 
     my $all_recordings = $params->{all_recordings};
     my $active_recording = $params->{active_recording} // '';
@@ -1737,8 +1455,9 @@ sub check_params ($$) {
         title                => $title,
         event_id             => $event_id,
         search               => $search,
-        archive              => $archive,
+        phase                => $phase,
         last_days            => $last_days,
+        next_days            => $next_days,
         order                => $order,
         project              => $project,
         default_project      => $default_project,
@@ -1747,13 +1466,13 @@ sub check_params ($$) {
         studio_name          => $studio_name,
         studio_id            => $studio_id,
         json_callback        => $json_callback,
-        get                  => $get,
+        excerpt              => $excerpt,
+        description          => $description,
         locations_to_exclude => $locations_to_exclude,
         projects_to_exclude  => $projects_to_exclude,
         exclude_locations    => $exclude_locations,
         exclude_projects     => $exclude_projects,
         exclude_event_images => $exclude_event_images,
-        disable_event_sync   => $disable_event_sync,
         extern               => $extern,
         all_recordings       => $all_recordings,
         active_recording     => $active_recording,
@@ -1771,13 +1490,11 @@ sub l($){
 
 sub get_keys($) {
     my ($event) = @_;
-
-    #my $program                = $event->{program}                || '';
-    my $series_name            = $event->{series_name}            || '';
-    my $title                  = $event->{title}                  || '';
-    my $user_title             = $event->{user_title}             || '';
-    my $episode                = $event->{episode}                || '';
-    my $recurrence_count_alpha = $event->{recurrence_count_alpha} || '';
+    my $series_name            = $event->{series_name}            // '';
+    my $title                  = $event->{title}                  // '';
+    my $user_title             = $event->{user_title}             // '';
+    my $episode                = $event->{episode}                // '';
+    my $recurrence_count_alpha = $event->{recurrence_count_alpha} // '';
 
     # "<title>: <user-title>"
     my $tkey = join (': ', (l($title), l($user_title)));
@@ -1793,7 +1510,6 @@ sub get_keys($) {
 
     # separation between <series> and <title>
     my $stkey = ( length($series_name) and length($te) ) ? ' - ' : '';
-
     return {
         skey                            => $series_name,
         stkey                           => $stkey,
@@ -1806,4 +1522,3 @@ sub get_keys($) {
 
 #do not delete last line!
 1;
-
