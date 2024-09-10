@@ -81,13 +81,13 @@ sub main {
     <script>
     function addToToc(selector){
         $(selector).each(function(){
-            if($(this).hasClass('hide'))return
+            if ($(this).hasClass('hide'))return
             var title=$(this).text();
             var tag=$(this).prop('tagName');
             var span=2;
-            if(tag=='H2')span=4;
-            if(tag=='H3')span=6;
-            if(tag=='H4')span=8;
+            if (tag=='H2')span=4;
+            if (tag=='H3')span=6;
+            if (tag=='H4')span=8;
             var url=title;
             url=url.replace(/[^a-zA-Z]/g,'-')
             url=url.replace(/\-+/g, '-')

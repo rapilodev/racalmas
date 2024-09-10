@@ -12,9 +12,9 @@ local $SIG{__WARN__} = \&Apache2::ServerRec::warn;
 use Data::Dumper;
 use Time::Local();
 use Date::Calc();
-use Calendar::Simple ();
-use Try::Tiny ();
-use Scalar::Util qw( blessed );
+use Calendar::Simple();
+use Try::Tiny();
+use Scalar::Util qw(blessed);
 use Exception::Class(
     'AuthError',
     'SessionError' => { isa => 'AuthError' },

@@ -1,1 +1,0 @@
-<TMPL_LOOP NAME=events><TMPL_IF __first__><TMPL_VAR full_title> : <TMPL_IF podcast_url><TMPL_VAR podcast_url><ELSE><TMPL_IF media_url><TMPL_VAR media_url><ELSE><TMPL_IF excerpt><TMPL_VAR excerpt></TMPL_IF></TMPL_IF></TMPL_IF></TMPL_IF></TMPL_LOOP>

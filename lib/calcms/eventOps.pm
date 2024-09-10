@@ -34,16 +34,16 @@ sub setAttributesFromSeriesTemplate($$$) {
 			series_id  => $params->{series_id},
 		}
 	);
-	if ( scalar @$series != 1 ) {
+	if (scalar @$series != 1) {
 		ExistError->throw(error=>"series not found");
 	}
 
 	#copy fields from series template
 	my $serie = $series->[0];
-	for my $attr (
+	for my $attr(
 		'program',  'series_name', 'title', 'excerpt', 'topic',       'content', 'html_content', 'project',
 	    'location',    'image', 'live',    'archive_url', 'podcast_url', 'content_format'
-	  )
+	 )
 	{
 		$event->{$attr} = $serie->{$attr};
 	}
@@ -52,7 +52,7 @@ sub setAttributesFromSeriesTemplate($$$) {
 	return $serie;
 }
 
-sub setAttributesFromSchedule ($$$){
+sub setAttributesFromSchedule($$$){
     my ($config, $params, $event) = @_;
 
 	#set attributes from schedule
@@ -66,22 +66,22 @@ sub setAttributesFromSchedule ($$$){
 		}
 	);
 
-	if ( @$schedules != 1 ) {
+	if (@$schedules != 1) {
 		ExistError->throw(error=>"schedule not found");
 	}
 
 	my $schedule = $schedules->[0];
-	for my $attr ( 'start', 'end', 'day', 'weekday', 'start_date', 'end_date' ) {
+	for my $attr('start', 'end', 'day', 'weekday', 'start_date', 'end_date') {
 		$event->{$attr} = $schedule->{$attr};
 	}
 
 	my $timezone = $config->{date}->{time_zone};
-	$event->{duration} = time::get_duration( $event->{start}, $event->{end}, $timezone );
+	$event->{duration} = time::get_duration($event->{start}, $event->{end}, $timezone);
 
 	return $event;
 }
 
-sub setAttributesFromOtherEvent ($$$){
+sub setAttributesFromOtherEvent($$$){
     my ($config, $params, $event) = @_;
 
 	my $event2 = series::get_event(
@@ -95,12 +95,12 @@ sub setAttributesFromOtherEvent ($$$){
 			event_id => $params->{source_event_id}
 		}
 	);
-	if ( defined $event2 ) {
-		for my $attr (
+	if (defined $event2) {
+		for my $attr(
 			'title',       'user_title',  'excerpt',      'user_excerpt', 'content',       'html_content',
 			'topics',      'image',       'series_image', 'live',         'no_event_sync', 'podcast_url',
 			'archive_url', 'image_label', 'series_image_label', 'content_format'
-		  )
+		 )
 		{
 			$event->{$attr} = $event2->{$attr};
 		}
@@ -111,27 +111,27 @@ sub setAttributesFromOtherEvent ($$$){
 	return $event;
 }
 
-sub setAttributesForCurrentTime ($$){
+sub setAttributesForCurrentTime($$){
     my ($serie, $event) = @_;
 
 	#on new event not from schedule use current time
-	if ( $event->{start} eq '' ) {
+	if ($event->{start} eq '') {
 		$event->{start} = time::time_to_datetime();
-		if ( $event->{start} =~ /(\d\d\d\d\-\d\d\-\d\d \d\d)/ ) {
+		if ($event->{start} =~ /(\d\d\d\d\-\d\d\-\d\d \d\d)/) {
 			$event->{start} = $1 . ':00';
 		}
 	}
 	$event->{duration} = $serie->{duration} || 60;
-	$event->{end} = time::add_minutes_to_datetime( $event->{start}, $event->{duration} );
+	$event->{end} = time::add_minutes_to_datetime($event->{start}, $event->{duration});
 	$event->{end} =~ s/(\d\d:\d\d)\:\d\d/$1/;
 
 	return $event;
 }
 
 # get recurrence base id
-sub getRecurrenceBaseId ($){
+sub getRecurrenceBaseId($){
 	my ($event) = @_;
-	return $event->{recurrence} if ( defined $event->{recurrence} ) && ( $event->{recurrence} ne '' ) && ( $event->{recurrence} ne '0' );
+	return $event->{recurrence} if (defined $event->{recurrence}) && ($event->{recurrence} ne '') && ($event->{recurrence} ne '0');
 	return $event->{event_id};
 }
 
@@ -141,31 +141,31 @@ sub getNewEvent($$$) {
 
 	# check for missing parameters
 	my $required_fields = [ 'project_id', 'studio_id', 'series_id' ];
-	push @$required_fields, 'start_date' if ( $action eq 'show_new_event_from_schedule' );
+	push @$required_fields, 'start_date' if ($action eq 'show_new_event_from_schedule');
 
 	my $event = {};
-	for my $attr (@$required_fields) {
-        ParamError->throw( error => "eventOps: missing " . $attr ) unless defined $params->{$attr};
+	for my $attr(@$required_fields) {
+        ParamError->throw(error => "eventOps: missing " . $attr) unless defined $params->{$attr};
 		$event->{$attr} = $params->{$attr};
 	}
 
-	my $serie = eventOps::setAttributesFromSeriesTemplate( $config, $params, $event );
+	my $serie = eventOps::setAttributesFromSeriesTemplate($config, $params, $event);
 
-	if ( $action eq 'show_new_event_from_schedule' ) {
-		eventOps::setAttributesFromSchedule( $config, $params, $event );
+	if ($action eq 'show_new_event_from_schedule') {
+		eventOps::setAttributesFromSchedule($config, $params, $event);
 	} else {
-		eventOps::setAttributesForCurrentTime( $serie, $event );
+		eventOps::setAttributesForCurrentTime($serie, $event);
 	}
 
-	if ( defined $params->{source_event_id} ) {
+	if (defined $params->{source_event_id}) {
 
-		#overwrite by existing event (rerun)
-		eventOps::setAttributesFromOtherEvent( $config, $params, $event );
+		#overwrite by existing event(rerun)
+		eventOps::setAttributesFromOtherEvent($config, $params, $event);
 	}
 
-	$event = events::calc_dates( $config, $event );
+	$event = events::calc_dates($config, $event);
 
-	if ( $serie->{has_single_events} eq '1' ) {
+	if ($serie->{has_single_events} eq '1') {
 		$event->{has_single_events} = 1;
 		$event->{series_name}       = undef;
 		$event->{episode}           = undef;
@@ -200,7 +200,7 @@ sub createEvent($$$) {
 	my $checklist = [ 'studio', 'user', 'create_events', 'studio_timeslots' ];
     push @$checklist, 'schedule' if $action eq 'create_event_from_schedule';
 
-	my $start = $event->{start_date}, my $end = time::add_minutes_to_datetime( $event->{start_date}, $event->{duration} );
+	my $start = $event->{start_date}, my $end = time::add_minutes_to_datetime($event->{start_date}, $event->{duration});
 
 	series_events::check_permission(
 		$request,
@@ -226,7 +226,7 @@ sub createEvent($$$) {
 			series_id  => $event->{series_id},
 		}
 	);
-	if ( scalar @$series != 1 ) {
+	if (scalar @$series != 1) {
 		ExistError->throw(error=>"series not found");
 	}
 	my $serie = $series->[0];
@@ -240,7 +240,7 @@ sub createEvent($$$) {
 		}
 	);
     StudioError->throw(error => "studios not found $_") unless defined $studios;
-	unless ( scalar @$studios == 1 ) {
+	unless (scalar @$studios == 1) {
 		ExistError->throw(error=>"studio not found");
 	}
 	my $studio = $studios->[0];
@@ -272,7 +272,7 @@ sub createEvent($$$) {
 
 	#update recurrences
 	$event->{event_id} = $event_id;
-	series::update_recurring_events( $config, $event );
+	series::update_recurring_events($config, $event);
 
 	# update user stats
 	user_stats::increase(

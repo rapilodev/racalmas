@@ -15,7 +15,7 @@ my $r = shift;
 #binmode STDOUT, ":utf8";
 binmode STDOUT, ":encoding(UTF-8)";
 
-if ( $0 =~ /cal.*?\.cgi$/ ) {
+if ($0 =~ /cal.*?\.cgi$/) {
     my ($params, $error) = params::get($r);
 
     my $config = config::getFromScriptLocation();
@@ -23,13 +23,13 @@ if ( $0 =~ /cal.*?\.cgi$/ ) {
         url    => $ENV{QUERY_STRING},
         params => {
             original => $params,
-            checked  => calendar::check_params( $config, $params ),
+            checked  => calendar::check_params($config, $params),
         },
     };
     $params = $request->{params}->{checked};
 
     my $out = '';
-    calendar::get_cached_or_render( $out, $config, $request );
+    calendar::get_cached_or_render($out, $config, $request);
     print $out. "\n";
 }
 

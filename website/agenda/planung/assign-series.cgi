@@ -134,7 +134,7 @@ sub assign_series {
         }
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
 
     #check if series is assigned to project/studio
     my $series = series::get(
@@ -162,7 +162,6 @@ sub assign_series {
         print STDERR "ERROR: series $entry->{series_id} already assigned to project $entry->{project_id}, studio $entry->{studio_id}\n";
     }
 
-    $config->{access}->{write} = 0;
     uac::print_info("The series $entry->{series_id} successfully assigned to project $entry->{project_id} and studio $entry->{studio_id}");
     return;
 }
@@ -185,7 +184,7 @@ sub unassign_series {
         }
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
 
     #check if series is assigned to project/studio
     my $series = series::get(
@@ -213,7 +212,6 @@ sub unassign_series {
         print STDERR "series $entry->{series_id} is not assigned to project $entry->{project_id}, studio $entry->{studio_id}\n";
     }
 
-    $config->{access}->{write} = 0;
     uac::print_info("The series $entry->{series_id} was removed from the project $entry->{project_id} and the studio $entry->{studio_id}.");
     return;
 }

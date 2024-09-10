@@ -6,7 +6,7 @@ no warnings 'redefine';
 use Digest::MD5();
 
 use time;
-use Exception::Class ('SessionError');
+use Exception::Class('SessionError');
 
 # access user name by session id
 
@@ -15,8 +15,8 @@ use Exception::Class ('SessionError');
 # user,
 # timeout,
 # pid,
-# start (timestamp),
-# end (timestamp),
+# start(timestamp),
+# end(timestamp),
 
 our @EXPORT_OK = qw(get_columns get insert update delete);
 
@@ -72,7 +72,7 @@ sub get($$) {
 }
 
 # insert entry and return database id
-sub insert ($$) {
+sub insert($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'timeout') {
@@ -106,7 +106,7 @@ sub start($$) {
             user    => $entry->{user},
             timeout => $entry->{timeout},
         }
-    );
+   );
     return undef unless defined $id;
 
     my $sessions = get($config, { id => $id });
@@ -119,7 +119,7 @@ sub start($$) {
 }
 
 # expand session by timeout
-sub keep_alive ($$) {
+sub keep_alive($$) {
     my ($config, $entry) = @_;
 
     SessionError->throw unless defined $entry;
@@ -154,7 +154,7 @@ sub check($$) {
 }
 
 # stop session
-sub stop ($$) {
+sub stop($$) {
     my ($config, $entry) = @_;
 
     SessionError->throw unless defined $entry;
@@ -172,7 +172,7 @@ sub stop ($$) {
 }
 
 #schedule id to id
-sub update ($$) {
+sub update($$) {
     my ($config, $entry) = @_;
 
     SessionError->throw unless defined $entry->{session_id};

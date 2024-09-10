@@ -73,7 +73,6 @@ sub main {
 
 sub upload_recording {
     my ($config, $request, $user, $fh) = @_;
-
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
@@ -86,6 +85,7 @@ sub upload_recording {
             unless defined $params->{$attr};
     }
 
+    local $config->{access}->{write} = 1;
     ParamError->throw(error => 'Could not get file handle') unless defined $fh;
 
     print STDERR "start upload\n";
@@ -156,8 +156,6 @@ sub delete_recording {
             unless defined $params->{$attr};
     }
 
-    $config->{access}->{write} = 0;
-
     my $audioRecordings = audio_recordings::get(
         $config,
         {   project_id => $params->{project_id},
@@ -182,8 +180,7 @@ sub delete_recording {
         error => "Cannot delete audio file '$file', file does not exist\n")
         unless -e $file;
     delete_file($file);
-
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     $audioRecordings = audio_recordings::delete(
         $config,
         {
@@ -193,7 +190,6 @@ sub delete_recording {
             path       => $params->{path},
         }
     );
-    $config->{access}->{write} = 0;
     return uac::json{status=>"deleted"};
 }
 
@@ -262,9 +258,9 @@ sub show_audio_recording {
 
 }
 
-sub get_duration {
-    my ($duration) = @_;
-    my $hour = int($duration / 3600);
+sub getDuration {
+    my $duration = shift;
+    my $hour     = int( $duration / 3600 );
     $duration -= $hour * 3600;
 
     my $minutes = int($duration / 60);
@@ -383,8 +379,8 @@ sub call_hooks {
     print STDERR Dumper($config->{"audio-upload-hooks"});
 
     $entry = audio_recordings::get(
-        $config,
-        {   project_id => $entry->{project_id},
+        $config, {
+            project_id => $entry->{project_id},
             studio_id  => $entry->{studio_id},
             event_id   => $entry->{event_id},
             path       => $entry->{path}

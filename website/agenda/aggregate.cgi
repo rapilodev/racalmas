@@ -15,15 +15,15 @@ use aggregator();
 use markup();
 use log();
 
-if ( $0 =~ /aggregate.*?\.cgi$/ ) {
+if ($0 =~ /aggregate.*?\.cgi$/) {
     binmode STDOUT, ":encoding(UTF-8)";
 
     my $params = {};
     my $r      = shift;
-    if ( ref($r) eq '' ) {
+    if (ref($r) eq '') {
         unshift @ARGV, $r;
-        for my $arg (@ARGV) {
-            my ( $key, $value ) = split( /\=/, $arg, 2 );
+        for my $arg(@ARGV) {
+            my ($key, $value) = split(/\=/, $arg, 2);
             $params->{$key} = $value;
         }
     } else {
@@ -34,7 +34,7 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
     my $base_dir = $config->{locations}->{base_dir};
 
     my $output_header = '';
-    if ( exists $ENV{REQUEST_URI} && $ENV{REQUEST_URI} ne '' ) {
+    if (exists $ENV{REQUEST_URI} && $ENV{REQUEST_URI} ne '') {
         $output_header .= "Content-type:text/html; charset=UTF-8;\n\n";
     }
 
@@ -48,31 +48,31 @@ if ( $0 =~ /aggregate.*?\.cgi$/ ) {
         url    => $ENV{QUERY_STRING},
         params => {
             original => $params,
-            checked  => aggregator::check_params( $config, $params ),
+            checked  => aggregator::check_params($config, $params),
         },
     };
     $params = $request->{params}->{checked};
 
-    my $content = load_file( $base_dir . './index.html' );
+    my $content = load_file($base_dir . './index.html');
 
     #replace HTML escaped calcms_title span by unescaped one
     $content =~
 s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span id=\"calcms_title\" \>\<\/span\>/g;
 
-    my $list = aggregator::get_list( $config, $request );
+    my $list = aggregator::get_list($config, $request);
 
     my $menu = { content => '' };
 
     $list->{day} = '' unless defined $list->{day};
-    $list->{day} = $params->{date}      if ( defined $params->{date} )      && ( $params->{date} ne '' );
-    $list->{day} = $params->{from_date} if ( defined $params->{from_date} ) && ( $params->{from_date} ne '' );
+    $list->{day} = $params->{date}      if (defined $params->{date})      && ($params->{date} ne '');
+    $list->{day} = $params->{from_date} if (defined $params->{from_date}) && ($params->{from_date} ne '');
     $list->{day} = 'today'              if $list->{day} eq '';
 
     $params->{active_recording} = 0;
-    $menu = aggregator::get_menu( $config, $request, $list->{day}, $list->{results} );
+    $menu = aggregator::get_menu($config, $request, $list->{day}, $list->{results});
 
-    my $calendar = aggregator::get_calendar( $config, $request, $list->{day} );
-    my $newest_comments = aggregator::get_newest_comments( $config, $request );
+    my $calendar = aggregator::get_calendar($config, $request, $list->{day});
+    my $newest_comments = aggregator::get_newest_comments($config, $request);
 
     #build results list
     my $output = {};
@@ -89,15 +89,15 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
     $content =~ s/\/\/\s*(calcms_)?preload/$js/;
 
     #insert results into page
-    for my $key ( keys %$output ) {
+    for my $key(keys %$output) {
         my $val = ${ $output->{$key} };
-        my $start = index( $val, "<body>" );
-        if ( $start != -1 ) {
-            $val = substr( $val, $start + length('<body>') );
+        my $start = index($val, "<body>");
+        if ($start != -1) {
+            $val = substr($val, $start + length('<body>'));
         }
-        my $end = index( $val, "</body>" );
-        if ( $end != -1 ) {
-            $val = substr( $val, 0, $end );
+        my $end = index($val, "</body>");
+        if ($end != -1) {
+            $val = substr($val, 0, $end);
         }
         $content =~ s/(<(div|span)\s+id="$key".*?>).*?(<\/(div|span)>)/$1$val$3/g;
     }
@@ -106,14 +106,14 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
     $list->{project_title} = '' unless defined $list->{project_title};
     $content =~ s/(<(div|span)\s+id="calcms_title".*?>).*?(<\/(div|span)>)/$list->{project_title}/g;
 
-    my $title = join ' - ', grep {defined $_ and $_ ne ''} (
+    my $title = join ' - ', grep {defined $_ and $_ ne ''}(
         $list->{'series_name'}, $list->{'title'},
         $list->{'location'}, 'Programm ' . $list->{project_title}
-    );
+   );
     $content =~ s/(<title>)(.*?)(<\/title>)/$1$title$3/;
 
     $js = '';
-    if ( ( defined $list->{event_id} ) && ( $list->{event_id} ne '' ) ) {
+    if ((defined $list->{event_id}) && ($list->{event_id} ne '')) {
         $js .= qq{showCommentsByEventIdOrEventStart('$list->{event_id}','$list->{start_datetime}')};
     }
 

@@ -29,8 +29,11 @@ Access-Control-Allow-Origin: *
 </tr>
 
 <tr>
+<TMPL_COMMENT><th>Wo</th>
+</TMPL_COMMENT>
 <TMPL_LOOP weekdays><th><a href="<TMPL_VAR .local_base_url>/<TMPL_VAR .controllers.events>/<TMPL_VAR start_date>/<TMPL_VAR end_date>/<TMPL_VAR weekday>/" onclick="calcms.selectWeekdayEventListener('<TMPL_VAR start_date escape=js>','<TMPL_VAR end_date escape=js>','<TMPL_VAR weekday escape=js>');return false;"><TMPL_VAR "weekday_short_name"></a></th></TMPL_LOOP>
 </tr>
+
 </thead>
 <tbody>
 
@@ -43,6 +46,8 @@ Access-Control-Allow-Origin: *
 </TMPL_LOOP></tr></TMPL_LOOP>
 </tbody>
 </table>
+
+
 </div>
 </body>
 </html>

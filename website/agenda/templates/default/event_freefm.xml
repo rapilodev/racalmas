@@ -1,4 +1,5 @@
 Content-type:text/xml; charset=UTF-8
+Access-Control-Allow-Origin: *
 
 <?xml version="1.0" encoding="UTF-8"?>
 <station lastupdate="<TMPL_VAR modified_at_datetime_utc>" xmlns:gml="http://www.opengis.net/gml">

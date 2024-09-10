@@ -9,7 +9,7 @@ use DBD::mysql();
 use Digest::MD5 qw();
 use Data::Dumper;
 use Try::Tiny;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 
 our @EXPORT_OK = qw(
   connect
@@ -56,12 +56,12 @@ sub connect($;$) {
     return $dbh;
 }
 
-# get all database entries of an sql query (as list of hashs)
+# get all database entries of an sql query(as list of hashs)
 state $sths = {};
 sub get($$;$) {
-    my ( $dbh, $sql, $bind_values ) = @_;
+    my ($dbh, $sql, $bind_values) = @_;
 
-    my $sth = $sths->{$sql} // ($sths->{$sql}=$dbh->prepare($sql));
+    my $sth = $sths->{$sql} //($sths->{$sql}=$dbh->prepare($sql));
     if (ref($bind_values) eq 'ARRAY') {
         $sth->execute(@$bind_values)
             or DatabaseError->throw(error => "db: $DBI::errstr $sql");
@@ -74,7 +74,7 @@ sub get($$;$) {
 # get list of table columns
 sub get_columns($$) {
     my ($dbh, $table) = @_;
-    my $columns = db::get( $dbh,
+    my $columns = db::get($dbh,
         qq{
             select column_name from information_schema.columns
             where table_schema=?
@@ -82,7 +82,7 @@ sub get_columns($$) {
             order by ordinal_position
         },
         [$database, $table]
-    );
+   );
     return [ map { values %$_ } @$columns ];
 }
 
@@ -94,27 +94,27 @@ sub get_columns_hash($$) {
 }
 
 #returns last inserted id
-sub insert ($$$){
+sub insert($$$){
     my ($dbh, $table, $entry) =@_;
 
     my @keys = sort keys %$entry;
-    my $keys = join( ",", map {"`$table`.`$_`"} @keys );
-    my $values = join( ",", map { '?' } @keys );
+    my $keys = join(",", map {"`$table`.`$_`"} @keys);
+    my $values = join(",", map { '?' } @keys);
     my @bind_values = map { $entry->{$_} } @keys;
 
-    my $sql = "insert into `$table` \n ($keys) \n values ($values);\n";
-    put( $dbh, $sql, \@bind_values );
-    my $result = get( $dbh, 'SELECT LAST_INSERT_ID() id;' );
+    my $sql = "insert into `$table` \n($keys) \n values($values);\n";
+    put($dbh, $sql, \@bind_values);
+    my $result = get($dbh, 'SELECT LAST_INSERT_ID() id;');
     return $result->[0]->{id} if $result->[0]->{id} > 0;
     return undef;
 }
 
-# execute a modifying database command (update,insert,...)
+# execute a modifying database command(update,insert,...)
 sub put($$$) {
     my ($dbh, $sql, $bind_values) =@_;
 
     my $sth = $dbh->prepare($sql);
-    if ( $write == 1 ) {
+    if ($write == 1) {
         if (ref($bind_values) eq 'ARRAY') {
             $sth->execute(@$bind_values);
         } else {
@@ -123,7 +123,7 @@ sub put($$$) {
     }
     $sth->finish;
 
-    my $result = get( $dbh, 'SELECT ROW_COUNT() changes;' );
+    my $result = get($dbh, 'SELECT ROW_COUNT() changes;');
     return $result->[0]->{changes} if $result->[0]->{changes} > 0;
     return undef;
 }
@@ -142,7 +142,7 @@ sub shift_date_by_hours($$$) {
 
     my $query       = 'select date(? - INTERVAL ? HOUR) date';
     my $bind_values = [ $date, $offset ];
-    my $results     = db::get( $dbh, $query, $bind_values );
+    my $results     = db::get($dbh, $query, $bind_values);
     return $results->[0]->{date};
 }
 
@@ -152,12 +152,12 @@ sub shift_datetime_by_minutes($$$) {
 
     my $query       = "select ? + INTERVAL ? MINUTE date";
     my $bind_values = [ $datetime, $offset ];
-    my $results     = db::get( $dbh, $query, $bind_values );
+    my $results     = db::get($dbh, $query, $bind_values);
     return $results->[0]->{date};
 }
 
 # get next free id of a database table
-sub next_id ($$){
+sub next_id($$){
     my ($dbh, $table) = @_;
 
     my $query = qq{
@@ -165,7 +165,7 @@ sub next_id ($$){
 		from $table
 		where 1
 	};
-    my $results = get( $dbh, $query );
+    my $results = get($dbh, $query);
     return $results->[0]->{id} + 1;
 }
 
@@ -178,7 +178,7 @@ sub get_max_id($$) {
 		from $table
 		where 1
 	};
-    my $results = get( $dbh, $query );
+    my $results = get($dbh, $query);
     return $results->[0]->{id};
 }
 

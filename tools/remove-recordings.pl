@@ -25,7 +25,7 @@ my $entries = db::get($dbh, $query);
 my %paths   = map {normalize($_->{path}) => $_->{start}} @$entries;
 
 my $dir = $config->{locations}->{local_audio_recordings_dir};
-for my $file (sort glob("$dir/*")) {
+for my $file(sort glob("$dir/*")) {
     next if $file !~ /\.(mp3|wav|flac|aac|ogg|m4a|aiff|aif|opus|aac)$/i;
     next if -M $file < 14;
     my $filename = normalize($file);

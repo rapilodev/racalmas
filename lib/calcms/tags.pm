@@ -13,7 +13,7 @@ sub get_tags($) {
 		group by name
 		order by sum desc	
 	};
-    my $tags = db::get( $dbh, $query );
+    my $tags = db::get($dbh, $query);
     return $tags;
 }
 

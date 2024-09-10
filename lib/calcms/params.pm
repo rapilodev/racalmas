@@ -6,7 +6,7 @@ no warnings 'redefine';
 use Data::Dumper;
 use CGI::Simple();
 use Apache2::Request();
-use Exception::Class ('ParamError');
+use Exception::Class('ParamError');
 
 {
     my $is_json = 0;
@@ -40,9 +40,9 @@ sub get($;$) {
         my $req = Apache2::Request->new($r,
             POST_MAX => $upload_limit,
             TEMP_DIR => $tmp_dir
-        );
+       );
         params::set_uri($r->unparsed_uri);
-        for my $key ($req->param) {
+        for my $key($req->param) {
             $params->{scalar($key)} = scalar($req->param($key));
         }
     } else {
@@ -64,7 +64,7 @@ sub get($;$) {
         $status = '' if $status eq 'Missing input data';
         ParamError->throw(error => $status) if $status;
     }
-    return ($params, $fh);
+    return($params, $fh);
 }
 
 #do not delete last line!

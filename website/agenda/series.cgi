@@ -28,8 +28,6 @@ sub list_series {
     my $config = shift;
     my $params = shift;
 
-    $config->{access}->{write} = 0;
-
     my $project_id = $params->{project_id};
     my $studio_id  = $params->{studio_id};
     my $location   = $params->{location};

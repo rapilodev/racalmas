@@ -35,9 +35,10 @@ if ( $0 =~ /upload_playout.*?\.cgi$/ ) {
     my $json = JSON::decode_json($content);
     $json->{project_id} = $params->{project_id} if defined $params->{project_id};
     $json->{studio_id}  = $params->{studio_id}  if defined $params->{studio_id};
-    $config->{access}->{write} = 1;
-    playout::sync( $config, $json );
-    $config->{access}->{write} = 0;
+    local $config->{access}->{write} = 1;
+    my $result = playout::sync( $config, $json );
+
+    print "upload playout result:" . Dumper($result);
 }
 
 1;

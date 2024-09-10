@@ -44,7 +44,6 @@ sub main {
             return $out . change_password( $config, $request, $session->{user} );
         }
     }
-    $config->{access}->{write} = 0;
     return $out . show_users( $config, $request );
 }
 
@@ -194,7 +193,7 @@ sub update_user {
         $user->{modified_at} = time::time_to_datetime( time() );
         $user->{created_by}  = $params->{presets}->{user};
 
-        $config->{access}->{write} = 1;
+        local $config->{access}->{write} = 1;
         uac::insert_user( $config, $user );
     } else {
         unless ( $permissions->{update_user} == 1 ) {
@@ -202,7 +201,7 @@ sub update_user {
             return;
         }
         $user->{modified_at} = time::time_to_datetime( time() );
-        $config->{access}->{write} = 1;
+        local $config->{access}->{write} = 1;
         uac::update_user( $config, $user );
     }
 }
@@ -234,7 +233,7 @@ sub delete_user {
         return;
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $params = $request->{params}->{checked};
     return uac::delete_user( $config, $params->{user_id} );
 }
@@ -356,7 +355,6 @@ sub update_user_roles {
             uac::print_info($message);
         }
     }
-    $config->{access}->{write} = 0;
 }
 
 sub check_params {

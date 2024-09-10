@@ -125,7 +125,7 @@ sub save_schedule {
                 exclude     => 0
         });
         if (scalar(@$schedules) > 0) {
-            $config->{access}->{write} = 1;
+            local $config->{access}->{write} = 1;
             for my $schedule (@$schedules) {
                 series_schedule::delete($config, $schedule);
             }
@@ -367,7 +367,7 @@ sub assign_event {
                 {   event_id => $entry->{event_id},
                     template => 'no',
                     limit    => 1,
-                    archive  => 'all',
+                    phase    => 'all',
                 }
             )
         },
@@ -397,7 +397,7 @@ sub assign_event {
         }
     );
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     series::assign_event(
         $config,
         {   uac::set(
@@ -507,7 +507,7 @@ sub unassign_event {
         }
     );
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     series::unassign_event(
         $config,
         {   uac::set(
@@ -572,7 +572,7 @@ sub add_user {
     AssignError->throw(error => 'series is not assigned to project!')
         unless project::is_series_assigned($config, $params) == 1;
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     series::add_user(
         $config,
         {   uac::set(
@@ -695,8 +695,7 @@ sub show_series {
 
     #this will be updated later (especially allow_update_events)
     for my $permission (keys %{ $request->{permissions} }) {
-        $params->{'allow'}->{$permission}
-            = $request->{permissions}->{$permission};
+        $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
 
     #list of all studios by id
@@ -864,9 +863,7 @@ sub show_series {
 
     $serie->{show_hint_to_add_schedule} = $params->{show_hint_to_add_schedule};
 
-    if (    (defined $params->{setImage})
-        and ($params->{setImage} ne $serie->{image}))
-    {
+    if ( ( defined $params->{setImage} ) && ( $params->{setImage} ne $serie->{image} ) ) {
         $serie->{image}          = $params->{setImage};
         $params->{forced_change} = 1;
     }
@@ -876,9 +873,8 @@ sub show_series {
         $params->{$key} = $serie->{$key};
     }
 
-    for my $value ('markdown', 'creole') {
-        $params->{"content_format_$value"} = 1
-            if ($params->{content_format} // '') eq $value;
+    for my $value ('markdown', 'creole'){
+        $params->{"content_format_$value"}=1 if ($params->{content_format}//'') eq $value;
     }
 
     $params->{loc} = localization::get($config,
@@ -960,6 +956,15 @@ sub rebuild_episodes {
     for my $event (@$events) {
         $events_by_id->{ $event->{id} } = $event;
     }
+
+    print "<style>
+        tr        {cursor:pointer}
+        td        {border:1px solid gray}
+        tr.error  {background:#f99}
+        tr.warn   {background:#ff9}
+        tr.ok     {background:#9f9}
+        </style>
+    ";
 
     my $prev        = undef;
     my $max_episode = 0;
@@ -1082,20 +1087,17 @@ sub check_params {
     );
 
     for my $attr ('start') {
-        if (   (defined $params->{$attr})
-            && ($params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d[ T]\d\d\:\d\d)/))
+        if (   ( defined $params->{$attr} )
+            && ( $params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d[ T]\d\d\:\d\d)/ ) )
         {
             $checked->{$attr} = $1 . ':00';
         }
     }
 
     for my $attr ('end') {
-        if (   (defined $params->{$attr})
-            && ($params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d)/))
-        {
+        if ( ( defined $params->{$attr} ) && ( $params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d)/ ) ) {
             $checked->{$attr} = $1;
         }
     }
-    use Data::Dumper;print STDERR Dumper($checked);
     return $checked;
 }

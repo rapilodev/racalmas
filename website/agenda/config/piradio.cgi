@@ -34,7 +34,7 @@ domain                      ${DOMAIN}
 <locations>
     temp_dir                ${BASE_DIR}/temp/
 
-    # URLs of the program page the agenda should be injected into (done by preload_agenda.pl)
+    # URLs of the program page the agenda should be injected into(done by preload_agenda.pl)
     # this is the page containing calcms_menu, and other ids
     source_url_http         https://${DOMAIN}/calcms/
     source_url_https        https://${DOMAIN}/calcms/
@@ -118,7 +118,7 @@ domain                      ${DOMAIN}
 
 no_result_message           Pi-Radio sendet innerhalb der Freien Radios – Berlin-Brandenburg<br>jede Woche von Donnerstag um 6:00 Uhr bis Freitag um 6:00 Uhr.
 events_title                Pi Radio: Berliner Stimmen und ihre Musik
-events_description          Freies Radio aus Berlin, immer Mittwoch und Donnerstag von 19:00 bis 06:00 auf UKW 88,4 MHz (Berlin) und 90,7 MHz (Potsdam).
+events_description          Freies Radio aus Berlin, immer Mittwoch und Donnerstag von 19:00 bis 06:00 auf UKW 88,4 MHz(Berlin) und 90,7 MHz(Potsdam).
 
 </config>
 

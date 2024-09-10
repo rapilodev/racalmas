@@ -38,7 +38,6 @@ sub main {
         return $out . delete_schedule( $config, $request ) if ( $params->{action} eq 'delete_schedule' );
     }
 
-    $config->{access}->{write} = 0;
     $out.= template::process( $config, template::check( $config, 'worktime-header.html' ), $headerParams );
     return show_work_schedule( $config, $request );
 }
@@ -102,7 +101,6 @@ sub save_schedule {
         my $updates = work_dates::update( $config, $entry );
         uac::print_info("schedule added. $updates dates added");
     }
-    $config->{access}->{write} = 0;
 }
 
 sub delete_schedule {
@@ -133,8 +131,6 @@ sub delete_schedule {
 
 sub show_work_schedule {
     my ($config, $request) = @_;
-
-    $config->{access}->{write} = 0;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};

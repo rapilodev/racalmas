@@ -14,7 +14,7 @@ sub error($$) {
     my $message = "Error: $_[1]\n";
 
     print STDERR $message;
-    unless ( defined $config ) {
+    unless (defined $config) {
         print STDERR "missing config at log::error\n";
         die("missing config at log::error");
     }
@@ -25,10 +25,10 @@ sub load_file($) {
     my ($filename) = @_;
 
     my $content = '';
-    if ( -e $filename ) {
+    if (-e $filename) {
         my $FILE = undef;
-        open( $FILE, "<:utf8", $filename ) || warn "cant read file '$filename'";
-        $content = join "", (<$FILE>);
+        open($FILE, "<:utf8", $filename) || warn "cant read file '$filename'";
+        $content = join "",(<$FILE>);
         close $FILE;
         return $content;
     }
@@ -38,16 +38,16 @@ sub save_file($$) {
     my ($filename, $content) = @_;
 
     #check if directory is writeable
-    if ( $filename =~ /^(.+?)\/[^\/]+$/ ) {
+    if ($filename =~ /^(.+?)\/[^\/]+$/) {
         my $dir = $1;
-        unless ( -w $dir ) {
-            print STDERR "log::save_file : cannot write to directory ($dir)\n";
+        unless (-w $dir) {
+            print STDERR "log::save_file : cannot write to directory($dir)\n";
             return;
         }
     }
 
     open my $FILE, ">:utf8", $filename || warn("cant write file '$filename'");
-    if ( defined $FILE ) {
+    if (defined $FILE) {
         print $FILE $content . "\n";
         close $FILE;
     }
@@ -57,7 +57,7 @@ sub save_file($$) {
 sub append_file($$) {
     my ($filename, $content) = @_;
 
-    unless ( ( defined $filename ) && ( $filename ne '' ) && ( -e $filename ) ) {
+    unless ((defined $filename) && ($filename ne '') && (-e $filename)) {
         print STDERR "cannot append, file '$filename' does not exist\n";
         return;
     }

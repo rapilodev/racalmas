@@ -6,7 +6,7 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use Try::Tiny;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 
 use uac();
 use user_settings();
@@ -22,7 +22,7 @@ sub get($$) {
     my ($config, $options) = @_;
 
     #get pot file
-    unless ( defined $options->{file} ) {
+    unless (defined $options->{file}) {
         LocalizationError->throw(error=> "missing po file\n");
     }
 
@@ -32,8 +32,8 @@ sub get($$) {
     $language = $options->{language} if defined $options->{language};
 
     #get language from user
-    if ( ( !( defined $language ) ) && ( defined $options->{user} ) ) {
-        my $user_settings = user_settings::get( $config, { user => $options->{user} } );
+    if ((!(defined $language)) && (defined $options->{user})) {
+        my $user_settings = user_settings::get($config, { user => $options->{user} });
         $language = $user_settings->{language};
     }
     $language = 'en' unless defined $language;
@@ -46,9 +46,9 @@ sub get($$) {
     $files =~ s/[^a-zA-Z\,\_\-]//g;
 
     #get all comma separated po files
-    for my $file ( split /\,/, $files ) {
+    for my $file(split /\,/, $files) {
         my $po_file = $config->{locations}->{admin_pot_dir} . '/' . $language . '/' . $file . '.po';
-        $loc = read_po_file( $po_file, $loc );
+        $loc = read_po_file($po_file, $loc);
     }
     return $loc;
 }
@@ -56,11 +56,11 @@ sub get($$) {
 sub read_po_file($$) {
     my ($po_file, $loc) = @_;
 
-    unless ( -e $po_file ) {
+    unless (-e $po_file) {
         LocalizationError->throw(error=> "po file $po_file does not exist\n");
         return $loc;
     }
-    unless ( -r $po_file ) {
+    unless (-r $po_file) {
         LocalizationError->throw(error=> "cannot read po file $po_file\n");
         return $loc;
     }
@@ -71,12 +71,12 @@ sub read_po_file($$) {
     while (<$file>) {
         my $line = $_;
 
-        if ( $line =~ /^msgid\s*\"(.*)\"\s*$/ ) {
+        if ($line =~ /^msgid\s*\"(.*)\"\s*$/) {
             $key = $1;
             $key =~ s/\'//g;
             $key =~ s/\"//g;
         }
-        if ( $line =~ /^msgstr\s*\"(.*)\"\s*$/ ) {
+        if ($line =~ /^msgstr\s*\"(.*)\"\s*$/) {
             my $val = $1;
             $val =~ s/\'//g;
             $val =~ s/\"//g;
@@ -87,12 +87,12 @@ sub read_po_file($$) {
     return $loc;
 }
 
-sub getJavascript ($){
+sub getJavascript($){
     my ($loc) = @_;
 
     my $out = '<script>';
     $out .= "var loc={};\n";
-    for my $key ( sort keys %$loc ) {
+    for my $key(sort keys %$loc) {
         $out .= qq{loc['$key']='$loc->{$key}';} . "\n";
     }
     $out .= "</script>\n";

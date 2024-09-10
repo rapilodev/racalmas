@@ -12,10 +12,10 @@ sub get_columns($) {
     my ($config) = @_;
 
     my $dbh  = db::connect($config);
-    return db::get_columns_hash( $dbh, 'calcms_user_day_start' );
+    return db::get_columns_hash($dbh, 'calcms_user_day_start');
 }
 
-sub get ($$) {
+sub get($$) {
     my ($config, $condition) = @_;
 
     my @conditions  = ();
@@ -25,15 +25,15 @@ sub get ($$) {
         ParamError->throw(error => "user_day_start:get missing $_") unless defined $condition->{$_}
     };
 
-    for my $field ('user', 'project_id', 'studio_id'){
-        if ( ( defined $condition->{$field} ) && ( $condition->{$field} ne '' ) ) {
+    for my $field('user', 'project_id', 'studio_id'){
+        if ((defined $condition->{$field}) && ($condition->{$field} ne '')) {
             push @conditions,  $field.'=?';
             push @bind_values, $condition->{$field};
         }
     }
 
     my $conditions = '';
-    $conditions = " where " . join( " and ", @conditions ) if scalar(@conditions) > 0;
+    $conditions = " where " . join(" and ", @conditions) if scalar(@conditions) > 0;
 
     my $query = qq{
 		select *
@@ -42,20 +42,20 @@ sub get ($$) {
 	};
 
     my $dbh = db::connect($config);
-    my $entries = db::get( $dbh, $query, \@bind_values );
+    my $entries = db::get($dbh, $query, \@bind_values);
     return $entries->[0] || undef;
 }
 
 sub insert_or_update($$){
     my ($config, $entry) = @_;
-    if ( get($config, $entry) ){
-        update ($config, $entry);
+    if (get($config, $entry)){
+        update($config, $entry);
     } else {
-        insert ($config, $entry);
+        insert($config, $entry);
     }
 }
 
-sub insert ($$) {
+sub insert($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'project_id', 'studio_id', 'day_start') {
@@ -63,7 +63,7 @@ sub insert ($$) {
     }
 
     my $dbh = db::connect($config);
-    return db::insert( $dbh, 'calcms_user_day_start', $entry );
+    return db::insert($dbh, 'calcms_user_day_start', $entry);
 }
 
 sub update($$) {
@@ -75,9 +75,9 @@ sub update($$) {
     }
 
     my @keys        = sort keys %$entry;
-    my $values      = join( ",", map { $_ . '=?' } @keys );
-    my @bind_values = map { $entry->{$_} } ( @keys, @$fields );
-    my $conditions  = join (' and ', map { $_.'=?' } @$fields );
+    my $values      = join(",", map { $_ . '=?' } @keys);
+    my @bind_values = map { $entry->{$_} }(@keys, @$fields);
+    my $conditions  = join(' and ', map { $_.'=?' } @$fields);
 
     my $query = qq{
 		update calcms_user_day_start
@@ -86,10 +86,10 @@ sub update($$) {
 	};
 
     my $dbh = db::connect($config);
-    return db::put( $dbh, $query, \@bind_values );
+    return db::put($dbh, $query, \@bind_values);
 }
 
-sub delete ($$) {
+sub delete($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'project_id', 'studio_id') {
@@ -104,7 +104,7 @@ sub delete ($$) {
     my $bind_values = [ $entry->{user}, $entry->{project_id}, $entry->{studio_id} ];
 
     my $dbh = db::connect($config);
-    return db::put( $dbh, $query, $bind_values );
+    return db::put($dbh, $query, $bind_values);
 }
 
 #do not delete last line!

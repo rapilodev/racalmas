@@ -10,10 +10,10 @@ our @EXPORT_OK = qw(get_columns get update insert get_stats increase);
 sub get_columns($) {
     my ($config) = @_;
     my $dbh = db::connect($config);
-    return db::get_columns_hash( $dbh, 'calcms_user_stats' );
+    return db::get_columns_hash($dbh, 'calcms_user_stats');
 }
 
-sub get ($$) {
+sub get($$) {
     my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
@@ -21,33 +21,33 @@ sub get ($$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
+    if ((defined $condition->{project_id}) && ($condition->{project_id} ne '')) {
         push @conditions,  'project_id=?';
         push @bind_values, $condition->{project_id};
     }
 
-    if ( ( defined $condition->{studio_id} ) && ( $condition->{studio_id} ne '' ) ) {
+    if ((defined $condition->{studio_id}) && ($condition->{studio_id} ne '')) {
         push @conditions,  'studio_id=?';
         push @bind_values, $condition->{studio_id};
     }
 
-    if ( ( defined $condition->{series_id} ) && ( $condition->{series_id} ne '' ) ) {
+    if ((defined $condition->{series_id}) && ($condition->{series_id} ne '')) {
         push @conditions,  'series_id=?';
         push @bind_values, $condition->{series_id};
     }
 
-    if ( ( defined $condition->{user} ) && ( $condition->{user} ne '' ) ) {
+    if ((defined $condition->{user}) && ($condition->{user} ne '')) {
         push @conditions,  'user=?';
         push @bind_values, $condition->{user};
     }
 
     my $limit = '';
-    if ( ( defined $condition->{limit} ) && ( $condition->{limit} ne '' ) ) {
+    if ((defined $condition->{limit}) && ($condition->{limit} ne '')) {
         $limit = 'limit ' . $condition->{limit};
     }
 
     my $conditions = '';
-    $conditions = " where " . join( " and ", @conditions ) if ( @conditions > 0 );
+    $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
 		select	*
@@ -57,7 +57,7 @@ sub get ($$) {
         $limit
 	};
 
-    my $results = db::get( $dbh, $query, \@bind_values );
+    my $results = db::get($dbh, $query, \@bind_values);
     return $results;
 }
 
@@ -69,33 +69,33 @@ sub get_stats($$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
+    if ((defined $condition->{project_id}) && ($condition->{project_id} ne '')) {
         push @conditions,  'project_id=?';
         push @bind_values, $condition->{project_id};
     }
 
-    if ( ( defined $condition->{studio_id} ) && ( $condition->{studio_id} ne '' ) ) {
+    if ((defined $condition->{studio_id}) && ($condition->{studio_id} ne '')) {
         push @conditions,  'studio_id=?';
         push @bind_values, $condition->{studio_id};
     }
 
-    if ( ( defined $condition->{series_id} ) && ( $condition->{series_id} ne '' ) ) {
+    if ((defined $condition->{series_id}) && ($condition->{series_id} ne '')) {
         push @conditions,  'series_id=?';
         push @bind_values, $condition->{series_id};
     }
 
-    if ( ( defined $condition->{user} ) && ( $condition->{user} ne '' ) ) {
+    if ((defined $condition->{user}) && ($condition->{user} ne '')) {
         push @conditions,  'user=?';
         push @bind_values, $condition->{user};
     }
 
     my $limit = '';
-    if ( ( defined $condition->{limit} ) && ( $condition->{limit} ne '' ) ) {
+    if ((defined $condition->{limit}) && ($condition->{limit} ne '')) {
         $limit = 'limit ' . $condition->{limit};
     }
 
     my $conditions = '';
-    $conditions = " where " . join( " and ", @conditions ) if ( @conditions > 0 );
+    $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
 		select	user, project_id, studio_id,
@@ -112,11 +112,11 @@ sub get_stats($$) {
         $limit
 	};
 
-    my $results = db::get( $dbh, $query, \@bind_values );
-    for my $result (@$results) {
+    my $results = db::get($dbh, $query, \@bind_values);
+    for my $result(@$results) {
         $result->{score} = 0;
-        for my $column ( 'create_events', 'update_events', 'delete_events', 'create_series', 'update_series',
-            'delete_series' )
+        for my $column('create_events', 'update_events', 'delete_events', 'create_series', 'update_series',
+            'delete_series')
         {
             $result->{score} += $result->{$column};
         }
@@ -135,18 +135,18 @@ sub insert($$) {
     #TODO:filter for existing attributes
     my $columns = get_columns($config);
     my $entry   = {};
-    for my $column ( keys %$columns ) {
+    for my $column(keys %$columns) {
         $entry->{$column} = $stats->{$column} if defined $stats->{$column};
     }
-    $entry->{modified_at} = time::time_to_datetime( time() );
+    $entry->{modified_at} = time::time_to_datetime(time());
 
     my $dbh = db::connect($config);
-    my $id = db::insert( $dbh, 'calcms_user_stats', $entry );
+    my $id = db::insert($dbh, 'calcms_user_stats', $entry);
     return $id;
 }
 
 # update project
-sub update ($$) {
+sub update($$) {
     my ($config, $stats) = @_;
 
     for ('user', 'project_id', 'studio_id', 'series_id') {
@@ -155,13 +155,13 @@ sub update ($$) {
 
     my $columns = get_columns($config);
     my $entry   = {};
-    for my $column ( keys %$columns ) {
+    for my $column(keys %$columns) {
         $entry->{$column} = $stats->{$column} if defined $stats->{$column};
     }
-    $entry->{modified_at} = time::time_to_datetime( time() );
+    $entry->{modified_at} = time::time_to_datetime(time());
 
     my @keys = sort keys %$entry;
-    my $values = join( ",", map { $_ . '=?' } @keys );
+    my $values = join(",", map { $_ . '=?' } @keys);
     my @bind_values = map { $entry->{$_} } @keys;
     push @bind_values, $entry->{user};
     push @bind_values, $entry->{project_id};
@@ -175,22 +175,22 @@ sub update ($$) {
 	};
 
     my $dbh = db::connect($config);
-    return db::put( $dbh, $query, \@bind_values );
+    return db::put($dbh, $query, \@bind_values);
 }
 
-sub increase ($$$) {
+sub increase($$$) {
     my ($config, $usecase, $options) = @_;
 
     return undef unless defined $usecase;
-    for ('user', 'project_id', 'studio_id', 'series_id', ) {
+    for ('user', 'project_id', 'studio_id', 'series_id',) {
         ParamError->throw(error => "missing $_") unless defined $options->{$_}
     };
 
     my $columns = get_columns($config);
     return undef unless exists $columns->{$usecase};
 
-    my $entries = get( $config, $options );
-    if ( scalar @$entries == 0 ) {
+    my $entries = get($config, $options);
+    if (scalar @$entries == 0) {
         my $entry = {
             project_id => $options->{project_id},
             studio_id  => $options->{studio_id},
@@ -199,11 +199,11 @@ sub increase ($$$) {
             $usecase   => 1,
         };
 
-        return insert( $config, $entry );
-    } elsif ( scalar @$entries == 1 ) {
+        return insert($config, $entry);
+    } elsif(scalar @$entries == 1) {
         my $entry = $entries->[0];
         $entry->{$usecase}++ if defined
-        return update( $config, $entry );
+        return update($config, $entry);
     } else {
         print STDERR "user_stats: to few options given: $usecase," . Dumper($options) . "\n";
     }
@@ -219,14 +219,14 @@ sub get_active_users{
         select u.name login, u.full_name,
             s.last_login, s.login_count,
             u.disabled, u.created_at, u.created_by
-        from calcms_users u left join (
+        from calcms_users u left join(
             SELECT user , max(start) last_login, count(user) login_count
             FROM calcms_user_sessions
             group by user
-        ) s on s.user=u.name
+       ) s on s.user=u.name
         order by u.disabled, s.last_login desc, u.created_at desc
     };
-    my $results = db::get( $dbh, $query, [] );
+    my $results = db::get($dbh, $query, []);
     return $results;
 }
 

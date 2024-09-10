@@ -7,8 +7,8 @@ no warnings 'redefine';
 use CGI::Simple();
 use CGI::Cookie();
 use Authen::Passphrase::BlowfishCrypt();
-use user_sessions ();
-use localization ();
+use user_sessions();
+use localization();
 
 my $defaultExpiration = 60;
 
@@ -19,14 +19,14 @@ sub get_session($$) {
             my ($user, $password, $uri) = ($params->{user}, $params->{password}, $params->{uri});
             print login($config, $user, $password) .  new CGI::Simple()->redirect($uri);
             exit;
-        } elsif ($params->{authAction} eq 'logout') {
+        } elsif($params->{authAction} eq 'logout') {
             print logout($config);
             LogoutDone->throw;
         }
     }
     my $session_id = read_cookie();
     my $session    = read_session($config, $session_id);
-    $params->{$_} = $session->{$_} for qw (user expires);
+    $params->{$_} = $session->{$_} for qw(user expires);
     $session->{params} = $params;
     return $session;
 }
@@ -38,7 +38,7 @@ sub crypt_password($) {
         cost        => 8,
         salt_random => 1,
         passphrase  => $password
-    );
+   );
     return {
         salt  => $ppr->salt_base64,
         crypt => $ppr->as_crypt
@@ -71,7 +71,7 @@ sub create_cookie($$) {
         -expires  => $timeout,
         -secure   => 1,
         -samesite => "Lax"
-    );
+   );
     return CGI::Simple->new()->header(-cookie => $cookie);
 }
 
@@ -91,12 +91,12 @@ sub delete_cookie() {
         -expires => '+1s'
         -secure   => 1,
         -samesite => "Lax"
-    )->bake;
+   )->bake;
 }
 
 # read and write server-side session data
 # timeout is in seconds
-sub create_session ($$$) {
+sub create_session($$$) {
     my ($config, $user, $timeout) = @_;
     return user_sessions::start(
         $config,
@@ -104,7 +104,7 @@ sub create_session ($$$) {
             user    => $user,
             timeout => $timeout,
         }
-    );
+   );
 }
 
 sub read_session($$) {
@@ -150,9 +150,9 @@ sub authenticate($$$) {
     return $timeout;
 }
 
-sub show_login_form ($$$) {
+sub show_login_form($$$) {
     my ($config, $user, $message) = @_;
-    my $loc = localization::get( $config, { user => $user, file => 'login' } );
+    my $loc = localization::get($config, { user => $user, file => 'login' });
     my $uri = params::get_uri() // '';
     $uri =~ s/_=\d+//;
     my $requestReset = '';

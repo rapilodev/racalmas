@@ -7,8 +7,8 @@ use Data::Dumper;
 use File::Basename;
 use Time::Local();
 
-use Apache2::RequestRec ();
-use Apache2::Connection ();
+use Apache2::RequestRec();
+use Apache2::Connection();
 use Apache2::Const -compile => qw(FORBIDDEN OK);
 
 sub handler {
@@ -18,7 +18,7 @@ sub handler {
     my $OK = Apache2::Const::OK;
     my $FORBIDDEN = Apache2::Const::FORBIDDEN;
 
-    my $path = $ENV{LISTENER_DIR} . File::Basename::basename( $r->uri() );
+    my $path = $ENV{LISTENER_DIR} . File::Basename::basename($r->uri());
     my $file = readlink $path;
 
     # granted access by temporary symlinks only
@@ -26,16 +26,16 @@ sub handler {
 
     # use link age for authorized downloads
     if (File::Basename::basename($path) =~ /^shared\-/) {
-        my $age = time() - (lstat($path))[9];
-        return ( $age > 7 * $DAYS ) ? $FORBIDDEN : $OK;
+        my $age = time() -(lstat($path))[9];
+        return($age > 7 * $DAYS) ? $FORBIDDEN : $OK;
     }
 
     # use age from file name for public access
     return $FORBIDDEN unless
-        File::Basename::basename($file) =~ /(\d\d\d\d)\-(\d\d)\-(\d\d) (\d\d)_(\d\d)/;
+        File::Basename::basename($file) =~ /(\d\d\d\d)\-(\d\d)\-(\d\d)(\d\d)_(\d\d)/;
 
-    my $age =  time() - Time::Local::timelocal( 0, $5, $4, $3, $2 - 1, $1 );
-    return ( $age > 7 * $DAYS ) ? $FORBIDDEN : $OK;
+    my $age =  time() - Time::Local::timelocal(0, $5, $4, $3, $2 - 1, $1);
+    return($age > 7 * $DAYS) ? $FORBIDDEN : $OK;
 }
 1;
 

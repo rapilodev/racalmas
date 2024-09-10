@@ -13,7 +13,7 @@ use events();
 sub break_dates {
     my ($dates, $start_of_day) = @_;
 
-    for my $date (@$dates) {
+    for my $date(@$dates) {
         next unless defined $date;
 
         $date->{splitCount} = 0 unless defined $date->{splitCount};
@@ -27,7 +27,7 @@ sub break_dates {
 
         # add new entry
         my $entry = {};
-        for my $key (keys %$date) {
+        for my $key(keys %$date) {
             $entry->{$key} = $date->{$key};
         }
         $entry->{start} = $nextDayStart;
@@ -43,7 +43,7 @@ sub break_dates {
     return join_dates($dates, $start_of_day);
 }
 
-# check if event breaks the start of day (e.g. 06:00)
+# check if event breaks the start of day(e.g. 06:00)
 sub breaks_day {
     my ($start, $end, $start_of_day) = @_;
 
@@ -81,13 +81,13 @@ sub join_dates {
     @$dates = sort {$a->{start} cmp $b->{start}} @$dates;
 
     my $prev_date = undef;
-    for my $date (@$dates) {
+    for my $date(@$dates) {
         next unless defined $date;
         unless (defined $prev_date) {
             $prev_date = $date;
             next;
         }
-        if (   ($date->{event_id} == $prev_date->{event_id})
+        if (($date->{event_id} == $prev_date->{event_id})
             && ($date->{series_id} == $prev_date->{series_id})
             && ($date->{start} eq $prev_date->{end})
             && ($date->{start} =~ /00\:00\:\d\d/))
@@ -100,7 +100,7 @@ sub join_dates {
     }
 
     my $results = [];
-    for my $date (@$dates) {
+    for my $date(@$dates) {
         next unless defined $date;
         push @$results, $date;
     }
@@ -119,10 +119,10 @@ sub filterEvents {
     my $endDatetime   = $options->{till} . ' ' . $dayStartTime;
 
     my $results = [];
-    for my $date (@$events) {
+    for my $date(@$events) {
         next
             if (($date->{start} ge $endDatetime)
-            || ($date->{end} le $startDatetime));
+            ||($date->{end} le $startDatetime));
         push @$results, $date;
     }
     return $results;
@@ -246,7 +246,7 @@ sub calc_positions {
 
     my $start_of_day = $cal_options->{start_of_day};
 
-    for my $event (@$events) {
+    for my $event(@$events) {
         my ($start_hour, $start_min) = getTime($event->{start_time});
         my ($end_hour,   $end_min)   = getTime($event->{end_time});
 
@@ -264,7 +264,7 @@ sub calc_positions {
 sub find_errors {
     my ($events) = @_;
 
-    for my $event (@$events) {
+    for my $event(@$events) {
         next if defined $event->{grid};
         next if defined $event->{work};
         next if defined $event->{play};
@@ -275,7 +275,7 @@ sub find_errors {
     }
 
     #check next events
-    for my $i (0 .. scalar(@$events) - 1) {
+    for my $i(0 .. scalar(@$events) - 1) {
         my $event = $events->[$i];
         next unless defined $event->{check_errors};
 
@@ -284,33 +284,33 @@ sub find_errors {
         next if $min_index >= scalar @$events;
         my $max_index = $i + 8;
         $max_index = scalar(@$events) - 1 if $max_index >= (@$events);
-        for my $j ($min_index .. $max_index) {
+        for my $j($min_index .. $max_index) {
             my $event2 = $events->[$j];
             next unless defined $event2->{check_errors};
 
          #mark events if same start,stop,series_id, one is schedule one is event
-            if (   (defined $event->{series_id})
+            if ((defined $event->{series_id})
                 && (defined $event2->{series_id})
                 && ($event->{series_id} == $event2->{series_id}))
             {
-                if (   ($event->{ystart} eq $event2->{ystart})
+                if (($event->{ystart} eq $event2->{ystart})
                     && ($event->{yend} eq $event2->{yend}))
                 {
-                    if (   (defined $event->{schedule})
+                    if ((defined $event->{schedule})
                         && (!(defined $event2->{schedule})))
                     {
                         $event->{hide}       = 1;
                         $event2->{scheduled} = 1;
                         next;
                     }
-                    if (   (!(defined $event->{schedule}))
+                    if ((!(defined $event->{schedule}))
                         && (defined $event2->{schedule}))
                     {
                         $event->{scheduled} = 1;
                         $event2->{hide}     = 1;
                         next;
                     }
-                } elsif (($event->{ystart} >= $event2->{ystart})
+                } elsif(($event->{ystart} >= $event2->{ystart})
                     && ($event->{scheduled} == 1)
                     && ($event2->{scheduled} == 1))
                 {
@@ -320,7 +320,7 @@ sub find_errors {
                     $event2->{error}++;
                     next;
                 }
-            } elsif ($event->{ystart} >= $event2->{ystart}) {
+            } elsif($event->{ystart} >= $event2->{ystart}) {
 
                 #errors on multiple schedules or events
                 $event->{error}++;
@@ -330,14 +330,14 @@ sub find_errors {
         }
     }
 
-#remove error tags from correctly scheduled entries (subsequent entries with same series id)
-    for my $event (@$events) {
+#remove error tags from correctly scheduled entries(subsequent entries with same series id)
+    for my $event(@$events) {
         delete $event->{error}
             if (
-            (defined $event->{error})
-            && (   ((defined $event->{scheduled}) && ($event->{scheduled} == 1))
-                || ((defined $event->{hide}) && ($event->{hide} == 1)))
-            );
+         (defined $event->{error})
+            && (((defined $event->{scheduled}) && ($event->{scheduled} == 1))
+                ||((defined $event->{hide}) && ($event->{hide} == 1)))
+           );
     }
 }
 
@@ -345,9 +345,9 @@ sub find_errors {
 sub getTime {
     my ($time) = @_;
     if ($time =~ /^(\d\d)\:(\d\d)/) {
-        return ($1, $2);
+        return($1, $2);
     }
-    return (-1, -1);
+    return(-1, -1);
 }
 
 sub showEventList {
@@ -396,8 +396,8 @@ qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
     #my $i = 1;
 
     my $scheduled_events = {};
-    for my $date (reverse sort (keys %$events_by_day)) {
-        for my $event (reverse @{ $events_by_day->{$date} }) {
+    for my $date(reverse sort(keys %$events_by_day)) {
+        for my $event(reverse @{ $events_by_day->{$date} }) {
             next unless defined $event;
             next if defined $event->{grid};
             next if defined $event->{work};
@@ -425,12 +425,12 @@ qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
                 $class .= ' no_series'
                     if (($class eq 'event') && ($event->{series_id} eq '-1'));
 
-                for my $filter (
+                for my $filter(
                     'rerun',   'archived',
                     'playout', 'published',
                     'live',    'disable_event_sync',
                     'draft'
-                    )
+                   )
                 {
                     $class .= ' ' . $filter
                         if ((defined $event->{$filter})
@@ -441,10 +441,10 @@ qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
                     && ($event->{'live'} eq '1'));
                 $class .= ' no_playout'
                     unless (
-                    (defined $event->{'playout'})
+                 (defined $event->{'playout'})
                     && (defined $event->{'playout'}
                         and $event->{'playout'} eq '1')
-                    );
+                   );
                 $class .= ' no_rerun'
                     unless ((defined $event->{'rerun'})
                     && ($event->{'rerun'} eq '1'));
@@ -514,7 +514,7 @@ qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
             $out .=
                   qq!<tr id="$id" class="$class" start="$event->{start}" >!
                 . qq!<td class="day_of_year">!
-                . (
+                .(
                 defined $event->{start} ? time::dayOfYear($event->{start}) : '')
                 . q!</td>!
                 . qq!<td class="weekday">$event->{weekday_short_name},</td>!
@@ -553,7 +553,7 @@ qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
                 project_id => $project_id,
                 studio_id  => $studio_id
             }
-        );
+       );
         $out .= q{<div id="event_no_series" style="display:none">};
         $out .= get_assign_events_to_series_form($series, $params)
             if (defined $permissions->{assign_series_events})
@@ -598,7 +598,7 @@ sub calcCalendarTable {
     my $language     = $params->{language};
 
     #insert time column
-    for my $hour ($min_hour .. $max_hour) {
+    for my $hour($min_hour .. $max_hour) {
         push @{ $events_by_day->{0} },
             {
             start      => sprintf('%02d:00', $hour % 24),
@@ -620,7 +620,7 @@ sub calcCalendarTable {
         time::get_datetime(time::time_to_datetime(time()),
             $config->{date}->{time_zone}) =~
         /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d\:\d\d)/
-        )
+       )
     {
         $date = $1;
         $time = $2;
@@ -631,7 +631,7 @@ sub calcCalendarTable {
         time::get_datetime(time::time_to_datetime(time() + 60),
             $config->{date}->{time_zone}) =~
         /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d\:\d\d)/
-        )
+       )
     {
         $next_time = $2;
     }
@@ -709,7 +709,7 @@ sub getTableHeader {
     my $ypos     = 0;
     my $old_week = undef;
     my $dt       = undef;
-    for my $day (@$days) {
+    for my $day(@$days) {
         my $events = $events_by_day->{$day};
 
         if ($day ne '0') {
@@ -801,7 +801,7 @@ sub getTableBody {
     my $dt       = undef;
     my $old_week = undef;
 
-    for my $day (@$days) {
+    for my $day(@$days) {
         my $events = $events_by_day->{$day};
 
         if ($day ne '0') {
@@ -816,9 +816,9 @@ sub getTableBody {
 
         $out .= qq{<td>};    # width="$width">};
 
-        for my $event (@$events) {
+        for my $event(@$events) {
             my $content = '';
-            if (   (defined $event->{series_name})
+            if ((defined $event->{series_name})
                 && ($event->{series_name} ne ''))
             {
                 $event->{series_name} = $params->{loc}->{single_event}
@@ -859,9 +859,9 @@ sub getTableBody {
                 $event->{content} .= audio::formatDuration(
                     $event->{duration},
                     $event->{event_duration},
-                    sprintf("%d min", ($event->{duration} + 30) / 60),
+                    sprintf("%d min",($event->{duration} + 30) / 60),
                     sprintf("%d s", $event->{duration})
-                    )
+                   )
                     . ' '
                     if defined $event->{duration};
                 $event->{content} .=
@@ -872,7 +872,7 @@ sub getTableBody {
                     audio::formatLoudness($event->{rms_right}, 'R: ', 'round')
                     if defined $event->{rms_right};
 
-#$event->{content} .= formatBitrate( $event->{bitrate} ) if defined $event->{bitrate};
+#$event->{content} .= formatBitrate($event->{bitrate}) if defined $event->{bitrate};
                 $event->{content} .= '</span>';
             }
 
@@ -904,7 +904,7 @@ sub getSeries {
             project_id => $project_id,
             studio_id  => $studio_id
         }
-    );
+   );
 
     my $out = '';
     if (($params->{studio_id} ne '') && ($params->{studio_id} ne '-1')) {
@@ -949,7 +949,7 @@ sub getJavascript {
 }
 
 
-# create form to add events to series (that are not assigned to series, yet)
+# create form to add events to series(that are not assigned to series, yet)
 sub get_assign_events_to_series_form {
     my ($series, $params) = @_;
 
@@ -972,7 +972,7 @@ sub get_assign_events_to_series_form {
                         <td><select id="select_series" name="series_id">
     };
 
-    for my $serie (@$series) {
+    for my $serie(@$series) {
         my $id       = $serie->{series_id}   || -1;
         my $duration = $serie->{duration}    || '';
         my $name     = $serie->{series_name} || '';
@@ -1073,10 +1073,10 @@ sub get_event {
             if (($class eq 'event') && ($event->{series_id} eq '-1'));
         $class .= " error x$event->{error}" if defined $event->{error};
 
-        for my $filter (
+        for my $filter(
             'rerun', 'archived',           'playout', 'published',
             'live',  'disable_event_sync', 'draft'
-            )
+           )
         {
             $class .= ' ' . $filter
                 if ((defined $event->{$filter}) && ($event->{$filter} eq '1'));
@@ -1099,14 +1099,14 @@ sub get_event {
     my $height = $yend - $ystart + 1;
 
     if ($ypos > 0) {
-        $height = q{height:} . ($height) . 'px;';
+        $height = q{height:} .($height) . 'px;';
     } else {
         $height = '';
     }
 
     my $content = '<div class="header">';
     $content .=
-        qq!<img class="icon" src="! . ($event->{series_icon_url}) . q!">!
+        qq!<img class="icon" src="! .($event->{series_icon_url}) . q!">!
         if $class =~ /event/;
     $content .= $event->{content} || '';
     $content .= '</div>';
@@ -1196,7 +1196,7 @@ sub getSeriesEvents {
         return $events;
     }
 
-    #get events (directly from database to get the ones, not assigned, yet)
+    #get events(directly from database to get the ones, not assigned, yet)
     delete $options->{studio_id};
     delete $options->{project_id};
     $options->{recordings} = 1;
@@ -1220,13 +1220,13 @@ sub getSeriesEvents {
         {
             project_id => $options->{project_id}
         }
-    );
+   );
     my $studio_id_by_location = {};
-    for my $studio (@$studios) {
+    for my $studio(@$studios) {
         $studio_id_by_location->{ $studio->{location} } = $studio->{id};
     }
 
-    for my $event (@$events) {
+    for my $event(@$events) {
         $event->{project_id} = $options->{project_id}
             unless defined $event->{project_id};
         $event->{studio_id} = $studio_id_by_location->{ $event->{location} }

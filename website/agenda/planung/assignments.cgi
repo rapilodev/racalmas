@@ -171,7 +171,7 @@ sub assign_events {
         }
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     for my $event_id ( split( /[\,\s]+/, $params->{event_ids} ) ) {
         next unless $event_id =~ /^\d+/;
         $entry->{event_id} = $event_id;
@@ -185,7 +185,7 @@ sub assign_events {
                         event_id => $entry->{event_id},
                         template => 'no',
                         limit    => 1,
-                        archive  => 'all',
+                        phase    => 'all',
                     }
                 )
             },
@@ -293,10 +293,7 @@ sub assign_events {
         );
     }
 
-    $config->{access}->{write} = 0;
     uac::print_info("event successfully assigned to series");
-
-    #$params->{getBack}=1;
 }
 
 sub check_params {

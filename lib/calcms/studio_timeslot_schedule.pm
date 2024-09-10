@@ -16,7 +16,7 @@ sub get_columns($) {
     my ($config) = @_;
 
 	my $dbh = db::connect($config);
-	return db::get_columns_hash( $dbh, 'calcms_studio_timeslot_schedule' );
+	return db::get_columns_hash($dbh, 'calcms_studio_timeslot_schedule');
 }
 
 #map schedule id to id
@@ -28,21 +28,21 @@ sub get($$) {
 	my @conditions  = ();
 	my @bind_values = ();
 
-	if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
+	if ((defined $condition->{project_id}) && ($condition->{project_id} ne '')) {
 		push @conditions,  'project_id=?';
 		push @bind_values, $condition->{project_id};
 	}
-	if ( ( defined $condition->{studio_id} ) && ( $condition->{studio_id} ne '' ) ) {
+	if ((defined $condition->{studio_id}) && ($condition->{studio_id} ne '')) {
 		push @conditions,  'studio_id=?';
 		push @bind_values, $condition->{studio_id};
 	}
-	if ( ( defined $condition->{schedule_id} ) && ( $condition->{schedule_id} ne '' ) ) {
+	if ((defined $condition->{schedule_id}) && ($condition->{schedule_id} ne '')) {
 		push @conditions,  'id=?';
 		push @bind_values, $condition->{schedule_id};
 	}
 
 	my $conditions = '';
-	$conditions = " where " . join( " and ", @conditions ) if ( @conditions > 0 );
+	$conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
 	my $query = qq{
 		select *
@@ -51,8 +51,8 @@ sub get($$) {
 		order  by start
 	};
 
-	my $entries = db::get( $dbh, $query, \@bind_values );
-	for my $entry (@$entries) {
+	my $entries = db::get($dbh, $query, \@bind_values);
+	for my $entry(@$entries) {
 		$entry->{schedule_id} = $entry->{id};
 		delete $entry->{id};
 	}
@@ -67,7 +67,7 @@ sub insert($$) {
     }
 
 	my $dbh = db::connect($config);
-	return db::insert( $dbh, 'calcms_studio_timeslot_schedule', $entry );
+	return db::insert($dbh, 'calcms_studio_timeslot_schedule', $entry);
 }
 
 #schedule id to id
@@ -83,7 +83,7 @@ sub update($$) {
 
 	my $dbh         = db::connect($config);
 	my @keys        = sort keys %$entry;
-	my $values      = join( ",", map { $_ . '=?' } @keys );
+	my $values      = join(",", map { $_ . '=?' } @keys);
 	my @bind_values = map { $entry->{$_} } @keys;
 	push @bind_values, $entry->{id};
 
@@ -92,7 +92,7 @@ sub update($$) {
 		set    $values
 		where  id=?
 	};
-	db::put( $dbh, $query, \@bind_values );
+	db::put($dbh, $query, \@bind_values);
 
 	$entry->{schedule_id} = $entry->{id};
 	delete $entry->{id};
@@ -100,7 +100,7 @@ sub update($$) {
 }
 
 #map schedule id to id
-sub delete ($$){
+sub delete($$){
     my ($config, $entry) = @_;
 
     for ('schedule_id') {
@@ -116,7 +116,7 @@ sub delete ($$){
 	};
 	my $bind_values = [ $entry->{schedule_id} ];
 
-	db::put( $dbh, $query, $bind_values );
+	db::put($dbh, $query, $bind_values);
 }
 
 #do not delete last line!

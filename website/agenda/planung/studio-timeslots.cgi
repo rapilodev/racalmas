@@ -91,7 +91,7 @@ sub save_schedule {
     return uac::print_error('start date should be before end date!')
         if $entry->{end} ne '' && $entry->{end} le $entry->{start};
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     if (defined $params->{schedule_id}) {
         $entry->{schedule_id} = $params->{schedule_id};
         studio_timeslot_schedule::update( $config, $entry );
@@ -112,7 +112,6 @@ sub delete_schedule {
     my $permissions = $request->{permissions};
     PermissionError->throw(error=>'Missing permission to update_studio_timeslot_schedule')
         unless $permissions->{update_studio_timeslot_schedule} == 1;
-
     my $params = $request->{params}->{checked};
 
     my $entry = {};
@@ -134,7 +133,6 @@ sub delete_schedule {
 sub showTimeslotSchedule {
     my ($config, $request) = @_;
 
-    $config->{access}->{write} = 0;
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     PermissionError->throw(error=>'Missing permission to read_studio_timeslot_schedule')
@@ -200,8 +198,6 @@ sub showTimeslotSchedule {
 
 sub showDates {
     my ($config, $request) = @_;
-
-    $config->{access}->{write} = 0;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
