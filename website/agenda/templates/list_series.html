@@ -35,10 +35,10 @@
 
 <div id="content">
 <TMPL_LOOP series>
-	<div class="series"
+    <div class="series"
         href="#"
     >
-		<b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b>
+        <b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b>
         <TMPL_IF TITLE> - <TMPL_VAR title></TMPL_IF>
         <div class="buttons">
             <button onclick="$(this).parent().parent().find('#calcms_list').load('/agenda/suche/all/<TMPL_VAR series_name escape=url>/vergangene/').show();return false;" >&#x2BC7; vergangene</button>
@@ -47,7 +47,7 @@
         </div>
         <div id="calcms_list" style="display:none"> </div>
 
-	</div>
+    </div>
 </TMPL_LOOP>
 </div>
 

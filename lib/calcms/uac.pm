@@ -37,10 +37,10 @@ sub get_user($$) {
     my ($config, $user) = @_;
 
     my $query = qq{
-		select	id, name, full_name, email, disabled, modified_at, created_at
-		from 	calcms_users
-		where 	name=?
-	};
+        select    id, name, full_name, email, disabled, modified_at, created_at
+        from     calcms_users
+        where     name=?
+    };
     my $bind_values = [$user];
 
     my $dbh = db::connect($config);
@@ -68,10 +68,10 @@ sub get_users($;$) {
     $conditions = " where " . join(" and ", @conditions) if (scalar @conditions > 0);
 
     my $query = qq{
-		select	id, name, full_name, email, disabled, modified_at, created_at
-		from 	calcms_users
+        select    id, name, full_name, email, disabled, modified_at, created_at
+        from     calcms_users
         $conditions
-	};
+    };
 
     my $dbh = db::connect($config);
     my $users = db::get($dbh, $query, \@bind_values);
@@ -103,11 +103,11 @@ sub get_users_by_studio ($$) {
     $conditions = " and " . join(" and ", @conditions) if (scalar @conditions > 0);
 
     my $query = qq{
-		select	distinct(u.id), u.name, u.full_name
-		from 	calcms_user_roles ur, calcms_users u
-		where 	ur.user_id=u.id
-		$conditions
-	};
+        select    distinct(u.id), u.name, u.full_name
+        from     calcms_user_roles ur, calcms_users u
+        where     ur.user_id=u.id
+        $conditions
+    };
 
     my $dbh = db::connect($config);
     my $users = db::get($dbh, $query, \@bind_values);
@@ -140,11 +140,11 @@ sub get_projects_by_user ($$) {
     $conditions = " and " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	distinct p.*, ur.project_id project_id
-		from 	calcms_user_roles ur, calcms_users u, calcms_projects p
-		where 	ur.user_id=u.id and p.project_id=ur.project_id
+        select    distinct p.*, ur.project_id project_id
+        from     calcms_user_roles ur, calcms_users u, calcms_projects p
+        where     ur.user_id=u.id and p.project_id=ur.project_id
         $conditions
-	};
+    };
 
     my $dbh = db::connect($config);
     my $users = db::get($dbh, $query, \@bind_values);
@@ -178,11 +178,11 @@ sub get_studios_by_user ($$) {
     $conditions = " and " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	distinct s.*, ur.project_id project_id
-		from 	calcms_user_roles ur, calcms_users u, calcms_studios s
-		where 	ur.user_id=u.id and s.id=ur.studio_id
+        select    distinct s.*, ur.project_id project_id
+        from     calcms_user_roles ur, calcms_users u, calcms_studios s
+        where     ur.user_id=u.id and s.id=ur.studio_id
         $conditions
-	};
+    };
     my $dbh = db::connect($config);
     my $users = db::get($dbh, $query, \@bind_values);
     return $users;
@@ -209,10 +209,10 @@ sub update_user($$) {
     push @bind_values, $entry->{id};
 
     my $query = qq{
-		update calcms_users
-		set $values
-		where id=?
-	};
+        update calcms_users
+        set $values
+        where id=?
+    };
 
     my $dbh = db::connect($config);
     db::put($dbh, $query, \@bind_values);
@@ -223,9 +223,9 @@ sub delete_user($$) {
     return unless (defined $id && ($id =~ /^\d+$/));
 
     my $query = qq{
-		delete from calcms_users
-		where id=?
-	};
+        delete from calcms_users
+        where id=?
+    };
     my $dbh = db::connect($config);
     db::put($dbh, $query, [$id]);
 }
@@ -254,11 +254,11 @@ sub get_studio_roles($$) {
     $conditions = " and " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	r.*, ur.studio_id, ur.project_id
-		from 	calcms_roles r, calcms_user_roles ur
-		where 	r.id=ur.role_id
-		$conditions
-	};
+        select    r.*, ur.studio_id, ur.project_id
+        from     calcms_roles r, calcms_user_roles ur
+        where     r.id=ur.role_id
+        $conditions
+    };
 
     my $dbh = db::connect($config);
     my $roles = db::get($dbh, $query, \@bind_values);
@@ -294,10 +294,10 @@ sub get_roles($$) {
     $conditions = ' where ' . join(' and ', @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	r.*
-		from 	calcms_roles r
-		$conditions
-	};
+        select    r.*
+        from     calcms_roles r
+        $conditions
+    };
 
     my $roles = db::get($dbh, $query, \@bind_values);
 
@@ -334,10 +334,10 @@ sub update_role($$) {
     push @bind_values, $entry->{id};
 
     my $query = qq{
-		update calcms_roles
-		set $values
-		where id=?
-	};
+        update calcms_roles
+        set $values
+        where id=?
+    };
 
     db::put($dbh, $query, \@bind_values);
 }
@@ -349,9 +349,9 @@ sub delete_role($$) {
     return unless (defined $id && ($id =~ /^\d+$/));
 
     my $query = qq{
-		delete from calcms_roles
-		where id=?
-	};
+        delete from calcms_roles
+        where id=?
+    };
     my $dbh = db::connect($config);
     db::put($dbh, $query, [$id]);
 }
@@ -385,11 +385,11 @@ sub get_user_roles($$) {
     $conditions = " and " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	distinct r.*
-		from 	calcms_users u, calcms_user_roles ur, calcms_roles r
-		where 	ur.user_id=u.id and ur.role_id=r.id
-			$conditions
-	};
+        select    distinct r.*
+        from     calcms_users u, calcms_user_roles ur, calcms_roles r
+        where     ur.user_id=u.id and ur.role_id=r.id
+            $conditions
+    };
 
     my $dbh = db::connect($config);
     my $user_roles = db::get($dbh, $query, \@bind_values);
@@ -436,12 +436,12 @@ sub get_admin_user_roles ($$) {
     $conditions = " and " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	distinct r.*, ur.studio_id, ur.project_id
-		from 	calcms_users u, calcms_user_roles ur, calcms_roles r
-		where 	ur.user_id=u.id and ur.role_id=r.id and r.admin=1
+        select    distinct r.*, ur.studio_id, ur.project_id
+        from     calcms_users u, calcms_user_roles ur, calcms_roles r
+        where     ur.user_id=u.id and ur.role_id=r.id and r.admin=1
                 $conditions
-		limit 1
-	};
+        limit 1
+    };
 
     my $dbh = db::connect($config);
     my $user_roles = db::get($dbh, $query, \@bind_values);
@@ -496,10 +496,10 @@ sub get_user_id ($$) {
     return undef unless defined $user;
 
     my $query = qq{
-		select	id
-		from 	calcms_users
-		where 	binary name=?
-	};
+        select    id
+        from     calcms_users
+        where     binary name=?
+    };
     my $dbh = db::connect($config);
     my $users = db::get($dbh, $query, [$user]);
     return undef if scalar @$users == 0;
@@ -512,10 +512,10 @@ sub get_role_id ($$) {
     return undef unless defined $role;
 
     my $query = qq{
-		select	id
-		from 	calcms_roles
-		where 	role=?
-	};
+        select    id
+        from     calcms_roles
+        where     role=?
+    };
     my $dbh = db::connect($config);
     my $roles = db::get($dbh, $query, [$role]);
     return undef if scalar @$roles == 0;
@@ -532,10 +532,10 @@ sub assign_user_role($$) {
 
     #return if already exists
     my $query = qq{
-		select	*
-		from 	calcms_user_roles
-		where 	project_id=? and studio_id=? and user_id=? and role_id=?
-	};
+        select    *
+        from     calcms_user_roles
+        where     project_id=? and studio_id=? and user_id=? and role_id=?
+    };
     my $dbh        = db::connect($config);
     my $user_roles = db::get($dbh, $query,
         [ $options->{project_id}, $options->{studio_id}, $options->{user_id}, $options->{role_id} ]);
@@ -562,10 +562,10 @@ sub remove_user_role($$) {
     }
 
     my $query = qq{
-		delete
-		from 	calcms_user_roles
-		where 	project_id=? and studio_id=? and user_id=? and role_id=?
-	};
+        delete
+        from     calcms_user_roles
+        where     project_id=? and studio_id=? and user_id=? and role_id=?
+    };
     my $bind_values = [ $options->{project_id}, $options->{studio_id}, $options->{user_id}, $options->{role_id} ];
 
     my $dbh = db::connect($config);

@@ -48,7 +48,7 @@
 
     <!-- view series -->
     <div id="view_<TMPL_VAR .series_id>" class="view" style="clear:both">
-	    <div class="buttons">
+        <div class="buttons">
 
             <div style="float:left">Series</div>
             <select style="float:left;max-width:600px;" id="series_id">
@@ -61,7 +61,7 @@
             <form action="assign-series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>" method="post" id="assignments_form">
                 <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
                 <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
-                <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">	
+                <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">    
                 <button target="_blank"
                     onclick="assign_series('<TMPL_VAR .project_id escape=js>', '<TMPL_VAR .studio_id escape=js>', $('#series_id').val());return false;"
                     style="float:left"
@@ -74,7 +74,7 @@
         </div>
     </div>
 
-    </main>	
+    </main>    
     </body>
     </html>
 

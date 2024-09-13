@@ -11,8 +11,8 @@ Access-Control-Allow-Origin: *
 <subtitle type='text'>Das Schaerfste kommentiert noch</subtitle>
 
 <author>
-	<name><TMPL_VAR project_title></name>
-	<email>info@radiopiloten.de</email>
+    <name><TMPL_VAR project_title></name>
+    <email>info@radiopiloten.de</email>
 </author>
 <link rel='alternate' type='text/html' href='<TMPL_VAR widget_render_url>feed_kommentare/'/>
 <generator version='0.1' uri='http://radiopiloten.org'>calcms</generator>
@@ -29,8 +29,8 @@ Access-Control-Allow-Origin: *
 <TMPL_IF content><summary type='text'><TMPL_VAR content></summary></TMPL_IF>
 <TMPL_IF content><content type='html'><![CDATA[<TMPL_VAR content>]]></content></TMPL_IF>
 
-<link rel='alternate'	type='text/html'		href='<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event escape=url>/<TMPL_VAR event_id escape=url>.html#comment_<TMPL_VAR id escape=url>' title='alternate'/>
-<link rel='self' 	type='application/atom+xml'	href='<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event escape=url>/<TMPL_VAR event_id escape=url>.html#comment_<TMPL_VAR id escape=url>'/>
+<link rel='alternate'    type='text/html'        href='<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event escape=url>/<TMPL_VAR event_id escape=url>.html#comment_<TMPL_VAR id escape=url>' title='alternate'/>
+<link rel='self'     type='application/atom+xml'    href='<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event escape=url>/<TMPL_VAR event_id escape=url>.html#comment_<TMPL_VAR id escape=url>'/>
 <author><name><TMPL_VAR author></name></author>
 </entry>
 </TMPL_LOOP>

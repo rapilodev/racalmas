@@ -4,24 +4,24 @@ Access-Control-Allow-Origin: *
 $events=[
 <TMPL_LOOP NAME=events>
 {
-	'event_id'		    => q|<TMPL_VAR event_id>|,
-	'start_date'		=> q|<TMPL_VAR start_date>|,
-	'start_datetime'	=> q|<TMPL_VAR start_datetime>|,
-	'end_datetime'		=> q|<TMPL_VAR end_datetime>|,
-	'weekday_short_name'	=> q|<TMPL_VAR weekday_short_name>|,
-	'location'		    => q|<TMPL_VAR location_mapped>|,
-	'location_mapped'	=> q|<TMPL_VAR location_mapped>|,
-	'image'			    => q|<TMPL_VAR image>|,
-	'project_title'	    => q|<TMPL_VAR project_title>|,
-	'program'		    => q|<TMPL_VAR program>|,
-	'series_name'	    => q|<TMPL_VAR series_name>|,
-	'title'			    => q|<TMPL_VAR title>|,
-	'user_title'	    => q|<TMPL_VAR user_title>|,
-	'excerpt'		    => q|<TMPL_VAR excerpt>|,
-	'user_excerpt'	    => q|<TMPL_VAR user_excerpt>|,
-	'episode'	        => q|<TMPL_VAR episode>|,
-	'full_title'        => q|<TMPL_VAR full_title>|,
-	'content'		    => q|<TMPL_VAR content>|
+    'event_id'            => q|<TMPL_VAR event_id>|,
+    'start_date'        => q|<TMPL_VAR start_date>|,
+    'start_datetime'    => q|<TMPL_VAR start_datetime>|,
+    'end_datetime'        => q|<TMPL_VAR end_datetime>|,
+    'weekday_short_name'    => q|<TMPL_VAR weekday_short_name>|,
+    'location'            => q|<TMPL_VAR location_mapped>|,
+    'location_mapped'    => q|<TMPL_VAR location_mapped>|,
+    'image'                => q|<TMPL_VAR image>|,
+    'project_title'        => q|<TMPL_VAR project_title>|,
+    'program'            => q|<TMPL_VAR program>|,
+    'series_name'        => q|<TMPL_VAR series_name>|,
+    'title'                => q|<TMPL_VAR title>|,
+    'user_title'        => q|<TMPL_VAR user_title>|,
+    'excerpt'            => q|<TMPL_VAR excerpt>|,
+    'user_excerpt'        => q|<TMPL_VAR user_excerpt>|,
+    'episode'            => q|<TMPL_VAR episode>|,
+    'full_title'        => q|<TMPL_VAR full_title>|,
+    'content'            => q|<TMPL_VAR content>|
 }<TMPL_UNLESS __last__>,</TMPL_UNLESS>
 </TMPL_LOOP>
 ];
@@ -29,5 +29,5 @@ $events=[
 
 
 <TMPL_IF asd>
-	'content'		=> q$<TMPL_VAR content>$
+    'content'        => q$<TMPL_VAR content>$
 </TMPL_IF>

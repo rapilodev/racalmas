@@ -385,13 +385,9 @@ sub delete_event {
     $event->{user} = $params->{presets}->{user};
     series_events::delete_event($config, $event);
 
-    user_stats::increase(
-        $config,
-        'delete_events',
-        {
-            uac::set($event, 'project_id', 'studio_id', 'series_id', 'user')
-        }
-    );
+    user_stats::increase($config, 'delete_events', {
+        uac::set($event, 'project_id', 'studio_id', 'series_id', 'user')
+    });
     return uac::json(
         {
             "entry" => {
@@ -538,11 +534,9 @@ sub save_event {
     #update history
     event_history::insert($config, $event);
 
-    user_stats::increase(
-        $config,
-        'update_events',
-        { uac::set($event, 'project_id', 'studio_id', 'series_id', 'user') }
-    );
+    user_stats::increase($config, 'update_events',{
+        uac::set($event, 'project_id', 'studio_id', 'series_id', 'user')
+    });
     $config->{access}->{write} = 0;
     return uac::json(
         {

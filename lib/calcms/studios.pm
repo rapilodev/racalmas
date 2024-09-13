@@ -45,11 +45,11 @@ sub get($;$) {
         my $conditions = '';
         $conditions = " where " . join(" and ", @conditions) if (scalar @conditions > 0);
         $query = qq{
-		    select	*
-		    from 	calcms_studios s
-		    $conditions
-		    $limit
-	    };
+            select    *
+            from     calcms_studios s
+            $conditions
+            $limit
+        };
     } else {
         push @conditions,  's.id=ps.studio_id';
         push @conditions,  'ps.project_id=?';
@@ -57,11 +57,11 @@ sub get($;$) {
 
         my $conditions = " where " . join(" and ", @conditions);
         $query = qq{
-		    select	*
-		    from 	calcms_studios s, calcms_project_studios ps
-		    $conditions
-		    $limit
-	    };
+            select    *
+            from     calcms_studios s, calcms_project_studios ps
+            $conditions
+            $limit
+        };
     }
     my $dbh = db::connect($config);
     my $studios = db::get($dbh, $query, \@bind_values);
@@ -109,10 +109,10 @@ sub update ($$) {
     push @bind_values, $entry->{id};
 
     my $query = qq{
-		update calcms_studios
-		set $values
-		where id=?
-	};
+        update calcms_studios
+        set $values
+        where id=?
+    };
 
     my $dbh = db::connect($config);
     db::put($dbh, $query, \@bind_values);

@@ -275,7 +275,7 @@ sub compress ($) {
     $_[0] = $header . $content;
 
     #$_[0]=~s/HTTP_CONTENT_TYPE/\n\n/;
-    #	return $_[0];
+    #    return $_[0];
 }
 
 #from XML::RSS.pm

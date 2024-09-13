@@ -17,7 +17,7 @@ unless (defined $config::config){
 clean_up_cache();
 
 sub clean_up_cache{
-	my $base_dir =$config::config->{locations}->{base_dir}||'';
+    my $base_dir =$config::config->{locations}->{base_dir}||'';
 
     print_error("'base_dir' directory not configured! Please check config!") if($base_dir eq'');
     print_error("invalid 'base_dir' directory '$base_dir'! Please check config!") unless ($base_dir=~/[a-zA-Z]\/[a-zA-Z]/);
@@ -25,26 +25,26 @@ sub clean_up_cache{
     print_error("cannot read 'base_dir' directory '$base_dir'! Please check permissions!") unless (-r $base_dir);
 
     # update basic layout
-	print_header("update basic layout");
+    print_header("update basic layout");
 
-	my $file="$base_dir/index.html";
-	if ((-e $file) && (!-w $file)){
-		print_error("Please check write permission on '$file'");
-	}else{
-		my $config=$base_dir.'/config/config.cgi';
-		my $cmd="perl $perlPath get_source_page.pl --config $config --output $file 2>&1";
-		execute($cmd);
-	}
+    my $file="$base_dir/index.html";
+    if ((-e $file) && (!-w $file)){
+        print_error("Please check write permission on '$file'");
+    }else{
+        my $config=$base_dir.'/config/config.cgi';
+        my $cmd="perl $perlPath get_source_page.pl --config $config --output $file 2>&1";
+        execute($cmd);
+    }
 
     # update start page
-	print_header("update agenda start page");
-	$file="$base_dir/programm.html";
-	if ((-e $file) && (!-w $file)){
-		print_error("Please check write permission on '$file'\n");
-	}else{
-		my $cmd="cd $base_dir; perl $perlPath aggregate.cgi date=today >$file 2>&1";
-		execute($cmd);
-	}
+    print_header("update agenda start page");
+    $file="$base_dir/programm.html";
+    if ((-e $file) && (!-w $file)){
+        print_error("Please check write permission on '$file'\n");
+    }else{
+        my $cmd="cd $base_dir; perl $perlPath aggregate.cgi date=today >$file 2>&1";
+        execute($cmd);
+    }
 }
 
 sub print_header{
@@ -52,11 +52,11 @@ sub print_header{
 }
 
 sub execute{
-	my $cmd=$_[0];
-	print_info($cmd."\n");
-	print eval{`$cmd`}."\n";
-	print_info('ok') 			if ($? == 0);
-	print_error("error $! $?")	if ($? != 0);
+    my $cmd=$_[0];
+    print_info($cmd."\n");
+    print eval{`$cmd`}."\n";
+    print_info('ok')             if ($? == 0);
+    print_error("error $! $?")    if ($? != 0);
 }
 
 sub print_info{
@@ -64,8 +64,8 @@ sub print_info{
 }
 
 sub print_error{
-	print STDERR "ERROR: $_[0]\n";
-	exit 1;
+    print STDERR "ERROR: $_[0]\n";
+    exit 1;
 }
 
 1;

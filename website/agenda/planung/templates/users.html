@@ -1,79 +1,79 @@
 
 <style type="text/css">
 #content div.label{
-	width:10em;
-	padding:0;
-	margin:0;
-	color:#555;
+    width:10em;
+    padding:0;
+    margin:0;
+    color:#555;
 }
 
 #content .disabled{
-	color:#999;
+    color:#999;
 }
 
 
 #content div.editor div.right{
-	float:right;
-	padding:0;
-	margin:0;
+    float:right;
+    padding:0;
+    margin:0;
 }
 
 #content div.editor div.buttons{
-	text-align:center;
-	padding:0;
+    text-align:center;
+    padding:0;
 }
 
 #content div.editor div.buttons button,
 #content div.editor div.buttons input{
-	margin-left:1em;
+    margin-left:1em;
 }
 
 
 #content table td{
-	padding:6px;
-	margin:0;
+    padding:6px;
+    margin:0;
 }
 </style>
 
 <script type="text/javascript">
-	function edit_user(name){
-		if ($('#edit_'+name).css('display')=='none'){
-			$('.view_'+name).addClass('disabled');
-			$('#edit_'+name).show();
-			$('#edit_roles_'+name).hide();
-			$('#view_roles_'+name).show();
-		}else{
-			$('#edit_'+name).hide();
-			$('.view_'+name).removeClass('disabled');
-			$('#edit_roles_'+name).hide();
-			$('#view_roles_'+name).show();
-		}
-		return false;
-	}
-	function add_user(){
-		$('.editor').hide();
-		$('#edit_new').show();
-		return false;
-	}
-	function cancel_edit_user(name){
-	    edit_user(name)
-		return false;
-	}
+    function edit_user(name){
+        if ($('#edit_'+name).css('display')=='none'){
+            $('.view_'+name).addClass('disabled');
+            $('#edit_'+name).show();
+            $('#edit_roles_'+name).hide();
+            $('#view_roles_'+name).show();
+        }else{
+            $('#edit_'+name).hide();
+            $('.view_'+name).removeClass('disabled');
+            $('#edit_roles_'+name).hide();
+            $('#view_roles_'+name).show();
+        }
+        return false;
+    }
+    function add_user(){
+        $('.editor').hide();
+        $('#edit_new').show();
+        return false;
+    }
+    function cancel_edit_user(name){
+        edit_user(name)
+        return false;
+    }
 
-	function edit_roles(name){
-		if ($('#edit_roles_'+name).css('display')=='none'){
-			$('#edit_'+name).hide();
-			$('.view_'+name).removeClass('disabled');
-			$('#view_roles_'+name).hide();
-			$('#edit_roles_'+name).show();
-		}else{
-			$('#edit_'+name).hide();
-			$('.view_'+name).removeClass('disabled');
-			$('#edit_roles_'+name).hide();
-			$('#view_roles_'+name).show();
-		}
-		return false;
-	}
+    function edit_roles(name){
+        if ($('#edit_roles_'+name).css('display')=='none'){
+            $('#edit_'+name).hide();
+            $('.view_'+name).removeClass('disabled');
+            $('#view_roles_'+name).hide();
+            $('#edit_roles_'+name).show();
+        }else{
+            $('#edit_'+name).hide();
+            $('.view_'+name).removeClass('disabled');
+            $('#edit_roles_'+name).hide();
+            $('#view_roles_'+name).show();
+        }
+        return false;
+    }
 </script>
 
 <h2><TMPL_VAR .loc.title></h2>
@@ -81,130 +81,130 @@
 
 <TMPL_IF allow.create_user>
 <div style="clear:both" class="newuser">
-	<button onclick="add_user('<TMPL_VAR name escape=js>')"><TMPL_VAR .loc.button_add_user></button>
-	<div id="edit_new" class="user editor panel" style="display:none">
-		<form method="post">
-		<table>
-		<tr>	<td><TMPL_VAR .loc.label_name></td>		    <td><input name="user_name" 	 value="<TMPL_VAR user_name>"></td>	</tr>
-		<tr>	<td><TMPL_VAR .loc.label_full_name></td>	<td><input name="user_full_name" value="<TMPL_VAR user_full_name>"></td>	</tr>
-		<tr>	<td><TMPL_VAR .loc.label_email></td>		<td><input name="user_email" 	 value="<TMPL_VAR user_email>"></td>	</tr>
-		<tr>	<td><TMPL_VAR .loc.label_password></td>	    <td><input name="user_password"  value="<TMPL_VAR password>"></td>	</tr>
-		<tr>	<td><TMPL_VAR .loc.label_password2></td>	<td><input name="user_password2" value="<TMPL_VAR password2>"></td>	</tr>
-		<tr>	<td class="buttons" colspan="3">
-				<button onclick="cancel_edit_user('new');return false;" class="text"><TMPL_VAR .loc.button_cancel></button>
-				<button type=submit name="action" value="save"><TMPL_VAR .loc.button_create_user></button>
-			</td>
-		</tr>
-		</table>
-		</form>
-	</div>
+    <button onclick="add_user('<TMPL_VAR name escape=js>')"><TMPL_VAR .loc.button_add_user></button>
+    <div id="edit_new" class="user editor panel" style="display:none">
+        <form method="post">
+        <table>
+        <tr>    <td><TMPL_VAR .loc.label_name></td>            <td><input name="user_name"      value="<TMPL_VAR user_name>"></td>    </tr>
+        <tr>    <td><TMPL_VAR .loc.label_full_name></td>    <td><input name="user_full_name" value="<TMPL_VAR user_full_name>"></td>    </tr>
+        <tr>    <td><TMPL_VAR .loc.label_email></td>        <td><input name="user_email"      value="<TMPL_VAR user_email>"></td>    </tr>
+        <tr>    <td><TMPL_VAR .loc.label_password></td>        <td><input name="user_password"  value="<TMPL_VAR password>"></td>    </tr>
+        <tr>    <td><TMPL_VAR .loc.label_password2></td>    <td><input name="user_password2" value="<TMPL_VAR password2>"></td>    </tr>
+        <tr>    <td class="buttons" colspan="3">
+                <button onclick="cancel_edit_user('new');return false;" class="text"><TMPL_VAR .loc.button_cancel></button>
+                <button type=submit name="action" value="save"><TMPL_VAR .loc.button_create_user></button>
+            </td>
+        </tr>
+        </table>
+        </form>
+    </div>
 </div>
 </TMPL_IF>
 
 <div class="panel">
 <table class="table">
 <TMPL_LOOP users>
-	
-<tr id="view_<TMPL_VAR id>" class="list<TMPL_IF disabled> disabled</TMPL_IF>">	
-	<td>	
-		<div style="float:left;font-weight:bold;"><TMPL_VAR name></div>
-	</td>
+    
+<tr id="view_<TMPL_VAR id>" class="list<TMPL_IF disabled> disabled</TMPL_IF>">    
+    <td>    
+        <div style="float:left;font-weight:bold;"><TMPL_VAR name></div>
+    </td>
 
-	<td class="view_<TMPL_VAR id>">
-		<TMPL_VAR full_name>
-	</td>	
+    <td class="view_<TMPL_VAR id>">
+        <TMPL_VAR full_name>
+    </td>    
 
 <TMPL_IF showMail>
-	<td class="view_<TMPL_VAR id>">
-		<TMPL_VAR email>
-	</td>	
-</TMPL_IF>		
+    <td class="view_<TMPL_VAR id>">
+        <TMPL_VAR email>
+    </td>    
+</TMPL_IF>        
 
-	<td class="view_<TMPL_VAR id>">
-		<div id="view_roles_<TMPL_VAR id>">		
-			<TMPL_LOOP user_roles><TMPL_VAR role><br/></TMPL_LOOP>
-		</div>
+    <td class="view_<TMPL_VAR id>">
+        <div id="view_roles_<TMPL_VAR id>">        
+            <TMPL_LOOP user_roles><TMPL_VAR role><br/></TMPL_LOOP>
+        </div>
 
-		<TMPL_IF allow.update_user_role>
-		<div id="edit_roles_<TMPL_VAR id>" class="card list editor" style="display:none">
-			<form method="post">
-			<table>
-			<tr>
-				<td>
-				<TMPL_LOOP roles>
-					<input type="checkbox"
-						name="role_<TMPL_VAR id>"
-						<TMPL_IF assigned>checked="checked"</TMPL_IF>
-					><TMPL_VAR role><br>
-				</TMPL_LOOP>
-					<button type="submit" name="action" value="assign"><TMPL_VAR .loc.button_assign_role></button>
-					<input type="hidden" name="user_id" value="<TMPL_VAR id>">
-					<input class="studio_id"  type="hidden" name="studio_id"  value="<TMPL_VAR studio_id>">
-					<input class="project_id" type="hidden" name="project_id" value="<TMPL_VAR project_id>">
-				</td>
-			</tr>
-			</table>
-			</form>
-		</div>
-		</TMPL_IF>
-	</td>
+        <TMPL_IF allow.update_user_role>
+        <div id="edit_roles_<TMPL_VAR id>" class="card list editor" style="display:none">
+            <form method="post">
+            <table>
+            <tr>
+                <td>
+                <TMPL_LOOP roles>
+                    <input type="checkbox"
+                        name="role_<TMPL_VAR id>"
+                        <TMPL_IF assigned>checked="checked"</TMPL_IF>
+                    ><TMPL_VAR role><br>
+                </TMPL_LOOP>
+                    <button type="submit" name="action" value="assign"><TMPL_VAR .loc.button_assign_role></button>
+                    <input type="hidden" name="user_id" value="<TMPL_VAR id>">
+                    <input class="studio_id"  type="hidden" name="studio_id"  value="<TMPL_VAR studio_id>">
+                    <input class="project_id" type="hidden" name="project_id" value="<TMPL_VAR project_id>">
+                </td>
+            </tr>
+            </table>
+            </form>
+        </div>
+        </TMPL_IF>
+    </td>
 
-	<td>
-		<TMPL_IF allow.update_user>
-			<button class="text" onclick="edit_user('<TMPL_VAR id escape=js>')"><TMPL_VAR .loc.button_edit_user></button>
-		</TMPL_IF>
+    <td>
+        <TMPL_IF allow.update_user>
+            <button class="text" onclick="edit_user('<TMPL_VAR id escape=js>')"><TMPL_VAR .loc.button_edit_user></button>
+        </TMPL_IF>
 
-		<TMPL_IF allow.update_user_role>
-			<button class="text" onclick="edit_roles('<TMPL_VAR id escape=js>')"><TMPL_VAR .loc.button_edit_roles></button>
-		</TMPL_IF>
-		<!--	</div> -->
-	</td>
+        <TMPL_IF allow.update_user_role>
+            <button class="text" onclick="edit_roles('<TMPL_VAR id escape=js>')"><TMPL_VAR .loc.button_edit_roles></button>
+        </TMPL_IF>
+        <!--    </div> -->
+    </td>
 </tr>
-	<!--</div>-->
+    <!--</div>-->
 
-	<TMPL_IF allow.update_user>
+    <TMPL_IF allow.update_user>
 <tr id="edit_<TMPL_VAR id>" class="list editor"  style="display:none">
-	<td colspan="5">	
-		<div class="card">
-		<form method="post" id="user_<TMPL_VAR id>">
-		<table>
+    <td colspan="5">    
+        <div class="card">
+        <form method="post" id="user_<TMPL_VAR id>">
+        <table>
 
-			<tr>	<td><TMPL_VAR .loc.label_name></td>	   <td><TMPL_VAR name></td></tr>
-			<tr>	<td><TMPL_VAR .loc.label_full_name></td> <td><input name="user_full_name" value="<TMPL_VAR full_name>"></td></tr>
-			<TMPL_if .allow.read_user>
-			<tr>	<td><TMPL_VAR .loc.label_email></td>	   <td><input name="user_email" value="<TMPL_VAR email>"></td></tr>
-			</TMPL_IF>
-			<tr>	<td><TMPL_VAR .loc.label_disabled></td>
-				<td>
-					<TMPL_IF allow.disable_user>
-					<input type="checkbox" name="disabled" value="1" <TMPL_IF disabled>checked="checked"</TMPL_IF> >
-					</TMPL_IF>
-				</td>
-			</tr>
+            <tr>    <td><TMPL_VAR .loc.label_name></td>       <td><TMPL_VAR name></td></tr>
+            <tr>    <td><TMPL_VAR .loc.label_full_name></td> <td><input name="user_full_name" value="<TMPL_VAR full_name>"></td></tr>
+            <TMPL_if .allow.read_user>
+            <tr>    <td><TMPL_VAR .loc.label_email></td>       <td><input name="user_email" value="<TMPL_VAR email>"></td></tr>
+            </TMPL_IF>
+            <tr>    <td><TMPL_VAR .loc.label_disabled></td>
+                <td>
+                    <TMPL_IF allow.disable_user>
+                    <input type="checkbox" name="disabled" value="1" <TMPL_IF disabled>checked="checked"</TMPL_IF> >
+                    </TMPL_IF>
+                </td>
+            </tr>
 
-			<tr>	
-				<td></td>
-				<td class="buttons" colspan="2">
-					<input type="hidden" name="user_id" value="<TMPL_VAR id>">
-					<button type=submit name="action" value="save"><TMPL_VAR .loc.button_save_user></button>
-				</td>
-				<td colspan="2">
+            <tr>    
+                <td></td>
+                <td class="buttons" colspan="2">
+                    <input type="hidden" name="user_id" value="<TMPL_VAR id>">
+                    <button type=submit name="action" value="save"><TMPL_VAR .loc.button_save_user></button>
+                </td>
+                <td colspan="2">
 
-					<TMPL_IF allow.delete_user>
-					<div class="right">
-					    <button type=submit name="action" value="delete"
+                    <TMPL_IF allow.delete_user>
+                    <div class="right">
+                        <button type=submit name="action" value="delete"
                         onclick="commitForm('user_<TMPL_VAR id escape=js>','delete','<TMPL_VAR .loc.button_delete_user escape=js>');return false;"
                     ><TMPL_VAR .loc.button_delete_user></div>
-					</TMPL_IF>
-				</td>
-			</tr>
+                    </TMPL_IF>
+                </td>
+            </tr>
 
-		</table>
-		</form>
-		</div>
-	</td>
+        </table>
+        </form>
+        </div>
+    </td>
 </tr>
-	</TMPL_IF>
+    </TMPL_IF>
 
 </TMPL_LOOP>
 </table>

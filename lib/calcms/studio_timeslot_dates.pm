@@ -83,20 +83,20 @@ sub get ($$){
     $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	 date(start)        start_date
-				,date(end)          end_date
-				,dayname(start) 	start_weekday
-				,dayname(end) 	    end_weekday
-				,start_date         day
-				,start
-				,end
+        select     date(start)        start_date
+                ,date(end)          end_date
+                ,dayname(start)     start_weekday
+                ,dayname(end)         end_weekday
+                ,start_date         day
+                ,start
+                ,end
                 ,schedule_id
-				,studio_id
+                ,studio_id
 
-		from 	calcms_studio_timeslot_dates
-		$conditions
-		order by start
-	};
+        from     calcms_studio_timeslot_dates
+        $conditions
+        order by start
+    };
 
     my $entries = db::get($dbh, $query, \@bind_values);
     for my $entry (@$entries) {
@@ -310,10 +310,10 @@ sub delete {
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete
-		from calcms_studio_timeslot_dates
+        delete
+        from calcms_studio_timeslot_dates
         where schedule_id=?
-	};
+    };
     my $bind_values = [ $entry->{schedule_id} ];
 
     db::put($dbh, $query, $bind_values);
@@ -356,10 +356,10 @@ sub can_studio_edit_events {
 
     my $dbh   = db::connect($config);
     my $query = qq{
-		select	count(*) permission
-		from 	calcms_studio_timeslot_dates
-		$conditions
-	};
+        select    count(*) permission
+        from     calcms_studio_timeslot_dates
+        $conditions
+    };
 
     my $entries = db::get($dbh, $query, \@bind_values);
 
@@ -426,11 +426,11 @@ sub getMergedDays {
     # get all days starting on first day or ending at next day
     my $dbh   = db::connect($config);
     my $query = qq{
-		select	start, end
-		from 	calcms_studio_timeslot_dates
-		$conditions
-		order by start
-	};
+        select    start, end
+        from     calcms_studio_timeslot_dates
+        $conditions
+        order by start
+    };
 
     my $entries = db::get($dbh, $query, \@bind_values);
     if (scalar(@$entries) == 2) {

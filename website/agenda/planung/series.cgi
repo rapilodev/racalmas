@@ -122,8 +122,8 @@ sub save_schedule {
         #get single schedules
         my $schedules = series_schedule::get($config, {
             uac::set($entry, 'project_id', 'studio_id', 'series_id', 'start'),
-                period_type => 'single',
-                exclude     => 0
+            period_type => 'single',
+            exclude     => 0
         });
         if (scalar(@$schedules) > 0) {
             local $config->{access}->{write} = 1;
@@ -188,7 +188,7 @@ sub delete_schedule {
         ParamError->throw(error => "missing $attr")
             unless defined $params->{$attr};
         $entry->{$attr} = $params->{$attr};
-        }
+    }
 
     AssignError->throw(error => 'series is not assigned to project!')
         unless project::is_series_assigned($config, $entry) == 1;
@@ -229,13 +229,10 @@ sub delete_series {
     if ($entry->{series_id} ne '') {
         my $result = series::delete($config, $entry);
 
-        user_stats::increase(
-            $config,
-            'delete_series',
-            {   uac::set($entry, 'project_id', 'studio_id', 'series_id'),
-                user => $params->{presets}->{user}
-            }
-        );
+        user_stats::increase($config, 'delete_series', {
+            uac::set($entry, 'project_id', 'studio_id', 'series_id'),
+            user => $params->{presets}->{user}
+        });
     }
 
     return uac::json(
@@ -266,7 +263,7 @@ sub save_series {
         $entry->{predecessor_id}, $entry->{series_id}
     )) if $entry->{predecessor_id} eq $entry->{series_id};
 
-    if ($entry->{content_format} // '' eq "markdown") {
+    if (($entry->{content_format} // '') eq "markdown") {
         $entry->{html_content} = markup::markdown_to_html($entry->{content});
     } else {
         $entry->{html_content} = markup::creole_to_html($entry->{content});
@@ -277,13 +274,12 @@ sub save_series {
     $entry->{modified_by} = $request->{user};
 
     ParamError->throw(error => "please set at least series name!")
-        if ($params->{title} eq '') && ($params->{series_name} eq '');
+        if ($params->{title} eq '' && $params->{series_name} eq '');
 
     # make sure name is not used anywhere else
     my $series_ids = series::get($config, {
-        uac::set($entry, 'project_id', 'studio_id', 'series_name', 'title'),
+        uac::set($entry, 'project_id', 'studio_id', 'series_name', 'title')
     });
-    #print STDERR Dumper($series_ids);
 
     if ($params->{action} eq 'create_series') {
         PermissionError->throw(error => 'missing permission to create_series')
@@ -326,7 +322,7 @@ sub save_series {
         local $config->{access}->{write} = 1;
         series::update($config, $entry);
 
-        series_events::update_series_images($config,{
+        series_events::update_series_images($config, {
             uac::set($entry, 'project_id', 'studio_id', 'series_id'),
             series_image => $params->{image}
         });
@@ -390,28 +386,21 @@ sub assign_event {
         $request,
         {   permission => 'assign_series_events',
             check_for  => [ 'studio', 'user', 'series', 'studio_timeslots' ],
-            uac::set(
-                $entry, 'project_id', 'studio_id', 'series_id',
-                'event_id'
-            ),
+            uac::set($entry, 'project_id', 'studio_id', 'series_id', 'event_id'),
             start => $event->{start_datetime},
             end   => $event->{end_datetime}
         }
     );
 
     local $config->{access}->{write} = 1;
-    series::assign_event(
-        $config,
-        {   uac::set(
-                $entry, 'project_id', 'studio_id', 'series_id',
-                'event_id'
-            ),
-            manual => 1
-        }
-    );
+    series::assign_event($config, {
+        uac::set($entry, 'project_id', 'studio_id', 'series_id', 'event_id'),
+        manual => 1
+    });
 
-    my $series = series::get($config,
-        { uac::set($entry, 'project_id', 'studio_id', 'series_id'), });
+    my $series = series::get($config, {
+        uac::set($entry, 'project_id', 'studio_id', 'series_id')
+    });
 
     SeriesError->throw(
         error => sprintf(
@@ -479,14 +468,9 @@ sub unassign_event {
     }
 
     #check if event exists
-    my $event = series::get_event(
-        $config,
-        {   uac::set(
-                $entry, 'project_id', 'studio_id', 'series_id',
-                'event_id'
-            ),
-        }
-    );
+    my $event = series::get_event($config, {
+        uac::set($entry, 'project_id', 'studio_id', 'series_id', 'event_id')
+    });
     ExistError->throw(
         error => sprintf(
             "event %s not found for project_id=%s, studio_id=%s, series_id=%s",
@@ -510,14 +494,9 @@ sub unassign_event {
     );
 
     local $config->{access}->{write} = 1;
-    $result = series::unassign_event(
-        $config,
-        {   uac::set(
-                $entry, 'project_id', 'studio_id', 'series_id',
-                'event_id'
-            ),
-        }
-    );
+    $result = series::unassign_event($config, {
+        uac::set($entry, 'project_id', 'studio_id', 'series_id', 'event_id')
+    });
 
     return uac::json(
         {   "entry" => {
@@ -562,7 +541,7 @@ sub add_user {
     my ($config, $request) = @_;
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    print STDERR Dumper($params);
+
     PermissionError->throw(
         error => "missing permission to assign_series_member")
         unless $permissions->{assign_series_member} == 1;
@@ -575,15 +554,10 @@ sub add_user {
         unless project::is_series_assigned($config, $params) == 1;
 
     local $config->{access}->{write} = 1;
-    series::add_user(
-        $config,
-        {   uac::set(
-                $params, 'project_id', 'studio_id', 'series_id',
-                'user_id'
-            ),
-            user => $request->{user}
-        }
-    );
+    series::add_user($config, {
+        uac::set($params, 'project_id', 'studio_id', 'series_id', 'user_id'),
+        user => $request->{user}
+    });
     return uac::json(
         {   "entry" => {
                 uac::set(
@@ -613,15 +587,10 @@ sub remove_user {
     AssignError->throw(error => 'series is not assigned to project!')
         unless project::is_series_assigned($config, $params) == 1;
 
-    $config->{access}->{write} = 1;
-    series::remove_user(
-        $config,
-        {   uac::set(
-                $params, 'project_id', 'studio_id', 'series_id',
-                'user_id'
-            ),
-        }
-    );
+    local $config->{access}->{write} = 1;
+    series::remove_user($config, {
+        uac::set($params, 'project_id', 'studio_id', 'series_id', 'user_id')
+    });
     return uac::json(
         {   "entry" => {
                 uac::set(
@@ -637,12 +606,13 @@ sub remove_user {
 sub list_series {
     my ($config, $request) = @_;
 
-    my $params      = $request->{params}->{checked};
+    my $params = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     PermissionError->throw(error => 'Missing permission to read_series')
         unless $permissions->{read_series} == 1;
-    my $studios = studios::get($config,
-        { uac::set($params, 'project_id', 'studio_id'), });
+    my $studios = studios::get($config, {
+        uac::set($params, 'project_id', 'studio_id')
+    });
 
     my $studio_by_id = {};
     for my $studio (@$studios) {
@@ -651,7 +621,7 @@ sub list_series {
     my $studio = $studio_by_id->{ $params->{studio_id} };
 
     my $series_conditions = { uac::set($params, 'project_id', 'studio_id'), };
-    my $series            = series::get_event_age($config, $series_conditions);
+    my $series = series::get_event_age($config, $series_conditions);
     for my $serie (sort {lc $a->{series_name} cmp lc $b->{series_name}}
         (@$series))
     {
@@ -664,16 +634,11 @@ sub list_series {
     my @series = sort {lc $a->{series_name} cmp lc $b->{series_name}} @$series;
     $params->{series} = \@series;
 
-    $params->{image} = studios::getImageById(
-        $config,
-        {   project_id => $params->{project_id},
-            studio_id  => $params->{studio_id}
-        }
-    ) if (!defined $params->{image}) || ($params->{image} eq '');
-    $params->{image}
-        = project::getImageById($config,
-            { project_id => $params->{project_id} })
-        if (!defined $params->{image}) || ($params->{image} eq '');
+    $params->{image} =
+      studios::getImageById($config, { project_id => $project_id, studio_id => $studio_id })
+      if ((!defined $params->{image}) || ($params->{image} eq ''));
+    $params->{image} = project::getImageById($config, { project_id => $project_id })
+      if ((!defined $params->{image}) || ($params->{image} eq ''));
 
     $params->{loc} = localization::get($config,
         { user => $params->{presets}->{user}, file => 'all,series' });
@@ -701,8 +666,9 @@ sub show_series {
     }
 
     #list of all studios by id
-    my $studios = studios::get($config,
-        { uac::set($params, 'project_id', 'studio_id'), });
+    my $studios = studios::get($config, {
+        uac::set($params, 'project_id', 'studio_id')
+    });
     my $studio_by_id = {};
     for my $studio (@$studios) {
         $studio_by_id->{ $studio->{id} } = $studio;
@@ -710,8 +676,7 @@ sub show_series {
 
     #get series
     my $series_conditions = {
-        uac::set($params, 'project_id', 'studio_id', 'series_id'),
-
+        uac::set($params, 'project_id', 'studio_id', 'series_id')
     };
 
     my $series = series::get($config, $series_conditions);
@@ -737,12 +702,9 @@ sub show_series {
     my $user_studios = uac::get_studios_by_user($config,
         { project_id => $params->{project_id}, user => $request->{user} });
 
-    my $studio_users = uac::get_users_by_studio(
-        $config,
-        {   project_id => $params->{project_id},
-            studio_id  => $params->{studio_id}
-        }
-    );
+    my $studio_users = uac::get_users_by_studio($config, {
+        uac::set($params, 'project_id', 'studio_id')
+    });
     for my $studio_user (@$studio_users) {
         $studio_user->{user_id} = $studio_user->{id};
     }
@@ -762,26 +724,24 @@ sub show_series {
     my $location = $studio->{location};
 
     # set default image from studio
-    $serie->{image} = studios::getImageById(
-        $config,
-        {   project_id => $params->{project_id},
-            studio_id  => $params->{studio_id}
-        }
-    ) if (!defined $serie->{image}) || ($serie->{image} eq '');
+    $serie->{image} = studios::getImageById($config, {
+        uac::set($params, 'project_id', 'studio_id')
+    }) if (!defined $serie->{image}) || ($serie->{image} eq '');
     $serie->{image}
         = project::getImageById($config,
             { project_id => $params->{project_id} })
         if (!defined $serie->{image}) || ($serie->{image} eq '');
 
     #add users
-    $serie->{series_users} = series::get_users($config,
-        { uac::set($serie, 'project_id', 'studio_id', 'series_id'), });
+    $serie->{series_users} = series::get_users($config, {
+        uac::set($serie, 'project_id', 'studio_id', 'series_id')
+    });
     $serie->{show_hint_to_add_users} = 1 if @{ $serie->{series_users} } == 0;
 
     #add events
     $serie->{events} = series::get_events(
-        $config,
-        {   uac::set($serie, 'project_id', 'studio_id', 'series_id'),
+        $config, {
+            uac::set($serie, 'project_id', 'studio_id', 'series_id'),
             from_date => $from,
             till_date => $till,
             location  => $location,
@@ -795,12 +755,11 @@ sub show_series {
     $params->{allow}->{update_event} = 1;
     try {
         series_events::check_permission(
-            $request,
-            {   permission =>
-                    'update_event_of_series,update_event_of_others',
+            $request, {
+                permission => 'update_event_of_series,update_event_of_others',
                 check_for => [ 'studio', 'user', 'series' ],
-                uac::set($serie, 'project_id', 'studio_id', 'series_id'),
-            },
+                uac::set($serie, 'project_id', 'studio_id', 'series_id')
+            }
         );
     } catch {
         $params->{allow}->{update_event} = 0;
@@ -820,8 +779,9 @@ sub show_series {
     }
 
     #add schedules
-    my $schedules = series_schedule::get($config,
-        { uac::set($serie, 'project_id', 'studio_id', 'series_id'), });
+    my $schedules = series_schedule::get($config, {
+        uac::set($serie, 'project_id', 'studio_id', 'series_id')
+    });
 
     #remove seconds from dates
     for my $schedule (@$schedules) {
@@ -849,8 +809,9 @@ sub show_series {
     $serie->{end} =~ s/(\d\d\:\d\d)\:\d\d/$1/   if defined $serie->{end};
 
     #add series dates
-    my $series_dates = series_dates::get($config,
-        { uac::set($serie, 'project_id', 'studio_id', 'series_id'), });
+    my $series_dates = series_dates::get($config, {
+        uac::set($serie, 'project_id', 'studio_id', 'series_id')
+    });
 
     #remove seconds from dates
     for my $date (@$series_dates) {
@@ -875,8 +836,10 @@ sub show_series {
         $params->{"content_format_$value"}=1 if ($params->{content_format}//'') eq $value;
     }
 
-    $params->{loc} = localization::get($config,
-        { user => $params->{presets}->{user}, file => 'all,series' });
+    $params->{loc} = localization::get($config, {
+        user => $params->{presets}->{user}, 
+        file => 'all,series'
+    });
     return template::process($config, $params->{template}, $params);
 }
 
@@ -900,21 +863,18 @@ sub set_rebuilt_episodes {
     for my $permission (keys %{ $request->{permissions} }) {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
-    my $events = series::get_rebuilt_episodes($config,
-        { uac::set($params, 'project_id', 'studio_id', 'series_id'), });
+    my $events = series::get_rebuilt_episodes($config, {
+        uac::set($params, 'project_id', 'studio_id', 'series_id')
+    });
 
     my $updates = 0;
     for my $event (@$events) {
         next if $event->{project_id} ne $params->{project_id};
         next if $event->{studio_id} ne $params->{studio_id};
         next if $event->{old_episode} eq $event->{episode};
-        series_events::set_episode(
-            $config,
-            {
-                id      => $event->{id},
-                episode => $event->{episode}
-            }
-        );
+        series_events::set_episode($config, {
+            uac::set($event, 'id', 'episode')
+        });
         $updates++;
     }
     return uac::json(
@@ -946,8 +906,9 @@ sub rebuild_episodes {
     for my $permission (keys %{ $request->{permissions} }) {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
-    my $events = series::get_rebuilt_episodes($config,
-        { uac::set($params, 'project_id', 'studio_id', 'series_id'), });
+    my $events = series::get_rebuilt_episodes($config, {
+        uac::set($params, 'project_id', 'studio_id', 'series_id')
+    });
 
     my $events_by_id = {};
     for my $event (@$events) {

@@ -74,7 +74,7 @@ sub show_users {
         }
     );
 
-    #	print "max level:$max_level<br>";
+    #    print "max level:$max_level<br>";
 
     #user roles
     for my $user (@$users) {
@@ -104,7 +104,7 @@ sub show_users {
                 if ($role->{role} eq $user_role->{role}) {
                     $role{assigned} = 1;
 
-                    #					print "if ($role->{role} eq $user_role->{role}<br>";
+                    #                    print "if ($role->{role} eq $user_role->{role}<br>";
                     $has_roles = 1;
                     last;
                 }
@@ -253,7 +253,7 @@ sub update_user_roles {
     my $studio_id  = $params->{studio_id};
     my $user_id    = $params->{user_id} || '';
 
-    #	return undef if ($user_id eq '');
+    #    return undef if ($user_id eq '');
 
     #get all roles
     my $roles = uac::get_roles(
@@ -300,7 +300,7 @@ sub update_user_roles {
         my $user_role = $user_role_by_id->{$user_role_id};
         my $role      = $role_by_id->{$user_role_id};
 
-        #		print "$user_role_id - $params->{role_ids}->{$user_role_id} ($studio_id)<br>";
+        #        print "$user_role_id - $params->{role_ids}->{$user_role_id} ($studio_id)<br>";
         unless (defined $params->{role_ids}->{$user_role_id}) {
             my $message =
 "remove role '$role->{role}' (level $role->{level}) from user $user_id (level $max_user_level) for studio_id=$studio_id, project_id=$project_id. Your level is $max_level";
@@ -333,7 +333,7 @@ sub update_user_roles {
             my $message =
 "assign role $role->{role} (level $role->{level}) to user (level $max_user_level). Your level is $max_level";
 
-            #			print "user role id: $role->{id}<br>\n";
+            #            print "user role id: $role->{id}<br>\n";
             my $update = 0;
             $update = 1 if defined $permissions->{is_admin};
             $update = 1

@@ -50,12 +50,12 @@ sub get ($$) {
     $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	*
-		from 	calcms_user_stats
-		$conditions
-		order by modified_at desc
+        select    *
+        from     calcms_user_stats
+        $conditions
+        order by modified_at desc
         $limit
-	};
+    };
 
     my $results = db::get($dbh, $query, \@bind_values);
     return $results;
@@ -98,19 +98,19 @@ sub get_stats($$) {
     $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	user, project_id, studio_id,
-		        max(modified_at)   modified_at,
-		        sum(create_events) create_events,
-		        sum(update_events) update_events,
-		        sum(delete_events) delete_events,
-		        sum(create_series) create_series,
-		        sum(update_series) update_series,
-		        sum(delete_series) delete_series
-		from 	calcms_user_stats
-		$conditions
-		group by user, project_id, studio_id
+        select    user, project_id, studio_id,
+                max(modified_at)   modified_at,
+                sum(create_events) create_events,
+                sum(update_events) update_events,
+                sum(delete_events) delete_events,
+                sum(create_series) create_series,
+                sum(update_series) update_series,
+                sum(delete_series) delete_series
+        from     calcms_user_stats
+        $conditions
+        group by user, project_id, studio_id
         $limit
-	};
+    };
 
     my $results = db::get($dbh, $query, \@bind_values);
     for my $result (@$results) {
@@ -169,10 +169,10 @@ sub update ($$) {
     push @bind_values, $entry->{series_id};
 
     my $query = qq{
-		update calcms_user_stats
-		set $values
-		where user=? and project_id=? and studio_id=? and series_id=?
-	};
+        update calcms_user_stats
+        set $values
+        where user=? and project_id=? and studio_id=? and series_id=?
+    };
 
     my $dbh = db::connect($config);
     return db::put($dbh, $query, \@bind_values);

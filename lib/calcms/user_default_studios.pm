@@ -38,10 +38,10 @@ sub get ($$) {
     $conditions = " where " . join(" and ", @conditions) if scalar(@conditions) > 0;
 
     my $query = qq{
-		select *
-		from   calcms_user_default_studios
-		$conditions
-	};
+        select *
+        from   calcms_user_default_studios
+        $conditions
+    };
 
     my $dbh = db::connect($config);
     my $entries = db::get($dbh, $query, \@bind_values);
@@ -71,10 +71,10 @@ sub update($$) {
     push @bind_values, $entry->{project_id};
 
     my $query = qq{
-		update calcms_user_default_studios
-		set    $values
-		where  user=? and project_id=?
-	};
+        update calcms_user_default_studios
+        set    $values
+        where  user=? and project_id=?
+    };
 
     my $dbh = db::connect($config);
     return db::put($dbh, $query, \@bind_values);
@@ -86,10 +86,10 @@ sub delete ($$) {
     ParamError->throw(error => "missing user on deleting default studio") unless defined $entry->{user};
 
     my $query = qq{
-		delete
-		from calcms_user_default_studios
-		where user=?
-	};
+        delete
+        from calcms_user_default_studios
+        where user=?
+    };
     my $bind_values = [ $entry->{user} ];
 
     my $dbh = db::connect($config);

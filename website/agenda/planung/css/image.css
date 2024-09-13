@@ -1,31 +1,31 @@
 input.field{
-	width:30em;
+    width:30em;
 }
 
 #content div.image{
-	display:inline-block;
-	vertical-alignment:top;
-	border:1px solid gray;
-	margin:6px;
-	padding:0;
-	text-align:left;
-	background-repeat:no-repeat;
-	width:150px;
-	height:150px;
-	vertical-align:bottom;
+    display:inline-block;
+    vertical-alignment:top;
+    border:1px solid gray;
+    margin:6px;
+    padding:0;
+    text-align:left;
+    background-repeat:no-repeat;
+    width:150px;
+    height:150px;
+    vertical-align:bottom;
 }
 
 #content .close{
-	text-align:right;
-	padding:0;
-	margin:0;
-	color:white;
-	float:right;
+    text-align:right;
+    padding:0;
+    margin:0;
+    color:white;
+    float:right;
 }
 
 #content div.image:hover{
     cursor:pointer;
-	background-color:#39a1f4;
+    background-color:#39a1f4;
     font-weight:bold;
     opacity:0.9;
     filter:contrast(120%);
@@ -33,18 +33,18 @@ input.field{
 }
 
 #content div.image .label{
-	text-align:center;
-	background-color:#333;
-	color:#fff;
-	vertical-align:bottom;
-	opacity:0.9;
-	padding:6px;
-	width:138px;
-	margin:0;
+    text-align:center;
+    background-color:#333;
+    color:#fff;
+    vertical-align:bottom;
+    opacity:0.9;
+    padding:6px;
+    width:138px;
+    margin:0;
 }
 
 #content div.image.active .label{
-	background-color:#39a1f4;
+    background-color:#39a1f4;
     font-weight:bold;
 }
 

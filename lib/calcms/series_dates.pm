@@ -79,22 +79,22 @@ sub get ($;$) {
     $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	 date(start) start_date
-				,date(end)   end_date
-				,dayname(start) 	weekday
-				,start_date         day
-				,start
-				,end
-				,id 				schedule_id
-				,series_id
-				,studio_id
-				,project_id
-				,exclude
+        select     date(start) start_date
+                ,date(end)   end_date
+                ,dayname(start)     weekday
+                ,start_date         day
+                ,start
+                ,end
+                ,id                 schedule_id
+                ,series_id
+                ,studio_id
+                ,project_id
+                ,exclude
 
-		from 	calcms_series_dates
-		$conditions
-		order by start
-	};
+        from     calcms_series_dates
+        $conditions
+        order by start
+    };
 
     my $entries = db::get($dbh, $query, \@bind_values);
     for my $entry (@$entries) {
@@ -214,25 +214,25 @@ sub get_series($;$) {
     $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	 date(d.start) 		start_date
-				,date(d.end) 		end_date
-				,dayname(d.start) 	weekday
-				,d.start_date       day
-				,d.start
-				,d.end
-				,d.id 				schedule_id
-				,d.series_id
-				,d.series_schedule_id
-				,d.exclude
-				,d.studio_id
-				,d.project_id
+        select     date(d.start)         start_date
+                ,date(d.end)         end_date
+                ,dayname(d.start)     weekday
+                ,d.start_date       day
+                ,d.start
+                ,d.end
+                ,d.id                 schedule_id
+                ,d.series_id
+                ,d.series_schedule_id
+                ,d.exclude
+                ,d.studio_id
+                ,d.project_id
                 ,s.series_name
                 ,s.title
                 ,s.has_single_events
-		from 	calcms_series_dates d, calcms_series s
-		$conditions
-		order by start
-	};
+        from     calcms_series_dates d, calcms_series s
+        $conditions
+        order by start
+    };
 
     my $entries = db::get($dbh, $query, \@bind_values);
 
@@ -507,10 +507,10 @@ sub delete ($$) {
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete
-		from calcms_series_dates
-		where project_id=? and studio_id=? and series_id=?
-	};
+        delete
+        from calcms_series_dates
+        where project_id=? and studio_id=? and series_id=?
+    };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id} ];
 
     db::put($dbh, $query, $bind_values);

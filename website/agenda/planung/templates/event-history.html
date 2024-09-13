@@ -4,8 +4,8 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title><TMPL_VAR .doc.title></title>
     <link href="css/series.css" type="text/css" rel="stylesheet"/>
-	<link href="css/theme.default.css" rel="stylesheet">
-	<script src="js/jquery.tablesorter.min.js"></script>
+    <link href="css/theme.default.css" rel="stylesheet">
+    <script src="js/jquery.tablesorter.min.js"></script>
 
     <style>
         table#event_history tr td{
@@ -33,9 +33,9 @@
 <script>
     var region='<TMPL_VAR loc.region escape=js>';
     $(function(){
-	    $('table').tablesorter({
-		    widgets        : ['zebra','filter'],
-		    usNumberFormat : false
+        $('table').tablesorter({
+            widgets        : ['zebra','filter'],
+            usNumberFormat : false
     });
     });
 

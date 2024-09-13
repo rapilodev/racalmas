@@ -67,7 +67,7 @@ sub get($$) {
         push @$bind_values, $search;
         push @$bind_values, $search;
 
-        #		push @$bind_values,$search;
+        #        push @$bind_values,$search;
     }
 
     my $where = '';
@@ -81,12 +81,12 @@ sub get($$) {
     }
 
     my $query = qq{
-		select	*
-		from 	calcms_images
-		$where
-		order by created_at desc
-		$limit
-	};
+        select    *
+        from     calcms_images
+        $where
+        order by created_at desc
+        $limit
+    };
 
     my $dbh = db::connect($config);
     my $results = db::get($dbh, $query, $bind_values);
@@ -134,11 +134,11 @@ sub insert ($$) {
     }
 
     my $query = q{
-		insert into calcms_images(
-			} . join(',', @sql_columns) . qq{
-		)
-		values(} . join(', ', (map { '?' } @sql_columns)) . q{)
-	};
+        insert into calcms_images(
+            } . join(',', @sql_columns) . qq{
+        )
+        values(} . join(', ', (map { '?' } @sql_columns)) . q{)
+    };
     my @bind_values = map { $image->{$_} } @sql_columns;
     my $result = db::put($dbh, $query, \@bind_values);
 
@@ -185,10 +185,10 @@ sub update($$) {
     my $set = join(",", @set);
     $conditions = join(' and ', @$conditions);
     my $query = qq{
-		update calcms_images
-		set	   $set
-		where  $conditions
-	};
+        update calcms_images
+        set       $set
+        where  $conditions
+    };
     my $result = db::put($dbh, $query, $bind_values);
 
     images::setSeriesLabels($dbh, $image);
@@ -219,9 +219,9 @@ sub delete($$) {
 
     $conditions = join(' and ', @$conditions);
     my $query = qq{
-		delete from calcms_images
-		where  $conditions
-	};
+        delete from calcms_images
+        where  $conditions
+    };
     return db::put($dbh, $query, $bind_values);
 }
 

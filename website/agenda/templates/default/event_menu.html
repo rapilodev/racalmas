@@ -30,13 +30,13 @@ Access-Control-Allow-Origin: *
         <div id="event_menu_<TMPL_VAR event_id>" class="vevent event<TMPL_IF is_running> running</TMPL_IF>"
             title="<TMPL_IF program><TMPL_VAR program> - </TMPL_IF><TMPL_IF series_name><TMPL_VAR series_name> - </TMPL_IF><TMPL_VAR title>"
         >
-	<TMPL_COMMENT>
+    <TMPL_COMMENT>
             <div class="icon">
                 <TMPL_IF icon><img src="<TMPL_VAR icon>" alt="<TMPL_VAR series_name>" />
                 <TMPL_ELSE><img src="<TMPL_VAR static_files_url>images/event.icon.png" />
                 </TMPL_IF>
             </div>
-	</TMPL_COMMENT>
+    </TMPL_COMMENT>
             <div class="title">
                 <TMPL_VAR start_time_name><br />
                 <TMPL_VAR series_name><TMPL_UNLESS series_name>!<TMPL_VAR title></TMPL_UNLESS>&nbsp;

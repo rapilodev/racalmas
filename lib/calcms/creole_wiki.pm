@@ -141,7 +141,7 @@ sub eventToWikiText($$) {
     #markup editors
     $event->{wiki_content} = $event->{content};
 
-#	[[http://localhost/agenda_files/media/images/Vl8X7YmaWrmm9RMN_OMywA.jpg|{{http://localhost/agenda_files/media/thumbs/Vl8X7YmaWrmm9RMN_OMywA.jpg|}}]]
+#    [[http://localhost/agenda_files/media/images/Vl8X7YmaWrmm9RMN_OMywA.jpg|{{http://localhost/agenda_files/media/thumbs/Vl8X7YmaWrmm9RMN_OMywA.jpg|}}]]
 #replace "thumbs/xxx" link by link to local media URI
     $event->{wiki_content} =~
 s/\[\[.*?\/+media\/+images\/+(.*?)\s*\|.*?\{\{.*?\/+media\/+thumbs\/+(.*?)\s*\|\s*(.*?)\s*\}\}\]\]/\{\{thumbs\/$1\|$3\}\}/g;

@@ -4,48 +4,48 @@ Access-Control-Allow-Origin: *
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Kommentare zu Sendungen - <TMPL_VAR project_title></title>
-	<meta http-equiv="Content-Script-Type" content="javascript" />
-	<meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Kommentare zu Sendungen - <TMPL_VAR project_title></title>
+    <meta http-equiv="Content-Script-Type" content="javascript" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
 </head>
 <body>
-	<a name="comments" />
-	<TMPL_IF allow.new_comments>
-		<a href="#comments"
-		   onclick="calcms.showCommentForm('calcms_add_comment','','<TMPL_VAR event_id escape=js>','<TMPL_VAR event_start escape=js>');return false;"
-		>Neuen Kommentar schreiben</a>
-	<div>
-		<div id="calcms_add_comment" style="display:none;visibility:hidden;" >&nbsp;</div>
-	</div>
-	</TMPL_IF>	
+    <a name="comments" />
+    <TMPL_IF allow.new_comments>
+        <a href="#comments"
+           onclick="calcms.showCommentForm('calcms_add_comment','','<TMPL_VAR event_id escape=js>','<TMPL_VAR event_start escape=js>');return false;"
+        >Neuen Kommentar schreiben</a>
+    <div>
+        <div id="calcms_add_comment" style="display:none;visibility:hidden;" >&nbsp;</div>
+    </div>
+    </TMPL_IF>    
 
-	<TMPL_IF comments>
+    <TMPL_IF comments>
         <br>
-		<h4>
-			<span style="float:left">
-				<TMPL_VAR comment_count> Kommentar<TMPL_UNLESS one_result>e</TMPL_UNLESS> &nbsp;
-			</span>
-			<a href="/agenda/feed_kommentare/" title="Kommentare als Feed abonnieren">
-				<img src="<TMPL_VAR static_files_url>images/feed.png" style="float:none">
-			</a>
-		</h4>
-	</TMPL_IF>
-	<TMPL_LOOP comments>
-		<div class="comment level<TMPL_VAR level>" style="float:clear;" >
-			<a name="comment_<TMPL_VAR id>" />
-			<div class="w1"><div class="w2"><div class="w3"><div class="w4">
-				<span class="author"><TMPL_VAR author escape=none></span>,
-				<span class="date"><TMPL_VAR start_date_name> - <TMPL_VAR start_time_name></span>
-				<div class="content"><TMPL_VAR content escape=none></div>
-				<TMPL_IF allow.new_comments>
-					<span >
-						<a href="#calcms_add_comment_<TMPL_VAR id>_anchor"
-						   onclick="calcms.showCommentForm('calcms_add_comment_<TMPL_VAR id escape=js>','<TMPL_VAR id escape=js>','<TMPL_VAR event_id escape=js>','<TMPL_VAR event_start escape=js>');return false;"
-						>antworten</a>
-					</span>
-					<div id="calcms_add_comment_<TMPL_VAR id>">&nbsp;</div>
-				</TMPL_IF>
-			</div></div></div></div>
-		</div>
-	</TMPL_LOOP>
+        <h4>
+            <span style="float:left">
+                <TMPL_VAR comment_count> Kommentar<TMPL_UNLESS one_result>e</TMPL_UNLESS> &nbsp;
+            </span>
+            <a href="/agenda/feed_kommentare/" title="Kommentare als Feed abonnieren">
+                <img src="<TMPL_VAR static_files_url>images/feed.png" style="float:none">
+            </a>
+        </h4>
+    </TMPL_IF>
+    <TMPL_LOOP comments>
+        <div class="comment level<TMPL_VAR level>" style="float:clear;" >
+            <a name="comment_<TMPL_VAR id>" />
+            <div class="w1"><div class="w2"><div class="w3"><div class="w4">
+                <span class="author"><TMPL_VAR author escape=none></span>,
+                <span class="date"><TMPL_VAR start_date_name> - <TMPL_VAR start_time_name></span>
+                <div class="content"><TMPL_VAR content escape=none></div>
+                <TMPL_IF allow.new_comments>
+                    <span >
+                        <a href="#calcms_add_comment_<TMPL_VAR id>_anchor"
+                           onclick="calcms.showCommentForm('calcms_add_comment_<TMPL_VAR id escape=js>','<TMPL_VAR id escape=js>','<TMPL_VAR event_id escape=js>','<TMPL_VAR event_start escape=js>');return false;"
+                        >antworten</a>
+                    </span>
+                    <div id="calcms_add_comment_<TMPL_VAR id>">&nbsp;</div>
+                </TMPL_IF>
+            </div></div></div></div>
+        </div>
+    </TMPL_LOOP>
 </body>

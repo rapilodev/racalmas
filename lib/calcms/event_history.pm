@@ -60,12 +60,12 @@ sub get ($$){
     $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	*
-		from 	calcms_event_history
-		$conditions
-		order by modified_at desc
+        select    *
+        from     calcms_event_history
+        $conditions
+        order by modified_at desc
         $limit
-	};
+    };
 
     my $changes = db::get($dbh, $query, \@bind_values);
 
@@ -80,10 +80,10 @@ sub get_by_id($$) {
     my ($config, $id) = @_;
     my $dbh = db::connect($config);
     my $query = qq{
-		select	*
-		from 	calcms_event_history
-		where	event_id=?
-	};
+        select    *
+        from     calcms_event_history
+        where    event_id=?
+    };
     my $studios = db::get($dbh, $query, [$id]);
     return undef if (@$studios != 1);
     return $studios->[0];

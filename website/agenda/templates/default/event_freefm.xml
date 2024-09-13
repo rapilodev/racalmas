@@ -45,13 +45,13 @@ Access-Control-Allow-Origin: *
             </transmitter-location>
         </transmitter>
         <webstream>
-			<transmit-times>
-				<transmit-time time-from="00:00:00" time-to="23:59:59"/>
-			</transmit-times>
-			<url>http://ice.rosebud-media.de:8000/88vier</url>
-			<format>audio/mpeg</format>
-			<quality>160kbps</quality>
-		</webstream>
+            <transmit-times>
+                <transmit-time time-from="00:00:00" time-to="23:59:59"/>
+            </transmit-times>
+            <url>http://ice.rosebud-media.de:8000/88vier</url>
+            <format>audio/mpeg</format>
+            <quality>160kbps</quality>
+        </webstream>
         <website>
             <url>https://piradio.de</url>
         </website>

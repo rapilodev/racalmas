@@ -9,19 +9,16 @@ use Apache2::Request();
 use Exception::Class('ParamError');
 
 {
+    my $uri;
+    sub set_uri($) { ($uri) = @_; }
+    sub get_uri()  { return $uri; }
+}
+
+{
     my $is_json = 0;
-
-    sub set_json() {
-        $is_json = 1;
-    }
-
-    sub reset_json() {
-        $is_json = 0;
-    }
-
-    sub is_json() {
-        return $is_json;
-    }
+    sub set_json()   { $is_json = 1; }
+    sub reset_json() { $is_json = 0; }
+    sub is_json()    { return $is_json; }
 }
 
 sub get($;$) {

@@ -128,10 +128,10 @@ sub authenticate($$$) {
 
     my $dbh   = db::connect($config);
     my $query = qq{
-		select	*
-		from 	calcms_users
-		where 	name=?
-	};
+        select    *
+        from     calcms_users
+        where     name=?
+    };
     my $bind_values = [$user];
     my $users = db::get($dbh, $query, $bind_values);
     LoginError->throw(user => $user, message => 'authentication_failed')
@@ -210,16 +210,16 @@ Content-type:text/html
         margin-right:1rem;
     }
 
-	#login_form{
-		background:#fff;
+    #login_form{
+        background:#fff;
         box-shadow: 1rem 1rem 1rem #eee;
-		margin:1rem;
-		padding:1rem;
+        margin:1rem;
+        padding:1rem;
         text-align:center;
         animation-name:form;
         animation-duration: 1s;
         animation-timing-function:ease;
-	}
+    }
 
     button:hover{
         scale:1.1;
@@ -227,16 +227,16 @@ Content-type:text/html
         transition: all 0.1s ease;
     }
 
-	#login_form .field{
-		width:8rem;
-		float:left;
-	}
+    #login_form .field{
+        width:8rem;
+        float:left;
+    }
 
-	#login_form .message{
+    #login_form .message{
         color:white;
-		background:#004f9b;
-		text-align:left;
-		font-weight:bold;
+        background:#004f9b;
+        text-align:left;
+        font-weight:bold;
         padding:1rem;
         margin:-1rem;
         margin-bottom:0;
@@ -276,22 +276,22 @@ Content-type:text/html
 
 <div class="container">
     <div id="login_form">
-	    <div class="message">}.($loc->{$message}//$message).qq{</div><br/>
-	    <form method="post">
+        <div class="message">}.($loc->{$message}//$message).qq{</div><br/>
+        <form method="post">
             <div class="row">
-		        <div class="field">$loc->{user}</div>
-		        <input name="user" value="$user"><br/>
+                <div class="field">$loc->{user}</div>
+                <input name="user" value="$user"><br/>
             </div>
             <div class="row">
-		        <div class="field">$loc->{password}</div>
-		        <input type="password" name="password"><br/>
+                <div class="field">$loc->{password}</div>
+                <input type="password" name="password"><br/>
             </div>
             <div class="row">
-		        <button class="button" type="submit" name="authAction" value="logout" style="opacity:0.5">$loc->{logout}</button>
+                <button class="button" type="submit" name="authAction" value="logout" style="opacity:0.5">$loc->{logout}</button>
                 <button class="button" type="submit" name="authAction" value="login">$loc->{login}</button>
             </div>
-		    <input type="hidden" name="uri" value="$uri">
-	    </form>
+            <input type="hidden" name="uri" value="$uri">
+        </form>
         $requestReset
     </div>
 </container>

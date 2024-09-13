@@ -251,18 +251,18 @@ sub show_roles {
 
     #print user role form
     my $out = qq{
-	<div id="edit_roles">
-	<form method="post">
-		<input type="hidden" name="project_id" value="$project_id">
-		<input type="hidden" name="studio_id"  value="$studio_id">
-	};
+    <div id="edit_roles">
+    <form method="post">
+        <input type="hidden" name="project_id" value="$project_id">
+        <input type="hidden" name="studio_id"  value="$studio_id">
+    };
 
     if (defined $permissions->{update_role}) {
 
         #add new user role button
         $out .= q{
-			<button id="add_user_role_button" onclick="add_user_role();return false;">add user role</button>
-		}
+            <button id="add_user_role_button" onclick="add_user_role();return false;">add user role</button>
+        }
     }
 
     $out .= '<div class="panel">';
@@ -335,9 +335,9 @@ sub show_roles {
             $checked = 'checked="checked"' if ($value eq '1');
             $active =~ s/\s//g;
             $out .= qq{<td$style>
-				<input type="checkbox" name="} . $key . '_' . $id . qq{" value="$value" $checked class="$active">
-				</td>
-			};
+                <input type="checkbox" name="} . $key . '_' . $id . qq{" value="$value" $checked class="$active">
+                </td>
+            };
         }
         $out .= qq{</tr>};
     }

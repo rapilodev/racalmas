@@ -8,7 +8,7 @@ Access-Control-Allow-Origin: *
         "url" : "https:<TMPL_VAR .source_base_url>programm/sendung/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>",
         "title" : "<TMPL_VAR full_title escape=IJSON>",
         "excerpt" : "<TMPL_VAR excerpt escape=IJSON>",
-	    "start" : "<TMPL_VAR start_date>T<TMPL_VAR start_time>:00",
+        "start" : "<TMPL_VAR start_date>T<TMPL_VAR start_time>:00",
         "end"   : "<TMPL_VAR end_date>T<TMPL_VAR end_time>:00",
         "series_name" : "<TMPL_VAR series_name escape=IJSON>",
         "image_url" : "<TMPL_VAR series_image_url escape=IJSON>",

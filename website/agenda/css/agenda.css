@@ -190,7 +190,7 @@ table#nav table td {
 table#nav  table td, table#nav  table a {
     padding: 1px;
     /*
-	font-size:10px;
+    font-size:10px;
 */
 }
 
@@ -259,7 +259,7 @@ table#nav table td.row_type:hover {
 
 #wp-calendar td {
     /*
-	font-size:8px;
+    font-size:8px;
 */
     text-align: center;
     background-color: #fefeff;
@@ -268,7 +268,7 @@ table#nav table td.row_type:hover {
 #wp-calendar td a {
     padding: 2px;
     /*
-	font-size:8px;
+    font-size:8px;
 */
     font-weight: normal;
 }

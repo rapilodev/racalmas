@@ -57,12 +57,12 @@ sub get ($;$) {
     $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	*
-		from 	calcms_projects
-		$conditions
-		order by start_date
+        select    *
+        from     calcms_projects
+        $conditions
+        order by start_date
         $limit
-	};
+    };
 
     my $projects = db::get($dbh, $query, \@bind_values);
     return $projects;
@@ -87,7 +87,7 @@ sub get_date_range($) {
     my $query = qq{
         select min(start_date) start_date, max(end_date) end_date
         from   calcms_projects
-	};
+    };
     my $dbh = db::connect($config);
 
     my $projects = db::get($dbh, $query);
@@ -129,10 +129,10 @@ sub update($$) {
     push @bind_values, $entry->{project_id};
 
     my $query = qq{
-		update calcms_projects
-		set $values
-		where project_id=?
-	};
+        update calcms_projects
+        set $values
+        where project_id=?
+    };
     my $dbh = db::connect($config);
     db::put($dbh, $query, \@bind_values);
 }
@@ -154,10 +154,10 @@ sub get_studios($$) {
     my $project_id = $options->{project_id};
 
     my $query = qq{
-		select	*
-		from 	calcms_project_studios
-		where	project_id=?
-	};
+        select    *
+        from     calcms_project_studios
+        where    project_id=?
+    };
     my $dbh = db::connect($config);
     my $project_studios = db::get($dbh, $query, [$project_id]);
 
@@ -184,10 +184,10 @@ sub get_studio_assignments($$) {
     $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	*
-		from 	calcms_project_studios
-		$conditions
-	};
+        select    *
+        from     calcms_project_studios
+        $conditions
+    };
 
     my $dbh = db::connect($config);
     my $results = db::get($dbh, $query, \@bind_values);
@@ -207,10 +207,10 @@ sub is_studio_assigned ($$) {
     my $studio_id  = $entry->{studio_id};
 
     my $query = qq{
-		select	*
-		from 	calcms_project_studios
-		where	project_id=? and studio_id=?
-	};
+        select    *
+        from     calcms_project_studios
+        where    project_id=? and studio_id=?
+    };
     my $bind_values = [ $project_id, $studio_id ];
 
     my $dbh = db::connect($config);
@@ -265,10 +265,10 @@ sub get_series ($$) {
     my $studio_id  = $options->{studio_id};
 
     my $query = qq{
-		select	*
-		from 	calcms_project_series
-		where	project_id=? and studio_id=?
-	};
+        select    *
+        from     calcms_project_series
+        where    project_id=? and studio_id=?
+    };
     my $bind_values    = [ $project_id, $studio_id ];
     my $dbh            = db::connect($config);
     my $project_series = db::get($dbh, $query, $bind_values);
@@ -301,10 +301,10 @@ sub get_series_assignments ($$) {
     $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	*
-		from 	calcms_project_series
-		$conditions
-	};
+        select    *
+        from     calcms_project_series
+        $conditions
+    };
 
     my $dbh = db::connect($config);
     my $results = db::get($dbh, $query, \@bind_values);
@@ -325,10 +325,10 @@ sub is_series_assigned ($$) {
     my $series_id  = $entry->{series_id};
 
     my $query = qq{
-		select	*
-		from 	calcms_project_series
-		where	project_id=? and studio_id=? and series_id=?
-	};
+        select    *
+        from     calcms_project_series
+        where    project_id=? and studio_id=? and series_id=?
+    };
     my $bind_values = [ $project_id, $studio_id, $series_id ];
 
     my $dbh = db::connect($config);

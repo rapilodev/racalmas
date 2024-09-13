@@ -40,10 +40,10 @@ sub get ($$) {
     $conditions = " where " . join(" and ", @conditions) if scalar(@conditions) > 0;
 
     my $query = qq{
-		select *
-		from   calcms_user_selected_events
-		$conditions
-	};
+        select *
+        from   calcms_user_selected_events
+        $conditions
+    };
 
     my $dbh = db::connect($config);
     my $entries = db::get($dbh, $query, \@bind_values);
@@ -78,10 +78,10 @@ sub update($$) {
     my $conditions  = join (' and ', map { $_.'=?' } @$fields);
 
     my $query = qq{
-		update calcms_user_selected_events
-		set    $values
-		where  $conditions
-	};
+        update calcms_user_selected_events
+        set    $values
+        where  $conditions
+    };
 
     my $dbh = db::connect($config);
     return db::put($dbh, $query, \@bind_values);
@@ -95,10 +95,10 @@ sub delete ($$) {
     };
 
     my $query = qq{
-		delete
-		from calcms_user_selected_events
-		where user=? and project_id=? and studio_id=? and series_id=?
-	};
+        delete
+        from calcms_user_selected_events
+        where user=? and project_id=? and studio_id=? and series_id=?
+    };
     my $bind_values = [ $entry->{user}, $entry->{project_id}, $entry->{studio_id}, $entry->{series_id} ];
 
     my $dbh = db::connect($config);

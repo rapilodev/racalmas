@@ -92,21 +92,21 @@ sub get ($$) {
         push @conditions, 'ps.series_id=s.id';
         $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
         $query = qq{
-		    select	*
-		    from 	calcms_series s, calcms_project_series ps
-		    $conditions
-		    order by has_single_events desc, series_name, title
-	    };
+            select    *
+            from     calcms_series s, calcms_project_series ps
+            $conditions
+            order by has_single_events desc, series_name, title
+        };
     } else {
 
         # simple query
         $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
         $query = qq{
-		    select	*
-		    from 	calcms_series
-		    $conditions
-		    order by has_single_events desc, series_name, title
-	    };
+            select    *
+            from     calcms_series
+            $conditions
+            order by has_single_events desc, series_name, title
+        };
     }
 
     my $dbh = db::connect($config);
@@ -184,10 +184,10 @@ sub update ($$) {
     push @bind_values, $entry->{id};
 
     my $query = qq{
-		update calcms_series
-		set    $values
-		where  id=?
-	};
+        update calcms_series
+        set    $values
+        where  id=?
+    };
     my $dbh = db::connect($config);
     return db::put($dbh, $query, \@bind_values);
 }
@@ -217,16 +217,16 @@ sub delete($$) {
 
     #delete schedules
     $query = qq{
-		delete from calcms_series_schedule
-		where project_id=? and studio_id=? and series_id=?
-	};
+        delete from calcms_series_schedule
+        where project_id=? and studio_id=? and series_id=?
+    };
     db::put($dbh, $query, $bind_values);
 
     #delete series dates
     $query = qq{
-		delete from calcms_series_dates
-		where project_id=? and studio_id=? and series_id=?
-	};
+        delete from calcms_series_dates
+        where project_id=? and studio_id=? and series_id=?
+    };
     db::put($dbh, $query, $bind_values);
 
     #unassign users
@@ -242,9 +242,9 @@ sub delete($$) {
     #unassign events
     $bind_values = [ $project_id, $studio_id, $series_id ];
     $query = qq{
-		delete from calcms_series_events
-		where project_id=? and studio_id=? and series_id=?
-	};
+        delete from calcms_series_events
+        where project_id=? and studio_id=? and series_id=?
+    };
 
     db::put($dbh, $query, $bind_values);
 
@@ -271,9 +271,9 @@ sub delete($$) {
 
     $bind_values = [$series_id];
     $query       = qq{
-	    delete from calcms_series
-	    where  id=?
-	};
+        delete from calcms_series
+        where  id=?
+    };
 
     db::put($dbh, $query, $bind_values);
 }
@@ -309,11 +309,11 @@ sub get_users ($$) {
     $conditions = " and " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select u.id, u.name, u.full_name, u.email, us.modified_by, us.modified_at
-		from   calcms_users u, calcms_user_series us
-		where  us.user_id=u.id
-		$conditions
-	};
+        select u.id, u.name, u.full_name, u.email, us.modified_by, us.modified_at
+        from   calcms_users u, calcms_user_series us
+        where  us.user_id=u.id
+        $conditions
+    };
 
     my $dbh = db::connect($config);
     my $result = db::get($dbh, $query, \@bind_values);
@@ -330,10 +330,10 @@ sub add_user ($$) {
     };
 
     my $query = qq{
-		select	id
-		from	calcms_user_series
-		where 	project_id=? and studio_id=? and series_id=? and user_id=?
-	};
+        select    id
+        from    calcms_user_series
+        where     project_id=? and studio_id=? and series_id=? and user_id=?
+    };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{user_id} ];
 
     my $dbh = db::connect($config);
@@ -341,9 +341,9 @@ sub add_user ($$) {
     return unless scalar @$results == 0;
 
     $query = qq{
-		insert calcms_user_series
-		set    project_id=?, studio_id=?, series_id=?, user_id=?, modified_by=?, modified_at=now()
-	};
+        insert calcms_user_series
+        set    project_id=?, studio_id=?, series_id=?, user_id=?, modified_by=?, modified_at=now()
+    };
     $bind_values =
       [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{user_id}, $entry->{user} ];
     db::put($dbh, $query, $bind_values);
@@ -384,9 +384,9 @@ sub remove_user ($$) {
     $conditions = join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		delete from calcms_user_series
-		where  $conditions
-	};
+        delete from calcms_user_series
+        where  $conditions
+    };
     my $dbh = db::connect($config);
     db::put($dbh, $query, \@bind_values);
 }
@@ -501,9 +501,9 @@ sub get_events ($$) {
         inner join calcms_events e on se.event_id = e.id
         left  join calcms_audio_recordings ar on se.event_id=ar.event_id and ar.active=1
         $conditions
-		order by start_date desc
-		$limit
-	};
+        order by start_date desc
+        $limit
+    };
 
     my $dbh = db::connect($config);
     my $results = db::get($dbh, $query, \@bind_values);
@@ -768,12 +768,12 @@ sub get_images ($$) {
     }
 
     my $query = qq{
-		select	*
-		from 	calcms_images
-		$where
-		order by created_at desc
-		$limit
-	};
+        select    *
+        from     calcms_images
+        $where
+        order by created_at desc
+        $limit
+    };
 
     my $results = db::get($dbh, $query, $bind_values);
     return $results;
@@ -793,9 +793,9 @@ sub assign_event($$) {
     $conditions = 'and manual=1' if $entry->{manual} eq '1';
 
     my $query = qq{
-		select * from calcms_series_events
-		where project_id=? and studio_id=? and series_id=? and event_id=? $conditions
-	};
+        select * from calcms_series_events
+        where project_id=? and studio_id=? and series_id=? and event_id=? $conditions
+    };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id} ];
     my $dbh         = db::connect($config);
     my $results     = db::get($dbh, $query, $bind_values);
@@ -812,9 +812,9 @@ sub assign_event($$) {
     }
 
     $query = qq{
-		insert into calcms_series_events (project_id, studio_id, series_id, event_id, manual)
-		values (?,?,?,?,?)
-	};
+        insert into calcms_series_events (project_id, studio_id, series_id, event_id, manual)
+        values (?,?,?,?,?)
+    };
     $bind_values =
       [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id}, $entry->{manual} ];
 
@@ -833,10 +833,10 @@ sub unassign_event($$) {
     $conditions = 'and manual=1' if (defined $entry->{manual}) && ($entry->{manual} eq '1');
 
     my $query = qq{
-		delete from calcms_series_events
-		where project_id=? and studio_id=? and series_id=? and event_id=?
-		$conditions
-	};
+        delete from calcms_series_events
+        where project_id=? and studio_id=? and series_id=? and event_id=?
+        $conditions
+    };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id} ];
 
     my $dbh = db::connect($config);
@@ -863,10 +863,10 @@ sub add_series_ids_to_events ($$) {
     #query series ids
     my $dbh   = db::connect($config);
     my $query = qq{
-		select project_id, studio_id, series_id, event_id
-		from calcms_series_events
-		where event_id in ($event_ids)
-	};
+        select project_id, studio_id, series_id, event_id
+        from calcms_series_events
+        where event_id in ($event_ids)
+    };
     my $results = db::get($dbh, $query, \@bind_values);
     my @results = @$results;
     return [] unless scalar @results > 0;
@@ -907,9 +907,9 @@ sub set_event_ids ($$$$$) {
     #get series_entries from db
     #my $bind_names=join(',', (map { '?' } @$event_ids));
     my $query = qq{
-		select event_id from calcms_series_events
-		where project_id=? and studio_id=? and series_id=?
-	};
+        select event_id from calcms_series_events
+        where project_id=? and studio_id=? and series_id=?
+    };
     my $bind_values = [ $project_id, $studio_id, $serie_id ];
 
     my $dbh = db::connect($config);
@@ -1219,10 +1219,10 @@ sub update_recurring_event($$) {
     push @$bind_values, $event->{id};
 
     my $update_sql = qq{
-		update calcms_events
-		set 	recurrence=?, recurrence_count=?, rerun=?
-		where	id=?
-	};
+        update calcms_events
+        set     recurrence=?, recurrence_count=?, rerun=?
+        where    id=?
+    };
 
     my $dbh = db::connect($config);
     db::put($dbh, $update_sql, $bind_values);

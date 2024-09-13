@@ -35,10 +35,10 @@ sub get($$) {
     my $conditions = '';
     $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
     my $query = qq{
-		select *
-		from   calcms_help_texts
-		$conditions
-	};
+        select *
+        from   calcms_help_texts
+        $conditions
+    };
     my $entries = db::get($dbh, $query, \@bind_values);
     return $entries;
 }
@@ -68,15 +68,15 @@ sub update ($$) {
         push @bind_values, $entry->{$col};
     }
     my $query = qq{
-		update calcms_help_texts
-		set    $values
-		where
-		          `calcms_help_texts`.`project_id`=?
-		      and `calcms_help_texts`.`studio_id`=?
-		      and `calcms_help_texts`.`lang`=?
-		      and `calcms_help_texts`.`table`=?
-		      and `calcms_help_texts`.`column`=?
-	};
+        update calcms_help_texts
+        set    $values
+        where
+                  `calcms_help_texts`.`project_id`=?
+              and `calcms_help_texts`.`studio_id`=?
+              and `calcms_help_texts`.`lang`=?
+              and `calcms_help_texts`.`table`=?
+              and `calcms_help_texts`.`column`=?
+    };
     return db::put($dbh, $query, \@bind_values);
     print "done\n";
 }
@@ -89,10 +89,10 @@ sub delete($$) {
     }
     my $dbh = db::connect($config);
     my $query = qq{
-		delete
-		from calcms_help_texts
+        delete
+        from calcms_help_texts
         where  project_id=? and studio_id=? and lang=? and `calcms_help_texts`.`table`=? and `calcms_help_texts`.`column`=?
-	};
+    };
     my $bind_values = [];
     for my $col ('project_id', 'studio_id', 'lang', 'table', 'column') {
         push @$bind_values, $entry->{$col};

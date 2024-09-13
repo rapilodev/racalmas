@@ -80,10 +80,10 @@ sub save_content($$) {
 
     push @bind_values, $entry->{id};
     my $query = qq{
-		update calcms_events
-		set    $values
-		where  id=?
-	};
+        update calcms_events
+        set    $values
+        where  id=?
+    };
 
     my $dbh = db::connect($config);
     my $result = db::put($dbh, $query, \@bind_values);
@@ -99,10 +99,10 @@ sub set_episode{
     };
 
     my $query = qq{
-		update calcms_events
-		set    episode=?
-		where  id=?
-	};
+        update calcms_events
+        set    episode=?
+        where  id=?
+    };
     my $bind_values= [ $entry->{episode}, $entry->{id} ];
     my $dbh = db::connect($config);
     my $result = db::put($dbh, $query, $bind_values);
@@ -152,10 +152,10 @@ sub save_event_time($$) {
 
     my $update_columns = join(",\n", @update_columns);
     my $update_sql = qq{
-		update calcms_events
-		set 	$update_columns
-		where	id=?
-	};
+        update calcms_events
+        set     $update_columns
+        where    id=?
+    };
     push @$bind_values, $event->{id};
     db::put($dbh, $update_sql, $bind_values);
     return $event;
@@ -171,25 +171,25 @@ sub set_playout_status ($$) {
     my $dbh = db::connect($config);
     # check if event is assigned to project and studio
     my $sql = qq{
-		select  se.event_id event_id
-		from calcms_series_events se, calcms_events e
+        select  se.event_id event_id
+        from calcms_series_events se, calcms_events e
         where
             se.event_id=e.id
         and e.start=?
-		and se.project_id=?
-		and se.studio_id=?
-	};
+        and se.project_id=?
+        and se.studio_id=?
+    };
     my $bind_values = [ $entry->{start}, $entry->{project_id}, $entry->{studio_id} ];
 
     my $events = db::get($dbh, $sql, $bind_values);
     return undef if scalar(@$events) != 1;
     my $event_id = $events->[0]->{event_id};
     $sql = qq{
-		update  calcms_events
-		set 	playout=?
-		where	id=?
-		and     start=?
-	};
+        update  calcms_events
+        set     playout=?
+        where    id=?
+        and     start=?
+    };
     $bind_values = [ $entry->{playout}, $event_id, $entry->{start} ];
     my $result = db::put($dbh, $sql, $bind_values);
     EventError->throw(error => "Could not create event") unless defined $result;

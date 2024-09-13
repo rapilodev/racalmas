@@ -79,14 +79,14 @@ sub get_scheduled($$) {
     $order = $condition->{order} if (defined $condition->{order}) && ($condition->{order} ne '');
 
     my $query = qq{
-		select	  date(p.start) 	start_date
-				, date(p.end) 		end_date
-				, dayname(p.start) 	weekday
-				, p.start_date      day
-				, p.start
-				, p.end
-				, p.studio_id
-				, p.project_id
+        select      date(p.start)     start_date
+                , date(p.end)         end_date
+                , dayname(p.start)     weekday
+                , p.start_date      day
+                , p.start
+                , p.end
+                , p.studio_id
+                , p.project_id
                 , p.duration
                 , p.file
                 , p.errors
@@ -107,14 +107,14 @@ sub get_scheduled($$) {
                 , p.updated_at
                 , TIMESTAMPDIFF(SECOND,e.start,e.end) "event_duration"
         from    calcms_playout p, calcms_events e, calcms_series_events se
-		where   p.start=e.start
-		and     e.id=se.event_id
+        where   p.start=e.start
+        and     e.id=se.event_id
         and     p.studio_id=se.studio_id
         and     p.project_id=se.project_id
-		$conditions
-		order by $order
+        $conditions
+        order by $order
         $limit
-	};
+    };
 
     my $entries = db::get($dbh, $query, \@bind_values);
     return $entries;
@@ -184,14 +184,14 @@ sub get($$) {
     $order = $condition->{order} if (defined $condition->{order}) && ($condition->{order} ne '');
 
     my $query = qq{
-		select	 date(start) 		start_date
-				,date(end) 			end_date
-				,dayname(start) 	weekday
-				,start_date         day
-				,start
-				,end
-				,studio_id
-				,project_id
+        select     date(start)         start_date
+                ,date(end)             end_date
+                ,dayname(start)     weekday
+                ,start_date         day
+                ,start
+                ,end
+                ,studio_id
+                ,project_id
                 ,duration
                 ,file
                 ,errors
@@ -210,11 +210,11 @@ sub get($$) {
                 ,rms_image
                 ,modified_at
                 ,updated_at
-		from 	calcms_playout
-		$conditions
-		order by $order
+        from     calcms_playout
+        $conditions
+        order by $order
         $limit
-	};
+    };
 
     my $entries = db::get($dbh, $query, \@bind_values);
     return $entries;
@@ -243,14 +243,14 @@ sub sync ($$) {
     my $bind_values = [ $options->{project_id}, $options->{studio_id}, $options->{from}, $options->{till} ];
 
     my $query = qq{
-		select  *
-		from 	calcms_playout
-		where   project_id=?
-		        and studio_id=?
-		        and start >=?
-		        and end <= ?
-		order by start
-	};
+        select  *
+        from     calcms_playout
+        where   project_id=?
+                and studio_id=?
+                and start >=?
+                and end <= ?
+        order by start
+    };
     print STDERR "from:$options->{from} till:$options->{till}\n";
     my $dbh = db::connect($config);
     my $entries = db::get($dbh, $query, $bind_values);
@@ -425,10 +425,10 @@ sub delete($$$) {
         ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     }
     my $query = qq{
-		delete
-		from calcms_playout
-		where project_id=? and studio_id=? and start=?
-	};
+        delete
+        from calcms_playout
+        where project_id=? and studio_id=? and start=?
+    };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{start} ];
     return db::put($dbh, $query, $bind_values);
 }

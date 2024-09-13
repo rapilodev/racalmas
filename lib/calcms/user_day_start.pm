@@ -36,10 +36,10 @@ sub get ($$) {
     $conditions = " where " . join(" and ", @conditions) if scalar(@conditions) > 0;
 
     my $query = qq{
-		select *
-		from   calcms_user_day_start
-		$conditions
-	};
+        select *
+        from   calcms_user_day_start
+        $conditions
+    };
 
     my $dbh = db::connect($config);
     my $entries = db::get($dbh, $query, \@bind_values);
@@ -80,10 +80,10 @@ sub update($$) {
     my $conditions  = join (' and ', map { $_.'=?' } @$fields);
 
     my $query = qq{
-		update calcms_user_day_start
-		set    $values
-		where  $conditions
-	};
+        update calcms_user_day_start
+        set    $values
+        where  $conditions
+    };
 
     my $dbh = db::connect($config);
     return db::put($dbh, $query, \@bind_values);
@@ -97,10 +97,10 @@ sub delete ($$) {
     };
 
     my $query = qq{
-		delete
-		from calcms_user_day_start
-		where user=? and project_id=? and studio_id=?
-	};
+        delete
+        from calcms_user_day_start
+        where user=? and project_id=? and studio_id=?
+    };
     my $bind_values = [ $entry->{user}, $entry->{project_id}, $entry->{studio_id} ];
 
     my $dbh = db::connect($config);

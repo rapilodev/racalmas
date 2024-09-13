@@ -88,23 +88,23 @@ sub get ($$) {
     $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	 date(start) 		start_date
-				,date(end) 			end_date
-				,dayname(start) 	weekday
-				,start_date         day
-				,start
-				,end
-				,schedule_id
-				,studio_id
-				,project_id
-				,exclude
+        select     date(start)         start_date
+                ,date(end)             end_date
+                ,dayname(start)     weekday
+                ,start_date         day
+                ,start
+                ,end
+                ,schedule_id
+                ,studio_id
+                ,project_id
+                ,exclude
                 ,type
                 ,title
 
-		from 	calcms_work_dates
-		$conditions
-		order by start
-	};
+        from     calcms_work_dates
+        $conditions
+        order by start
+    };
 
     my $entries = db::get($dbh, $query, \@bind_values);
     for my $entry (@$entries) {
@@ -340,10 +340,10 @@ sub delete($$) {
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete
-		from calcms_work_dates
-		where project_id=? and studio_id=? and schedule_id=?
-	};
+        delete
+        from calcms_work_dates
+        where project_id=? and studio_id=? and schedule_id=?
+    };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{schedule_id} ];
     return db::put($dbh, $query, $bind_values);
 }

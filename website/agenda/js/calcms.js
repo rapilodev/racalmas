@@ -23,18 +23,18 @@ var calcms = (function($) {
     }
 
     my.show = function (elem) {
-	    elem.style.display = 'block';
+        elem.style.display = 'block';
     };
 
     my.hide = function (elem) {
-	    elem.style.display = 'none';
+        elem.style.display = 'none';
     };
 
     my.toggle = function (elem) {
-	    if (window.getComputedStyle(elem).display === 'block') {
-		    my.hide(elem);
-	    }else{
-    	    my.show(elem);
+        if (window.getComputedStyle(elem).display === 'block') {
+            my.hide(elem);
+        }else{
+            my.show(elem);
         }
     };
 

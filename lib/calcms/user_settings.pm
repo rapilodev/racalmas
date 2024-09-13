@@ -153,10 +153,10 @@ sub get ($$) {
     $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select *
-		from   calcms_user_settings
-		$conditions
-	};
+        select *
+        from   calcms_user_settings
+        $conditions
+    };
 
     my $entries = db::get($dbh, $query, \@bind_values);
     return $entries->[0] || undef;
@@ -187,10 +187,10 @@ sub update($$) {
     push @bind_values, $entry->{user};
 
     my $query = qq{
-		update calcms_user_settings
-		set    $values
-		where  user=?
-	};
+        update calcms_user_settings
+        set    $values
+        where  user=?
+    };
 
     db::put($dbh, $query, \@bind_values);
 }
@@ -205,10 +205,10 @@ sub delete ($$) {
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete
-		from calcms_user_settings
-		where user=?
-	};
+        delete
+        from calcms_user_settings
+        where user=?
+    };
     my $bind_values = [ $entry->{user} ];
 
     db::put($dbh, $query, $bind_values);

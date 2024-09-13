@@ -68,11 +68,11 @@ sub get($$) {
     $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select *
-		from   calcms_work_schedule
-		$conditions
-		order  by exclude, start
-	};
+        select *
+        from   calcms_work_schedule
+        $conditions
+        order  by exclude, start
+    };
 
     my $entries = db::get($dbh, $query, \@bind_values);
     return $entries;
@@ -106,10 +106,10 @@ sub update ($$) {
     push @bind_values, $entry->{schedule_id};
 
     my $query = qq{
-		update calcms_work_schedule
-		set    $values
-		where  project_id=? and studio_id=? and schedule_id=?
-	};
+        update calcms_work_schedule
+        set    $values
+        where  project_id=? and studio_id=? and schedule_id=?
+    };
     return db::put($dbh, $query, \@bind_values);
 }
 
@@ -124,10 +124,10 @@ sub delete($$) {
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete
-		from calcms_work_schedule
-		where project_id=? and studio_id=? and schedule_id=?
-	};
+        delete
+        from calcms_work_schedule
+        where project_id=? and studio_id=? and schedule_id=?
+    };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{schedule_id} ];
 
     return db::put($dbh, $query, $bind_values);

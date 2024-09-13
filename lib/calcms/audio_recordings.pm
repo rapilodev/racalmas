@@ -67,26 +67,26 @@ sub get($$) {
     $whereClause = " where " . join(" and ", @$conditions) if (scalar @$conditions > 0);
 
     my $query = qq{
-		select	id
-		        ,project_id
-				,studio_id
-				,event_id
-				,active
-				,path
-				,size
-				,created_by
-				,created_at
-				,modified_at
-				,mastered
-				,processed
-				,audioDuration
-				,eventDuration
-				,rmsLeft
-				,rmsRight
-		from 	calcms_audio_recordings
-		$whereClause
-		order by created_at desc
-	};
+        select    id
+                ,project_id
+                ,studio_id
+                ,event_id
+                ,active
+                ,path
+                ,size
+                ,created_by
+                ,created_at
+                ,modified_at
+                ,mastered
+                ,processed
+                ,audioDuration
+                ,eventDuration
+                ,rmsLeft
+                ,rmsRight
+        from     calcms_audio_recordings
+        $whereClause
+        order by created_at desc
+    };
     my $entries = db::get($dbh, $query, $bind_values);
     return $entries;
 }
@@ -198,10 +198,10 @@ sub delete ($$) {
 
     my $dbh = db::connect($config);
     my $query = qq{
-		delete
-		from calcms_audio_recordings
-		where project_id=? and studio_id=? and event_id=? and path=?
-	};
+        delete
+        from calcms_audio_recordings
+        where project_id=? and studio_id=? and event_id=? and path=?
+    };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{event_id}, $entry->{path} ];
     my $result =  db::put($dbh, $query, $bind_values);
 

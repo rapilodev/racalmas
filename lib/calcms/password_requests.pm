@@ -42,10 +42,10 @@ sub get ($$) {
 
     my $conditions = " where " . join(" and ", @conditions);
     my $query = qq{
-		select *
-		from   calcms_password_requests
-		$conditions
-	};
+        select *
+        from   calcms_password_requests
+        $conditions
+    };
 
     my $entries = db::get($dbh, $query, \@bind_values);
     return $entries->[0] || undef;
@@ -63,10 +63,10 @@ sub update($$) {
     push @bind_values, $entry->{token};
 
     my $query = qq{
-		update calcms_password_requests
-		set    $values
-		where  token=?
-	};
+        update calcms_password_requests
+        set    $values
+        where  token=?
+    };
     db::put($dbh, $query, \@bind_values);
 }
 
@@ -101,10 +101,10 @@ sub delete ($$) {
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete
-		from calcms_password_requests
+        delete
+        from calcms_password_requests
         $conditions
-	};
+    };
 
     db::put($dbh, $query, \@bind_values);
 }
