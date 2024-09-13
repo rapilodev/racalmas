@@ -56,12 +56,12 @@ sub connect($;$) {
     return $dbh;
 }
 
-# get all database entries of an sql query(as list of hashs)
+# get all database entries of an sql query (as list of hashs)
 state $sths = {};
 sub get($$;$) {
     my ($dbh, $sql, $bind_values) = @_;
 
-    my $sth = $sths->{$sql} //($sths->{$sql}=$dbh->prepare($sql));
+    my $sth = $sths->{$sql} // ($sths->{$sql}=$dbh->prepare($sql));
     if (ref($bind_values) eq 'ARRAY') {
         $sth->execute(@$bind_values)
             or DatabaseError->throw(error => "db: $DBI::errstr $sql");
@@ -82,7 +82,7 @@ sub get_columns($$) {
             order by ordinal_position
         },
         [$database, $table]
-   );
+    );
     return [ map { values %$_ } @$columns ];
 }
 
@@ -94,7 +94,7 @@ sub get_columns_hash($$) {
 }
 
 #returns last inserted id
-sub insert($$$){
+sub insert ($$$){
     my ($dbh, $table, $entry) =@_;
 
     my @keys = sort keys %$entry;
@@ -102,14 +102,14 @@ sub insert($$$){
     my $values = join(",", map { '?' } @keys);
     my @bind_values = map { $entry->{$_} } @keys;
 
-    my $sql = "insert into `$table` \n($keys) \n values($values);\n";
+    my $sql = "insert into `$table` \n ($keys) \n values ($values);\n";
     put($dbh, $sql, \@bind_values);
     my $result = get($dbh, 'SELECT LAST_INSERT_ID() id;');
     return $result->[0]->{id} if $result->[0]->{id} > 0;
     return undef;
 }
 
-# execute a modifying database command(update,insert,...)
+# execute a modifying database command (update,insert,...)
 sub put($$$) {
     my ($dbh, $sql, $bind_values) =@_;
 
@@ -157,7 +157,7 @@ sub shift_datetime_by_minutes($$$) {
 }
 
 # get next free id of a database table
-sub next_id($$){
+sub next_id ($$){
     my ($dbh, $table) = @_;
 
     my $query = qq{

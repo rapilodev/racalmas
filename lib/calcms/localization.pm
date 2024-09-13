@@ -46,7 +46,7 @@ sub get($$) {
     $files =~ s/[^a-zA-Z\,\_\-]//g;
 
     #get all comma separated po files
-    for my $file(split /\,/, $files) {
+    for my $file (split /\,/, $files) {
         my $po_file = $config->{locations}->{admin_pot_dir} . '/' . $language . '/' . $file . '.po';
         $loc = read_po_file($po_file, $loc);
     }
@@ -87,12 +87,12 @@ sub read_po_file($$) {
     return $loc;
 }
 
-sub getJavascript($){
+sub getJavascript ($){
     my ($loc) = @_;
 
     my $out = '<script>';
     $out .= "var loc={};\n";
-    for my $key(sort keys %$loc) {
+    for my $key (sort keys %$loc) {
         $out .= qq{loc['$key']='$loc->{$key}';} . "\n";
     }
     $out .= "</script>\n";

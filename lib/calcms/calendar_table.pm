@@ -345,9 +345,9 @@ sub find_errors {
 sub getTime {
     my ($time) = @_;
     if ($time =~ /^(\d\d)\:(\d\d)/) {
-        return($1, $2);
+        return ($1, $2);
     }
-    return(-1, -1);
+    return (-1, -1);
 }
 
 sub showEventList {

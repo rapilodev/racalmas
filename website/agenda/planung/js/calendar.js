@@ -11,13 +11,13 @@ function openNewTab(url){
 function selectCheckbox(selector){
     $(selector).each(function(){
         $(this).prop('checked', 'checked');
-    })
+    })   
 }
 
 function unselectCheckbox(selector){
     $(selector).each(function(){
         $(this).removeProp('checked');
-    })
+    })   
 }
 
 function isChecked(selector){
@@ -44,13 +44,13 @@ function setupMenuHeight(){
         $('#calendar_weekdays').css("top", top);
 
         var weekday_height=30;
-        weekdays.querySelectorAll("table td div").forEach(
+        weekdays.querySelectorAll("table td div").forEach( 
             function(div) {
                 var height = div.offsetHeight + 14;
                 if (height>weekday_height) weekday_height=height;
-            }
+            } 
         );
-
+        
         top+=weekday_height+1-10;
         $('#calendar').css("top", top);
         return top;
@@ -84,12 +84,12 @@ function resizeCalendarMenu(){
     $('#calendar table').css('width', width-20);
     $('#calendar_weekdays table').css('width', width-20);
     $('#calendar table').css('height', height);
-
+    
     //set spacing between table columns
     var columnSpacing=Math.round($(window).width()/72);
     if(columnSpacing<0) columnSpacing=0;
     columnSpacing=Math.ceil(columnSpacing);
-
+    
     $('div.week').css('width',       columnSpacing);
     $('div.week').css('margin-left',-columnSpacing);
 
@@ -106,7 +106,7 @@ function resizeCalendarMenu(){
     var with_param='width';
     var cw=cell_width.toFixed();
     menuHeight = setupMenuHeight();
-
+    
     $('#calendar').show();
     $('#calendar_weekdays').css("visibility","visible");
 }
@@ -134,7 +134,7 @@ function setSelectedOptions(){
             var value=$(this).attr('value');
             if (value==null) return;
             $(this).children().each(
-                function(){
+        function(){
                     if ($(this).attr('value')==value){
                         $(this).attr('selected','selected');
                     }
@@ -142,7 +142,7 @@ function setSelectedOptions(){
             );
         }
     );
-}
+                }
 
 function updateUrls(url){
     if(url==null){
@@ -366,7 +366,7 @@ function show_not_assigned_to_series_dialog(){
         buttons : {
             Cancel : function() { $(this).closest('div#dialog').remove(); }        }
     });
-}
+        }
 
 function show_schedule_series_dialog(project_id, studio_id, series_id, start_date){
     jQuery.getJSON(
@@ -388,7 +388,7 @@ function show_schedule_series_dialog(project_id, studio_id, series_id, start_dat
             if (serie['has_single_events'] == '1') name = loc['single_events'];
             if (title != '') title = ' - ' + title;
             html += '<option value="' + id + '" duration="' + duration + '">' + name + title + '</option>' + "\n";
-        }
+}
         html+= '</select></td></tr>';
         html+= '<tr>';
         html+= '    <td>' + loc["label_date"] + "</td>";
@@ -444,7 +444,7 @@ function setDatePicker(){
 function getUrl(name,value){
     var url=window.location.href;
     url=updateUrlParameters(url);
-    if((name!=null)&&(value!=null)){
+    if((name!=null)&& (value!=null)){
         url=setUrlParameter(url, name, value);
     }
     return url;
@@ -527,7 +527,7 @@ function createId(prefix) {
   }
   return prefix+'_'+s4() + s4();
 }
-
+            
 function showRmsPlot(id, project_id, studio_id, start, elem){
     showDialog({
         width:940,
@@ -537,7 +537,7 @@ function showRmsPlot(id, project_id, studio_id, start, elem){
             Close : function() { $(this).closest('div#dialog').remove(); }
         },
         onOpen: function () { $(this).scrollTop(0); }
-    });
+                });
     return false;
 }
 
@@ -576,7 +576,7 @@ function initRmsPlot(){
                      event.stopImmediatePropagation();
                      showRmsPlot( id , project_id , studio_id , start, $(this) );
                 });
-            }
+}
 
             if ( (!$(this).hasClass("rms_image")) && (plot!=null)){
                 $(this).addClass("rms_image");
@@ -658,7 +658,7 @@ function getMouseOverText(elem){
 }
 
 function updateTable(){
-
+    
     $('#previous_month').off();
     $('#previous_month').on('mouseup', function(event){
         var url=getUrl('date', previous_date);
@@ -780,7 +780,7 @@ function updateTable(){
         handleWorktime($(this).attr("id"), event);
     });
 
-
+    
     //add tooltips
     $('#calendar > table > tbody > tr > td > div').mouseover( function(){
         var text = getMouseOverText($(this));
@@ -848,7 +848,7 @@ function handleEvent(id, event){
     var url="broadcast.cgi?action=edit&project_id="+project_id+"&studio_id="+studio_id+"&series_id="+series_id+"&event_id="+event_id;
     if(event.which==1){
         loadUrl(url);
-    }
+}
     if(event.which==2){
         openNewTab(url);
     }
@@ -867,7 +867,7 @@ function handleUnassignedEvent(id){
     if (studio_id<0)    return;
     if (event_id<0)     return;
     $('#assign_series_events input[name="event_id"]').attr('value',event_id);
-
+    
     show_not_assigned_to_series_dialog();
 }
 
@@ -927,7 +927,6 @@ function handleGrid(id){
     var studio_id   =field.shift();
     var series_id   =field.shift();//to be selected
 
-    if(checkStudio()==0)return;
     if (project_id<0)   return;
     if (studio_id<0)    return;
 

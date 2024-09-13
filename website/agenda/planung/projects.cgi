@@ -54,19 +54,19 @@ sub delete_project {
     my $columns = project::get_columns($config);
 
     my $entry = {};
-    for my $param ( keys %$params ) {
-        if ( exists $columns->{$param} ) {
+    for my $param (keys %$params) {
+        if (exists $columns->{$param}) {
             $entry->{$param} = $params->{$param} || '';
         }
     }
 
     my $project_id = $params->{pid} || '';
 
-    if ( $project_id ne '' ) {
-        $config->{access}->{write} = 1;
+    if ($project_id ne '') {
+        local $config->{access}->{write} = 1;
         $entry->{project_id} = $project_id;
         delete $entry->{studio_id};
-        project::delete( $config, $entry );
+        project::delete($config, $entry);
         uac::print_info("Project deleted");
     }
 }
@@ -80,8 +80,8 @@ sub save_project {
     #filter entry for studio columns
     my $columns = project::get_columns($config);
     my $entry   = {};
-    for my $param ( keys %$params ) {
-        if ( exists $columns->{$param} ) {
+    for my $param (keys %$params) {
+        if (exists $columns->{$param}) {
             $entry->{$param} = $params->{$param} || '';
         }
     }
@@ -90,13 +90,12 @@ sub save_project {
     if ( $project_id ne '' ) {
         unless ( $permissions->{update_project} == 1 ) {
             PermissionError->throw(error=>'Missing permission to update_project');
-        }
+}
         $entry->{project_id} = $project_id;
         delete $entry->{studio_id};
 
-        $config->{access}->{write} = 1;
-        project::update( $config, $entry );
-        $config->{access}->{write} = 0;
+        local $config->{access}->{write} = 1;
+        project::update($config, $entry);
         uac::print_info("project saved");
     } else {
         unless ( $permissions->{create_project} == 1 ) {
@@ -105,13 +104,12 @@ sub save_project {
         my $projects = project::get( $config, { name => $entry->{name} } );
         if ( scalar @$projects > 0 ) {
             ExistError->throw(error=> "project with name '$entry->{name}' already exists");
-        }
+    }
         delete $entry->{project_id};
         delete $entry->{studio_id};
 
-        $config->{access}->{write} = 1;
-        project::insert( $config, $entry );
-        $config->{access}->{write} = 0;
+        local $config->{access}->{write} = 1;
+        project::insert($config, $entry);
         uac::print_info("project created");
     }
 }
@@ -123,7 +121,7 @@ sub assign_studio {
     my $permissions = $request->{permissions};
     unless ( $permissions->{assign_project_studio} == 1 ) {
         PermissionError->throw(error=>'Missing permission to assign_project_studio');
-    }
+        }
 
     for my $param ( 'pid', 'sid' ) {
         unless ( defined $params->{$param} ) {
@@ -139,7 +137,6 @@ sub assign_studio {
             studio_id  => $params->{sid}
         }
     );
-    $config->{access}->{write} = 0;
     uac::print_info("project assigned");
 
 }
@@ -160,7 +157,7 @@ sub unassign_studio {
             return;
         }
     }
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     project::unassign_studio(
         $config,
         {
@@ -168,7 +165,6 @@ sub unassign_studio {
             studio_id  => $params->{sid}
         }
     );
-    $config->{access}->{write} = 0;
     uac::print_info("project unassigned");
 
 }
@@ -179,7 +175,7 @@ sub show_projects {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    unless ( $permissions->{read_project} == 1 ) {
+    unless ($permissions->{read_project} == 1 ) {
         PermissionError->throw(error=>'Missing permission to read_project');
     }
 
@@ -192,7 +188,7 @@ sub show_projects {
 
         # get assigned studios
         my $project_studio_assignements =
-          project::get_studio_assignments( $config, { project_id => $project->{project_id} } );
+          project::get_studio_assignments($config, { project_id => $project->{project_id} });
         $project->{pid} = $project->{project_id};
 
         # get assigned studios by id
@@ -204,7 +200,7 @@ sub show_projects {
             $studio        = \%studio;
             $studio->{pid} = $project->{pid};
             $studio->{sid} = $studio->{id};
-            if ( defined $assigned_studio_by_id->{ $studio->{id} } ) {
+            if (defined $assigned_studio_by_id->{ $studio->{id} }) {
                 push @$assigned_studios, $studio;
             } else {
                 push @$unassigned_studios, $studio;
@@ -213,14 +209,14 @@ sub show_projects {
         $project->{assigned_studios}   = $assigned_studios;
         $project->{unassigned_studios} = $unassigned_studios;
 
-        if ( ( defined $params->{setImage} ) && ( $project->{pid} eq $params->{pid} ) ) {
+        if ((defined $params->{setImage}) && ($project->{pid} eq $params->{pid})) {
             $project->{image} = $params->{setImage};
         }
     }
 
     $params->{projects} = $projects;
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'projects' } );
-    uac::set_template_permissions( $permissions, $params );
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'projects' });
+    uac::set_template_permissions($permissions, $params);
 
     return template::process( $config, $params->{template}, $params );
 }
@@ -231,19 +227,19 @@ sub check_params {
 
     #template
     my $template = '';
-    $template = template::check( $config, $params->{template}, 'projects' );
+    $template = template::check($config, $params->{template}, 'projects');
     $checked->{template} = $template;
 
     $checked->{action} = entry::element_of($params->{action},
-        ['save', 'delete', 'assign_studio', 'unassign_studio'] );
+        ['save', 'delete', 'assign_studio', 'unassign_studio']);
 
-    entry::set_strings( $checked, $params, [
+    entry::set_strings($checked, $params, [
         'name', 'title', 'subtitle', 'start_date', 'end_date', 'image', 'email', 'setImage' ]);
 
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'project_id', 'studio_id', 'default_studio_id', 'pid', 'sid']);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;

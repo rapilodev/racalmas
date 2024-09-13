@@ -95,7 +95,7 @@ sub showCalendar {
     }
 
     #get range from user settings
-    my $user_settings = user_settings::get( $config, { user => $params->{presets}->{user} } );
+    my $user_settings = user_settings::get($config, { user => $params->{presets}->{user} });
     $params->{range} = $user_settings->{range} unless defined $params->{range};
     $params->{range} = 28 unless defined $params->{range};
 
@@ -160,7 +160,7 @@ sub getToolbar {
 
     my $toolbar = '<div id="toolbar">';
 
-    $toolbar .= addCalendarButton( $params, $calendar );
+    $toolbar .= addCalendarButton($params, $calendar);
     $toolbar .= qq{<button id="setToday">} . $params->{loc}->{button_today} . qq{</button>};
 
     #ranges
@@ -180,8 +180,7 @@ sub getToolbar {
         $params->{loc}->{label_month},   $params->{loc}->{label_4_weeks},
         $params->{loc}->{label_2_weeks}, $params->{loc}->{label_1_week},
         $params->{loc}->{label_day}
-      )
-    {
+    ) {
         my $value = $ranges->{$range} || '';
         $toolbar .= qq{<option name="$range" value="$value">} . $range . '</option>';
     }
@@ -194,10 +193,10 @@ sub getToolbar {
     $toolbar .= qq{
         <select id="day_start" name="day_start" onchange="updateDayStart();reloadCalendar()" value="$day_start">
     };
-    for my $hour ( 0 .. 24 ) {
+    for my $hour (0 .. 24) {
         my $selected = '';
         $selected = 'selected="selected"' if $hour eq $day_start;
-        $toolbar .= qq{<option value="$hour">} . sprintf( "%02d:00", $hour ) . '</option>';
+        $toolbar .= qq{<option value="$hour">} . sprintf("%02d:00", $hour) . '</option>';
     }
     $toolbar .= q{
         </select>
@@ -211,10 +210,8 @@ sub getToolbar {
 
     for my $filter (
         'no markup', 'conflicts', 'rerun', 'archived',
-        'playout',   'published', 'live',
-        'draft'
-      )
-    {
+        'playout',   'published', 'live',  'draft'
+    ) {
         my $key = $filter;
         $key =~ s/ /_/g;
 
@@ -258,12 +255,12 @@ sub check_params {
 
     my $checked = {user => $config->{user}};
     my $template = '';
-    $checked->{template} = template::check( $config, $params->{template}, 'series' );
+    $checked->{template} = template::check($config, $params->{template}, 'series');
 
     #numeric values
     $checked->{list}     = 0;
     $checked->{open_end} = 1;
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'id',      'project_id', 'studio_id', 'default_studio_id',
         'user_id', 'series_id',  'event_id',
         'list',    'day_start',  'open_end'
@@ -276,16 +273,16 @@ sub check_params {
             studio_id  => $checked->{studio_id}
         });
         $checked->{day_start} = $start->{day_start} if $start;
-    }
+        }
     $checked->{day_start} = $config->{date}->{day_starting_hour}
       unless defined $checked->{day_start};
     $checked->{day_start} %= 24;
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
 
         # a studio is selected, use the studio from parameter
         $checked->{default_studio_id} = $checked->{studio_id};
-    } elsif ( ( defined $params->{studio_id} ) && ( $params->{studio_id} eq '-1' ) ) {
+    } elsif ((defined $params->{studio_id}) && ($params->{studio_id} eq '-1')) {
 
         # all studios selected, use -1
         $checked->{studio_id} = -1;
@@ -296,23 +293,24 @@ sub check_params {
     }
 
     for my $param ('expires') {
-        $checked->{$param} = time::check_datetime( $params->{$param} );
+        $checked->{$param} = time::check_datetime($params->{$param});
     }
 
     #scalars
     $checked->{search} = '';
     $checked->{filter} = '';
-    for my $param ( 'date', 'from_date', 'till_date' ) {
-        $checked->{$param} = time::check_date( $params->{$param} );
+
+    for my $param ('date', 'from_date', 'till_date') {
+        $checked->{$param} = time::check_date($params->{$param});
     }
 
-    entry::set_strings( $checked, $params, [
+    entry::set_strings($checked, $params, [
         'search', 'filter', 'range',
         'series_name', 'title',    'excerpt', 'content',
         'program',     'image',   'user_content'
       ]);
 
-    $checked->{action} = entry::element_of( $params->{action},
+    $checked->{action} = entry::element_of($params->{action},
         [ 'add_user', 'remove_user', 'delete', 'save', 'details', 'show', 'edit_event', 'save_event' ]
     );
 

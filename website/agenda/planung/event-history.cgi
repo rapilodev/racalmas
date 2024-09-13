@@ -67,25 +67,26 @@ sub show_history {
     my $permissions = $request->{permissions};
     for my $attr ('studio_id') {    # 'series_id','event_id'
         ParamError->throw(error=> "missing " . $attr . " to show changes" ) unless defined $params->{$attr};
-    }
+        }
     PermissionError->throw(error=>"missing permissions to show changes") unless $permissions->{read_event} == 1;
 
     my $options = {
         project_id => $params->{project_id},
         studio_id  => $params->{studio_id},
         limit      => 200
-    };
+};
     $options->{series_id} = $params->{series_id} if defined $params->{series_id};
     $options->{event_id}  = $params->{event_id}  if defined $params->{event_id};
 
-    my $events = event_history::get( $config, $options );
+    my $events = event_history::get($config, $options);
+
     return unless defined $events;
     $params->{events} = $events;
 
-    for my $permission ( keys %{$permissions} ) {
+    for my $permission (keys %{$permissions}) {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event-history' } );
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'event-history' });
 
     return template::process( $config, template::check( $config, 'event-history' ), $params );
 }
@@ -116,12 +117,12 @@ sub compare {
         limit      => 2
     };
 
-    my $events = event_history::get( $config, $options );
+    my $events = event_history::get($config, $options);
     return unless @$events == 1;
     my $v1 = $events->[0];
 
     $options->{change_id} = $params->{v2};
-    $events = event_history::get( $config, $options );
+    $events = event_history::get($config, $options);
     return unless @$events == 1;
     my $v2 = $events->[0];
 
@@ -209,14 +210,14 @@ sub check_params {
 
     my $checked  = {};
     my $template = '';
-    $checked->{template} = template::check( $config, $params->{template}, 'event-history' );
+    $checked->{template} = template::check($config, $params->{template}, 'event-history');
 
     #numeric values
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'event_id', 'v1', 'v2'
     ]);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;

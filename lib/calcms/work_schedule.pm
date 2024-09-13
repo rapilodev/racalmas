@@ -9,12 +9,12 @@ use series_dates();
 
 # table:   calcms_work_schedule
 # columns: id, studio_id, series_id,
-# start(datetime),
-# duration(minutes),
-# frequency(days),
-# end(date),
-# weekday(1..7)
-# week_of_month(1..5)
+# start (datetime),
+# duration (minutes),
+# frequency (days),
+# end (date),
+# weekday (1..7)
+# week_of_month (1..5)
 # month
 
 our @EXPORT_OK = qw(get_columns get insert update delete);
@@ -78,7 +78,7 @@ sub get($$) {
     return $entries;
 }
 
-sub insert($$) {
+sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'start') {
@@ -89,7 +89,7 @@ sub insert($$) {
 }
 
 #schedule id to id
-sub update($$) {
+sub update ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'schedule_id', 'start') {

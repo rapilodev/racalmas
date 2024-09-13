@@ -216,7 +216,7 @@ function checkFields() {
     $('textarea[name="excerpt"]').on("keyup", function() {
         checkExcerptField();
     });
-}
+    }
 
 async function addUser(form) {
     let response = await fetch("series.cgi?", {
@@ -277,7 +277,6 @@ function commitDeleteSeries(project_id, studio_id, series_id) {
         async function(){
             let response = await fetch("series.cgi?", {
                 method: 'POST',
-                cache: "no-store",
                 body: new URLSearchParams({
                     action: "delete_series",
                     project_id: project_id,

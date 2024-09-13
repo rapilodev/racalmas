@@ -38,7 +38,7 @@ sub crypt_password($) {
         cost        => 8,
         salt_random => 1,
         passphrase  => $password
-   );
+    );
     return {
         salt  => $ppr->salt_base64,
         crypt => $ppr->as_crypt
@@ -66,10 +66,10 @@ sub logout($) {
 sub create_cookie($$) {
     my ($session_id, $timeout) = @_;
     my $cookie = CGI::Cookie->new(
-        -name     => 'sessionID',
-        -value    => $session_id,
-        -expires  => $timeout,
-        -secure   => 1,
+        -name    => 'sessionID',
+        -value   => $session_id,
+        -expires => $timeout,
+        -secure  => 1,
         -samesite => "Lax"
    );
     return CGI::Simple->new()->header(-cookie => $cookie);
@@ -96,7 +96,7 @@ sub delete_cookie() {
 
 # read and write server-side session data
 # timeout is in seconds
-sub create_session($$$) {
+sub create_session ($$$) {
     my ($config, $user, $timeout) = @_;
     return user_sessions::start(
         $config,
@@ -104,7 +104,7 @@ sub create_session($$$) {
             user    => $user,
             timeout => $timeout,
         }
-   );
+    );
 }
 
 sub read_session($$) {
@@ -150,13 +150,13 @@ sub authenticate($$$) {
     return $timeout;
 }
 
-sub show_login_form($$$) {
+sub show_login_form ($$$) {
     my ($config, $user, $message) = @_;
     my $loc = localization::get($config, { user => $user, file => 'login' });
     my $uri = params::get_uri() // '';
     $uri =~ s/_=\d+//;
     my $requestReset = '';
-    if ($user and $message) {
+    if ($user && $message) {
         $requestReset = qq{
             <a href="request-password.cgi?user=$user">$loc->{password_lost}</a>
         };
@@ -240,7 +240,7 @@ Content-type:text/html
         padding:1rem;
         margin:-1rem;
         margin-bottom:0;
-	}
+    }
     input.button,
     button.button{
         padding:1rem;

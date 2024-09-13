@@ -64,11 +64,11 @@ sub check_params {
     my ($config, $params) = @_;
     my $checked = {};
 
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'id', 'project_id', 'studio_id', 'day_start'
     ]);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;

@@ -215,13 +215,13 @@
                         <input name="end_date" value="<TMPL_VAR end_date>" class="datetimepicker end_date"/>
                     </div>
 
-                    <div class="cell">
+					<div class="cell">
                         <select name="schedule_studio_id" >
                             <TMPL_LOOP studios>
                                 <option value="<TMPL_VAR id>" <TMPL_IF selected>selected="selected"</TMPL_IF>><TMPL_VAR name></option>
                             </TMPL_LOOP>
                         </select>
-                    </div>
+		</div>
 
 					<TMPL_IF .allow.update_schedule>
 					<div class="cell">
@@ -230,7 +230,7 @@
 					</TMPL_IF>
 				</form>
 			</div>
-		</div>
+        </div>
         <p>
     </div>
 	</TMPL_IF>
@@ -240,7 +240,6 @@
         <div class="show_schedule_head"> <TMPL_VAR loc.label_select_range>
             <div id="show_date"> </div>
         </div>
-
         <div id="show_schedule" class="show_schedule">
 	    </div>
     </div>

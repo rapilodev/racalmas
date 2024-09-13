@@ -15,7 +15,7 @@ sub get_columns($) {
     return db::get_columns_hash($dbh, 'calcms_user_day_start');
 }
 
-sub get($$) {
+sub get ($$) {
     my ($config, $condition) = @_;
 
     my @conditions  = ();
@@ -25,7 +25,7 @@ sub get($$) {
         ParamError->throw(error => "user_day_start:get missing $_") unless defined $condition->{$_}
     };
 
-    for my $field('user', 'project_id', 'studio_id'){
+    for my $field ('user', 'project_id', 'studio_id'){
         if ((defined $condition->{$field}) && ($condition->{$field} ne '')) {
             push @conditions,  $field.'=?';
             push @bind_values, $condition->{$field};
@@ -49,13 +49,13 @@ sub get($$) {
 sub insert_or_update($$){
     my ($config, $entry) = @_;
     if (get($config, $entry)){
-        update($config, $entry);
+        update ($config, $entry);
     } else {
-        insert($config, $entry);
+        insert ($config, $entry);
     }
 }
 
-sub insert($$) {
+sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'project_id', 'studio_id', 'day_start') {
@@ -76,8 +76,8 @@ sub update($$) {
 
     my @keys        = sort keys %$entry;
     my $values      = join(",", map { $_ . '=?' } @keys);
-    my @bind_values = map { $entry->{$_} }(@keys, @$fields);
-    my $conditions  = join(' and ', map { $_.'=?' } @$fields);
+    my @bind_values = map { $entry->{$_} } (@keys, @$fields);
+    my $conditions  = join (' and ', map { $_.'=?' } @$fields);
 
     my $query = qq{
 		update calcms_user_day_start
@@ -89,7 +89,7 @@ sub update($$) {
     return db::put($dbh, $query, \@bind_values);
 }
 
-sub delete($$) {
+sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'project_id', 'studio_id') {

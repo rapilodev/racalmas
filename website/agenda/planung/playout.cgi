@@ -64,10 +64,10 @@ sub deleteFromPlayout {
         }
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
 
-    playout::delete(
+    my $result = playout::delete(
         $config, $dbh,
         {
             project_id => $params->{project_id},
@@ -75,7 +75,6 @@ sub deleteFromPlayout {
             start      => $params->{start_date}
         }
     );
-    $config->{access}->{write} = 0;
 }
 
 sub check_params {
@@ -84,25 +83,25 @@ sub check_params {
     my $checked = {};
 
     $checked->{action} = '';
-    if ( defined $params->{action} ) {
-        if ( $params->{action} =~ /^(delete)$/ ) {
+    if (defined $params->{action}) {
+        if ($params->{action} =~ /^(delete)$/) {
             $checked->{action} = $params->{action};
         }
     }
 
     #numeric values
     $checked->{exclude} = 0;
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'project_id', 'studio_id']);
 
     #dates
     for my $param ('start_date') {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /(\d\d\d\d\-\d\d\-\d\d \d\d\:\d\d)/ ) ) {
+        if ((defined $params->{$param}) && ($params->{$param} =~ /(\d\d\d\d\-\d\d\-\d\d \d\d\:\d\d)/)) {
             $checked->{$param} = $1 . ':00';
         }
     }
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;

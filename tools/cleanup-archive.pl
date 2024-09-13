@@ -24,7 +24,7 @@ sub cleanup_files{
         if (-l $path){
             my $age = ($now-(lstat $path)[9])/$day;
             remove $path if $age > 7;
-        }elsif(-f $path){
+        }elsif (-f $path){
             my $age = ($now-(stat $path)[9])/$day;
             remove $path if $age > 360;
         }

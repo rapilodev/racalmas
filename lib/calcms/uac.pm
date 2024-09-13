@@ -56,7 +56,7 @@ sub get_users($;$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    for my $key('name', 'email') {
+    for my $key ('name', 'email') {
         my $value = $condition->{$key};
         next unless defined $value;
         next if $value eq '';
@@ -81,8 +81,8 @@ sub get_users($;$) {
 #TODO: get_users_by_project
 
 # get all users of a given studio id
-# used at series(previously named get_studio_users)
-sub get_users_by_studio($$) {
+# used at series (previously named get_studio_users)
+sub get_users_by_studio ($$) {
     my ($config, $condition) = @_;
     return unless defined $condition->{studio_id};
 
@@ -115,7 +115,7 @@ sub get_users_by_studio($$) {
 }
 
 # get projects a user is assigned by name
-sub get_projects_by_user($$) {
+sub get_projects_by_user ($$) {
     my ($config, $condition) = @_;
 
     my @conditions  = ();
@@ -152,8 +152,8 @@ sub get_projects_by_user($$) {
 }
 
 # get all studios a user is assigned to by role
-# used at series(previously named get_user_studios)
-sub get_studios_by_user($$) {
+# used at series (previously named get_user_studios)
+sub get_studios_by_user ($$) {
     my ($config, $condition) = @_;
 
     my @conditions  = ();
@@ -265,7 +265,7 @@ sub get_studio_roles($$) {
     return $roles;
 }
 
-# get role columns(for external use only)
+# get role columns (for external use only)
 sub get_role_columns($) {
     my ($config) = @_;
     my $dbh     = db::connect($config);
@@ -284,7 +284,7 @@ sub get_roles($$) {
     my $dbh = db::connect($config);
     my $columns = db::get_columns_hash($dbh, 'calcms_roles');
 
-    for my $column(sort keys %$columns) {
+    for my $column (sort keys %$columns) {
         if (defined $condition->{$column}) {
             push @conditions,  $column . '=?';
             push @bind_values, $condition->{$column};
@@ -305,7 +305,7 @@ sub get_roles($$) {
 }
 
 #insert role to database, set created_at and modified_at
-sub insert_role($$) {
+sub insert_role ($$) {
     my ($config, $entry) = @_;
 
     $entry->{created_at}  = time::time_to_datetime(time());
@@ -314,7 +314,7 @@ sub insert_role($$) {
     my $dbh     = db::connect($config);
     my $columns = db::get_columns_hash($dbh, 'calcms_roles');
     my $role    = {};
-    for my $column(keys %$columns) {
+    for my $column (keys %$columns) {
         $role->{$column} = $entry->{$column} if defined $entry->{$column};
     }
     db::insert($dbh, 'calcms_roles', $role);
@@ -395,7 +395,7 @@ sub get_user_roles($$) {
     my $user_roles = db::get($dbh, $query, \@bind_values);
 
     #return roles, if the contain an admin role
-    for my $role(@$user_roles) {
+    for my $role (@$user_roles) {
         return $user_roles if $role->{role} eq 'Admin';
     }
 
@@ -409,7 +409,7 @@ sub get_user_roles($$) {
 }
 
 #return admin user roles for given conditions: project_id, studio_id, user, user_id
-sub get_admin_user_roles($$) {
+sub get_admin_user_roles ($$) {
     my ($config, $condition) = @_;
 
     my @conditions  = ();
@@ -451,7 +451,7 @@ sub get_admin_user_roles($$) {
 # read permissions for given conditions and add to user_permissions
 # return user_permissions
 # studio_id, user_id, name
-sub get_user_permissions($$;$) {
+sub get_user_permissions ($$;$) {
     my ($config, $conditions, $user_permissions) = @_;
 
     my $user_roles = get_user_roles($config, $conditions);
@@ -475,7 +475,7 @@ sub get_user_permissions($$;$) {
             $user_permissions->{project_id} = $user_role->{project_id};
             $max_level                      = $user_role->{level};
         }
-        for my $permission(keys %$user_role) {
+        for my $permission (keys %$user_role) {
             if (($permission ne 'level')
                 && ($permission ne 'id')
                 && ($permission ne 'role')
@@ -491,7 +491,7 @@ sub get_user_permissions($$;$) {
 }
 
 #get user id by user name
-sub get_user_id($$) {
+sub get_user_id ($$) {
     my ($config, $user) = @_;
     return undef unless defined $user;
 
@@ -507,7 +507,7 @@ sub get_user_id($$) {
 }
 
 #get role id by role name
-sub get_role_id($$) {
+sub get_role_id ($$) {
     my ($config, $role) = @_;
     return undef unless defined $role;
 
@@ -522,7 +522,7 @@ sub get_role_id($$) {
     return $roles->[0]->{id};
 }
 
-# assign a role to an user(for a studio)
+# assign a role to an user (for a studio)
 sub assign_user_role($$) {
     my ($config, $options) = @_;
 
@@ -553,7 +553,7 @@ sub assign_user_role($$) {
     return db::insert($dbh, 'calcms_user_roles', $entry);
 }
 
-# unassign a user from a role of(for a studio)
+# unassign a user from a role of (for a studio)
 sub remove_user_role($$) {
     my ($config, $options) = @_;
 
@@ -575,7 +575,7 @@ sub remove_user_role($$) {
 }
 
 #checks
-sub is_user_assigned_to_studio($$) {
+sub is_user_assigned_to_studio ($$) {
     my ($request, $options) = @_;
 
     my $config = $request->{config};
@@ -589,7 +589,7 @@ sub is_user_assigned_to_studio($$) {
         studio_id  => $options->{studio_id},
         project_id => $options->{project_id}
     });
-    return(@$user_studios == 1);
+    return (@$user_studios == 1);
 }
 
 # print errors at get_user_presets and check for project id and studio id
@@ -625,7 +625,7 @@ sub get_user_presets($$) {
     UacError->throw(error => "no project is assigned to user") if scalar @$projects == 0;
 
     $projects = project::get($config) if (@$admin_roles > 0);
-    my @projects = reverse sort { $a->{end_date} cmp $b->{end_date} }(@$projects);
+    my @projects = reverse sort { $a->{end_date} cmp $b->{end_date} } (@$projects);
     $projects = \@projects;
 
     if ($project_id ne '' && $project_id ne '-1') {
@@ -665,14 +665,14 @@ sub get_user_presets($$) {
     my $permissions =
       uac::get_user_permissions($config, { user => $user, project_id => $project_id, studio_id => $studio_id });
     if ($permissions->{admin} == 1) {
-        for my $key(keys %$permissions) {
+        for my $key (keys %$permissions) {
             $permissions->{$key} = 1;
         }
     }
 
     #set studios and projects as selected, TODO:do in JS
     my $selectedProject = {};
-    for my $project(@$projects) {
+    for my $project (@$projects) {
         if ($project_id eq $project->{project_id}) {
             $project->{selected} = 'selected="selected"';
             $selectedProject = $project;
@@ -681,7 +681,7 @@ sub get_user_presets($$) {
     }
 
     my $selectedStudio = {};
-    for my $studio(@$studios) {
+    for my $studio (@$studios) {
         if ($studio_id eq $studio->{id}) {
             $studio->{selected} = 'selected="selected"';
             $selectedStudio = $studio;
@@ -709,11 +709,11 @@ sub get_user_presets($$) {
     return $result;
 }
 
-sub setDefaultProject($$) {
+sub setDefaultProject ($$) {
     my ($params, $user_presets) = @_;
 
     $params->{project_id} = $user_presets->{project_id}
-      if (!defined $params->{authAction}) ||($params->{authAction} eq '') ||($params->{authAction} eq 'login');
+      if (!defined $params->{authAction}) || ($params->{authAction} eq '') || ($params->{authAction} eq 'login');
     return $params;
 }
 
@@ -721,30 +721,30 @@ sub setDefaultStudio($$) {
     my ($params, $user_presets) = @_;
 
     $params->{studio_id} = $user_presets->{studio_id}
-      if (!defined $params->{authAction}) ||($params->{authAction} eq '') ||($params->{authAction} eq 'login');
+      if (!defined $params->{authAction}) || ($params->{authAction} eq '') || ($params->{authAction} eq 'login');
     return $params;
 }
 
 #set user preset properties to request
-sub prepare_request($$) {
+sub prepare_request ($$) {
     my ($request, $user_presets) = @_;
 
-    for my $key(keys %$user_presets) {
+    for my $key (keys %$user_presets) {
         $request->{$key} = $user_presets->{$key};
     }
 
     #enrich menu parameters
-    for my $key('studio_id', 'project_id', 'studio', 'project', 'studios', 'projects', 'user', 'logout_url') {
+    for my $key ('studio_id', 'project_id', 'studio', 'project', 'studios', 'projects', 'user', 'logout_url') {
         $request->{params}->{checked}->{presets}->{$key} = $user_presets->{$key};
     }
     return $request;
 }
 
 #TODO: shift to permissions sub entry
-sub set_template_permissions($$) {
+sub set_template_permissions ($$) {
     my ($permissions, $params) = @_;
 
-    for my $usecase(keys %$permissions) {
+    for my $usecase (keys %$permissions) {
         $params->{'allow'}->{$usecase} = 1 if ($permissions->{$usecase} eq '1');
     }
     return $params;
@@ -771,7 +771,7 @@ sub print_warn($) {
       . '</div>' . "\n";
 }
 
-sub print_error($) {
+sub print_error ($) {
     my ($message) = @_;
     print STDERR "ERROR:" . $message . "\n";
     print '<div class="error" head>'
@@ -816,7 +816,6 @@ sub init{
                 print auth::show_login_form($config, '', $_->message // $_->error);
                 exit;
             }
-            AuthError->throw(error=>"session not found");
         };
         $params = $session->{params};
 

@@ -22,7 +22,7 @@ our @EXPORT_OK = qw(
 #TODO: globally replace get_studios by get_studio_assignments
 
 # get project columns
-sub get_columns($) {
+sub get_columns ($) {
     my ($config) = @_;
 
     my $dbh = db::connect($config);
@@ -30,7 +30,7 @@ sub get_columns($) {
 }
 
 # get projects
-sub get($;$) {
+sub get ($;$) {
     my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
@@ -100,7 +100,7 @@ sub insert($$) {
 
     my $columns = get_columns($config);
     my $project = {};
-    for my $column(keys %$columns) {
+    for my $column (keys %$columns) {
         $project->{$column} = $entry->{$column} if defined $entry->{$column};
     }
 
@@ -117,7 +117,7 @@ sub update($$) {
 
     my $columns = project::get_columns($config);
     my $entry   = {};
-    for my $column(keys %$columns) {
+    for my $column (keys %$columns) {
         $entry->{$column} = $project->{$column} if defined $project->{$column};
     }
 
@@ -138,7 +138,7 @@ sub update($$) {
 }
 
 # delete project
-sub delete($$) {
+sub delete ($$) {
     my ($config, $entry) = @_;
     my $dbh = db::connect($config);
     db::put($dbh, 'delete from calcms_projects where project_id=?', [ $entry->{project_id} ]);
@@ -196,7 +196,7 @@ sub get_studio_assignments($$) {
 }
 
 # is studio assigned to project
-sub is_studio_assigned($$) {
+sub is_studio_assigned ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id') {
@@ -255,7 +255,7 @@ sub unassign_studio($$) {
 }
 
 # get series by project and studio
-sub get_series($$) {
+sub get_series ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id') {
@@ -276,7 +276,7 @@ sub get_series($$) {
     return $project_series;
 }
 
-sub get_series_assignments($$) {
+sub get_series_assignments ($$) {
     my ($config, $options) = @_;
 
     my @conditions  = ();
@@ -313,7 +313,7 @@ sub get_series_assignments($$) {
 }
 
 # is series assigned to project and studio
-sub is_series_assigned($$) {
+sub is_series_assigned ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
@@ -361,7 +361,7 @@ sub assign_series($$) {
 
 # unassign series from project
 # TODO: remove series _single_ if no event is assigned to
-sub unassign_series($$) {
+sub unassign_series ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
@@ -384,7 +384,7 @@ sub get_with_dates($;$) {
     my $language = $config->{date}->{language} || 'en';
     my $projects = project::get($config, {});
 
-    foreach my $project(reverse sort { $a->{end_date} cmp $b->{end_date} }(@$projects)) {
+    foreach my $project (reverse sort { $a->{end_date} cmp $b->{end_date} } (@$projects)) {
         $project->{months}  = get_months($config, $project, $language);
         $project->{user}    = $ENV{REMOTE_USER};
         $project->{current} = 1 if ($project->{name} eq $config->{project});
@@ -397,7 +397,7 @@ sub get_with_dates($;$) {
 sub get_sorted($) {
     my ($config) = @_;
     my $projects = project::get($config, {});
-    my @projects = reverse sort { $a->{end_date} cmp $b->{end_date} }(@$projects);
+    my @projects = reverse sort { $a->{end_date} cmp $b->{end_date} } (@$projects);
 
     unshift @projects,
       {
@@ -411,32 +411,32 @@ sub get_sorted($) {
 }
 
 # internal
-sub get_months($$;$) {
+sub get_months ($$;$) {
     my ($config, $project, $language) = @_;
     $language ||= $config->{date}->{language} || 'en';
 
     my $start = $project->{start_date};
     my $end   = $project->{end_date};
 
- (my $start_year, my $start_month, my $start_day) = split(/\-/, $start);
+    (my $start_year, my $start_month, my $start_day) = split(/\-/, $start);
     my $last_day = Date::Calc::Days_in_Month($start_year, $start_month);
     $start_day = 1         if ($start_day < 1);
     $start_day = $last_day if ($start_day gt $last_day);
 
- (my $end_year, my $end_month, my $end_day) = split(/\-/, $end);
+    (my $end_year, my $end_month, my $end_day) = split(/\-/, $end);
     $last_day = Date::Calc::Days_in_Month($end_year, $end_month);
     $end_day = 1         if ($end_day < 1);
     $end_day = $last_day if ($end_day gt $last_day);
 
     my $monthNamesShort = time::getMonthNamesShort($language);
     my @months          = ();
-    for my $year($start_year .. $end_year) {
+    for my $year ($start_year .. $end_year) {
         my $m1 = 1;
         my $m2 = 12;
         $m1 = $start_month if $year eq $start_year;
         $m2 = $end_month   if $year eq $end_year;
 
-        for my $month($m1 .. $m2) {
+        for my $month ($m1 .. $m2) {
             my $d1 = 1;
             my $d2 = Date::Calc::Days_in_Month($year, $month);
             $d1 = $start_day if $month eq $start_month;
@@ -458,7 +458,7 @@ sub get_months($$;$) {
 }
 
 # check project_id
-sub check($$) {
+sub check ($$) {
     my ($config, $options) = @_;
     ParamError->throw(error=> "missing project_id at checking project") unless defined $options->{project_id};
     ParamError->throw(error=> "Please select a project") if ($options->{project_id} eq '-1');

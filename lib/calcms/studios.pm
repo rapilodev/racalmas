@@ -79,7 +79,7 @@ sub getImageById($$) {
     return $studios->[0]->{image};
 }
 
-sub insert($$) {
+sub insert ($$) {
     my ($config, $entry) = @_;
 
     $entry->{created_at}  = time::time_to_datetime(time());
@@ -91,14 +91,14 @@ sub insert($$) {
     return $id;
 }
 
-sub update($$) {
+sub update ($$) {
     my ($config, $studio) = @_;
 
     $studio->{modified_at} = time::time_to_datetime(time());
 
     my $columns = get_columns($config);
     my $entry   = {};
-    for my $column(keys %$columns) {
+    for my $column (keys %$columns) {
         $entry->{$column} = $studio->{$column} if defined $studio->{$column};
     }
     $entry->{image} = images::normalizeName($entry->{image}) if defined $entry->{image};
@@ -118,7 +118,7 @@ sub update($$) {
     db::put($dbh, $query, \@bind_values);
 }
 
-sub delete($$) {
+sub delete ($$) {
     my ($config, $studio) = @_;
     my $dbh = db::connect($config);
     db::put($dbh, 'delete from calcms_studios where id=?', [ $studio->{id} ]);
@@ -130,7 +130,7 @@ sub check_studio($$) {
     return check($config, $options);
 }
 
-sub check($$) {
+sub check ($$) {
     my ($config, $options) = @_;
     ParamError->throw(error => "missing studio_id") unless defined $options->{studio_id};
     ParamError->throw(error => "Please select a studio") if ($options->{studio_id} eq '-1');

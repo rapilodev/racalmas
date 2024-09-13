@@ -10,7 +10,7 @@ use template();
 our @EXPORT_OK = qw(get insert update insert_or_update delete delete_files);
 
 #column 'created_at' will be set at insert
-#column 'modified_at' will be set by default(do not update)
+#column 'modified_at' will be set by default (do not update)
 my $sql_columns = [
     'filename',  'name',       'description', 'created_by', 'modified_by', 'modified_at',
     'studio_id', 'project_id', 'public',      'licence'
@@ -107,7 +107,7 @@ sub insert_or_update($$) {
     }
 }
 
-sub insert($$) {
+sub insert ($$) {
     my ($dbh, $image) = @_;
 
     my @sql_columns = @$sql_columns;
@@ -129,7 +129,7 @@ sub insert($$) {
         return undef;
     }
 
-    for my $attr('public') {
+    for my $attr ('public') {
         $image->{$attr} = 0 unless (defined $image->{$attr}) && ($image->{$attr} eq '1');
     }
 
@@ -137,7 +137,7 @@ sub insert($$) {
 		insert into calcms_images(
 			} . join(',', @sql_columns) . qq{
 		)
-		values(} . join(', ',(map { '?' } @sql_columns)) . q{)
+		values(} . join(', ', (map { '?' } @sql_columns)) . q{)
 	};
     my @bind_values = map { $image->{$_} } @sql_columns;
     my $result = db::put($dbh, $query, \@bind_values);
@@ -157,13 +157,13 @@ sub update($$) {
 
     $image->{modified_at} = time::time_to_datetime();
 
-    for my $attr('public') {
+    for my $attr ('public') {
         $image->{$attr} = 0 unless (defined $image->{$attr}) && ($image->{$attr} eq '1');
     }
 
     my @set         = ();
     my $bind_values = [];
-    for my $column(@$sql_columns) {
+    for my $column (@$sql_columns) {
         if (defined $image->{$column}) {
             push @set,          $column . ' = ?';
             push @$bind_values, $image->{$column};
@@ -264,7 +264,7 @@ sub delete_files($$$$$) {
 }
 
 # deactivated
-sub delete_file($$$$) {
+sub delete_file ($$$$) {
     my $path          = $_[0];
     my $type          = $_[1];
     my $action_result = $_[2];
@@ -309,7 +309,7 @@ sub getPath {
     return $path;
 }
 
-sub getInternalPath($$) {
+sub getInternalPath ($$) {
     my ($config, $options) = @_;
 
     my $dir = $config->{locations}->{local_media_dir};
@@ -328,7 +328,7 @@ sub getInternalPath($$) {
     return $path;
 }
 
-sub normalizeName(;$) {
+sub normalizeName (;$) {
     my ($name) = @_;
 
     return undef unless defined $name;
@@ -352,7 +352,7 @@ sub readFile($) {
     return { content => $content };
 }
 
-sub writeFile($$) {
+sub writeFile ($$) {
     my ($path, $content) = @_;
 
     print STDERR "save '$path'\n";
@@ -373,7 +373,7 @@ sub deleteFile($) {
 
 }
 
-sub copyFile($$$) {
+sub copyFile ($$$) {
     my ($source, $target, $errors) = @_;
 
     my $read = images::readFile($source);
@@ -390,7 +390,7 @@ sub publish($$) {
     return undef unless defined $config;
     return undef unless defined $filename;
     my $errors = [];
-    for my $type('images', 'thumbs', 'icons') {
+    for my $type ('images', 'thumbs', 'icons') {
         my $source = getInternalPath($config, { filename => $filename, type => $type });
         my $target = getPath($config, { filename => $filename, type => $type });
         my $result = copyFile($source, $target, $errors);
@@ -402,14 +402,14 @@ sub publish($$) {
     return $errors;
 }
 
-sub depublish($$) {
+sub depublish ($$) {
     my ($config, $filename) = @_;
 
     print STDERR "depublish\n";
     return undef unless defined $config;
     return undef unless defined $filename;
     my $errors = [];
-    for my $type('images', 'thumbs', 'icons') {
+    for my $type ('images', 'thumbs', 'icons') {
         my $path = getPath($config, { filename => $filename, type => $type });
         next unless defined $path;
         print STDERR "remove '$path'\n";
@@ -420,7 +420,7 @@ sub depublish($$) {
     return $errors;
 }
 
-sub checkLicence($$) {
+sub checkLicence ($$) {
     my ($config, $result) = @_;
 
     print STDERR "depublish\n";

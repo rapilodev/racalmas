@@ -53,14 +53,14 @@ sub delete_studio {
     my $columns = studios::get_columns($config);
 
     my $entry = {};
-    for my $param ( keys %$params ) {
-        if ( exists $columns->{$param} ) {
+    for my $param (keys %$params) {
+        if (exists $columns->{$param}) {
             $entry->{$param} = $params->{$param} || '';
         }
     }
 
     my $studio_id = $entry->{id} || '';
-    if ( $studio_id ne '' ) {
+    if ($studio_id ne '') {
         local $config->{access}->{write} = 1;
 
         project::unassign_studio(
@@ -78,12 +78,12 @@ sub delete_studio {
             }
         );
 
-        unless ( scalar @$studio_assignments == 0 ) {
+        unless (scalar @$studio_assignments == 0) {
             uac::print_info("Studio unassigned from project");
             uac::print_warn("Studio is assigned to other projects, so it will not be deleted");
             return undef;
         }
-        studios::delete( $config, $entry );
+        studios::delete($config, $entry);
         uac::print_info("Studio deleted");
     }
 }
@@ -101,21 +101,21 @@ sub save_studio {
     #filter entry for studio columns
     my $columns = studios::get_columns($config);
     my $entry   = {};
-    for my $param ( keys %$params ) {
-        if ( exists $columns->{$param} ) {
+    for my $param (keys %$params) {
+        if (exists $columns->{$param}) {
             $entry->{$param} = $params->{$param} || '';
         }
     }
-
+}
     local $config->{access}->{write} = 1;
-    if ( ( defined $entry->{id} ) && ( $entry ne '' ) ) {
-        studios::update( $config, $entry );
+    if ((defined $entry->{id}) && ($entry ne '')) {
+        studios::update($config, $entry);
     } else {
         my $studios = studios::get( $config, { name => $entry->{name} } );
         if ( scalar @$studios > 0 ) {
             ExistError->throw(error=> "studio with name '$entry->{name}' already exists");
         }
-        $entry->{id} = studios::insert( $config, $entry );
+        $entry->{id} = studios::insert($config, $entry);
 
         project::assign_studio(
             $config,
@@ -136,7 +136,7 @@ sub save_studio {
             has_single_events => 1
         }
     );
-    if ( scalar @$single_series == 0 ) {
+    if (scalar @$single_series == 0) {
         series::insert(
             $config,
             {
@@ -166,7 +166,7 @@ sub show_studios {
         }
     );
 
-    if ( $params->{setImage} ) {
+    if ($params->{setImage}) {
         for my $studio (@$studios) {
             next unless $studio->{id} eq $params->{studio_id};
             $studio->{image} = $params->{setImage};
@@ -174,8 +174,8 @@ sub show_studios {
     }
 
     $params->{studios} = $studios;
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'studios' } );
-    uac::set_template_permissions( $permissions, $params );
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'studios' });
+    uac::set_template_permissions($permissions, $params);
 
     return $out . template::process( $config, $params->{template}, $params );
 }
@@ -186,19 +186,19 @@ sub check_params {
 
     #template
     my $template = '';
-    $template = template::check( $config, $params->{template}, 'studios' );
+    $template = template::check($config, $params->{template}, 'studios');
     $checked->{template} = $template;
 
-    $checked->{action} = entry::element_of( $params->{action}, ['save', 'delete']);
+    $checked->{action} = entry::element_of($params->{action}, ['save', 'delete']);
 
-    entry::set_strings( $checked, $params, [
+    entry::set_strings($checked, $params, [
         'name', 'description', 'location', 'stream', 'image', 'setImage' ]);
 
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'project_id', 'studio_id', 'default_studio_id', 'id'
     ]);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;

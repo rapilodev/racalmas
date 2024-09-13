@@ -15,8 +15,8 @@ use Exception::Class('SessionError');
 # user,
 # timeout,
 # pid,
-# start(timestamp),
-# end(timestamp),
+# start (timestamp),
+# end (timestamp),
 
 our @EXPORT_OK = qw(get_columns get insert update delete);
 
@@ -72,7 +72,7 @@ sub get($$) {
 }
 
 # insert entry and return database id
-sub insert($$) {
+sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'timeout') {
@@ -106,7 +106,7 @@ sub start($$) {
             user    => $entry->{user},
             timeout => $entry->{timeout},
         }
-   );
+    );
     return undef unless defined $id;
 
     my $sessions = get($config, { id => $id });
@@ -119,7 +119,7 @@ sub start($$) {
 }
 
 # expand session by timeout
-sub keep_alive($$) {
+sub keep_alive ($$) {
     my ($config, $entry) = @_;
 
     SessionError->throw unless defined $entry;
@@ -154,25 +154,25 @@ sub check($$) {
 }
 
 # stop session
-sub stop($$) {
+sub stop ($$) {
     my ($config, $entry) = @_;
 
     SessionError->throw unless defined $entry;
 
-    my $entries = get $config, { session_id => $entry->{session_id} };
+    my $entries = get($config, { session_id => $entry->{session_id} });
     SessionError->throw unless defined $entries;
 
     $entry = $entries->[0];
     SessionError->throw unless defined $entry;
 
-    $entry->{end} = time::time_to_datetime time();
+    $entry->{end} = time::time_to_datetime(time());
 
     my $dbh = db::connect($config);
     return update($config, $entry);
 }
 
 #schedule id to id
-sub update($$) {
+sub update ($$) {
     my ($config, $entry) = @_;
 
     SessionError->throw unless defined $entry->{session_id};

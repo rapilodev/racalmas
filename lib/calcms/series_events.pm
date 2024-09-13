@@ -24,7 +24,7 @@ use images();
 
 sub get_content_columns($) {
     my ($config) = @_;
-    return(
+    return (
     'series_name',  'title',              'excerpt',            'content',
     'html_content', 'user_title',         'user_excerpt',       'topic',
     'html_topic',   'episode',            'image',              'image_label',
@@ -32,7 +32,7 @@ sub get_content_columns($) {
     'live',         'published',          'playout',            'archived',
     'rerun',        'draft',              'disable_event_sync', 'modified_by',
     'content_format'
-   );
+    );
 }
 
 # update main fields of the event by id
@@ -44,17 +44,17 @@ sub save_content($$) {
         ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
-    for my $attr(keys %$entry) {
+    for my $attr (keys %$entry) {
         next unless defined $entry->{$attr};
         $entry->{$attr} =~ s/^\s+//g;
         $entry->{$attr} =~ s/\s+$//g;
     }
 
-    for my $attr('image', 'series_image') {
+    for my $attr ('image', 'series_image') {
         $entry->{$attr} = images::normalizeName($entry->{$attr}) if defined $entry->{$attr};
     }
 
-    for my $attr('content', 'topic') {
+    for my $attr ('content', 'topic') {
         next unless defined $entry->{$attr};
         if (($entry->{content_format}//'') eq 'markdown'){
             $entry->{ 'html_' . $attr } = markup::markdown_to_html($entry->{$attr});
@@ -66,17 +66,17 @@ sub save_content($$) {
     $entry->{modified_at} = time::time_to_datetime(time());
     #update only existing atributes
 
-    #TODO: double check series_name(needed for reassignment but not for editing...)
+    #TODO: double check series_name (needed for reassignment but not for editing...)
     my @keys = ();
-    for my $key(get_content_columns($config)) {
+    for my $key (get_content_columns($config)) {
         push @keys, $key if defined $entry->{$key};
     }
     $entry->{rerun}     = 0 unless $entry->{rerun};
     $entry->{episode}   = undef if (defined $entry->{episode}) && ($entry->{episode} eq '0');
     $entry->{published} = 0     if (defined $entry->{draft})   && ($entry->{draft} eq '1');
 
-    my $values = join(",", map { $_ . '=?' }(@keys));
-    my @bind_values = map { $entry->{$_} }(@keys);
+    my $values = join(",", map { $_ . '=?' } (@keys));
+    my @bind_values = map { $entry->{$_} } (@keys);
 
     push @bind_values, $entry->{id};
     my $query = qq{
@@ -161,7 +161,7 @@ sub save_event_time($$) {
     return $event;
 }
 
-sub set_playout_status($$) {
+sub set_playout_status ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'start', 'playout') {
@@ -217,7 +217,7 @@ sub is_event_assigned($$) {
     return 0;
 }
 
-sub delete_event($$) {
+sub delete_event ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'event_id', 'user') {
@@ -248,8 +248,8 @@ sub delete_event($$) {
 }
 
 #check permissions
-# options:           conditions(studio_id, series_id,...)
-# key permission:    permissions to be checked(one of)
+# options:           conditions (studio_id, series_id,...)
+# key permission:    permissions to be checked (one of)
 # key check_for:     user, studio, series, events, schedule
 # return error text or 1 if okay
 sub check_permission($$) {
@@ -268,9 +268,9 @@ sub check_permission($$) {
     my $studio_check = studios::check($config, $options);
     my $project_check = project::check($config, $options);
 
-    #check if permissions are set(like create_event)
+    #check if permissions are set (like create_event)
     my $found = 0;
-    for my $permission(split /\,/, $options->{permission}) {
+    for my $permission (split /\,/, $options->{permission}) {
         $found = 1 if (defined $permissions->{$permission}) && ($permissions->{$permission}) eq '1';
     }
     PermissionError->throw(error => 'missing permission to ' . $options->{permission}) if $found == 0;
@@ -290,7 +290,7 @@ sub check_permission($$) {
             project_id => $options->{project_id},
             studio_id  => $options->{studio_id}
         }
-   );
+    );
     ExistError->throw(error =>  "unknown studio") unless defined $studios;
     ExistError->throw(error =>  "unknown studio") unless scalar @$studios == 1;
     my $studio = $studios->[0];
@@ -304,7 +304,7 @@ sub check_permission($$) {
             studio_id  => $options->{studio_id},
             series_id  => $options->{series_id}
         }
-   );
+    );
     my $series_name = $series->[0]->{series_name} || '';
     $series_name .= ' - ' . $series->[0]->{title} if $series->[0]->{series_name} ne '';
 
@@ -315,7 +315,7 @@ sub check_permission($$) {
     if ((defined $check->{user}) && (uac::is_user_assigned_to_studio($request, $options) == 0)) {
         AssignError->throw(error =>
             "User '$request->{user}' is not assigned to studio $studio_name($options->{studio_id})");
-    }
+        }
 
     if ((defined $check->{studio}) && (project::is_series_assigned($config, $options) == 0)) {
         AssignError->throw(error =>
@@ -337,7 +337,7 @@ sub check_permission($$) {
     if (($draft == 0)
         && (defined $check->{studio_timeslots})
         && (studio_timeslot_dates::can_studio_edit_events($config, $options) == 0)
-   ) {
+    ) {
         PermissionError->throw(error => "requested time is not assigned to studio '$studio_name'($options->{studio_id})");
     }
 
@@ -360,9 +360,8 @@ sub check_permission($$) {
                     event_id   => $options->{event_id},
                     max_age    => 14
                 }
-           ) == 1
-         )
-        {
+            ) == 1
+        ) {
             PermissionError->throw(error => "show is over for more than 2 weeks")
               unless ((defined $permissions->{update_event_after_week})
                 && ($permissions->{update_event_after_week} eq '1'));
@@ -386,7 +385,7 @@ sub check_permission($$) {
 # responsible, status, rating, podcast_url, media_url, visible, recurrence, reference, created_at
 
 #insert event
-sub insert_event($$) {
+sub insert_event ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio', 'serie', 'event', 'user') {
@@ -414,26 +413,23 @@ sub insert_event($$) {
     $event = series_events::add_event_dates($config, $event, $params);
 
     #get event content from series
-    for my $attr(
+    for my $attr (
         'program', 'series_name', 'title',       'excerpt', 'content', 'topic',
         'image',   'episode',     'podcast_url', 'archive_url', 'content_format'
-     )
-    {
+    ) {
         $event->{$attr} = $serie->{$attr} if defined $serie->{$attr};
     }
     $event->{series_image}       = $serie->{image}   if defined $serie->{image};
     $event->{series_image_label} = $serie->{licence} if defined $serie->{licence};
 
     #overwrite series values from parameters
-    for my $attr(
+    for my $attr (
         'program', 'series_name', 'title', 'user_title', 'excerpt',     'user_except',
         'content', 'topic',       'image', 'episode',    'podcast_url', 'archive_url',
         'content_format'
-     )
-    {
+    ) {
         $event->{$attr} = $params->{$attr} if defined $params->{$attr};
     }
-
     if (($event->{'content_format'}//'') eq 'markdown'){
         $event->{'html_content'} = markup::markdown_to_html($event->{'content'}) if defined $event->{'content'};
         $event->{'html_topic'}   = markup::markdown_to_html($event->{'topic'})   if defined $event->{'topic'};
@@ -443,7 +439,7 @@ sub insert_event($$) {
     }
 
     #add event status
-    for my $attr('live', 'published', 'playout', 'archived', 'rerun', 'draft', 'disable_event_sync') {
+    for my $attr ('live', 'published', 'playout', 'archived', 'rerun', 'draft', 'disable_event_sync') {
         $event->{$attr} = $params->{$attr} || 0;
     }
 
@@ -485,7 +481,7 @@ sub add_event_dates($$$) {
     return $event;
 }
 
-sub update_series_images($$) {
+sub update_series_images ($$) {
     my ($config, $options) = @_;
 
     ParamError->throw(error => "missing $_") for
@@ -495,7 +491,7 @@ sub update_series_images($$) {
         $config, uac::set($options, qw(project_id studio_id series_id))
    );
 
-    for my $event(@$events) {
+    for my $event (@$events) {
         $event->{series_image} = $options->{series_image};
         series_events::save_content($config, $event);
     }

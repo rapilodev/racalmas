@@ -52,7 +52,7 @@ sub show_events {
     PermissionError->throw(error=>'Missing permission to read_events')
         unless $permissions->{assign_series_events} == 1;
 
-    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
     $headerParams->{loc} = localization::get(
         $config, { user => $session->{user}, file => 'menu' }
     );
@@ -129,24 +129,39 @@ sub getDates {
     my $project_id = $params->{project_id};
     my $studio_id  = $params->{studio_id};
     my $series_id  = $params->{series_id};
+    my $from_date  = $params->{from_date};
+    my $till_date  = $params->{till_date};
     my $duration   = $params->{duration};
 
-    ($params->{from_date}, $params->{till_date}) = getTimeRange($params->{duration});
-    print STDERR "$0: get events from $params->{from_date} to $params->{till_date}\n";
+    $from_date = time::time_to_datetime();
+    if ($from_date =~ /(\d\d\d\d\-\d\d\-\d\d \d\d)/) {
+        $from_date = $1 . ':00';
+    }
+    $till_date = time::add_days_to_datetime($from_date, $duration);
+    if ($from_date =~ /(\d\d\d\d\-\d\d\-\d\d)/) {
+        $from_date = $1;
+    }
+    if ($till_date =~ /(\d\d\d\d\-\d\d\-\d\d)/) {
+        $till_date = $1;
+    }
+    $params->{from_date} = $from_date;
+    $params->{till_date} = $till_date;
+    print STDERR "$0: get events from $from_date to $till_date\n";
 
-    my $dates = series_dates::getDatesWithoutEvent($config,
+    my $dates = series_dates::getDatesWithoutEvent(
+        $config,
         {
             project_id => $project_id,
             studio_id  => $studio_id,
-            ($series_id>0) ? (series_id  => $series_id) : (),
-            from       => $params->{from_date},
-            till       => $params->{till_date},
+            $series_id ? (series_id  => $series_id) : (),
+            from       => $from_date,
+            till       => $till_date,
         }
-   );
+    );
     my $series = series::get($config, {
             project_id => $project_id,
             studio_id  => $studio_id,
-            ($series_id>0) ? (series_id => $series_id) : ()
+            $series_id ? (series_id => $series_id) : ()
     });
     my %series_by_id = map { $_->{series_id} => $_ } @$series;
     for  my $date (@$dates) {

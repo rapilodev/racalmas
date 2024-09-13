@@ -10,7 +10,7 @@ function showSeries(project_id, studio_id, series_id, tab) {
         studio_id: studio_id,
         series_id: series_id,
     }).toString() + tab);
-}
+            }
 
 function view_series_details(project_id, studio_id, series_id){
     var elem=$('.series_details_'+series_id).prev();

@@ -102,7 +102,7 @@ sub get($$) {
 
     my $dbh = db::connect($config, $request);
 
- (my $query, my $bind_values) = events::get_query($dbh, $config, $request);
+    (my $query, my $bind_values) = events::get_query($dbh, $config, $request);
     my $results = db::get($dbh, $$query, $bind_values);
     $results = events::add_recordings($dbh, $config, $request, $results) if $request->{params}->{checked}->{all_recordings};
     $results = events::modify_results($dbh, $config, $request, $results);
@@ -111,7 +111,7 @@ sub get($$) {
     if (@$results==1
         and !$request->{params}->{checked}->{stop_nav}  #< prevent recursion!
         and  my $event_id = $request->{params}->{original}->{event_id}
-   ){
+    ){
         my $event = $results->[0];
         $event->{prev_event_id} = (get_prev($config, $event)//{})->{event_id};
         $event->{next_event_id} = (get_next($config, $event)//{})->{event_id};
@@ -120,7 +120,7 @@ sub get($$) {
     return $results;
 }
 
-sub modify_results($$$$) {
+sub modify_results ($$$$) {
     my ($dbh, $config, $request, $results) = @_;
 
     my $params = $request->{params}->{checked};
@@ -143,7 +143,10 @@ sub modify_results($$$$) {
 
     my $previous_result = { start_date => '' };
     my $counter = 1;
-    for my $result(@$results) {
+    my $is_ics = $params->{template} =~ /\.ics$/;
+    my $is_atom = $params->{template} =~ /\.atom\.xml/;
+    my $is_rss_xml = $params->{template} =~ /\.rss\.xml/;
+    for my $result (@$results) {
         if (defined $params->{template}) {
             if ($is_ics) {
                 markup::plain_to_ical($result, qw(content title user_title excerpt user_excerpt series_name));
@@ -152,13 +155,13 @@ sub modify_results($$$$) {
                 $result->{modified_at} =~ tr/ /T/;
                 $result->{modified_at} =~ tr/\:\-//d;
 
-            } elsif($is_atom) {
+            } elsif ($is_atom) {
                 $result->{excerpt} ||= "lass dich ueberraschen";
                 $result->{created_at} =~ tr/ /T/;
                 $result->{created_at} .= $time_diff;
                 $result->{modified_at} =~ tr/ /T/;
                 $result->{modified_at} .= $time_diff;
-            } elsif($is_rss_xml) {
+            } elsif ($is_rss_xml) {
                 $result->{excerpt} ||= "lass dich ueberraschen";
                 $result->{modified_at} = time::datetime_to_rfc822($result->{modified_at});
                 $result->{created_at} =
@@ -255,14 +258,14 @@ sub modify_results($$$$) {
                 $projects->{$project_name} = $results->[0] || {};
             }
             my $project = $projects->{$project_name};
-            for my $key(keys %$project) {
+            for my $key (keys %$project) {
                 $result->{ 'project_' . $key } = $project->{$key};
             }
         } else {
             printf STDERR "events::get - unknown project for event %s\n", $result->{id} // "undef";
         }
 
-        #if project_id is set add columns from project(cached)
+        #if project_id is set add columns from project (cached)
         my $project_id = $result->{project_id};
         if (defined $project_id) {
             unless (defined $projects->{$project_id}) {
@@ -270,12 +273,12 @@ sub modify_results($$$$) {
                 $projects->{$project_id} = $results->[0] || {};
             }
             my $project = $projects->{$project_id};
-            for my $key(keys %$project) {
+            for my $key (keys %$project) {
                 $result->{ 'project_' . $key } = $project->{$key};
             }
         }
 
-        #if studio_id is set add columns from studio(cached)
+        #if studio_id is set add columns from studio (cached)
         my $studio_id = $result->{studio_id};
         if (defined $studio_id) {
             unless (defined $studios->{$studio_id}) {
@@ -283,12 +286,12 @@ sub modify_results($$$$) {
                 $studios->{$studio_id} = $results->[0] || {};
             }
             my $studio = $studios->{$studio_id};
-            for my $key(keys %$studio) {
+            for my $key (keys %$studio) {
                 $result->{ 'studio_' . $key } = $studio->{$key};
             }
         }
 
-        for my $name(keys %{ $config->{mapping}->{events} }) {
+        for my $name (keys %{ $config->{mapping}->{events} }) {
             if (defined $result->{$name} && defined $config->{mapping}->{events}->{$name}) {
                 my $val = $config->{mapping}->{events}->{$name}->{$result->{$name}};
                 $result->{ $name . '_mapped' } = $val if $val;
@@ -300,14 +303,14 @@ sub modify_results($$$$) {
         $counter++;
 
         if ($params->{excerpt} eq 'summary') {
-            for my $field(qw(excerpt user_excerpt)) {
+            for my $field (qw(excerpt user_excerpt)) {
                 $result->{$field} = substr($result->{$field}, 0, 250) . '...'
                     if length $result->{$field} > 250;
             }
         }
 
         if ($params->{description} eq 'html') {
-            for my $field(qw(content topic)) {
+            for my $field (qw(content topic)) {
                 $result->{"html_$field"} = events::format($result, $field) if defined $result->{$field};
             }
         }
@@ -325,7 +328,7 @@ sub modify_results($$$$) {
         if (defined $params->{template} && (
                 $params->{template} =~ /event_perl\.txt$/
              or $params->{template} =~ /event_file_export\.txt$/)
-       ) {
+        ) {
             $result->{$_} =~ s/\|/\\\|/g for (grep {defined $result->{$_}} keys %$result);
         }
 
@@ -350,7 +353,7 @@ sub add_recurrence_dates {
 
     # get unique list of recurrence ids from results
     my $recurrence_dates = {};
-    for my $result(@$results) {
+    for my $result (@$results) {
         next unless defined $result->{recurrence};
         next if $result->{recurrence} == 0;
         $recurrence_dates->{ $result->{recurrence} } = 0;
@@ -362,7 +365,7 @@ sub add_recurrence_dates {
     # query start date of recurrences
     my $conditions  = [];
     my $bind_values = [];
-    for my $id(@event_ids) {
+    for my $id (@event_ids) {
         push @$conditions,  '?';
         push @$bind_values, $id;
     }
@@ -371,26 +374,26 @@ sub add_recurrence_dates {
     my $query = qq{
         select id event_id, start
         from   calcms_events
-        where  id in($conditions)
+        where  id in ($conditions)
     };
     my $dbh = db::connect($config);
     my $events = db::get($dbh, $query, $bind_values);
 
     # store start dates by recurrence id
-    for my $event(@$events) {
+    for my $event (@$events) {
         $recurrence_dates->{ $event->{event_id} } = $event->{start};
     }
 
     # set start dates to results
     my $language = $config->{date}->{language} || 'en';
-    for my $result(@$results) {
+    for my $result (@$results) {
         next unless defined $result->{recurrence};
         next if $result->{recurrence} == 0;
         my $rdate = $recurrence_dates->{ $result->{recurrence} };
         if ($rdate){
             $result->{recurrence_date} = $rdate;
             $result->{recurrence_date_name} = time::date_format($config, $rdate, $language);
-         ($result->{recurrence_time_name}) = $rdate =~ m/(\d\d\:\d\d)\:\d\d/ ;
+            ($result->{recurrence_time_name}) = $rdate =~ m/(\d\d\:\d\d)\:\d\d/ ;
             my $ymd = time::date_to_array($rdate);
             my $weekdayIndex = time::weekday($ymd->[0], $ymd->[1], $ymd->[2]);
             $result->{recurrence_weekday_name}       = time::getWeekdayNames($language)->[$weekdayIndex];
@@ -536,7 +539,7 @@ sub add_recordings($$$$) {
     my $query = qq{
         select  *
         from    calcms_audio_recordings
-        where   event_id in($qms)
+        where   event_id in ($qms)
         order by created_at;
     };
 
@@ -547,7 +550,7 @@ sub add_recordings($$$$) {
     return $events;
 }
 
-sub getDateQueryConditions($$$) {
+sub getDateQueryConditions ($$$) {
     my ($config, $params, $bind_values) = @_;
 
     # conditions by date
@@ -558,7 +561,7 @@ sub getDateQueryConditions($$$) {
     my $date = ($params->{date} ne '') ? time::date_cond($params->{date}) : '';
     if ($date eq 'today') {
         my $date = time::get_event_date($config);
-        push @$date_conds,  '(start_date = ?) ';
+        push @$date_conds,  ' (start_date = ?) ';
         push @$bind_values, $date;
         return $date_conds;
     }
@@ -582,11 +585,11 @@ sub getDateQueryConditions($$$) {
 
     if ($params->{phase} eq 'running') {
         push @$date_conds, qq{
-          (
-          (unix_timestamp(end)   >  unix_timestamp(now()))
+           (
+             (unix_timestamp(end)   >  unix_timestamp(now()))
              and
-          (unix_timestamp(start) <= unix_timestamp(now()))
-            )
+             (unix_timestamp(start) <= unix_timestamp(now()))
+           )
         };
         return $date_conds;
     }
@@ -613,10 +616,10 @@ sub getDateQueryConditions($$$) {
         $start = time::add_hours_to_datetime($start, $day_starting_hour);
         if ($date_range_include eq '1') {
             ## end is after start
-            push @$date_conds,  '(end >= ?)';
+            push @$date_conds,  ' (end >= ?)';
             push @$bind_values, $start;
         } else {
-            push @$date_conds,  '(start >= ?) ';
+            push @$date_conds,  ' (start >= ?) ';
             push @$bind_values, $start;
         }
     }
@@ -638,10 +641,10 @@ sub getDateQueryConditions($$$) {
         $end = time::add_hours_to_datetime($end, $day_starting_hour);
         if ($date_range_include eq '1') {
             ## start is before end
-            push @$date_conds,  '(start <= ?)';
+            push @$date_conds,  ' (start <= ?)';
             push @$bind_values, $end;
         } else {
-            push @$date_conds,  '(end <= ?) ';
+            push @$date_conds,  ' (end <= ?) ';
             push @$bind_values, $end;
         }
     }
@@ -650,24 +653,24 @@ sub getDateQueryConditions($$$) {
         my $weekday = int($params->{weekday});
         $weekday += 1;
         $weekday -= 7 if $weekday > 7;
-        push @$date_conds,  '(dayofweek(start)= ?) ';
+        push @$date_conds,  ' (dayofweek(start)= ?) ';
         push @$bind_values, $weekday;
     }
 
     if ($params->{last_days}) {
         my $d = int $params->{last_days};
-        push @$date_conds,  qq{(end between date_sub(now(),INTERVAL $d DAY) and now()) };
-    } elsif($params->{next_days}) {
+        push @$date_conds,  qq{ (end between date_sub(now(),INTERVAL $d DAY) and now()) };
+    } elsif ($params->{next_days}) {
         my $d = int $params->{next_days};
-        push @$date_conds,  qq{(end between now() and date_add(now(),INTERVAL $d DAY)) };
-    } elsif($params->{phase} eq 'past') {
+        push @$date_conds,  qq{ (end between now() and date_add(now(),INTERVAL $d DAY)) };
+    } elsif ($params->{phase} eq 'past') {
         if ((my $date = time::get_event_date($config)) ne '') {
-            push @$date_conds,  '(start < ?) ';
+            push @$date_conds,  ' (start < ?) ';
             push @$bind_values, $date;
         } else {die}
-    } elsif($params->{phase} eq 'future') {
+    } elsif ($params->{phase} eq 'future') {
         if ((my $date = time::get_event_date($config)) ne '') {
-            push @$date_conds,  '(end >= ?) ';
+            push @$date_conds,  ' (end >= ?) ';
             push @$bind_values, $date;
         } else {die}
     }
@@ -714,16 +717,16 @@ sub get_query($$$) {
     # location
     my $location_cond = '';
     if (my @locations = grep {$_ ne ''} split /,/, $params->{location} =~ s/$invalid/%/gr) {
-        $location_cond = ' location in(' . join(',',('?') x @locations) . ')';
+        $location_cond = ' location in (' . join(',', ('?') x @locations) . ')';
         push @$bind_values, @locations;
     }
 
     # exclude location
     my $exclude_location_cond = '';
     if ($params->{exclude_locations} eq '1' &&
-     (my @locations = grep {$_ ne ''} split /,/, $params->{locations_to_exclude} =~ s/$invalid/%/gr)
-   ) {
-        $exclude_location_cond = 'location not in(' . join(',',('?')x @locations) . ')';
+        (my @locations = grep {$_ ne ''} split /,/, $params->{locations_to_exclude} =~ s/$invalid/%/gr)
+    ) {
+        $exclude_location_cond = 'location not in (' . join(',', ('?')x @locations) . ')';
         push @$bind_values, @locations;
     }
 
@@ -731,14 +734,14 @@ sub get_query($$$) {
     my $exclude_project_cond = '';
     if ($params->{exclude_projects} eq '1' &&  $params->{projects_to_exclude} ne '') {
         my @projects_to_exclude = split /,/, $params->{projects_to_exclude} =~s/$invalid/%/gr;
-        $exclude_project_cond = 'project not in(' . join(",",('?') x @projects_to_exclude) . ')';
+        $exclude_project_cond = 'project not in (' . join(",", ('?') x @projects_to_exclude) . ')';
         push @$bind_values, @projects_to_exclude;
     }
 
     my $series_name_cond = '';
     if ($params->{series_name} ne '' &&
-     (my $series_name = (split(/\,/, $params->{series_name} =~ s/$invalid/%/gr))[0])
-   ) {
+        (my $series_name = (split(/\,/, $params->{series_name} =~ s/$invalid/%/gr))[0])
+    ) {
         $series_name_cond = ' series_name like ? ';
         push @$bind_values, $series_name;
     }
@@ -747,13 +750,13 @@ sub get_query($$$) {
     my $tag_cond = '';
     my @tags = split /\,/, $params->{tag};
     if (scalar @tags > 0) {
-        my $tags = join ",",(map { '?' } @tags);
+        my $tags = join ",", (map { '?' } @tags);
         push @$bind_values, @tags;
         $tag_cond = qq{
             id in(
                 select event_id from calcms_tags
                 where name in($tags)
-           )
+            )
         };
     }
 
@@ -777,7 +780,7 @@ sub get_query($$$) {
         $search = "%$search%";
         my @attributes = qw(title series_name excerpt content topic);
         $search_cond = '(' . join(' OR ', map { "lower($_) LIKE ?" } @attributes) . ')';
-        push @$bind_values,($search) x @attributes;
+        push @$bind_values, ($search) x @attributes;
     }
 
     my $project_name = (($params || {})->{project} || {})->{name} || '';
@@ -799,15 +802,15 @@ sub get_query($$$) {
     }
 
     #combine date, location, series_name, tag, search and project
-    push @$where_cond, grep {length $_}($location_cond, $exclude_location_cond, $exclude_project_cond,
+    push @$where_cond, grep {length $_} ($location_cond, $exclude_location_cond, $exclude_project_cond,
         $series_name_cond, $tag_cond, $title_cond, $search_cond, $project_cond, $published_cond,
         $draft_cond
-   );
+    );
 
     #order is forced
     if ($params->{order} eq 'asc') {
         $order_cond = 'order by start';
-    } elsif($params->{order} eq 'desc') {
+    } elsif ($params->{order} eq 'desc') {
         $order_cond = 'order by start desc';
     } else {
         if ($params->{phase} eq 'past') {
@@ -872,7 +875,7 @@ sub get_query($$$) {
         if $params->{description} eq 'text';
 
     # add project id and series id
-    for my $field(grep {$params->{$_} =~ /^\d+$/ }('project_id', 'studio_id')) {
+    for my $field (grep {$params->{$_} =~ /^\d+$/ } ('project_id', 'studio_id')) {
         push @$where_cond, "se.$field = ?";
         push @$bind_values, $params->{$field};
         $query .= ", se.$field";
@@ -905,7 +908,7 @@ sub get_query($$$) {
     $query .= "\n" . $order_cond if $order_cond ne '';
     $query .= "\n" . $limit_cond if $limit_cond ne '';
 
-    return(\$query, $bind_values);
+    return (\$query, $bind_values);
 }
 
 sub render($$$$;$) {
@@ -913,7 +916,7 @@ sub render($$$$;$) {
 
     my $params = $request->{params}->{checked};
     if (ref($root_params) eq 'HASH') {
-        for my $param(keys %$root_params) {
+        for my $param (keys %$root_params) {
             $params->{$param} = $root_params->{$param};
         }
     }
@@ -946,14 +949,14 @@ sub render($$$$;$) {
 
     if (scalar @$results == 0) {
         if (($params->{search} ne '')
-            ||($params->{series_name} ne ''))
+            || ($params->{series_name} ne ''))
         {
             $tparams->{no_search_result} = '1';
         } else {
             $tparams->{no_result} = '1';
         }
     } else {
-        if ((!defined $params->{event_id}) ||($params->{event_id} eq '')) {
+        if ((!defined $params->{event_id}) || ($params->{event_id} eq '')) {
             $tparams->{event_count}   = scalar @$results . '';
             $tparams->{first_of_list} = $results->[0]->{event_id};
         }
@@ -971,16 +974,16 @@ sub render($$$$;$) {
     if ($params->{template} =~ /\.atom\.xml/) {
         $tparams->{modified_at} =~ s/ /T/gi;
         $tparams->{modified_at} .= $time_diff;
-    } elsif($params->{template} =~ /\.rss\.xml/) {
+    } elsif ($params->{template} =~ /\.rss\.xml/) {
         $tparams->{modified_at} =
           time::datetime_to_rfc822($tparams->{modified_at});
-    } elsif($params->{template} =~ /\.txt/) {
+    } elsif ($params->{template} =~ /\.txt/) {
         $tparams->{modified_at_utc} =
           time::datetime_to_utc($tparams->{modified_at}, $config->{date}->{time_zone});
     }
 
     my $project = $params->{default_project};
-    foreach my $key(keys %$project) {
+    foreach my $key (keys %$project) {
         $tparams->{ 'project_' . $key } = $project->{$key};
     }
     $tparams->{ 'project_' . $project->{name} } = 1
@@ -991,7 +994,7 @@ sub render($$$$;$) {
       if (defined $config->{permissions}->{hide_event_images})
       && ($config->{permissions}->{hide_event_images} == 1);
 
-    for my $attr(qw(no_result events_title events_description)){
+    for my $attr (qw(no_result events_title events_description)){
         $tparams->{$attr} = $config->{$attr};
     }
 
@@ -1007,13 +1010,13 @@ sub get_running_event_id($) {
         select id event_id, start, title
         from calcms_events
         where
- (
-     (unix_timestamp(start) <= unix_timestamp(now()))
+    (
+        (unix_timestamp(start) <= unix_timestamp(now()))
         and
-     (unix_timestamp(end) > unix_timestamp(now()))
+        (unix_timestamp(end) > unix_timestamp(now()))
         and
-     (unix_timestamp(end) - unix_timestamp(now())) < 24*3600
-   )
+        (unix_timestamp(end) - unix_timestamp(now())) < 24*3600
+    )
 
         order by start
         limit 1
@@ -1027,7 +1030,7 @@ sub get_running_event_id($) {
 }
 
 # add filters to query
-sub setDefaultEventConditions($$$$) {
+sub setDefaultEventConditions ($$$$) {
     my ($config, $conditions, $bind_values, $options) = @_;
 
     $options = {} unless defined $options;
@@ -1040,8 +1043,8 @@ sub setDefaultEventConditions($$$$) {
     {
         my @projects_to_exclude =
           split(/,/, $config->{filter}->{projects_to_exclude});
-        push @$conditions, 'project not in(' . join(",", map { '?' } @projects_to_exclude) . ')';
-        for my $project(@projects_to_exclude) {
+        push @$conditions, 'project not in (' . join(",", map { '?' } @projects_to_exclude) . ')';
+        for my $project (@projects_to_exclude) {
             push @$bind_values, $project;
         }
     }
@@ -1054,8 +1057,8 @@ sub setDefaultEventConditions($$$$) {
     {
         my @locations_to_exclude =
           split(/,/, $config->{filter}->{locations_to_exclude});
-        push @$conditions, 'location not in(' . join(",", map { '?' } @locations_to_exclude) . ')';
-        for my $location(@locations_to_exclude) {
+        push @$conditions, 'location not in (' . join(",", map { '?' } @locations_to_exclude) . ')';
+        for my $location (@locations_to_exclude) {
             push @$bind_values, $location;
         }
     }
@@ -1063,7 +1066,7 @@ sub setDefaultEventConditions($$$$) {
 }
 
 # for local use only or add support for exclude_projects and exclude_locations
-sub getEventById($$$$) {
+sub getEventById ($$$$) {
     my ($dbh, $config, $event_id, $options) = @_;
 
     $dbh = db::connect($config) unless defined $dbh;
@@ -1087,7 +1090,7 @@ sub getEventById($$$$) {
     return $events;
 }
 
-sub get_next_event_of_series($$$) {
+sub get_next_event_of_series ($$$) {
     my ($dbh, $config, $options) = @_;
 
     my $eventId = $options->{event_id};
@@ -1161,7 +1164,7 @@ sub get_previous_event_of_series($$$) {
 }
 
 # used by calendar
-sub get_by_date_range($$$$$) {
+sub get_by_date_range ($$$$$) {
     my ($dbh, $config, $start_date, $end_date, $options) = @_;
 
     my $day_starting_hour = $config->{date}->{day_starting_hour};
@@ -1196,7 +1199,7 @@ sub get_by_date_range($$$$$) {
     return $events;
 }
 
-sub get_by_image($$$) {
+sub get_by_image ($$$) {
     my ($dbh, $config, $filename) = @_;
 
     my $query = qq{
@@ -1214,7 +1217,7 @@ sub get_by_image($$$) {
 }
 
 # deleting an event is currently disabled
-sub delete($$$) {
+sub delete ($$$) {
     return;
     my ($request, $config, $event_id) = @_;
 
@@ -1235,7 +1238,7 @@ sub delete($$$) {
 
 }
 
-sub get_duration($$) {
+sub get_duration ($$) {
     my ($config, $event) = @_;
 
     my $timezone = $config->{date}->{time_zone};
@@ -1247,7 +1250,7 @@ sub get_duration($$) {
     return $duration / 60;
 }
 
-sub check_params($$) {
+sub check_params ($$) {
     my ($config, $params) = @_;
 
     #define running at
@@ -1274,7 +1277,7 @@ sub check_params($$) {
     my $till_date = time::check_date($params->{till_date});
     my $date = ($from_date eq '' && $till_date eq '') ? time::check_date($params->{date}) : '';
 
-    #set date interval(including)
+    #set date interval (including)
     my $date_range_include = ($params->{date_range_include}//'') eq '1' ?0:1;
 
     my $order = '';
@@ -1352,11 +1355,11 @@ sub check_params($$) {
     my $phase = $params->{phase} // 'future';
     if ($phase =~ /^(?:future|upcoming)$/) {
         $phase = 'future';
-    } elsif($phase =~/^(?:ongoing|running)$/) {
+    } elsif ($phase =~/^(?:ongoing|running)$/) {
         $phase = 'ongoing';
-    } elsif($phase eq 'all' or($from_date ne '' && $till_date ne '')) {
+    } elsif ($phase eq 'all' or ($from_date ne '' && $till_date ne '')) {
         $phase = 'all';
-    } elsif($phase =~ /^(?:past|completed)$/) {
+    } elsif ($phase =~ /^(?:past|completed)$/) {
         $phase = 'past'    ;
     } else {
         die "invalid phase";
@@ -1391,7 +1394,7 @@ sub check_params($$) {
     my $template = '.html';
     if (($params->{template}//'') eq 'no') {
         $template = 'no';
-    } elsif(($params->{template}//'') eq 'html') {
+    } elsif (($params->{template}//'') eq 'html') {
         $template = 'html';
     } else {
         $template = template::check($config, $params->{template}, 'event_list.html');
@@ -1413,12 +1416,12 @@ sub check_params($$) {
       unless scalar(@$projects) == 1;
     $default_project = $projects->[0];
 
-    # get project from parameter(by name)
+    # get project from parameter (by name)
     my $project = '';
     if ((defined $params->{project})
         && ($params->{project} =~ /\w+/)
         && ($params->{project} ne 'all')
-   ) {
+    ) {
         my $project_name = $params->{project};
         my $projects = project::get($config, { name => $project_name });
         log::error($config, 'invalid project ' . $project_name) unless scalar(@$projects) == 1;
@@ -1478,14 +1481,14 @@ sub check_params($$) {
         active_recording     => $active_recording,
         only_active_recordings => $only_active_recording,
         set_no_listen_keys   => $set_no_listen_keys,
-        ro                   =>($params->{ro}//'') ? 1 : 0
+        ro                   => ($params->{ro}//'') ? 1 : 0
     };
     return $checked;
 }
 
 sub l($){
     my ($word) = @_;
-    return length $word ? $word :();
+    return length $word ? $word : ();
 }
 
 sub get_keys($) {
@@ -1497,16 +1500,16 @@ sub get_keys($) {
     my $recurrence_count_alpha = $event->{recurrence_count_alpha} // '';
 
     # "<title>: <user-title>"
-    my $tkey = join(': ',(l($title), l($user_title)));
+    my $tkey = join (': ', (l($title), l($user_title)));
 
     # episode "#123c"
-    my $ekey = join '',(
-     (length $episode) ? '#'.$episode : '',
+    my $ekey = join '', (
+        (length $episode) ? '#'.$episode : '',
         $recurrence_count_alpha
-   );
+    );
 
     # "<title> <episode>"
-    my $te = join " ",(l($tkey), l($ekey));
+    my $te = join " ", (l($tkey), l($ekey));
 
     # separation between <series> and <title>
     my $stkey = (length($series_name) and length($te)) ? ' - ' : '';

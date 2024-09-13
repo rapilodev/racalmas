@@ -17,7 +17,7 @@ use log();
 our @EXPORT_OK =
   qw(fix_line_ends html_to_creole creole_to_html creole_to_plain plain_to_ical ical_to_plain ical_to_xml html_to_plain fix_utf8 uri_encode compress base26);
 
-sub fix_line_ends($) {
+sub fix_line_ends ($) {
     my ($s) = @_;
     $s =~ s/\r?\n|\r/\n/g;
     return $s;
@@ -104,7 +104,7 @@ sub html_to_creole($) {
     $s =~ s/(={2,99})/\n$1/g;
 
     #reduce head line level
-    $s =~ s/= (=+)/$1/g;
+    $s =~ s/=(=+)/$1/g;
 
     $s =~ s/^\s+//gi;
     $s =~ s/\s+$//gi;
@@ -116,7 +116,7 @@ sub html_to_creole($) {
     return $s;
 }
 
-sub creole_to_html($) {
+sub creole_to_html ($) {
     my $s = $_[0] || '';
 
     $s =~ s/<a\s+.*?href="(.*?)".*?>(.*?)(\s*)<\/a>/\[\[$1\|$2\]\]$3/gi;
@@ -136,7 +136,7 @@ sub creole_to_html($) {
     $s =~ s/(\{\{[^\}\n]*?)\n([^\}\n]*?\}\})/$1$2/g;
 
     #remove whitespaces and break lines at start or end of elements
-    for my $elem('p', 'li') {
+    for my $elem ('p', 'li') {
         $s =~ s|<$elem>\s*<br/><br/>|<$elem>|g;
         $s =~ s|<br/><br/>\s*</$elem>|</$elem>|g;
     }
@@ -163,16 +163,16 @@ sub creole_to_plain($) {
     $s =~ s/\n== (.*?)\n/\n<h2>$1<\/h2>\n/g;
     $s =~ s/\*\*(.*?)\*\*/<strong>$1<\/strong> /g;
     $s =~ s/^== (.*?)\n/<h2>$1<\/h2>\n/g;
-    $s =~ s/\n\*(.*?)\n/\n<li>$1<\/li>\n/g;
-    $s =~ s/\n\*(.*?)\n/\n<li>$1<\/li>\n/g;
-    $s =~ s/\n\-(.*?)\n/\n<lo>$1<\/lo>\n/g;
-    $s =~ s/\n\-(.*?)\n/\n<lo>$1<\/lo>\n/g;
+    $s =~ s/\n\* (.*?)\n/\n<li>$1<\/li>\n/g;
+    $s =~ s/\n\* (.*?)\n/\n<li>$1<\/li>\n/g;
+    $s =~ s/\n\- (.*?)\n/\n<lo>$1<\/lo>\n/g;
+    $s =~ s/\n\- (.*?)\n/\n<lo>$1<\/lo>\n/g;
     $s =~ s/\n\n/\n<p>/gi;
     $s =~ s/\n/\n<br\/>/gi;
     return $s;
 }
 
-sub html_to_plain($) {
+sub html_to_plain ($) {
     my ($s) = @_;
 
     return '' unless defined $s;
@@ -182,7 +182,7 @@ sub html_to_plain($) {
     return $s;
 }
 
-sub ical_to_plain($) {
+sub ical_to_plain ($) {
     return '' unless defined($_[0]);
     $_[0] =~ s/\\n/\n/gi;
     $_[0] =~ s/   /\t/gi;
@@ -210,7 +210,7 @@ sub plain_to_ical {
 
 sub plain_to_xml($) {
     return '' unless defined($_[0]);
-    $_[0] =~ s/\n\={1,6}(.*?)\s+/\n\[\[$1\]\]\n/gi;
+    $_[0] =~ s/\n\={1,6} (.*?)\s+/\n\[\[$1\]\]\n/gi;
 
     #remove images + links
     $_[0] =~ s/\[\[.+?\|(.+?)\]\]/$1/g;
@@ -223,12 +223,12 @@ sub fix_utf8($) {
     return $_[0];
 }
 
-sub uri_encode($) {
+sub uri_encode ($) {
     $_[0] =~ s/([^a-zA-Z0-9_\.\-])/sprintf("%%%02lx",ord($1))/esg;
     return $_[0];
 }
 
-sub compress($) {
+sub compress ($) {
     my $header = '';
 
     if ($_[0] =~ /(Content\-type\:[^\n]+[\n]+)/) {
@@ -393,7 +393,7 @@ sub encode_xml_element($) {
     return $encoded_text;
 }
 
-sub encode_xml_element_text($) {
+sub encode_xml_element_text ($) {
     my ($text) = @_;
 
     $text =~ s/&(?!(#[0-9]+|#x[0-9a-fA-F]+|\w+);)/&amp;/g;

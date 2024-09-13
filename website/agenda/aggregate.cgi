@@ -22,7 +22,7 @@ if ($0 =~ /aggregate.*?\.cgi$/) {
     my $r      = shift;
     if (ref($r) eq '') {
         unshift @ARGV, $r;
-        for my $arg(@ARGV) {
+        for my $arg (@ARGV) {
             my ($key, $value) = split(/\=/, $arg, 2);
             $params->{$key} = $value;
         }
@@ -89,7 +89,7 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
     $content =~ s/\/\/\s*(calcms_)?preload/$js/;
 
     #insert results into page
-    for my $key(keys %$output) {
+    for my $key (keys %$output) {
         my $val = ${ $output->{$key} };
         my $start = index($val, "<body>");
         if ($start != -1) {
@@ -106,10 +106,10 @@ s/\&lt\;span id\=&quot\;calcms_title&quot\;\&gt\;[^\&]*\&lt\;\/span\&gt\;/\<span
     $list->{project_title} = '' unless defined $list->{project_title};
     $content =~ s/(<(div|span)\s+id="calcms_title".*?>).*?(<\/(div|span)>)/$list->{project_title}/g;
 
-    my $title = join ' - ', grep {defined $_ and $_ ne ''}(
+    my $title = join ' - ', grep {defined $_ and $_ ne ''} (
         $list->{'series_name'}, $list->{'title'},
         $list->{'location'}, 'Programm ' . $list->{project_title}
-   );
+    );
     $content =~ s/(<title>)(.*?)(<\/title>)/$1$title$3/;
 
     $js = '';

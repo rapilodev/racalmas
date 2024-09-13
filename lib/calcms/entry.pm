@@ -5,12 +5,12 @@ use strict;
 
 sub from_valid($$) {
     my ($params, $attrs) = @_;
-    return { map { defined $params->{$_} ? { $_ => $params->{$_} } :() } @$attrs };
+    return { map { defined $params->{$_} ? { $_ => $params->{$_} } : () } @$attrs };
 }
 
 sub set_numbers($$$) {
     my ($entry, $params, $fields) = @_;
-    for my $field(@$fields) {
+    for my $field (@$fields) {
         my $value = $params->{$field};
         next unless defined $value;
         if ($value =~ /([\-\d]+)/){
@@ -21,7 +21,7 @@ sub set_numbers($$$) {
 
 sub set_bools($$$) {
     my ($entry, $params, $fields) = @_;
-    for my $field(@$fields) {
+    for my $field (@$fields) {
         my $value = $params->{$field};
         next unless defined $value;
         if ($value=~/([01])/){
@@ -32,7 +32,7 @@ sub set_bools($$$) {
 
 sub set_strings($$$) {
     my ($entry, $params, $attrs) = @_;
-    for my $field(@$attrs) {
+    for my $field (@$attrs) {
         my $value = $params->{$field};
         next unless defined $value;
         $entry->{$field} = $value;

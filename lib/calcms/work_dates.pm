@@ -27,7 +27,7 @@ sub get_columns($) {
 
 # get all work_dates for studio_id and schedule_id within given time range
 # calculate start_date, end_date, weeday, day from start and end(datetime)
-sub get($$) {
+sub get ($$) {
     my ($config, $condition) = @_;
 
     my $date_range_include = 0;
@@ -107,7 +107,7 @@ sub get($$) {
 	};
 
     my $entries = db::get($dbh, $query, \@bind_values);
-    for my $entry(@$entries) {
+    for my $entry (@$entries) {
         $entry->{weekday} = substr($entry->{weekday}, 0, 2);
     }
 
@@ -124,7 +124,7 @@ sub update($$) {
 
     my $dbh = db::connect($config);
 
-    #delete all existing work dates(by project, studio and schedule id)
+    #delete all existing work dates (by project, studio and schedule id)
     work_dates::delete($config, $entry);
 
     my $day_start = $config->{date}->{day_starting_hour};
@@ -137,25 +137,25 @@ sub update($$) {
             studio_id   => $entry->{studio_id},
             schedule_id => $entry->{schedule_id},
         }
-   );
+    );
 
     #add scheduled work dates and remove exluded dates
     my $work_dates = {};
 
     #TODO:set schedules exclude to 0 if not 1
-    #insert all normal dates(not excludes)
-    for my $schedule(@$schedules) {
+    #insert all normal dates (not excludes)
+    for my $schedule (@$schedules) {
         my $dates = get_schedule_dates($schedule, { exclude => 0 });
-        for my $date(@$dates) {
+        for my $date (@$dates) {
             $date->{exclude} = 0;
             $work_dates->{ $date->{start} } = $date;
         }
     }
 
     #insert / overwrite all exlude dates
-    for my $schedule(@$schedules) {
+    for my $schedule (@$schedules) {
         my $dates = get_schedule_dates($schedule, { exclude => 1 });
-        for my $date(@$dates) {
+        for my $date (@$dates) {
             $date->{exclude} = 1;
             $work_dates->{ $date->{start} } = $date;
         }
@@ -164,7 +164,7 @@ sub update($$) {
     my $request = { config => $config };
     my $i = 0;
     my $j = 0;
-    for my $date(keys %$work_dates) {
+    for my $date (keys %$work_dates) {
         my $work_date = $work_dates->{$date};
 
         #insert date
@@ -202,13 +202,13 @@ sub get_schedule_dates($$) {
 
     if ($schedule->{period_type} eq 'single') {
         $dates = get_single_date($schedule->{start}, $schedule->{duration});
-    } elsif($schedule->{period_type} eq 'days') {
+    } elsif ($schedule->{period_type} eq 'days') {
         $dates = get_dates($schedule->{start}, $schedule->{end}, $schedule->{duration}, $schedule->{frequency});
-    } elsif($schedule->{period_type} eq 'week_of_month') {
+    } elsif ($schedule->{period_type} eq 'week_of_month') {
         $dates = get_week_of_month_dates(
             $schedule->{start},         $schedule->{end},     $schedule->{duration},
             $schedule->{week_of_month}, $schedule->{weekday}, $schedule->{month}
-       );
+        );
     } else {
         print STDERR "unknown schedule period_type\n";
     }
@@ -232,7 +232,7 @@ sub get_week_of_month_dates($$$$$$) {
     my $results = [];
 
     my $c = -1;
-    for my $start_datetime(@$start_dates) {
+    for my $start_datetime (@$start_dates) {
         $c++;
         my @start = @{ time::datetime_to_array($start_datetime) };
         next unless @start >= 6;
@@ -242,7 +242,7 @@ sub get_week_of_month_dates($$$$$$) {
             $start[0], $start[1], $start[2],    # start date
             $start[3], $start[4], $start[5],    # start time
             0, 0, $duration, 0                  # delta days, hours, minutes, seconds
-       );
+        );
         my $end_datetime = time::array_to_datetime(\@end_datetime);
 
         push @$results,
@@ -265,7 +265,7 @@ sub get_single_date($$) {
         $start[0], $start[1], $start[2],    # start date
         $start[3], $start[4], $start[5],    # start time
         0, 0, $duration, 0                  # delta days, hours, minutes, seconds
-   );
+    );
     my $date = {
         start => $start_datetime,
         end   => time::array_to_datetime(\@end_datetime)
@@ -288,7 +288,7 @@ sub get_dates($$$$) {
     $date->{start} = sprintf("%04d-%02d-%02d", @start_date) . ' ' . $start_time;
     return undef if $duration eq '';
 
-    return undef if ($frequency eq '') ||($end_date eq '');
+    return undef if ($frequency eq '') || ($end_date eq '');
 
     #continue on recurring date
     my @end = @{ time::datetime_to_array($end_date) };
@@ -316,7 +316,7 @@ sub get_dates($$$$) {
             $date[0],  $date[1],  $date[2],     # start date
             $start[3], $start[4], $start[5],    # start time
             0, 0, $duration, 0                  # delta days, hours, minutes, seconds
-       );
+        );
         $date->{end} = time::array_to_datetime(\@end_datetime);
 
         last if ($c > 200);

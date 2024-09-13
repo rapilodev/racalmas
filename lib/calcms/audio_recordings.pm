@@ -160,7 +160,7 @@ sub update($$) {
 }
 
 # insert playout entry
-sub insert($$) {
+sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'event_id', 'path') {
@@ -189,7 +189,7 @@ sub insert($$) {
 }
 
 # delete playout entry
-sub delete($$) {
+sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'event_id', 'path') {

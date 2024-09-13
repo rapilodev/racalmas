@@ -50,24 +50,24 @@ sub read_config {
             my $sentry = pop @stack;
             die unless $sentry->{name} eq $name;
             $entry = $sentry->{value};
-        } elsif($line =~ /^<([^>]+)>$/) {
+        } elsif ($line =~ /^<([^>]+)>$/) {
 
             # open tag
             my $name = $1;
             $entry->{$name} = {};
             push @stack, { name => $name, value => $entry };
             $entry = $entry->{$name};
-        } elsif($line =~ /^Define\s/) {
+        } elsif ($line =~ /^Define\s/) {
             # define vars
             my ($attr, $key, $value) = split /\s+/, $line, 3;
-            for my $var(keys %$vars) {
+            for my $var (keys %$vars) {
                 $value =~ s/\$\{$var\}/$vars->{$var}/;
             }
             $vars->{$key} = $value;
         } else {
             # attributes
             my ($key, $value) = split /\s+/, $line, 2;
-            for my $var(keys %$vars) {
+            for my $var (keys %$vars) {
                 $value =~ s/\$\{$var\}/$vars->{$var}/;
             }
             $entry->{$key} = $value;

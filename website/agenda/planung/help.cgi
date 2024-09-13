@@ -62,7 +62,7 @@ sub main {
     #content p{
         padding-left:6em;
         line-height:1.5em;
-    }
+}
 
     #content ul{
         padding-left:7em;
@@ -598,10 +598,10 @@ sub check_params {
     my $checked = {};
 
     $checked->{exclude} = 0;
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'id', 'project_id', 'studio_id', 'default_studio_id' ]);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;

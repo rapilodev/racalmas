@@ -10,7 +10,7 @@ function showSeries(project_id, studio_id, series_id, tab) {
         studio_id: studio_id,
         series_id: series_id,
     }).toString() + tab);
-}
+            }
 
 function view_series_details(project_id, studio_id, series_id){
     var elem=$('.series_details_'+series_id).prev();
@@ -25,7 +25,7 @@ function view_series_details(project_id, studio_id, series_id){
         elem.addClass('active');
         showSeries(project_id,studio_id,series_id);
     }
-}
+        }
 
 
 function searchEventsAt(selector, searchValue){
@@ -33,7 +33,7 @@ function searchEventsAt(selector, searchValue){
         if(searchValue==''){
             $(this).show();
             return;
-        }
+}
         var text=$(this).text().toLowerCase();
         if(text.indexOf(searchValue)!=-1){
             $(this).show();
@@ -62,7 +62,6 @@ function clearSearch(){
 }
 
 async function createSeries(form){
-    var formData = new FormData(form.get(0));
     formData.append("action", "create_series");
     let response = await fetch("series.cgi?",{
         method: 'POST',

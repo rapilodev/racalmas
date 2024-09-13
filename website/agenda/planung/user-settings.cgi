@@ -53,7 +53,7 @@ sub show_settings {
     my $permissions = $request->{permissions};
 
     my $user = $params->{presets}->{user};
-    my $colors = user_settings::getColors( $config, { user => $user } );
+    my $colors = user_settings::getColors($config, { user => $user });
 
     #map colors to params
     my @colors = ();
@@ -70,10 +70,10 @@ sub show_settings {
     }
 
     $params->{colors}      = \@colors;
-    $params->{css}         = user_settings::getColorCss( $config, { user => $user } );
+    $params->{css}         = user_settings::getColorCss($config, { user => $user });
     $params->{permissions} = $permissions;
 
-    my $user_settings = user_settings::get( $config, { user => $user } );
+    my $user_settings = user_settings::get($config, { user => $user });
     my $language = $user_settings->{language} || 'en';
     $params->{language} = $language;
     $params->{ 'language_' . $language } = 1;
@@ -82,13 +82,13 @@ sub show_settings {
     $params->{ 'period_' . $period } = 1;
 
     $params->{loc} =
-      localization::get( $config, { language => $language, file => 'user-settings' } );
+      localization::get($config, { language => $language, file => 'user-settings' });
 
-    for my $color ( @{ $params->{colors} } ) {
+    for my $color (@{ $params->{colors} }) {
         $color->{title} = $params->{loc}->{ $color->{title} };
     }
 
-    uac::set_template_permissions( $permissions, $params );
+    uac::set_template_permissions($permissions, $params);
 
     return template::process( $config, $params->{template}, $params );
 }
@@ -112,13 +112,12 @@ sub updateDefaultProjectStudio {
             $config,
             { user => $user }
         )
-      )
-    {
+    ) {
         uac::print_info("update project and studio settings");
-        user_settings::update( $config, $entry );
+        user_settings::update($config, $entry);
     } else {
         uac::print_info("insert user settings, as missing on updating default project and studio");
-        update_settings( $config, $request );
+        update_settings($config, $request);
     }
 
     if (
@@ -129,13 +128,12 @@ sub updateDefaultProjectStudio {
                 project_id => $params->{project_id}
             }
         )
-      )
-    {
+    ) {
         uac::print_info("update user default studio");
-        user_default_studios::update( $config, $entry );
+        user_default_studios::update($config, $entry);
     } else {
         uac::print_info("insert user default studio");
-        user_default_studios::insert( $config, $entry );
+        user_default_studios::insert($config, $entry);
     }
 }
 
@@ -149,8 +147,8 @@ sub update_settings {
     # map params to colors
     my @colors = ();
     my $c      = 0;
-    for my $color ( @{$user_settings::defaultColors} ) {
-        if ( defined $params->{ 'color_' . $c } ) {
+    for my $color (@{$user_settings::defaultColors}) {
+        if (defined $params->{ 'color_' . $c }) {
             push @colors, $color->{css} . '=' . $params->{ 'color_' . $c };
         } else {
             push @colors, $color->{css} . '=' . $color->{color};
@@ -160,21 +158,21 @@ sub update_settings {
 
     my $settings = {
         user     => $user,
-        colors   => join( "\n", @colors ),
+        colors   => join("\n", @colors),
         language => $params->{language},
         period   => $params->{period},
     };
 
-    my $results = user_settings::get( $config, { user => $user } );
+    my $results = user_settings::get($config, { user => $user });
     local $config->{access}->{write} = 1;
-    if ( defined $results ) {
+    if (defined $results) {
         uac::print_info("update user settings");
-        user_settings::update( $config, $settings );
+        user_settings::update($config, $settings);
     } else {
         uac::print_info("insert user settings");
         $settings->{project_id} = $params->{project_id};
         $settings->{studio_id}  = $params->{studio_id};
-        user_settings::insert( $config, $settings );
+        user_settings::insert($config, $settings);
     }
 }
 
@@ -184,38 +182,38 @@ sub check_params {
 
     #template
     my $template = '';
-    $template = template::check( $config, $params->{template}, 'user-settings' );
+    $template = template::check($config, $params->{template}, 'user-settings');
     $checked->{template} = $template;
 
     #numeric values
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'project_id', 'default_studio_id', 'studio_id', 'default_studio',
         'default_project' ]);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;
     }
 
-    for my $param ( keys %$params ) {
-        if ( ( defined $params->{$param} ) && ( $param =~ /^(color\_\d+)$/ ) ) {
+    for my $param (keys %$params) {
+        if ((defined $params->{$param}) && ($param =~ /^(color\_\d+)$/)) {
             $checked->{$param} = $params->{$param};
         }
     }
 
     $checked->{language} = 'en';
-    if ( ( defined $params->{language} ) && ( $params->{language} =~ /^de$/ ) ) {
+    if ((defined $params->{language}) && ($params->{language} =~ /^de$/)) {
         $checked->{language} = 'de';
     }
 
-    if ( defined $params->{period} ) {
-        if ( $params->{period} =~ /(\S+)/ ) {
+    if (defined $params->{period}) {
+        if ($params->{period} =~ /(\S+)/) {
             $checked->{period} = $1;
         }
     }
 
-    $checked->{action} = entry::element_of( $params->{action}, ['save', 'updateDefaultProjectStudio']);
+    $checked->{action} = entry::element_of($params->{action}, ['save', 'updateDefaultProjectStudio']);
     return $checked;
-}
+    }
 

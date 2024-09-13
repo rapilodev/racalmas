@@ -19,7 +19,7 @@ sub to_ascii {
         Ü Ue
         ü ue
         ß ss
-   );
+    );
     $s =~ s/([ÄäÖöÜüß])/$translate{$1}/g;
     $s = unidecode $s;
     return $s;
@@ -38,7 +38,7 @@ sub send($) {
 			'Subject' => to_ascii($mail->{'Subject'})
         ],
         body => to_ascii($mail->{'Data'})
-   );
+    );
     Email::Sender::Simple->send($email);
 }
 

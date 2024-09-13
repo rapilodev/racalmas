@@ -13,7 +13,7 @@ use series_events();
 
 our @EXPORT_OK = qw(get_columns get sync);
 
-sub get_columns($) {
+sub get_columns ($) {
     my ($config) = @_;
     my $dbh = db::connect($config);
     return db::get_columns_hash($dbh, 'calcms_playout');
@@ -222,7 +222,7 @@ sub get($$) {
 
 # update playout entries for a given date span
 # insert, update and delete entries
-sub sync($$) {
+sub sync ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'from', 'till', 'events') {
@@ -235,7 +235,7 @@ sub sync($$) {
 
     # get new entries by date
     my $update_by_date = {};
-    for my $entry(@$updates) {
+    for my $entry (@$updates) {
         $update_by_date->{ $entry->{start} } = $entry;
     }
 
@@ -257,7 +257,7 @@ sub sync($$) {
 
     # get database entries by date
     my $entries_by_date = {};
-    for my $entry(@$entries) {
+    for my $entry (@$entries) {
 
         # store entry by date
         my $start = $entry->{start};
@@ -274,8 +274,8 @@ sub sync($$) {
                     start      => $entry->{start},
                     playout    => 0,
                 }
-           );
-            print STDERR "delete playout_status result=" .($result // 'undef') . "\n";
+            );
+            print STDERR "delete playout_status result=" . ($result // 'undef') . "\n";
             next;
         }
 
@@ -291,14 +291,14 @@ sub sync($$) {
                     start      => $entry->{start},
                     playout    => 1,
                 }
-           );
-            print STDERR "update playout_status result=" .($result // 'undef') . "\n";
+            );
+            print STDERR "update playout_status result=" . ($result // 'undef') . "\n";
             next;
         }
     }
 
     # insert new entries
-    for my $entry(@$updates) {
+    for my $entry (@$updates) {
         my $start = $entry->{start};
         unless (defined $entries_by_date->{$start}) {
             $entry->{project_id} = $project_id;
@@ -312,39 +312,37 @@ sub sync($$) {
                     start      => $entry->{start},
                     playout    => 1,
                 }
-           );
-            print STDERR "insert playout_status result=" .($result // 'undef'). "\n";
+            );
+            print STDERR "insert playout_status result=" . ($result // 'undef'). "\n";
         }
     }
     return 1;
 }
 
-sub has_changed($$) {
+sub has_changed ($$) {
     my ($oldEntry, $newEntry) = @_;
-    for my $key(
+    for my $key (
         'duration',        'errors',         'file',           'channels',
         'format',          'format_version', 'format_profile', 'format_settings',
         'stream_size',     'bitrate',        'bitrate_mode',   'sampling_rate',
         'writing_library', 'modified_at'
-     )
-    {
-        return 1 if ($oldEntry->{$key} // '') ne($newEntry->{$key} // '');
+    ) {
+        return 1 if ($oldEntry->{$key} // '') ne ($newEntry->{$key} // '');
     }
     return 0;
 }
 
 # update playout entry if differs to old values
-sub update($$$$) {
+sub update ($$$$) {
     my ($config, $dbh, $oldEntry, $newEntry) = @_;
-    for my $key(
+    for my $key (
         'duration',        'errors',         'file',           'channels',
         'format',          'format_version', 'format_profile', 'format_settings',
         'stream_size',     'bitrate',        'bitrate_mode',   'sampling_rate',
         'writing_library', 'rms_left',       'rms_right',      'rms_image',
         'replay_gain',     'modified_at'
-     )
-    {
-        if (($oldEntry->{$key} || '') ne($newEntry->{$key} || '')) {
+    ) {
+        if (($oldEntry->{$key} || '') ne ($newEntry->{$key} || '')) {
             $oldEntry->{$key} = $newEntry->{$key};
         }
     }
@@ -377,12 +375,11 @@ sub update($$$$) {
 }
 
 # insert playout entry
-sub insert($$$) {
+sub insert ($$$) {
     my ($config, $dbh, $entry) = @_;
-
     for ('project_id', 'studio_id', 'start', 'duration', 'file') {
         ParamError->throw(error => "missing $_") unless defined $entry->{$_}
-    };
+    }
 
     my $day_start = $config->{date}->{day_starting_hour};
     $entry->{end} = playout::get_end($entry->{start}, $entry->{duration});
@@ -418,8 +415,7 @@ sub insert($$$) {
             writing_library => $entry->{writing_library},
             modified_at     => $entry->{modified_at}
         }
-   );
-
+    );
 }
 
 # delete playout entry
@@ -427,7 +423,7 @@ sub delete($$$) {
     my ($config, $dbh, $entry) = @_;
     for ('project_id', 'studio_id', 'start') {
         ParamError->throw(error => "missing $_") unless defined $entry->{$_}
-    };
+    }
     my $query = qq{
 		delete
 		from calcms_playout
@@ -437,7 +433,7 @@ sub delete($$$) {
     return db::put($dbh, $query, $bind_values);
 }
 
-sub get_end($$) {
+sub get_end ($$) {
     my ($start, $duration) = @_;
     # calculate end from start + duration
     my @start = @{ time::datetime_to_array($start) };
@@ -447,7 +443,7 @@ sub get_end($$) {
         $start[0], $start[1], $start[2],    # start date
         $start[3], $start[4], $start[5],    # start time
         0, 0, 0, int($duration)             # delta days, hours, minutes, seconds
-   );
+    );
     return time::array_to_datetime(\@end_datetime);
 }
 

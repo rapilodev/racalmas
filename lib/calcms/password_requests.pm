@@ -15,13 +15,13 @@ use uac;
 use db;
 use auth;
 
-sub get_columns($) {
+sub get_columns ($) {
     my ($config) = @_;
     my $dbh     = db::connect($config);
     return db::get_columns_hash($dbh, 'calcms_password_requests');
 }
 
-sub get($$) {
+sub get ($$) {
     my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
@@ -70,7 +70,7 @@ sub update($$) {
     db::put($dbh, $query, \@bind_values);
 }
 
-sub insert($$) {
+sub insert ($$) {
     my ($config, $entry) = @_;
     for ('user') {
         ParamError->throw(error => "missing $_") unless defined $entry->{$_}
@@ -79,7 +79,7 @@ sub insert($$) {
     return db::insert($dbh, 'calcms_password_requests', $entry);
 }
 
-sub delete($$) {
+sub delete ($$) {
     my ($config, $condition) = @_;
 
     my @conditions  = ();
@@ -109,7 +109,7 @@ sub delete($$) {
     db::put($dbh, $query, \@bind_values);
 }
 
-sub sendToken($$) {
+sub sendToken ($$) {
     my ($config, $entry) = @_;
 
     return undef unless defined $entry->{user};
@@ -148,18 +148,18 @@ sub sendToken($$) {
             "Subject" => "request to change password for $baseUrl",
             "Data"    => $content
         }
-   );
+    );
 
     password_requests::insert($config, $entry);
 }
 
-sub changePassword($$$) {
+sub changePassword ($$$) {
     my ($config, $request, $userName) = @_;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    unless ((defined $userName) ||($userName eq '')) {
+    unless ((defined $userName) || ($userName eq '')) {
         return { error => 'The User could not be found.' };
     }
 

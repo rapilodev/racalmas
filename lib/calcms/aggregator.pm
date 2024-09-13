@@ -38,11 +38,11 @@ sub get_list($$) {
 
     #count most projects
     my $used_projects = {};
-    for my $result(@$results) {
+    for my $result (@$results) {
         my $project = $result->{project_title} || '';
         $used_projects->{$project}++;
     }
-    my @used_projects = reverse sort { $used_projects->{$a} <=> $used_projects->{$b} }(keys %$used_projects);
+    my @used_projects = reverse sort { $used_projects->{$a} <=> $used_projects->{$b} } (keys %$used_projects);
     my $most_used_project = $used_projects[0];
 
     return {
@@ -161,7 +161,7 @@ sub check_params($$) {
             my ($y, $m) = split /-/, time::time_to_date();
             $params->{from_date} = time::datetime_to_date("$y-$m-01");
             $params->{till_date} = time::datetime_to_date("$y-$m-".Date::Calc::Days_in_Month($y,$m));
-        } elsif(my ($y, $m) = $params->{month} =~ m/^(\d\d\d\d)-(\d\d)$/) {
+        } elsif (my ($y, $m) = $params->{month} =~ m/^(\d\d\d\d)-(\d\d)$/) {
             if ($m) {
                 $params->{from_date} = time::datetime_to_date("$y-$m-01");
                 $params->{till_date} = time::datetime_to_date("$y-$m-".Date::Calc::Days_in_Month($y,$m));
@@ -193,7 +193,7 @@ sub check_params($$) {
                 exclude_projects  => 1,
                 exclude_locations => 1,
             }
-       );
+        );
     }
 
     my $event_id = $params->{event_id} || '';
@@ -206,7 +206,7 @@ sub check_params($$) {
     }
 
     #set query string for caching
-    if ((!exists $ENV{QUERY_STRING}) ||($ENV{QUERY_STRING} eq '')) {
+    if ((!exists $ENV{QUERY_STRING}) || ($ENV{QUERY_STRING} eq '')) {
         my $options = [];
         push @$options, 'date=' . $date           if $date ne '';
         push @$options, 'from_date=' . $from_date if $from_date ne '';

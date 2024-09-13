@@ -558,8 +558,8 @@
         <div>
 	        <form method="post" action="series.cgi#tabs-delete" id="series_<TMPL_VAR .series_id>">
                 <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-		        <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
-		        <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">	
+	            <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+	            <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">	
 		        <input type="hidden" name="action" value="delete">
 		        <button type="submit" value="delete this series"
                     onclick="commitForm('series_<TMPL_VAR .series_id>','delete','<TMPL_VAR .loc.button_delete_series>');return false;"

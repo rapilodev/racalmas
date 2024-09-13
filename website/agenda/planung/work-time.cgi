@@ -68,37 +68,37 @@ sub save_schedule {
     }
 
     my $found = 0;
-    for my $type ( 'single', 'days', 'week_of_month' ) {
-        $found = 1 if ( $entry->{period_type} eq $type );
+    for my $type ('single', 'days', 'week_of_month') {
+        $found = 1 if ($entry->{period_type} eq $type);
     }
-    if ( $found == 0 ) {
+    if ($found == 0) {
         uac::print_error('no period type selected!');
         return;
     }
 
-    $entry->{exclude} = 0 if ( $entry->{exclude} ne '1' );
+    $entry->{exclude} = 0 if ($entry->{exclude} ne '1');
 
-    if ( ( $entry->{end} ne '' ) && ( $entry->{end} le $entry->{start} ) ) {
+    if (($entry->{end} ne '') && ($entry->{end} le $entry->{start})) {
         uac::print_error('start date should be before end date!');
         return;
     }
 
     #TODO: check if schedule is in studio_timeslots
 
-    $config->{access}->{write} = 1;
-    if ( defined $params->{schedule_id} ) {
+    local $config->{access}->{write} = 1;
+    if (defined $params->{schedule_id}) {
         $entry->{schedule_id} = $params->{schedule_id};
-        work_schedule::update( $config, $entry );
+        work_schedule::update($config, $entry);
 
         #timeslots are checked inside
-        my $updates = work_dates::update( $config, $entry );
+        my $updates = work_dates::update($config, $entry);
         uac::print_info("schedule saved. $updates dates scheduled");
     } else {
-        my $schedule_id = work_schedule::insert( $config, $entry );
+        my $schedule_id = work_schedule::insert($config, $entry);
         $entry->{schedule_id} = $schedule_id;
 
         #timeslots are checked inside
-        my $updates = work_dates::update( $config, $entry );
+        my $updates = work_dates::update($config, $entry);
         uac::print_info("schedule added. $updates dates added");
     }
 }
@@ -114,18 +114,18 @@ sub delete_schedule {
     }
 
     my $entry = {};
-    for my $attr ( 'project_id', 'studio_id', 'schedule_id' ) {
-        if ( defined $params->{$attr} ) {
+    for my $attr ('project_id', 'studio_id', 'schedule_id') {
+        if (defined $params->{$attr}) {
             $entry->{$attr} = $params->{$attr};
         } else {
             ParamError->throw(error=> "missing $attr" );
         }
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     $entry->{schedule_id} = $params->{schedule_id};
-    work_schedule::delete( $config, $entry );
-    work_dates::update( $config, $entry );
+    work_schedule::delete($config, $entry);
+    work_dates::update($config, $entry);
     uac::print_info("schedule deleted");
 }
 
@@ -142,7 +142,7 @@ sub show_work_schedule {
     }
 
     #this will be updated later (especially allow_update_events)
-    for my $permission ( keys %{ $request->{permissions} } ) {
+    for my $permission (keys %{ $request->{permissions} }) {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
 
@@ -164,14 +164,15 @@ sub show_work_schedule {
         $schedule->{end} =~ s/(\d\d\:\d\d)\:\d\d/$1/   if defined $schedule->{end};
 
         #detect schedule type
-        if ( $schedule->{period_type} eq '' ) {
+        if ($schedule->{period_type} eq '') {
             $schedule->{period_type} = 'week_of_month';
-            $schedule->{period_type} = 'days' unless ( $schedule->{week_of_month} =~ /\d/ );
-            $schedule->{period_type} = 'single' unless ( $schedule->{end} =~ /\d/ );
+            $schedule->{period_type} = 'days' unless ($schedule->{week_of_month} =~ /\d/);
+            $schedule->{period_type} = 'single' unless ($schedule->{end} =~ /\d/);
         }
         $schedule->{ 'period_type_' . $schedule->{period_type} } = 1;
-        $schedule->{selected} = 1 if $params->{schedule_id} eq $schedule->{schedule_id};
-    }
+        if ($params->{schedule_id} eq $schedule->{schedule_id}) {
+            $schedule->{selected} = 1;
+        }
     my $serie = {};
     $serie->{schedule} = $schedules;
 
@@ -204,7 +205,7 @@ sub show_work_schedule {
     $serie->{show_hint_to_add_schedule} = $params->{show_hint_to_add_schedule};
 
     #copy series to params
-    for my $key ( keys %$serie ) {
+    for my $key (keys %$serie) {
         $params->{$key} = $serie->{$key};
     }
 
@@ -216,44 +217,44 @@ sub check_params {
     my ($config, $params) = @_;
     my $checked = {};
 
-    $checked->{action} = entry::element_of( $params->{action},
+    $checked->{action} = entry::element_of($params->{action},
         ['show', 'save_schedule', 'delete_schedule']
     );
 
     $checked->{exclude} = 0;
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'project_id', 'studio_id',                 'default_studio_id',     'schedule_id',
         'exclude',    'show_hint_to_add_schedule', 'weekday week_of_month', 'month'
     ]);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;
     }
 
-    $checked->{template} = template::check( $config, $params->{template}, 'edit-work-time' );
+    $checked->{template} = template::check($config, $params->{template}, 'edit-work-time');
 
-    if ( ( defined $checked->{action} ) && ( $checked->{action} eq 'save_schedule' ) ) {
+    if ((defined $checked->{action}) && ($checked->{action} eq 'save_schedule')) {
 
         #set defaults
         $checked->{create_events}  = 0;
         $checked->{publish_events} = 0;
     }
-    entry::set_numbers( $checked, $params, [ 'frequency', 'duration', 'default_duration' ]);
+    entry::set_numbers($checked, $params, [ 'frequency', 'duration', 'default_duration' ]);
 
-    entry::set_strings( $checked, $params,
+    entry::set_strings($checked, $params,
         [ 'from', 'till', 'period_type', 'type', 'title' ]
     );
 
     for my $attr ('start') {
-        if ( ( defined $params->{$attr} ) && ( $params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d[ T]\d\d\:\d\d)/ ) ) {
+        if ((defined $params->{$attr}) && ($params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d[ T]\d\d\:\d\d)/)) {
             $checked->{$attr} = $1 . ':00';
         }
     }
 
     for my $attr ('end') {
-        if ( ( defined $params->{$attr} ) && ( $params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d)/ ) ) {
+        if ((defined $params->{$attr}) && ($params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d)/)) {
             $checked->{$attr} = $1;
         }
     }

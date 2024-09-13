@@ -78,7 +78,7 @@
             <button class="text"
                 onclick="deleteFromSchedule('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>','<TMPL_VAR start escape=url>');return false;"
             ><TMPL_VAR .loc.button_delete_from_schedule></button>
-        </TMPL_IF>
+    </TMPL_IF>
     <TMPL_ELSE>
         <TMPL_IF .allow.assign_series_events>
             <button class="text" onclick="selectChangeSeries('changeSeriesId');"
@@ -164,7 +164,7 @@
                 <button onclick="hideSelectRerun('rerunEventId')"><TMPL_VAR .loc.button_cancel></button>
                 <button onclick="if ($('#rerunEventId').val()) copyFromEvent('rerunEventId')"><TMPL_VAR .loc.button_apply></button>
             </div>
-        </div>
+</div>
     </TMPL_IF>
 
     <!-- move to other series -->
@@ -244,7 +244,7 @@
             <td>
                 <TMPL_IF .allow.update_event_field_title>
                     <input name="title" value="<TMPL_VAR title>" placeholder="<TMPL_VAR .loc.label_title>">
-                <TMPL_ELSE>
+        <TMPL_ELSE>
                     <TMPL_VAR title>
                 </TMPL_IF>
 
@@ -504,7 +504,7 @@
                     onclick="saveEvent($(this), 'save');return false"
                 ><TMPL_VAR .loc.button_save></button>
             </TMPL_IF>
-        </TMPL_IF>
+                </TMPL_IF>
     </div>
     </TMPL_UNLESS>
 

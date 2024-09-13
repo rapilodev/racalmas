@@ -235,18 +235,16 @@ sub show_audio_recording {
             get_duration($recording->{audioDuration})
         );
 
-        $recording->{rmsLeft}
-            = audio::formatLoudness($recording->{rmsLeft}, 'L:');
-        $recording->{rmsRight}
-            = audio::formatLoudness($recording->{rmsRight}, 'R:');
+        $recording->{rmsLeft}  = audio::formatLoudness($recording->{rmsLeft}, 'L:');
+        $recording->{rmsRight} = audio::formatLoudness($recording->{rmsRight}, 'R:');
     }
 
     my $now      = time();
     my $timeZone = $config->{date}->{time_zone};
     my $start    = time::datetime_to_utc($event->{start}, $timeZone);
-    my $end      = time::datetime_to_utc($event->{end},   $timeZone);
+    my $end      = time::datetime_to_utc($event->{end}, $timeZone);
     if ($now > $end) {
-        $params->{error}  = "upload is expired due to the show is over";
+        uac::print_error("upload is expired due to the show is over");
         $params->{isOver} = 1;
     }
     my $days = 24 * 60 * 60;
@@ -258,9 +256,9 @@ sub show_audio_recording {
 
 }
 
-sub getDuration {
+sub get_duration {
     my $duration = shift;
-    my $hour     = int( $duration / 3600 );
+    my $hour     = int($duration / 3600);
     $duration -= $hour * 3600;
 
     my $minutes = int($duration / 60);
@@ -312,7 +310,7 @@ sub upload_file {
     open my $out, '>', $tempFile
         or AppError->throw("error" => "Could not save upload $! $tempFile");
     binmode $out;
-    my $buffer = '';
+    my $buffer='';
     print $out $buffer while read($fh, $buffer, 4096);
     close $out
         or AppError->throw("error" => "Could not save upload $! $tempFile");
@@ -353,7 +351,7 @@ sub update_database {
 
     if ((defined $entries) && (scalar @$entries > 0)) {
         print STDERR "update\n";
-        audio_recordings::update( $config, $entry );
+        audio_recordings::update($config, $entry);
         my $entry = $entries->[0];
         $params->{id} = $entry->{id};
     } else {
@@ -365,7 +363,7 @@ sub update_database {
         $entry->{rmsRight}      = 0.0;
         $entry->{audioDuration} = 0.0;
         $entry->{modified_at}   = time();
-        $entry->{id} = audio_recordings::insert( $config, $entry );
+        $entry->{id} = audio_recordings::insert($config, $entry);
         $params->{id} = $entry->{id};
     }
     call_hooks($config, $entry, $params);
@@ -416,7 +414,7 @@ sub call_hooks {
                         $key => $value
                     }
                 );
-            }
+    }
         }
         close $fh or AppError->throw(error => "error in hook $cmd");
     }
@@ -455,17 +453,11 @@ sub check_params {
     my ($config, $params) = @_;
 
     my $checked = {};
-    $checked->{error}    = '';
-    $checked->{template} = template::check($config, $params->{template},
-        'upload-audio-recordings');
+    $checked->{error} = '';
+    $checked->{template} = template::check($config, $params->{template}, 'upload-audio-recordings');
 
-    entry::set_numbers(
-        $checked, $params,
-        [   'project_id',        'studio_id',
-            'default_studio_id', 'series_id',
-            'event_id',          'id'
-        ]
-    );
+    entry::set_numbers($checked, $params, [
+        'project_id', 'studio_id', 'default_studio_id', 'series_id', 'event_id', 'id']);
 
     if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};

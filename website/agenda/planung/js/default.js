@@ -29,13 +29,13 @@ function set_studio(id){
             if(! pair.match(/^studio_id=/)) params.push(pair);
         }
     }
-    //add studio id
+    //add studio id 
     if(id==null)id=-1;
     if(id=='')id=-1;
     params.push('studio_id='+id);
     //append parameters to url
     url+='?'+params.join('&');
-    if ((comment!=null)&&(comment!='')) url+='#'+comment;
+    if ((comment!=null)&& (comment!='')) url+='#'+comment;
     window.location = url;
 }
 
@@ -67,14 +67,14 @@ function set_project(id){
     params.push('project_id='+id);
     //append parameters to url
     url+='?'+params.join('&');
-    if ((comment!=null)&&(comment!='')) url+='#'+comment;
+    if ((comment!=null)&& (comment!='')) url+='#'+comment;
     window.location = url;
 }
 
 function contains(s,t){
     if (s==false) return false;
     if (t==false) return false;
-    return s.indexOf(t) != -1;
+    return s.indexOf(t) != -1; 
 }
 
 function updateContainer2(id, url, callback){
@@ -96,7 +96,7 @@ function showInfo(s) {
        $('#info').html(s);
    } else {
        showToast(s, {color:"white", background:"green"})
-   }
+    }
 }
 
 function showWarn(s) {
@@ -104,7 +104,7 @@ function showWarn(s) {
        $('#warn').html(s);
    } else {
        showToast(s, {color:"black", background:"yellow"})
-   }
+}
 }
 
 function showToast(s, options){
@@ -252,7 +252,7 @@ function getFormValues(form, allowed){
             ([name]) => allowed.includes(name)
         )
     )
-}
+        }
 
 
 function postContainer(url, parameters, callback){
@@ -283,7 +283,7 @@ function setTextWidth(select, minValue){
     $(select).each(
         function(){
             $(this).css('width', maxWidth);
-        }
+}
     );
 }
 
@@ -340,7 +340,7 @@ function commitForm ( formElement, action, title, callback){
             alert("trigger form submit (missing callback!)")
             $(formElement).append('<input type="hidden" name="action" value="'+action+'">');
             $(formElement).submit();
-        }
+            }
     }
     commitAction(title, callback);
 }
@@ -456,7 +456,6 @@ function setMissingUrlParameters(){
         }
         url=setUrlParameter(url, 'project_id', project_id);
         url=setUrlParameter(url, 'studio_id',  studio_id);
-        loadUrl(url);
     }
 }
 

@@ -3,8 +3,6 @@
 use strict;
 use warnings;
 
-#no warnings 'redefine';
-
 use Encode();
 use Data::Dumper;
 $Data::Dumper::Sortkeys = 1;
@@ -112,13 +110,13 @@ sub show_event {
     }
 
     my $editLock = 1;
-    if (   (defined $permissions->{update_event_after_week})
+    if ((defined $permissions->{update_event_after_week})
         && ($permissions->{update_event_after_week} eq '1'))
     {
         $editLock = 0;
     } else {
         $editLock = 0
-            if (
+          if (
             series::is_event_older_than_days(
                 $config,
                 {
@@ -126,7 +124,7 @@ sub show_event {
                     max_age    => 14
                 }
             ) == 0
-            );
+          );
     }
 
     # for rerun, deprecated
@@ -148,7 +146,7 @@ sub show_event {
                 'series_image',       'series_image_label',
                 'live no_event_sync', 'podcast_url',
                 'archive_url',        'content_format'
-                )
+           )
             {
                 $event->{$attr} = $event2->{$attr};
             }
@@ -157,24 +155,20 @@ sub show_event {
         }
     }
 
-    $event->{rerun}     = 1 if ($event->{rerun} =~ /a-z/);
+    $event->{rerun} = 1 if ($event->{rerun} =~ /a-z/);
     $event->{series_id} = $params->{series_id};
 
-    $event->{duration}  = events::get_duration($config, $event);
+    $event->{duration} = events::get_duration($config, $event);
     $event->{durations} = \@durations;
     if (defined $event->{duration}) {
         for my $duration (@{ $event->{durations} }) {
-            $duration->{selected} = 1
-                if ($event->{duration} eq $duration->{value});
+            $duration->{selected} = 1 if ($event->{duration} eq $duration->{value});
         }
     }
     $event->{start} =~ s/(\d\d:\d\d)\:\d\d/$1/;
-    $event->{end}   =~ s/(\d\d:\d\d)\:\d\d/$1/;
-    $event->{is_over} = time::time_to_datetime() ge $event->{end} ? 1 : 0;
+    $event->{end} =~ s/(\d\d:\d\d)\:\d\d/$1/;
 
-    if (    (defined $params->{setImage})
-        and ($params->{setImage} ne $event->{image}))
-    {
+    if ((defined $params->{setImage}) and ($params->{setImage} ne $event->{image})) {
         $event->{image}          = $params->{setImage};
         $params->{forced_change} = 1;
     }
@@ -194,10 +188,9 @@ sub show_event {
     );
     $params->{series_users} = $users;
 
-    $params->{series_users_email_list} =
-        join(',', (map {$_->{email}} (@$users)));
+    $params->{series_users_email_list} = join(',', (map { $_->{email} } (@$users)));
     $params->{series_user_names} =
-        join(' und ', (map {(split(/\s+/, $_->{full_name}))[0]} (@$users)));
+      join(' und ', (map { (split(/\s+/, $_->{full_name}))[0] } (@$users)));
 
     for my $permission (sort keys %{$permissions}) {
         $params->{'allow'}->{$permission} = $permissions->{$permission};
@@ -207,13 +200,12 @@ sub show_event {
         $params->{$key} = $event->{$key};
     }
     $params->{event_edited} = 1
-        if (($params->{action} eq 'save') && (!(defined $params->{error})));
+      if (($params->{action} eq 'save') && (!(defined $params->{error})));
     $params->{event_edited} = 1 if ($params->{action} eq 'delete');
     $params->{event_edited} = 1
-        if (($params->{action} eq 'create_event')
-        && (!(defined $params->{error})));
+      if (($params->{action} eq 'create_event') && (!(defined $params->{error})));
     $params->{event_edited} = 1
-        if (($params->{action} eq 'create_event_from_schedule')
+      if (($params->{action} eq 'create_event_from_schedule')
         && (!(defined $params->{error})));
     $params->{user} = $params->{presets}->{user};
 
@@ -221,17 +213,14 @@ sub show_event {
     if ($editLock == 1) {
         for my $key (keys %$params) {
             unless ($key =~ /create_download/) {
-                delete $params->{allow}->{$key}
-                    if $key =~ /^(update|delete|create|assign)/;
+                delete $params->{allow}->{$key} if $key =~ /^(update|delete|create|assign)/;
             }
         }
         $params->{edit_lock} = 1;
     }
 
-    for my $value ('markdown', 'creole') {
-        $params->{"content_format_$value"} = 1
-            if ($params->{content_format} // '') eq $value;
-    }
+    for my $value ('markdown', 'creole'){
+        $params->{"content_format_$value"}=1 if ($params->{content_format}//'') eq $value;
 
     $params->{loc} =
         localization::get($config,
@@ -242,14 +231,13 @@ sub show_event {
 
 sub get_json {
     my ($config, $request) = @_;
-
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
     for my $attr ('project_id', 'studio_id', 'series_id', 'event_id') {
         unless (defined $params->{$attr}) {
             ParamError->throw(error => "missing " . $attr . " to show event");
-        }
+    }
     }
 
     series_events::check_permission(
@@ -270,10 +258,10 @@ sub get_json {
         ParamError->throw(error => "event not found");
     }
 
-    $event->{rerun}     = 1 if ($event->{rerun} =~ /a-z/);
+    $event->{rerun} = 1 if ($event->{rerun} =~ /a-z/);
     $event->{series_id} = $params->{series_id};
     $event->{start} =~ s/(\d\d:\d\d)\:\d\d/$1/;
-    $event->{end}   =~ s/(\d\d:\d\d)\:\d\d/$1/;
+    $event->{end} =~ s/(\d\d:\d\d)\:\d\d/$1/;
 
     # get event series
     my $series = series::get(
@@ -296,12 +284,7 @@ sub get_json {
     # for rerun
     if ($params->{get_rerun} == 1) {
         $event->{recurrence} = eventOps::getRecurrenceBaseId($event);
-        for my $key (
-            'live',               'published',
-            'playout',            'archived',
-            'disable_event_sync', 'draft'
-            )
-        {
+        for my $key ('live', 'published', 'playout', 'archived', 'disable_event_sync', 'draft'){
             $event->{$key} = 0;
         }
         $event->{rerun} = 1;
@@ -361,13 +344,11 @@ sub show_new_event {
 
     #set permissions to template
     for my $permission (keys %{ $request->{permissions} }) {
-        $params->{'allow'}->{$permission} =
-            $request->{permissions}->{$permission};
+        $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
 
-    for my $value ('markdown', 'creole') {
-        $params->{"content_format_$value"} = 1
-            if ($params->{content_format} // '') eq $value;
+    for my $value ('markdown', 'creole'){
+        $params->{"content_format_$value"}=1 if ($params->{content_format}//'') eq $value;
     }
 
     $params->{loc} =
@@ -398,7 +379,7 @@ sub delete_event {
             uac::set($event, 'project_id', 'studio_id', 'series_id', 'event_id')
         }
     );
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
 
     #set user to be added to history
     $event->{user} = $params->{presets}->{user};
@@ -434,16 +415,12 @@ sub save_event {
     }
 
     my $start = $params->{start_date};
-    my $end   = time::add_minutes_to_datetime($params->{start_date},
-        $params->{duration});
+    my $end = time::add_minutes_to_datetime($params->{start_date}, $params->{duration});
 
     #check permissions
     my $options = {
         permission => 'update_event_of_series,update_event_of_others',
-        check_for  => [
-            'studio',           'user', 'series', 'events',
-            'studio_timeslots', 'event_age'
-        ],
+        check_for  => [ 'studio', 'user', 'series', 'events', 'studio_timeslots', 'event_age' ],
         uac::set($params, 'project_id', 'studio_id', 'series_id', 'event_id'),
         draft      => $params->{draft},
         start      => $start,
@@ -454,18 +431,15 @@ sub save_event {
 
     #changed columns depending on permissions
     my $entry = { id => $params->{event_id} };
+
     my $found = 0;
 
     #content fields
     for my $key (
-        'content',            'topic',
-        'title',              'excerpt',
-        'episode',            'image',
-        'series_image',       'image_label',
-        'series_image_label', 'podcast_url',
-        'archive_url',        'content_format'
-        )
-    {
+        'content',            'topic',       'title',        'excerpt',
+        'episode',            'image',       'series_image', 'image_label',
+        'series_image_label', 'podcast_url', 'archive_url',  'content_format'
+    ) {
         next unless defined $permissions->{ 'update_event_field_' . $key };
         if ($permissions->{ 'update_event_field_' . $key } eq '1') {
             next unless defined $params->{$key};
@@ -476,13 +450,8 @@ sub save_event {
 
     #user extension fields
     for my $key ('title', 'excerpt') {
-        next
-            unless defined $permissions->{ 'update_event_field_'
-                . $key
-                . '_extension' };
-        if ($permissions->{ 'update_event_field_' . $key . '_extension' } eq
-            '1')
-        {
+        next unless defined $permissions->{ 'update_event_field_' . $key . '_extension' };
+        if ($permissions->{ 'update_event_field_' . $key . '_extension' } eq '1') {
             next unless defined $params->{ 'user_' . $key };
             $entry->{ 'user_' . $key } = $params->{ 'user_' . $key };
             $found++;
@@ -490,11 +459,9 @@ sub save_event {
     }
 
     #status field
-    for my $key (
-        'live',  'published',          'playout', 'archived',
-        'rerun', 'disable_event_sync', 'draft'
-        )
-    {
+    for my $key ('live', 'published', 'playout', 'archived', 'rerun', 
+      'disable_event_sync', 'draft'
+    ) {
         next unless defined $permissions->{ 'update_event_status_' . $key };
         if ($permissions->{ 'update_event_status_' . $key } eq '1') {
             $entry->{$key} = $params->{$key} || 0;
@@ -534,7 +501,7 @@ sub save_event {
     $entry->{image}        = images::normalizeName($entry->{image});
     $entry->{series_image} = images::normalizeName($serie->{series_image});
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
 
     #update content
     if ($found > 0) {
@@ -545,7 +512,7 @@ sub save_event {
     }
 
     #update time
-    if (   (defined $permissions->{update_event_time})
+    if ((defined $permissions->{update_event_time})
         && ($permissions->{update_event_time} eq '1'))
     {
         my $entry = {
@@ -574,9 +541,7 @@ sub save_event {
     user_stats::increase(
         $config,
         'update_events',
-        {
-            uac::set($event, 'project_id', 'studio_id', 'series_id', 'user')
-        }
+        { uac::set($event, 'project_id', 'studio_id', 'series_id', 'user') }
     );
     $config->{access}->{write} = 0;
     return uac::json(
@@ -595,9 +560,9 @@ sub save_event {
 sub create_event {
     my ($config, $request) = @_;
 
-    my $params   = $request->{params}->{checked};
-    my $event    = $request->{params}->{checked};
-    my $action   = $params->{action};
+    my $params = $request->{params}->{checked};
+    my $event  = $request->{params}->{checked};
+    my $action = $params->{action};
     my $event_id = eventOps::createEvent($request, $event, $action);
     EventError->throw(error => "cannot create event") unless $event_id;
     return uac::json(
@@ -652,7 +617,7 @@ sub get_download_event {
 sub download {
     my ($config, $request) = @_;
 
-    my $event    = get_download_event($config, $request);
+    my $event = get_download_event($config, $request);
     my $datetime = $event->{start_datetime};
     if ($datetime =~ /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d)\:(\d\d)/) {
         $datetime = $1 . '\ ' . $2 . '_' . $3;
@@ -662,7 +627,7 @@ sub download {
     }
     my $archive_dir = $config->{locations}->{local_archive_dir};
     my $archive_url = $config->{locations}->{local_archive_url};
-    my @files       = glob($archive_dir . '/' . $datetime . '*.mp3');
+    my @files = glob($archive_dir . '/' . $datetime . '*.mp3');
 
     if (@files > 0) {
         my $file = $files[0];
@@ -674,29 +639,28 @@ sub download {
         #decode filename
         $file = Encode::decode("UTF-8", $file);
 
-        my $cmd =
-            "ln -s '" . $file . "' '" . $archive_dir . '/' . $key . ".mp3'";
+        my $cmd = "ln -s '" . $file . "' '" . $archive_dir . '/' . $key . ".mp3'";
         my $url = $archive_url . '/' . $key . '.mp3';
 
         #print $cmd."\n";
         print `$cmd`;
 
         $request->{params}->{checked}->{download} = ''
-            . qq{<a href="$url" style="color:#39a1f4;" download="$event->{series_name}#$event->{episode}.mp3">}
-            . q{Download: }
-            . $event->{start_date_name} . ", "
-            . $event->{start_time_name} . " - "
-            . $event->{full_title}
-            . qq{</a>\n}
-            . qq{<pre>$url</pre>\n}
-            . qq{\nDer Link wird nach 7 Tagen geloescht.};
+          . qq{<a href="$url" style="color:#39a1f4;" download="$event->{series_name}#$event->{episode}.mp3">}
+          . q{Download: }
+          . $event->{start_date_name} . ", "
+          . $event->{start_time_name} . " - "
+          . $event->{full_title}
+          . qq{</a>\n}
+          . qq{<pre>$url</pre>\n}
+          . qq{\nDer Link wird nach 7 Tagen geloescht.};
     }
 }
 
 sub download_audio {
     my ($config, $request) = @_;
 
-    my $event    = get_download_event($config, $request);
+    my $event = get_download_event($config, $request);
     my $datetime = $event->{start_datetime};
     if ($datetime =~ /(\d\d\d\d\-\d\d\-\d\d)[ T](\d\d)\:(\d\d)/) {
         $datetime = $1 . '\ ' . $2 . '_' . $3;
@@ -707,12 +671,11 @@ sub download_audio {
     my $archive_dir = $config->{locations}->{local_archive_dir};
     print STDERR "archive_dir: " . $archive_dir . "\n";
     print STDERR "broadcast.cgi::download look for : $archive_dir/$datetime*.mp3\n";
-    my @files = glob( $archive_dir . '/' . $datetime . '*.mp3' );
-    if ( @files > 0 ) {
+    my @files = glob($archive_dir . '/' . $datetime . '*.mp3');
+    if (@files > 0) {
         my $file = $files[0];
         $file = Encode::decode("UTF-8", $file);
-        print qq{Content-Disposition: attachment; filename="}
-            . basename($file) . qq{"\n};
+        print qq{Content-Disposition: attachment; filename="}.basename($file).qq{"\n};
         print qq{Content-Type: audio/mpeg\n\n};
         binmode STDOUT;
         open my $fh, '<:raw', $file;
@@ -728,19 +691,13 @@ sub check_params {
 
     my $checked  = {};
     my $template = '';
-    $checked->{template} =
-        template::check($config, $params->{template}, 'series');
+    $checked->{template} = template::check($config, $params->{template}, 'series');
 
-    entry::set_numbers(
-        $checked, $params,
-        [
-            'id',        'project_id',
-            'studio_id', 'default_studio_id',
-            'user_id',   'series_id',
-            'event_id',  'source_event_id',
-            'episode'
-        ]
-    );
+    entry::set_numbers($checked, $params, [
+        'id',      'project_id', 'studio_id', 'default_studio_id',
+        'user_id', 'series_id',  'event_id',  'source_event_id',
+        'episode'
+    ]);
 
     if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
@@ -754,47 +711,31 @@ sub check_params {
 
     entry::set_numbers($checked, $params, [ 'duration', 'recurrence' ]);
 
-    entry::set_bools(
-        $checked, $params,
-        [
-            'live',               'published',
-            'playout',            'archived',
-            'rerun',              'draft',
-            'disable_event_sync', 'get_rerun'
-        ]
-    );
+    entry::set_bools($checked, $params, [
+        'live',  'published', 'playout',            'archived',
+        'rerun', 'draft',     'disable_event_sync', 'get_rerun'
+    ]);
 
-    entry::set_strings(
-        $checked, $params,
-        [
-            'series_name',  'title',
-            'excerpt',      'content',
-            'topic',        'program',
-            'image',        'series_image',
-            'user_content', 'user_title',
-            'user_excerpt', 'podcast_url',
-            'archive_url',  'setImage',
-            'content_format'
-        ]
-    );
+    entry::set_strings($checked, $params, [
+        'series_name',  'title',        'excerpt',    'content',
+        'topic',        'program',      'image',
+        'series_image', 'user_content', 'user_title', 'user_excerpt',
+        'podcast_url',  'archive_url',  'setImage',   'content_format'
+    ]);
 
     #dates
     for my $param ('start_date', 'end_date') {
-        if (   (defined $params->{$param})
+        if ((defined $params->{$param})
             && ($params->{$param} =~ /(\d\d\d\d\-\d\d\-\d\d \d\d\:\d\d)/))
         {
             $checked->{$param} = $1 . ':00';
         }
     }
 
-    $checked->{action} = entry::element_of(
-        $params->{action},
-        [
-            'save',                       'delete',
-            'download',                   'download_audio',
-            'show_new_event',             'show_new_event_from_schedule',
-            'edit',                       'create_event',
-            'create_event_from_schedule', 'get_json'
+    $checked->{action} = entry::element_of($params->{action},
+        [ 'save', 'delete', 'download', 'download_audio', 'show_new_event',
+            'show_new_event_from_schedule',
+          'create_event', 'create_event_from_schedule', 'get_json'
         ]
     ) // '';
     return $checked;

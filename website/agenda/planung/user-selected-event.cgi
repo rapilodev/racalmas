@@ -64,7 +64,7 @@ sub log_event_selection {
     $entry->{$_} = $params->{$_} for ( @$select_fields, @$value_fields);
     for ( @$select_fields, @$value_fields ) {
         ParamError->throw(error=> "missing $_") unless defined $entry->{$_};
-    }
+}
 
     if ($preset) {
         user_selected_events::update( $config, $entry );
@@ -77,8 +77,8 @@ sub log_event_selection {
 
 sub check_params {
     my ($config, $params) = @_;
-    my @fields = ( @{get_select_fields()}, @{get_value_fields()} );
+    my @fields = (@{get_select_fields()}, @{get_value_fields()});
     my $checked = {};
-    entry::set_numbers( $checked, $params, \@fields );
+    entry::set_numbers($checked, $params, \@fields);
     return $checked;
 }

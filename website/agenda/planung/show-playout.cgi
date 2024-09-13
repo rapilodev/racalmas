@@ -63,8 +63,8 @@ sub showPlayout {
         }
     }
 
-    my $today     = time::time_to_date( time() );
-    my $startDate = time::add_days_to_date( $today, -14 );
+    my $today     = time::time_to_date(time());
+    my $startDate = time::add_days_to_date($today, -14);
     my $events    = playout::get_scheduled(
         $config,
         {
@@ -75,7 +75,7 @@ sub showPlayout {
         }
     );
 
-    unless ( defined $events ) {
+    unless (defined $events) {
         uac::print_error("not found");
         return;
     }
@@ -86,17 +86,17 @@ sub showPlayout {
         $event->{stream_size} =~ s/(\d)(\d\d\d\.\d\d\d)$/$1\.$2/g;
         $event->{duration} =~ s/(\d\.\d)(\d+)$/$1/g;
         $event->{duration} =~ s/(\d)\.0/$1/g;
-        $event->{rms_left}      = audio::formatLoudness( $event->{rms_left}, 'L:' );
-        $event->{rms_right}     = audio::formatLoudness( $event->{rms_right}, 'R:' );
-        $event->{bitrate}       = audio::formatBitrate( $event->{bitrate} );
-        $event->{bitrate_mode}  = audio::formatBitrateMode( $event->{bitrate_mode} );
-        $event->{sampling_rate} = audio::formatSamplingRate( $event->{sampling_rate} );
+        $event->{rms_left}      = audio::formatLoudness($event->{rms_left}, 'L:');
+        $event->{rms_right}     = audio::formatLoudness($event->{rms_right}, 'R:');
+        $event->{bitrate}       = audio::formatBitrate($event->{bitrate});
+        $event->{bitrate_mode}  = audio::formatBitrateMode($event->{bitrate_mode});
+        $event->{sampling_rate} = audio::formatSamplingRate($event->{sampling_rate});
         $event->{duration}      = audio::formatDuration(
             $event->{duration},
             $event->{event_duration},
-            sprintf( "%.1g h", $event->{duration} / 3600)
+            sprintf("%.1g h", $event->{duration} / 3600)
         );
-        $event->{channels} = audio::formatChannels( $event->{channels} );
+        $event->{channels} = audio::formatChannels($event->{channels});
         $event->{class} = "past" if  $event->{start} lt $today;
     }
 
@@ -107,13 +107,13 @@ sub check_params {
     my ($config, $params) = @_;
     my $checked = {};
     $checked->{error} = '';
-    $checked->{template} = template::check( $config, $params->{template}, 'show-playout' );
+    $checked->{template} = template::check($config, $params->{template}, 'show-playout');
 
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
          'project_id', 'studio_id', 'default_studio_id', 'series_id', 'event_id', 'id'
     ]);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;

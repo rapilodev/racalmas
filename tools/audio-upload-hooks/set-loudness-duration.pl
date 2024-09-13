@@ -19,7 +19,7 @@ while (defined(my $line = <$err>)) {
             . int($fields[3] + 0.5) . "\n";
         print "calcms_audio_recordings.rmsRight = "
             . int($fields[4] + 0.5) . "\n";
-    } elsif($line =~ /^Length\ss/) {
+    } elsif ($line =~ /^Length\ss/) {
         print "calcms_audio_recordings.audioDuration = "
             . int($fields[2] + 0.5)
             . "\n";

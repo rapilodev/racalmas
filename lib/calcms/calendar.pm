@@ -43,7 +43,7 @@ sub get($$) {
     my $weekday_short_names = time::getWeekdayNamesShort($language);
     my $week_label          = {};
     my $c                   = 0;
-    for my $weekday(@$weekday_short_names) {
+    for my $weekday (@$weekday_short_names) {
         $week_label->{$weekday} = $weekday_names->[$c] || '';
         $c++;
     }
@@ -59,7 +59,7 @@ sub get($$) {
     #put "week day" filter into final results
     my $days = [];
     $c = 0;
-    for my $weekday(@$weekday_short_names) {
+    for my $weekday (@$weekday_short_names) {
         my $day_result = {
             label              => $week_label->{$weekday},
             weekday            => $c + 1,
@@ -155,17 +155,17 @@ sub get($$) {
             exclude_projects  => 1,
             exclude_locations => 1,
         }
-   );
+    );
     my $used_day = { map { $_->{start_date} => 1 } @$used_days };
 
-    for my $year(sort { $a <=> $b } keys %$years) {
+    for my $year (sort { $a <=> $b } keys %$years) {
         my $months = $years->{$year};
 
-        for my $month(sort { $a <=> $b } keys %$months) {
+        for my $month (sort { $a <=> $b } keys %$months) {
             my $weeks = $months->{$month};
 
             my $weekCounter = 1;
-            for my $week(@$weeks) {
+            for my $week (@$weeks) {
                 my $dayResults = [];
 
                 my $week_end   = undef;
@@ -174,12 +174,12 @@ sub get($$) {
                 my $week_of_year = undef;
                 my $woy_year     = undef;
 
-                for my $date(@$week) {
+                for my $date (@$week) {
                     my ($year, $month, $day) = split(/\-/, $date, 3);
                     my $weekday    = 0;
                     my $day_result = undef;
 
-                 ($week_of_year, $woy_year) = Date::Calc::Week_of_Year($year, $month, $day)
+                    ($week_of_year, $woy_year) = Date::Calc::Week_of_Year($year, $month, $day)
                       unless defined $week_of_year;
 
                     $day_result = {
@@ -228,7 +228,7 @@ sub get($$) {
 
                 $week_result->{class} .= ' selected'
                   if ((defined $params->{from_date}) && ($start_date eq $params->{from_date}))
-                  ||((defined $params->{till_date}) && ($end_date eq $params->{till_date}));
+                  || ((defined $params->{till_date}) && ($end_date eq $params->{till_date}));
                 $week_result->{class} .= " week_$weekCounter";
                 $week_result->{class} =~ s/^\s+//g;
 
@@ -247,7 +247,7 @@ sub get($$) {
 
     }    #end year
 
-    for my $weekday(@$weekdayResults) {
+    for my $weekday (@$weekdayResults) {
         $weekday->{start_date} = $start_date;
         $weekday->{end_date}   = $end_date;
     }
@@ -299,9 +299,9 @@ sub get_calendar_weeks($$$) {
     my $end_month   = int($end->[1]);
 
     my $years = {};
-    for my $year($start_year .. $end_year) {
+    for my $year ($start_year .. $end_year) {
         my $months = {};
-        for my $month($start_month .. $end_month) {
+        for my $month ($start_month .. $end_month) {
 
             #get week arrays of days of the month
             my $weeks = getWeeksOfMonth($year, $month);
@@ -329,7 +329,7 @@ sub getWeeksOfMonth($$) {
 
     # get date of 1st of row
     my ($week, $year) = Date::Calc::Week_of_Year($thisYear, $thisMonth, $thisDay);
- ($year, my $month, my $day) = Date::Calc::Monday_of_Week($week, $year);
+    ($year, my $month, my $day) = Date::Calc::Monday_of_Week($week, $year);
 
     my @weeks   = ();
     my $weekday = 1;
@@ -337,7 +337,7 @@ sub getWeeksOfMonth($$) {
     {
         # first week
         my @days = ();
-        for $weekday(0 .. $thisMonthWeekday - 2) {
+        for $weekday (0 .. $thisMonthWeekday - 2) {
             push @days, sprintf("%04d-%02d-%02d", $year, $month, $day);
             $day++;
         }
@@ -346,7 +346,7 @@ sub getWeeksOfMonth($$) {
         $month = $thisMonth;
         $year  = $thisYear;
         $day   = 1;
-        for $weekday($thisMonthWeekday .. 7) {
+        for $weekday ($thisMonthWeekday .. 7) {
             push @days, sprintf("%04d-%02d-%02d", $year, $month, $day);
             $day++;
         }
@@ -393,7 +393,7 @@ sub getWeeksOfMonth($$) {
     #coming weeks
     while (scalar(@weeks) < 6) {
         my @days = ();
-        for $weekday(1 .. 7) {
+        for $weekday (1 .. 7) {
             push @days, sprintf("%04d-%02d-%02d", $year, $month, $day);
             $day++;
         }

@@ -4,7 +4,7 @@ function updateProjectStudioId(){
 
     var fields=elem.val().split("_");
     if (fields.length !=2) return;
-
+    
     var projectId = fields[0];
     var studioId  = fields[1];
     $('#selectEvent #projectId').attr('value', projectId);
@@ -14,7 +14,7 @@ function updateProjectStudioId(){
 function updateSeriesId(){
     var elem=$('#selectEvent #selectSeries');
     if (elem.length==0)return;
-
+    
     var seriesId = elem.val();
     $('#selectEvent #seriesId').attr('value', seriesId);
 }
@@ -22,7 +22,7 @@ function updateSeriesId(){
 function updateDateRange(){
     var elem=$('#selectEvent #year');
     if (elem.length==0)return;
-
+    
     var year=$(elem).val();
     var fromDate=year+'-01-01';
     var tillDate=year+'-12-31';
@@ -58,7 +58,7 @@ function updateEventSelection(resultElemId){
     url+="&s_id="         + studioId;
     url+="&series_id="    + seriesId;
     url+="&resultElemId=" + encodeURIComponent(resultElemId);
-
+    
     if (from_date !=""){
         url+="&from_date=" +encodeURIComponent(from_date);
     }
@@ -66,7 +66,7 @@ function updateEventSelection(resultElemId){
     if (till_date != ""){
         url+="&till_date=" +encodeURIComponent(till_date);
     }
-
+    
     var elem=$('#selectEvent #selectProjectStudio');
     if (elem.length!=0){
         url+="&selectProjectStudio=1";
@@ -81,7 +81,7 @@ function updateEventSelection(resultElemId){
     if (elem.length!=0){
         url+="&selectRange=1";
     }
-
+    
     var elem=$("#selectEvent").parent();
     url = parseUrl(url);
     console.log(url);
@@ -98,7 +98,7 @@ function selectEventAction(resultElemId){
 
     var filterProjectStudio =  $('#selectEvent #selectProjectStudio').length!=0 ? 1:0;
     var filterSeries        =  $('#selectEvent #selectSeries').length!=0 ? 1:0;
-
+    
     var url = "user-selected-event.cgi";
     url += "?project_id="            + getProjectId();
     url += "&studio_id="             + getStudioId();

@@ -4,7 +4,7 @@ function updateProjectStudioId(){
 
     var fields=elem.val().split("_");
     if (fields.length !=2) return;
-
+    
     var projectId = fields[0];
     var studioId  = fields[1];
     $('#selectSeries #projectId').attr('value', projectId);
@@ -30,7 +30,7 @@ function updateSeriesSelection(resultElemId){
     url+="&series_id="    + seriesId;
     url+="&resultElemId=" + encodeURIComponent(resultElemId);
     url+="&selectSeries=1";
-
+    
     var elem=$('#selectSeries #selectProjectStudio');
     if (elem.length!=0){
         url+="&selectProjectStudio=1";
@@ -57,4 +57,3 @@ $(document).ready(
         console.log("yes")
     }
 );
-

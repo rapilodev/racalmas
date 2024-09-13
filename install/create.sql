@@ -1817,6 +1817,8 @@ CHANGE COLUMN `email` `email` VARCHAR(100) NULL DEFAULT NULL ;
 ALTER TABLE `calcms`.`calcms_user_selected_events`
 CHANGE COLUMN `user` `user` VARCHAR(100) NOT NULL ;
 
+CREATE INDEX idx_covering ON calcms_events (start, end, id);
+
 DROP TABLE IF EXISTS `calcms_user_selected_events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;

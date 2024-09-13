@@ -19,14 +19,14 @@ my $configFile     = undef;
 my $help           = undef;
 my $output         = undef;
 
-GetOptions(
+GetOptions (
     "config=s"          => \$configFile,
     "insert_widgets"    => \$insertWidgets,
     "output=s"          => \$output,
     "help"              => \$help
 )or die("Error in command line arguments\n");
 
-if (($help) ||(!(defined $configFile))){
+if(($help) || (!(defined $configFile))){
     print get_usage();
     exit 1;
 }
@@ -38,7 +38,7 @@ my $config = config::get($configFile);
 my $source_url_http  = $config->{locations}->{source_url_http};
 my $source_url_https = $config->{locations}->{source_url_https};
 
-#external base url(relative links/images are located)
+#external base url (relative links/images are located)
 my $source_base_url  = $config->{locations}->{source_base_url};
 
 my $source_base_url_http = $source_base_url;
@@ -85,7 +85,7 @@ $html_page=~s/(href\=\"\/)$source_base_url_https/$1/g;
 $html_page=~s/(src\=\"\/)$source_base_url_https/$1/g;
 $html_page=~s/(src\=\"\/)$source_base_url_https/$1/g;
 
-#replace link to uncompressed or compressed drupal(first link in <head>)
+#replace link to uncompressed or compressed drupal (first link in <head>)
 my @parts=split(/<\/head>/,$html_page);
 $parts[0]=~s|/misc/jquery.js|/agenda_files/js/jquery.js|;
 $parts[0]=~s|/sites/default/files/js/[a-z0-9\_]+\.js|/agenda_files/js/jquery.js|;
@@ -95,7 +95,7 @@ $html_page=join('</head>',@parts);
 markup::compress($html_page);
 
 #print result
-if (defined $output){
+if(defined $output){
     unless (-w $output){
         print STDERR "cannot write to '$output'\n";
         exit 1;
@@ -115,7 +115,7 @@ sub load_widgets{
     my $base=shift;
     my $urls=shift;
 
-    #set current date(or end date if above)
+    #set current date (or end date if above)
     my @date=localtime(time());
     my $year=    $date[5]+1900;
     my $month=    $date[4]+1;
@@ -131,7 +131,7 @@ sub load_widgets{
     $date=$project->{end_date}     if ($date gt $project->{end_date});
 
     #load widgets
-    for my $block(keys %$urls){
+    for my $block (keys %$urls){
         my $url=$urls->{$block};
         $url=~s/\$date/$date/gi;
         $results->{$block}= http_get($ua,$url);
@@ -147,7 +147,7 @@ sub load_widgets{
     $base=~s/(\/\/calcms_preload)/$1\n$preload_js/;
 
     #replace widget containers
-    for my $block(keys %$urls){
+    for my $block (keys %$urls){
         if ($block ne 'base'){
             my $content=$results->{$block};
             $base=~s/(id\=\"$block\".*?\>)(.*?)(\<)/$1$content$3/;

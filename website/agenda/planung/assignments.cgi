@@ -61,12 +61,12 @@ sub show_events {
         PermissionError->throw(error => 'assign_series_events');
     }
 
-    my $projects = project::get( $config, { project_id => $params->{project_id} } );
+    my $projects = project::get($config, { project_id => $params->{project_id} });
     my $project = $projects->[0];
 
     ExistError->throw(error=>"expect one project") unless scalar @$projects == 1;
 
-    my $studios = studios::get( $config, { project_id => $params->{project_id}, studio_id => $params->{studio_id} } );
+    my $studios = studios::get($config, { project_id => $params->{project_id}, studio_id => $params->{studio_id} });
     my $studio = $studios->[0];
     ExistError->throw(error=>"expect one studio") unless scalar @$studios == 1;
 
@@ -81,7 +81,7 @@ sub show_events {
         where  s.id=ps.series_id
         order  by series_name, title
     };
-    my $results = db::get( $dbh, $query );
+    my $results = db::get($dbh, $query);
 
     # get projects by id
     my $projects_by_id = {};
@@ -108,15 +108,15 @@ sub show_events {
     # get events not assigned to series
     my $conditions  = [];
     my $bind_values = [];
-    if ( $project_name ne '' ) {
+    if ($project_name ne '') {
         push @$conditions,  'e.project=?';
         push @$bind_values, $project_name;
     }
-    if ( $studio_name ne '' ) {
+    if ($studio_name ne '') {
         push @$conditions,  'e.location=?';
         push @$bind_values, $studio_name;
     }
-    $conditions = ' and ' . join( ' and ', @$conditions ) if scalar(@$conditions) > 0;
+    $conditions = ' and ' . join(' and ', @$conditions) if scalar(@$conditions) > 0;
     $query = qq{
         select   e.id, program, project, location, start, series_name, title, episode, rerun
         from     calcms_events e left join calcms_series_events se on se.event_id =e.id
@@ -125,22 +125,22 @@ sub show_events {
         order by series_name,title,start
         limit 1000
     };
-    $results = db::get( $dbh, $query, $bind_values );
+    $results = db::get($dbh, $query, $bind_values);
 
     # detect title and episode
     my $weekdayNamesShort = time::getWeekdayNamesShort('de');
     for my $result (@$results) {
         $result->{rerun} .= '';
-        if ( $result->{title} =~ /\#(\d+)([a-z])?\s*$/ ) {
+        if ($result->{title} =~ /\#(\d+)([a-z])?\s*$/) {
             $result->{episode} = $1 unless defined $result->{episode};
-            $result->{rerun} = $2 || '' unless ( $result->{rerun} =~ /\d/ );
+            $result->{rerun} = $2 || '' unless ($result->{rerun} =~ /\d/);
             $result->{title} =~ s/\#\d+[a-z]?\s*$//;
             $result->{title} =~ s/\s+$//;
         }
-        my $a = time::datetime_to_array( $result->{start} );
+        my $a = time::datetime_to_array($result->{start});
 
         #print STDERR "($a->[0],$a->[1],$a->[2])\n";
-        $result->{weekday} = time::weekday( $a->[0], $a->[1], $a->[2] );
+        $result->{weekday} = time::weekday($a->[0], $a->[1], $a->[2]);
         $result->{weekday} = $weekdayNamesShort->[ $result->{weekday} - 1 ];
     }
 
@@ -163,8 +163,8 @@ sub assign_events {
     }
 
     my $entry = {};
-    for my $attr ( 'project_id', 'studio_id', 'series_id', 'event_ids' ) {
-        if ( defined $params->{$attr} ) {
+    for my $attr ('project_id', 'studio_id', 'series_id', 'event_ids') {
+        if (defined $params->{$attr}) {
             $entry->{$attr} = $params->{$attr};
         } else {
             ParamError->throw(error => $attr . ' not given!' );
@@ -172,7 +172,7 @@ sub assign_events {
     }
 
     local $config->{access}->{write} = 1;
-    for my $event_id ( split( /[\,\s]+/, $params->{event_ids} ) ) {
+    for my $event_id (split(/[\,\s]+/, $params->{event_ids})) {
         next unless $event_id =~ /^\d+/;
         $entry->{event_id} = $event_id;
 
@@ -193,9 +193,9 @@ sub assign_events {
             permissions => $request->{permissions}
         };
         $request2->{params}->{checked}->{published} = 'all';
-        my $events = events::get( $config, $request2 );
+        my $events = events::get($config, $request2);
         my $event = $events->[0];
-        unless ( defined $event ) {
+        unless (defined $event) {
             print STDERR
 "event not found for project $entry->{project_id}, studio $entry->{studio_id}, series $entry->{series_id}, event $entry->{event_id}\n";
             next;
@@ -210,7 +210,7 @@ sub assign_events {
                 series_id  => $entry->{series_id},
             }
         );
-        if ( scalar(@$series) == 0 ) {
+        if (scalar(@$series) == 0) {
 
             # assign series to project/studio
             project::assign_series(
@@ -235,16 +235,16 @@ sub assign_events {
                 series_id  => $entry->{series_id},
             }
         );
-        if ( scalar(@$series) == 1 ) {
+        if (scalar(@$series) == 1) {
             my $serie = $series->[0];
 
             #set event's series name to value from series
             my $series_name = $serie->{series_name} || '';
-            if ( $series_name ne '' ) {
+            if ($series_name ne '') {
 
                 # prepend series_name from event to title on adding to single_events series
                 my $title = $event->{title};
-                if ( $serie->{has_single_events} eq '1' ) {
+                if ($serie->{has_single_events} eq '1') {
                     $title = $event->{series_name} . ' - ' . $title if $event->{series_name} ne '';
                 }
 
@@ -270,7 +270,7 @@ sub assign_events {
                 $event->{series_name} = $series_name;
                 $event->{title}       = $title;
                 $event->{user}        = $params->{presets}->{user};
-                event_history::insert( $config, $event );
+                event_history::insert($config, $event);
 
                 #            print STDERR "ok\n";
             }
@@ -304,34 +304,34 @@ sub check_params {
     $checked->{action} = entry::element_of($params->{action}, ['assign_events']);
 
     $checked->{exclude} = 0;
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'id', 'project_id', 'studio_id', 'series_id', 'event_id'
         ]);
 
     for my $param ('event_ids') {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^[\d,]+$/ ) ) {
+        if ((defined $params->{$param}) && ($params->{$param} =~ /^[\d,]+$/)) {
             $checked->{$param} = $params->{$param};
         }
     }
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;
     }
 
-    $checked->{template} = template::check( $config, $params->{template}, 'assignments' );
+    $checked->{template} = template::check($config, $params->{template}, 'assignments');
 
-    if ( ( defined $checked->{action} ) && ( $checked->{action} eq 'save_schedule' ) ) {
+    if ((defined $checked->{action}) && ($checked->{action} eq 'save_schedule')) {
 
         #set defaults
         $checked->{create_events}  = 0;
         $checked->{publish_events} = 0;
     }
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'frequency', 'duration', 'default_duration', 'create_events', 'publish_events', 'live']);
 
-    entry::set_strings( $checked, $params,
+    entry::set_strings($checked, $params,
         [ 'search', 'from', 'till' ]);
 
     return $checked;

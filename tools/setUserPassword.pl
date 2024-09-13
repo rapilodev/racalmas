@@ -27,7 +27,7 @@ sub change_password{
 
     my $userName=$params->{user_name}||'';
 	if ($userName eq ''){
-		error("user '$userName' not found");
+		error ("user '$userName' not found");
         exit;
 	}
 
@@ -43,8 +43,8 @@ sub change_password{
         exit;
     }
 
-    unless (check_password($params->{user_password})){
-		error("password does not meet requirements");
+    unless(check_password($params->{user_password})){
+		error ("password does not meet requirements");
         exit;
     }
 
@@ -64,27 +64,27 @@ sub change_password{
 
 sub check_password{
     my $password=shift;
-    unless (defined $password || $password eq ''){
+    unless(defined $password || $password eq ''){
         error("password is empty");
         return 0;
     }
-    if (length($password)<8){
+    if(length($password)<8){
         error("password to short");
         return 0;
     }
-    unless ($password=~/[a-z]/){
+    unless($password=~/[a-z]/){
         error("password should contains at least one small character");
         return 0;
     }
-    unless ($password=~/[A-Z]/){
+    unless($password=~/[A-Z]/){
         error("password should contains at least one big character");
         return 0;
     }
-    unless ($password=~/[0-9]/){
+    unless($password=~/[0-9]/){
         error("password should contains at least one number");
         return 0;
     }
-    unless ($password=~/[^a-zA-Z0-9]/){
+    unless($password=~/[^a-zA-Z0-9]/){
         error("password should contains at least one special character");
         return 0;
     }
@@ -97,7 +97,7 @@ sub check_params{
 
 	my $checked={};
 
-	for my $param('user_name', 'user_password', 'user_password2'){
+	for my $param ('user_name', 'user_password', 'user_password2'){
 		if (defined $params->{$param}){
 			$checked->{$param}=$params->{$param};
 		}

@@ -44,8 +44,8 @@ sub upload_file {
     my $upload = shift;
     my $user   = shift;
 
-    my $result = get_filename( $cgi, $upload );
-    return $result if ( $result->{error} ne '' );
+    my $result = get_filename($cgi, $upload);
+    return $result if ($result->{error} ne '');
 
     my $file     = $result->{fh};
     my $filename = $result->{filename};
@@ -53,7 +53,7 @@ sub upload_file {
     $result = check_filename($filename);
 
     #print STDERR $result . "\n";
-    return $result if ( $result->{error} ne '' );
+    return $result if ($result->{error} ne '');
 
     my $extension = $result->{extension} || '';
 
@@ -64,7 +64,7 @@ sub upload_file {
     #print STDERR $file . "\n";
 
     binmode $file;
-    while ( read $file, $data, 1024 ) {
+    while (read $file, $data, 1024) {
         $content .= $data;
     }
 
@@ -72,7 +72,7 @@ sub upload_file {
     my $md5_filename = Digest::MD5::md5_base64($content);
     $md5_filename =~ s/[\/\+]/_/gi;
 
-    return process_image( $config, $filename, $extension, $md5_filename, $content );
+    return process_image($config, $filename, $extension, $md5_filename, $content);
 }
 
 sub update_database {
@@ -103,7 +103,7 @@ sub update_database {
     };
 
     #connect
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
 
     my $entries = images::get(
@@ -114,17 +114,16 @@ sub update_database {
             studio_id  => $image->{studio_id}
         }
     );
-    if ( ( defined $entries ) && ( scalar(@$entries) > 0 ) ) {
+    if ((defined $entries) && (scalar(@$entries) > 0)) {
         print STDERR "update image\n".Dumper($image);
-        images::update( $dbh, $image );
+        images::update($dbh, $image);
         my $entry = $entries->[0];
         $params->{image_id} = $entry->{id};
     } else {
         print STDERR "insert image\n";
         $image->{created_by} = $user;
-        $params->{image_id} = images::insert( $dbh, $image );
+        $params->{image_id} = images::insert($dbh, $image);
     }
-    $config->{access}->{write} = 0;
     $params->{action_result} = 'done!';
 
     return $params;
@@ -136,7 +135,7 @@ sub get_filename {
     my $upload = shift;
 
     # try apache2 module
-    if ( defined $upload ) {
+    if (defined $upload) {
         my $filename = $upload->filename();
         return {
             filename => $filename,
@@ -147,14 +146,14 @@ sub get_filename {
 
     # fallback to CGI module
     my $file = $cgi->param("image");
-    if ( $file =~ /\|/ ) {
+    if ($file =~ /\|/) {
         return { error => "is no file" };
     }
 
     my $file_info = $cgi->uploadInfo($file);
-    if ( defined $file_info ) {
+    if (defined $file_info) {
         my $filename = $file_info->{'Content-Disposition'} || '';
-        if ( $filename =~ /filename=\"(.*?)\"/ ) {
+        if ($filename =~ /filename=\"(.*?)\"/) {
             $filename = $1;
             return {
                 filename => $filename,
@@ -172,18 +171,18 @@ sub get_filename {
 sub check_filename {
     my $filename = shift;
 
-    my @valid_extensions = ( 'png', 'jpeg', 'jpg', 'gif', 'pdf', 'txt', 'bmp', 'ps', 'eps', 'wmf', 'svg' );
-    if ( $filename =~ /\.([a-zA-Z]{3,5})$/ ) {
+    my @valid_extensions = ('png', 'jpeg', 'jpg', 'gif', 'pdf', 'txt', 'bmp', 'ps', 'eps', 'wmf', 'svg');
+    if ($filename =~ /\.([a-zA-Z]{3,5})$/) {
         my $extension = lc $1;
-        unless ( grep( /$extension/, @valid_extensions ) ) {
-            return { error => 'Following file formats are supported: ' . join( ",", @valid_extensions ) . '!' };
+        unless (grep(/$extension/, @valid_extensions)) {
+            return { error => 'Following file formats are supported: ' . join(",", @valid_extensions) . '!' };
         }
         return {
             extension => $extension,
             error     => ''
         };
     } else {
-        return { error => 'Not matching file extension found! Supported are: ' . join( ",", @valid_extensions ) . '!' };
+        return { error => 'Not matching file extension found! Supported are: ' . join(",", @valid_extensions) . '!' };
     }
 }
 
@@ -195,13 +194,13 @@ sub process_image {
     my $content      = shift;
 
     my $upload_path =
-      images::getInternalPath( $config, { type => 'upload', filename => $md5_filename . '.' . $extension } );
-    my $thumb_path = images::getInternalPath( $config, { type => 'thumbs', filename => $md5_filename . '.jpg' } );
-    my $icon_path  = images::getInternalPath( $config, { type => 'icons',  filename => $md5_filename . '.jpg' } );
-    my $image_path = images::getInternalPath( $config, { type => 'images', filename => $md5_filename . '.jpg' } );
+      images::getInternalPath($config, { type => 'upload', filename => $md5_filename . '.' . $extension });
+    my $thumb_path = images::getInternalPath($config, { type => 'thumbs', filename => $md5_filename . '.jpg' });
+    my $icon_path  = images::getInternalPath($config, { type => 'icons',  filename => $md5_filename . '.jpg' });
+    my $image_path = images::getInternalPath($config, { type => 'images', filename => $md5_filename . '.jpg' });
 
     #copy file to upload space
-    my $result = images::writeFile( $upload_path, $content );
+    my $result = images::writeFile($upload_path, $content);
     return $result if defined $result->{error};
 
     #write image
@@ -209,33 +208,33 @@ sub process_image {
     $image->Read($upload_path);
     my $x = $image->Get('width')  || 0;
     my $y = $image->Get('height') || 0;
-    if ( ( $x == 0 ) || ( $y == 0 ) ) {
+    if (($x == 0) || ($y == 0)) {
         return { error => 'Could not read image!' };
-        log::error( $config, 'Cannot read image $filename!' );
+        log::error($config, 'Cannot read image $filename!');
     }
 
     #set max size image
-    if ( $x > 0 && $y > 0 ) {
-        if ( $x > $y ) {
-            $image->Resize( width => '600', height => int( 600 * $y / $x ) );
+    if ($x > 0 && $y > 0) {
+        if ($x > $y) {
+            $image->Resize(width => '600', height => int(600 * $y / $x));
         } else {
-            $image->Resize( width => int( 600 * $x / $y ), height => '600' );
+            $image->Resize(width => int(600 * $x / $y), height => '600');
         }
     }
 
     #$image->Normalize();
-    $image->Write( 'jpg:' . $image_path );
+    $image->Write('jpg:' . $image_path);
 
     #write thumb
     my $thumb = $image;
     $thumb->Trim2Square;
-    $thumb->Resize( width => 150, height => 150 );
-    $thumb->Write( 'jpg:' . $thumb_path );
+    $thumb->Resize(width => 150, height => 150);
+    $thumb->Write('jpg:' . $thumb_path);
 
     my $icon = $image;
     $icon->Trim2Square;
-    $icon->Resize( width => 25, height => 25 );
-    $icon->Write( 'jpg:' . $icon_path );
+    $icon->Resize(width => 25, height => 25);
+    $icon->Write('jpg:' . $icon_path);
 
     return { error => 'could not create thumb file!' } unless -e $thumb_path;
     return { error => 'could not create icon file!' }  unless -e $icon_path;
@@ -256,21 +255,21 @@ sub check_params {
     my $params = shift;
 
     my $checked = {};
-    $checked->{template} = template::check( $config, $params->{template}, 'image-upload' );
+    $checked->{template} = template::check($config, $params->{template}, 'image-upload');
 
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'project_id', 'studio_id', 'default_studio_id'
     ]);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;
     }
 
-    entry::set_strings( $checked, $params, [ 'action', 'name', 'description', 'licence' ]);
+    entry::set_strings($checked, $params, [ 'action', 'name', 'description', 'licence' ]);
 
-    entry::set_bools( $checked, $params, [ 'public' ] );
+    entry::set_bools($checked, $params, [ 'public' ]);
     return $checked;
 }
 
@@ -280,12 +279,12 @@ my $upload = undef;
 my $error  = '';
 
 #get image from multiform before anything else
-if ( defined $r ) {
+if (defined $r) {
 
     #$cgi               = new CGI();
 
     #Apache2::Request
-    my $apr = Apache2::Request->new( $r, POST_MAX => $upload_limit, TEMP_DIR => $tmp_dir );
+    my $apr = Apache2::Request->new($r, POST_MAX => $upload_limit, TEMP_DIR => $tmp_dir);
 
     $params = {
         studio_id  => $apr->param('studio_id'),
@@ -294,15 +293,15 @@ if ( defined $r ) {
 
     #copy params to hash
     my $body = $apr->body();
-    if ( defined $body ) {
-        for my $key ( keys %$body ) {
-            $params->{ scalar($key) } = scalar( $apr->param($key) );
+    if (defined $body) {
+        for my $key (keys %$body) {
+            $params->{ scalar($key) } = scalar($apr->param($key));
         }
     }
 
     my $status = $apr->parse;
-    $status = '' if ( $status =~ /missing input data/i );
-    if ( $status =~ /limit/i ) {
+    $status = '' if ($status =~ /missing input data/i);
+    if ($status =~ /limit/i) {
         $error = $status;
     } else {
         $upload = $apr->upload('image') if defined $params->{image};
@@ -336,18 +335,18 @@ my $user_presets = uac::get_user_presets(
     }
 );
 $params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
+$params = uac::setDefaultStudio($params, $user_presets);
+$params = uac::setDefaultProject($params, $user_presets);
 
 my $request = {
     url => $ENV{QUERY_STRING} || '',
     params => {
         original => $params,
-        checked  => check_params( $config, $params ),
+        checked  => check_params($config, $params),
     },
 };
 
-$request = uac::prepare_request( $request, $user_presets );
+$request = uac::prepare_request($request, $user_presets);
 $params = $request->{params}->{checked};
 uac::check($config, $params, $user_presets);
 
@@ -360,19 +359,19 @@ if ( $permissions->{create_image} ne '1' ) {
 }
 
 my $file_info = undef;
-if ( $error ne '' ) {
-    if ( $error =~ /limit/ ) {
+if ($error ne '') {
+    if ($error =~ /limit/) {
         $params->{error} .=
             "Image size is limited to "
-          . int( $upload_limit / 1000000 ) . " MB!"
+          . int($upload_limit / 1000000) . " MB!"
           . "Please make it smaller and try again!";
     } else {
         $params->{error} .= "Error:'$error'";
     }
-} elsif ( $params->{action} eq 'upload' ) {
-    $file_info = upload_file( $config, $cgi, $upload, $user );
+} elsif ($params->{action} eq 'upload') {
+    $file_info = upload_file($config, $cgi, $upload, $user);
     $params->{error} .= $file_info->{error};
-    $params = update_database( $config, $params, $file_info, $user ) if $params->{error} eq '';
+    $params = update_database($config, $params, $file_info, $user) if $params->{error} eq '';
 }
 
 print STDERR "upload error: $params->{error}\n" if $params->{error};

@@ -25,7 +25,7 @@ my $request = {
     url    => $ENV{QUERY_STRING},
     params => {
         original => $params,
-        checked  => check_params( $config, $params )
+        checked  => check_params($config, $params)
     },
 };
 
@@ -36,7 +36,7 @@ my $dbh = db::connect($config);
 
 #fill template
 my $template_parameters = {};
-$template_parameters->{projects}         = getProjects( $dbh, $config, $params );
+$template_parameters->{projects}         = getProjects($dbh, $config, $params);
 
 #output template
 my $template = $params->{template};
@@ -54,8 +54,8 @@ sub getProjects {
     my $projects          = project::get_sorted($config);
 
     my $excludedProjects = {};
-    if ( defined $config->{filter}->{projects_to_exclude} ) {
-        for my $project ( split( /\,/, $config->{filter}->{projects_to_exclude} ) ) {
+    if (defined $config->{filter}->{projects_to_exclude}) {
+        for my $project (split(/\,/, $config->{filter}->{projects_to_exclude})) {
             $project =~ s/^\s+//g;
             $project =~ s/\s+$//g;
             $excludedProjects->{$project} = 1;
@@ -66,7 +66,7 @@ sub getProjects {
     for my $project (@$projects) {
         next if defined $excludedProjects->{ $project->{name} };
 
-        my $series_names = getSeriesNames( $dbh, $config, $project->{name}, $params );
+        my $series_names = getSeriesNames($dbh, $config, $project->{name}, $params);
         $project->{isEmpty} = 1 if scalar(@$series_names) == 0;
         $project->{series_names} = $series_names;
 
@@ -75,10 +75,10 @@ sub getProjects {
         $project->{js_name} =~ s/\_+/\_/g;
 
         #mark last series_name entry of all non empty projects
-        if ( ( defined $series_names ) && ( scalar @$series_names > 0 ) ) {
+        if ((defined $series_names) && (scalar @$series_names > 0)) {
             $series_names->[-1]->{last}      = 1;
             $prev_series_names->[-1]->{last} = 0
-              if ( defined $prev_series_names ) && ( scalar @$prev_series_names > 0 );
+              if (defined $prev_series_names) && (scalar @$prev_series_names > 0);
             $prev_series_names = $series_names;
         }
         push @$results, $project;
@@ -95,41 +95,41 @@ sub getSeriesNames {
     my $bind_values = [];
 
     my @conds = ();
-    if ( defined $config->{filter}->{locations_to_exclude} ) {
+    if (defined $config->{filter}->{locations_to_exclude}) {
         my @exclude = ();
-        for my $location ( split( /\,/, $config->{filter}->{locations_to_exclude} ) ) {
+        for my $location (split(/\,/, $config->{filter}->{locations_to_exclude})) {
             $location =~ s/^\s+//g;
             $location =~ s/\s+$//g;
             push @exclude,      '?';
             push @$bind_values, $location;
         }
-        push @conds, 'location not in (' . join( ',', @exclude ) . ')';
+        push @conds, 'location not in (' . join(',', @exclude) . ')';
     }
 
-    if ( defined $config->{filter}->{projects_to_exclude} ) {
+    if (defined $config->{filter}->{projects_to_exclude}) {
         my @exclude = ();
-        for my $project ( split( /\,/, $config->{filter}->{projects_to_exclude} ) ) {
+        for my $project (split(/\,/, $config->{filter}->{projects_to_exclude})) {
             $project =~ s/^\s+//g;
             $project =~ s/\s+$//g;
             push @exclude,      '?';
             push @$bind_values, $project;
         }
-        push @conds, 'project not in (' . join( ',', @exclude ) . ')';
+        push @conds, 'project not in (' . join(',', @exclude) . ')';
     }
 
-    if ( ( $project ne '' ) && ( $project ne 'all' ) ) {
+    if (($project ne '') && ($project ne 'all')) {
         push @conds,        'project=?';
         push @$bind_values, $project;
     }
 
-    if ( ( $params->{search} ne '' ) ) {
+    if (($params->{search} ne '')) {
         push @conds,        'series_name like ?';
         push @$bind_values, '%' . $params->{search} . '%';
     }
 
     my $where = '';
-    if ( scalar @conds > 0 ) {
-        $where = 'where ' . join( ' and ', @conds );
+    if (scalar @conds > 0) {
+        $where = 'where ' . join(' and ', @conds);
     }
 
     my $query = qq{
@@ -140,7 +140,7 @@ sub getSeriesNames {
         order by series_name
     };
 
-    my $series_names = db::get( $dbh, $query, $bind_values );
+    my $series_names = db::get($dbh, $query, $bind_values);
 
     for my $series (@$series_names) {
         $series->{series_name} = '' unless defined $series->{series_name};
@@ -156,10 +156,10 @@ sub check_params {
     my $config = shift;
     my $params = shift;
 
-    my $template = template::check( $config, $params->{template}, 'series_names.html' );
+    my $template = template::check($config, $params->{template}, 'series_names.html');
 
     my $search = $params->{q} || $params->{search} || $params->{term} || '';
-    if ( $search =~ /([a-z0-9A-Z\_\,]+)/ ) {
+    if ($search =~ /([a-z0-9A-Z\_\,]+)/) {
         $search = $1;
     }
 

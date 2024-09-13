@@ -43,7 +43,7 @@ sub main {
             = uac::set_template_permissions($request->{permissions}, $params);
         $headerParams->{loc} = localization::get($config,
             {user => $session->{user}, file => 'menu'}
-        );
+);
         $out .= template::process($config,
             template::check($config, 'series-header.html'), $headerParams
         );
@@ -83,7 +83,8 @@ sub main {
 sub save_schedule {
     my ($config, $request) = @_;
 
-    my $params      = $request->{params}->{checked};
+    my $params = $request->{params}->{checked};
+
     my $permissions = $request->{permissions};
     PermissionError->throw(error => 'Missing permission to update_schedule')
         unless $permissions->{update_schedule} == 1;
@@ -139,7 +140,7 @@ sub save_schedule {
         }
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     if (defined $params->{schedule_id}) {
         $entry->{schedule_id} = $params->{schedule_id};
         series_schedule::update($config, $entry);
@@ -187,12 +188,12 @@ sub delete_schedule {
         ParamError->throw(error => "missing $attr")
             unless defined $params->{$attr};
         $entry->{$attr} = $params->{$attr};
-    }
+        }
 
     AssignError->throw(error => 'series is not assigned to project!')
         unless project::is_series_assigned($config, $entry) == 1;
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     $entry->{schedule_id} = $params->{schedule_id};
     series_schedule::delete($config, $entry);
     series_dates::update($config, $entry);
@@ -224,9 +225,10 @@ sub delete_series {
     ParamError->throw(error => "series is not assigned to project")
         unless project::is_series_assigned($config, $entry) == 1;
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     if ($entry->{series_id} ne '') {
-        series::delete($config, $entry);
+        my $result = series::delete($config, $entry);
+
         user_stats::increase(
             $config,
             'delete_series',
@@ -321,7 +323,7 @@ sub save_series {
         ) if (scalar(@$series_ids) == 1)
             && ($series_ids->[0]->{series_id} ne $params->{series_id});
 
-        $config->{access}->{write} = 1;
+        local $config->{access}->{write} = 1;
         series::update($config, $entry);
 
         series_events::update_series_images($config,{
@@ -340,7 +342,7 @@ sub save_series {
         });
     }
     ActionError->throw(error => "Invalid save action");
-}
+    }
 
 sub assign_event {
     my ($config, $request) = @_;
@@ -384,7 +386,7 @@ sub assign_event {
     my $event = $events->[0];
 
     #is series assigned to studio
-    series_events::check_permission(
+    my $result = series_events::check_permission(
         $request,
         {   permission => 'assign_series_events',
             check_for  => [ 'studio', 'user', 'series', 'studio_timeslots' ],
@@ -440,7 +442,7 @@ sub assign_event {
                 title       => $title,
                 episode     => $event->{episode},
                 rerun       => $event->{rerun},
-            }
+        }
         );
 
         # add to history
@@ -457,7 +459,7 @@ sub assign_event {
         {   "entry" =>
                 { uac::set($entry, 'project_id', 'studio_id', 'series_id'), },
             "status" => "event assigned"
-        }
+    }
     );
 }
 
@@ -508,7 +510,7 @@ sub unassign_event {
     );
 
     local $config->{access}->{write} = 1;
-    series::unassign_event(
+    $result = series::unassign_event(
         $config,
         {   uac::set(
                 $entry, 'project_id', 'studio_id', 'series_id',
@@ -528,7 +530,7 @@ sub unassign_event {
         }
     );
 
-}
+    }
 
 # assign event to new series id and remove from old series id
 sub reassign_event {
@@ -745,14 +747,14 @@ sub show_series {
         $studio_user->{user_id} = $studio_user->{id};
     }
     my @users = @$studio_users;
-    @users        = sort {lc $a->{full_name} cmp lc $b->{full_name}} @users;
+    @users = sort { lc $a->{full_name} cmp lc $b->{full_name} } @users;
     $studio_users = \@users;
 
     #show events from last month until next 3 months
-    my $from = DateTime->now(time_zone => $config->{date}->{time_zone})
-        ->subtract(months => 1)->datetime();
-    my $till = DateTime->now(time_zone => $config->{date}->{time_zone})
-        ->add(months => 3)->datetime();
+    my $from = DateTime->now(time_zone => $config->{date}->{time_zone})->subtract(months => 1)
+      ->datetime();
+    my $till =
+      DateTime->now(time_zone => $config->{date}->{time_zone})->add(months => 3)->datetime();
 
     #add name of current studio
     my $studio = $studio_by_id->{ $serie->{studio_id} };
@@ -784,7 +786,7 @@ sub show_series {
             till_date => $till,
             location  => $location,
             limit     => 30,
-            archive   => 'all',
+            phase     => 'all',
             published => 'all'
         }
     );
@@ -823,18 +825,14 @@ sub show_series {
 
     #remove seconds from dates
     for my $schedule (@$schedules) {
-        $schedule->{start} =~ s/(\d\d\:\d\d)\:\d\d/$1/
-            if defined $schedule->{start};
-        $schedule->{end} =~ s/(\d\d\:\d\d)\:\d\d/$1/
-            if defined $schedule->{end};
+        $schedule->{start} =~ s/(\d\d\:\d\d)\:\d\d/$1/ if defined $schedule->{start};
+        $schedule->{end} =~ s/(\d\d\:\d\d)\:\d\d/$1/   if defined $schedule->{end};
 
         #detect schedule type
         if ($schedule->{period_type} eq '') {
             $schedule->{period_type} = 'week_of_month';
-            $schedule->{period_type} = 'days'
-                unless ($schedule->{week_of_month} =~ /\d/);
-            $schedule->{period_type} = 'single'
-                unless ($schedule->{end} =~ /\d/);
+            $schedule->{period_type} = 'days' unless ($schedule->{week_of_month} =~ /\d/);
+            $schedule->{period_type} = 'single' unless ($schedule->{end} =~ /\d/);
         }
         $schedule->{ 'period_type_' . $schedule->{period_type} } = 1;
     }
@@ -848,7 +846,7 @@ sub show_series {
     $serie->{duration} = $params->{duration} if $duration ne '';
 
     $serie->{start} =~ s/(\d\d\:\d\d)\:\d\d/$1/ if defined $serie->{start};
-    $serie->{end}   =~ s/(\d\d\:\d\d)\:\d\d/$1/ if defined $serie->{end};
+    $serie->{end} =~ s/(\d\d\:\d\d)\:\d\d/$1/   if defined $serie->{end};
 
     #add series dates
     my $series_dates = series_dates::get($config,
@@ -863,7 +861,7 @@ sub show_series {
 
     $serie->{show_hint_to_add_schedule} = $params->{show_hint_to_add_schedule};
 
-    if ( ( defined $params->{setImage} ) && ( $params->{setImage} ne $serie->{image} ) ) {
+    if ((defined $params->{setImage}) && ($params->{setImage} ne $serie->{image})) {
         $serie->{image}          = $params->{setImage};
         $params->{forced_change} = 1;
     }
@@ -900,8 +898,7 @@ sub set_rebuilt_episodes {
 
     #this will be updated later (especially allow_update_events)
     for my $permission (keys %{ $request->{permissions} }) {
-        $params->{'allow'}->{$permission}
-            = $request->{permissions}->{$permission};
+        $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
     my $events = series::get_rebuilt_episodes($config,
         { uac::set($params, 'project_id', 'studio_id', 'series_id'), });
@@ -913,7 +910,8 @@ sub set_rebuilt_episodes {
         next if $event->{old_episode} eq $event->{episode};
         series_events::set_episode(
             $config,
-            {   id      => $event->{id},
+            {
+                id      => $event->{id},
                 episode => $event->{episode}
             }
         );
@@ -925,7 +923,7 @@ sub set_rebuilt_episodes {
             "status" => "episodes rebuilt"
         }
     );
-}
+    }
 
 #TODO…
 sub rebuild_episodes {
@@ -946,8 +944,7 @@ sub rebuild_episodes {
 
     #this will be updated later (especially allow_update_events)
     for my $permission (keys %{ $request->{permissions} }) {
-        $params->{'allow'}->{$permission}
-            = $request->{permissions}->{$permission};
+        $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
     my $events = series::get_rebuilt_episodes($config,
         { uac::set($params, 'project_id', 'studio_id', 'series_id'), });
@@ -984,15 +981,14 @@ sub rebuild_episodes {
         }
         if ($e1 and $e2 and $o1 and $o2 and (($e2 - $o2) != ($e1 - $o1))) {
             $event->{class} = "error" if $e1 ne $e2;
-            $prev->{class}  = "error" if defined $prev and $o1 ne $o2;
+            $prev->{class} = "error" if defined $prev and $o1 ne $o2;
             $errors++;
         }
         if ($event->{episode} < $max_episode and !$event->{recurrence}) {
             $event->{class} = "error";
             $errors++;
         }
-        $event->{recurrence_start}
-            = $events_by_id->{ $event->{recurrence} }->{start};
+        $event->{recurrence_start} = $events_by_id->{ $event->{recurrence} }->{start};
         $event->{recurrence} = '-' unless $event->{recurrence};
         $prev = $event;
     }
@@ -1027,18 +1023,16 @@ sub check_params {
     );
 
     $checked->{exclude} = 0;
-    entry::set_numbers(
-        $checked, $params,
-        [   'id',            'project_id',
-            'studio_id',     'default_studio_id',
-            'user_id',       'new_series_id',
-            'series_id',     'schedule_id',
-            'exclude',       'show_hint_to_add_schedule',
-            'event_id',      'weekday',
-            'week_of_month', 'month',
-            'nextDay',       'predecessor_id'
-        ]
-    );
+    entry::set_numbers($checked, $params, [
+        'id',            'project_id',
+        'studio_id',     'default_studio_id',
+        'user_id',       'new_series_id',
+        'series_id',     'schedule_id',
+        'exclude',       'show_hint_to_add_schedule',
+        'event_id',      'weekday',
+        'week_of_month', 'month',
+        'nextDay',       'predecessor_id'
+    ]);
 
     if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
@@ -1047,55 +1041,48 @@ sub check_params {
     }
 
     if (defined $checked->{series_id}) {
-        $checked->{template}
-            = template::check($config, $params->{template}, 'edit-series');
+        $checked->{template} = template::check($config, $params->{template}, 'edit-series');
     } else {
-        $checked->{template}
-            = template::check($config, $params->{template}, 'series');
+        $checked->{template} = template::check($config, $params->{template}, 'series');
     }
 
-    #set defaults
-    if ((defined $checked->{action}) && ($checked->{action} eq 'save_schedule'))
-    {
+    if ((defined $checked->{action}) && ($checked->{action} eq 'save_schedule')) {
+
+        #set defaults
         $checked->{create_events}  = 0;
         $checked->{publish_events} = 0;
     }
 
-    entry::set_numbers(
-        $checked, $params,
-        [   'frequency',        'duration',
-            'default_duration', 'create_events',
-            'publish_events',   'live',
-            'count_episodes'
-        ]
-    );
+    entry::set_numbers($checked, $params, [
+        'frequency',      'duration', 'default_duration', 'create_events',
+        'publish_events', 'live',     'count_episodes'
+    ]);
 
     #scalars
     entry::set_strings($checked, $params,
-        [ 'search', 'from', 'till', 'period_type' ]);
-
-    entry::set_strings(
-        $checked, $params,
-        [   'series_name',        'title',
-            'excerpt',            'content',
-            'topic',              'image',
-            'image_label',        'assign_event_series_name',
-            'assign_event_title', 'comment',
-            'podcast_url',        'archive_url',
-            'setImage',           'content_format'
-        ]
+        [ 'search', 'from', 'till', 'period_type' ]
     );
 
+    entry::set_strings($checked, $params, [
+        'series_name',        'title',
+        'excerpt',            'content',
+        'topic',              'image',
+        'image_label',        'assign_event_series_name',
+        'assign_event_title', 'comment',
+        'podcast_url',        'archive_url',
+        'setImage',           'content_format'
+    ]);
+
     for my $attr ('start') {
-        if (   ( defined $params->{$attr} )
-            && ( $params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d[ T]\d\d\:\d\d)/ ) )
+        if ((defined $params->{$attr})
+            && ($params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d[ T]\d\d\:\d\d)/))
         {
             $checked->{$attr} = $1 . ':00';
         }
     }
 
     for my $attr ('end') {
-        if ( ( defined $params->{$attr} ) && ( $params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d)/ ) ) {
+        if ((defined $params->{$attr}) && ($params->{$attr} =~ /(\d\d\d\d\-\d\d\-\d\d)/)) {
             $checked->{$attr} = $1;
         }
     }

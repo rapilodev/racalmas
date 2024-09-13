@@ -83,15 +83,14 @@ sub show_image {
     unless ( defined $params->{studio_id} ) {
         ParamError->throw(error=> "missing studio id");
         return undef;
-    }
+}
 
     if ( $permissions->{read_image} ne '1' ) {
         PermissionError->throw(error=>"Missing permission to read image");
         return 0;
     }
 
-    $config->{access}->{write} = 0;
-    my $dbh = db::connect( $config, undef );
+    my $dbh = db::connect($config, undef);
 
     my $projectId        = $params->{project_id};
     my $studioId         = $params->{studio_id};
@@ -101,7 +100,7 @@ sub show_image {
     my $results   = [];
 
     # add images from series
-    if ( defined $params->{series_id} ) {
+    if (defined $params->{series_id}) {
         my $seriesImages = series::get_images(
             $config,
             {
@@ -144,8 +143,8 @@ sub show_image {
 
     #load selected image, if not already loaded
     my $selectedImage = undef;
-    if ( $selectedFilename ne '' ) {
-        if ( defined $filenames->{$selectedFilename} ) {
+    if ($selectedFilename ne '') {
+        if (defined $filenames->{$selectedFilename}) {
             $selectedImage = $filenames->{$selectedFilename};
         } else {
 
@@ -165,7 +164,7 @@ sub show_image {
 
         # put selected image first
         $selectedFilename = 'not-found';
-        if ( defined $selectedImage ) {
+        if (defined $selectedImage) {
             push @$finalResults, $selectedImage;
             $selectedFilename = $selectedImage->{filename};
         }
@@ -177,14 +176,14 @@ sub show_image {
         $results = $finalResults;
     }
 
-    if ( scalar @$results != 0 ) {
-        if ( $params->{template} =~ /edit/ ) {
+    if (scalar @$results != 0) {
+        if ($params->{template} =~ /edit/) {
             my $result = $results->[0];
-            $result->{missing_licence} = 1 if ( !defined $result->{licence} ) || ( $result->{licence} !~ /\S/ );
+            $result->{missing_licence} = 1 if (!defined $result->{licence}) || ($result->{licence} !~ /\S/);
             $results = [$result];
         }
 
-        $results = modify_results( $results, $permissions, $user, $local_media_url );
+        $results = modify_results($results, $permissions, $user, $local_media_url);
     }
 
     my $search = $params->{search} || '';
@@ -207,7 +206,7 @@ sub show_image {
     };
 
     #    print STDERR
-    $template_params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'image' } );
+    $template_params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'image' });
 
     my $label_key = 'label_assign_to_'.$params->{target};
     $template_params->{label_assign_to_by_label} = $template_params->{loc}->{$label_key};
@@ -215,7 +214,7 @@ sub show_image {
     $label_key = 'label_warn_not_public_'.$params->{target};
     $template_params->{label_warn_not_public_by_label} = $template_params->{loc}->{$label_key};
 
-    $template_params = uac::set_template_permissions( $permissions, $template_params );
+    $template_params = uac::set_template_permissions($permissions, $template_params);
     $template_params->{no_results} = 1 if scalar @$results == 0;
 
     #set global values for update and delete, per image values are evaluated later
@@ -263,9 +262,9 @@ sub save_image {
 
     $image->{name} = 'new' if $image->{name} eq '';
 
-    images::checkLicence( $config, $image );
+    images::checkLicence($config, $image);
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
 
     my $entries = images::get(
@@ -277,22 +276,22 @@ sub save_image {
         }
     );
 
-    if ( scalar @$entries > 1 ) {
+    if (scalar @$entries > 1) {
         print_js_error('more than one matching result found');
         return 0;
     }
-    if ( scalar @$entries == 0 ) {
+    if (scalar @$entries == 0) {
         print_js_error('image not found in database (for this studio)');
         return 0;
     }
     my $entry = $entries->[0];
-    if ( defined $entry ) {
-        images::update( $dbh, $image );
-        images::publish( $config, $image->{filename} ) if ( ( $image->{public} == 1 ) && ( $entry->{public} == 0 ) );
-        images::depublish( $config, $image->{filename} ) if ( ( $image->{public} == 0 ) && ( $entry->{public} == 1 ) );
+    if (defined $entry) {
+        images::update($dbh, $image);
+        images::publish($config, $image->{filename}) if (($image->{public} == 1) && ($entry->{public} == 0));
+        images::depublish($config, $image->{filename}) if (($image->{public} == 0) && ($entry->{public} == 1));
     } else {
         $image->{created_by} = $user;
-        images::insert( $dbh, $image );
+        images::insert($dbh, $image);
     }
 }
 
@@ -309,14 +308,15 @@ sub delete_image {
         PermissionError->throw(error=>'Missing permission to delete image');
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $dbh   = db::connect($config);
     my $image = {
         project_id => $params->{project_id},
         studio_id  => $params->{studio_id},
         filename   => $params->{delete_image},
     };
-    images::delete( $dbh, $image );
+    my $result = images::delete($dbh, $image);
+
     return;
 }
 
@@ -328,12 +328,12 @@ sub check_permission {
     my $filename    = shift;
 
     return 0 unless defined $user;
-    return 0 if ( $user eq '' );
+    return 0 if ($user eq '');
 
-    if ( $permissions->{ $permission . '_others' } eq '1' ) {
+    if ($permissions->{ $permission . '_others' } eq '1') {
         print STDERR "$user has update_image_others\n";
         return 1;
-    } elsif ( $permissions->{ $permission . '_own' } eq '1' ) {
+    } elsif ($permissions->{ $permission . '_own' } eq '1') {
         print STDERR "$user has update_image_own\n";
 
         #check if image was created by user
@@ -344,7 +344,7 @@ sub check_permission {
                 created_by => $user
             }
         );
-        return 1 if ( @$results == 1 );
+        return 1 if (@$results == 1);
         return 0;
     }
     return 0;
@@ -357,7 +357,7 @@ sub modify_results {
     my $local_media_url = shift;
 
     for my $result (@$results) {
-        unless ( defined $result->{filename} ) {
+        unless (defined $result->{filename}) {
             $result = undef;
             next;
         }
@@ -366,16 +366,16 @@ sub modify_results {
         $result->{icon_url}  = $local_media_url . '/icons/' . $result->{filename};
 
         #reduce
-        for my $permission ( 'update_image', 'delete_image' ) {
-            if (   ( defined $permissions->{ $permission . '_others' } )
-                && ( $permissions->{ $permission . '_others' } eq '1' ) )
+        for my $permission ('update_image', 'delete_image') {
+            if ((defined $permissions->{ $permission . '_others' })
+                && ($permissions->{ $permission . '_others' } eq '1'))
             {
                 $result->{$permission} = 1;
-            } elsif ( ( defined $permissions->{ $permission . '_own' } )
-                && ( $permissions->{ $permission . '_own' } eq '1' ) )
+            } elsif ((defined $permissions->{ $permission . '_own' })
+                && ($permissions->{ $permission . '_own' } eq '1'))
             {
-                next if ( $user eq '' );
-                $result->{$permission} = 1 if ( $user eq $result->{created_by} );
+                next if ($user eq '');
+                $result->{$permission} = 1 if ($user eq $result->{created_by});
             }
         }
     }
@@ -387,40 +387,40 @@ sub check_params {
     my $checked = { template => template::check( $config, $params->{template}, 'image.html' ) };
 
     $checked->{limit} = 100;
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'project_id', 'studio_id', 'series_id', 'event_id', 'pid', 'default_studio_id', 'limit'
     ]);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;
     }
 
     $checked->{limit} = 100 unless defined $checked->{limit};
-    $checked->{limit} = 100 if ( $checked->{limit} > 100 );
+    $checked->{limit} = 100 if ($checked->{limit} > 100);
 
     $checked->{delete_image} = '';
     $checked->{save_image}   = '';
-    entry::set_strings( $checked, $params, [
+    entry::set_strings($checked, $params, [
         'search',
         'update_name', 'update_description', 'licence',
         'save_image', 'delete_image', 'show', 'filename', 'target' ]);
 
     #checkboxes
-    entry::set_bools( $checked, $params, [ 'public']);
+    entry::set_bools($checked, $params, [ 'public']);
 
     #map show to filename, but overwrite if filename given
-    if ( ($checked->{show}//'') ne '' ) {
+    if (($checked->{show}//'') ne '') {
         $checked->{filename} = $checked->{show};
         delete $checked->{show};
         $checked->{limit} = 1;
-    } elsif ( ($checked->{filename}//'') ne '' ) {
+    } elsif (($checked->{filename}//'') ne '') {
         delete $checked->{show};
     }
 
-    $checked->{from} = time::check_date( $params->{from} );
-    $checked->{till} = time::check_date( $params->{till} );
+    $checked->{from} = time::check_date($params->{from});
+    $checked->{till} = time::check_date($params->{till});
 
     return $checked;
 }

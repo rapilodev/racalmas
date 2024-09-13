@@ -5,10 +5,10 @@ function addLocalization(usecase, callback){
         $.each( data, function( key, val ) {
             loc[key]=val;
         });
-
+                
         if (callback!=null) callback();
         //addBackButton();
-    });
+    });    
 }
 
 function getController(){

@@ -73,7 +73,7 @@ sub getColors($$) {
     #get defaultColors
     my $colors   = [];
     my $colorMap = {};
-    for my $defaultColor(@$defaultColors) {
+    for my $defaultColor (@$defaultColors) {
         my $color = {
             name  => $defaultColor->{name},
             css   => $defaultColor->{css},
@@ -87,7 +87,7 @@ sub getColors($$) {
     $settings->{colors} |= '';
 
     #overwrite colors from user settings
-    for my $line(split(/\n+/, $settings->{colors})) {
+    for my $line (split(/\n+/, $settings->{colors})) {
         my ($key, $value) = split(/\=/, $line);
         $key =~ s/^\s+//;
         $key =~ s/\s+$//;
@@ -98,7 +98,7 @@ sub getColors($$) {
     return $colors;
 }
 
-sub getColorCss($$) {
+sub getColorCss ($$) {
     my ($config, $conditions) = @_;
 
     return unless defined $conditions->{user};
@@ -108,7 +108,7 @@ sub getColorCss($$) {
 
     my $colors = getColors($config, $conditions);
     my $style = "<style>\n";
-    for my $color(@$colors) {
+    for my $color (@$colors) {
         $style .= $color->{css} . "{\n\tbackground-color:" . $color->{color} . ";\n}\n";
         my $c = $color->{color};
         if ($c =~ /#([a-fA-F0-9][a-fA-F0-9])([a-fA-F0-9][a-fA-F0-9])([a-fA-F0-9][a-fA-F0-9])/) {
@@ -136,7 +136,7 @@ sub get_columns($) {
     return db::get_columns_hash($dbh, 'calcms_user_settings');
 }
 
-sub get($$) {
+sub get ($$) {
     my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
@@ -162,7 +162,7 @@ sub get($$) {
     return $entries->[0] || undef;
 }
 
-sub insert($$) {
+sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('user') {
@@ -195,7 +195,7 @@ sub update($$) {
     db::put($dbh, $query, \@bind_values);
 }
 
-sub delete($$) {
+sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('user') {

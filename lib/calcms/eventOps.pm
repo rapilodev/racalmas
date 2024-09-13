@@ -40,10 +40,10 @@ sub setAttributesFromSeriesTemplate($$$) {
 
 	#copy fields from series template
 	my $serie = $series->[0];
-	for my $attr(
+	for my $attr (
 		'program',  'series_name', 'title', 'excerpt', 'topic',       'content', 'html_content', 'project',
 	    'location',    'image', 'live',    'archive_url', 'podcast_url', 'content_format'
-	 )
+	)
 	{
 		$event->{$attr} = $serie->{$attr};
 	}
@@ -52,7 +52,7 @@ sub setAttributesFromSeriesTemplate($$$) {
 	return $serie;
 }
 
-sub setAttributesFromSchedule($$$){
+sub setAttributesFromSchedule ($$$){
     my ($config, $params, $event) = @_;
 
 	#set attributes from schedule
@@ -71,7 +71,7 @@ sub setAttributesFromSchedule($$$){
 	}
 
 	my $schedule = $schedules->[0];
-	for my $attr('start', 'end', 'day', 'weekday', 'start_date', 'end_date') {
+	for my $attr ('start', 'end', 'day', 'weekday', 'start_date', 'end_date') {
 		$event->{$attr} = $schedule->{$attr};
 	}
 
@@ -81,7 +81,7 @@ sub setAttributesFromSchedule($$$){
 	return $event;
 }
 
-sub setAttributesFromOtherEvent($$$){
+sub setAttributesFromOtherEvent ($$$){
     my ($config, $params, $event) = @_;
 
 	my $event2 = series::get_event(
@@ -96,11 +96,11 @@ sub setAttributesFromOtherEvent($$$){
 		}
 	);
 	if (defined $event2) {
-		for my $attr(
+		for my $attr (
 			'title',       'user_title',  'excerpt',      'user_excerpt', 'content',       'html_content',
 			'topics',      'image',       'series_image', 'live',         'no_event_sync', 'podcast_url',
 			'archive_url', 'image_label', 'series_image_label', 'content_format'
-		 )
+		)
 		{
 			$event->{$attr} = $event2->{$attr};
 		}
@@ -111,7 +111,7 @@ sub setAttributesFromOtherEvent($$$){
 	return $event;
 }
 
-sub setAttributesForCurrentTime($$){
+sub setAttributesForCurrentTime ($$){
     my ($serie, $event) = @_;
 
 	#on new event not from schedule use current time
@@ -129,7 +129,7 @@ sub setAttributesForCurrentTime($$){
 }
 
 # get recurrence base id
-sub getRecurrenceBaseId($){
+sub getRecurrenceBaseId ($){
 	my ($event) = @_;
 	return $event->{recurrence} if (defined $event->{recurrence}) && ($event->{recurrence} ne '') && ($event->{recurrence} ne '0');
 	return $event->{event_id};
@@ -144,7 +144,7 @@ sub getNewEvent($$$) {
 	push @$required_fields, 'start_date' if ($action eq 'show_new_event_from_schedule');
 
 	my $event = {};
-	for my $attr(@$required_fields) {
+	for my $attr (@$required_fields) {
         ParamError->throw(error => "eventOps: missing " . $attr) unless defined $params->{$attr};
 		$event->{$attr} = $params->{$attr};
 	}
@@ -159,7 +159,7 @@ sub getNewEvent($$$) {
 
 	if (defined $params->{source_event_id}) {
 
-		#overwrite by existing event(rerun)
+		#overwrite by existing event (rerun)
 		eventOps::setAttributesFromOtherEvent($config, $params, $event);
 	}
 

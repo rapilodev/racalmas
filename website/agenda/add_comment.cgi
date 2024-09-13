@@ -68,7 +68,7 @@ sub is_blocked {
 
     # add lock settings here
     # return 1 if
-    # ($user_agent eq 'Mozilla/5.0(X11; Ubuntu; Linux i686; rv:35.0) Gecko/20100101 Firefox/35.0')
+    #    ($user_agent eq 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:35.0) Gecko/20100101 Firefox/35.0')
     #  && ($nslookup =~ /alicedsl/);
 
     return 0;
@@ -113,7 +113,7 @@ $base_domain/agenda/planung/comment.cgi?event_id=$comment->{event_id}&comment_id
     $content .= qq{
 -----------------------------------------------------------
 
-SENDER IP:      $ip($comment->{ip})
+SENDER IP:      $ip  ($comment->{ip})
 USER AGENT:     $user_agent
 COOKIE:         $cookie
 
@@ -126,7 +126,7 @@ $nslookup
         To      => $to,
         Subject => $subject,
         Data    => $content
-   );
+    );
 
     $msg->send;
 }

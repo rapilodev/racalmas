@@ -19,7 +19,7 @@ clean_up_cache();
 sub clean_up_cache{
 	my $base_dir =$config::config->{locations}->{base_dir}||'';
 
-    print_error("'base_dir' directory not configured! Please check config!") if ($base_dir eq'');
+    print_error("'base_dir' directory not configured! Please check config!") if($base_dir eq'');
     print_error("invalid 'base_dir' directory '$base_dir'! Please check config!") unless ($base_dir=~/[a-zA-Z]\/[a-zA-Z]/);
     print_error("'base_dir' directory '$base_dir' does not exist! Please check config!") unless (-e $base_dir);
     print_error("cannot read 'base_dir' directory '$base_dir'! Please check permissions!") unless (-r $base_dir);

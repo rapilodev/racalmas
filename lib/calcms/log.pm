@@ -28,7 +28,7 @@ sub load_file($) {
     if (-e $filename) {
         my $FILE = undef;
         open($FILE, "<:utf8", $filename) || warn "cant read file '$filename'";
-        $content = join "",(<$FILE>);
+        $content = join "", (<$FILE>);
         close $FILE;
         return $content;
     }
@@ -41,7 +41,7 @@ sub save_file($$) {
     if ($filename =~ /^(.+?)\/[^\/]+$/) {
         my $dir = $1;
         unless (-w $dir) {
-            print STDERR "log::save_file : cannot write to directory($dir)\n";
+            print STDERR "log::save_file : cannot write to directory ($dir)\n";
             return;
         }
     }

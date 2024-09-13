@@ -13,7 +13,7 @@ sub get_columns($) {
     return db::get_columns_hash($dbh, 'calcms_user_stats');
 }
 
-sub get($$) {
+sub get ($$) {
     my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
@@ -113,9 +113,9 @@ sub get_stats($$) {
 	};
 
     my $results = db::get($dbh, $query, \@bind_values);
-    for my $result(@$results) {
+    for my $result (@$results) {
         $result->{score} = 0;
-        for my $column('create_events', 'update_events', 'delete_events', 'create_series', 'update_series',
+        for my $column ('create_events', 'update_events', 'delete_events', 'create_series', 'update_series',
             'delete_series')
         {
             $result->{score} += $result->{$column};
@@ -135,7 +135,7 @@ sub insert($$) {
     #TODO:filter for existing attributes
     my $columns = get_columns($config);
     my $entry   = {};
-    for my $column(keys %$columns) {
+    for my $column (keys %$columns) {
         $entry->{$column} = $stats->{$column} if defined $stats->{$column};
     }
     $entry->{modified_at} = time::time_to_datetime(time());
@@ -146,7 +146,7 @@ sub insert($$) {
 }
 
 # update project
-sub update($$) {
+sub update ($$) {
     my ($config, $stats) = @_;
 
     for ('user', 'project_id', 'studio_id', 'series_id') {
@@ -155,7 +155,7 @@ sub update($$) {
 
     my $columns = get_columns($config);
     my $entry   = {};
-    for my $column(keys %$columns) {
+    for my $column (keys %$columns) {
         $entry->{$column} = $stats->{$column} if defined $stats->{$column};
     }
     $entry->{modified_at} = time::time_to_datetime(time());
@@ -178,7 +178,7 @@ sub update($$) {
     return db::put($dbh, $query, \@bind_values);
 }
 
-sub increase($$$) {
+sub increase ($$$) {
     my ($config, $usecase, $options) = @_;
 
     return undef unless defined $usecase;
@@ -200,7 +200,7 @@ sub increase($$$) {
         };
 
         return insert($config, $entry);
-    } elsif(scalar @$entries == 1) {
+    } elsif (scalar @$entries == 1) {
         my $entry = $entries->[0];
         $entry->{$usecase}++ if defined
         return update($config, $entry);
@@ -219,11 +219,11 @@ sub get_active_users{
         select u.name login, u.full_name,
             s.last_login, s.login_count,
             u.disabled, u.created_at, u.created_by
-        from calcms_users u left join(
+        from calcms_users u left join (
             SELECT user , max(start) last_login, count(user) login_count
             FROM calcms_user_sessions
             group by user
-       ) s on s.user=u.name
+        ) s on s.user=u.name
         order by u.disabled, s.last_login desc, u.created_at desc
     };
     my $results = db::get($dbh, $query, []);

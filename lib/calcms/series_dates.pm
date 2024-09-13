@@ -19,7 +19,7 @@ use series_schedule();
 # TODO: delete column schedule_id
 our @EXPORT_OK = qw(get_columns get insert update delete get_dates get_series);
 
-sub get_columns($) {
+sub get_columns ($) {
     my ($config) = @_;
 
     my $dbh = db::connect($config);
@@ -28,7 +28,7 @@ sub get_columns($) {
 
 # get all series_dates for studio_id and series_id within given time range
 # calculate start_date, end_date, weeday, day from start and end(datetime)
-sub get($;$) {
+sub get ($;$) {
     my ($config, $condition) = @_;
 
     my $dbh = db::connect($config);
@@ -97,14 +97,14 @@ sub get($;$) {
 	};
 
     my $entries = db::get($dbh, $query, \@bind_values);
-    for my $entry(@$entries) {
+    for my $entry (@$entries) {
         $entry->{weekday} = substr($entry->{weekday}, 0, 2);
     }
 
     return $entries;
 }
 
-#check if event is scheduled(on permission check)
+#check if event is scheduled (on permission check)
 sub is_event_scheduled($$) {
     my ($request, $options) = @_;
 
@@ -121,7 +121,7 @@ sub is_event_scheduled($$) {
             series_id  => $options->{series_id},
             start_at   => $options->{start_at}
         }
-   );
+    );
     return 0 if scalar @$schedules != 1;
     return 1;
 }
@@ -204,7 +204,7 @@ sub get_series($;$) {
             $search = '%' . $search . '%';
             my @attr = ('s.title', 's.series_name', 's.excerpt', 's.content');
             push @conditions, "(" . join(" or ", map { 'lower(' . $_ . ') like ?' } @attr) . ")";
-            for my $attr(@attr) {
+            for my $attr (@attr) {
                 push @bind_values, $search;
             }
         }
@@ -236,7 +236,7 @@ sub get_series($;$) {
 
     my $entries = db::get($dbh, $query, \@bind_values);
 
-    for my $entry(@$entries) {
+    for my $entry (@$entries) {
         $entry->{weekday} = substr($entry->{weekday}, 0, 2);
     }
 
@@ -246,7 +246,7 @@ sub get_series($;$) {
     return $entries;
 }
 
-sub addSeriesScheduleAttributes($$) {
+sub addSeriesScheduleAttributes ($$) {
     my ($config, $entries) = @_;
 
     # get series schedule ids used at entries
@@ -260,15 +260,15 @@ sub addSeriesScheduleAttributes($$) {
         {
             schedule_ids => \@scheduleIds
         }
-   );
+    );
 
     # get schedules by id
     my $scheduleById = {};
-    for my $schedule(@$schedules) {
+    for my $schedule (@$schedules) {
         $scheduleById->{ $schedule->{schedule_id} } = $schedule;
     }
 
-    for my $entry(@$entries) {
+    for my $entry (@$entries) {
         $entry->{frequency}   = $scheduleById->{ $entry->{series_schedule_id} }->{frequency};
         $entry->{period_type} = $scheduleById->{ $entry->{series_schedule_id} }->{period_type};
     }
@@ -286,7 +286,7 @@ sub update($$) {
 
     my $dbh = db::connect($config);
 
-    #delete all dates for series(by studio and series id)
+    #delete all dates for series (by studio and series id)
     series_dates::delete($config, $entry);
 
     my $day_start = $config->{date}->{day_starting_hour};
@@ -299,25 +299,25 @@ sub update($$) {
             studio_id  => $entry->{studio_id},
             series_id  => $entry->{series_id},
         }
-   );
+    );
 
     #add scheduled series dates and remove exluded dates
     my $series_dates = {};
 
     #TODO:set schedules exclude to 0 if not 1
-    #insert all normal dates(not excludes)
-    for my $schedule(@$schedules) {
+    #insert all normal dates (not excludes)
+    for my $schedule (@$schedules) {
         my $dates = get_schedule_dates($schedule, { exclude => 0 });
-        for my $date(@$dates) {
+        for my $date (@$dates) {
             $date->{exclude} = 0;
             $series_dates->{ $date->{start} } = $date;
         }
     }
 
     #insert / overwrite all exlude dates
-    for my $schedule(@$schedules) {
+    for my $schedule (@$schedules) {
         my $dates = get_schedule_dates($schedule, { exclude => 1 });
-        for my $date(@$dates) {
+        for my $date (@$dates) {
             $date->{exclude} = 1;
             $series_dates->{ $date->{start} } = $date;
         }
@@ -327,7 +327,7 @@ sub update($$) {
 
     my $i = 0;
     my $j = 0;
-    for my $date(keys %$series_dates) {
+    for my $date (keys %$series_dates) {
         my $series_date = $series_dates->{$date};
 
         #insert date
@@ -362,27 +362,27 @@ sub get_schedule_dates($$) {
 
     if ($schedule->{period_type} eq 'single') {
         $dates = get_single_date($schedule->{start}, $schedule->{duration});
-    } elsif($schedule->{period_type} eq 'days') {
+    } elsif ($schedule->{period_type} eq 'days') {
         $dates = get_dates($schedule->{start}, $schedule->{end}, $schedule->{duration}, $schedule->{frequency});
-    } elsif($schedule->{period_type} eq 'week_of_month') {
+    } elsif ($schedule->{period_type} eq 'week_of_month') {
         $dates = get_week_of_month_dates(
             $schedule->{start},   $schedule->{end},   $schedule->{duration}, $schedule->{week_of_month},
             $schedule->{weekday}, $schedule->{month}, $schedule->{nextDay}
-       );
+        );
     } else {
         print STDERR "unknown schedule period_type\n";
     }
 
     # set series schedule id
-    for my $date(@$dates) {
+    for my $date (@$dates) {
         $date->{series_schedule_id} = $schedule->{schedule_id};
     }
     return $dates;
 }
 
-sub get_week_of_month_dates($$$$$$$) {
+sub get_week_of_month_dates ($$$$$$$) {
     my ($start, $end, $duration, $week, $weekday, $frequency, $nextDay) = @_;
-    #datetime, datetime, minutes, every nth week of month, weekday [1..7], every 1st,2nd,3th time, add 24 hours to start,(for night hours at last weekday of month)
+    #datetime, datetime, minutes, every nth week of month, weekday [1..7], every 1st,2nd,3th time, add 24 hours to start, (for night hours at last weekday of month)
 
     return undef if $start eq '';
     return undef if $end eq '';
@@ -403,7 +403,7 @@ sub get_week_of_month_dates($$$$$$$) {
     my $results = [];
 
     my $c = -1;
-    for my $start_datetime(@$start_dates) {
+    for my $start_datetime (@$start_dates) {
         $c++;
         my @start = @{ time::datetime_to_array($start_datetime) };
         next unless @start >= 6;
@@ -413,7 +413,7 @@ sub get_week_of_month_dates($$$$$$$) {
             $start[0], $start[1], $start[2],    # start date
             $start[3], $start[4], $start[5],    # start time
             0, 0, $duration, 0                  # delta days, hours, minutes, seconds
-       );
+        );
         my $end_datetime = time::array_to_datetime(\@end_datetime);
 
         push @$results,
@@ -426,7 +426,7 @@ sub get_week_of_month_dates($$$$$$$) {
 }
 
 #add duration to a single date
-sub get_single_date($$) {
+sub get_single_date ($$) {
     my ($start_datetime, $duration) = @_;
 
     my @start = @{ time::datetime_to_array($start_datetime) };
@@ -436,7 +436,7 @@ sub get_single_date($$) {
         $start[0], $start[1], $start[2],    # start date
         $start[3], $start[4], $start[5],    # start time
         0, 0, $duration, 0                  # delta days, hours, minutes, seconds
-   );
+    );
     my $date = {
         start => $start_datetime,
         end   => time::array_to_datetime(\@end_datetime)
@@ -459,7 +459,7 @@ sub get_dates($$$$) {
     $date->{start} = sprintf("%04d-%02d-%02d", @start_date) . ' ' . $start_time;
     return undef if $duration eq '';
 
-    return undef if ($frequency eq '') ||($end_date eq '');
+    return undef if ($frequency eq '') || ($end_date eq '');
 
     #continue on recurring date
     my @end = @{ time::datetime_to_array($end_date) };
@@ -480,12 +480,12 @@ sub get_dates($$$$) {
         my $date = {};
         $date->{start} = sprintf("%04d-%02d-%02d", @date) . ' ' . $start_time;
 
-        #if ($date->{start} gt $today){
+        #if($date->{start} gt $today){
         my @end_datetime = Date::Calc::Add_Delta_DHMS(
             $date[0],  $date[1],  $date[2],     # start date
             $start[3], $start[4], $start[5],    # start time
             0, 0, $duration, 0                  # delta days, hours, minutes, seconds
-       );
+        );
         $date->{end} = time::array_to_datetime(\@end_datetime);
         push @$dates, $date;
 
@@ -497,7 +497,7 @@ sub get_dates($$$$) {
 }
 
 #remove all series_dates for studio_id and series_id
-sub delete($$) {
+sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
@@ -517,7 +517,7 @@ sub delete($$) {
 }
 
 # get all series dates where no event has been created for
-sub getDatesWithoutEvent($$) {
+sub getDatesWithoutEvent ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'from', 'till') {
@@ -530,7 +530,7 @@ sub getDatesWithoutEvent($$) {
     my $query = qq{
         SELECT sd.*
         FROM calcms_series_dates sd LEFT JOIN calcms_events e
-        on(sd.start = e.start)
+        on (sd.start = e.start)
         where e.start is null
         and sd.exclude != 1
         and sd.project_id = ?
@@ -543,7 +543,7 @@ sub getDatesWithoutEvent($$) {
 
     my $bind_values = [
         $options->{project_id}, $options->{studio_id},
-        $options->{series_id} ? $options->{series_id} :(),
+        $options->{series_id} ? $options->{series_id} : (),
         $options->{from}, $options->{till}
     ];
     my $entries = db::get($dbh, $query, $bind_values);

@@ -45,29 +45,29 @@ sub show_series {
     }
 
     # get user projects
-    my $user_projects = uac::get_projects_by_user( $config, { user => $request->{user} } );
+    my $user_projects = uac::get_projects_by_user($config, { user => $request->{user} });
     my $projects = {};
     for my $project (@$user_projects) {
         $projects->{ $project->{project_id} } = $project;
     }
 
     # get user studios
-    my $user_studios = uac::get_studios_by_user( $config, { user => $request->{user} } );
+    my $user_studios = uac::get_studios_by_user($config, { user => $request->{user} });
     for my $studio (@$user_studios) {
         my $project_id = $studio->{project_id};
         my $studio_id  = $studio->{id};
         $studio->{project_name} = $projects->{$project_id}->{name};
-        $studio->{selected} = 1 if ( $project_id eq $params->{p_id} ) && ( $studio_id eq $params->{s_id} );
+        $studio->{selected} = 1 if ($project_id eq $params->{p_id}) && ($studio_id eq $params->{s_id});
     }
 
     # get series
     my $options = {};
     $options->{project_id} = $params->{p_id} if defined $params->{p_id};
     $options->{studio_id}  = $params->{s_id} if defined $params->{s_id};
-    my $series = series::get( $config, $options );
+    my $series = series::get($config, $options);
 
     for my $serie (@$series) {
-        $serie->{selected} = 1 if ( defined $params->{series_id} ) && ( $serie->{series_id} eq $params->{series_id} );
+        $serie->{selected} = 1 if (defined $params->{series_id}) && ($serie->{series_id} eq $params->{series_id});
         $serie->{series_name} = 'Einzelsendung' if $serie->{series_name} eq '_single_';
     }
 
@@ -81,15 +81,15 @@ sub check_params {
     my ($config, $params) = @_;
     my $checked = {};
 
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'id', 'project_id', 'studio_id', 'series_id', 'p_id', 's_id'
     ]);
 
-    entry::set_bools( $checked, $params, [
+    entry::set_bools($checked, $params, [
          'selectProjectStudio', 'selectSeries', 'selectRange' ]);
 
     for my $param ('resultElemId') {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^[a-zA-ZöäüÖÄÜß_\d]+$/ ) ) {
+        if ((defined $params->{$param}) && ($params->{$param} =~ /^[a-zA-ZöäüÖÄÜß_\d]+$/)) {
             $checked->{$param} = $params->{$param};
         }
     }
@@ -98,13 +98,13 @@ sub check_params {
     $checked->{s_id} = $params->{studio_id}  || '-1' unless defined $params->{s_id};
     $checked->{p_id} = $params->{project_id} || '-1' unless defined $params->{p_id};
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;
     }
 
-    $checked->{template} = template::check( $config, $params->{template}, 'select-series' );
+    $checked->{template} = template::check($config, $params->{template}, 'select-series');
 
     return $checked;
 }

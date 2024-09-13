@@ -67,7 +67,6 @@ sub show {
         ParamError->throw(error=> "missing $attr to show comment") unless defined $params->{$attr};
     }
 
-    $config->{access}->{write} = 0;
     my $dbh = db::connect($config);
 
     my $comment             = $params->{comment};
@@ -145,7 +144,7 @@ sub setLock {
     $comment->{set_lock_status} = $comment->{lockStatus};
     $comment->{set_lock_status} = 'blocked' unless $comment->{set_lock_status} eq 'show';
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     return uac::json(comments::set_lock_status($dbh, $config, $comment));
 }

@@ -22,7 +22,7 @@ sub process($$$) {
     my ($config, $filename, $params) = @_;
 
     #TODO: get config
-    for my $key(keys %{ $config->{locations} }) {
+    for my $key (keys %{ $config->{locations} }) {
         $params->{$key} = $config->{locations}->{$key} if ($key =~ /\_url$/ && $key !~/local/);
     }
 
@@ -31,7 +31,7 @@ sub process($$$) {
         my $projects = project::get_with_dates($config, { name => $config->{project} });
         if (scalar @$projects == 1) {
             my $project = $projects->[0];
-            foreach my $key(keys %$project) {
+            foreach my $key (keys %$project) {
                 $params->{ 'project_' . $key } = $project->{$key};
             }
         }
@@ -39,11 +39,11 @@ sub process($$$) {
 
     $params->{user} = $ENV{REMOTE_USER} unless defined $params->{user};
 
-    if (($filename =~ /json\-p/) ||(params::is_json)) {
-        my $header = join("\n",(
+    if (($filename =~ /json\-p/) || (params::is_json)) {
+        my $header = join("\n", (
             "Content-type:application/json; charset=utf-8",
             "Access-Control-Allow-Origin: *",
-       )) . "\n\n";
+        )) . "\n\n";
         my $json = JSON->new->pretty(1)->canonical()->encode($params);
         $json = $header .($params->{json_callback}//'') . $json;
         return $json. "\n";
@@ -87,7 +87,7 @@ sub initTemplate($) {
             cache             => 1,
             utf8              => 1,
             plugin            => [qw(HTML::Template::Compiled::Plugin::XMLEscape)],
-       );
+        );
     }
 
     return HTML::Template::Compiled->new(
@@ -101,7 +101,7 @@ sub initTemplate($) {
         cache             => 1,
         utf8              => 1,
         plugin            => [qw(HTML::Template::Compiled::Plugin::Hyphen)]
-   );
+    );
 }
 
 # set relative urls in nested params structure
@@ -120,16 +120,16 @@ sub setRelativeUrls {
 
     # set recursive for hash
     if (ref($params) eq 'HASH') {
-        for my $key(keys %$params) {
+        for my $key (keys %$params) {
 
-            #next unless ($key eq 'icon') ||($key eq 'thumb');
+            #next unless ($key eq 'icon') || ($key eq 'thumb');
             my $val = $params->{$key};
             next unless defined $val;
             if (ref($val) eq '') {
 
                 # make link relative
                 $params->{$key} =~ s/^https?\:(\/\/[^\/]+)/$1/;
-            } elsif((ref($val) eq 'HASH') ||(ref($val) eq 'ARRAY')) {
+            } elsif ((ref($val) eq 'HASH') || (ref($val) eq 'ARRAY')) {
                 setRelativeUrls($params->{$key}, $depth + 1);
             }
         }
@@ -138,10 +138,10 @@ sub setRelativeUrls {
 
     # set recursive for arrays
     if (ref($params) eq 'ARRAY') {
-        for my $i(0 .. @$params) {
+        for my $i (0 .. @$params) {
             my $val = $params->[$i];
             next unless defined $val;
-            if ((ref($val) eq 'HASH') ||(ref($val) eq 'ARRAY')) {
+            if ((ref($val) eq 'HASH') || (ref($val) eq 'ARRAY')) {
                 setRelativeUrls($params->[$i], $depth + 1);
             }
         }

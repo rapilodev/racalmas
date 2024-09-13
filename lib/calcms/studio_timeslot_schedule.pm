@@ -52,7 +52,7 @@ sub get($$) {
 	};
 
 	my $entries = db::get($dbh, $query, \@bind_values);
-	for my $entry(@$entries) {
+	for my $entry (@$entries) {
 		$entry->{schedule_id} = $entry->{id};
 		delete $entry->{id};
 	}
@@ -100,7 +100,7 @@ sub update($$) {
 }
 
 #map schedule id to id
-sub delete($$){
+sub delete ($$){
     my ($config, $entry) = @_;
 
     for ('schedule_id') {

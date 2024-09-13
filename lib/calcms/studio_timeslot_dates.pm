@@ -12,7 +12,7 @@ use time();
 # columns: id, studio_id, start(datetime), end(datetime)
 # TODO: delete column schedule_id
 
-sub get_columns($){
+sub get_columns ($){
     my ($config) = @_;
 
     my $dbh = db::connect($config);
@@ -21,7 +21,7 @@ sub get_columns($){
 
 # get all studio_timeslot_dates for studio_id within given time range
 # calculate start_date, end_date, weeday, day from start and end(datetime)
-sub get($$){
+sub get ($$){
     my ($config, $condition) = @_;
 
     my $date_range_include = 0;
@@ -58,7 +58,7 @@ sub get($$){
         push @bind_values, $condition->{end};
     }
 
-    # check only a given date date range(without time)
+    # check only a given date date range (without time)
     if ((defined $condition->{from}) && ($condition->{from} ne '')) {
         if ($date_range_include == 1) {
             push @conditions,  'end_date>=?';
@@ -99,7 +99,7 @@ sub get($$){
 	};
 
     my $entries = db::get($dbh, $query, \@bind_values);
-    for my $entry(@$entries) {
+    for my $entry (@$entries) {
         $entry->{start_weekday} = substr($entry->{start_weekday}, 0, 2);
         $entry->{end_weekday}   = substr($entry->{end_weekday},   0, 2);
     }
@@ -110,7 +110,6 @@ sub get($$){
 #get all studio_timeslot_schedules for studio_id and update studio_timeslot_dates
 sub update {
     my ($config, $entry) = @_;
-
     for ('project_id', 'studio_id', 'schedule_id') {
         ParamError->throw(error => "studio_timeslots:update: missing $_") unless defined $entry->{$_}
     };
@@ -125,26 +124,26 @@ sub update {
     #get the schedule with schedule id ordered by date
     my $schedules = studio_timeslot_schedule::get($config,
         {schedule_id => $entry->{schedule_id}}
-   );
+    );
 
     #add scheduled dates
     my $i     = 0;
     my $dates = {};
-    for my $schedule(@$schedules) {
+    for my $schedule (@$schedules) {
         my $dateList;
         if ($schedule->{period_type} eq 'days') {
             #calculate dates from start to end_date
             $dateList = get_dates($schedule->{start}, $schedule->{end}, $schedule->{end_date}, $schedule->{frequency});
-        } elsif($schedule->{period_type} eq 'week_of_month') {
+        } elsif ($schedule->{period_type} eq 'week_of_month') {
             my $timezone = $config->{date}->{time_zone};
             $dateList = get_week_of_month_dates($timezone,
                 $schedule->{start},   $schedule->{end},   $schedule->{end_date},
                 $schedule->{week_of_month}, $schedule->{weekday}, $schedule->{month},
                 $schedule->{nextDay}
-           );
+            );
         }
 
-        for my $date(@$dateList) {
+        for my $date (@$dateList) {
             $date->{project_id}  = $schedule->{project_id};
             $date->{studio_id}   = $schedule->{studio_id};
             $date->{schedule_id} = $schedule->{schedule_id};
@@ -152,7 +151,7 @@ sub update {
         }
     }
 
-    for my $date(sort keys %$dates) {
+    for my $date (sort keys %$dates) {
         my $timeslot_date = $dates->{$date};
         my $entry = {
             project_id  => $timeslot_date->{project_id},
@@ -256,10 +255,10 @@ sub get_dates {
     return $dates;
 }
 
-# based on series_dates but with(timezone, start, end) instead of(start, duration)
-sub get_week_of_month_dates($$$$$$$$) {
+# based on series_dates but with (timezone, start, end) instead of (start, duration)
+sub get_week_of_month_dates ($$$$$$$$) {
     my ($timezone, $start, $end, $end_date, $week, $weekday, $frequency, $nextDay) = @_;
-    #datetime, datetime, date, every nth week of month, weekday [1..7], every 1st,2nd,3th time, add 24 hours to start,(for night hours at last weekday of month)
+    #datetime, datetime, date, every nth week of month, weekday [1..7], every 1st,2nd,3th time, add 24 hours to start, (for night hours at last weekday of month)
 
     return undef if $timezone eq '';
     return undef if $start eq '';
@@ -281,7 +280,7 @@ sub get_week_of_month_dates($$$$$$$$) {
     my $results = [];
     my $duration = time::get_duration($start, $end, $timezone);
     my $c = -1;
-    for my $start_datetime(@$start_dates) {
+    for my $start_datetime (@$start_dates) {
         $c++;
         my @start = @{ time::datetime_to_array($start_datetime) };
         next unless @start >= 6;
@@ -290,7 +289,7 @@ sub get_week_of_month_dates($$$$$$$$) {
             $start[0], $start[1], $start[2],    # start date
             $start[3], $start[4], $start[5],    # start time
             0, 0, $duration, 0                  # delta days, hours, minutes, seconds
-       );
+        );
         my $end_datetime = time::array_to_datetime(\@end_datetime);
         push @$results, {
             start => $start_datetime,

@@ -32,15 +32,15 @@ sub get_cached_or_render($$$;$) {
     my $results = comments::get($config, $request);
 
     if ((defined $mark_locked) && ($mark_locked eq 'mark_locked')) {
-        for my $result(@$results) {
+        for my $result (@$results) {
             if ($result->{lock_status} ne 'show') {
                 $result->{author}  = 'Zensur';
                 $result->{content} = 'Dieser Eintrag wurde gel&ouml;scht.';
             }
         }
-    } elsif((defined $mark_locked) && ($mark_locked eq 'filter_locked')) {
+    } elsif ((defined $mark_locked) && ($mark_locked eq 'filter_locked')) {
         my @results2 = ();
-        for my $result(@$results) {
+        for my $result (@$results) {
             push @results2, $result if ($result->{lock_status} eq 'show');
         }
         $results = \@results2;
@@ -56,7 +56,7 @@ sub get_cached_or_render($$$;$) {
     {
         my @results2 = ();
         my $c        = 0;
-        for my $result(@$results) {
+        for my $result (@$results) {
             push @results2, $result;
             $c++;
             last if ($c >= $params->{show_max});
@@ -73,7 +73,7 @@ sub get($$) {
 
     my $params = $request->{params}->{checked};
     my $dbh = db::connect($config, $request);
- (my $query, my $bind_values) = comments::get_query($dbh, $config, $request);
+    (my $query, my $bind_values) = comments::get_query($dbh, $config, $request);
     my $results = db::get($dbh, $$query, $bind_values);
     return $results;
 }
@@ -100,8 +100,8 @@ sub get_query($$$) {
 
         $from .= ',calcms_events e';
         push @conditions, 'e.id=c.event_id';
-        push @conditions, 'e.location not in(' . $locations_to_exclude . ')';
-        for my $location(@locations_to_exclude) {
+        push @conditions, 'e.location not in (' . $locations_to_exclude . ')';
+        for my $location (@locations_to_exclude) {
             push @$bind_values, $location;
         }
     }
@@ -109,8 +109,8 @@ sub get_query($$$) {
     if ((defined $params->{event_id} && $params->{event_id} ne '')
         && (defined $params->{event_start} && $params->{event_start} ne ''))
     {
-        #$where        =qq{ and(event_id=? or event_start=?) };
-        push @conditions,   q{(event_id=? or event_start=?) };
+        #$where        =qq{ and (event_id=? or event_start=?) };
+        push @conditions,   q{ (event_id=? or event_start=?) };
         push @$bind_values, $params->{event_id};
         push @$bind_values, $params->{event_start};
     }
@@ -140,7 +140,7 @@ sub get_query($$$) {
         $limit
     };
 
-    return(\$query, $bind_values);
+    return (\$query, $bind_values);
 }
 
 sub modify_results($$$) {
@@ -158,7 +158,7 @@ sub modify_results($$$) {
 
     my $language = $config->{date}->{language} || 'en';
 
-    for my $result(@$results) {
+    for my $result (@$results) {
         $result->{allow}->{new_comments} = 1 if ($params->{allow}->{new_comments});
         $result->{start_date_name} = time::date_format($config, $result->{created_at}, $language);
         $result->{start_time_name} = time::time_format($result->{created_at});
@@ -224,16 +224,16 @@ sub render($$$$) {
 }
 
 #check if comment exists already
-sub check($$$) {
+sub check ($$$) {
     my ($dbh, $config, $comment) = @_;
 
     my $query = qq{
         select  id
         from    calcms_comments
-        where(
+        where (
             event_start=?
             or  event_id=?
-           )
+        )
             and parent_id=?
             and author=?
             and ip=?
@@ -267,10 +267,10 @@ sub get_level($$$) {
     my $query = qq{
         select  level
         from    calcms_comments
-        where(
+        where (
                 event_start=?
                 or event_id=?
-           )
+        )
         and id=?
         limit 1
     };
@@ -303,7 +303,7 @@ sub get_by_event($$$) {
 
     if ((defined $params->{search}) && ($params->{search} ne '')) {
         $search      = '%' . $params->{search} . '%';
-        $where       = qq{(content like ?) or(email like ?) or(author like ?) or(ip like ?)};
+        $where       = qq{ (content like ?) or (email like ?) or (author like ?) or (ip like ?)};
         $bind_values = [ $search, $search, $search, $search ];
     }
 
@@ -332,23 +332,23 @@ sub get_by_time($$$) {
     my $bind_values = [];
     if ($comment->{age} ne '') {
         $where = qq{
-            where event_id in(
+            where event_id in (
                 select   distinct event_id
                 from     calcms_comments
                 where (
                     unix_timestamp(now()) - ?   < unix_timestamp(created_at)
-               )
-           )
+                )
+            )
         };
         $bind_values = [ $comment->{age} * 3600, ];
-    } elsif(($comment->{from} ne '') && ($comment->{till} ne '')) {
+    } elsif (($comment->{from} ne '') && ($comment->{till} ne '')) {
         $where = qq{
-            where event_id in(
+            where event_id in (
                 select  distinct event_id
                 from    calcms_comments
                 where   created_at >= ?
                 and     created_at <= ?
-           )
+            )
         };
         $bind_values = [ $comment->{from}, $comment->{till} ];
     }
@@ -375,25 +375,25 @@ sub get_events($$$$) {
 
     #my $quoted_event_ids=join "," ,(map {$dbh->quote($_)}(@keys));
     my @bind_values = @keys;
-    my $event_id_values = join ",",(map { '?' }(@keys));
+    my $event_id_values = join ",", (map { '?' } (@keys));
 
     my $query = qq{
         select   id, start, program, series_name, title, excerpt
         from     calcms_events
-        where    id in($event_id_values)
+        where    id in ($event_id_values)
     };
 
     my $events = db::get($dbh, $query, \@bind_values);
 
     #build lookup table for events by id
     my $events_by_id = {};
-    for my $event(@$events) {
+    for my $event (@$events) {
         $events_by_id->{ $event->{id} } = $event;
         $event->{max_comment_id} = 0;
     }
 
     #add unassigned events
-    #    for my $event_id(@keys){
+    #    for my $event_id (@keys){
     #        if ($events_by_id->{$event_id}eq''){
     #            my $event={
     #                title        => "not assigned",
@@ -405,14 +405,14 @@ sub get_events($$$$) {
     #        }
     #    }
 
-    for my $comment(@$comments) {
+    for my $comment (@$comments) {
         my $event_id = $comment->{event_id};
         my $event    = $events_by_id->{$event_id};
         next unless defined $event;
         $event->{comment_count}++;
         push @{ $event->{comments} }, $comment;    # if ($params->{event_id}ne'');
         $event->{max_comment_id} = $comment->{id} if $comment->{id} > $event->{max_comment_id};
-        for my $name(keys %{ $config->{controllers} }) {
+        for my $name (keys %{ $config->{controllers} }) {
             $comment->{ "controller_" . $name } = $config->{controllers}->{$name} || '';
 
             #            $event->{"controller_$name"}=$config->{controllers}->{$name};
@@ -422,7 +422,7 @@ sub get_events($$$$) {
     return \@sorted_events;
 }
 
-sub insert($$$) {
+sub insert ($$$) {
     my ($dbh, $config, $comment) = @_;
 
     $comment->{level} = comments::get_level($dbh, $config, $comment);
@@ -443,7 +443,7 @@ sub insert($$$) {
     return $comment_id;
 }
 
-sub set_lock_status($$$) {
+sub set_lock_status ($$$) {
     my ($dbh, $config, $comment) = @_;
 
     my $id          = $comment->{id};
@@ -483,7 +483,7 @@ sub set_news_status($$$) {
     db::put($dbh, $query, $bind_values);
 }
 
-sub update_comment_count($$$) {
+sub update_comment_count ($$$) {
     my ($dbh, $config, $comment) = @_;
 
     my $query = qq{
@@ -516,23 +516,23 @@ sub sort_childs {
     return $sorted_nodes unless defined $node->{childs};
 
     #process child nodes
-    for my $child(@{ $node->{childs} }) {
+    for my $child (@{ $node->{childs} }) {
         $sorted_nodes = sort_childs($child, $nodes, $sorted_nodes);
     }
     return $sorted_nodes;
 }
 
-#precondition: results are presorted by creation date(by sql)
+#precondition: results are presorted by creation date (by sql)
 sub sort($$) {
     my ($config, $results) = @_;
 
     #define parent nodes
     my $nodes = {};
-    for my $node(@$results) {
+    for my $node (@$results) {
         $nodes->{ $node->{id} } = $node;
     }
     my @root_nodes = ();
-    for my $node(@$results) {
+    for my $node (@$results) {
 
         #fill childs into parent nodes
         push @{ $nodes->{ $node->{parent_id} }->{childs} }, $node;
@@ -543,15 +543,15 @@ sub sort($$) {
 
     #sort root nodes from newest to oldest
     my $sorted_nodes = [];
-    for my $node(@root_nodes) {
+    for my $node (@root_nodes) {
 
-        #for my $node(reverse @root_nodes){
+        #for my $node (reverse @root_nodes){
         sort_childs($node, $nodes, $sorted_nodes);
     }
     return $sorted_nodes;
 }
 
-sub check_params($$) {
+sub check_params ($$) {
     my ($config, $params) = @_;
     my $comment = {};
 
@@ -604,7 +604,7 @@ sub check_params($$) {
         $delta_days = time::days_between($today, $date);
     }
     if (($delta_days > $config->{permissions}->{no_new_comments_before})
-        ||($delta_days < -1 * $config->{permissions}->{no_new_comments_after}))
+        || ($delta_days < -1 * $config->{permissions}->{no_new_comments_after}))
     {
         $comment->{allow}->{new_comments} = 0;
     } else {

@@ -77,7 +77,7 @@ sub check_params {
     my $checked = {};
 
     for my $param ('filename') {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^[A-Za-z\_\-\.\d\/]+$/ ) ) {
+        if ((defined $params->{$param}) && ($params->{$param} =~ /^[A-Za-z\_\-\.\d\/]+$/)) {
             $checked->{$param} = $params->{$param};
             $checked->{$param} =~ s/^.*\///g;
         }
@@ -85,16 +85,16 @@ sub check_params {
 
     $checked->{type} = 'thumbs';
     for my $param ('type') {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^(thumbs|images|icons)$/ ) ) {
+        if ((defined $params->{$param}) && ($params->{$param} =~ /^(thumbs|images|icons)$/)) {
             $checked->{$param} = $params->{$param};
         }
     }
 
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'project_id', 'studio_id', 'series_id', 'event_id'
     ]);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;

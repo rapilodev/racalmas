@@ -8,14 +8,14 @@ use Data::Dumper;
 
 our @EXPORT_OK   = qw(get_columns get get_by_id insert insert_by_event_id delete);
 
-sub get_columns($){
+sub get_columns ($){
     my ($config) = @_;
 
     my $dbh = db::connect($config);
     return db::get_columns_hash($dbh, 'calcms_event_history');
 }
 
-sub get($$){
+sub get ($$){
     my ($config, $condition) = @_;
 
     for ('studio_id') {
@@ -69,7 +69,7 @@ sub get($$){
 
     my $changes = db::get($dbh, $query, \@bind_values);
 
-    for my $change(@$changes) {
+    for my $change (@$changes) {
         $change->{change_id} = $change->{id};
         delete $change->{id};
     }
@@ -99,7 +99,7 @@ sub insert($$) {
     #TODO:filter for existing attributes
     my $columns = get_columns($config);
     my $event   = {};
-    for my $column(keys %$columns) {
+    for my $column (keys %$columns) {
         $event->{$column} = $entry->{$column} if defined $entry->{$column};
     }
 
@@ -109,7 +109,7 @@ sub insert($$) {
 }
 
 # insert event
-sub insert_by_event_id($$){
+sub insert_by_event_id ($$){
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'event_id', 'user') {
@@ -138,14 +138,14 @@ sub insert_by_event_id($$){
     event_history::insert($config, $event);
 }
 
-sub delete($$){
+sub delete ($$){
     my ($config, $entry) = @_;
 
     my $dbh = db::connect($config);
     db::put($dbh, 'delete from calcms_event_history where event_id=?', [ $entry->{id} ]);
 }
 
-sub error($){
+sub error ($){
     my $msg = shift;
     print "ERROR: $msg<br/>\n";
 }

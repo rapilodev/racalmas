@@ -24,24 +24,24 @@ sub formatDuration($$$;$) {
     my $class = "ok";
     my $title = $mouseOver;
 
-    my $delta = 100 * $audioDuration /($eventDuration+.00000000000001);
+    my $delta = 100 * $audioDuration / ($eventDuration+.00000000000001);
 
     if ($delta > 101) {
         $class = "warn";
         $title = sprintf(
             qq{file is too long! It should be %d minutes, but is %d},
-         ($eventDuration+30) / 60,
-         ($audioDuration+30) / 60
-       );
+            ($eventDuration+30) / 60,
+            ($audioDuration+30) / 60
+        );
     }
 
     if ($delta < 99.97) {
         $class = "error";
         $title = sprintf(
             qq{file is too short! should be %d minutes, but is %d},
-         ($eventDuration+30) / 60,
-         ($audioDuration+30) / 60
-       );
+            ($eventDuration+30) / 60,
+            ($audioDuration+30) / 60
+        );
 
     }
 

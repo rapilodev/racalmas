@@ -17,7 +17,7 @@ sub get_columns($) {
     return db::get_columns_hash($dbh, 'calcms_user_selected_events');
 }
 
-sub get($$) {
+sub get ($$) {
     my ($config, $condition) = @_;
 
     my @conditions  = ();
@@ -27,9 +27,9 @@ sub get($$) {
         ParamError->throw(error => "user_selected_event:get: missing $_") unless defined $condition->{$_}
     };
 
-    for my $field('user', 'project_id', 'studio_id', 'series_id',
+    for my $field ('user', 'project_id', 'studio_id', 'series_id',
         'filter_project_studio', 'filter_series'
-   ){
+    ){
         if ((defined $condition->{$field}) && ($condition->{$field} ne '')) {
             push @conditions,  $field.'=?';
             push @bind_values, $condition->{$field};
@@ -50,7 +50,7 @@ sub get($$) {
     return $entries->[0] || undef;
 }
 
-sub insert($$) {
+sub insert ($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'project_id', 'studio_id', 'series_id', 'selected_event') {
@@ -74,8 +74,8 @@ sub update($$) {
 
     my @keys        = sort keys %$entry;
     my $values      = join(",", map { $_ . '=?' } @keys);
-    my @bind_values = map { $entry->{$_} }(@keys, @$fields);
-    my $conditions  = join(' and ', map { $_.'=?' } @$fields);
+    my @bind_values = map { $entry->{$_} } (@keys, @$fields);
+    my $conditions  = join (' and ', map { $_.'=?' } @$fields);
 
     my $query = qq{
 		update calcms_user_selected_events
@@ -87,7 +87,7 @@ sub update($$) {
     return db::put($dbh, $query, \@bind_values);
 }
 
-sub delete($$) {
+sub delete ($$) {
     my ($config, $entry) = @_;
 
     for ('user', 'project_id', 'studio_id', 'series_id') {

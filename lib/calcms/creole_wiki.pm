@@ -23,12 +23,12 @@ sub extractEventFromWikiText($;$) {
     $content =~ s/\s*\,\s*/, /g;
     my @lines = split(/\s*\-{10,99}\s*/, $content);
     my $lines = \@lines;
-    for my $line(@$lines) {
+    for my $line (@$lines) {
         $line =~ s/^\s+|\s+$//g;
     }
     if (@lines == 1) {
         $event->{content} = shift @lines;
-    } elsif(@lines == 2) {
+    } elsif (@lines == 2) {
         $event->{excerpt} = shift @lines;
         $event->{content} = shift @lines;
     } else {
@@ -122,7 +122,7 @@ sub eventToWikiText($$) {
     my $title = '';
     if ($event->{program} ne '') {
         $title = $event->{program};
-        $title .= ': ' if ($event->{series_name} ne '') ||($event->{title} ne '');
+        $title .= ': ' if ($event->{series_name} ne '') || ($event->{title} ne '');
     }
     if ($event->{series_name} ne '') {
         $title .= $event->{series_name};
@@ -131,7 +131,7 @@ sub eventToWikiText($$) {
     $title .= $event->{title};
     if ($event->{categories}) {
         my $categories = $event->{categories};
-        $title .= '(' . join(",", @$categories) . ')' if (scalar @$categories > 0);
+        $title .= ' (' . join(",", @$categories) . ')' if (scalar @$categories > 0);
     }
 
     my $meta = extractMeta($event->{comments}, $event->{meta});
@@ -147,8 +147,8 @@ sub eventToWikiText($$) {
 s/\[\[.*?\/+media\/+images\/+(.*?)\s*\|.*?\{\{.*?\/+media\/+thumbs\/+(.*?)\s*\|\s*(.*?)\s*\}\}\]\]/\{\{thumbs\/$1\|$3\}\}/g;
 
     my $wiki_content =
-      join("\n" .("-" x 20) . "\n",($event->{excerpt}, $event->{wiki_content}));
-    $wiki_content .= "\n" .("-" x 20) . "\n" . $event->{wiki_comments}
+      join("\n" . ("-" x 20) . "\n", ($event->{excerpt}, $event->{wiki_content}));
+    $wiki_content .= "\n" . ("-" x 20) . "\n" . $event->{wiki_comments}
       if ($event->{wiki_comments} =~ /\S/);
 
     return {
@@ -160,7 +160,7 @@ s/\[\[.*?\/+media\/+images\/+(.*?)\s*\|.*?\{\{.*?\/+media\/+thumbs\/+(.*?)\s*\|\
 }
 
 #extrace meta tags from comment text
-sub extractMeta($$) {
+sub extractMeta ($$) {
     my ($comments, $meta) = @_;
 
     $meta = [] unless defined $meta;
@@ -171,7 +171,7 @@ sub extractMeta($$) {
         #build index for meta already defined
         my $meta_keys = { map { $_->{name}."=".$_->{value} => 1 } @$meta };
 
-        while ($comments =~ /\~\~META\:(.+?)\= (.+?)\~\~/g) {
+        while ($comments =~ /\~\~META\:(.+?)\=(.+?)\~\~/g) {
             my $name  = $1;
             my $value = $2;
 
@@ -182,8 +182,8 @@ sub extractMeta($$) {
 
             #insert into list, if not defined yet
             unless (($name eq '')
-                ||($value eq '')
-                ||(exists $meta_keys->{ $name . '=' . $value }))
+                || ($value eq '')
+                || (exists $meta_keys->{ $name . '=' . $value }))
             {
                 push @$meta,
                   {
@@ -203,8 +203,8 @@ sub removeMeta($) {
     $comments ||= '';
 
     my $result = '';
-    for my $line(split(/\n/, $comments)) {
-        $result .= $line unless ($line =~ /\~\~META\:(.+?)\= (.+?)\~\~/g);
+    for my $line (split(/\n/, $comments)) {
+        $result .= $line unless ($line =~ /\~\~META\:(.+?)\=(.+?)\~\~/g);
     }
     $result =~ s/^\s+//g;
     $result =~ s/\s+$//g;
@@ -217,7 +217,7 @@ sub metaToWiki {
     my ($meta) = @_;
 
     my $result = '';
-    for my $pair(@$meta) {
+    for my $pair (@$meta) {
         $result .= '~~META:' . $pair->{name} . '=' . $pair->{value} . '~~' . "\n";
     }
     return $result;

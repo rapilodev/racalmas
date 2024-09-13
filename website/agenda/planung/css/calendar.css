@@ -168,6 +168,8 @@ button:hover {
     overflow: hidden;
     margin-left: 0;
     border: 0;
+    border-bottom: 1px solid #fff;
+    border-top: 1px solid #fff;
 }
 
 #calendar div.time,
@@ -229,10 +231,10 @@ button:hover {
 
 #content div.grid {
     z-index: 1;
-    background: #fff8;
+    background: white;
     overflow: hidden;
     position: absolute;
-    background: repeating-linear-gradient(45deg, #fff8, #fff8 1rem, #eee8 1rem, #eee8 2rem);
+    background: repeating-linear-gradient(45deg, #fff, #fff 1rem, #eee 1rem, #eee 2rem);
     cursor: pointer;
 }
 
@@ -294,9 +296,17 @@ input.tablesorter-filter {
     white-space: nowrap;
 }
 
+#event_list tr td.series_name {
+
+}
+
 #event_list tr td.title {
     text-overflow: ellipsis;
     overflow: hidden;
+}
+
+#event_list tr td.user_title {
+
 }
 
 #event_list tr td.episode {
@@ -568,11 +578,11 @@ div.play .error {
 }
 
 #content tr.event.predecessor{
-    abackground:#f0cccc;
+    #background:#f0cccc;
     opacity:0.5;
 }
 #content tr.event.predecessor:hover{
-    abackground:#fdcccc
+    #background:#fdcccc
 }
 
 /* switch start, Code Copyright 2018 Materialize. Code released under the MIT license. */

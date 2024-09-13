@@ -26,7 +26,7 @@ sub get($$) {
 
     my @conditions  = ();
     my @bind_values = ();
-    for my $col('project_id', 'studio_id', 'lang', 'table', 'column', 'text') {
+    for my $col ('project_id', 'studio_id', 'lang', 'table', 'column', 'text') {
         if ((defined $condition->{$col}) && ($condition->{$col} ne '')) {
             push @conditions,  "`calcms_help_texts`.`$col`=?";
             push @bind_values, $condition->{$col};
@@ -43,10 +43,10 @@ sub get($$) {
     return $entries;
 }
 
-sub insert($$) {
+sub insert ($$) {
     my ($config, $entry) = @_;
 
-    for my $col('project_id', 'studio_id', 'lang', 'table', 'column', 'text') {
+    for my $col ('project_id', 'studio_id', 'lang', 'table', 'column', 'text') {
         return undef unless defined $entry->{$col};
     }
     my $dbh = db::connect($config);
@@ -54,17 +54,17 @@ sub insert($$) {
     return db::insert($dbh, 'calcms_help_texts', $entry);
 }
 
-sub update($$) {
+sub update ($$) {
     my ($config, $entry) = @_;
 
-    for my $col('project_id', 'studio_id', 'lang', 'table', 'column', 'text') {
+    for my $col ('project_id', 'studio_id', 'lang', 'table', 'column', 'text') {
         return undef unless defined $entry->{$col};
     }
     my $dbh         = db::connect($config);
     my @keys        = sort keys %$entry;
     my $values      = join(",", map { "`$_`" . '=?' } @keys);
     my @bind_values = map { $entry->{$_} } @keys;
-    for my $col('project_id', 'studio_id', 'lang', 'table', 'column') {
+    for my $col ('project_id', 'studio_id', 'lang', 'table', 'column') {
         push @bind_values, $entry->{$col};
     }
     my $query = qq{
@@ -84,7 +84,7 @@ sub update($$) {
 sub delete($$) {
     my ($config, $entry) = @_;
 
-    for my $col('project_id', 'studio_id', 'lang', 'table', 'column', 'text') {
+    for my $col ('project_id', 'studio_id', 'lang', 'table', 'column', 'text') {
         return undef unless defined $entry->{$col};
     }
     my $dbh = db::connect($config);
@@ -94,7 +94,7 @@ sub delete($$) {
         where  project_id=? and studio_id=? and lang=? and `calcms_help_texts`.`table`=? and `calcms_help_texts`.`column`=?
 	};
     my $bind_values = [];
-    for my $col('project_id', 'studio_id', 'lang', 'table', 'column') {
+    for my $col ('project_id', 'studio_id', 'lang', 'table', 'column') {
         push @$bind_values, $entry->{$col};
     }
     return db::put($dbh, $query, $bind_values);

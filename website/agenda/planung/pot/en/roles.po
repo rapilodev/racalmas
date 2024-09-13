@@ -25,7 +25,7 @@ msgstr "Level"
 msgid "level"
 msgstr "level"
 
-msgid "role"
+msgid "role" 
 msgstr "name"
 
 msgid "label_create_download"
@@ -43,188 +43,188 @@ msgstr "create event for series you are member of"
 msgid "label_delete_event"
 msgstr "delete events"
 
-msgid "label_update_event_field_content"
+msgid "label_update_event_field_content" 
 msgstr "edit event"
 
-msgid "label_update_event_field_description"
+msgid "label_update_event_field_description" 
 msgstr "edit event description"
 
-msgid "label_update_event_field_episode"
+msgid "label_update_event_field_episode" 
 msgstr "edit event episode"
 
-msgid "label_update_event_field_excerpt"
+msgid "label_update_event_field_excerpt" 
 msgstr "edit event excerpt"
 
-msgid "label_update_event_field_excerpt_extension"
+msgid "label_update_event_field_excerpt_extension" 
 msgstr "extend event excerpt (add some words)"
 
-msgid "label_update_event_field_image"
+msgid "label_update_event_field_image" 
 msgstr "edit event image"
 
-msgid "label_update_event_field_title"
+msgid "label_update_event_field_title" 
 msgstr "edit event title"
 
-msgid "label_update_event_field_title_extension"
+msgid "label_update_event_field_title_extension" 
 msgstr "extend event title (add some words)"
 
-msgid "label_update_event_field_topic"
+msgid "label_update_event_field_topic" 
 msgstr "edit current topics of the event"
 
-msgid "label_update_event_field_podcast_url"
+msgid "label_update_event_field_podcast_url" 
 msgstr "edit podcast URL"
 
-msgid "label_update_event_field_archive_url"
+msgid "label_update_event_field_archive_url" 
 msgstr "edit archive URL"
 
 msgid "label_update_event_field_content_format"
 msgstr "set Wiki-Format"
 
-msgid "label_create_event_from_schedule"
+msgid "label_create_event_from_schedule" 
 msgstr "create new events (with date from an existing schedule)"
 
-msgid "label_update_event_of_others"
+msgid "label_update_event_of_others" 
 msgstr "edit events you are NOT member of by series"
 
-msgid "label_update_event_of_series"
+msgid "label_update_event_of_series" 
 msgstr "edit events you are member of by series"
 
-msgid "label_update_event_status_archived"
+msgid "label_update_event_status_archived" 
 msgstr "set event archive status"
 
-msgid "label_update_event_status_live"
+msgid "label_update_event_status_live" 
 msgstr "set event live status"
 
-msgid "label_update_event_status_playout"
+msgid "label_update_event_status_playout" 
 msgstr "set event scheduled in playout"
 
-msgid "label_update_event_status_published"
+msgid "label_update_event_status_published" 
 msgstr "publish events"
 
-msgid "label_update_event_status_rerun"
+msgid "label_update_event_status_rerun" 
 msgstr "set event for rerun"
 
-msgid "label_update_event_status_draft"
+msgid "label_update_event_status_draft" 
 msgstr "set event to draft"
 
-msgid "label_update_event_status_disable_event_sync"
+msgid "label_update_event_status_disable_event_sync" 
 msgstr "prevent events to be overridden (by calendar synchronization)"
 
-msgid "label_update_event_time"
+msgid "label_update_event_time" 
 msgstr "move events (change date and time)"
 
-msgid "label_read_image"
+msgid "label_read_image" 
 msgstr "show images"
 
 msgid "label_create_image"
 msgstr "upload new images"
 
-msgid "label_update_image_others"
+msgid "label_update_image_others" 
 msgstr "edit images you are not owner of"
 
-msgid "label_delete_image_others"
+msgid "label_delete_image_others" 
 msgstr "delete images you are not owner of"
 
-msgid "label_update_image_own"
+msgid "label_update_image_own" 
 msgstr "edit images you have uploaded"
 
-msgid "label_delete_image_own"
+msgid "label_delete_image_own" 
 msgstr "delete images you have uploaded"
 
-msgid "label_read_role"
+msgid "label_read_role" 
 msgstr "show roles (for user permissions see below)"
 
-msgid "label_update_role"
+msgid "label_update_role" 
 msgstr "edit roles (change permissions of all users assigned to the same role. for user assignment see below)"
 
-msgid "label_read_schedule"
+msgid "label_read_schedule" 
 msgstr "show planned events of an series"
 
-msgid "label_update_schedule"
+msgid "label_update_schedule" 
 msgstr "plan series events (does not change the date/time of the events itself)"
 
-msgid "label_delete_schedule"
+msgid "label_delete_schedule" 
 msgstr "delete event schedules"
 
-msgid "label_read_series"
+msgid "label_read_series" 
 msgstr "show series"
 
-msgid "label_update_series"
+msgid "label_update_series" 
 msgstr "edit series (its template and members)"
 
-msgid "label_create_series"
+msgid "label_create_series" 
 msgstr "create new series"
 
-msgid "label_delete_series"
+msgid "label_delete_series" 
 msgstr "delete series (and its template)"
 
-msgid "label_scan_series_events"
+msgid "label_scan_series_events" 
 msgstr "import events into series"
 
-msgid "label_assign_series_member"
+msgid "label_assign_series_member" 
 msgstr "add members to series (The member requires to be assigned to a role with some event field permissions to make changes)"
 
-msgid "label_assign_series_events"
+msgid "label_assign_series_events" 
 msgstr "assign event to series"
 
-msgid "label_remove_series_member"
+msgid "label_remove_series_member" 
 msgstr "remove members from series (the member cannot do any changes in this series anymore)"
 
-msgid "label_update_series_template"
+msgid "label_update_series_template" 
 msgstr "edit series template"
 
-msgid "label_read_studio"
+msgid "label_read_studio" 
 msgstr "show studio"
 
-msgid "label_update_studio"
+msgid "label_update_studio" 
 msgstr "edit studio"
 
-msgid "label_create_studio"
+msgid "label_create_studio" 
 msgstr "create studio"
 
-msgid "label_delete_studio"
+msgid "label_delete_studio" 
 msgstr "delete studio"
 
-msgid "label_read_studio_timeslot_schedule"
+msgid "label_read_studio_timeslot_schedule" 
 msgstr "see at what timeslots events can be created by an studio"
 
-msgid "label_update_studio_timeslot_schedule"
+msgid "label_update_studio_timeslot_schedule" 
 msgstr "edit at what timeslots events can be created by an studio"
 
-msgid "label_read_project"
+msgid "label_read_project" 
 msgstr "show project"
 
-msgid "label_update_project"
+msgid "label_update_project" 
 msgstr "edit project"
 
-msgid "label_create_project"
+msgid "label_create_project" 
 msgstr "create project"
 
-msgid "label_delete_project"
+msgid "label_delete_project" 
 msgstr "delecte project"
 
-msgid "label_assign_project_studio"
+msgid "label_assign_project_studio" 
 msgstr "assign studio to project"
 
-msgid "label_read_user"
+msgid "label_read_user" 
 msgstr "show users"
 
-msgid "label_update_user"
+msgid "label_update_user" 
 msgstr "edit users"
 
 msgid "label_disable_user"
 msgstr "disable access for other users (the user cannot login anymore afterwards)"
 
-msgid "label_create_user"
+msgid "label_create_user" 
 msgstr "create new users"
 
-msgid "label_delete_user"
+msgid "label_delete_user" 
 msgstr "delete existing users"
 
-msgid "label_read_user_role"
+msgid "label_read_user_role" 
 msgstr "show user permissions (what roles are assigned to what users)"
 
-msgid "label_update_user_role"
-msgstr "manage user permissions (assign/remove roles from users. A user can only assign/remove roles of a level lower than his/her highest role.)"
+msgid "label_update_user_role" 
+msgstr "manage user permissions (assign/remove roles from users. A user can only assign/remove roles of a level lower than his/her highest role.)" 
 
 msgid "label_read_changes"
 msgstr "read event changes"

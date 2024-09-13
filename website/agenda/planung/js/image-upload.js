@@ -26,7 +26,7 @@ function uploadImage(){
 
         //remove existing image from list
         $('#imageList div.images #img_'+image_id).remove();
-
+        
         var url='show-image.cgi?project_id='+getProjectId()+'&studio_id='+getStudioId()+'&type=icon&filename='+filename;
 
         var html = '<div';

@@ -25,7 +25,7 @@ our @EXPORT_OK = qw(
 #TODO: get project_id, studio_id by join with project_series
 
 # get series columns
-sub get_columns($) {
+sub get_columns ($) {
     my ($config) = @_;
 
     my $dbh = db::connect($config);
@@ -33,7 +33,7 @@ sub get_columns($) {
 }
 
 # get series content
-sub get($$) {
+sub get ($$) {
     my ($config, $condition) = @_;
 
     my @conditions  = ();
@@ -70,7 +70,7 @@ sub get($$) {
             $search = '%' . $search . '%';
             my @attr = ('title', 'series_name', 'excerpt', 'content');
             push @conditions, "(" . join(" or ", map { 'lower(' . $_ . ') like ?' } @attr) . ")";
-            for my $attr(@attr) {
+            for my $attr (@attr) {
                 push @bind_values, $search;
             }
         }
@@ -79,7 +79,7 @@ sub get($$) {
     my $query      = '';
     my $conditions = '';
 
-    if ((defined $condition->{project_id}) ||(defined $condition->{studio_id})) {
+    if ((defined $condition->{project_id}) || (defined $condition->{studio_id})) {
         if ((defined $condition->{project_id}) && ($condition->{project_id} ne '')) {
             push @conditions,  'ps.project_id=?';
             push @bind_values, $condition->{project_id};
@@ -112,7 +112,7 @@ sub get($$) {
     my $dbh = db::connect($config);
     my $series = db::get($dbh, $query, \@bind_values);
 
-    for my $serie(@$series) {
+    for my $serie (@$series) {
         $serie->{series_id} = $serie->{id};
         delete $serie->{id};
     }
@@ -120,7 +120,7 @@ sub get($$) {
 }
 
 # insert series
-sub insert($$) {
+sub insert ($$) {
     my ($config, $series) = @_;
 
     for ('project_id', 'studio_id') {
@@ -132,7 +132,7 @@ sub insert($$) {
 
     my $columns = series::get_columns($config);
     my $entry = {};
-    for my $column(keys %$columns) {
+    for my $column (keys %$columns) {
         $entry->{$column} = $series->{$column} if defined $series->{$column};
     }
     $entry->{image} = images::normalizeName($entry->{image}) if defined $entry->{image};
@@ -152,13 +152,13 @@ sub insert($$) {
             studio_id  => $studio_id,
             series_id  => $series_id
         }
-   );
+    );
     return undef unless defined $result;
     return $series_id;
 }
 
 # update series
-sub update($$) {
+sub update ($$) {
     my ($config, $series) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
@@ -167,10 +167,10 @@ sub update($$) {
 
     my $columns = series::get_columns($config);
     my $entry = {};
-    for my $column(keys %$columns) {
+    for my $column (keys %$columns) {
         $entry->{$column} = $series->{$column} if defined $series->{$column};
     }
-    for my $column('live', 'count_episodes', 'predecessor_id') {
+    for my $column ('live', 'count_episodes', 'predecessor_id') {
         $entry->{$column} = 0 unless $entry->{$column};
     }
 
@@ -237,7 +237,7 @@ sub delete($$) {
             studio_id  => $studio_id,
             series_id  => $series_id
         }
-   );
+    );
 
     #unassign events
     $bind_values = [ $project_id, $studio_id, $series_id ];
@@ -255,7 +255,7 @@ sub delete($$) {
             studio_id  => $studio_id,
             series_id  => $series_id
         }
-   );
+    );
 
     #delete series
 
@@ -264,7 +264,7 @@ sub delete($$) {
         {
             series_id => $series_id
         }
-   );
+    );
     if (scalar @$series_assignments > 1) {
         AssignError->throw(error=> "do not delete series, due to assigned to other project or studio");
     }
@@ -278,8 +278,8 @@ sub delete($$) {
     db::put($dbh, $query, $bind_values);
 }
 
-# get users directly assigned to project, studio, series(editors)
-sub get_users($$) {
+# get users directly assigned to project, studio, series (editors)
+sub get_users ($$) {
     my ($config, $condition) = @_;
 
     my @conditions  = ();
@@ -322,7 +322,7 @@ sub get_users($$) {
 }
 
 # assign user to series
-sub add_user($$) {
+sub add_user ($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'user_id', 'user') {
@@ -339,7 +339,7 @@ sub add_user($$) {
     my $dbh = db::connect($config);
     my $results = db::get($dbh, $query, $bind_values);
     return unless scalar @$results == 0;
-    print STDERR "add-user:@$results\n";
+
     $query = qq{
 		insert calcms_user_series
 		set    project_id=?, studio_id=?, series_id=?, user_id=?, modified_by=?, modified_at=now()
@@ -350,7 +350,7 @@ sub add_user($$) {
 }
 
 # remove user(s) from series.
-sub remove_user($$) {
+sub remove_user ($$) {
     my ($config, $condition) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
@@ -391,9 +391,9 @@ sub remove_user($$) {
     db::put($dbh, $query, \@bind_values);
 }
 
-#search events by series_name and title(for events not assigned yet)
+#search events by series_name and title (for events not assigned yet)
 #TODO: add location
-sub search_events($$$) {
+sub search_events ($$$) {
     my ($config, $request, $options) = @_;
 
     my $series_name = $options->{series_name} || '';
@@ -433,8 +433,8 @@ sub search_events($$$) {
     return $events;
 }
 
-#get events(only assigned ones) by project_id,studio_id,series_id,
-sub get_events($$) {
+#get events (only assigned ones) by project_id,studio_id,series_id,
+sub get_events ($$) {
     my ($config, $options) = @_;
     return [] if defined($options->{series_id}) && ($options->{series_id} <= 0);
 
@@ -514,21 +514,21 @@ sub get_events($$) {
             params   => {
                 checked => {
                     template => '',
-                    set_no_listen_keys =>($options->{set_no_listen_keys}//'') ? 1:0
+                    set_no_listen_keys => ($options->{set_no_listen_keys}//'') ? 1:0
                 }
             }
         },
         $results
-   );
+    );
 
     #add studio id to events
     my $studios = studios::get($config, $options);
 
     my $studio_id_by_location = {};
-    for my $studio(@$studios) {
+    for my $studio (@$studios) {
         $studio_id_by_location->{ $studio->{location} } = $studio->{id};
     }
-    for my $result(@$results) {
+    for my $result (@$results) {
         $result->{studio_id} = $studio_id_by_location->{ $result->{location} };
     }
 
@@ -538,7 +538,7 @@ sub get_events($$) {
 # load event given by studio_id, series_id and event_id
 # helper for gui - errors are written to gui output
 # return undef on error
-sub get_event($$) {
+sub get_event ($$) {
     my ($config, $options) = @_;
 
     my $project_id = $options->{project_id} || '';
@@ -597,7 +597,7 @@ sub get_event($$) {
     return $event;
 }
 
-# get name and title of series and age in days('days_over')
+# get name and title of series and age in days ('days_over')
 sub get_event_age($$) {
     my ($config, $options) = @_;
 
@@ -633,7 +633,7 @@ sub get_event_age($$) {
         $conditions = join(' and ', @conditions);
     }
     my $query = qq{
-        select s.id series_id, s.series_name, s.title, s.has_single_events has_single_events,(to_days(now())-to_days(max(e.start))) days_over
+        select s.id series_id, s.series_name, s.title, s.has_single_events has_single_events, (to_days(now())-to_days(max(e.start))) days_over
         from      calcms_project_series ps
         left join calcms_series s         on ps.series_id=s.id
         left join calcms_series_events se on s.id=se.series_id
@@ -646,14 +646,14 @@ sub get_event_age($$) {
     my $dbh = db::connect($config);
     my $results = db::get($dbh, $query, \@bind_values);
 
-    for my $result(@$results) {
+    for my $result (@$results) {
         $result->{days_over} = 0 unless defined $result->{days_over};
     }
     return $results;
 }
 
 # is event older than max_age days
-sub is_event_older_than_days($$) {
+sub is_event_older_than_days ($$) {
     my ($config, $options) = @_;
 
     return 1 unless defined $options->{project_id};
@@ -670,7 +670,7 @@ sub is_event_older_than_days($$) {
             series_id  => $options->{series_id},
             event_id   => $options->{event_id}
         }
-   );
+    );
 
     if (scalar(@$events) == 0) {
         print STDERR
@@ -710,7 +710,7 @@ sub get_next_episode($$) {
     $results = db::get($dbh, $query, $bind_values);
 
     my $max = 0;
-    for my $result(@$results) {
+    for my $result (@$results) {
         if ($result->{title} =~ /\#(\d+)/) {
             my $value = $1;
             $max = $value if $value > $max;
@@ -721,7 +721,7 @@ sub get_next_episode($$) {
     return $max + 1;
 }
 
-sub get_images($$) {
+sub get_images ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
@@ -752,7 +752,7 @@ sub get_images($$) {
     # get all images from database
     my @cond        = ();
     my $bind_values = [];
-    for my $image(keys %$images) {
+    for my $image (keys %$images) {
         push @cond,         'filename=?';
         push @$bind_values, $image;
     }
@@ -812,8 +812,8 @@ sub assign_event($$) {
     }
 
     $query = qq{
-		insert into calcms_series_events(project_id, studio_id, series_id, event_id, manual)
-		values(?,?,?,?,?)
+		insert into calcms_series_events (project_id, studio_id, series_id, event_id, manual)
+		values (?,?,?,?,?)
 	};
     $bind_values =
       [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id}, $entry->{manual} ];
@@ -843,15 +843,15 @@ sub unassign_event($$) {
     return db::put($dbh, $query, $bind_values) || AssignError->throw(error => "could not assign event");
 }
 
-# put series id to given events(for legacy handling)
+# put series id to given events (for legacy handling)
 # used by calendar
 # TODO: optionally add project_id and studio_id to conditions
-sub add_series_ids_to_events($$) {
+sub add_series_ids_to_events ($$) {
     my ($config, $events) = @_;
 
     #get event ids from given events
     my @event_ids = ();
-    for my $event(@$events) {
+    for my $event (@$events) {
         push @event_ids, $event->{event_id};
     }
 
@@ -865,7 +865,7 @@ sub add_series_ids_to_events($$) {
     my $query = qq{
 		select project_id, studio_id, series_id, event_id
 		from calcms_series_events
-		where event_id in($event_ids)
+		where event_id in ($event_ids)
 	};
     my $results = db::get($dbh, $query, \@bind_values);
     my @results = @$results;
@@ -873,13 +873,13 @@ sub add_series_ids_to_events($$) {
 
     #build hash of series ids by event ids
     my $assignments_by_event_id = {};
-    for my $entry(@$results) {
+    for my $entry (@$results) {
         my $event_id = $entry->{event_id};
         $assignments_by_event_id->{$event_id} = $entry;
     }
 
     #fill in ids into events
-    for my $event(@$events) {
+    for my $event (@$events) {
         my $event_id   = $event->{event_id};
         my $assignment = $assignments_by_event_id->{$event_id};
         if (defined $assignment) {
@@ -893,7 +893,7 @@ sub add_series_ids_to_events($$) {
 
 # add event_ids to series and remove all event ids from series, not given event_ids
 # for scan only, used at series
-sub set_event_ids($$$$$) {
+sub set_event_ids ($$$$$) {
     my ($config, $project_id, $studio_id, $serie, $event_ids) = @_;
 
     my $serie_id = $serie->{series_id};
@@ -905,7 +905,7 @@ sub set_event_ids($$$$$) {
     my $event_id_hash = { map { $_ => 1 } @$event_ids };
 
     #get series_entries from db
-    #my $bind_names=join(',',(map { '?' } @$event_ids));
+    #my $bind_names=join(',', (map { '?' } @$event_ids));
     my $query = qq{
 		select event_id from calcms_series_events
 		where project_id=? and studio_id=? and series_id=?
@@ -919,7 +919,7 @@ sub set_event_ids($$$$$) {
     my $found = { map { $_->{event_id} => 1 } @$results };
 
     #insert events from list, not found in db
-    for my $event_id(@$event_ids) {
+    for my $event_id (@$event_ids) {
 
         series::assign_event(
             $config,
@@ -929,11 +929,11 @@ sub set_event_ids($$$$$) {
                 series_id  => $serie_id,
                 event_id   => $event_id
             }
-       ) unless ($found->{$event_id});
+        ) unless ($found->{$event_id});
     }
 
     #delete events found in db, but not in list
-    for my $event_id(keys %$found) {
+    for my $event_id (keys %$found) {
         series::unassign_event(
             $config,
             {
@@ -943,14 +943,14 @@ sub set_event_ids($$$$$) {
                 event_id   => $event_id,
                 manual     => 0
             }
-       ) unless defined $event_id_hash->{$event_id};
+        ) unless defined $event_id_hash->{$event_id};
     }
 
 }
 
 # check if user allowed to update series events
 # evaluate permissions and consider editors directly assigned to series
-sub can_user_update_events($$) {
+sub can_user_update_events ($$) {
     my ($request, $options) = @_;
 
     my $config      = $request->{config};
@@ -970,7 +970,7 @@ sub can_user_update_events($$) {
 
 # check if user allowed to create series events
 # evaluate permissions and consider editors directly assigned to series
-sub can_user_create_events($$) {
+sub can_user_create_events ($$) {
     my ($request, $options) = @_;
 
     my $config      = $request->{config};
@@ -988,7 +988,7 @@ sub can_user_create_events($$) {
     return is_series_assigned_to_user($request, $options);
 }
 
-sub is_series_assigned_to_user($$) {
+sub is_series_assigned_to_user ($$) {
     my ($request, $options) = @_;
 
     my $config      = $request->{config};
@@ -1007,14 +1007,14 @@ sub is_series_assigned_to_user($$) {
             series_id  => $options->{series_id},
             name       => $request->{user}
         }
-   );
+    );
     return 0 if scalar @$series_users == 0;
     return 1;
 }
 
 # check if user is assigned to studio where location matchs to event
 # return 1 on success or error text
-sub is_event_assigned_to_user($$) {
+sub is_event_assigned_to_user ($$) {
     my ($request, $options) = @_;
 
     my $config = $request->{config};
@@ -1031,7 +1031,7 @@ sub is_event_assigned_to_user($$) {
             studio_id  => $options->{studio_id},
             user       => $request->{user},
         }
-   );
+    );
     return "user is not assigned to studio" if scalar @$user_studios == 0;
     my $studio   = $user_studios->[0];
     my $location = $studio->{location};
@@ -1048,7 +1048,7 @@ sub is_event_assigned_to_user($$) {
             location   => $location,
             limit      => 1
         }
-   );
+    );
 
     return
         "no event found for"
@@ -1061,7 +1061,7 @@ sub is_event_assigned_to_user($$) {
     return 1;
 }
 
-sub get_rebuilt_episodes($$) {
+sub get_rebuilt_episodes ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {
@@ -1077,11 +1077,11 @@ sub get_rebuilt_episodes($$) {
             series_id  => $options->{series_id},
             draft      => 0
         }
-   );
+    );
     @$events = sort { $a->{start} cmp $b->{start} } @$events;
 
     my $events_by_episode = {};
-    for my $event(@$events) {
+    for my $event (@$events) {
         next unless $event->{episode};
         push @{ $events_by_episode->{$event->{episode}} }, $event;
     }
@@ -1090,7 +1090,7 @@ sub get_rebuilt_episodes($$) {
     my $episode = $events->[0]->{episode} // 0;
     $episode-=1;
 
-    for my $i(0..$#$events){
+    for my $i (0..$#$events){
         my $event = $events->[$i];
         next if $done->{$event->{id}};
         $episode++;
@@ -1101,7 +1101,7 @@ sub get_rebuilt_episodes($$) {
             next;
         }
         # set new value to all episodes with same value
-        for my $event2(@{$events_by_episode->{$event->{episode}}}){
+        for my $event2 (@{$events_by_episode->{$event->{episode}}}){
             $event2->{old_episode} = $event2->{episode};
             $event2->{episode} = $episode;
             $done->{$event2->{id}}=1;
@@ -1112,7 +1112,7 @@ sub get_rebuilt_episodes($$) {
 
 # to find multiple recurrences this does not include the recurrence_count
 # use events::get_key to add the recurrence
-sub get_event_key($) {
+sub get_event_key ($) {
     my ($event) = @_;
 
     my $program     = $event->{program}     || '';
@@ -1131,7 +1131,7 @@ sub get_event_key($) {
     return $key;
 }
 
-sub update_recurring_events($$) {
+sub update_recurring_events ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'event_id') {
@@ -1146,12 +1146,12 @@ sub update_recurring_events($$) {
             series_id  => $options->{series_id},
             draft      => 0
         }
-   );
+    );
     @$events = sort { $a->{start} cmp $b->{start} } @$events;
 
-    # store events with recurrences by key(series_name, title, user_title, episode)
+    # store events with recurrences by key (series_name, title, user_title, episode)
     my $events_by_key = {};
-    for my $event(@$events) {
+    for my $event (@$events) {
         my $key = get_event_key($event);
         next unless $key =~ /\#\d+$/;
         $event->{key} = $key;
@@ -1159,7 +1159,7 @@ sub update_recurring_events($$) {
     }
 
     # handle all events with the same key
-    for my $key(sort keys %$events_by_key) {
+    for my $key (sort keys %$events_by_key) {
         my $events = $events_by_key->{$key};
         next unless scalar @$events > 0;
 
@@ -1174,7 +1174,7 @@ sub update_recurring_events($$) {
             $event->{rerun}            = 0;
             series::update_recurring_event($config, $event);
 
-        } elsif(scalar @$events > 1) {
+        } elsif (scalar @$events > 1) {
 
             # multiple events found with same key
             # first event is the original

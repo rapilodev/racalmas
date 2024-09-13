@@ -228,7 +228,7 @@ function updateDuration(selector, value){
         }else{
             $(this).removeAttr('selected');
             //console.log("removed "+value)
-        }
+}
     })
     if(durationUpdated==0){
         console.log("added "+value)
@@ -311,7 +311,7 @@ function copyEventToClipboard(){
     document.execCommand("copy");
     $(copyText).remove();
     showInfo("copied")
-}
+            }
 
 function listEvents(project_id, studio_id, series_id) {
     loadUrl( 'calendar.cgi?' + new URLSearchParams({
@@ -351,10 +351,9 @@ async function modifyEvent(elem, action, callback){
     console.log(json)
     if (json.error) showError(json.error);
     else callback(json);
-}
+    }
 
 function createEvent2(elem, action){
-    modifyEvent(elem, action, function(json){
         if (json.status == "created"){
             showInfo("created");
             let event = json.entry;

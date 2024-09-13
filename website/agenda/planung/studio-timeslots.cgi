@@ -72,7 +72,7 @@ sub save_schedule {
 
     my $params = $request->{params}->{checked};
 
-    for my $attr ( 'project_id', 'studio_id', 'start', 'end', 'end_date', 'schedule_studio_id' ) {
+    for my $attr ('project_id', 'studio_id', 'start', 'end', 'end_date', 'schedule_studio_id' ) {
         ParamError->throw(error=> "missing $attr" ) unless defined $params->{$attr};
     }
 
@@ -80,7 +80,7 @@ sub save_schedule {
     if ($params->{period_type} eq 'days') {
         entry::set_numbers($entry, $params, ['frequency']);
         $entry->{period_type} = $params->{period_type};
-    } elsif($params->{period_type} eq 'week_of_month') {
+    } elsif ($params->{period_type} eq 'week_of_month') {
         entry::set_numbers($entry, $params, ['weekday', 'week_of_month', 'month']);
         $entry->{period_type} = $params->{period_type};
     }
@@ -94,14 +94,12 @@ sub save_schedule {
     local $config->{access}->{write} = 1;
     if (defined $params->{schedule_id}) {
         $entry->{schedule_id} = $params->{schedule_id};
-        studio_timeslot_schedule::update( $config, $entry );
-
-        my $updates = studio_timeslot_dates::update( $config, $entry );
+        studio_timeslot_schedule::update($config, $entry);
+        my $updates = studio_timeslot_dates::update($config, $entry);
         return uac::print_info("timeslot schedule saved. $updates dates scheduled");
     } else {
-        $entry->{schedule_id} = studio_timeslot_schedule::insert( $config, $entry );
-
-        my $updates = studio_timeslot_dates::update( $config, $entry );
+        $entry->{schedule_id} = studio_timeslot_schedule::insert($config, $entry);
+        my $updates = studio_timeslot_dates::update($config, $entry);
         return uac::print_info("timeslot schedule added. $updates dates added");
     }
 }
@@ -123,10 +121,10 @@ sub delete_schedule {
         }
     }
 
-    $config->{access}->{write} = 1;
+    local $config->{access}->{write} = 1;
     $entry->{schedule_id} = $params->{schedule_id};
-    studio_timeslot_schedule::delete( $config, $entry );
-    studio_timeslot_dates::update( $config, $entry );
+    studio_timeslot_schedule::delete($config, $entry);
+    studio_timeslot_dates::update($config, $entry);
     return uac::print_info("timeslot schedule deleted");
 }
 

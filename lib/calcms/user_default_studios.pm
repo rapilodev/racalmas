@@ -15,7 +15,7 @@ sub get_columns($) {
     return db::get_columns_hash($dbh, 'calcms_user_default_studios');
 }
 
-sub get($$) {
+sub get ($$) {
     my ($config, $condition) = @_;
 
     my @conditions  = ();
@@ -48,7 +48,7 @@ sub get($$) {
     return $entries->[0] || undef;
 }
 
-sub insert($$) {
+sub insert ($$) {
     my ($config, $entry) = @_;
 
     ParamError->throw(error => "missing user on inserting default studio") unless defined $entry->{user};
@@ -80,7 +80,7 @@ sub update($$) {
     return db::put($dbh, $query, \@bind_values);
 }
 
-sub delete($$) {
+sub delete ($$) {
     my ($config, $entry) = @_;
 
     ParamError->throw(error => "missing user on deleting default studio") unless defined $entry->{user};

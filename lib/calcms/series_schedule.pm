@@ -9,18 +9,18 @@ use series_dates();
 
 # table:   calcms_series_schedule
 # columns: id, studio_id, series_id,
-# start(datetime),
-# duration(minutes),
-# frequency(days),
-# end(date),
-# weekday(1..7)
-# week_of_month(1..5)
+# start (datetime),
+# duration (minutes),
+# frequency (days),
+# end (date),
+# weekday (1..7)
+# week_of_month (1..5)
 # month
-# nextDay(add 24 hours to start)
+# nextDay (add 24 hours to start)
 
 our @EXPORT_OK = qw(get_columns get insert update delete);
 
-sub get_columns($) {
+sub get_columns ($) {
     my ($config) = @_;
 
     my $dbh     = db::connect($config);
@@ -57,8 +57,8 @@ sub get($$) {
 
     if ((defined $condition->{schedule_ids}) && (ref($condition->{schedule_ids}) eq 'ARRAY')) {
         my @scheduleIds = @{ $condition->{schedule_ids} };
-        push @conditions, 'id in(' .(join(',',(map { '?' } @scheduleIds))) . ')';
-        for my $id(@scheduleIds) {
+        push @conditions, 'id in (' . (join(',', (map { '?' } @scheduleIds))) . ')';
+        for my $id (@scheduleIds) {
             push @bind_values, $id;
         }
     }
@@ -89,7 +89,7 @@ sub get($$) {
 	};
 
     my $entries = db::get($dbh, $query, \@bind_values);
-    for my $entry(@$entries) {
+    for my $entry (@$entries) {
         $entry->{schedule_id} = $entry->{id};
         delete $entry->{id};
     }
