@@ -196,11 +196,12 @@ The CGI scripts in the API utilize various parameters to handle different functi
   - **Format:** `YYYY-MM-DD`
   - **Example:** `till_date=2024-08-31` ends the query on August 31, 2024.
 
-- **`time`**: Used to specify the time-related filter, often in conjunction with `date`.
+- **`phase`**: Used to specify the time-related filter, often in conjunction with `date`.
   - **Supported values:**
-    - `now`: Represents the current time.
-    - `future`: Refers to future events.
-    - **Example:** `time=now` fetches events happening right now.
+    - `running|now`: Represents the current time.
+    - `upcoming|future`: Refers to future events.
+    - `completed|past`: Refers to future events.
+    - **Example:** `phase=running` fetches events happening right now.
 
 - **`limit`**: Sets the maximum number of results to be returned.
   - **Example:** `limit=10` limits the output to 10 results.
@@ -223,7 +224,7 @@ The CGI scripts in the API utilize various parameters to handle different functi
 - **`series_name`**: Filters events based on the name of a series.
   - **Example:** `series_name=tech_talks` filters events in the "Tech Talks" series.
 
-- **`archive`**: Determines whether to fetch upcoming (`coming`) or past (`gone`) events in a series or search.
+- **`archive`**: deprecated, see `phase`.
   - **Supported values:**
     - `coming`: Fetch upcoming events.
     - `gone`: Fetch past events.
@@ -275,7 +276,7 @@ The CGI scripts in the API utilize various parameters to handle different functi
 
 - **`template`**: Specifies the output format, such as Atom, RSS, or iCal.
   - **Example:** `template=event.ics` exports events in iCal format.
-  
+
 - **`last_days`**: Limits results to those from the last specified number of days.
   - **Example:** `last_days=7` includes events from the last 7 days.
 

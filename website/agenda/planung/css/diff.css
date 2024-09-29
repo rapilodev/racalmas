@@ -12,13 +12,13 @@ table.diff td {
     border-bottom: solid 1px #999999;
 }
 
-table.diff td:nth-child(1), 
+table.diff td:nth-child(1),
 table.diff td:nth-child(2) {
     background-color: #deedff;
 }
 
-table.diff tr.change, 
-table.diff tr.disc_a, 
+table.diff tr.change,
+table.diff tr.disc_a,
 table.diff tr.disc_b {
     background-color: #ffffdd;
 }

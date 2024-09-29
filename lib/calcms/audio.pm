@@ -5,7 +5,7 @@ use strict;
 sub durationToSeconds($) {
     my ($duration) = @_;
 
-    if ( $duration =~ /(\d+):(\d\d):(\d\d).(\d\d)/ ) {
+    if ($duration =~ /(\d+):(\d\d):(\d\d).(\d\d)/) {
         return $1 * 3600 + $2 * 60 + $3 + $4 / 100;
     }
     return $duration;
@@ -26,7 +26,7 @@ sub formatDuration($$$;$) {
 
     my $delta = 100 * $audioDuration / ($eventDuration+.00000000000001);
 
-    if ( $delta > 101 ) {
+    if ($delta > 101) {
         $class = "warn";
         $title = sprintf(
             qq{file is too long! It should be %d minutes, but is %d},
@@ -35,7 +35,7 @@ sub formatDuration($$$;$) {
         );
     }
 
-    if ( $delta < 99.97 ) {
+    if ($delta < 99.97) {
         $class = "error";
         $title = sprintf(
             qq{file is too short! should be %d minutes, but is %d},
@@ -45,7 +45,7 @@ sub formatDuration($$$;$) {
 
     }
 
-    return sprintf( qq{<div class="badge-%s" title="%s">%s</div>}, $class, $title, $value );
+    return sprintf(qq{<div class="badge-%s" title="%s">%s</div>}, $class, $title, $value);
 }
 
 sub formatChannels($) {
@@ -54,7 +54,7 @@ sub formatChannels($) {
     return '' unless $channels;
     my $class = "ok";
     $class = "error" if $channels != 2;
-    return sprintf( qq{<div class="badge-%s">%d ch.</div>}, $class, $channels );
+    return sprintf(qq{<div class="badge-%s">%d ch.</div>}, $class, $channels);
 }
 
 sub formatSamplingRate($) {
@@ -63,7 +63,7 @@ sub formatSamplingRate($) {
     return '' unless $samplingRate;
     my $class = "ok";
     $class = "error" if $samplingRate != 44100;
-    return sprintf( qq{<div class="badge-%s">%s Hz</div>}, $class, $samplingRate );
+    return sprintf(qq{<div class="badge-%s">%s Hz</div>}, $class, $samplingRate);
 }
 
 sub formatBitrate($) {
@@ -73,7 +73,7 @@ sub formatBitrate($) {
     my $class = 'ok';
     $class = 'warn'  if $bitrate >= 200;
     $class = 'error' if $bitrate < 192;
-    return sprintf( qq{<div class="badge-%s">%s kBit/s</div>}, $class, $bitrate );
+    return sprintf(qq{<div class="badge-%s">%s kBit/s</div>}, $class, $bitrate);
 }
 
 sub formatBitrateMode($) {
@@ -82,7 +82,7 @@ sub formatBitrateMode($) {
     return '' unless $mode;
     my $class = 'ok';
     $class = 'error' if $mode ne 'CBR';
-    return sprintf( qq{<div class="badge-%s">%s</div>}, $class, $mode );
+    return sprintf(qq{<div class="badge-%s">%s</div>}, $class, $mode);
 }
 
 sub formatLoudness {
@@ -91,14 +91,14 @@ sub formatLoudness {
     $round ||= '';
     return '' unless $value;
 
-    $value = sprintf( "%.1f", $value );
+    $value = sprintf("%.1f", $value);
 
     my $class = 'ok';
     $class = 'warn'  if $value > -18.5;
     $class = 'error' if $value > -16.0;
     $class = 'warn'  if $value < -24.0;
     $class = 'error' if $value < -27.0;
-    $value = int($value+0.5) if $round; 
+    $value = int($value+0.5) if $round;
 
     return qq{<div class="badge-$class">$prefix$value dB</div>};
 }

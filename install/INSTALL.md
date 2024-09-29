@@ -1,4 +1,3 @@
-
 # setup database
 
 Edit the file "init.sql" and change the passwords of the three user accounts (calcms_admin, calcms_write and calcms_read).
@@ -14,7 +13,10 @@ We use different accounts for different purposes.
 
 ## import database content
 
-    mysql -u calcms_admin -p calcms < ./install/create.sql 
+    mysql -u calcms_admin -p calcms < ./install/create.sql
+
+We use different  for different purposes.
+Do not forget to use your own passwords!
 
 ## socket connection issues
 
@@ -25,12 +27,12 @@ file /var/run/mysqld/mysqld.sock. You can either change the directory/file permi
 or use host "127.0.0.1" in bind-address at /etc/mysql/* for client and server and
 additionally as hostname in config.cgi.
 
-## Apache HTTP Server Setup 
+## Apache HTTP Server Setup
 
 ### install mod_perl
 
 install apache2
-    
+
     apt install apache2
 
 enable prefork mode
@@ -67,7 +69,7 @@ apt-get install <deb-package>
 
 #### install debian packages
 
-    mariadb-server 
+    mariadb-server
     build-essentials
     imagemagick
     libapreq2-3
@@ -156,13 +158,13 @@ shug!3Lu
 
 # inject calcms into your website
 
-calcms uses a copy of your web page as a template to have the same layout as your web site.  
+calcms uses a copy of your web page as a template to have the same layout as your web site.
 To update calcms content create a cronjob to run tools/update_page.sh
 
 you may have to update the paths inside update_page.sh
 
 # how-to
-   
+
 ## update time zones
 
     mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql -p
@@ -179,7 +181,7 @@ if using plesk, use
     # make sure lines with "modified_at" contain "ON UPDATE CURRENT_TIMESTAMP"
     # for example: `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     cat migrate | mysql -u root calcms
-    
+
 ## reset the default admin account run
 
     update calcms_users set pass='$2a$08$oLiwMC1vYD8ZzfjKdpTG3OBFAXbiKslWIe0w005ysdxO0kE/A/12G', salt='oLiwMC1vYD8ZzfjKdpTG3O' where name='ccAdmin';

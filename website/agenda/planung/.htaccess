@@ -1,8 +1,8 @@
 
 <IfModule mod_perl.c>
-    <FilesMatch "\.cgi$">   
+    <FilesMatch "\.cgi$">
         SetHandler perl-script
-		PerlResponseHandler ModPerl::PerlRunPrefork
+        PerlResponseHandler ModPerl::PerlRunPrefork
         PerlOptions +ParseHeaders
         Options +ExecCGI
         #PerlSetVar PerlRunOnce On
@@ -12,7 +12,7 @@
 </IfModule>
 
 <IfModule !mod_perl.c>
-#	AddHandler cgi-script .cgi .pl
+#    AddHandler cgi-script .cgi .pl
 </IfModule>
 
 LimitRequestBody 2000000000

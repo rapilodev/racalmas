@@ -24,17 +24,17 @@
 <body>
 
 <div id="comments">
-    <select id="selectCommentsByAge" onchange="showCommentsByAge($(this).val())">	
-	    <option value="">w&auml;hlen</option>
-	    <option value="1">Stunde </option>
-	    <option value="6">6 Stunden</option>
-	    <option value="24">24 Stunden</option>
-	    <option value="168">Woche</option>
-	    <option value="720">Monat</option>
-	    <option value="2160">3 Monate</option>
-	    <option value="4360">6 Monate</option>
-	    <option value="999999999">alle</option>
-    </select>	
+    <select id="selectCommentsByAge" onchange="showCommentsByAge($(this).val())">
+        <option value="">w&auml;hlen</option>
+        <option value="1">Stunde </option>
+        <option value="6">6 Stunden</option>
+        <option value="24">24 Stunden</option>
+        <option value="168">Woche</option>
+        <option value="720">Monat</option>
+        <option value="2160">3 Monate</option>
+        <option value="4360">6 Monate</option>
+        <option value="999999999">alle</option>
+    </select>
 
     <div style="text-align:right">
         <form action="comment.cgi">
@@ -53,7 +53,7 @@
             <div>
                 <table class="event_comments"><tbody><tr>
                     <td class="event_show_comments" >
-                        <a href="#event_<TMPL_VAR id>_comments" onclick="showEventComments('<TMPL_VAR id escape=js>');return false;" title="zeige Kommentare">    
+                        <a href="#event_<TMPL_VAR id>_comments" onclick="showEventComments('<TMPL_VAR id escape=js>');return false;" title="zeige Kommentare">
                             <TMPL_VAR comment_count> <TMPL_VAR .loc.label_comments>
                         </a>
                     </td>
@@ -71,7 +71,7 @@
             <div class="event" id="event_<TMPL_VAR id>_comments" style="line-height:100%;display:none;"> </div>
         </TMPL_LOOP>
     </TMPL_IF>
-</div>    
+</div>
 </body>
 <TMPL_ELSE>
 missing permission to read comment

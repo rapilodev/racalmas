@@ -28,8 +28,8 @@ pre {
     height: 24px;
 }
 
-#content .edit_event input, 
-#content .edit_event select, 
+#content .edit_event input,
+#content .edit_event select,
 #content .edit_event textarea {
     padding: 0.5em;
 }

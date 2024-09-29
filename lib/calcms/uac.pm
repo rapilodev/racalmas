@@ -32,15 +32,15 @@ sub get_user($$) {
     my ($config, $user) = @_;
 
     my $query = qq{
-		select	id, name, full_name, email, disabled, modified_at, created_at
-		from 	calcms_users
-		where 	name=?
-	};
+        select    id, name, full_name, email, disabled, modified_at, created_at
+        from     calcms_users
+        where     name=?
+    };
     my $bind_values = [$user];
 
     my $dbh = db::connect($config);
-    my $users = db::get( $dbh, $query, $bind_values );
-    if ( scalar @$users != 1 ) {
+    my $users = db::get($dbh, $query, $bind_values);
+    if (scalar @$users != 1) {
         print STDERR "cannot find user '$user'\n";
         return undef;
     }
@@ -54,7 +54,7 @@ sub get_users($;$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    for my $key ( 'name', 'email' ) {
+    for my $key ('name', 'email') {
         my $value = $condition->{$key};
         next unless defined $value;
         next if $value eq '';
@@ -63,16 +63,16 @@ sub get_users($;$) {
     }
 
     my $conditions = '';
-    $conditions = " where " . join( " and ", @conditions ) if ( scalar @conditions > 0 );
+    $conditions = " where " . join(" and ", @conditions) if (scalar @conditions > 0);
 
     my $query = qq{
-		select	id, name, full_name, email, disabled, modified_at, created_at
-		from 	calcms_users
+        select    id, name, full_name, email, disabled, modified_at, created_at
+        from     calcms_users
         $conditions
-	};
+    };
 
     my $dbh = db::connect($config);
-    my $users = db::get( $dbh, $query, \@bind_values );
+    my $users = db::get($dbh, $query, \@bind_values);
     return $users;
 }
 
@@ -87,28 +87,28 @@ sub get_users_by_studio ($$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
+    if ((defined $condition->{project_id}) && ($condition->{project_id} ne '')) {
         push @conditions,  'ur.project_id=?';
         push @bind_values, $condition->{project_id};
     }
 
-    if ( ( defined $condition->{studio_id} ) && ( $condition->{studio_id} ne '' ) ) {
+    if ((defined $condition->{studio_id}) && ($condition->{studio_id} ne '')) {
         push @conditions,  'ur.studio_id=?';
         push @bind_values, $condition->{studio_id};
     }
 
     my $conditions = '';
-    $conditions = " and " . join( " and ", @conditions ) if ( scalar @conditions > 0 );
+    $conditions = " and " . join(" and ", @conditions) if (scalar @conditions > 0);
 
     my $query = qq{
-		select	distinct(u.id), u.name, u.full_name
-		from 	calcms_user_roles ur, calcms_users u
-		where 	ur.user_id=u.id
-		$conditions
-	};
+        select    distinct(u.id), u.name, u.full_name
+        from     calcms_user_roles ur, calcms_users u
+        where     ur.user_id=u.id
+        $conditions
+    };
 
     my $dbh = db::connect($config);
-    my $users = db::get( $dbh, $query, \@bind_values );
+    my $users = db::get($dbh, $query, \@bind_values);
     return $users;
 }
 
@@ -119,33 +119,33 @@ sub get_projects_by_user ($$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
+    if ((defined $condition->{project_id}) && ($condition->{project_id} ne '')) {
         push @conditions,  'ur.project_id=?';
         push @bind_values, $condition->{project_id};
     }
 
-    if ( ( defined $condition->{studio_id} ) && ( $condition->{studio_id} ne '' ) ) {
+    if ((defined $condition->{studio_id}) && ($condition->{studio_id} ne '')) {
         push @conditions,  'ur.studio_id=?';
         push @bind_values, $condition->{studio_id};
     }
 
-    if ( ( defined $condition->{user} ) && ( $condition->{user} ne '' ) ) {
+    if ((defined $condition->{user}) && ($condition->{user} ne '')) {
         push @conditions,  'u.name=?';
         push @bind_values, $condition->{user};
     }
 
     my $conditions = '';
-    $conditions = " and " . join( " and ", @conditions ) if ( @conditions > 0 );
+    $conditions = " and " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	distinct p.*, ur.project_id project_id
-		from 	calcms_user_roles ur, calcms_users u, calcms_projects p
-		where 	ur.user_id=u.id and p.project_id=ur.project_id
+        select    distinct p.*, ur.project_id project_id
+        from     calcms_user_roles ur, calcms_users u, calcms_projects p
+        where     ur.user_id=u.id and p.project_id=ur.project_id
         $conditions
-	};
+    };
 
     my $dbh = db::connect($config);
-    my $users = db::get( $dbh, $query, \@bind_values );
+    my $users = db::get($dbh, $query, \@bind_values);
     return $users;
 }
 
@@ -157,75 +157,75 @@ sub get_studios_by_user ($$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
+    if ((defined $condition->{project_id}) && ($condition->{project_id} ne '')) {
         push @conditions,  'ur.project_id=?';
         push @bind_values, $condition->{project_id};
     }
 
-    if ( ( defined $condition->{studio_id} ) && ( $condition->{studio_id} ne '' ) ) {
+    if ((defined $condition->{studio_id}) && ($condition->{studio_id} ne '')) {
         push @conditions,  'ur.studio_id=?';
         push @bind_values, $condition->{studio_id};
     }
 
-    if ( ( defined $condition->{user} ) && ( $condition->{user} ne '' ) ) {
+    if ((defined $condition->{user}) && ($condition->{user} ne '')) {
         push @conditions,  'u.name=?';
         push @bind_values, $condition->{user};
     }
 
     my $conditions = '';
-    $conditions = " and " . join( " and ", @conditions ) if ( @conditions > 0 );
+    $conditions = " and " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	distinct s.*, ur.project_id project_id
-		from 	calcms_user_roles ur, calcms_users u, calcms_studios s
-		where 	ur.user_id=u.id and s.id=ur.studio_id
+        select    distinct s.*, ur.project_id project_id
+        from     calcms_user_roles ur, calcms_users u, calcms_studios s
+        where     ur.user_id=u.id and s.id=ur.studio_id
         $conditions
-	};
+    };
     my $dbh = db::connect($config);
-    my $users = db::get( $dbh, $query, \@bind_values );
+    my $users = db::get($dbh, $query, \@bind_values);
     return $users;
 }
 
 sub insert_user($$) {
     my ($config, $entry) = @_;
 
-    $entry->{created_at}  = time::time_to_datetime( time() );
-    $entry->{modified_at} = time::time_to_datetime( time() );
+    $entry->{created_at}  = time::time_to_datetime(time());
+    $entry->{modified_at} = time::time_to_datetime(time());
 
     my $dbh = db::connect($config);
-    db::insert( $dbh, 'calcms_users', $entry );
+    db::insert($dbh, 'calcms_users', $entry);
 }
 
 sub update_user($$) {
     my ($config, $entry) = @_;
 
-    $entry->{modified_at} = time::time_to_datetime( time() );
+    $entry->{modified_at} = time::time_to_datetime(time());
 
     my @keys = sort keys %$entry;
-    my $values = join( ",", map { $_ . '=?' } @keys );
+    my $values = join(",", map { $_ . '=?' } @keys);
     my @bind_values = map { $entry->{$_} } @keys;
     push @bind_values, $entry->{id};
 
     my $query = qq{
-		update calcms_users
-		set $values
-		where id=?
-	};
+        update calcms_users
+        set $values
+        where id=?
+    };
 
     my $dbh = db::connect($config);
-    db::put( $dbh, $query, \@bind_values );
+    db::put($dbh, $query, \@bind_values);
 }
 
 sub delete_user($$) {
     my ($config, $id) = @_;
-    return unless ( defined $id && ( $id =~ /^\d+$/ ) );
+    return unless (defined $id && ($id =~ /^\d+$/));
 
     my $query = qq{
-		delete from calcms_users
-		where id=?
-	};
+        delete from calcms_users
+        where id=?
+    };
     my $dbh = db::connect($config);
-    db::put( $dbh, $query, [$id] );
+    db::put($dbh, $query, [$id]);
 }
 
 # get all roles used by all users of a studio
@@ -233,33 +233,33 @@ sub delete_user($$) {
 sub get_studio_roles($$) {
     my ($config, $condition) = @_;
 
-    return [] if ( $condition->{studio_id} eq '' );
+    return [] if ($condition->{studio_id} eq '');
 
     my @conditions  = ();
     my @bind_values = ();
 
-    if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
+    if ((defined $condition->{project_id}) && ($condition->{project_id} ne '')) {
         push @conditions,  'ur.project_id=?';
         push @bind_values, $condition->{project_id};
     }
 
-    if ( ( defined $condition->{studio_id} ) && ( $condition->{studio_id} ne '' ) ) {
+    if ((defined $condition->{studio_id}) && ($condition->{studio_id} ne '')) {
         push @conditions,  'ur.studio_id=?';
         push @bind_values, $condition->{studio_id};
     }
 
     my $conditions = '';
-    $conditions = " and " . join( " and ", @conditions ) if ( @conditions > 0 );
+    $conditions = " and " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	r.*, ur.studio_id, ur.project_id
-		from 	calcms_roles r, calcms_user_roles ur
-		where 	r.id=ur.role_id 
-		$conditions
-	};
+        select    r.*, ur.studio_id, ur.project_id
+        from     calcms_roles r, calcms_user_roles ur
+        where     r.id=ur.role_id
+        $conditions
+    };
 
     my $dbh = db::connect($config);
-    my $roles = db::get( $dbh, $query, \@bind_values );
+    my $roles = db::get($dbh, $query, \@bind_values);
     return $roles;
 }
 
@@ -267,7 +267,7 @@ sub get_studio_roles($$) {
 sub get_role_columns($) {
     my ($config) = @_;
     my $dbh     = db::connect($config);
-    my $columns = db::get_columns_hash( $dbh, 'calcms_roles' );
+    my $columns = db::get_columns_hash($dbh, 'calcms_roles');
     return $columns;
 }
 
@@ -280,24 +280,24 @@ sub get_roles($$) {
     my @bind_values = ();
 
     my $dbh = db::connect($config);
-    my $columns = db::get_columns_hash( $dbh, 'calcms_roles' );
+    my $columns = db::get_columns_hash($dbh, 'calcms_roles');
 
-    for my $column ( sort keys %$columns ) {
-        if ( defined $condition->{$column} ) {
+    for my $column (sort keys %$columns) {
+        if (defined $condition->{$column}) {
             push @conditions,  $column . '=?';
             push @bind_values, $condition->{$column};
         }
     }
     my $conditions = '';
-    $conditions = ' where ' . join( ' and ', @conditions ) if ( @conditions > 0 );
+    $conditions = ' where ' . join(' and ', @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	r.*
-		from 	calcms_roles r
-		$conditions
-	};
+        select    r.*
+        from     calcms_roles r
+        $conditions
+    };
 
-    my $roles = db::get( $dbh, $query, \@bind_values );
+    my $roles = db::get($dbh, $query, \@bind_values);
 
     return $roles;
 }
@@ -306,52 +306,52 @@ sub get_roles($$) {
 sub insert_role ($$) {
     my ($config, $entry) = @_;
 
-    $entry->{created_at}  = time::time_to_datetime( time() );
-    $entry->{modified_at} = time::time_to_datetime( time() );
+    $entry->{created_at}  = time::time_to_datetime(time());
+    $entry->{modified_at} = time::time_to_datetime(time());
 
     my $dbh     = db::connect($config);
-    my $columns = db::get_columns_hash( $dbh, 'calcms_roles' );
+    my $columns = db::get_columns_hash($dbh, 'calcms_roles');
     my $role    = {};
-    for my $column ( keys %$columns ) {
+    for my $column (keys %$columns) {
         $role->{$column} = $entry->{$column} if defined $entry->{$column};
     }
-    db::insert( $dbh, 'calcms_roles', $role );
+    db::insert($dbh, 'calcms_roles', $role);
 }
 
 #update role, set modified_at
 sub update_role($$) {
     my ($config, $entry) = @_;
 
-    $entry->{modified_at} = time::time_to_datetime( time() );
+    $entry->{modified_at} = time::time_to_datetime(time());
 
     my $dbh         = db::connect($config);
-    my $columns     = db::get_columns_hash( $dbh, 'calcms_roles' );
+    my $columns     = db::get_columns_hash($dbh, 'calcms_roles');
     my @keys        = sort keys %$columns;
-    my $values      = join( ",", map { $_ . '=?' } @keys );
+    my $values      = join(",", map { $_ . '=?' } @keys);
     my @bind_values = map { $entry->{$_} } @keys;
     push @bind_values, $entry->{id};
 
     my $query = qq{
-		update calcms_roles 
-		set $values
-		where id=?
-	};
+        update calcms_roles
+        set $values
+        where id=?
+    };
 
-    db::put( $dbh, $query, \@bind_values );
+    db::put($dbh, $query, \@bind_values);
 }
 
 # delete role from database
 sub delete_role($$) {
     my ($config, $id) = @_;
 
-    return unless ( defined $id && ( $id =~ /^\d+$/ ) );
+    return unless (defined $id && ($id =~ /^\d+$/));
 
     my $query = qq{
-		delete from calcms_roles 
-		where id=?
-	};
+        delete from calcms_roles
+        where id=?
+    };
     my $dbh = db::connect($config);
-    db::put( $dbh, $query, [$id] );
+    db::put($dbh, $query, [$id]);
 }
 
 # get all roles for given conditions: project_id, studio_id, user_id, name
@@ -362,35 +362,35 @@ sub get_user_roles($$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    if ( defined $condition->{user} ) {
+    if (defined $condition->{user}) {
         push @conditions,  'u.name=?';
         push @bind_values, $condition->{user};
     }
-    if ( defined $condition->{user_id} ) {
+    if (defined $condition->{user_id}) {
         push @conditions,  'ur.user_id=?';
         push @bind_values, $condition->{user_id};
     }
-    if ( defined $condition->{studio_id} ) {
+    if (defined $condition->{studio_id}) {
         push @conditions,  'ur.studio_id=?';
         push @bind_values, $condition->{studio_id};
     }
-    if ( defined $condition->{project_id} ) {
+    if (defined $condition->{project_id}) {
         push @conditions,  'ur.project_id=?';
         push @bind_values, $condition->{project_id};
     }
 
     my $conditions = '';
-    $conditions = " and " . join( " and ", @conditions ) if ( @conditions > 0 );
+    $conditions = " and " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	distinct r.*
-		from 	calcms_users u, calcms_user_roles ur, calcms_roles r
-		where 	ur.user_id=u.id and ur.role_id=r.id 
-			$conditions
-	};
+        select    distinct r.*
+        from     calcms_users u, calcms_user_roles ur, calcms_roles r
+        where     ur.user_id=u.id and ur.role_id=r.id
+            $conditions
+    };
 
     my $dbh = db::connect($config);
-    my $user_roles = db::get( $dbh, $query, \@bind_values );
+    my $user_roles = db::get($dbh, $query, \@bind_values);
 
     #return roles, if the contain an admin role
     for my $role (@$user_roles) {
@@ -400,7 +400,7 @@ sub get_user_roles($$) {
     #get all admin roles
     delete $condition->{studio_id}  if defined $condition->{studio_id};
     delete $condition->{project_id} if defined $condition->{project_id};
-    my $admin_roles = get_admin_user_roles( $config, $condition );
+    my $admin_roles = get_admin_user_roles($config, $condition);
 
     #add admin roles to user roles
     return [@$admin_roles, @$user_roles];
@@ -413,36 +413,36 @@ sub get_admin_user_roles ($$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    if ( ( defined $condition->{user} ) && ( $condition->{user} ne '' ) ) {
+    if ((defined $condition->{user}) && ($condition->{user} ne '')) {
         push @conditions,  'u.name=?';
         push @bind_values, $condition->{user};
     }
-    if ( ( defined $condition->{user_id} ) && ( $condition->{user_id} ne '' ) ) {
+    if ((defined $condition->{user_id}) && ($condition->{user_id} ne '')) {
         push @conditions,  'ur.user_id=?';
         push @bind_values, $condition->{user_id};
     }
-    if ( ( defined $condition->{studio_id} ) && ( $condition->{studio_id} ne '' ) ) {
+    if ((defined $condition->{studio_id}) && ($condition->{studio_id} ne '')) {
         push @conditions,  'ur.studio_id=?';
         push @bind_values, $condition->{studio_id};
     }
-    if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
+    if ((defined $condition->{project_id}) && ($condition->{project_id} ne '')) {
         push @conditions,  'ur.project_id=?';
         push @bind_values, $condition->{project_id};
     }
 
     my $conditions = '';
-    $conditions = " and " . join( " and ", @conditions ) if ( @conditions > 0 );
+    $conditions = " and " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	distinct r.*, ur.studio_id, ur.project_id
-		from 	calcms_users u, calcms_user_roles ur, calcms_roles r
-		where 	ur.user_id=u.id and ur.role_id=r.id and r.admin=1
-			$conditions
-		limit 1
-	};
+        select    distinct r.*, ur.studio_id, ur.project_id
+        from     calcms_users u, calcms_user_roles ur, calcms_roles r
+        where     ur.user_id=u.id and ur.role_id=r.id and r.admin=1
+                $conditions
+        limit 1
+    };
 
     my $dbh = db::connect($config);
-    my $user_roles = db::get( $dbh, $query, \@bind_values );
+    my $user_roles = db::get($dbh, $query, \@bind_values);
     return $user_roles;
 }
 
@@ -452,9 +452,9 @@ sub get_admin_user_roles ($$) {
 sub get_user_permissions ($$;$) {
     my ($config, $conditions, $user_permissions) = @_;
 
-    my $user_roles = get_user_roles( $config, $conditions );
-    my $admin_roles = get_admin_user_roles( $config, $conditions );
-    my @user_roles = ( @$admin_roles, @$user_roles );
+    my $user_roles = get_user_roles($config, $conditions);
+    my $admin_roles = get_admin_user_roles($config, $conditions);
+    my @user_roles = (@$admin_roles, @$user_roles);
 
     #set default permissions
     $user_permissions = {} unless defined $user_permissions;
@@ -465,7 +465,7 @@ sub get_user_permissions ($$;$) {
     # aggregate max permissions
     # should be limited by project and studio
     for my $user_role (@user_roles) {
-        if ( $user_role->{level} > $max_level ) {
+        if ($user_role->{level} > $max_level) {
             $user_permissions->{level}      = $user_role->{level};
             $user_permissions->{id}         = $user_role->{id};
             $user_permissions->{role}       = $user_role->{role};
@@ -473,15 +473,15 @@ sub get_user_permissions ($$;$) {
             $user_permissions->{project_id} = $user_role->{project_id};
             $max_level                      = $user_role->{level};
         }
-        for my $permission ( keys %$user_role ) {
-            if (   ( $permission ne 'level' )
-                && ( $permission ne 'id' )
-                && ( $permission ne 'role' )
-                && ( $permission ne 'studio_id' )
-                && ( $permission ne 'project_id' ) )
+        for my $permission (keys %$user_role) {
+            if (($permission ne 'level')
+                && ($permission ne 'id')
+                && ($permission ne 'role')
+                && ($permission ne 'studio_id')
+                && ($permission ne 'project_id'))
             {
                 $user_permissions->{$permission} = 1
-                  if ( defined $user_role->{$permission} ) && ( $user_role->{$permission} ne '0' );
+                  if (defined $user_role->{$permission}) && ($user_role->{$permission} ne '0');
             }
         }
     }
@@ -494,12 +494,12 @@ sub get_user_id ($$) {
     return undef unless defined $user;
 
     my $query = qq{
-		select	id
-		from 	calcms_users
-		where 	binary name=?
-	};
+        select    id
+        from     calcms_users
+        where     binary name=?
+    };
     my $dbh = db::connect($config);
-    my $users = db::get( $dbh, $query, [$user] );
+    my $users = db::get($dbh, $query, [$user]);
     return undef if scalar @$users == 0;
     return $users->[0]->{id};
 }
@@ -510,12 +510,12 @@ sub get_role_id ($$) {
     return undef unless defined $role;
 
     my $query = qq{
-		select	id
-		from 	calcms_roles
-		where 	role=?
-	};
+        select    id
+        from     calcms_roles
+        where     role=?
+    };
     my $dbh = db::connect($config);
-    my $roles = db::get( $dbh, $query, [$role] );
+    my $roles = db::get($dbh, $query, [$role]);
     return undef if scalar @$roles == 0;
     return $roles->[0]->{id};
 }
@@ -530,13 +530,13 @@ sub assign_user_role($$) {
 
     #return if already exists
     my $query = qq{
-		select	*
-		from 	calcms_user_roles
-		where 	project_id=? and studio_id=? and user_id=? and role_id=?
-	};
+        select    *
+        from     calcms_user_roles
+        where     project_id=? and studio_id=? and user_id=? and role_id=?
+    };
     my $dbh        = db::connect($config);
-    my $user_roles = db::get( $dbh, $query,
-        [ $options->{project_id}, $options->{studio_id}, $options->{user_id}, $options->{role_id} ] );
+    my $user_roles = db::get($dbh, $query,
+        [ $options->{project_id}, $options->{studio_id}, $options->{user_id}, $options->{role_id} ]);
     return undef if scalar @$user_roles > 0;
 
     #insert entry
@@ -545,10 +545,10 @@ sub assign_user_role($$) {
         studio_id  => $options->{studio_id},
         user_id    => $options->{user_id},
         role_id    => $options->{role_id},
-        created_at => time::time_to_datetime( time() )
+        created_at => time::time_to_datetime(time())
     };
 
-    return db::insert( $dbh, 'calcms_user_roles', $entry );
+    return db::insert($dbh, 'calcms_user_roles', $entry);
 }
 
 # unassign a user from a role of (for a studio)
@@ -560,14 +560,14 @@ sub remove_user_role($$) {
     }
 
     my $query = qq{
-		delete
-		from 	calcms_user_roles
-		where 	project_id=? and studio_id=? and user_id=? and role_id=?
-	};
+        delete
+        from     calcms_user_roles
+        where     project_id=? and studio_id=? and user_id=? and role_id=?
+    };
     my $bind_values = [ $options->{project_id}, $options->{studio_id}, $options->{user_id}, $options->{role_id} ];
 
     my $dbh = db::connect($config);
-    my $result = db::put( $dbh, $query, $bind_values );
+    my $result = db::put($dbh, $query, $bind_values);
     # successfully return  even if no entry exists
     return 1;
 }
@@ -581,8 +581,8 @@ sub is_user_assigned_to_studio ($$) {
         return 0 unless defined $options->{$_}
     }
     return 0 unless defined $request->{user};
- 
-    my $user_studios = uac::get_studios_by_user( $config, {
+
+    my $user_studios = uac::get_studios_by_user($config, {
         user       => $request->{user},
         studio_id  => $options->{studio_id},
         project_id => $options->{project_id}
@@ -594,19 +594,19 @@ sub is_user_assigned_to_studio ($$) {
 # call after header is printed
 sub check($$$) {
     my ($config, $params, $user_presets) = @_;
-    if ( defined $user_presets->{error} ) {
-        uac::print_error( $user_presets->{error} );
+    if (defined $user_presets->{error}) {
+        uac::print_error($user_presets->{error});
         return 0;
     }
 
-    my $project_check = project::check( $config, { project_id => $params->{project_id} } );
-    if ( $project_check ne '1' ) {
+    my $project_check = project::check($config, { project_id => $params->{project_id} });
+    if ($project_check ne '1') {
         uac::print_error($project_check);
         return 0;
     }
 
-    my $studio_check = studios::check( $config, { studio_id => $params->{studio_id} } );
-    if ( $studio_check ne '1' ) {
+    my $studio_check = studios::check($config, { studio_id => $params->{studio_id} });
+    if ($studio_check ne '1') {
         uac::print_error($studio_check);
         return 0;
     }
@@ -621,81 +621,81 @@ sub get_user_presets($$) {
 
     my $user = $options->{user} || '';
     my $error = undef;
-    return { error => "no user selected" } if ( $user eq '' );
+    return { error => "no user selected" } if ($user eq '');
 
     my $project_id = $options->{project_id} || '';
     my $studio_id  = $options->{studio_id}  || '';
 
-    my $user_settings = user_settings::get( $config, { user => $user } );
+    my $user_settings = user_settings::get($config, { user => $user });
     $project_id = $user_settings->{project_id} // '' if $project_id eq '';
-    my $defaults = user_default_studios::get( $config, { user => $user, project_id => $project_id } );
+    my $defaults = user_default_studios::get($config, { user => $user, project_id => $project_id });
     $studio_id = $defaults->{studio_id} // $user_settings->{studio_id}  // '' if $studio_id eq '';
 
     #get
-    my $admin_roles = get_admin_user_roles( $config, { user => $user } );
+    my $admin_roles = get_admin_user_roles($config, { user => $user });
 
     #get all projects by user
-    my $projects = uac::get_projects_by_user( $config, { user => $user } );
+    my $projects = uac::get_projects_by_user($config, { user => $user });
     return { error => "no project is assigned to user" } if scalar @$projects == 0;
 
-    $projects = project::get($config) if ( @$admin_roles > 0 );
+    $projects = project::get($config) if (@$admin_roles > 0);
     my @projects = reverse sort { $a->{end_date} cmp $b->{end_date} } (@$projects);
     $projects = \@projects;
 
-    if ( $project_id ne '' && $project_id ne '-1' ) {
+    if ($project_id ne '' && $project_id ne '-1') {
         my $projectFound = 0;
         for my $project (@$projects) {
-            if ( $project->{project_id} eq $project_id ) {
+            if ($project->{project_id} eq $project_id) {
                 $projectFound = 1;
                 last;
             }
         }
-        return { error => "project is not assigned to user" } if ( $projectFound == 0 );
+        return { error => "project is not assigned to user" } if ($projectFound == 0);
     } else {
         $project_id = $projects->[0]->{project_id};
     }
 
     #check if studios are assigned to project
-    my $studios = project::get_studios( $config, { project_id => $project_id } );
+    my $studios = project::get_studios($config, { project_id => $project_id });
     $error = "no studio is assigned to project" if scalar @$studios == 0;
 
-    if ( scalar @$admin_roles == 0 ) {
+    if (scalar @$admin_roles == 0) {
 
         #get all studios by user
-        $studios = uac::get_studios_by_user( $config, { user => $user, project_id => $project_id } );
+        $studios = uac::get_studios_by_user($config, { user => $user, project_id => $project_id });
         $error = "no studio is assigned to user" if scalar @$studios == 0;
-        if ( ( $studio_id ne '' ) && ( $studio_id ne '-1' ) ) {
+        if (($studio_id ne '') && ($studio_id ne '-1')) {
             my $studioFound = 0;
             for my $studio (@$studios) {
-                if ( $studio->{id} eq $studio_id ) {
+                if ($studio->{id} eq $studio_id) {
                     $studioFound = 1;
                     last;
                 }
             }
-            $error = "studio is not assigned to user" if ( $studioFound == 0 );
+            $error = "studio is not assigned to user" if ($studioFound == 0);
         } else {
             $studio_id = $studios->[0]->{id} unless defined $studio_id;
         }
     } else {
 
         #for admin get studios by project
-        $studios = studios::get( $config, { project_id => $project_id } );
-        if ( ( $studio_id ne '' ) && ( $studio_id ne '-1' ) ) {
+        $studios = studios::get($config, { project_id => $project_id });
+        if (($studio_id ne '') && ($studio_id ne '-1')) {
             my $studioFound = 0;
             for my $studio (@$studios) {
-                if ( $studio->{id} eq $studio_id ) {
+                if ($studio->{id} eq $studio_id) {
                     $studioFound = 1;
                     last;
                 }
             }
-            $error = "studio is not assigned to project" if ( $studioFound == 0 );
+            $error = "studio is not assigned to project" if ($studioFound == 0);
         } else {
             $studio_id = $studios->[0]->{id} unless defined $studio_id;
         }
     }
 
     my $permissions =
-      uac::get_user_permissions( $config, { user => $user, project_id => $project_id, studio_id => $studio_id } );
+      uac::get_user_permissions($config, { user => $user, project_id => $project_id, studio_id => $studio_id });
     if ($permissions->{admin} == 1) {
         for my $key (keys %$permissions) {
             $permissions->{$key} = 1;
@@ -705,7 +705,7 @@ sub get_user_presets($$) {
     #set studios and projects as selected, TODO:do in JS
     my $selectedProject = {};
     for my $project (@$projects) {
-        if ( $project_id eq $project->{project_id} ) {
+        if ($project_id eq $project->{project_id}) {
             $project->{selected} = 'selected="selected"';
             $selectedProject = $project;
             last;
@@ -714,14 +714,14 @@ sub get_user_presets($$) {
 
     my $selectedStudio = {};
     for my $studio (@$studios) {
-        if ( $studio_id eq $studio->{id} ) {
+        if ($studio_id eq $studio->{id}) {
             $studio->{selected} = 'selected="selected"';
             $selectedStudio = $studio;
             last;
         }
     }
 
-    my $logout_url = ( split( /\//, $0 ) )[-1];
+    my $logout_url = (split(/\//, $0))[-1];
 
     my $result = {
         user       => $user,
@@ -746,7 +746,7 @@ sub setDefaultProject ($$) {
     my ($params, $user_presets) = @_;
 
     $params->{project_id} = $user_presets->{project_id}
-      if ( !defined $params->{authAction} ) || ( $params->{authAction} eq '' ) || ( $params->{authAction} eq 'login' );
+      if (!defined $params->{authAction}) || ($params->{authAction} eq '') || ($params->{authAction} eq 'login');
     return $params;
 }
 
@@ -754,7 +754,7 @@ sub setDefaultStudio($$) {
     my ($params, $user_presets) = @_;
 
     $params->{studio_id} = $user_presets->{studio_id}
-      if ( !defined $params->{authAction} ) || ( $params->{authAction} eq '' ) || ( $params->{authAction} eq 'login' );
+      if (!defined $params->{authAction}) || ($params->{authAction} eq '') || ($params->{authAction} eq 'login');
     return $params;
 }
 
@@ -762,12 +762,12 @@ sub setDefaultStudio($$) {
 sub prepare_request ($$) {
     my ($request, $user_presets) = @_;
 
-    for my $key ( keys %$user_presets ) {
+    for my $key (keys %$user_presets) {
         $request->{$key} = $user_presets->{$key};
     }
 
     #enrich menu parameters
-    for my $key ( 'studio_id', 'project_id', 'studio', 'project', 'studios', 'projects', 'user', 'logout_url' ) {
+    for my $key ('studio_id', 'project_id', 'studio', 'project', 'studios', 'projects', 'user', 'logout_url') {
         $request->{params}->{checked}->{presets}->{$key} = $user_presets->{$key};
     }
     return $request;
@@ -777,8 +777,8 @@ sub prepare_request ($$) {
 sub set_template_permissions ($$) {
     my ($permissions, $params) = @_;
 
-    for my $usecase ( keys %$permissions ) {
-        $params->{'allow'}->{$usecase} = 1 if ( $permissions->{$usecase} eq '1' );
+    for my $usecase (keys %$permissions) {
+        $params->{'allow'}->{$usecase} = 1 if ($permissions->{$usecase} eq '1');
     }
     return $params;
 }
@@ -812,6 +812,39 @@ sub print_error ($) {
       . '<span class="ui-icon ui-icon-alert" style="float:left"></span>&nbsp;'
       . $message
       . '</div>' . "\n";
+}
+
+sub json {
+    my ($obj) = @_;
+    return qq{Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+Pragma: no-cache
+Expires: 0
+Content-Type:application/json; charset=utf-8
+
+} . JSON->new->canonical->utf8(0)->encode($obj) . "\n";
+}
+
+sub error_handler {
+    #print STDERR Dumper(\@_);
+    my $last = $_[-1];
+    if (blessed($last) and $last->isa("APR::Request::Error")){
+        print json({error => $last->{func}});
+    }
+    return json({
+            error => ref $_[0] eq 'SCALAR' ? $_[0]: $_[0]->{message} // $_[0]->{error} //'',
+            "status" => 200
+        }, 200) if blessed $_[0];
+    die @_;
+};
+
+sub set {
+    my ($entry, @fields) = @_;
+    return wantarray ? %$entry{@fields} : { map { $_ => $entry->{$_} } @fields };
+}
+
+sub missing {
+    my ($entry, @fields) = @_;
+    return grep {!defined $entry->{$_}} @fields;
 }
 
 #do not delete last line!

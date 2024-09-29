@@ -87,18 +87,16 @@ sub save_schedule {
     my $params = $request->{params}->{checked};
     for my $attr ('project_id', 'studio_id', 'start', 'end', 'end_date', 'schedule_studio_id') {
         return uac::print_error($attr . ' not given!') unless defined $params->{$attr};
-   }
+    }
 
-    my $entry = {};
+    my $entry = {map {$_ => $params->{$_}} ('project_id', 'start', 'end', 'end_date')};
     if ($params->{period_type} eq 'days') {
         entry::set_numbers($entry, $params, ['frequency']);
         $entry->{period_type} = $params->{period_type};
-   }elsif($params->{period_type} eq 'week_of_month') {
+    } elsif ($params->{period_type} eq 'week_of_month') {
         entry::set_numbers($entry, $params, ['weekday', 'week_of_month', 'month']);
         $entry->{period_type} = $params->{period_type};
-   }
-
-    my $entry = {map {$_ => $params->{$_}} ('project_id', 'start', 'end', 'end_date')};
+    }
 
     #set schedule's studio to value from schedule_studio_id
     $entry->{studio_id} = $params->{schedule_studio_id} if defined $params->{schedule_studio_id};
@@ -165,7 +163,7 @@ sub showTimeslotSchedule {
     #get project schedule
     my $schedules = studio_timeslot_schedule::get(
         $config, {project_id => $project_id}
-);
+    );
 
     #list of all studios by id
     my $studios = studios::get($config, {project_id => $project_id});
@@ -285,8 +283,7 @@ sub showDates {
 }
 
 sub check_params {
-    ($config, $params) = @_;
-
+    my ($config, $params) = @_;
     my $checked = {};
     $checked->{template} = template::check($config, $params->{template}, 'studio-timeslots');
 
@@ -296,7 +293,7 @@ sub check_params {
 
     $checked->{exclude} = 0;
     entry::set_numbers($checked, $params, [
-        'id', 'project_id', 'studio_id', 'default_studio_id', 'schedule_id', 'schedule_studio_id'
+        'id', 'project_id', 'studio_id', 'default_studio_id', 'schedule_id', 'schedule_studio_id', 'frequency'
     ]);
     $checked->{default_studio_id} = $checked->{studio_id} // -1;
 
@@ -307,7 +304,6 @@ sub check_params {
         $checked->{show_date} = $date->[0];
     }
 
-    entry::set_numbers($checked, $params, ['frequency']);
     if ($params->{period_type}eq 'days') {
         $checked->{period_type} = $params->{period_type};
     }elsif($params->{period_type}eq 'week_of_month') {

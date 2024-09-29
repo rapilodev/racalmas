@@ -60,7 +60,7 @@ function searchImage(target, project_id, studio_id, series_id, event_id, pid){
 
 
     load(url);
-}    
+}
 
 // disable public, save and update form on success
 function depublishImage(id, filename){
@@ -74,7 +74,7 @@ function publishImage(id, filename){
     saveImage(id, filename);
 }
 
-// save image 
+// save image
 function saveImage(id, filename) {
 
     $('#imageEditor #status').html('');
@@ -82,8 +82,8 @@ function saveImage(id, filename) {
 
     var url='image.cgi?save_image='+filename+'&project_id='+project_id+'&studio_id='+studio_id;
     $.post(
-        url, 
-        $("#save_img_"+id).serialize(), 
+        url,
+        $("#save_img_"+id).serialize(),
         function(data){
             var errorFound=0;
             data.split(/\n/).forEach(
@@ -103,21 +103,21 @@ function saveImage(id, filename) {
                 updateActiveImage();
             }
             hideImageDetails('img_'+id, filename);
-        } 
+        }
     );
     return false;
 }
 
-// delete image 
+// delete image
 function askDeleteImage(id, filename) {
-    commitAction("delete image", 
-        function(){ 
-            deleteImage(id, filename) 
-        } 
+    commitAction("delete image",
+        function(){
+            deleteImage(id, filename)
+        }
     );
 }
 
-// delete image 
+// delete image
 function deleteImage(id, filename) {
     //alert("deleteImage");return;
     $("#"+id).load('image.cgi?delete_image='+filename+'&project_id='+project_id+'&studio_id='+studio_id);
@@ -152,7 +152,7 @@ function selectImage( searchValue, imageUrl, target, project_id, studio_id, seri
     }
 
    url += "&search="+encodeURIComponent(searchValue)
- 
+
     if(imageUrl!=null){
         var filename=imageUrl.split('%2F').pop();
         url+='&filename='+filename;
@@ -194,8 +194,8 @@ $(document).ready(
             var seriesId  = elem.attr("seriesId");
             var eventId   = elem.attr("eventId");
             var pid       = elem.attr("pid");
- 
-            updateImageEditor($(this), filename, target, projectId, studioId, seriesId, eventId, pid); 
+
+            updateImageEditor($(this), filename, target, projectId, studioId, seriesId, eventId, pid);
             return false;
         });
 

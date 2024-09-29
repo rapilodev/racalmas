@@ -83,17 +83,17 @@ sub getColors($$) {
         $colorMap->{ $color->{css} } = $color;
     }
 
-    my $settings = user_settings::get( $config, { user => $user } );
+    my $settings = user_settings::get($config, { user => $user });
     $settings->{colors} |= '';
 
     #overwrite colors from user settings
-    for my $line ( split( /\n+/, $settings->{colors} ) ) {
-        my ( $key, $value ) = split( /\=/, $line );
+    for my $line (split(/\n+/, $settings->{colors})) {
+        my ($key, $value) = split(/\=/, $line);
         $key =~ s/^\s+//;
         $key =~ s/\s+$//;
         $value =~ s/^\s+//;
         $value =~ s/\s+$//;
-        $colorMap->{$key}->{color} = $value if ( $key ne '' ) && ( $value ne '' ) && ( defined $colorMap->{$key} );
+        $colorMap->{$key}->{color} = $value if ($key ne '') && ($value ne '') && (defined $colorMap->{$key});
     }
     return $colors;
 }
@@ -106,22 +106,22 @@ sub getColorCss ($$) {
     my $shift = 20;
     my $limit = 220;
 
-    my $colors = getColors( $config, $conditions );
+    my $colors = getColors($config, $conditions);
     my $style = "<style>\n";
     for my $color (@$colors) {
         $style .= $color->{css} . "{\n\tbackground-color:" . $color->{color} . ";\n}\n";
         my $c = $color->{color};
-        if ( $c =~ /#([a-fA-F0-9][a-fA-F0-9])([a-fA-F0-9][a-fA-F0-9])([a-fA-F0-9][a-fA-F0-9])/ ) {
+        if ($c =~ /#([a-fA-F0-9][a-fA-F0-9])([a-fA-F0-9][a-fA-F0-9])([a-fA-F0-9][a-fA-F0-9])/) {
             my $r = hex($1);
             my $g = hex($2);
             my $b = hex($3);
-            if ( $r > $limit ) { $r -= $shift; }
+            if ($r > $limit) { $r -= $shift; }
             else               { $r += $shift; }
-            if ( $g > $limit ) { $g -= $shift; }
+            if ($g > $limit) { $g -= $shift; }
             else               { $g += $shift; }
-            if ( $b > $limit ) { $b -= $shift; }
+            if ($b > $limit) { $b -= $shift; }
             else               { $b += $shift; }
-            $c = sprintf( "#%x%x%x", $r, $g, $b );
+            $c = sprintf("#%x%x%x", $r, $g, $b);
             $style .= $color->{css} . ":hover{\n\tbackground-color:" . $c . ";\n}\n";
         }
     }
@@ -133,7 +133,7 @@ sub get_columns($) {
     my ($config) = @_;
 
     my $dbh = db::connect($config);
-    return db::get_columns_hash( $dbh, 'calcms_user_settings' );
+    return db::get_columns_hash($dbh, 'calcms_user_settings');
 }
 
 sub get ($$) {
@@ -144,21 +144,21 @@ sub get ($$) {
     my @conditions  = ();
     my @bind_values = ();
 
-    if ( ( defined $condition->{user} ) && ( $condition->{user} ne '' ) ) {
+    if ((defined $condition->{user}) && ($condition->{user} ne '')) {
         push @conditions,  'user=?';
         push @bind_values, $condition->{user};
     }
 
     my $conditions = '';
-    $conditions = " where " . join( " and ", @conditions ) if ( @conditions > 0 );
+    $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select *
-		from   calcms_user_settings
-		$conditions
-	};
+        select *
+        from   calcms_user_settings
+        $conditions
+    };
 
-    my $entries = db::get( $dbh, $query, \@bind_values );
+    my $entries = db::get($dbh, $query, \@bind_values);
     return $entries->[0] || undef;
 }
 
@@ -168,9 +168,9 @@ sub insert ($$) {
     for ('user') {
         return unless defined $entry->{$_};
     }
-   
+
     my $dbh = db::connect($config);
-    return db::insert( $dbh, 'calcms_user_settings', $entry );
+    return db::insert($dbh, 'calcms_user_settings', $entry);
 }
 
 sub update($$) {
@@ -182,17 +182,17 @@ sub update($$) {
 
     my $dbh         = db::connect($config);
     my @keys        = sort keys %$entry;
-    my $values      = join( ",", map { $_ . '=?' } @keys );
+    my $values      = join(",", map { $_ . '=?' } @keys);
     my @bind_values = map { $entry->{$_} } @keys;
     push @bind_values, $entry->{user};
 
     my $query = qq{
-		update calcms_user_settings 
-		set    $values
-		where  user=?
-	};
+        update calcms_user_settings
+        set    $values
+        where  user=?
+    };
 
-    db::put( $dbh, $query, \@bind_values );
+    db::put($dbh, $query, \@bind_values);
     print "done\n";
 }
 
@@ -206,13 +206,13 @@ sub delete ($$) {
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete 
-		from calcms_user_settings 
-		where user=?
-	};
+        delete
+        from calcms_user_settings
+        where user=?
+    };
     my $bind_values = [ $entry->{user} ];
 
-    db::put( $dbh, $query, $bind_values );
+    db::put($dbh, $query, $bind_values);
 }
 
 sub error ($) {

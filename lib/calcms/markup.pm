@@ -30,7 +30,7 @@ sub base26($) {
 
     my $s = "";
     while ($num) {
-        $s   = chr( --$num % 26 + ord "a" ) . $s;
+        $s   = chr(--$num % 26 + ord "a") . $s;
         $num = int $num / 26;
     }
 
@@ -88,8 +88,8 @@ sub html_to_creole($) {
     $s =~ s/\s*<h3.*?>/==== /gi;
     $s =~ s/\s*<h\d.*?>/===== /gi;
 
-    my $tree = HTML::Parse::parse_html( '<body>' . $s . '</body>' );
-    my $formatter = HTML::FormatText->new( leftmargin => 0, rightmargin => 2000 );
+    my $tree = HTML::Parse::parse_html('<body>' . $s . '</body>');
+    my $formatter = HTML::FormatText->new(leftmargin => 0, rightmargin => 2000);
     $s = $formatter->format($tree);
 
     $s =~ s/\</\&lt;/g;
@@ -136,7 +136,7 @@ sub creole_to_html ($) {
     $s =~ s/(\{\{[^\}\n]*?)\n([^\}\n]*?\}\})/$1$2/g;
 
     #remove whitespaces and break lines at start or end of elements
-    for my $elem ( 'p', 'li' ) {
+    for my $elem ('p', 'li') {
         $s =~ s|<$elem>\s*<br/><br/>|<$elem>|g;
         $s =~ s|<br/><br/>\s*</$elem>|</$elem>|g;
     }
@@ -176,14 +176,14 @@ sub html_to_plain ($) {
     my ($s) = @_;
 
     return '' unless defined $s;
-    my $tree = HTML::Parse::parse_html( '<body>' . $s . '</body>' );
-    my $formatter = HTML::FormatText->new( leftmargin => 0, rightmargin => 2000 );
+    my $tree = HTML::Parse::parse_html('<body>' . $s . '</body>');
+    my $formatter = HTML::FormatText->new(leftmargin => 0, rightmargin => 2000);
     $s = $formatter->format($tree);
     return $s;
 }
 
 sub ical_to_plain ($) {
-    return '' unless defined( $_[0] );
+    return '' unless defined($_[0]);
     $_[0] =~ s/\\n/\n/gi;
     $_[0] =~ s/   /\t/gi;
     $_[0] =~ s/\\\;/\;/gi;
@@ -209,17 +209,17 @@ sub plain_to_ical {
 }
 
 sub plain_to_xml($) {
-    return '' unless defined( $_[0] );
+    return '' unless defined($_[0]);
     $_[0] =~ s/\n\={1,6} (.*?)\s+/\n\[\[$1\]\]\n/gi;
 
     #remove images + links
     $_[0] =~ s/\[\[.+?\|(.+?)\]\]/$1/g;
     $_[0] =~ s/\{\{.+?\}\}//g;
-    return encode_xml_element( $_[0] );
+    return encode_xml_element($_[0]);
 }
 
 sub fix_utf8($) {
-    $_[0] = Encode::decode( 'cp1252', $_[0] );
+    $_[0] = Encode::decode('cp1252', $_[0]);
     return $_[0];
 }
 
@@ -231,16 +231,16 @@ sub uri_encode ($) {
 sub compress ($) {
     my $header = '';
 
-    if ( $_[0] =~ /(Content\-type\:[^\n]+[\n]+)/ ) {
+    if ($_[0] =~ /(Content\-type\:[^\n]+[\n]+)/) {
         $header = $1;
     }
-    my $start = index( $_[0], $header );
-    return if ( $start < 0 );
+    my $start = index($_[0], $header);
+    return if ($start < 0);
 
     my $header_length = length($header);
-    $header = substr( $_[0], 0, $start + $header_length );
+    $header = substr($_[0], 0, $start + $header_length);
 
-    my $content = substr( $_[0], $start + $header_length );
+    my $content = substr($_[0], $start + $header_length);
 
     #remove multiple line breaks
     $content =~ s/[\r\n]+[\s]*[\r\n]+/\n/g;
@@ -275,7 +275,7 @@ sub compress ($) {
     $_[0] = $header . $content;
 
     #$_[0]=~s/HTTP_CONTENT_TYPE/\n\n/;
-    #	return $_[0];
+    #    return $_[0];
 }
 
 #from XML::RSS.pm
@@ -378,14 +378,14 @@ my %entity = (
     yuml   => "&#255;",
 );
 
-my $entities = join( '|', keys %entity );
+my $entities = join('|', keys %entity);
 
 sub encode_xml_element($) {
     my ($text) = @_;
 
     my $encoded_text = '';
 
-    while ( $text =~ s/(.*?)(\<\!\[CDATA\[.*?\]\]\>)//s ) {
+    while ($text =~ s/(.*?)(\<\!\[CDATA\[.*?\]\]\>)//s) {
         $encoded_text .= encode_xml_element_text($1) . $2;
     }
     $encoded_text .= encode_xml_element_text($text);
@@ -407,7 +407,7 @@ sub encode_xml_element_text ($) {
 sub escapeHtml($) {
     my ($s) = @_;
 
-    return HTML::Entities::encode_entities( $s, q{&<>"'} );
+    return HTML::Entities::encode_entities($s, q{&<>"'});
 }
 
 #do not delete last line!

@@ -1,15 +1,9 @@
-/* roboto-regular - latin_latin-ext */
 @font-face {
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
-  src: url('../fonts/roboto-v18-latin_latin-ext-regular.eot'); /* IE9 Compat Modes */
     src: local('Roboto'), local('Roboto-Regular'),
-       url('../fonts/roboto-v18-latin_latin-ext-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('../fonts/roboto-v18-latin_latin-ext-regular.woff2') format('woff2'), /* Super Modern Browsers */
-       url('../fonts/roboto-v18-latin_latin-ext-regular.woff') format('woff'), /* Modern Browsers */
-       url('../fonts/roboto-v18-latin_latin-ext-regular.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('../fonts/roboto-v18-latin_latin-ext-regular.svg#Roboto') format('svg'); /* Legacy iOS */
+       url('../fonts/roboto-v18-latin_latin-ext-regular.woff2') format('woff2'),
 }
 
 /* open-sans-regular - latin_latin-ext */
@@ -17,13 +11,8 @@
     font-family: 'Open Sans';
     font-style: normal;
     font-weight: 400;
-    src: url('../fonts/open-sans-v15-latin_latin-ext-regular.eot'); /* IE9 Compat Modes */
     src: local('Open Sans Regular'), local('OpenSans-Regular'),
-       url('../fonts/open-sans-v15-latin_latin-ext-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('../fonts/open-sans-v15-latin_latin-ext-regular.woff2') format('woff2'), /* Super Modern Browsers */
-       url('../fonts/open-sans-v15-latin_latin-ext-regular.woff') format('woff'), /* Modern Browsers */
-       url('../fonts/open-sans-v15-latin_latin-ext-regular.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('../fonts/open-sans-v15-latin_latin-ext-regular.svg#OpenSans') format('svg'); /* Legacy iOS */
+       url('../fonts/open-sans-v15-latin_latin-ext-regular.woff2') format('woff2'),
 }
 
 html, body, div, span, applet, object, iframe,
@@ -35,16 +24,16 @@ b, u, i, center,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
 }
 
 body {
@@ -79,22 +68,22 @@ div {
     max-width: none;
 }
 
-body, 
-#content input, 
-#content textarea, 
-#content td, 
+body,
+#content input,
+#content textarea,
+#content td,
 #content div,
-#content select, 
-#content option, 
-#content li, 
+#content select,
+#content option,
+#content li,
 #content input[type="submit"],
-#content input[type="file"], 
+#content input[type="file"],
 #content .label {
     font-family: Roboto, sans-serif;
     font-size: 0.937rem;
 }
 
-#content div.panel-header, 
+#content div.panel-header,
 #content .label {
     font-family: Roboto condensed, Roboto, sans-serif;
 }
@@ -133,21 +122,21 @@ body,
     z-index: 99;
 }
 
-#calcms_nav, 
-#calcms_nav a, 
-#calcms_nav div, 
+#calcms_nav,
+#calcms_nav a,
+#calcms_nav div,
 #calcms_nav input,
-#calcms_nav select, 
+#calcms_nav select,
 #calcms_nav option {
     color: #fff;
 }
 
-#calcms_nav, 
+#calcms_nav,
 #calcms_nav select {
     background-color: #004f9b;
 }
 
-#calcms_nav a:hover, 
+#calcms_nav a:hover,
 #calcms_nav select:hover {
     background-color: #007acc;
     transition: all 0.5s linear;
@@ -155,7 +144,7 @@ body,
         rgba(0, 0, 0, .15);
 }
 
-#calcms_nav div a, 
+#calcms_nav div a,
 #calcms_nav select {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
@@ -166,7 +155,7 @@ body,
     transition: background 0.2s;
 }
 
-#calcms_nav select, 
+#calcms_nav select,
 #calcms_nav option {
     max-width: 8em;
     border: 0;
@@ -201,7 +190,7 @@ body,
 
 select#studio_id,
 select#project_id {
-    padding:0.8rem;    
+    padding:0.8rem;
     padding-left:24px;
     background-repeat:no-repeat;
     background-position:6px center;
@@ -268,7 +257,7 @@ nav img {
 #calcms_nav .dropdown:hover .dropdown-content {
     display: block;
     transition: all 1s linear;
-}    
+}
 
 a {
     color: #000;
@@ -350,9 +339,9 @@ a {
     text-decoration: underline;
 }
 
-#content div, 
-td, 
-tr, 
+#content div,
+td,
+tr,
 table {
     vertical-align: middle;
 }
@@ -365,7 +354,7 @@ td.label{
     padding: 0.5rem;
 }
 
-#content pre, 
+#content pre,
 .pre {
     border: 0;
     padding-top:1rem;
@@ -435,8 +424,8 @@ div.error {
 }
 
 /* badges */
-div.badge-ok, 
-div.badge-warn, 
+div.badge-ok,
+div.badge-warn,
 div.badge-error {
     border-radius: 0.3rem;
     display: inline;
@@ -503,7 +492,7 @@ tr.tablesorter-filter-row input {
     color: #000;
 }
 
-table.table tr, 
+table.table tr,
 table.tablesorter tr {
     border-bottom: solid 1px #ebebeb;
 }
@@ -569,7 +558,7 @@ table.tablesorter tr {
 
 #content button.primary {
     border: 1px solid #167ec2;
-    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18), 
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18),
                 0 4px 15px 0 rgba(0, 0, 0, .15);
 }
 
@@ -623,7 +612,7 @@ table.tablesorter tr {
     cursor: pointer;
 }
 
-#content select, 
+#content select,
 input[type='checkbox'] {
     margin-top: 0px;
 }

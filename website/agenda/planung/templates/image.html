@@ -13,7 +13,7 @@
     var selectedImageTab='select';
 
     $(document).ready(
-    	function() {
+        function() {
             addLocalization('image');
 
             //add tab change handler
@@ -44,9 +44,9 @@
 <div id="image-tabs">
     <ul>
         <li>
-            <a href="#image-tabs-select" value="select"> 
-                <TMPL_VAR .loc.tab_select> 
-                <TMPL_IF .allow.update_image> / <TMPL_VAR .loc.tab_edit> </TMPL_IF> 
+            <a href="#image-tabs-select" value="select">
+                <TMPL_VAR .loc.tab_select>
+                <TMPL_IF .allow.update_image> / <TMPL_VAR .loc.tab_edit> </TMPL_IF>
             </a>
         </li>
 
@@ -65,37 +65,37 @@
     <TMPL_IF .allow.create_image>
     <div id="image-tabs-upload" class="panel">
     </div>
-    </TMPL_IF>    
+    </TMPL_IF>
 </div>
 
 <div id="imageList" class="panel">
 
     <div style="clear:both; display:flex; flex-direction:row;">
         <div>
-	        <form id="image_manager" action="image.cgi">
-		        <input name="search" value="<TMPL_VAR search escape=none>" style="width:20em;">
-		        <input type="hidden" name="filename" value="<TMPL_VAR filename escape=js>">
-		        <button onclick="searchImage('<TMPL_VAR target escape=js>', '<TMPL_VAR .project_id escape=js>', '<TMPL_VAR .studio_id escape=js>', '<TMPL_VAR .series_id escape=js>', '<TMPL_VAR .event_id escape=js>', '<TMPL_VAR .pid escape=js>'); return false;"><TMPL_VAR .loc.button_search></button>
-	        </form>
+            <form id="image_manager" action="image.cgi">
+                <input name="search" value="<TMPL_VAR search escape=none>" style="width:20em;">
+                <input type="hidden" name="filename" value="<TMPL_VAR filename escape=js>">
+                <button onclick="searchImage('<TMPL_VAR target escape=js>', '<TMPL_VAR .project_id escape=js>', '<TMPL_VAR .studio_id escape=js>', '<TMPL_VAR .series_id escape=js>', '<TMPL_VAR .event_id escape=js>', '<TMPL_VAR .pid escape=js>'); return false;"><TMPL_VAR .loc.button_search></button>
+            </form>
             <TMPL_VAR count> <TMPL_VAR .loc.label_search_hits><br />
-            <div class="images" 
-                style="overflow-y:scroll" 
-                target="<TMPL_VAR .target>" 
-                projectId="<TMPL_VAR .project_id>" 
-                studioId="<TMPL_VAR .studio_id>" 
-                seriesId="<TMPL_VAR .series_id>" 
+            <div class="images"
+                style="overflow-y:scroll"
+                target="<TMPL_VAR .target>"
+                projectId="<TMPL_VAR .project_id>"
+                studioId="<TMPL_VAR .studio_id>"
+                seriesId="<TMPL_VAR .series_id>"
                 eventId="<TMPL_VAR .event_id>"
                 pid="<TMPL_VAR .pid>"
             >
                 <TMPL_LOOP images>
-	                <div class="image" 
-		                id="img_<TMPL_VAR id>" 
-		                style="background-image:url('show-image.cgi?project_id=<TMPL_VAR .project_id escape=js>&studio_id=<TMPL_VAR .studio_id escape=js>&type=icon&filename=<TMPL_VAR filename escape=js>')"
-		                title="<TMPL_VAR description>"
+                    <div class="image"
+                        id="img_<TMPL_VAR id>"
+                        style="background-image:url('show-image.cgi?project_id=<TMPL_VAR .project_id escape=js>&studio_id=<TMPL_VAR .studio_id escape=js>&type=icon&filename=<TMPL_VAR filename escape=js>')"
+                        title="<TMPL_VAR description>"
                         filename="<TMPL_VAR filename>"
-	                >
-		                <div class="label"><TMPL_VAR name></div>
-	                </div>
+                    >
+                        <div class="label"><TMPL_VAR name></div>
+                    </div>
                 </TMPL_LOOP>
             </div>
         </div>

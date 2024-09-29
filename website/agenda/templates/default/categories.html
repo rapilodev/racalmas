@@ -5,29 +5,29 @@ Access-Control-Allow-Origin: *
 <html>
 <body>
 <form id="calcms_projects" name="calcms_project">
-	<select id="calcms_project" name="project" 
-		onchange="calcms.selectProject()" 
-	>
-	<TMPL_LOOP projects><option value="<TMPL_VAR name escape=none>"><TMPL_VAR title></option>
+    <select id="calcms_project" name="project"
+        onchange="calcms.selectProject()"
+    >
+    <TMPL_LOOP projects><option value="<TMPL_VAR name escape=none>"><TMPL_VAR title></option>
 </TMPL_LOOP>
-	</select>
+    </select>
 </form>
 
 <TMPL_IF projects>
 <form id="calcmsCategoryForm" name="calcms_category">
-	<TMPL_LOOP projects>
-	<TMPL_UNLESS isEmpty>
-	<select id="calcms_category_<TMPL_VAR js_name escape=none>" name="category_<TMPL_VAR js_name escape=none>" 
-		title="Kategorien durchsuchen" 
-		onchange="calcms.selectCategory('<TMPL_VAR name escape=js>', jQuery(this).val())" 
-		style="display:none;"
-	>
-		<option value="">- Kategorie -</option>
+    <TMPL_LOOP projects>
+    <TMPL_UNLESS isEmpty>
+    <select id="calcms_category_<TMPL_VAR js_name escape=none>" name="category_<TMPL_VAR js_name escape=none>"
+        title="Kategorien durchsuchen"
+        onchange="calcms.selectCategory('<TMPL_VAR name escape=js>', jQuery(this).val())"
+        style="display:none;"
+    >
+        <option value="">- Kategorie -</option>
 <TMPL_LOOP categories><option value="<TMPL_VAR name escape=none>"<TMPL_VAR selected>><TMPL_VAR name> (<TMPL_VAR sum>)</option>
 </TMPL_LOOP>
-	</select>
+    </select>
     </TMPL_UNLESS>
-	</TMPL_LOOP>
+    </TMPL_LOOP>
 </form>
 </TMPL_IF>
 

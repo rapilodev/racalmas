@@ -27,11 +27,11 @@ use utf8;
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+(my $cgi, my $params, my $error) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+my ($user, $expires) = auth::get_user($config, $params, $cgi);
+return if ((!defined $user) || ($user eq ''));
 my $user_presets = uac::get_user_presets(
     $config,
     {
@@ -41,27 +41,27 @@ my $user_presets = uac::get_user_presets(
     }
 );
 $params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
+$params = uac::setDefaultStudio($params, $user_presets);
+$params = uac::setDefaultProject($params, $user_presets);
 
 my $request = {
     url => $ENV{QUERY_STRING} || '',
     params => {
         original => $params,
-        checked  => check_params( $config, $params ),
+        checked  => check_params($config, $params),
     },
 };
 
 #set user at params->presets->user
-$request = uac::prepare_request( $request, $user_presets );
+$request = uac::prepare_request($request, $user_presets);
 
 $params = $request->{params}->{checked};
 
 #show header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
-return unless uac::check( $config, $params, $user_presets ) == 1;
+my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+$headerParams->{loc} = localization::get($config, { user => $user, file => 'menu' });
+template::process($config, 'print', template::check($config, 'default.html'), $headerParams);
+return unless uac::check($config, $params, $user_presets) == 1;
 
 print q{
     <style>
@@ -76,11 +76,11 @@ print q{
     </style>
 };
 
-if ( $params->{action} eq 'diff' ) {
-    compare( $config, $request );
+if ($params->{action} eq 'diff') {
+    compare($config, $request);
     return;
 }
-show_history( $config, $request );
+show_history($config, $request);
 
 #show existing event history
 sub show_history {
@@ -89,13 +89,13 @@ sub show_history {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     for my $attr ('studio_id') {    # 'series_id','event_id'
-        unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to show changes" );
+        unless (defined $params->{$attr}) {
+            uac::print_error("missing " . $attr . " to show changes");
             return;
         }
     }
 
-    unless ( $permissions->{read_event} == 1 ) {
+    unless ($permissions->{read_event} == 1) {
         uac::print_error("missing permissions to show changes");
         return;
     }
@@ -108,17 +108,17 @@ sub show_history {
     $options->{series_id} = $params->{series_id} if defined $params->{series_id};
     $options->{event_id}  = $params->{event_id}  if defined $params->{event_id};
 
-    my $events = event_history::get( $config, $options );
+    my $events = event_history::get($config, $options);
 
     return unless defined $events;
     $params->{events} = $events;
 
-    for my $permission ( keys %{$permissions} ) {
+    for my $permission (keys %{$permissions}) {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'event-history' } );
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'event-history' });
 
-    template::process( $config, 'print', template::check( $config, 'event-history' ), $params );
+    template::process($config, 'print', template::check($config, 'event-history'), $params);
 }
 
 #show existing event history
@@ -127,19 +127,19 @@ sub compare {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    for my $attr ( 'project_id', 'studio_id', 'event_id', 'v1', 'v2' ) {
-        unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to show changes" );
+    for my $attr ('project_id', 'studio_id', 'event_id', 'v1', 'v2') {
+        unless (defined $params->{$attr}) {
+            uac::print_error("missing " . $attr . " to show changes");
             return;
         }
     }
 
-    unless ( $permissions->{read_event} == 1 ) {
+    unless ($permissions->{read_event} == 1) {
         uac::print_error("missing permissions to show changes");
         return;
     }
 
-    if ( $params->{v1} > $params->{v2} ) {
+    if ($params->{v1} > $params->{v2}) {
         my $t = $params->{v1};
         $params->{v1} = $params->{v2};
         $params->{v2} = $t;
@@ -154,19 +154,19 @@ sub compare {
         limit      => 2
     };
 
-    my $events = event_history::get( $config, $options );
+    my $events = event_history::get($config, $options);
     return unless @$events == 1;
     my $v1 = $events->[0];
 
     $options->{change_id} = $params->{v2};
-    $events = event_history::get( $config, $options );
+    $events = event_history::get($config, $options);
     return unless @$events == 1;
     my $v2 = $events->[0];
 
     my $t1 = eventToText($v1);
     my $t2 = eventToText($v2);
 
-    if ( $t1 eq $t2 ) {
+    if ($t1 eq $t2) {
         print "no changes\n";
         return;
     }
@@ -220,13 +220,13 @@ b.BBLU {background-color: #0000aa}
 b.BMAG {background-color: #aa00aa}
 b.BCYN {background-color: #00aaaa}
 b.BWHI {background-color: #aaaaaa}
-    </style>        
+    </style>
     };
     my $diff = qx{$cmd};
     $diff = substr($diff, index($diff, "<body>")+6);
     $diff = substr($diff, 0, index($diff, "</body>"));
     print "$diff\n";
-    
+
 }
 
 sub eventToText {
@@ -244,19 +244,18 @@ sub eventToText {
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
+    my ($config, $params) = @_;
 
     my $checked  = {};
     my $template = '';
-    $checked->{template} = template::check( $config, $params->{template}, 'event-history' );
+    $checked->{template} = template::check($config, $params->{template}, 'event-history');
 
     #numeric values
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'event_id', 'v1', 'v2'
     ]);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;

@@ -38,7 +38,7 @@ function searchEventsAt(selector, searchValue){
 function searchEvents(){
     var searchValue=$('#searchField').val().toLowerCase();
     searchValue=searchValue.trim().replace(/\s+/g, ' ');
-    
+
     if (searchValue=='') {
         $('#clearSearch').hide();
     }else{

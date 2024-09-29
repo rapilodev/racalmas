@@ -21,8 +21,8 @@ sub get_cached_or_render($$$) {
     my $request = $_[2];
 
     my $parms = $request->{params}->{checked};
-    my $calendar = calendar::get( $config, $request );
-    calendar::render( $_[0], $config, $request, $calendar );
+    my $calendar = calendar::get($config, $request);
+    calendar::render($_[0], $config, $request, $calendar);
 }
 
 sub get($$) {
@@ -36,8 +36,8 @@ sub get($$) {
     my $from_time = $params->{from_time} || '';
     my $till_time = $params->{till_time} || '';
 
-    my @today = localtime( time() );
-    my $today = sprintf( '%04d-%02d-%02d', 1900 + $today[5], $today[4] + 1, $today[3] );
+    my @today = localtime(time());
+    my $today = sprintf('%04d-%02d-%02d', 1900 + $today[5], $today[4] + 1, $today[3]);
 
     my $weekday_names       = time::getWeekdayNames($language);
     my $weekday_short_names = time::getWeekdayNamesShort($language);
@@ -88,52 +88,52 @@ sub get($$) {
     #get today
     my $start_date = '';
     my $end_date   = '';
-    if ( $date =~ /(\d{4})\-(\d{2})/ ) {
+    if ($date =~ /(\d{4})\-(\d{2})/) {
         my $year  = $1;
         my $month = $2;
         $start_date = "$year-$month-01";
-        $end_date = "$year-$month-" . Date::Calc::Days_in_Month( $year, $month );
+        $end_date = "$year-$month-" . Date::Calc::Days_in_Month($year, $month);
     } else {
         $start_date = $params->{start_date};
         $end_date   = $params->{end_date};
     }
 
     my $previous_month = $start_date;
-    if ( $previous_month =~ /(\d{4})\-(\d{2})/ ) {
+    if ($previous_month =~ /(\d{4})\-(\d{2})/) {
         my $year  = $1;
         my $month = $2 - 1;
-        $month = '0' . $month if ( length($month) < 2 );
-        if ( $month lt '01' ) {
+        $month = '0' . $month if (length($month) < 2);
+        if ($month lt '01') {
             $year -= 1;
             $month = '12';
         }
         $previous_month = "$year-$month-01";
-        $previous_month = $params->{start_date} if ( $previous_month lt $params->{start_date} );
+        $previous_month = $params->{start_date} if ($previous_month lt $params->{start_date});
     }
 
     my $next_month = $end_date;
-    if ( $next_month =~ /(\d{4})\-(\d{2})/ ) {
+    if ($next_month =~ /(\d{4})\-(\d{2})/) {
         my $year  = $1;
         my $month = $2 + 1;
-        $month = '0' . $month if ( length($month) < 2 );
-        if ( $month gt '12' ) {
+        $month = '0' . $month if (length($month) < 2);
+        if ($month gt '12') {
             $year += 1;
             $month = '01';
         }
         $next_month = "$year-$month-01";
-        $next_month = $params->{end_date} if ( $next_month gt $params->{end_date} );
+        $next_month = $params->{end_date} if ($next_month gt $params->{end_date});
     }
 
     my $start_year  = undef;
     my $start_month = undef;
-    if ( $start_date =~ /(\d{4})\-(\d{2})/ ) {
+    if ($start_date =~ /(\d{4})\-(\d{2})/) {
         $start_year  = $1;
         $start_month = $2;
     }
     my $monthNames       = time::getMonthNamesShort($language);
     my $start_month_name = $monthNames->[ $start_month - 1 ];
 
-    if ( $params->{month_only} eq '1' ) {
+    if ($params->{month_only} eq '1') {
         return {
             next_month       => $next_month,
             previous_month   => $previous_month,
@@ -143,9 +143,9 @@ sub get($$) {
         };
     }
 
-    my $years = calendar::get_calendar_weeks( $config, $start_date, $end_date );
+    my $years = calendar::get_calendar_weeks($config, $start_date, $end_date);
 
-    my $dbh = db::connect( $config, $request );
+    my $dbh = db::connect($config, $request);
 
     my $used_days = events::get_by_date_range(
         $dbh, $config,
@@ -158,10 +158,10 @@ sub get($$) {
     );
     my $used_day = { map { $_->{start_date} => 1 } @$used_days };
 
-    for my $year ( sort { $a <=> $b } keys %$years ) {
+    for my $year (sort { $a <=> $b } keys %$years) {
         my $months = $years->{$year};
 
-        for my $month ( sort { $a <=> $b } keys %$months ) {
+        for my $month (sort { $a <=> $b } keys %$months) {
             my $weeks = $months->{$month};
 
             my $weekCounter = 1;
@@ -175,11 +175,11 @@ sub get($$) {
                 my $woy_year     = undef;
 
                 for my $date (@$week) {
-                    my ( $year, $month, $day ) = split( /\-/, $date, 3 );
+                    my ($year, $month, $day) = split(/\-/, $date, 3);
                     my $weekday    = 0;
                     my $day_result = undef;
 
-                    ( $week_of_year, $woy_year ) = Date::Calc::Week_of_Year( $year, $month, $day )
+                    ($week_of_year, $woy_year) = Date::Calc::Week_of_Year($year, $month, $day)
                       unless defined $week_of_year;
 
                     $day_result = {
@@ -194,8 +194,8 @@ sub get($$) {
                     $day_result->{class} .= ' calcms_today' if $date eq $today;
                     $day_result->{class} .= ' selected'     if defined $used_day->{$date};
                     $day_result->{class} .= " week_$weekCounter";
-                    $day_result->{class} .= " other_month" if ( $weekCounter < 2 ) && ( $day gt "15" );
-                    $day_result->{class} .= " other_month" if ( $weekCounter > 3 ) && ( $day lt "15" );
+                    $day_result->{class} .= " other_month" if ($weekCounter < 2) && ($day gt "15");
+                    $day_result->{class} .= " other_month" if ($weekCounter > 3) && ($day lt "15");
                     $day_result->{class} =~ s/^\s+//g;
 
                     $week_start = $day unless defined $week_start;
@@ -221,14 +221,14 @@ sub get($$) {
                     till_date    => $end_date,
                     week_start   => $week_start,
                     week_end     => $week_end,
-                    week_month   => sprintf( "%2d", $month ),
+                    week_month   => sprintf("%2d", $month),
                     week_year    => $year,
                     week_of_year => $week_of_year,
                 };
 
                 $week_result->{class} .= ' selected'
-                  if ( ( defined $params->{from_date} ) && ( $start_date eq $params->{from_date} ) )
-                  || ( ( defined $params->{till_date} ) && ( $end_date eq $params->{till_date} ) );
+                  if ((defined $params->{from_date}) && ($start_date eq $params->{from_date}))
+                  || ((defined $params->{till_date}) && ($end_date eq $params->{till_date}));
                 $week_result->{class} .= " week_$weekCounter";
                 $week_result->{class} =~ s/^\s+//g;
 
@@ -283,7 +283,7 @@ sub render($$$$) {
     $template_parameters->{base_url}         = $config->{locations}->{base_url};
     $template_parameters->{widget_render_url}= $config->{locations}->{widget_render_url};
 
-    template::process( $config, $_[0], $parms->{template}, $template_parameters );
+    template::process($config, $_[0], $parms->{template}, $template_parameters);
 }
 
 sub get_calendar_weeks($$$) {
@@ -292,19 +292,19 @@ sub get_calendar_weeks($$$) {
     $start = time::date_to_array($start);
     $end   = time::date_to_array($end);
 
-    my $start_year = int( $start->[0] );
-    my $end_year   = int( $end->[0] );
+    my $start_year = int($start->[0]);
+    my $end_year   = int($end->[0]);
 
-    my $start_month = int( $start->[1] );
-    my $end_month   = int( $end->[1] );
+    my $start_month = int($start->[1]);
+    my $end_month   = int($end->[1]);
 
     my $years = {};
-    for my $year ( $start_year .. $end_year ) {
+    for my $year ($start_year .. $end_year) {
         my $months = {};
-        for my $month ( $start_month .. $end_month ) {
+        for my $month ($start_month .. $end_month) {
 
             #get week arrays of days of the month
-            my $weeks = getWeeksOfMonth( $year, $month );
+            my $weeks = getWeeksOfMonth($year, $month);
             $months->{$month} = $weeks;
         }
         $years->{$year} = $months;
@@ -318,18 +318,18 @@ sub getWeeksOfMonth($$) {
     my $thisDay   = 1;
 
     # get weekday of 1st of month
-    my $thisMonthWeekday = Date::Calc::Day_of_Week( $thisYear, $thisMonth, 1 );
+    my $thisMonthWeekday = Date::Calc::Day_of_Week($thisYear, $thisMonth, 1);
 
     # get next month date
-    my ( $nextYear, $nextMonth, $nextDay ) = Date::Calc::Add_Delta_YM( $thisYear, $thisMonth, $thisDay, 0, 1 );
+    my ($nextYear, $nextMonth, $nextDay) = Date::Calc::Add_Delta_YM($thisYear, $thisMonth, $thisDay, 0, 1);
 
     # get weekday of 1st of next month
-    my $nextMonthWeekday = Date::Calc::Day_of_Week( $nextYear, $nextMonth, $nextDay );
-    my ( $lastYear, $lastMonth, $lastDayOfMonth ) = Date::Calc::Add_Delta_Days( $nextYear, $nextMonth, $nextDay, -1 );
+    my $nextMonthWeekday = Date::Calc::Day_of_Week($nextYear, $nextMonth, $nextDay);
+    my ($lastYear, $lastMonth, $lastDayOfMonth) = Date::Calc::Add_Delta_Days($nextYear, $nextMonth, $nextDay, -1);
 
     # get date of 1st of row
-    my ( $week, $year ) = Date::Calc::Week_of_Year( $thisYear, $thisMonth, $thisDay );
-    ( $year, my $month, my $day ) = Date::Calc::Monday_of_Week( $week, $year );
+    my ($week, $year) = Date::Calc::Week_of_Year($thisYear, $thisMonth, $thisDay);
+    ($year, my $month, my $day) = Date::Calc::Monday_of_Week($week, $year);
 
     my @weeks   = ();
     my $weekday = 1;
@@ -337,8 +337,8 @@ sub getWeeksOfMonth($$) {
     {
         # first week
         my @days = ();
-        for $weekday ( 0 .. $thisMonthWeekday - 2 ) {
-            push @days, sprintf( "%04d-%02d-%02d", $year, $month, $day );
+        for $weekday (0 .. $thisMonthWeekday - 2) {
+            push @days, sprintf("%04d-%02d-%02d", $year, $month, $day);
             $day++;
         }
 
@@ -346,8 +346,8 @@ sub getWeeksOfMonth($$) {
         $month = $thisMonth;
         $year  = $thisYear;
         $day   = 1;
-        for $weekday ( $thisMonthWeekday .. 7 ) {
-            push @days, sprintf( "%04d-%02d-%02d", $year, $month, $day );
+        for $weekday ($thisMonthWeekday .. 7) {
+            push @days, sprintf("%04d-%02d-%02d", $year, $month, $day);
             $day++;
         }
 
@@ -356,29 +356,29 @@ sub getWeeksOfMonth($$) {
     }
 
     # weeks until end of month
-    while ( scalar(@weeks) < 6 ) {
+    while (scalar(@weeks) < 6) {
         my @days = ();
         $weekday = 1;
-        while ( $weekday <= 7 ) {
-            push @days, sprintf( "%04d-%02d-%02d", $year, $month, $day );
+        while ($weekday <= 7) {
+            push @days, sprintf("%04d-%02d-%02d", $year, $month, $day);
             $day++;
             $weekday++;
             last if $day > $lastDayOfMonth;
         }
 
-        if ( $day > $lastDayOfMonth ) {
+        if ($day > $lastDayOfMonth) {
 
             # set next month
             $month = $nextMonth;
             $year  = $nextYear;
             $day   = 1;
 
-            if ( $nextMonthWeekday != 1 ) {
+            if ($nextMonthWeekday != 1) {
 
                 # finish end week
-                if ( $weekday <= 7 ) {
-                    while ( $weekday <= 7 ) {
-                        push @days, sprintf( "%04d-%02d-%02d", $year, $month, $day );
+                if ($weekday <= 7) {
+                    while ($weekday <= 7) {
+                        push @days, sprintf("%04d-%02d-%02d", $year, $month, $day);
                         $day++;
                         $weekday++;
                     }
@@ -391,10 +391,10 @@ sub getWeeksOfMonth($$) {
     }
 
     #coming weeks
-    while ( scalar(@weeks) < 6 ) {
+    while (scalar(@weeks) < 6) {
         my @days = ();
-        for $weekday ( 1 .. 7 ) {
-            push @days, sprintf( "%04d-%02d-%02d", $year, $month, $day );
+        for $weekday (1 .. 7) {
+            push @days, sprintf("%04d-%02d-%02d", $year, $month, $day);
             $day++;
         }
         push @weeks, \@days;
@@ -412,34 +412,34 @@ sub check_params($$) {
 
     #switch off limiting end date by project
     my $open_end = 0;
-    if ( ( defined $params->{'open_end'} ) && ( $params->{'open_end'} =~ /(\d+)/ ) ) {
+    if ((defined $params->{'open_end'}) && ($params->{'open_end'} =~ /(\d+)/)) {
         $open_end = $1;
-        $end_date = time::add_days_to_datetime( time::time_to_datetime(), 365 );
+        $end_date = time::add_days_to_datetime(time::time_to_datetime(), 365);
     }
 
     my $month_only = $params->{month_only} || '';
 
     #filter for date
-    my $date = time::check_date( $params->{date} );
+    my $date = time::check_date($params->{date});
 
-    $date = $start_date if ( $date lt $start_date );
-    $date = $end_date   if ( $date gt $end_date );
-    log::error( $config, "no valid year-month format given!" ) if ( $date eq "-1" );
+    $date = $start_date if ($date lt $start_date);
+    $date = $end_date   if ($date gt $end_date);
+    log::error($config, "no valid year-month format given!") if ($date eq "-1");
 
-    my $time = time::check_time( $params->{time} );
-    log::error( $config, "no valid time format given!" ) if ( $time eq "-1" );
+    my $time = time::check_time($params->{time});
+    log::error($config, "no valid time format given!") if ($time eq "-1");
 
-    my $from_date = time::check_date( $params->{from_date} ) || '';
-    log::error( $config, "no valid date format given!" ) if ( defined $from_date && $from_date eq "-1" );
-    $from_date = $start_date if ( $from_date lt $start_date );
-    $from_date = $end_date   if ( $from_date gt $end_date );
+    my $from_date = time::check_date($params->{from_date}) || '';
+    log::error($config, "no valid date format given!") if (defined $from_date && $from_date eq "-1");
+    $from_date = $start_date if ($from_date lt $start_date);
+    $from_date = $end_date   if ($from_date gt $end_date);
 
-    my $till_date = time::check_date( $params->{till_date} || '' );
-    log::error( $config, "no valid date format given!" ) if ( defined $till_date && $till_date eq "-1" );
-    $till_date = $start_date if ( $till_date lt $start_date );
-    $till_date = $end_date   if ( $till_date gt $end_date );
+    my $till_date = time::check_date($params->{till_date} || '');
+    log::error($config, "no valid date format given!") if (defined $till_date && $till_date eq "-1");
+    $till_date = $start_date if ($till_date lt $start_date);
+    $till_date = $end_date   if ($till_date gt $end_date);
 
-    my $template = template::check( $config, $params->{template}, 'calendar.html' );
+    my $template = template::check($config, $params->{template}, 'calendar.html');
 
     return {
         template   => $template,

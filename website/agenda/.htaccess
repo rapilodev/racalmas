@@ -10,64 +10,64 @@ RewriteCond  %{REQUEST_FILENAME} -d
 RewriteRule (.*) $1 [L]
 
 # compatibility layer
-RewriteRule ^sendungen/heute/(.*?)$               events/today/$1
-RewriteRule ^sendungen/(.*?)$                     events/$1
-RewriteRule ^sendung/(.*?)$                       event/$1
-RewriteRule ^sendereihen/(.*)$                    series/$1
-RewriteRule ^sendereihe/(.*)$                     serie/$1
-RewriteRule ^kalender/(.*)$                       calendar/$1
-RewriteRule ^menu/heute/(.*)$                     menu/today&$1
-RewriteRule ^suche/(.*?)/(.*?)/kommende/(.*)$     search/$1/$2/upcoming/$3
-RewriteRule ^suche/(.*?)/(.*?)/vergangene/(.*)$   search/$1/$2/gone/$4
-RewriteRule ^suche/(.*)$                          search/$1
-RewriteRule ^kommentare/(.*)$                     comments/$1
-RewriteRule ^neueste_kommentare/(.*)$             comments/latest/$1
-RewriteRule ^feed_kommentare/(.*)$                comments/feed/$1
-RewriteRule ^kommentar_neu/(.*)$                  comments/add/$1
-RewriteRule ^dashboard/sendung/(.*)$              dashboard/event/$1
-RewriteRule ^running_event_id/(.*)$               event/running/id/$1
-RewriteRule ^running_event/(.*)$                  event/running/$1
-RewriteRule ^playlistLong/(.*)$                   playlist/long/$1
-RewriteRule ^playlistUtc/(.*)$                    playlist/utc/$1
-RewriteRule ^playlist_show/(.*)$                  playlist/show/$1
+RewriteRule ^sendungen/heute/               events/today/
+RewriteRule ^sendungen/                     events/
+RewriteRule ^sendung/                       event/
+RewriteRule ^sendereihen/                   series/
+RewriteRule ^sendereihe/                    serie/
+RewriteRule ^kalender/                      calendar/
+RewriteRule ^menu/heute/                    menu/today/
+RewriteRule ^suche/(.*?)/(.*?)/kommende/    search/$1/$2/upcoming/
+RewriteRule ^suche/(.*?)/(.*?)/vergangene/  search/$1/$2/gone/
+RewriteRule ^suche/                         search/
+RewriteRule  kommentare                     comments
+RewriteRule ^neueste_kommentare/            comments/latest/
+RewriteRule ^feed_kommentare                comments/feed/
+RewriteRule ^kommentar_neu                  comments/add/
+RewriteRule ^dashboard/sendung              dashboard/event/
+RewriteRule ^running_event_id               event/running/id/
+RewriteRule ^running_event                  event/running/
+RewriteRule ^playlistLong                   playlist/long/
+RewriteRule ^playlistUtc                    playlist/utc/
+RewriteRule ^playlist_show                  playlist/show/
 
-RewriteRule ^events/today/(.*)$                                         events.cgi?template=event_list.html&date=today&$1 [L]
-RewriteRule ^events/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(\d)/(.*)$  events.cgi?template=event_list.html&from_date=$1&till_date=$2&weekday=$3&$4 [L]
-RewriteRule ^events/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(.*)$       events.cgi?template=event_list.html&from_date=$1&till_date=$2&$3 [L]
-RewriteRule ^events/(\d{4}-\d{2}-\d{2})/(.*)$                           events.cgi?template=event_list.html&date=$1&$2 [L]
+RewriteRule ^events/today/(.*)$                                         events.cgi?template=event_list.html&description=none&excerpt=none&date=today&$1 [L]
+RewriteRule ^events/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(\d)/(.*)$  events.cgi?template=event_list.html&description=none&excerpt=none&from_date=$1&till_date=$2&weekday=$3&$4 [L]
+RewriteRule ^events/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(.*)$       events.cgi?template=event_list.html&description=none&excerpt=none&from_date=$1&till_date=$2&$3 [L]
+RewriteRule ^events/(\d{4}-\d{2}-\d{2})/(.*)$                           events.cgi?template=event_list.html&description=none&excerpt=none&date=$1&$2 [L]
 RewriteRule ^events/json/(.*)$                                          events.cgi?&json=1$1 [L]
 RewriteRule ^events/(.*)$                                               events.cgi?$1 [L]
 
 RewriteRule ^event/(\d+)/[^&]*(&.*)?$    events.cgi?template=event_details.html&event_id=$1&$2 [L]
-RewriteRule ^event/running/id/(.*)$      events.cgi?template=event_running_id.html&time=now&limit=1&$1 [L]
-RewriteRule ^event/running/(.*)$         events.cgi?template=event_running.html&time=now&limit=1&$1 [L]
-RewriteRule ^event/rds/(.*)$             events.cgi?template=event_playlist.txt&time=now&limit=1&$1 [L]
+RewriteRule ^event/running/id/(.*)$      events.cgi?template=event_running_id.html&phase=running&limit=1&$1 [L]
+RewriteRule ^event/running/(.*)$         events.cgi?template=event_running.html&phase=running&limit=1&$1 [L]
+RewriteRule ^event/rds/(.*)$             events.cgi?template=event_playlist.txt&phase=running&limit=1&description=none&excerpt=none&$1 [L]
 RewriteRule ^event/(.*)$                 events.cgi?$1 [L]
 
-RewriteRule ^playlist/long/(.*)$         events.cgi?template=event_playlist_long.html&time=future&limit=20&$1 [L]
+RewriteRule ^playlist/long/(.*)$         events.cgi?template=event_playlist_long.html&description=none&excerpt=none&phase=upcoming&limit=20&$1 [L]
 RewriteRule ^playlist/utc/(.*)$          events.cgi?template=event_utc_time.json&limit=1
-RewriteRule ^playlist/show/(.*)$         events.cgi?template=event_playlist_show.html&time=future&limit=3&$1 [L]
-RewriteRule ^playlist/(.*)$              events.cgi?template=event_playlist.html&time=future&limit=5&$1 [L]
+RewriteRule ^playlist/show/(.*)$         events.cgi?template=event_playlist_show.html&description=none&excerpt=none&phase=upcoming&limit=3&$1 [L]
+RewriteRule ^playlist/(.*)$              events.cgi?template=event_playlist.html&description=none&excerpt=none&phase=upcoming&limit=5&$1 [L]
 
-RewriteRule ^menu/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(\d)/(.*)$    events.cgi?template=event_menu.html&from_date=$1&till_date=$2&weekday=$3&$4 [L]
-RewriteRule ^menu/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(.*)$         events.cgi?template=event_menu.html&from_date=$1&till_date=$2&$3 [L]
-RewriteRule ^menu/(\d{4}-\d{2}-\d{2})/(.*)$                             events.cgi?template=event_menu.html&date=$1&$2 [L]
-RewriteRule ^menu/today/(.*)$                                           events.cgi?template=event_menu.html&date=today&$1 [L]
-RewriteRule ^menu/(.*)$                                                 events.cgi?$1 [L]
+RewriteRule ^menu/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(\d)/(.*)$    events.cgi?template=event_menu.html&description=none&excerpt=none&from_date=$1&till_date=$2&weekday=$3&$4 [L]
+RewriteRule ^menu/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(.*)$         events.cgi?template=event_menu.html&description=none&excerpt=none&from_date=$1&till_date=$2&$3 [L]
+RewriteRule ^menu/(\d{4}-\d{2}-\d{2})/(.*)$                             events.cgi?template=event_menu.html&description=none&excerpt=none&date=$1&$2 [L]
+RewriteRule ^menu/today/(.*)$                                           events.cgi?template=event_menu.html&description=none&excerpt=none&date=today&$1 [L]
+RewriteRule ^menu/(.*)$                                                 events.cgi?description=none&excerpt=none&$1 [L]
 
 RewriteRule ^series/(.*)$                                               series_names.cgi?$1 [L]
-RewriteRule ^serie/(.*?)/(.*?)/upcoming/(.*)$                           events.cgi?template=event_list.html&project=$1&series_name=$2&archive=coming&$3 [L]
-RewriteRule ^serie/(.*?)/(.*?)/over/(.*)$                               events.cgi?template=event_list.html&project=$1&series_name=$2&archive=gone&$3 [L]
-RewriteRule ^serie/(.*?)/(.*?)/show/$                                   events.cgi?template=event_redirect.html&project=$1&series_name=$2&limit=1&$3 [L]
-RewriteRule ^serie/(.*?)/(.*?)/(.*)$                                    events.cgi?template=event_list.html&project=$1&series_name=$2&$3 [L]
-RewriteRule ^serie/(.*?)/(.*)$                                          events.cgi?template=event_list.html&series_name=$1&$2 [L]
+RewriteRule ^serie/(.*?)/(.*?)/show/$                                   events.cgi?template=event_redirect.html&description=none&excerpt=none&project=$1&series_name=$2&limit=1&$3 [L]
+RewriteRule ^serie/(.*?)/(.*?)/upcoming/(.*)$                           events.cgi?template=event_list.html&description=none&excerpt=none&project=$1&series_name=$2&phase=upcoming&$3 [L]
+RewriteRule ^serie/(.*?)/(.*?)/over/(.*)$                               events.cgi?template=event_list.html&description=none&excerpt=none&project=$1&series_name=$2&phase=completed&$3 [L]
+RewriteRule ^serie/(.*?)/(.*?)/(.*)$                                    events.cgi?template=event_list.html&description=none&excerpt=none&project=$1&series_name=$2&$3 [L]
+RewriteRule ^serie/(.*?)/(.*)$                                          events.cgi?template=event_list.html&description=none&excerpt=none&series_name=$1&$2 [L]
 
 RewriteRule ^calendar/(\d{4}-\d{2}-\d{2})/$                             cal.cgi?date=$1 [L]
 RewriteRule ^calendar/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/$         cal.cgi?from_date=$1&till_date=$2 [L]
 RewriteRule ^calendar/(.*)$                                             cal.cgi?$1 [L]
 
-RewriteRule ^feed/atom/(.*)$                                            events.cgi?template=event.atom.xml&time=future&limit=100&$1 [L]
-RewriteRule ^feed/rss/(.*)$                                             events.cgi?template=event.rss.xml&time=future&limit=100&$1 [L]
+RewriteRule ^feed/atom/(.*)$                                            events.cgi?template=event.atom.xml&phase=upcoming&limit=100&$1 [L]
+RewriteRule ^feed/rss/(.*)$                                             events.cgi?template=event.rss.xml&phase=upcoming&limit=100&$1 [L]
 RewriteRule ^feed/rss-media/(.*)$                                       events.cgi?last_days=7&only_active_recording=1&template=event_media.rss.xml&$1 [L]
 
 RewriteRule ^ical/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(\d)/(.*)$    events.cgi?template=event.ics&from_date=$1&till_date=$2&weekday=$3&$4 [L]
@@ -77,8 +77,8 @@ RewriteRule ^ical/(\d{4}-\d{2}-\d{2})/(.*)$                             events.c
 RewriteRule ^ical/(\d+)/(.*)?$                                          events.cgi?template=event.ics&event_id=$1&$2 [L]
 RewriteRule ^ical/(.*)$                                                 events.cgi?template=event.ics&$1 [L]
 
-RewriteRule ^search/(.*?)/(.*?)/coming/(.*)$        events.cgi?template=event_list.html&project=$1&search=$2&archive=coming&$3 [L]
-RewriteRule ^search/(.*?)/(.*?)/over/(.*)$          events.cgi?template=event_list.html&project=$1&search=$2&archive=gone&$3 [L]
+RewriteRule ^search/(.*?)/(.*?)/coming/(.*)$        events.cgi?template=event_list.html&project=$1&search=$2&phase=upcoming&$3 [L]
+RewriteRule ^search/(.*?)/(.*?)/over/(.*)$          events.cgi?template=event_list.html&project=$1&search=$2&phase=completed&$3 [L]
 RewriteRule ^search/(.*?)/(.*?)/(.*)$               events.cgi?template=event_list.html&project=$1&search=$2&$3 [L]
 RewriteRule ^search/(.*?)/(.*)$                     events.cgi?template=event_list.html&search=$1&$2 [L]
 
@@ -90,7 +90,7 @@ RewriteRule ^comments/(\d+)/(\d{4}-\d{2}-\d{2}[T\+]\d{2}\:\d{2})(\:\d{2})?/(.*)$
 # special
 RewriteRule ^dashboard/event/(\d+)/[^&]*(&.*)?$    events.cgi?template=event_dashboard_details.html&event_id=$1&$2 [L]
 RewriteRule ^dashboard/date/(\d{4}-\d{2}-\d{2})/$  events.cgi?template=event_dashboard.html.js&date=$1&$2 [L]
-RewriteRule ^dashboard/date/now/$                  events.cgi?template=event_dashboard.html.js&time=now&limit=1&$1 [L]
+RewriteRule ^dashboard/date/now/$                  events.cgi?template=event_dashboard.html.js&phase=running&limit=1&$1 [L]
 
 RewriteRule ^freefm.xml$                           events.cgi?template=event_freefm.xml&location=piradio&limit=40
 RewriteRule ^frrapo-programm.html$                 events.cgi?location=potsdam&template=event_frrapo
@@ -108,7 +108,7 @@ Options -Indexes -MultiViews +FollowSymLinks +ExecCGI
 
 #PerlResponseHandler ModPerl::RegistryPrefork
 <IfModule mod_perl.c>
-    <FilesMatch "\.cgi$">   
+    <FilesMatch "\.cgi$">
         SetHandler perl-script
         PerlResponseHandler ModPerl::RegistryPrefork
         PerlOptions +ParseHeaders

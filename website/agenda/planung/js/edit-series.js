@@ -135,7 +135,7 @@ function addSelectChangeHandler(selector, name, title){
         function(){
             $(this).change(function(){
                 if($(this).val()==''){
-                    //replace select by input, copy value from select to input, 
+                    //replace select by input, copy value from select to input,
                     var value=$(this).attr('value');
                     $(this).parent().html(
                         loc[title]+'<br>'
@@ -176,7 +176,7 @@ function updateWeekdays(){
 // change create schedule button name (add/remove)
 function updateScheduleButtonName(){
     var buttonChecked=$('#schedule_add input[name="exclude"]');
-    
+
     if(buttonChecked.prop('checked')){
         $('#addScheduleButton').text(loc['label_remove_schedule']);
     }else{
@@ -234,7 +234,7 @@ $(document).ready(
                 addBackButton();
                 updateWeekdays();
             }
-        );    
+        );
 
         showDateTimePicker('input.datetimepicker.start', {
             onSelect: function(){updateWeekdays();}
@@ -267,7 +267,7 @@ $(document).ready(
 //        $('#content div.cell select').change(function(){setInputWidth()});
 
         $('textarea').autosize();
-        
+
         $('table#schedule_table').tablesorter({
             widgets: ["filter"],
               usNumberFormat : false

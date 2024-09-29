@@ -28,7 +28,7 @@ $(document).ready(
             function(){
                 updatePublicCheckbox($(this));
             }
-        )        
+        )
         console.log("image handler initialized");
         pageLeaveHandler();
     }

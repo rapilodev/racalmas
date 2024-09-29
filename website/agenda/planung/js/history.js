@@ -9,7 +9,7 @@ function clearCookie(name) {
 function getCookie(name) {
     var cookies = document.cookie.split('; ');
     for(var i=0; i<cookies.length; i++) {
-        
+
         if (cookies[i].indexOf(name+'=')==0){
             return cookies[i].substring(name.length+1);
         }
@@ -38,7 +38,7 @@ function isNewToHistory(url){
     //last page already in history
     if ( history[0] == url) return null;
 
-    
+
     //replace url in history by current one, if controller is the same
     var urlController=url.split('.cgi').shift();
     var historyController=history[0].split('.cgi').shift();
@@ -69,7 +69,7 @@ function appendHistory(url, rewrite){
         var content=url;
         var i=0;
         for (i in history){
-            if ((history[i]!=null)&&(history[i]!=''))content+='|'+history[i];
+            if ((history[i]!=null)&& (history[i]!=''))content+='|'+history[i];
         }
         setCookie("history", content);
     }

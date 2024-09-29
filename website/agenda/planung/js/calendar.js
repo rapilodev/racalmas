@@ -11,13 +11,13 @@ function openNewTab(url){
 function selectCheckbox(selector){
     $(selector).each(function(){
         $(this).prop('checked', 'checked');
-    })   
+    })
 }
 
 function unselectCheckbox(selector){
     $(selector).each(function(){
         $(this).removeProp('checked');
-    })   
+    })
 }
 
 function isChecked(selector){
@@ -44,13 +44,13 @@ function setupMenuHeight(){
         $('#calendar_weekdays').css("top", top);
 
         var weekday_height=30;
-        weekdays.querySelectorAll("table td div").forEach( 
+        weekdays.querySelectorAll("table td div").forEach(
             function(div) {
                 var height = div.offsetHeight + 14;
                 if (height>weekday_height) weekday_height=height;
-            } 
+            }
         );
-        
+
         top+=weekday_height+1-10;
         $('#calendar').css("top", top);
         return top;
@@ -84,12 +84,12 @@ function resizeCalendarMenu(){
     $('#calendar table').css('width', width-20);
     $('#calendar_weekdays table').css('width', width-20);
     $('#calendar table').css('height', height);
-    
+
     //set spacing between table columns
     var columnSpacing=Math.round($(window).width()/72);
     if(columnSpacing<0) columnSpacing=0;
     columnSpacing=Math.ceil(columnSpacing);
-    
+
     $('div.week').css('width',       columnSpacing);
     $('div.week').css('margin-left',-columnSpacing);
 
@@ -106,14 +106,13 @@ function resizeCalendarMenu(){
     var with_param='width';
     var cw=cell_width.toFixed();
     menuHeight = setupMenuHeight();
-    
+
     //var theight=$('#calendar table tr').last().find('td').first().find('div').last().css("top")
     //$('td.week').css("height",theight)
 
     $('#calendar').show();
     $('#calendar_weekdays').css("visibility","visible");
 }
-
 
 function setFilter(){
     var filter=$('#filter').val();
@@ -153,7 +152,7 @@ function updateUrls(url){
         url=window.location.href;
         url=updateUrlParameters(url);
     }
-    url=removeUrlParameter(url, 'part');    
+    url=removeUrlParameter(url, 'part');
 
     //replace current in history
     history.pushState(null, null, url);
@@ -335,7 +334,7 @@ function showMouse(){
     );
 
     // Get a reference to the last interval, then clean all
-    var interval_id = window.setInterval("", 9999); 
+    var interval_id = window.setInterval("", 9999);
     for (var i = 1; i < interval_id; i++)
         window.clearInterval(i);
 
@@ -396,7 +395,7 @@ function setDatePicker(){
         onSelect : function(dates, inst) {
             var date = dates[0];
             var url  = setUrlParameter(window.location.href, 'date', formatDate(date));
-            loadCalendar(url);    
+            loadCalendar(url);
         }
     });
     datePicker.setDate(parseDateTime(getUrlParameter("date")));
@@ -407,7 +406,7 @@ function setDatePicker(){
 function getUrl(name,value){
     var url=window.location.href;
     url=updateUrlParameters(url);
-    if((name!=null)&&(value!=null)){
+    if((name!=null)&& (value!=null)){
         url=setUrlParameter(url, name, value);
     }
     return url;
@@ -492,7 +491,7 @@ function createId(prefix) {
 
 function showRmsPlot(id, project_id, studio_id, start, elem){
     showDialog({
-        width:940, 
+        width:940,
         height:560,
         content: elem.html(),
         buttons: {
@@ -527,7 +526,7 @@ function initRmsPlot(){
             var project_id  = field.shift();
             var studio_id   = field.shift();
             var start       = $(this).attr("start")
-            
+
             if (project_id==null) return;
             if (studio_id==null) return;
             if (start==null) return;
@@ -561,8 +560,8 @@ function initRmsPlot(){
             $(this).find('img').each(function(){
                 $(this).show();
             });
-            
-        }, 
+
+        },
         function() {
             var plot=$(this).attr("rms");
             if (plot==null) return;
@@ -594,8 +593,8 @@ function loadCalendar(url, mouseButton){
         url=updateUrlParameters(url);
     }
     url=setUrlParameter(url, 'part', '1');
-    updateContainer('calendarTable', url, function(){ 
-        updateTable(); 
+    updateContainer('calendarTable', url, function(){
+        updateTable();
         $('#calendarTable').css('opacity','1.0');
         $('#current_date').html(current_date);
         updateUrls(url);
@@ -641,7 +640,7 @@ function updateTable(){
             openNewTab(url);
         }
     });
-    
+
     var baseElement='#event_list';
     if(calendarTable==1){
         baseElement='#calendar';
@@ -658,16 +657,16 @@ function updateTable(){
     show_playout();
     show_worktime();
     show_descriptions();
-    
+
     $('#show_events').off();
-    $('#show_events').on("click",   
+    $('#show_events').on("click",
         function(){
             show_events();
             updateUrls();
         }
     );
     $('#show_schedule').off();
-    $('#show_schedule').on("click",   
+    $('#show_schedule').on("click",
         function(){
             show_schedule();
             updateUrls();
@@ -701,8 +700,8 @@ function updateTable(){
                 selectCheckbox('#show_playout');
             }
             show_events();
-            show_schedule();            
-            show_playout();            
+            show_schedule();
+            show_playout();
             updateUrls();
         }
     );
@@ -734,7 +733,7 @@ function updateTable(){
     $(baseElement).on("mousedown", ".work", function(event){
         handleWorktime($(this).attr("id"), event);
     });
-    
+
 
     //add tooltips
     $('#calendar > table > tbody > tr > td > div').mouseover( function(){
@@ -742,7 +741,7 @@ function updateTable(){
         if ($(this).attr("title") == text) return;
         $(this).attr("title",text);
     });
-    
+
     if($('#event_list table').length!=0){
         $('#event_list table').tablesorter({
             widgets: ["filter"],
@@ -780,7 +779,7 @@ function updateTable(){
             elem.addClass("pin");
         }
     });
-    
+
     //set checkboxes from url parameters and update all urls
     $('#calendar').show();
 
@@ -867,7 +866,7 @@ function handleGrid(id){
     showDateTimePicker('#series_date', {
         date: start_date
     });
-    
+
 
     show_schedule_series_dialog(project_id, studio_id, series_id, start_date);
 }

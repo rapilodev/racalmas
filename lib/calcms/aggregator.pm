@@ -4,10 +4,10 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
-use events();
-use comments();
-use calendar();
-use project();
+use events ();
+use comments ();
+use calendar ();
+use project ();
 use Date::Calc;
 
 our @EXPORT_OK = qw(get_cache configure_cache put_cache get_list check_params);
@@ -18,16 +18,16 @@ sub get_list($$) {
 
     #customize prefiltered request parameters
     $request->{params}->{original}->{date} = $request->{params}->{checked}->{date};
-    if ( $params->{event_id} ne '' ) {
+    if ($params->{event_id} ne '') {
         $request->{params}->{original}->{template} = 'event_details.html';
     } else {
         $request->{params}->{original}->{template} = 'event_list.html';
     }
-    $request->{params}->{checked} = events::check_params( $config, $request->{params}->{original} );
+    $request->{params}->{checked} = events::check_params($config, $request->{params}->{original});
 
     my $content = '';
-    my $results = events::get( $config, $request );
-    events::render( $content, $config, $request, $results );
+    my $results = events::get($config, $request);
+    events::render($content, $config, $request, $results);
 
     #set url to embed as last loaded url in javascript
     my $date = $params->{date} || '';
@@ -42,7 +42,7 @@ sub get_list($$) {
         my $project = $result->{project_title} || '';
         $used_projects->{$project}++;
     }
-    my @used_projects = reverse sort { $used_projects->{$a} <=> $used_projects->{$b} } ( keys %$used_projects );
+    my @used_projects = reverse sort { $used_projects->{$a} <=> $used_projects->{$b} } (keys %$used_projects);
     my $most_used_project = $used_projects[0];
 
     return {
@@ -65,19 +65,23 @@ sub get_menu($$$$) {
     my $params = $request->{params}->{checked};
 
     #load details only on demand
-    if ( $params->{event_id} ne '' ) {
+    if ($params->{event_id} ne '') {
         $request->{params}->{original}->{template} = 'event_menu.html';
         $request->{params}->{original}->{event_id} = undef;
         $request->{params}->{original}->{date}     = $date;
-        $request->{params}->{checked} = events::check_params( $config, $request->{params}->{original} );
-        $results = events::get( $config, $request );
+        $request->{params}->{original}->{excerpt}  = 'none';
+        $request->{params}->{original}->{content}  = 'none';
+        $request->{params}->{checked} = events::check_params($config, $request->{params}->{original});
+        $results = events::get($config, $request);
     } else {
-        $request->{params}->{checked}->{template} = template::check( $config, 'event_menu.html' );
+        $request->{params}->{checked}->{template} = template::check($config, 'event_menu.html');
+        $request->{params}->{original}->{excerpt}  = 'none';
+        $request->{params}->{original}->{content}  = 'none';
     }
 
     #events menu
     my $output = '';
-    events::render( $output, $config, $request, $results );
+    events::render($output, $config, $request, $results);
 
     return { content => $output };
 }
@@ -89,7 +93,7 @@ sub get_calendar($$$) {
 
     $request->{params}->{original}->{template} = 'calendar.html';
     $request->{params}->{original}->{date} = $date if defined $date;
-    $request->{params}->{checked} = calendar::check_params( $config, $request->{params}->{original} );
+    $request->{params}->{checked} = calendar::check_params($config, $request->{params}->{original});
     $params = $request->{params}->{checked};
 
     #set query string for caching
@@ -97,10 +101,10 @@ sub get_calendar($$$) {
     push @$options, 'date=' . $params->{date}           if $params->{date} ne '';
     push @$options, 'from_date=' . $params->{from_date} if $params->{from_date} ne '';
     push @$options, 'till_date=' . $params->{till_date} if $params->{till_date} ne '';
-    $ENV{QUERY_STRING} = '' . join( "&", @$options );
+    $ENV{QUERY_STRING} = '' . join("&", @$options);
 
     my $content = '';
-    calendar::get_cached_or_render( $content, $config, $request );
+    calendar::get_cached_or_render($content, $config, $request);
 
     return { content => $content };
 }
@@ -118,13 +122,13 @@ sub get_newest_comments($$) {
         url    => $ENV{QUERY_STRING},
         params => {
             original => $params,
-            checked  => comments::check_params( $config, $params ),
+            checked  => comments::check_params($config, $params),
         },
         config     => $config,
         connection => $request->{connection}
     };
     my $content = '';
-    comments::get_cached_or_render( $content, $config, $request );
+    comments::get_cached_or_render($content, $config, $request);
     return { content => $content };
 }
 
@@ -137,18 +141,18 @@ sub check_params($$) {
     my $end_date   = $range->{end_date};
 
     #filter for date
-    my $date = time::check_date( $params->{date} );
+    my $date = time::check_date($params->{date});
 
-    $date = time::time_to_date( time() )  if $date eq '';
+    $date = time::time_to_date(time())  if $date eq '';
     $date = time::get_event_date($config) if $date eq 'today';
 
     $date = $start_date if $date lt $start_date;
     $date = $end_date   if $date gt $end_date;
 
     #filter for date
-    my $time = time::check_time( $params->{time} );
-    if ( ( defined $params->{today} ) && ( $params->{today} eq '1' ) ) {
-        $date = time::time_to_date( time() );
+    my $time = time::check_time($params->{time});
+    if ((defined $params->{today}) && ($params->{today} eq '1')) {
+        $date = time::time_to_date(time());
         $params->{date} = $date;
     }
 
@@ -165,11 +169,11 @@ sub check_params($$) {
         }
     }
 
-    my $from_date = time::check_date( $params->{from_date} );
-    my $till_date = time::check_date( $params->{till_date} );
+    my $from_date = time::check_date($params->{from_date});
+    my $till_date = time::check_date($params->{till_date});
 
     my $previous_series = $params->{previous_series} || '';
-    if ( ($previous_series) && ( $previous_series =~ /(\d+)/ ) ) {
+    if (($previous_series) && ($previous_series =~ /(\d+)/)) {
         $params->{event_id} = events::get_previous_event_of_series(
             undef, $config,
             {
@@ -181,7 +185,7 @@ sub check_params($$) {
     }
 
     my $next_series = $params->{next_series} || '';
-    if ( ($next_series) && ( $next_series =~ /(\d+)/ ) ) {
+    if (($next_series) && ($next_series =~ /(\d+)/)) {
         $params->{event_id} = events::get_next_event_of_series(
             undef, $config,
             {
@@ -193,22 +197,22 @@ sub check_params($$) {
     }
 
     my $event_id = $params->{event_id} || '';
-    unless ( $event_id eq '' ) {
-        if ( $event_id =~ /(\d+)/ ) {
+    unless ($event_id eq '') {
+        if ($event_id =~ /(\d+)/) {
             $event_id = $1;
         } else {
-            log::error( $config, "invalid event_id" );
+            log::error($config, "invalid event_id");
         }
     }
 
     #set query string for caching
-    if ( ( !exists $ENV{QUERY_STRING} ) || ( $ENV{QUERY_STRING} eq '' ) ) {
+    if ((!exists $ENV{QUERY_STRING}) || ($ENV{QUERY_STRING} eq '')) {
         my $options = [];
         push @$options, 'date=' . $date           if $date ne '';
         push @$options, 'from_date=' . $from_date if $from_date ne '';
         push @$options, 'till_date=' . $till_date if $till_date ne '';
         push @$options, 'event_id=' . $event_id   if $event_id ne '';
-        $ENV{QUERY_STRING} = '' . join( "&", @$options );
+        $ENV{QUERY_STRING} = '' . join("&", @$options);
     }
 
     return {

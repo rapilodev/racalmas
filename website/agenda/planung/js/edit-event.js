@@ -15,7 +15,7 @@ function onDateModified(){
     var startDate=parseDateTime($('#start_date').val());
     var weekday=getWeekday(startDate);
     $('#start_date_weekday').html(weekday);
-    
+
     updateCalendarLink();
 }
 
@@ -34,7 +34,7 @@ function hideSelectRerun(resultSelector, tillDate){
     $('#import_rerun').hide();
 
     $('.buttons').show();
-    $('#edit_event').show();    
+    $('#edit_event').show();
 }
 
 function selectOldEventFromSeries(resultSelector, tillDate){
@@ -51,7 +51,7 @@ function selectOldEventFromSeries(resultSelector, tillDate){
     url+="&resultElemId="+encodeURIComponent(resultSelector);
     url+="&till_date="+tillDate;
     url+="&selectRange=1";
-    
+
     updateContainer('import_rerun', url);
 }
 
@@ -70,7 +70,7 @@ function selectOtherEvent(resultSelector){
     url+="&selectRange=1";
     url+="&selectProjectStudio=1";
     url+="&selectSeries=1";
-    
+
     updateContainer('import_rerun', url);
 }
 
@@ -110,7 +110,7 @@ function loadEvent(projectId,studioId,seriesId,eventId, callback){
     url+="&json=1";
     url+="&get_rerun=1";
     console.log("loadEvent: "+url)
-    
+
     $.getJSON(url)
     .done( function(event) {
         $("#edit_event input[name='title']").attr('value', event.title)
@@ -134,7 +134,7 @@ function loadEvent(projectId,studioId,seriesId,eventId, callback){
         $("#edit_event input[name='archive_url']").attr('value', event.archive_url);
 
         updateDuration("#edit_event #duration", event.duration);
-        
+
         if (callback != null) callback();
         console.log("loadEvent done")
     }).fail( function(jqxhr, textStatus, error) {
@@ -188,9 +188,9 @@ function changeSeries(seriesId){
     url += '&new_series_id='+newSeriesId;
     url += '&action=reassign_event';
     //alert(url);
-    
+
     $.post(
-        url, 
+        url,
         function(data){
             var url='broadcast.cgi?';
             url += '&project_id='+projectId;
@@ -199,7 +199,7 @@ function changeSeries(seriesId){
             url += '&event_id='+eventId;
             url += '&action=edit';
             window.location.href = url;
-        } 
+        }
     );
     return false;
 }
@@ -312,7 +312,7 @@ $(document).ready(
                     $(this).attr('value','1');
                 }
             }
-        );    
+        );
 
         if($('#calendar').length==0){
             $('#back_to_calendar').hide();
@@ -322,7 +322,7 @@ $(document).ready(
         checkFields();
 
         $('textarea').autosize();
-        
+
         // unset published on setting draft
         $("#edit_event input[name='draft']").change(
             function(){

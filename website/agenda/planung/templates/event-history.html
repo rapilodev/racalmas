@@ -3,9 +3,9 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title><TMPL_VAR .doc.title></title>
-    <link href="css/event.css" type="text/css" rel="stylesheet"/> 
-	<link href="css/theme.default.css" rel="stylesheet">
-	<script src="js/jquery.tablesorter.min.js"></script>
+    <link href="css/event.css" type="text/css" rel="stylesheet"/>
+    <link href="css/theme.default.css" rel="stylesheet">
+    <script src="js/jquery.tablesorter.min.js"></script>
 
     <style>
         table#event_history tr td{
@@ -32,12 +32,12 @@
 <script>
     var region='<TMPL_VAR loc.region escape=js>';
     $(function(){
-	    $('table').tablesorter({
-		    widgets        : ['zebra','filter'],
-		    usNumberFormat : false
-	    });
+        $('table').tablesorter({
+            widgets        : ['zebra','filter'],
+            usNumberFormat : false
+        });
     });
-    
+
     function showDiff(){
         var ids=[];
         $('#event_history input.diff:checked').each(function(){
@@ -90,12 +90,12 @@
         <th><TMPL_VAR .loc.label_event></th>
         <th><TMPL_VAR .loc.label_start></th>
         <th class="status" title="<TMPL_VAR .loc.label_live>"     ><img src="image/32/live.png"></th>
-        <th class="status" title="<TMPL_VAR .loc.label_published>"><img src="image/32/published.png"></th> 
-        <th class="status" title="<TMPL_VAR .loc.label_playout>"  ><img src="image/32/playout.png"></th> 
-        <th class="status" title="<TMPL_VAR .loc.label_archived>" ><img src="image/32/archived.png"></th> 
-        <th class="status" title="<TMPL_VAR .loc.label_deleted>"  ><img src="image/32/deleted.png"></th> 
-        <th><TMPL_VAR .loc.label_modified_at></th> 
-        <th><TMPL_VAR .loc.label_modified_by></th> 
+        <th class="status" title="<TMPL_VAR .loc.label_published>"><img src="image/32/published.png"></th>
+        <th class="status" title="<TMPL_VAR .loc.label_playout>"  ><img src="image/32/playout.png"></th>
+        <th class="status" title="<TMPL_VAR .loc.label_archived>" ><img src="image/32/archived.png"></th>
+        <th class="status" title="<TMPL_VAR .loc.label_deleted>"  ><img src="image/32/deleted.png"></th>
+        <th><TMPL_VAR .loc.label_modified_at></th>
+        <th><TMPL_VAR .loc.label_modified_by></th>
     </tr>
     </head>
     <tbody>

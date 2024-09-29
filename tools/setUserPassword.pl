@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w 
+#! /usr/bin/perl -w
 
 use warnings "all";
 use strict;
@@ -14,7 +14,7 @@ use uac;
 my $cgi=new CGI();
 my $params=$cgi->Vars();
 
-my $config		=config::get('../../piradio.de/agenda/config/config.cgi');
+my $config        =config::get('../../piradio.de/agenda/config/config.cgi');
 
 $params=check_params($params);
 our $errors=[];
@@ -22,21 +22,21 @@ change_password($config, $params);
 
 
 sub change_password{
-	my $config=shift;
-	my $params=shift;
+    my $config=shift;
+    my $params=shift;
 
     my $userName=$params->{user_name}||'';
-	if ($userName eq ''){
-		error ("user '$userName' not found");
+    if ($userName eq ''){
+        error ("user '$userName' not found");
         exit;
-	}
+    }
 
     my $user=uac::get_user($config, $userName);
 
-	unless ( (defined $user) && (defined $user->{id}) && ($user->{id}ne'') ){
-        error( "user id not found");
+    unless ((defined $user) && (defined $user->{id}) && ($user->{id}ne'')){
+        error("user id not found");
         exit;
-	}
+    }
 
     unless (defined $params->{user_password}){
         error("missing password for $userName");
@@ -44,7 +44,7 @@ sub change_password{
     }
 
     unless(check_password($params->{user_password})){
-		error ("password does not meet requirements");
+        error ("password does not meet requirements");
         exit;
     }
 
@@ -59,7 +59,7 @@ sub change_password{
     uac::update_user($config, $user);
     print STDERR "password changed for $userName\n";
     print STDERR Dumper($user);
-    
+
 }
 
 sub check_password{
@@ -93,23 +93,23 @@ sub check_password{
 
 
 sub check_params{
-	my $params=shift;
+    my $params=shift;
 
-	my $checked={};
+    my $checked={};
 
-	for my $param ('user_name', 'user_password', 'user_password2'){
-		if (defined $params->{$param}){
-			$checked->{$param}=$params->{$param};
-		}
-	}
+    for my $param ('user_name', 'user_password', 'user_password2'){
+        if (defined $params->{$param}){
+            $checked->{$param}=$params->{$param};
+        }
+    }
 
-	#print Dumper($params);
-	#print '<pre>'.Dumper($checked).'</pre>';
-	return $checked;
+    #print Dumper($params);
+    #print '<pre>'.Dumper($checked).'</pre>';
+    return $checked;
 }
 
 sub error{
-	print STDERR "ERROR - ".$_[0]."\n";
+    print STDERR "ERROR - ".$_[0]."\n";
 }
 
 

@@ -92,7 +92,7 @@ msgid "button_create_series"
 msgstr "create"
 
 msgid "label_no_studio_selected"
-msgstr "Please choose studio and try again"
+msgstr "Please select studio and try again"
 
 msgid "label_event_not_assigned_to_series"
 msgstr "This event is not assigned to any series"

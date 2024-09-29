@@ -13,7 +13,7 @@ function uploadImage(){
     var form=$("#img_upload");
     var fd = new FormData(form[0]);
     $.ajax({
-        url: 'image-upload.cgi',  
+        url: 'image-upload.cgi',
         type: 'POST',
         data: fd,
         cache: false,
@@ -26,7 +26,7 @@ function uploadImage(){
         var filename = $("#upload_image_filename").html();
         var title    = $("#upload_image_title").html();
         var quote    = "'";
-        
+
         //remove existing image from list
         $('#imageList div.images #img_'+image_id).remove();
 

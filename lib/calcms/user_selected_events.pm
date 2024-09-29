@@ -14,7 +14,7 @@ sub get_columns($) {
     my ($config) = @_;
 
     my $dbh  = db::connect($config);
-    return db::get_columns_hash( $dbh, 'calcms_user_selected_events' );
+    return db::get_columns_hash($dbh, 'calcms_user_selected_events');
 }
 
 sub get ($$) {
@@ -30,23 +30,23 @@ sub get ($$) {
     for my $field ('user', 'project_id', 'studio_id', 'series_id',
         'filter_project_studio', 'filter_series'
     ){
-        if ( ( defined $condition->{$field} ) && ( $condition->{$field} ne '' ) ) {
+        if ((defined $condition->{$field}) && ($condition->{$field} ne '')) {
             push @conditions,  $field.'=?';
             push @bind_values, $condition->{$field};
         }
     }
 
     my $conditions = '';
-    $conditions = " where " . join( " and ", @conditions ) if scalar(@conditions) > 0;
+    $conditions = " where " . join(" and ", @conditions) if scalar(@conditions) > 0;
 
     my $query = qq{
-		select *
-		from   calcms_user_selected_events
-		$conditions
-	};
+        select *
+        from   calcms_user_selected_events
+        $conditions
+    };
 
     my $dbh = db::connect($config);
-    my $entries = db::get( $dbh, $query, \@bind_values );
+    my $entries = db::get($dbh, $query, \@bind_values);
     return $entries->[0] || undef;
 }
 
@@ -58,35 +58,35 @@ sub insert ($$) {
     };
 
     my $dbh = db::connect($config);
-    print STDERR "insert".Dumper($entry );
-    return db::insert( $dbh, 'calcms_user_selected_events', $entry );
+    print STDERR "insert".Dumper($entry);
+    return db::insert($dbh, 'calcms_user_selected_events', $entry);
 }
 
 sub update($$) {
     my ($config, $entry) = @_;
 
-    my $fields = [ 
-        'user', 'project_id', 'studio_id', 'series_id', 
-        'filter_project_studio', 'filter_series' 
+    my $fields = [
+        'user', 'project_id', 'studio_id', 'series_id',
+        'filter_project_studio', 'filter_series'
     ];
-    for (@$fields){
+    for (@$fields) {
         return unless defined $entry->{$_}
     };
 
     my @keys        = sort keys %$entry;
-    my $values      = join( ",", map { $_ . '=?' } @keys );
-    my @bind_values = map { $entry->{$_} } ( @keys, @$fields );
-    my $conditions  = join (' and ', map { $_.'=?' } @$fields );
+    my $values      = join(",", map { $_ . '=?' } @keys);
+    my @bind_values = map { $entry->{$_} } (@keys, @$fields);
+    my $conditions  = join (' and ', map { $_.'=?' } @$fields);
 
     my $query = qq{
-		update calcms_user_selected_events 
-		set    $values
-		where  $conditions
-	};
+        update calcms_user_selected_events
+        set    $values
+        where  $conditions
+    };
 
-    print STDERR "update".Dumper($query ).Dumper(\@bind_values);
+    print STDERR "update".Dumper($query).Dumper(\@bind_values);
     my $dbh = db::connect($config);
-    return db::put( $dbh, $query, \@bind_values );
+    return db::put($dbh, $query, \@bind_values);
 }
 
 sub delete ($$) {
@@ -97,14 +97,14 @@ sub delete ($$) {
     };
 
     my $query = qq{
-		delete 
-		from calcms_user_selected_events
-		where user=? and project_id=? and studio_id=? and series_id=?
-	};
+        delete
+        from calcms_user_selected_events
+        where user=? and project_id=? and studio_id=? and series_id=?
+    };
     my $bind_values = [ $entry->{user}, $entry->{project_id}, $entry->{studio_id}, $entry->{series_id} ];
 
     my $dbh = db::connect($config);
-    return db::put( $dbh, $query, $bind_values );
+    return db::put($dbh, $query, $bind_values);
 }
 
 sub error ($) {

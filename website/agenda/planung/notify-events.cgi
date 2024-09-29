@@ -26,11 +26,11 @@ use mail();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+(my $cgi, my $params, my $error) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+my ($user, $expires) = auth::get_user($config, $params, $cgi);
+return if ((!defined $user) || ($user eq ''));
 
 my $user_presets = uac::get_user_presets(
     $config,
@@ -41,34 +41,34 @@ my $user_presets = uac::get_user_presets(
     }
 );
 $params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
+$params = uac::setDefaultStudio($params, $user_presets);
+$params = uac::setDefaultProject($params, $user_presets);
 
 my $request = {
     url => $ENV{QUERY_STRING} || '',
     params => {
         original => $params,
-        checked  => check_params( $config, $params ),
+        checked  => check_params($config, $params),
     },
 };
 
 #set user at params->presets->user
-$request = uac::prepare_request( $request, $user_presets );
+$request = uac::prepare_request($request, $user_presets);
 $params = $request->{params}->{checked};
 
 #show header
-unless ( params::isJson() || ( $params->{template} =~ /\.txt/ ) || $params->{action}eq'send' ) {
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-    template::process( $config, 'print', template::check( $config, 'default.html' ), $headerParams );
+unless (params::is_json() || ($params->{template} =~ /\.txt/) || $params->{action}eq'send') {
+    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+    $headerParams->{loc} = localization::get($config, { user => $user, file => 'menu' });
+    template::process($config, 'print', template::check($config, 'default.html'), $headerParams);
 }
-return unless uac::check( $config, $params, $user_presets ) == 1;
+return unless uac::check($config, $params, $user_presets) == 1;
 
-if ( $params->{action} eq 'send' ) {
-    sendMail( $config, $request );
+if ($params->{action} eq 'send') {
+    sendMail($config, $request);
     return;
 }
-show_events( $config, $request );
+show_events($config, $request);
 
 #show existing event history
 sub show_events {
@@ -77,14 +77,14 @@ sub show_events {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    for my $attr ( 'project_id', 'studio_id') {    # 'series_id','event_id'
-        unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to show changes" );
+    for my $attr ('project_id', 'studio_id') {    # 'series_id','event_id'
+        unless (defined $params->{$attr}) {
+            uac::print_error("missing " . $attr . " to show changes");
             return;
         }
     }
 
-    unless ( $permissions->{read_event} == 1 ) {
+    unless ($permissions->{read_event} == 1) {
         uac::print_error("missing permissions to show changes");
         return;
     }
@@ -95,16 +95,16 @@ sub show_events {
         project_id => $params->{project_id},
         studio_id  => $params->{studio_id},
         from_date  => time::time_to_date(),
-        till_date  => time::time_to_date( time() + $duration * 24 * 60 * 60 ),
+        till_date  => time::time_to_date(time() + $duration * 24 * 60 * 60),
         draft      => 0,
         published  => 1
     };
 
-    my $events = series::get_events( $config, $options );
+    my $events = series::get_events($config, $options);
 
     # get series_users
     for my $event (@$events) {
-        my $mail = getMail( $config, $request, $event );
+        my $mail = getMail($config, $request, $event);
         $event->{mail} = $mail;
         $event->{start} = substr($event->{start}, 0, 16);
         $event->{preproduction} = !$event->{live};
@@ -114,12 +114,12 @@ sub show_events {
     my @events = sort { $a->{start} cmp $b->{start} } @$events;
     $params->{events} = \@events;
 
-    for my $permission ( keys %{$permissions} ) {
+    for my $permission (keys %{$permissions}) {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
 
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'notify-events' } );
-    template::process( $config, 'print', $params->{template}, $params );
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'notify-events' });
+    template::process($config, 'print', $params->{template}, $params);
 
 }
 
@@ -129,14 +129,14 @@ sub sendMail {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    for my $attr ( 'project_id', 'studio_id', 'series_id', 'event_id' ) {
-        unless ( defined $params->{$attr} ) {
-            uac::print_error( "missing " . $attr . " to send notification" );
+    for my $attr ('project_id', 'studio_id', 'series_id', 'event_id') {
+        unless (defined $params->{$attr}) {
+            uac::print_error("missing " . $attr . " to send notification");
             return;
         }
     }
 
-    unless ( $permissions->{read_event} == 1 ) {
+    unless ($permissions->{read_event} == 1) {
         uac::print_error("missing permissions to send notification");
         return;
     }
@@ -149,14 +149,14 @@ sub sendMail {
         draft      => 0,
         published  => 0,
     };
-    my $events = series::get_events( $config, $options );
+    my $events = series::get_events($config, $options);
 
-    unless ( scalar(@$events) == 1 ) {
+    unless (scalar(@$events) == 1) {
         uac::print_error("did not found exactly one event");
         return;
     }
 
-    my $mail = getMail( $config, $request, $events->[0] );
+    my $mail = getMail($config, $request, $events->[0]);
     $mail->{To}      = $params->{to}      if defined $params->{to};
     $mail->{Cc}      = $params->{cc}      if defined $params->{cc};
     $mail->{Subject} = $params->{subject} if defined $params->{subject};
@@ -185,21 +185,21 @@ sub getMail {
     my $userNames = [];
     my $userMails = [];
     for my $user (@$users) {
-        push @$userNames, ( split( /\s+/, $user->{full_name} ) )[0];
+        push @$userNames, (split(/\s+/, $user->{full_name}))[0];
         push @$userMails, $user->{email};
     }
-    if ( scalar(@$userMails) == 0 ) {
+    if (scalar(@$userMails) == 0) {
         $event->{noRecipient} = 1;
         return;
     }
     my $sender = $config->{locations}->{event_sender_email};
     my $mail = {
         'From'     => $sender,
-        'To'       => join( ', ', @$userMails ),
+        'To'       => join(', ', @$userMails),
         'Cc'       => $sender,
         'Reply-To' => $sender,
         'Subject'  => substr($event->{start},0,16) . " - $event->{full_title}",
-        'Data'     => "Hallo " . join( ' und ', @$userNames ) . ",\n\n"
+        'Data'     => "Hallo " . join(' und ', @$userNames) . ",\n\n"
     };
 
     $mail->{Data} .= "nur zur Erinnerung...\n\n";
@@ -228,16 +228,16 @@ sub check_params {
 
     my $checked  = {};
     my $template = '';
-    $checked->{template} = template::check( $config, $params->{template}, 'notify-events' );
+    $checked->{template} = template::check($config, $params->{template}, 'notify-events');
 
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'event_id', 'project_id', 'studio_id', 'default_studio_id', 'user_id', 'series_id', 'duration'
     ]);
 
-    entry::set_strings( $checked, $params, [
+    entry::set_strings($checked, $params, [
         'subject', 'to', 'cc', 'content']);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;

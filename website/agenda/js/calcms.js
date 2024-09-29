@@ -13,28 +13,28 @@ var calcms = (function($) {
                 elem.innerHTML = text;
                 if (callback != null) callback();
             })
-            .catch( error => { 
+            .catch( error => {
                 console.error('Error:', error);
             });
     }
 
     my.load = function load(url) {
-        window.location.href = url;
+        window.location  = url;
     }
 
     my.show = function (elem) {
-	    elem.style.display = 'block';
+        elem.style.display = 'block';
     };
 
     my.hide = function (elem) {
-	    elem.style.display = 'none';
+        elem.style.display = 'none';
     };
 
     my.toggle = function (elem) {
-	    if (window.getComputedStyle(elem).display === 'block') {
-		    my.hide(elem);
-	    }else{
-    	    my.show(elem);
+        if (window.getComputedStyle(elem).display === 'block') {
+            my.hide(elem);
+        }else{
+            my.show(elem);
         }
     };
 
@@ -321,7 +321,7 @@ var calcms = (function($) {
         var url = my.setAndGetUrlParameters(field, value);
 
         if (target == 'window') {
-            window.location.href = events_url + url;
+            window.location = events_url + url;
         } else {
             my.updateContainer('calcms_menu', menu_url + url);
 
@@ -411,7 +411,7 @@ var calcms = (function($) {
         }
 
         if (target == 'window') {
-            window.location.href = events_url + url;
+            window.location = events_url + url;
         } else {
             my.updateContainer('calcms_calendar', url);
         }
@@ -463,11 +463,11 @@ var calcms = (function($) {
         .then( result => {
             console.log('Success:', result);
             my.showCommentsByEventIdOrEventStart(
-                my.get('comments_event_id'), 
+                my.get('comments_event_id'),
                 my.get('comments_event_start')
-            );        
+            );
         })
-        .catch( error => { 
+        .catch( error => {
             console.error('Error:', error);
         });
 

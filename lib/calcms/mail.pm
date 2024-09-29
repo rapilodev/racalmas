@@ -35,7 +35,7 @@ sub send($) {
             'To'       => $mail->{'To'},
             'Cc'       => $mail->{'Cc'},
             'Reply-To' => $mail->{'Reply-To'},
-			'Subject' => to_ascii($mail->{'Subject'})
+            'Subject' => to_ascii($mail->{'Subject'})
         ],
         body => to_ascii($mail->{'Data'})
     );

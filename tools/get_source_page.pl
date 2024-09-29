@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use warnings;
 use strict;
@@ -26,7 +26,7 @@ GetOptions (
     "help"              => \$help
 )or die("Error in command line arguments\n");
 
-if(($help) || (!(defined $configFile)) ){
+if(($help) || (!(defined $configFile))){
     print get_usage();
     exit 1;
 }
@@ -150,7 +150,7 @@ sub load_widgets{
     for my $block (keys %$urls){
         if ($block ne 'base'){
             my $content=$results->{$block};
-            $base=~s/( id\=\"$block\".*?\>)(.*?)(\<)/$1$content$3/;
+            $base=~s/(id\=\"$block\".*?\>)(.*?)(\<)/$1$content$3/;
         }
     }
     return $base;
@@ -160,7 +160,7 @@ sub http_get{
     my $ua=shift;
     my $url=shift;
 
-    print STDERR "read url '$url'\n"; 
+    print STDERR "read url '$url'\n";
     my $request = HTTP::Request->new(GET => $url);
     my $response = $ua->request($request);
     return $response->{_content};

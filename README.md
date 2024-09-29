@@ -21,10 +21,10 @@ Event Calendar
 Series
 ![series](docs/screenshots/calcms-show-series.png)
 
-Edit Series 
+Edit Series
 ![series](docs/screenshots/calcms-edit-series.png)
 
-Schedule Series 
+Schedule Series
 ![series](docs/screenshots/calcms-schedule-series.png)
 
 List Series Events

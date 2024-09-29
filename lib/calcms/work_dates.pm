@@ -22,7 +22,7 @@ our @EXPORT_OK = qw(get_columns get insert update delete get_dates);
 sub get_columns($) {
     my ($config) = @_;
     my $dbh = db::connect($config);
-    return db::get_columns_hash( $dbh, 'calcms_work_dates' );
+    return db::get_columns_hash($dbh, 'calcms_work_dates');
 }
 
 # get all work_dates for studio_id and schedule_id within given time range
@@ -32,35 +32,35 @@ sub get ($$) {
 
     my $date_range_include = 0;
     $date_range_include = 1
-      if ( defined $condition->{date_range_include} ) && ( $condition->{date_range_include} == 1 );
+      if (defined $condition->{date_range_include}) && ($condition->{date_range_include} == 1);
 
     my $dbh = db::connect($config);
 
     my @conditions  = ();
     my @bind_values = ();
 
-    if ( ( defined $condition->{project_id} ) && ( $condition->{project_id} ne '' ) ) {
+    if ((defined $condition->{project_id}) && ($condition->{project_id} ne '')) {
         push @conditions,  'project_id=?';
         push @bind_values, $condition->{project_id};
     }
 
-    if ( ( defined $condition->{studio_id} ) && ( $condition->{studio_id} ne '' ) ) {
+    if ((defined $condition->{studio_id}) && ($condition->{studio_id} ne '')) {
         push @conditions,  'studio_id=?';
         push @bind_values, $condition->{studio_id};
     }
 
-    if ( ( defined $condition->{schedule_id} ) && ( $condition->{schedule_id} ne '' ) ) {
+    if ((defined $condition->{schedule_id}) && ($condition->{schedule_id} ne '')) {
         push @conditions,  'schedule_id=?';
         push @bind_values, $condition->{schedule_id};
     }
 
-    if ( ( defined $condition->{start_at} ) && ( $condition->{start_at} ne '' ) ) {
+    if ((defined $condition->{start_at}) && ($condition->{start_at} ne '')) {
         push @conditions,  'start=?';
         push @bind_values, $condition->{start_at};
     }
 
-    if ( ( defined $condition->{from} ) && ( $condition->{from} ne '' ) ) {
-        if ( $date_range_include == 1 ) {
+    if ((defined $condition->{from}) && ($condition->{from} ne '')) {
+        if ($date_range_include == 1) {
             push @conditions,  'end_date>=?';
             push @bind_values, $condition->{from};
         } else {
@@ -69,8 +69,8 @@ sub get ($$) {
         }
     }
 
-    if ( ( defined $condition->{till} ) && ( $condition->{till} ne '' ) ) {
-        if ( $date_range_include == 1 ) {
+    if ((defined $condition->{till}) && ($condition->{till} ne '')) {
+        if ($date_range_include == 1) {
             push @conditions,  'start_date<=?';
             push @bind_values, $condition->{till};
         } else {
@@ -79,36 +79,36 @@ sub get ($$) {
         }
     }
 
-    if ( ( defined $condition->{exclude} ) && ( $condition->{exclude} ne '' ) ) {
+    if ((defined $condition->{exclude}) && ($condition->{exclude} ne '')) {
         push @conditions,  'exclude=?';
         push @bind_values, $condition->{exclude};
     }
 
     my $conditions = '';
-    $conditions = " where " . join( " and ", @conditions ) if ( @conditions > 0 );
+    $conditions = " where " . join(" and ", @conditions) if (@conditions > 0);
 
     my $query = qq{
-		select	 date(start) 		start_date
-				,date(end) 			end_date
-				,dayname(start) 	weekday
-				,start_date         day
-				,start
-				,end
-				,schedule_id
-				,studio_id
-				,project_id
-				,exclude
+        select     date(start)         start_date
+                ,date(end)             end_date
+                ,dayname(start)     weekday
+                ,start_date         day
+                ,start
+                ,end
+                ,schedule_id
+                ,studio_id
+                ,project_id
+                ,exclude
                 ,type
                 ,title
 
-		from 	calcms_work_dates
-		$conditions
-		order by start
-	};
+        from     calcms_work_dates
+        $conditions
+        order by start
+    };
 
-    my $entries = db::get( $dbh, $query, \@bind_values );
+    my $entries = db::get($dbh, $query, \@bind_values);
     for my $entry (@$entries) {
-        $entry->{weekday} = substr( $entry->{weekday}, 0, 2 );
+        $entry->{weekday} = substr($entry->{weekday}, 0, 2);
     }
 
     return $entries;
@@ -118,14 +118,14 @@ sub get ($$) {
 sub update($$) {
     my ($config, $entry) = @_;
 
-    for ('project_id', 'studio_id', 'schedule_id' ) {
+    for ('project_id', 'studio_id', 'schedule_id') {
         return undef unless defined $entry->{$_}
     };
 
     my $dbh = db::connect($config);
 
     #delete all existing work dates (by project, studio and schedule id)
-    work_dates::delete( $config, $entry );
+    work_dates::delete($config, $entry);
 
     my $day_start = $config->{date}->{day_starting_hour};
 
@@ -145,7 +145,7 @@ sub update($$) {
     #TODO:set schedules exclude to 0 if not 1
     #insert all normal dates (not excludes)
     for my $schedule (@$schedules) {
-        my $dates = get_schedule_dates( $schedule, { exclude => 0 } );
+        my $dates = get_schedule_dates($schedule, { exclude => 0 });
         for my $date (@$dates) {
             $date->{exclude} = 0;
             $work_dates->{ $date->{start} } = $date;
@@ -154,7 +154,7 @@ sub update($$) {
 
     #insert / overwrite all exlude dates
     for my $schedule (@$schedules) {
-        my $dates = get_schedule_dates( $schedule, { exclude => 1 } );
+        my $dates = get_schedule_dates($schedule, { exclude => 1 });
         for my $date (@$dates) {
             $date->{exclude} = 1;
             $work_dates->{ $date->{start} } = $date;
@@ -164,7 +164,7 @@ sub update($$) {
     my $request = { config => $config };
     my $i = 0;
     my $j = 0;
-    for my $date ( keys %$work_dates ) {
+    for my $date (keys %$work_dates) {
         my $work_date = $work_dates->{$date};
 
         #insert date
@@ -179,10 +179,10 @@ sub update($$) {
             end         => $work_date->{end},
             exclude     => $work_date->{exclude}
         };
-        if ( studio_timeslot_dates::can_studio_edit_events( $config, $entry ) == 1 ) {    # by studio_id, start, end
-            $entry->{start_date} = time::add_hours_to_datetime( $entry->{start}, -$day_start );
-            $entry->{end_date}   = time::add_hours_to_datetime( $entry->{end},   -$day_start );
-            db::insert( $dbh, 'calcms_work_dates', $entry );
+        if (studio_timeslot_dates::can_studio_edit_events($config, $entry) == 1) {    # by studio_id, start, end
+            $entry->{start_date} = time::add_hours_to_datetime($entry->{start}, -$day_start);
+            $entry->{end_date}   = time::add_hours_to_datetime($entry->{end},   -$day_start);
+            db::insert($dbh, 'calcms_work_dates', $entry);
             $i++;
         } else {
             $j++;
@@ -197,14 +197,14 @@ sub get_schedule_dates($$) {
 
     my $is_exclude = $options->{exclude} || 0;
     my $dates = [];
-    return $dates if ( $is_exclude eq '1' ) && ( $schedule->{exclude} ne '1' );
-    return $dates if ( $is_exclude eq '0' ) && ( $schedule->{exclude} eq '1' );
+    return $dates if ($is_exclude eq '1') && ($schedule->{exclude} ne '1');
+    return $dates if ($is_exclude eq '0') && ($schedule->{exclude} eq '1');
 
-    if ( $schedule->{period_type} eq 'single' ) {
-        $dates = get_single_date( $schedule->{start}, $schedule->{duration} );
-    } elsif ( $schedule->{period_type} eq 'days' ) {
-        $dates = get_dates( $schedule->{start}, $schedule->{end}, $schedule->{duration}, $schedule->{frequency} );
-    } elsif ( $schedule->{period_type} eq 'week_of_month' ) {
+    if ($schedule->{period_type} eq 'single') {
+        $dates = get_single_date($schedule->{start}, $schedule->{duration});
+    } elsif ($schedule->{period_type} eq 'days') {
+        $dates = get_dates($schedule->{start}, $schedule->{end}, $schedule->{duration}, $schedule->{frequency});
+    } elsif ($schedule->{period_type} eq 'week_of_month') {
         $dates = get_week_of_month_dates(
             $schedule->{start},         $schedule->{end},     $schedule->{duration},
             $schedule->{week_of_month}, $schedule->{weekday}, $schedule->{month}
@@ -227,7 +227,7 @@ sub get_week_of_month_dates($$$$$$) {
     return undef if $frequency eq '';
     return undef if $frequency == 0;
 
-    my $start_dates = time::get_nth_weekday_in_month( $start, $end, $week, $weekday );
+    my $start_dates = time::get_nth_weekday_in_month($start, $end, $week, $weekday);
 
     my $results = [];
 
@@ -236,14 +236,14 @@ sub get_week_of_month_dates($$$$$$) {
         $c++;
         my @start = @{ time::datetime_to_array($start_datetime) };
         next unless @start >= 6;
-        next if ( $c % $frequency ) != 0;
+        next if ($c % $frequency) != 0;
 
         my @end_datetime = Date::Calc::Add_Delta_DHMS(
             $start[0], $start[1], $start[2],    # start date
             $start[3], $start[4], $start[5],    # start time
             0, 0, $duration, 0                  # delta days, hours, minutes, seconds
         );
-        my $end_datetime = time::array_to_datetime( \@end_datetime );
+        my $end_datetime = time::array_to_datetime(\@end_datetime);
 
         push @$results,
           {
@@ -268,7 +268,7 @@ sub get_single_date($$) {
     );
     my $date = {
         start => $start_datetime,
-        end   => time::array_to_datetime( \@end_datetime )
+        end   => time::array_to_datetime(\@end_datetime)
     };
     return [$date];
 }
@@ -280,46 +280,46 @@ sub get_dates($$$$) {
 
     my @start = @{ time::datetime_to_array($start_datetime) };
     return unless @start >= 6;
-    my @start_date = ( $start[0], $start[1], $start[2] );
-    my $start_time = sprintf( '%02d:%02d:%02d', $start[3], $start[4], $start[5] );
+    my @start_date = ($start[0], $start[1], $start[2]);
+    my $start_time = sprintf('%02d:%02d:%02d', $start[3], $start[4], $start[5]);
 
     #return on single date
     my $date = {};
-    $date->{start} = sprintf( "%04d-%02d-%02d", @start_date ) . ' ' . $start_time;
+    $date->{start} = sprintf("%04d-%02d-%02d", @start_date) . ' ' . $start_time;
     return undef if $duration eq '';
 
-    return undef if ( $frequency eq '' ) || ( $end_date eq '' );
+    return undef if ($frequency eq '') || ($end_date eq '');
 
     #continue on recurring date
     my @end = @{ time::datetime_to_array($end_date) };
     return unless @end >= 3;
-    my @end_date = ( $end[0], $end[1], $end[2] );
+    my @end_date = ($end[0], $end[1], $end[2]);
 
     my $today = time::time_to_date();
-    my ( $year, $month, $day ) = split( /\-/, $today );
+    my ($year, $month, $day) = split(/\-/, $today);
 
     #do not show dates one month back
-    my $not_before = sprintf( "%04d-%02d-%02d", Date::Calc::Add_Delta_Days( $year, $month, $day, -30 ) );
+    my $not_before = sprintf("%04d-%02d-%02d", Date::Calc::Add_Delta_Days($year, $month, $day, -30));
 
     my $dates = [];
-    return $dates if ( $end_date lt $today );
-    return $dates if ( $frequency < 1 );
+    return $dates if ($end_date lt $today);
+    return $dates if ($frequency < 1);
 
-    my $j = Date::Calc::Delta_Days( @start_date, @end_date );
+    my $j = Date::Calc::Delta_Days(@start_date, @end_date);
     my $c = 0;
-    for ( my $i = 0 ; $i <= $j ; $i += $frequency ) {
-        my @date = Date::Calc::Add_Delta_Days( $start[0], $start[1], $start[2], $i );
+    for (my $i = 0 ; $i <= $j ; $i += $frequency) {
+        my @date = Date::Calc::Add_Delta_Days($start[0], $start[1], $start[2], $i);
         my $date = {};
-        $date->{start} = sprintf( "%04d-%02d-%02d", @date ) . ' ' . $start_time;
+        $date->{start} = sprintf("%04d-%02d-%02d", @date) . ' ' . $start_time;
 
         my @end_datetime = Date::Calc::Add_Delta_DHMS(
             $date[0],  $date[1],  $date[2],     # start date
             $start[3], $start[4], $start[5],    # start time
             0, 0, $duration, 0                  # delta days, hours, minutes, seconds
         );
-        $date->{end} = time::array_to_datetime( \@end_datetime );
+        $date->{end} = time::array_to_datetime(\@end_datetime);
 
-        last if ( $c > 200 );
+        last if ($c > 200);
         $c++;
 
         next if $date->{end} lt $not_before;
@@ -340,12 +340,12 @@ sub delete($$) {
     my $dbh = db::connect($config);
 
     my $query = qq{
-		delete 
-		from calcms_work_dates 
-		where project_id=? and studio_id=? and schedule_id=?
-	};
+        delete
+        from calcms_work_dates
+        where project_id=? and studio_id=? and schedule_id=?
+    };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{schedule_id} ];
-    return db::put( $dbh, $query, $bind_values );
+    return db::put($dbh, $query, $bind_values);
 }
 
 sub error($) {

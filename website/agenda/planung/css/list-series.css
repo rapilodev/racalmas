@@ -10,7 +10,7 @@ div#oldSeries{
     clear:both;
 }
 
-div#newSeries, 
+div#newSeries,
 div#oldSeries{
     display: flex;
     flex-wrap: wrap;

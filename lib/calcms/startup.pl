@@ -20,7 +20,7 @@ use time();
 use db();
 use template();
 
-# build compile check include list: 
+# build compile check include list:
 # ls -1 lib/calcms/*.pm | perl -ne 'if (/([^\/]+).pm/){ print "use $1(); "}'
 
 #do not delete last line!

@@ -1818,3 +1818,55 @@ ALTER TABLE `calcms`.`calcms_user_selected_events`
 CHANGE COLUMN `user` `user` VARCHAR(100) NOT NULL ;
 
 CREATE INDEX idx_covering ON calcms_events (start, end, id);
+
+DROP TABLE IF EXISTS `calcms_user_selected_events`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `calcms_user_selected_events` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) NOT NULL,
+  `project_id` int(10) unsigned DEFAULT NULL,
+  `studio_id` int(10) unsigned DEFAULT NULL,
+  `series_id` int(10) unsigned DEFAULT NULL,
+  `filter_project_studio` int(1) unsigned DEFAULT NULL,
+  `filter_series` int(1) unsigned DEFAULT NULL,
+  `selected_project` int(10) unsigned DEFAULT NULL,
+  `selected_studio` int(10) unsigned DEFAULT NULL,
+  `selected_series` int(10) unsigned DEFAULT NULL,
+  `selected_event` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique` (`user`,`project_id`,`studio_id`,`series_id`,`filter_project_studio`,`filter_series`),
+  KEY `user` (`user`,`project_id`,`studio_id`,`series_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+ALTER TABLE `calcms`.`calcms_events`
+ADD COLUMN `upload_status` VARCHAR(45) NULL DEFAULT NULL AFTER `listen_key`;
+
+--
+-- Table structure for table `calcms_user_day_start`
+--
+
+DROP TABLE IF EXISTS `calcms_user_day_start`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `calcms_user_day_start` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) NOT NULL,
+  `project_id` int(10) unsigned NOT NULL,
+  `studio_id` int(10) unsigned NOT NULL,
+  `day_start` int(10) unsigned DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `select` (`project_id`,`studio_id`,`user`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;

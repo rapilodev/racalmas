@@ -22,59 +22,59 @@ Access-Control-Allow-Origin: *
             overflow:hidden;
         }
     </style>
-	<div class="content" style="clear:both"> 
+    <div class="content" style="clear:both">
 
-	    <h1 class="summary title">
-	        <TMPL_VAR events_title>
-	    </h1>
-	    <br>
+        <h1 class="summary title">
+            <TMPL_VAR events_title>
+        </h1>
+        <br>
         <TMPL_VAR events_description>
 
         <div id="coming_shows"></div>
 
-	    <a href="/agenda/programm.html">
-		    Programmplan
-	    </a>
+        <a href="/agenda/programm.html">
+            Programmplan
+        </a>
 
-	    <TMPL_IF search>
-		    <TMLP_VAR count> Treffer:
-	    </TMPL_IF>
-	</div>
+        <TMPL_IF search>
+            <TMLP_VAR count> Treffer:
+        </TMPL_IF>
+    </div>
 
 </TMPL_IF>
 
 <TMPL_LOOP events>
-	<p>
-	<div class="event">
-		<TMPL_IF event_id>
-			<div class="date<TMPL_IF is_running> running</TMPL_IF>">
-				<p>
-				<h1 class="summary title">
-					Aktuelle Sendung: <a href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
-						<TMPL_VAR full_title>
-					</a>
-				</h1>
-				<span class="submitted"><TMPL_VAR weekday_name>, <TMPL_VAR start_date_name> -
-				<TMPL_VAR start_time_name> bis <TMPL_VAR end_time_name> Uhr <TMPL_IF program>(<TMPL_VAR program>)</TMPL_IF></span><br />
-			</div>
-			<div class="content" > 
-				<TMPL_COMMENT>
-				<div class="image-attach-teaser" style="width: 150px;">
-					<a href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
-						<img class="image image-thumbnail" src="<TMPL_VAR image>" width="150" height="150" />
-					</a>
-				</div>
-				</TMPL_COMMENT>
-				<TMPL_VAR excerpt >
-			</div>
-				<a 	href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#comments">
-					<span><TMPL_VAR comment_count> Kommentar<TMPL_UNLESS one_comment>e</TMPL_UNLESS></span>
-				</a>	
-			</div>
-			</p>
-			<TMPL_UNLESS __last__><hr /></TMPL_UNLESS>
-		</TMPL_IF>
-	</TMPL_LOOP>
+    <p>
+    <div class="event">
+        <TMPL_IF event_id>
+            <div class="date<TMPL_IF is_running> running</TMPL_IF>">
+                <p>
+                <h1 class="summary title">
+                    Aktuelle Sendung: <a href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
+                        <TMPL_VAR full_title>
+                    </a>
+                </h1>
+                <span class="submitted"><TMPL_VAR weekday_name>, <TMPL_VAR start_date_name> -
+                <TMPL_VAR start_time_name> bis <TMPL_VAR end_time_name> Uhr <TMPL_IF program>(<TMPL_VAR program>)</TMPL_IF></span><br />
+            </div>
+            <div class="content" >
+                <TMPL_COMMENT>
+                <div class="image-attach-teaser" style="width: 150px;">
+                    <a href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>">
+                        <img class="image image-thumbnail" src="<TMPL_VAR image>" width="150" height="150" />
+                    </a>
+                </div>
+                </TMPL_COMMENT>
+                <TMPL_VAR excerpt >
+            </div>
+                <a     href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#comments">
+                    <span><TMPL_VAR comment_count> Kommentar<TMPL_UNLESS one_comment>e</TMPL_UNLESS></span>
+                </a>
+            </div>
+            </p>
+            <TMPL_UNLESS __last__><hr /></TMPL_UNLESS>
+        </TMPL_IF>
+    </TMPL_LOOP>
 
 <!--end of content -->
 

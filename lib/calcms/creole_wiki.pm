@@ -21,31 +21,31 @@ sub extractEventFromWikiText($;$) {
 
     #split content into excerpt, content and comments
     $content =~ s/\s*\,\s*/, /g;
-    my @lines = split( /\s*\-{10,99}\s*/, $content );
+    my @lines = split(/\s*\-{10,99}\s*/, $content);
     my $lines = \@lines;
     for my $line (@$lines) {
         $line =~ s/^\s+|\s+$//g;
     }
-    if ( @lines == 1 ) {
+    if (@lines == 1) {
         $event->{content} = shift @lines;
-    } elsif ( @lines == 2 ) {
+    } elsif (@lines == 2) {
         $event->{excerpt} = shift @lines;
         $event->{content} = shift @lines;
     } else {
         $event->{excerpt}  = shift @lines;
         $event->{content}  = shift @lines;
-        $event->{comments} = join( "--------------------\n", @lines );
+        $event->{comments} = join("--------------------\n", @lines);
     }
-    if ( defined $event->{excerpt} ) {
-        $event->{excerpt} = markup::html_to_plain( $event->{excerpt} );
+    if (defined $event->{excerpt}) {
+        $event->{excerpt} = markup::html_to_plain($event->{excerpt});
     }
 
     #extract program from title
     $event->{program} = '';
 
-    if ( $title =~ /^(.*?)\:/ ) {
+    if ($title =~ /^(.*?)\:/) {
         my $program = $1;
-        unless ( $program =~ /\s\-\s/ ) {
+        unless ($program =~ /\s\-\s/) {
             $event->{program} = $program;
             $event->{program} =~ s/^\s+|\s+$//g;
             $event->{program} =~ s/\s+/ /g;
@@ -55,7 +55,7 @@ sub extractEventFromWikiText($;$) {
 
     #extract series_name from title
     $event->{series_name} = '';
-    if ( $title =~ /^(.*?)\s+\-\s+/ ) {
+    if ($title =~ /^(.*?)\s+\-\s+/) {
         $event->{series_name} = $1;
         $event->{series_name} =~ s/^\s+|\s+$//g;
         $event->{series_name} =~ s/\s+/ /g;
@@ -64,27 +64,27 @@ sub extractEventFromWikiText($;$) {
 
     #extract categories from title
     my @categories = ();
-    while ( $title =~ /\((.*?),(.*?)\)/ ) {
+    while ($title =~ /\((.*?),(.*?)\)/) {
         $title =~ s/\((.*?),(.*?)\)/\($2\)/;
     }
-    if ( $title =~ /\((.*?)\)/ ) {
+    if ($title =~ /\((.*?)\)/) {
         $title =~ s/\((.*?)\)//;
     }
     $event->{title} = $title;
     $event->{title} =~ s/^\s+|\s+$//g;
 
-    if ( defined $event->{content} ) {
+    if (defined $event->{content}) {
 
         #extract podcast_url from content link 'podcast'
         my $podcast_url = '';
-        if ( $event->{content} =~ /\[\[\s*([^\|\]]+)\s*\|\s*podcast\s*\]\]/i ) {
+        if ($event->{content} =~ /\[\[\s*([^\|\]]+)\s*\|\s*podcast\s*\]\]/i) {
             $podcast_url = $1;
         }
         $event->{podcast_url} = $podcast_url;
 
         #extract media_url from content link 'download'
         my $media_url = '';
-        if ( $event->{content} =~ /\[\[\s*([^\|\]]+)\s*\|\s*(direct\s+)?download\s*\]\]/i ) {
+        if ($event->{content} =~ /\[\[\s*([^\|\]]+)\s*\|\s*(direct\s+)?download\s*\]\]/i) {
             $media_url = $1;
         }
         $event->{media_url} = $media_url;
@@ -94,14 +94,14 @@ sub extractEventFromWikiText($;$) {
 s/\{\{\s*thumbs\/+(.*?)\s*\|\s*(.*?)\s*\}\}/\[\[$local_media_url\/images\/$1\|\{\{$local_media_url\/thumbs\/$1\|$2\}\}\]\]/g;
 
         #extract image from content
-        if ( $event->{content} =~ /\{\{(.*?)(\||\}\})/ ) {
+        if ($event->{content} =~ /\{\{(.*?)(\||\}\})/) {
             $event->{image} = $1;
         }
     }
 
     #meta
-    if ( defined $event->{comments} ) {
-        my $meta = extractMeta( $event->{comments} );
+    if (defined $event->{comments}) {
+        my $meta = extractMeta($event->{comments});
         $event->{meta} = $meta if scalar @$meta > 0;
     }
 
@@ -120,36 +120,36 @@ sub eventToWikiText($$) {
     $event->{comments} =~ s/^\s+|\s+$//g;
 
     my $title = '';
-    if ( $event->{program} ne '' ) {
+    if ($event->{program} ne '') {
         $title = $event->{program};
-        $title .= ': ' if ( $event->{series_name} ne '' ) || ( $event->{title} ne '' );
+        $title .= ': ' if ($event->{series_name} ne '') || ($event->{title} ne '');
     }
-    if ( $event->{series_name} ne '' ) {
+    if ($event->{series_name} ne '') {
         $title .= $event->{series_name};
-        $title .= ' - ' if ( $event->{title} ne '' );
+        $title .= ' - ' if ($event->{title} ne '');
     }
     $title .= $event->{title};
-    if ( $event->{categories} ) {
+    if ($event->{categories}) {
         my $categories = $event->{categories};
-        $title .= ' (' . join( ",", @$categories ) . ')' if ( scalar @$categories > 0 );
+        $title .= ' (' . join(",", @$categories) . ')' if (scalar @$categories > 0);
     }
 
-    my $meta = extractMeta( $event->{comments}, $event->{meta} );
-    $event->{comments}      = removeMeta( $event->{comments} );
+    my $meta = extractMeta($event->{comments}, $event->{meta});
+    $event->{comments}      = removeMeta($event->{comments});
     $event->{wiki_comments} = $event->{comments} . "\n\n" . metaToWiki($meta);
 
     #markup editors
     $event->{wiki_content} = $event->{content};
 
-#	[[http://localhost/agenda_files/media/images/Vl8X7YmaWrmm9RMN_OMywA.jpg|{{http://localhost/agenda_files/media/thumbs/Vl8X7YmaWrmm9RMN_OMywA.jpg|}}]]
+#    [[http://localhost/agenda_files/media/images/Vl8X7YmaWrmm9RMN_OMywA.jpg|{{http://localhost/agenda_files/media/thumbs/Vl8X7YmaWrmm9RMN_OMywA.jpg|}}]]
 #replace "thumbs/xxx" link by link to local media URI
     $event->{wiki_content} =~
 s/\[\[.*?\/+media\/+images\/+(.*?)\s*\|.*?\{\{.*?\/+media\/+thumbs\/+(.*?)\s*\|\s*(.*?)\s*\}\}\]\]/\{\{thumbs\/$1\|$3\}\}/g;
 
     my $wiki_content =
-      join( "\n" . ( "-" x 20 ) . "\n", ( $event->{excerpt}, $event->{wiki_content} ) );
-    $wiki_content .= "\n" . ( "-" x 20 ) . "\n" . $event->{wiki_comments}
-      if ( $event->{wiki_comments} =~ /\S/ );
+      join("\n" . ("-" x 20) . "\n", ($event->{excerpt}, $event->{wiki_content}));
+    $wiki_content .= "\n" . ("-" x 20) . "\n" . $event->{wiki_comments}
+      if ($event->{wiki_comments} =~ /\S/);
 
     return {
         title        => $title,
@@ -166,12 +166,12 @@ sub extractMeta ($$) {
     $meta = [] unless defined $meta;
 
     #push meta tags into meta list
-    if ( defined $comments ) {
+    if (defined $comments) {
 
         #build index for meta already defined
         my $meta_keys = { map { $_->{name}."=".$_->{value} => 1 } @$meta };
 
-        while ( $comments =~ /\~\~META\:(.+?)\=(.+?)\~\~/g ) {
+        while ($comments =~ /\~\~META\:(.+?)\=(.+?)\~\~/g) {
             my $name  = $1;
             my $value = $2;
 
@@ -181,9 +181,9 @@ sub extractMeta ($$) {
             $value =~ s/^\s+|\s+$//g;
 
             #insert into list, if not defined yet
-            unless ( ( $name eq '' )
-                || ( $value eq '' )
-                || ( exists $meta_keys->{ $name . '=' . $value } ) )
+            unless (($name eq '')
+                || ($value eq '')
+                || (exists $meta_keys->{ $name . '=' . $value }))
             {
                 push @$meta,
                   {
@@ -203,8 +203,8 @@ sub removeMeta($) {
     $comments ||= '';
 
     my $result = '';
-    for my $line ( split( /\n/, $comments ) ) {
-        $result .= $line unless ( $line =~ /\~\~META\:(.+?)\=(.+?)\~\~/g );
+    for my $line (split(/\n/, $comments)) {
+        $result .= $line unless ($line =~ /\~\~META\:(.+?)\=(.+?)\~\~/g);
     }
     $result =~ s/^\s+//g;
     $result =~ s/\s+$//g;

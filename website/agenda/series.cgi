@@ -17,12 +17,12 @@ binmode STDOUT, ":utf8";
 print "Content-Type: text/html; charset=utf-8\n\n";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+(my $cgi, my $params, my $error) = params::get($r);
 
 my $config = config::getFromScriptLocation();
-$params = check_params( $config, $params );
+$params = check_params($config, $params);
 
-list_series( $config, $params );
+list_series($config, $params);
 
 sub list_series {
     my $config = shift;
@@ -32,7 +32,7 @@ sub list_series {
     my $studio_id  = $params->{studio_id};
     my $location   = $params->{location};
 
-    if ( defined $location ) {
+    if (defined $location) {
         my $studios = studios::get(
             $config,
             {
@@ -48,15 +48,15 @@ sub list_series {
     $conditions->{project_id} = $project_id if defined $project_id;
     $conditions->{studio_id}  = $studio_id  if defined $studio_id;
 
-    if ( scalar( keys %$conditions ) == 0 ) {
+    if (scalar(keys %$conditions) == 0) {
         $params->{info} .= "missing parameters";
         return;
     }
     $params->{info} .= Dumper($conditions);
 
-    my $series = series::get_event_age( $config, $conditions );
+    my $series = series::get_event_age($config, $conditions);
     my $series2 = [];
-    for my $serie ( sort { lc $a->{series_name} cmp lc $b->{series_name} } (@$series) ) {
+    for my $serie (sort { lc $a->{series_name} cmp lc $b->{series_name} } (@$series)) {
         next if $serie->{days_over} > 80;
         next if $serie->{days_over} == 0;
         next unless defined $serie->{series_name};
@@ -68,7 +68,7 @@ sub list_series {
     $params->{info} .= "no results found" if scalar(@$series) == 0;
     $params->{info} = '';
 
-    template::process( $config, 'print', 'templates/series.html', $params );
+    template::process($config, 'print', 'templates/series.html', $params);
 }
 
 sub check_params {
@@ -77,9 +77,9 @@ sub check_params {
 
     my $checked = {};
 
-    entry::set_numbers( $checked, $params, ['project_id', 'studio_id' ]);
+    entry::set_numbers($checked, $params, ['project_id', 'studio_id' ]);
 
-    entry::set_strings( $checked, $params, [ 'location'] );
+    entry::set_strings($checked, $params, [ 'location']);
 
     return $checked;
 }

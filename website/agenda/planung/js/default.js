@@ -29,13 +29,13 @@ function set_studio(id){
             if(! pair.match(/^studio_id=/)) params.push(pair);
         }
     }
-    //add studio id 
+    //add studio id
     if(id==null)id=-1;
     if(id=='')id=-1;
     params.push('studio_id='+id);
     //append parameters to url
     url+='?'+params.join('&');
-    if ((comment!=null)&&(comment!='')) url+='#'+comment;
+    if ((comment!=null)&& (comment!='')) url+='#'+comment;
     window.location.href=url;
 }
 
@@ -67,14 +67,14 @@ function set_project(id){
     params.push('project_id='+id);
     //append parameters to url
     url+='?'+params.join('&');
-    if ((comment!=null)&&(comment!='')) url+='#'+comment;
+    if ((comment!=null)&& (comment!='')) url+='#'+comment;
     window.location.href=url;
 }
 
 function contains(s,t){
     if (s==false) return false;
     if (t==false) return false;
-    return s.indexOf(t) != -1; 
+    return s.indexOf(t) != -1;
 }
 
 function updateContainer(id, url, callback){
@@ -180,7 +180,7 @@ function commitForm ( formElement, action, title){
     formElement='#'+formElement;
     if ($(formElement).length!=1)    {alert("id "+formElement+" exists not only once, but "+$(formElement).length+" times");return}
     if ($(formElement).is('form')==0) {alert("id "+formElement+" this is not a form");return}
-    commitAction(title, 
+    commitAction(title,
         function(){
             $(formElement).append('<input type="hidden" name="action" value="'+action+'">');
             $(formElement).submit();
@@ -203,7 +203,7 @@ function setUrlParameter(url, name, value){
     //add comments
     if ((comments!=null) && (comments!='') )url+='#'+comments;
 
-    return url;    
+    return url;
 }
 
 function removeUrlParameter(url, name){
@@ -211,7 +211,7 @@ function removeUrlParameter(url, name){
     url=url.replace(r,'?');
     var r = new RegExp("&"+name+"=[^&#]*");
     url=url.replace(r,'');
-    return url;    
+    return url;
 }
 
 function getUrlParameter(name){
@@ -268,7 +268,7 @@ function setupMenuHeight(){
     var top = menu.height();
     content.css("top", top);
 
-    /*    
+    /*
     console.log($(window).width()+" "+$(document).width()+" "+$('#content').width());
     var left=0;
     if( $(window).width() >= $(document).width() ){
@@ -276,7 +276,7 @@ function setupMenuHeight(){
         left/=2;
         if (left<40)left=0;
     }
-    $('#content').css("left", left);    
+    $('#content').css("left", left);
     */
     return top;
 }
@@ -290,7 +290,7 @@ function getStudioId(){
 }
 
 
-//set project id and studio id 
+//set project id and studio id
 function setMissingUrlParameters(){
     console.log("check");
     var project_id=$('#project_id').val();
@@ -333,11 +333,11 @@ function checkSession(){
             var expiry = Math.floor((date1.getTime() - now) / 1000);
             $('#logout').attr('title', "session expires in "+expiry+" seconds");
 
-            if (expiry<120){ 
+            if (expiry<120){
                 alert("session expires soon!");
             }
 
-            if (expiry<0){ 
+            if (expiry<0){
                 alert("session expired!");
                 clearInterval(intervalID);
             }

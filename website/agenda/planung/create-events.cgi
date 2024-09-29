@@ -23,11 +23,11 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+(my $cgi, my $params, my $error) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+my ($user, $expires) = auth::get_user($config, $params, $cgi);
+return if ((!defined $user) || ($user eq ''));
 
 my $user_presets = uac::get_user_presets(
     $config,
@@ -38,35 +38,35 @@ my $user_presets = uac::get_user_presets(
     }
 );
 $params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
+$params = uac::setDefaultStudio($params, $user_presets);
+$params = uac::setDefaultProject($params, $user_presets);
 
 my $request = {
     url => $ENV{QUERY_STRING} || '',
     params => {
         original => $params,
-        checked  => check_params( $config, $params ),
+        checked  => check_params($config, $params),
     },
 };
-$request = uac::prepare_request( $request, $user_presets );
+$request = uac::prepare_request($request, $user_presets);
 $params = $request->{params}->{checked};
 
 #process header
-my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-$headerParams->{loc} = localization::get( $config, { user => $user, file => 'menu' } );
-template::process( $config, 'print', template::check( $config, 'create-events-header.html' ), $headerParams );
-return unless uac::check( $config, $params, $user_presets ) == 1;
+my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+$headerParams->{loc} = localization::get($config, { user => $user, file => 'menu' });
+template::process($config, 'print', template::check($config, 'create-events-header.html'), $headerParams);
+return unless uac::check($config, $params, $user_presets) == 1;
 
 my $permissions = $request->{permissions};
-unless ( $permissions->{create_event_from_schedule} == 1 ) {
+unless ($permissions->{create_event_from_schedule} == 1) {
     uac::permissions_denied('create_event_from_schedule');
     return;
 }
 
-if ( $params->{action} eq 'create_events' ) {
-    create_events( $config, $request );
+if ($params->{action} eq 'create_events') {
+    create_events($config, $request);
 } else {
-    show_events( $config, $request );
+    show_events($config, $request);
 }
 
 sub show_events {
@@ -74,17 +74,17 @@ sub show_events {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{assign_series_events} == 1 ) {
+    unless ($permissions->{assign_series_events} == 1) {
         uac::permissions_denied('read_events');
         return;
     }
-    my $events = getDates( $config, $request );
+    my $events = getDates($config, $request);
     $params->{events} = $events;
     $params->{total}  = scalar(@$events);
     $params->{action} = 'show';
     $params->{loc} =
-      localization::get( $config, { user => $params->{presets}->{user}, file => 'create-events' } );
-    template::process( $config, 'print', $params->{template}, $params );
+      localization::get($config, { user => $params->{presets}->{user}, file => 'create-events' });
+    template::process($config, 'print', $params->{template}, $params);
 
 }
 
@@ -93,25 +93,25 @@ sub create_events {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{assign_series_events} == 1 ) {
+    unless ($permissions->{assign_series_events} == 1) {
         uac::permissions_denied('assign_series_events');
         return;
     }
 
     print STDERR "create events\n";
-    my $dates = getDates( $config, $request );
+    my $dates = getDates($config, $request);
 
-    print STDERR "<pre>found " . ( scalar @$dates ) . " dates\n";
+    print STDERR "<pre>found " . (scalar @$dates) . " dates\n";
     my $events = [];
     for my $date (@$dates) {
-        push @$events, createEvent( $config, $request, $date );
+        push @$events, createEvent($config, $request, $date);
     }
     $params->{events} = $events;
     $params->{total}  = scalar(@$events);
     $params->{action} = 'created';
     $params->{loc} =
-      localization::get( $config, { user => $params->{presets}->{user}, file => 'create-events' } );
-    template::process( $config, 'print', $params->{template}, $params );
+      localization::get($config, { user => $params->{presets}->{user}, file => 'create-events' });
+    template::process($config, 'print', $params->{template}, $params);
 }
 
 sub getDates {
@@ -119,7 +119,7 @@ sub getDates {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{read_event} == 1 ) {
+    unless ($permissions->{read_event} == 1) {
         uac::permissions_denied('read_event');
         return;
     }
@@ -132,14 +132,14 @@ sub getDates {
     my $duration   = $params->{duration};
 
     $from_date = time::time_to_datetime();
-    if ( $from_date =~ /(\d\d\d\d\-\d\d\-\d\d \d\d)/ ) {
+    if ($from_date =~ /(\d\d\d\d\-\d\d\-\d\d \d\d)/) {
         $from_date = $1 . ':00';
     }
-    $till_date = time::add_days_to_datetime( $from_date, $duration );
-    if ( $from_date =~ /(\d\d\d\d\-\d\d\-\d\d)/ ) {
+    $till_date = time::add_days_to_datetime($from_date, $duration);
+    if ($from_date =~ /(\d\d\d\d\-\d\d\-\d\d)/) {
         $from_date = $1;
     }
-    if ( $till_date =~ /(\d\d\d\d\-\d\d\-\d\d)/ ) {
+    if ($till_date =~ /(\d\d\d\d\-\d\d\-\d\d)/) {
         $till_date = $1;
     }
     $params->{from_date} = $from_date;
@@ -156,7 +156,7 @@ sub getDates {
             till       => $till_date,
         }
     );
-    my $series = series::get( $config, {
+    my $series = series::get($config, {
             project_id => $project_id,
             studio_id  => $studio_id,
             $series_id ? (series_id => $series_id) : ()
@@ -178,45 +178,41 @@ sub createEvent {
     my $user        = $request->{user};
 
     $date->{show_new_event_from_schedule} = 1;
-    unless ( $permissions->{create_event_from_schedule} == 1 ) {
+    unless ($permissions->{create_event_from_schedule} == 1) {
         uac::permissions_denied('create_event_from_schedule');
         return;
     }
 
     $date->{start_date} = $date->{start};
-    my $event = eventOps::getNewEvent( $config, $date, 'show_new_event_from_schedule' );
+    my $event = eventOps::getNewEvent($config, $date, 'show_new_event_from_schedule');
 
     return undef unless defined $event;
 
     $event->{start_date} = $event->{start};
-    eventOps::createEvent( $request, $event, 'create_event_from_schedule' );
+    eventOps::createEvent($request, $event, 'create_event_from_schedule');
     return $event;
-
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
+    my ($config, $params) = @_;
 
     my $checked = {};
-
-    $checked->{action} = entry::element_of($params->{action}, 
+    $checked->{action} = entry::element_of($params->{action},
         ['create_events', 'show_events'])//'';
 
     $checked->{exclude}  = 0;
     $checked->{duration} = 28;
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'id', 'project_id', 'studio_id', 'series_id', 'duration']);
     $checked->{"duration".$checked->{duration}}='selected="selected"';
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;
     }
 
-    $checked->{template} = template::check( $config, $params->{template}, 'create-events' );
+    $checked->{template} = template::check($config, $params->{template}, 'create-events');
 
     return $checked;
 }
-

@@ -19,11 +19,11 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-( my $cgi, my $params, my $error ) = params::get($r);
+(my $cgi, my $params, my $error) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
-my ( $user, $expires ) = auth::get_user( $config, $params, $cgi );
-return if ( ( !defined $user ) || ( $user eq '' ) );
+my ($user, $expires) = auth::get_user($config, $params, $cgi);
+return if ((!defined $user) || ($user eq ''));
 
 my $user_presets = uac::get_user_presets(
     $config,
@@ -34,23 +34,23 @@ my $user_presets = uac::get_user_presets(
     }
 );
 $params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio( $params, $user_presets );
-$params = uac::setDefaultProject( $params, $user_presets );
+$params = uac::setDefaultStudio($params, $user_presets);
+$params = uac::setDefaultProject($params, $user_presets);
 
 my $request = {
     url => $ENV{QUERY_STRING} || '',
     params => {
         original => $params,
-        checked  => check_params( $config, $params ),
+        checked  => check_params($config, $params),
     },
 };
-$request = uac::prepare_request( $request, $user_presets );
+$request = uac::prepare_request($request, $user_presets);
 $params = $request->{params}->{checked};
 
 #process header
 
-return unless uac::check( $config, $params, $user_presets ) == 1;
-showImage( $config, $request );
+return unless uac::check($config, $params, $user_presets) == 1;
+showImage($config, $request);
 
 #TODO: filter by published, draft
 sub showImage {
@@ -59,29 +59,29 @@ sub showImage {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    unless ( $permissions->{read_event} == 1 ) {
+    unless ($permissions->{read_event} == 1) {
         uac::permissions_denied('read_image');
         return;
     }
 
-    unless ( defined $params->{filename} ) {
+    unless (defined $params->{filename}) {
         uac::permissions_denied('missing filename');
         return;
     }
 
-    my $filename = images::getInternalPath( $config, $params );
-    unless ( defined $filename ) {
+    my $filename = images::getInternalPath($config, $params);
+    unless (defined $filename) {
         uac::permissions_denied("could not find path");
         return;
     }
 
-    unless ( -e $filename ) {
+    unless (-e $filename) {
         uac::permissions_denied("read $filename");
         return;
     }
 
     my $image = images::readFile($filename);
-    if ( defined $image->{error} ) {
+    if (defined $image->{error}) {
         uac::permissions_denied("read $filename, $image->{error}");
         return;
     }
@@ -93,13 +93,11 @@ sub showImage {
 }
 
 sub check_params {
-    my $config = shift;
-    my $params = shift;
-
+    my ($config, $params) = @_;
     my $checked = {};
 
     for my $param ('filename') {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^[A-Za-z\_\-\.\d\/]+$/ ) ) {
+        if ((defined $params->{$param}) && ($params->{$param} =~ /^[A-Za-z\_\-\.\d\/]+$/)) {
             $checked->{$param} = $params->{$param};
             $checked->{$param} =~ s/^.*\///g;
         }
@@ -107,16 +105,16 @@ sub check_params {
 
     $checked->{type} = 'thumbs';
     for my $param ('type') {
-        if ( ( defined $params->{$param} ) && ( $params->{$param} =~ /^(thumbs|images|icons)$/ ) ) {
+        if ((defined $params->{$param}) && ($params->{$param} =~ /^(thumbs|images|icons)$/)) {
             $checked->{$param} = $params->{$param};
         }
     }
 
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'project_id', 'studio_id', 'series_id', 'event_id'
     ]);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;

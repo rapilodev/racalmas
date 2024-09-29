@@ -52,7 +52,7 @@
             </TMPL_IF>
             <tr><td class="label"><TMPL_VAR .loc.label_name></td>       <td><TMPL_VAR name> &nbsp;</td></tr>
             <TMPL_IF subtitle><tr><td class="label"><TMPL_VAR .loc.label_subtitle></td>   <td><TMPL_VAR subtitle> &nbsp;</td></tr></TMPL_IF>
-            <tr><td class="label"><TMPL_VAR .loc.label_activity></td> 
+            <tr><td class="label"><TMPL_VAR .loc.label_activity></td>
                 <td><TMPL_VAR start_date> - <TMPL_VAR end_date></td>
             </tr>
             <TMPL_IF email><tr><td class="label"><TMPL_VAR .loc.label_email></td>      <td><TMPL_VAR email> &nbsp;</td></tr></TMPL_IF>
@@ -86,9 +86,9 @@
             <table>
                 <tr><td class="label"><TMPL_VAR .loc.label_title></td>     <td><input name="title" value="<TMPL_VAR title>"></td></tr>
                 <tr><td class="label">
-                    <TMPL_VAR .loc.label_image></td>      
+                    <TMPL_VAR .loc.label_image></td>
                     <td>
-                        <button 
+                        <button
                             class="selectImage"
                             onclick="selectImage('<TMPL_VAR name escape=js>', '<TMPL_VAR image  escape=js>', 'projects', '<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>', null, null, '<TMPL_VAR pid escape=js>'); return false;"
                         >
@@ -100,8 +100,8 @@
                 <tr><td class="label"><TMPL_VAR .loc.label_name></td>      <td><input name="name" value="<TMPL_VAR name>"></td></tr>
                 <tr><td class="label"><TMPL_VAR .loc.label_subtitle></td>  <td><input name="subtitle" value="<TMPL_VAR subtitle>"></td></tr>
                 <tr><td class="label"><TMPL_VAR .loc.label_start_date></td><td><input class="date" name="start_date" value="<TMPL_VAR start_date>"></td></tr>
-                <tr><td class="label"><TMPL_VAR .loc.label_end_date></td>  <td><input class="date" name="end_date" value="<TMPL_VAR end_date>"></td></tr>        
-                <tr><td class="label"><TMPL_VAR .loc.label_email></td>     <td><input name="email" value="<TMPL_VAR email>"></td></tr>        
+                <tr><td class="label"><TMPL_VAR .loc.label_end_date></td>  <td><input class="date" name="end_date" value="<TMPL_VAR end_date>"></td></tr>
+                <tr><td class="label"><TMPL_VAR .loc.label_email></td>     <td><input name="email" value="<TMPL_VAR email>"></td></tr>
 
                 <tr>
                     <td></td>
@@ -131,7 +131,7 @@
     <TMPL_IF .allow.assign_project_studio>
     <div id="assign_<TMPL_VAR project_id>" class="editor"  style="display:none">
 
-        <!-- assign studios -->        
+        <!-- assign studios -->
         <div class="edit_series_members_<TMPL_VAR .series_id>" >
             <form method="post" action="projects.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>">
                 <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
@@ -148,15 +148,15 @@
             </form>
         </div>
 
-        <!-- unassign studios -->        
+        <!-- unassign studios -->
         <table>
         <TMPL_LOOP assigned_studios>
             <tr>
-                <td><TMPL_VAR name></td> 
+                <td><TMPL_VAR name></td>
                 <td>
                     <div class="edit_series_members_<TMPL_VAR .series_id>" >
                         <form method="post"
-                            action="projects.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>" 
+                            action="projects.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>"
                         >
                             <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
                             <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
@@ -180,6 +180,6 @@
 </TMPL_LOOP>
 </div>
 
-</main>	    
+</main>
 </body>
 </html>

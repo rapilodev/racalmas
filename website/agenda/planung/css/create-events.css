@@ -9,3 +9,7 @@
     overflow:clip;
     text-overflow: ellipsis;
 }
+
+form table td:first-child{
+    width: 10ch;
+}

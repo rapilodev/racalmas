@@ -1,7 +1,7 @@
 <TMPL_IF .allow.scan_series_events>
     <script src="js/jquery.autosize.min.js" type="text/javascript"></script>
-	<link href="css/theme.default.css" rel="stylesheet">
-	<script src="js/jquery.tablesorter.min.js"></script>
+    <link href="css/theme.default.css" rel="stylesheet">
+    <script src="js/jquery.tablesorter.min.js"></script>
     <script src="js/image.js" type="text/javascript"></script>
     <script>
         var event_id='<TMPL_VAR event_id escape=js>';
@@ -17,7 +17,7 @@
             function(){
                 $('table#assignment_table').tablesorter({
                     widgets: ["filter"],
-          	        usNumberFormat : false
+                      usNumberFormat : false
                 });
             }
         );
@@ -61,7 +61,7 @@
                     selected++;
                 }
             );
-            console.log(selected+" selected")            
+            console.log(selected+" selected")
         }
 
     </script>
@@ -79,16 +79,16 @@
         width:100%;
     }
 
-	#editor div p a img {
-		float:right;
-	}
+    #editor div p a img {
+        float:right;
+    }
 </style>
 
 found <TMPL_VAR sum_events> unassigned events for project <b><TMPL_VAR project_name></b> and studio <b><TMPL_VAR studio_name></b>
 
 <!-- view series -->
 <div id="view_<TMPL_VAR .series_id>" class="view" style="clear:both">
-	<div class="buttons">
+    <div class="buttons">
         <button target="_blank"
             onclick="select_all()"
             style="float:left"
@@ -109,8 +109,8 @@ found <TMPL_VAR sum_events> unassigned events for project <b><TMPL_VAR project_n
         <form action="assignments.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>" method="post" id="assignments_form">
             <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
             <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
-            <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">	
-            <input type="hidden" name="event_ids" value="<TMPL_VAR .event_id>">	
+            <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">
+            <input type="hidden" name="event_ids" value="<TMPL_VAR .event_id>">
             <input type="hidden" name="action" value="assign_events">
             <button target="_blank"
                 onclick="assign_series_events('<TMPL_VAR .project_id escape=js>', '<TMPL_VAR .studio_id escape=js>', $('#series_id').val());return false;"
@@ -127,46 +127,46 @@ found <TMPL_VAR sum_events> unassigned events for project <b><TMPL_VAR project_n
 
         <!-- show schedule -->
         <div id="show_schedule_<TMPL_VAR series_id>" class="show_schedule">
-	        <table id="assignment_table">
+            <table id="assignment_table">
                 <thead>
-	                <tr>
+                    <tr>
                         <th>assign</th>
                         <!--<th>id</th>-->
-		                <th>program</th>
-		                <th>project</th>
-		                <th>location</th>
-		                <th>weekday</th>
-		                <th>start</th>
-		                <th>series_name</th>
-		                <th>title</th>
-		                <th>episode</th>
-		                <th>rerun</th>
-		                <th>preview</th>
-	                </tr>
+                        <th>program</th>
+                        <th>project</th>
+                        <th>location</th>
+                        <th>weekday</th>
+                        <th>start</th>
+                        <th>series_name</th>
+                        <th>title</th>
+                        <th>episode</th>
+                        <th>rerun</th>
+                        <th>preview</th>
+                    </tr>
                 </thead>
                 <tbody>
-	        <TMPL_LOOP unassigned_events>
-		            <tr>
-		                <td><input class="event_id" type="checkbox" value="<TMPL_VAR id>" title="<TMPL_VAR id>"></td>
-		                <!--<td><TMPL_VAR id></td>-->
-		                <td><TMPL_VAR program></td>
-		                <td><TMPL_VAR project></td>
-		                <td><TMPL_VAR location></td>
-		                <td><TMPL_VAR weekday></td>
-		                <td><TMPL_VAR start></td>
-		                <td><TMPL_VAR series_name></td>
-		                <td><TMPL_VAR title></td>
-		                <td><TMPL_VAR episode></td>
-		                <td><TMPL_VAR rerun></td>
+            <TMPL_LOOP unassigned_events>
+                    <tr>
+                        <td><input class="event_id" type="checkbox" value="<TMPL_VAR id>" title="<TMPL_VAR id>"></td>
+                        <!--<td><TMPL_VAR id></td>-->
+                        <td><TMPL_VAR program></td>
+                        <td><TMPL_VAR project></td>
+                        <td><TMPL_VAR location></td>
+                        <td><TMPL_VAR weekday></td>
+                        <td><TMPL_VAR start></td>
+                        <td><TMPL_VAR series_name></td>
+                        <td><TMPL_VAR title></td>
+                        <td><TMPL_VAR episode></td>
+                        <td><TMPL_VAR rerun></td>
                         <td><a href="/programm/sendung/<TMPL_VAR id>.html" target="_blank"> <button >preview</button></a>
-	                </tr>
-	        </TMPL_LOOP>
+                    </tr>
+            </TMPL_LOOP>
                 </tbody>
-	        </table>
-	    </div>
+            </table>
+        </div>
     </div>
 
-</main>	    
+</main>
 </body>
 </html>
 

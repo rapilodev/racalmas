@@ -47,7 +47,7 @@ function parseDateTime(datetime){
         console.log("datetime.js parseDateTime() is undefined or null");
         return null;
     }
-    
+
     var dateTime = datetime.split(/[ T]+/);
 
     var date = dateTime[0].split("-");

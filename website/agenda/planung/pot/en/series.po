@@ -25,6 +25,12 @@ msgstr "changes"
 msgid "button_rebuild_episodes"
 msgstr "recount episodes"
 
+msgid "button_commit"
+msgstr "commit changes"
+
+msgid "button_close"
+msgstr "Close"
+
 msgid "label_name"
 msgstr "name"
 

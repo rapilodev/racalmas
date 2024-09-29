@@ -17,9 +17,12 @@ var series_id=0;
 <div class="panel">
 <form id="create_event_form" method="post">
     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-    <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>"> 
-    <input type="hidden" id="select_series_id" name="series_id" value="<TMPL_VAR .series_id>"> 
-    <TMPL_VAR loc.create_till>
+    <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+    <input type="hidden" id="select_series_id" name="series_id" value="<TMPL_VAR .series_id>">
+
+    <table><tr>
+    <td class="label"><TMPL_VAR loc.create_till></td>
+    <td>
     <select name="duration">
         <option value="1" <TMPL_VAR duration1>><TMPL_VAR loc.today></option>
         <option value="7" <TMPL_VAR duration7>><TMPL_VAR loc.1week></option>

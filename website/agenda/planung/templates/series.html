@@ -9,41 +9,41 @@
 <!-- create a new series -->
 <TMPL_IF .allow.create_series>
 <div style="clear:both" class="newseries">
-	<button onclick="add_series('<TMPL_VAR series_name escape=js>')"><TMPL_VAR .loc.button_add_series></button>
-	<div id="edit_new" class="editor" style="display:none;clear:both">
-		<form method="post" action="series.cgi">
-			<input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-			<input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
-			<input type="hidden" name="image" value="<TMPL_VAR .image>">
+    <button onclick="add_series('<TMPL_VAR series_name escape=js>')"><TMPL_VAR .loc.button_add_series></button>
+    <div id="edit_new" class="editor" style="display:none;clear:both">
+        <form method="post" action="series.cgi">
+            <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+            <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+            <input type="hidden" name="image" value="<TMPL_VAR .image>">
 
-		    <div class="formField">
-		        <div class="label"><TMPL_VAR .loc.label_name></div>
-		        <input name="series_name" placeholder="<TMPL_VAR .loc.label_name>">
+            <div class="formField">
+                <div class="label"><TMPL_VAR .loc.label_name></div>
+                <input name="series_name" placeholder="<TMPL_VAR .loc.label_name>">
             </div>
 
-		    <div class="formField">
-		        <div class="label"><TMPL_VAR .loc.label_title></div>
-		        <input name="title" placeholder="<TMPL_VAR .loc.label_title>">
+            <div class="formField">
+                <div class="label"><TMPL_VAR .loc.label_title></div>
+                <input name="title" placeholder="<TMPL_VAR .loc.label_title>">
             </div>
 
-		    <div class="formField">
-	        	<button type=submit name="action" value="create"><TMPL_VAR .loc.button_create></button>
-	        	<button onclick="cancel_edit_series('new');return false;"><TMPL_VAR .loc.button_cancel></button>
+            <div class="formField">
+                <button type=submit name="action" value="create"><TMPL_VAR .loc.button_create></button>
+                <button onclick="cancel_edit_series('new');return false;"><TMPL_VAR .loc.button_cancel></button>
             </div>
-		</form>
-	</div>
+        </form>
+    </div>
 </div>
 </TMPL_IF>
 
 <div id="newSeries">
 <TMPL_LOOP newSeries>
-	<a 
+    <a
         onclick="view_series_details('<TMPL_VAR series_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR .project_id escape=js>')"
         href="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>&action=show"
     >
-		<b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b> 
+        <b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b>
         <TMPL_IF title> <br> <TMPL_VAR title></TMPL_IF>
-	</a>
+    </a>
 </TMPL_LOOP>
 </div>
 
@@ -53,16 +53,16 @@
 
 <div id="oldSeries" style="display:none;">
 <TMPL_LOOP oldSeries>
-	<a onclick="view_series_details('<TMPL_VAR series_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR .project_id escape=js>')"
+    <a onclick="view_series_details('<TMPL_VAR series_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR .project_id escape=js>')"
         href="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>&action=show"
     >
-		<b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b> 
+        <b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b>
         <TMPL_IF title> <br> <TMPL_VAR title></TMPL_IF>
-	</a>
+    </a>
 </TMPL_LOOP>
 </div>
 
 
-</main>	    
+</main>
 </body>
 </html>

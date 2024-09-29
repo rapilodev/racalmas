@@ -4,28 +4,28 @@ Access-Control-Allow-Origin: *
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Script-Type" content="javascript" />
-	<meta http-equiv="Content-Style-Type" content="text/css" />
-	<title>Calendar <TMPL_VAR project_title></title>
+    <meta http-equiv="Content-Script-Type" content="javascript" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Calendar <TMPL_VAR project_title></title>
 </head>
 <body>
 
-<div >
+<div>
 <table>
 <thead>
 <tr>
-	<th class="first">
-		<a 	href="<TMPL_VAR .widget_render_url>/<TMPL_VAR .controllers.calendar>/<TMPL_VAR previous_month>.html" 
-		>&laquo;</a>
-	</th>
-	<th colspan="5" align="center">
-		<a 	href="<TMPL_VAR .widget_render_url>/<TMPL_VAR .controllers.calendar>/<TMPL_VAR start_date>_<TMPL_VAR end_date>.html" 
-		><TMPL_VAR start_month_name> <TMPL_VAR start_year></a>
-	</th>
-	<th class="last">
-		<a 	href="<TMPL_VAR .widget_render_url>/<TMPL_VAR .controllers.calendar>/<TMPL_VAR next_month>.html" 
-		>&raquo;</a>
-	</th>
+    <th class="first">
+        <a     href="<TMPL_VAR .widget_render_url>/<TMPL_VAR .controllers.calendar>/<TMPL_VAR previous_month>.html"
+        >&laquo;</a>
+    </th>
+    <th colspan="5" align="center">
+        <a     href="<TMPL_VAR .widget_render_url>/<TMPL_VAR .controllers.calendar>/<TMPL_VAR start_date>_<TMPL_VAR end_date>.html"
+        ><TMPL_VAR start_month_name> <TMPL_VAR start_year></a>
+    </th>
+    <th class="last">
+        <a     href="<TMPL_VAR .widget_render_url>/<TMPL_VAR .controllers.calendar>/<TMPL_VAR next_month>.html"
+        >&raquo;</a>
+    </th>
 </tr>
 
 <tr>
