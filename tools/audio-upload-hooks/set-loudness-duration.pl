@@ -7,6 +7,19 @@ use Symbol 'gensym';
 die "Usage: $0 <input.m4a>\n" unless $ARGV[0];
 
 my $filename = $ARGV[0];
+
+if (-T $filename) {
+    my $duration;
+    open(my $file, '<', $filename) or die qq{could not read "$filename"};
+    while (<$file>) {
+        $duration ||= $1 if /#EXTINF:(\d+)/;
+        $duration ||= $1 if /^\s*(\d+)\s*$/;
+    }
+    close $file;
+    print "calcms_audio_recordings.audioDuration = $duration\n";
+    exit;
+}
+
 $filename =~ s/'/'\\''/g;  # Escape any single quotes in the filename
 $filename = "'$filename'"; # Wrap the filename in single quotes to handle spaces and special chars
 
