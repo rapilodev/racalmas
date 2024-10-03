@@ -57,6 +57,7 @@ sub insert ($$) {
         ParamError->throw(error => "user_selected_event:insert; missing $_") unless defined $entry->{$_}
     };
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     return db::insert($dbh, 'calcms_user_selected_events', $entry);
 }
@@ -83,6 +84,7 @@ sub update($$) {
         where  $conditions
     };
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     return db::put($dbh, $query, \@bind_values);
 }
@@ -101,6 +103,7 @@ sub delete ($$) {
     };
     my $bind_values = [ $entry->{user}, $entry->{project_id}, $entry->{studio_id}, $entry->{series_id} ];
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     return db::put($dbh, $query, $bind_values);
 }
