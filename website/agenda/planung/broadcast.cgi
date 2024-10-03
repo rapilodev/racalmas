@@ -94,7 +94,7 @@ if (defined $params->{action}) {
         }
     }
     if ($params->{action} eq 'get_json') {
-        getJson($config, $request);
+        get_json($config, $request);
         return;
     }
     if ($params->{action} eq 'delete') { delete_event($config, $request) }

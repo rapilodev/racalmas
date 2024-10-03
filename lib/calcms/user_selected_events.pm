@@ -57,6 +57,7 @@ sub insert ($$) {
         return unless defined $entry->{$_}
     };
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     print STDERR "insert".Dumper($entry);
     return db::insert($dbh, 'calcms_user_selected_events', $entry);
@@ -85,6 +86,7 @@ sub update($$) {
     };
 
     print STDERR "update".Dumper($query).Dumper(\@bind_values);
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     return db::put($dbh, $query, \@bind_values);
 }
@@ -103,6 +105,7 @@ sub delete ($$) {
     };
     my $bind_values = [ $entry->{user}, $entry->{project_id}, $entry->{studio_id}, $entry->{series_id} ];
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     return db::put($dbh, $query, $bind_values);
 }
