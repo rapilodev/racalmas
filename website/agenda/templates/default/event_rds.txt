@@ -1,4 +1,4 @@
 Content-type:text/plain; charset=UTF-8;
 Access-Control-Allow-Origin: *
 
-<TMPL_LOOP NAME=events><TMPL_IF __first__><TMPL_VAR rds_title></TMPL_IF></TMPL_LOOP>
+<TMPL_LOOP NAME=events><TMPL_IF __first__><TMPL_VAR full_title></TMPL_IF></TMPL_LOOP>

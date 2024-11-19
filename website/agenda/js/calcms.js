@@ -72,8 +72,7 @@ var calcms = (function($) {
     }
 
     my.isArchive = function isArchive() {
-        if ($('#calcms_archive:checked').length == 0) return 0;
-        return 1;
+        return ($('#calcms_archive').val() == 0) ? 0 : 1;
     }
 
     my.getSearchElement = function getSearchElement() {
@@ -180,18 +179,18 @@ var calcms = (function($) {
             url += '/' + weekday;
         } else if (date != '') {
             if (date == 'today') {
-                url += '/heute/';
+                url += '/today/';
             } else {
                 url += '/' + date;
             }
         }
 
         if (search_field != '') {
-            url += "/suche/" + search_field;
+            url += "/search/" + search_field;
         }
 
         if (series_name != null && series_name != '') {
-            url += "/sendereihe/" + series_name;
+            url += "/series/" + series_name;
         }
 
         if (url.substr(url.length - 1, url.length) != '/') {
@@ -262,8 +261,8 @@ var calcms = (function($) {
             else
                 url += 'all/';
             if (value != '' && value != null) url += escapeString(value) + '/';
-            if (archive != null && archive == 0) url += 'kommende/';
-            if (archive != null && archive == 1) url += 'vergangene/';
+            if (archive != null && archive == 0) url += 'upcoming/';
+            if (archive != null && archive == 1) url += 'gone/';
             my.updateContainer('calcms_list', url);
         }
     }
@@ -276,8 +275,8 @@ var calcms = (function($) {
             if (project != '' && project != null) url += escapeString(project) + '/';
             if (seriesName != '' && seriesName != null)
                 url += escapeString(seriesName) + '/';
-            if (archive != null && archive == 0) url += 'kommende/';
-            if (archive != null && archive == 1) url += 'vergangene/';
+            if (archive != null && archive == 0) url += 'upcoming/';
+            if (archive != null && archive == 1) url += 'gone/';
             my.updateContainer('calcms_list', url);
         }
     }

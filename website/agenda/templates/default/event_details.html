@@ -71,7 +71,8 @@ body { font-family: sans-serif; }
             </TMPL_IF>
         </TMPL_IF>
     </TMPL_IF>
-    <TMPL_IF content><TMPL_VAR topic escape=none><TMPL_VAR content escape=none></TMPL_IF>
+    <TMPL_IF topic><TMPL_VAR topic escape=none></TMPL_IF>
+    <TMPL_IF content><TMPL_VAR content escape=none></TMPL_IF>
     <TMPL_IF listen_url><audio class="listen"
         controls
         src="<TMPL_VAR listen_url>"

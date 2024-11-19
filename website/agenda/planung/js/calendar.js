@@ -107,9 +107,6 @@ function resizeCalendarMenu(){
     var cw=cell_width.toFixed();
     menuHeight = setupMenuHeight();
 
-    //var theight=$('#calendar table tr').last().find('td').first().find('div').last().css("top")
-    //$('td.week').css("height",theight)
-
     $('#calendar').show();
     $('#calendar_weekdays').css("visibility","visible");
 }

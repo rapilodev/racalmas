@@ -14,9 +14,8 @@ our @EXPORT_OK = qw(get insert update delete delete_files);
 # get project columns
 sub get_columns ($) {
     my ($config) = @_;
-
     my $dbh = db::connect($config);
-    return db::get_columns_hash($dbh, 'calcms_projects');
+    return db::get_columns_hash($dbh, 'calcms_images');
 }
 
 sub get($$) {
@@ -99,27 +98,19 @@ sub get($$) {
 sub insert ($$) {
     my ($config, $image) = @_;
 
-    unless (defined $image->{created_by}) {
-        print STDERR "missing created_by at image::insert\n";
-        return undef;
-    }
-    unless (defined $image->{studio_id}) {
-        print STDERR "missing studio_id at image::insert\n";
-        return undef;
-    }
-    unless (defined $image->{project_id}) {
-        print STDERR "missing project_id at image::insert\n";
-        return undef;
-    }
+    for ('studio_id', 'project_id', 'created_by', 'filename') {
+        unless (defined $image->{$_}) {
+            print STDERR "missing $_ at images::insert\n";
+            return undef;
+        }
+    };
 
-    local $config->{access}->{write} = 1;
-    my $dbh = db::connect($config);
-    my @sql_columns = get_columns($dbh);
     $image->{modified_at} = time::time_to_datetime();
     for my $attr ('public') {
         $image->{$attr} = 0 unless (defined $image->{$attr}) && ($image->{$attr} eq '1');
     }
 
+    my @sql_columns = sort keys %{get_columns($config)};
     my $query = q{
         insert into calcms_images(
             } . join(',', @sql_columns) . qq{
@@ -127,10 +118,12 @@ sub insert ($$) {
         values(} . join(', ', (map { '?' } @sql_columns)) . q{)
     };
     my @bind_values = map { $image->{$_} } @sql_columns;
+    local $config->{access}->{write} = 1;
+    my $dbh = db::connect($config);
     my $result = db::put($dbh, $query, \@bind_values);
 
-    images::setSeriesLabels($dbh, $image);
-    images::setEventLabels($dbh, $image);
+    images::setSeriesLabels($config, $image);
+    images::setEventLabels($config, $image);
 
     return $result;
 }
@@ -138,19 +131,18 @@ sub insert ($$) {
 sub update($$) {
     my ($config, $image) = @_;
     for ('studio_id', 'project_id', 'filename') {
-        print STDERR "missing $_ at images::update\n";
-        return undef;
+        unless (defined $image->{$_}) {
+            print STDERR "missing $_ at images::update\n";
+            return undef;
+        }
     };
 
-    local $config->{access}->{write} = 1;
-    my $dbh = db::connect($config);
-    my @sql_columns = get_columns($dbh);
     $image->{modified_at} = time::time_to_datetime();
-
     for my $attr ('public') {
         $image->{$attr} = 0 unless (defined $image->{$attr}) && ($image->{$attr} eq '1');
     }
 
+    my @sql_columns = sort keys %{get_columns($config)};
     my @set         = ();
     my $bind_values = [];
     for my $column (@sql_columns) {
@@ -179,10 +171,12 @@ sub update($$) {
         set       $set
         where  $conditions
     };
+    local $config->{access}->{write} = 1;
+    my $dbh = db::connect($config);
     my $result = db::put($dbh, $query, $bind_values);
 
-    images::setSeriesLabels($dbh, $image);
-    images::setEventLabels($dbh, $image);
+    images::setSeriesLabels($config, $image);
+    images::setEventLabels($config, $image);
 
     return $result;
 }
@@ -191,12 +185,11 @@ sub delete($$) {
     my ($config, $image) = @_;
 
     for ('studio_id', 'project_id', 'filename') {
-        print STDERR "missing studio_id at images::delete\n";
-        return undef;
+        unless (defined $image->{$_}) {
+            print STDERR "missing $_ at images::delete\n";
+            return undef;
+        }
     };
-    local $config->{access}->{write} = 1;
-    my $dbh = db::connect($config);
-    my @sql_columns = get_columns($dbh);
 
     my $project_id = $image->{project_id};
     my $studio_id  = $image->{studio_id};
@@ -216,6 +209,8 @@ sub delete($$) {
         delete from calcms_images
         where  $conditions
     };
+    local $config->{access}->{write} = 1;
+    my $dbh = db::connect($config);
     return db::put($dbh, $query, $bind_values);
 }
 
@@ -431,26 +426,20 @@ sub checkLicence ($$) {
 sub setEventLabels($$) {
     my ($config, $image) = @_;
 
-    unless (defined $image->{project_id}) {
-        print STDERR "missing project_id at images::setEventLabels\n";
-        return undef;
-    }
-    unless (defined $image->{studio_id}) {
-        print STDERR "missing studio_id at images::setEventLabels\n";
-        return undef;
-    }
-    unless (defined $image->{filename}) {
-        print STDERR "missing filename at images::setEventLabels\n";
-        return undef;
-    }
-    local $config->{access}->{write} = 1;
-    my $dbh = db::connect($config);
+    for ('licence', 'filename') {
+        unless (defined $image->{$_}) {
+            print STDERR "missing $_ at images::setEventLabels\n";
+            return undef;
+        }
+    };
     my $query = qq{
         update calcms_events
         set    image_label=?
         where  image=?
     };
     my $bind_values = [ $image->{licence}, $image->{filename} ];
+    local $config->{access}->{write} = 1;
+    my $dbh = db::connect($config);
     my $results = db::put($dbh, $query, $bind_values);
     return $results;
 }
@@ -458,27 +447,21 @@ sub setEventLabels($$) {
 sub setSeriesLabels($$) {
     my ($config, $image) = @_;
 
-    unless (defined $image->{project_id}) {
-        print STDERR "missing project_id at images::setSeriesLabels\n";
-        return undef;
-    }
-    unless (defined $image->{studio_id}) {
-        print STDERR "missing studio_id at images::setSeriesLabels\n";
-        return undef;
-    }
-    unless (defined $image->{filename}) {
-        print STDERR "missing filename at images::setSeriesLabels\n";
-        return undef;
-    }
+    for ('licence', 'filename') {
+        unless (defined $image->{$_}) {
+            print STDERR "missing $_ at images::setSetiesLabels\n";
+            return undef;
+        }
+    };
 
-    local $config->{access}->{write} = 1;
-    my $dbh = db::connect($config);
     my $query = qq{
         update calcms_events
         set    series_image_label=?
         where  series_image=?
     };
     my $bind_values = [ $image->{licence}, $image->{filename} ];
+    local $config->{access}->{write} = 1;
+    my $dbh = db::connect($config);
     my $results = db::put($dbh, $query, $bind_values);
     return $results;
 }

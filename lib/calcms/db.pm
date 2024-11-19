@@ -28,8 +28,7 @@ state $connection = {};
 
 sub connect($;$) {
     my ($options, $request) = @_;
-
-    my $access_options = $options->{access};
+    my $access_options = $options->{access} or die "missing database access options";
     my $key = Digest::MD5::md5_hex(sort values %$access_options);
     my $cache = $connection->{$key};
     return $cache->{dbh} if defined $cache && ($cache->{expires}//0>time);# && $cache->{dbh}->ping;

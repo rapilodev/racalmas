@@ -1,70 +1,68 @@
 <script src="js/edit-image.js" type="text/javascript"></script>
 
-    <div class="editor" class="panel">
-        <TMPL_IF action>
-            <TMPL_IF error>
-                <div class="error">failed</div>
-                <div id="message"><TMPL_VAR error></div>
-            <TMPL_ELSE>
-                <div class="ok">success</div>
-                <div style="display:none">
-                    <div id="upload_image_id"><TMPL_VAR image_id></div>
-                    <div id="upload_image_filename"><TMPL_VAR filename></div>
-                    <div id="upload_image_title"><TMPL_VAR title></div>
-                    <div id="upload_image_link">{{thumbs//<TMPL_VAR filename>}}</div>
+<div class="editor" class="panel">
+<TMPL_IF action>
+    <TMPL_IF error>
+        <div class="error">failed</div>
+        <div id="message"><TMPL_VAR error></div>
+    <TMPL_ELSE>
+        <div class="ok">success</div>
+        <div style="display:none">
+            <div id="upload_image_id"><TMPL_VAR image_id></div>
+            <div id="upload_image_filename"><TMPL_VAR filename></div>
+            <div id="upload_image_title"><TMPL_VAR title></div>
+            <div id="upload_image_link">{{thumbs//<TMPL_VAR filename>}}</div>
+        </div>
+    </TMPL_IF>
+</TMPL_IF>
+
+<form name="img_upload" id="img_upload" method="POST" action="image-upload.cgi" enctype="multipart/form-data">
+    <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+    <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+    <input type="hidden" name="action" value="upload">
+    <table>
+        <tr>
+            <td>
+                <TMPL_IF filename>
+                <div class="image" style="background-image:url('show-image.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR filename>')" >
                 </div>
-            </TMPL_IF>
-        </TMPL_IF>
+                </TMPL_IF>
+            </td>
 
-        <form name="img_upload" id="img_upload" method="POST" action="image-upload.cgi" enctype="multipart/form-data">
-            <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-            <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
-            <input type="hidden" name="action" value="upload">
-            <table>
-                <tr>
-                    <td>
-                        <TMPL_IF filename>
-                        <div class="image" style="background-image:url('show-image.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR filename>')" >
-                        </div>
-                        </TMPL_IF>
-                    </td>
+            <td>
+                <TMPL_IF filename>
+                <input value="{{thumbs/<TMPL_VAR filename escape=none>|<TMPL_VAR name escape=none>}}" size="50" />
+                </TMPL_IF>
+            </td>
+        </tr>
 
-                    <td>
-                        <TMPL_IF filename>
-                        <input value="{{thumbs/<TMPL_VAR filename escape=none>|<TMPL_VAR name escape=none>}}" size="50" />
-                        </TMPL_IF>
-                    </td>
-                </tr>
+        <tr>
+            <td><label><TMPL_VAR .loc.label_name></label></td>
+            <td><input value="<TMPL_VAR name escape=none>" name="name" size="40" maxlength="100" placeholder="<TMPL_VAR .loc.label_name_required>" required> </td>
+        </tr>
 
-                <tr>
-                    <td><label><TMPL_VAR .loc.label_name></label></td>
-                    <td><input value="<TMPL_VAR name escape=none>" name="name" size="40" maxlength="100" placeholder="<TMPL_VAR .loc.label_name_required>" required> </td>
-                </tr>
+        <tr>
+            <td><label><TMPL_VAR .loc.label_author>/<TMPL_VAR .loc.label_licence></label></td>
+            <td><input name="licence" size="40" value="<TMPL_VAR licence>" placeholder="<TMPL_VAR .loc.label_licence_required>" required /></td>
+        </tr>
 
-                <tr>
-                    <td><label><TMPL_VAR .loc.label_author>/<TMPL_VAR .loc.label_licence></label></td>
-                    <td><input name="licence" size="40" value="<TMPL_VAR licence>" placeholder="<TMPL_VAR .loc.label_licence_required>" required /></td>
-                </tr>
+        <tr>
+            <td><label><TMPL_VAR .loc.label_file></label></td>
+            <td><input type="file" name="upload" accept="image/*" maxlength="2000000" size="10" required /></td>
+        </tr>
 
-                <tr>
-                    <td><label><TMPL_VAR .loc.label_file></label></td>
-                    <td><input type="file" name="image" accept="image/*" maxlength="2000000" size="10" required /></td>
-                </tr>
+        <tr>
+            <td><label><TMPL_VAR .loc.label_description></label></td>
+            <td><textarea name="description" cols="50" rows=5><TMPL_VAR description escape=none ></textarea></td>
+        </tr>
 
-                <tr>
-                    <td><label><TMPL_VAR .loc.label_description></label></td>
-                    <td><textarea name="description" cols="50" rows=5><TMPL_VAR description escape=none ></textarea></td>
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td>
-                        <button onclick="uploadImage();return false" ><TMPL_VAR .loc.button_upload></button>
-                    </td>
-                </tr>
-            </table>
-        </form>
-    </div>
-</body>
-</html>
+        <tr>
+            <td></td>
+            <td>
+                <button onclick="uploadImage();return false" ><TMPL_VAR .loc.button_upload></button>
+            </td>
+        </tr>
+    </table>
+</form>
+</div>
 

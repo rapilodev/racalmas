@@ -9,6 +9,9 @@ RewriteRule (.*) $1 [L]
 RewriteCond  %{REQUEST_FILENAME} -d
 RewriteRule (.*) $1 [L]
 
+AddType image/svg+xml .svg
+RewriteRule favicon.ico favicon.svg [L]
+
 # compatibility layer
 RewriteRule ^sendungen/heute/               events/today/
 RewriteRule ^sendungen/                     events/
@@ -20,10 +23,10 @@ RewriteRule ^menu/heute/                    menu/today/
 RewriteRule ^suche/(.*?)/(.*?)/kommende/    search/$1/$2/upcoming/
 RewriteRule ^suche/(.*?)/(.*?)/vergangene/  search/$1/$2/gone/
 RewriteRule ^suche/                         search/
-RewriteRule  kommentare                     comments
-RewriteRule ^neueste_kommentare/            comments/latest/
+RewriteRule ^neueste_kommentare             comments/latest/
 RewriteRule ^feed_kommentare                comments/feed/
 RewriteRule ^kommentar_neu                  comments/add/
+RewriteRule  kommentare                     comments
 RewriteRule ^dashboard/sendung              dashboard/event/
 RewriteRule ^running_event_id               event/running/id/
 RewriteRule ^running_event                  event/running/
@@ -40,8 +43,8 @@ RewriteRule ^events/(.*)$                                               events.c
 
 RewriteRule ^event/(\d+)/[^&]*(&.*)?$    events.cgi?template=event_details.html&event_id=$1&$2 [L]
 RewriteRule ^event/running/id/(.*)$      events.cgi?template=event_running_id.html&phase=running&limit=1&$1 [L]
+RewriteRule ^event/running/rds/(.*)$     events.cgi?template=event_rds.txt&phase=running&limit=1&description=none&excerpt=none&$1 [L]
 RewriteRule ^event/running/(.*)$         events.cgi?template=event_running.html&phase=running&limit=1&$1 [L]
-RewriteRule ^event/rds/(.*)$             events.cgi?template=event_playlist.txt&phase=running&limit=1&description=none&excerpt=none&$1 [L]
 RewriteRule ^event/(.*)$                 events.cgi?$1 [L]
 
 RewriteRule ^playlist/long/(.*)$         events.cgi?template=event_playlist_long.html&description=none&excerpt=none&phase=upcoming&limit=20&$1 [L]
@@ -68,7 +71,7 @@ RewriteRule ^calendar/(.*)$                                             cal.cgi?
 
 RewriteRule ^feed/atom/(.*)$                                            events.cgi?template=event.atom.xml&phase=upcoming&limit=100&$1 [L]
 RewriteRule ^feed/rss/(.*)$                                             events.cgi?template=event.rss.xml&phase=upcoming&limit=100&$1 [L]
-RewriteRule ^feed/rss-media/(.*)$                                       events.cgi?last_days=7&only_active_recording=1&template=event_media.rss.xml&$1 [L]
+RewriteRule ^feed/rss\-media/(.*)$                                       events.cgi?last_days=7&only_active_recording=1&template=event_media.rss.xml&$1 [L]
 
 RewriteRule ^ical/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(\d)/(.*)$    events.cgi?template=event.ics&from_date=$1&till_date=$2&weekday=$3&$4 [L]
 RewriteRule ^ical/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(.*)$         events.cgi?template=event.ics&from_date=$1&till_date=$2&$3 [L]

@@ -263,7 +263,6 @@
         <div type="hidden" class="panel" name="event_id" ><TMPL_VAR download escape=none></div>
     </TMPL_IF>
 
-
     <!-- edit event time -->
     <!-- <TMPL_UNLESS new_event>style="display:none"</TMPL_UNLESS> -->
     <table id="edit_time_<TMPL_VAR event_id>" class="edit_event" >
@@ -336,9 +335,7 @@
                         <TMPL_LOOP durations><TMPL_IF selected><input type="hidden" name="duration" value="<TMPL_VAR value>" ></TMPL_IF></TMPL_LOOP>
                     </td>
                 </tr>
-
             </TMPL_IF>
-
         </TMPL_IF>
 
         <tr>
@@ -398,29 +395,6 @@
 
     </table>
 
-
-    <!-- show event content -->
-<!--
-    <TMPL_IF read_event>
-    <table id="show_content_<TMPL_VAR event_id>" <TMPL_IF new_event>style="display:none"</TMPL_IF> >
-        <tr>
-            <td class="label">excerpt</td>
-            <td><TMPL_VAR excerpt><TMPL_VAR user_excerpt></td>
-        </tr>
-
-        <tr>
-            <td class="label">description</td>
-            <td>
-                <img style="float:right;padding-left:1em" src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR image>">
-                   <div><TMPL_VAR topic</div>
-                   <div><TMPL_VAR html_content escape=none></div>
-            </td>
-        </tr>
-    </table>
-    </TMPL_IF>
--->
-
-    <!-- <TMPL_UNLESS new_event>style="display:none"</TMPL_UNLESS> -->
     <!-- edit event content -->
     <table id="edit_content_<TMPL_VAR event_id>" class="edit_event" >
         <tr id="excerpt">
@@ -538,7 +512,6 @@
     <!-- buttons -->
     <TMPL_UNLESS edit_lock>
 
-
     <div class="buttons" style="text-align:center">
         <TMPL_IF show_new_event_from_schedule>
             <TMPL_IF .allow.create_event_from_schedule>
@@ -560,7 +533,6 @@
             </TMPL_IF>
         </TMPL_IF>
     </div>
-
     </TMPL_UNLESS>
 
     </form>
@@ -579,6 +551,5 @@
 </TMPL_IF>
 
 </main>
-
 </body>
 </html>

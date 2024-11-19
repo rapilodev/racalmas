@@ -1,5 +1,4 @@
 #content {
-    margin-top: 3rem;
     min-height: 100%;
 }
 
@@ -7,8 +6,9 @@
     padding:0;
 }
 
-#content td.label {
-    max-width: 2rem;
+#content .editor td.label {
+    max-width: min-content;
+    padding-top:0.5rem;
 }
 
 #content .editor td.label {

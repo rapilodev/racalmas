@@ -550,55 +550,6 @@
         </table>
     </div>
 
-    <!-- assign events from series_name and title-->
-    <TMPL_IF .allow.scan_series_events>
-    <!--
-    <div id="tabs-import">
-        <div id="scan_<TMPL_VAR .series_id>" class="editor">
-            <div><TMPL_VAR .loc.label_import></div>
-            <form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-import">
-                <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-                <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
-                <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">
-                <input type="hidden" name="action" value="save_scan">
-                <table>
-                    <tr>
-                        <td class="label"><TMPL_VAR .loc.label_import_series></td>
-                        <td><input name="assign_event_series_name" value="<TMPL_VAR assign_event_series_name>"></td>
-                    </tr>
-                    <tr>
-                        <td class="label"><TMPL_VAR .loc.label_import_title></td>
-                        <td><input name="assign_event_title" value="<TMPL_VAR assign_event_title>"></td>
-                    </tr>
-                      <tr>
-                          <td></td>
-                          <td><button type="submit" value="save"><TMPL_VAR .loc.button_import_save></button></td>
-                  </table>
-            </form>
-        </div>
-
-        <div class="buttons">
-            <div><TMPL_VAR .loc.label_import_scan></div>
-            <form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-import">
-                <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-                <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
-                <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">
-                <input type="hidden" name="action" value="scan_events">
-                <table>
-                    <tr>
-                        <td class="label"></td>
-                        <td><button type="submit" value="scan"
-                            ><TMPL_VAR .loc.button_import_scan></button>
-                        </td>
-                    </tr>
-                  </table>
-            </form>
-        </div>
-        <TMPL_VAR scan_results escape="no">
-    </div>
-    -->
-    </TMPL_IF>
-
     <!-- delete series -->
     <TMPL_IF .allow.delete_series>
     <div id="tabs-delete" class="panel">

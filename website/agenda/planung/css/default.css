@@ -3,7 +3,7 @@
     font-style: normal;
     font-weight: 400;
     src: local('Roboto'), local('Roboto-Regular'),
-       url('../fonts/roboto-v18-latin_latin-ext-regular.woff2') format('woff2'),
+       url('../fonts/roboto.woff2') format('woff2'),
 }
 
 @font-face {
@@ -11,7 +11,7 @@
     font-style: normal;
     font-weight: 400;
     src: local('Open Sans Regular'), local('OpenSans-Regular'),
-       url('../fonts/open-sans-v15-latin_latin-ext-regular.woff2') format('woff2'),
+       url('../fonts/open-sans.woff2') format('woff2'),
 }
 
 html, body, div, span, applet, object, iframe,
@@ -47,6 +47,7 @@ body #content {
     text-align: left;
     min-width: min-content;
     max-width: 960px;
+    margin-top: 3rem;
     margin-left: auto;
     margin-right: auto;
 }
@@ -121,6 +122,11 @@ body,
     z-index: 99;
 }
 
+#calcms_nav img{
+    opacity: 0.9;
+    padding-right: 3px;
+}
+
 #calcms_nav,
 #calcms_nav a,
 #calcms_nav div,
@@ -148,6 +154,10 @@ body,
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     line-height: 3em;
+}
+
+#calcms_nav select {
+    height: 3em;
 }
 
 #calcms_nav div {
@@ -238,14 +248,11 @@ select#project_id::after {
 
 #calcms_nav .dropdown-content a {
     min-width: 10rem;
-    display: inline-block;
+    display: inline-flex;
 }
 
 #calcms_nav > div > a {
     display: flex;
-}
-
-#calcms_nav > div {
 }
 
 nav img {
@@ -561,6 +568,11 @@ table.tablesorter tr {
                 0 4px 15px 0 rgba(0, 0, 0, .15);
 }
 
+#content button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 #content input[type="submit"]:hover,
 #content input[type="file"]:hover,
 #content button:focus {
@@ -728,8 +740,21 @@ ul.tabContainer li:last-child{
     width: 15rem;
     height: 4rem;
     text-align:center;
-    vertical-align:middle;
-    display:inline;
+    align-items:center;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+#content #dialog #title{
+    display:flex;
+    align-items:center;
+}
+
+#content #dialog #buttons{
+    flex-direction:row;
+    display:flex;
+    align-items:center;
 }
 
 .right{
@@ -744,5 +769,11 @@ ul.tabContainer li:last-child{
 #content .bottom,
 .bottom{
     margin-bottom:auto;
+}
+
+.tools{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 

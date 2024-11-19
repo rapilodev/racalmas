@@ -430,8 +430,7 @@ div#toolbar input.search {
 }
 
 #content #toolbar div {
-    padding: 0;
-    padding-left: 6px;
+    padding: 6px;
 }
 
 #content #toolbar div:hover,

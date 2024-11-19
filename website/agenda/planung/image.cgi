@@ -268,7 +268,6 @@ sub save_image {
         print_js_error("empty name or empty description!");
         return 0;
     }
-
     my $image = {};
     $image->{filename}    = $params->{save_image};
     $image->{name}        = $params->{update_name} if $params->{update_name} ne '';
