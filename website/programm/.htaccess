@@ -2,10 +2,10 @@
     RewriteEngine on
     RewriteBase /programm
 
-	RewriteRule ^kalender/(.*)$                       calendar/$1
-	RewriteRule ^sendungen/monat\.html(.*?)$          events/month.html$1
-	RewriteRule ^sendungen/(.*?)$                     events/$1
-	RewriteRule ^sendung/(.*?)$                       event/$1
+    RewriteRule ^kalender/(.*)$                       calendar/$1
+    RewriteRule ^sendungen/monat\.html(.*?)$          events/month.html$1
+    RewriteRule ^sendungen/(.*?)$                     events/$1
+    RewriteRule ^sendung/(.*?)$                       event/$1
 
     RewriteRule ^calendar/(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$   /agenda/aggregate.cgi?description=html&from_date=$1&till_date=$2&$3 [L]
     RewriteRule ^calendar/(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$                       /agenda/aggregate.cgi?description=html&date=$1&$2 [L]
@@ -14,8 +14,8 @@
     RewriteRule ^events/(\d{4}-\d{2})\.html[\?]?(.*)$                               /agenda/aggregate.cgi?description=html&month=$1&$2 [L]
     RewriteRule ^events/month\.html[\?]?(.*)$                                       /agenda/aggregate.cgi?description=html&month=this [L]
     RewriteRule ^events/(.*)$                                                       /agenda/aggregate.cgi?description=html&$1 [L]
-    RewriteRule ^event/serie_plus/(\d+)\.html[\?]?(.*)$                             /agenda/aggregate.cgi?description=html&next_series=$1&$2 [L]
-    RewriteRule ^event/serie_minus/(\d+)\.html[\?]?(.*)$                            /agenda/aggregate.cgi?description=html&previous_series=$1&$2 [L]
+    RewriteRule ^event/next_episode/(\d+)\.html[\?]?(.*)$                           /agenda/aggregate.cgi?description=html&next_series=$1&$2 [L]
+    RewriteRule ^event/previous_episode/(\d+)\.html[\?]?(.*)$                       /agenda/aggregate.cgi?description=html&previous_series=$1&$2 [L]
     RewriteRule ^event/(\d+)/(.*)$                                                  /agenda/aggregate.cgi?description=html&event_id=$1&$2 [L]
     RewriteRule ^event/(\d+)\.html[\?]?(.*)$                                        /agenda/aggregate.cgi?description=html&event_id=$1&$2 [L]
     RewriteRule ^(\d+)$                                                             /agenda/aggregate.cgi?description=html&event_id=$1&$2 [L]
