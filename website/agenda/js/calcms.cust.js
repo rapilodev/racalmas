@@ -16,27 +16,38 @@ var calcms_settings = new Array();
     // search events
     calcms.selectSearchEventListener = function selectSearchEventListener() {
         var project = calcms.getProject();
-
-        calcms.showSearchResultsByProject(project, calcms.getSearchElement()
-                .val(), calcms.isArchive());
+        calcms.searchEvents({
+            project : project, 
+            search : calcms.getSearchElement().val(), 
+            archive : calcms.isArchive()
+        });
         calcms.selectFirstOption('#calcms_series_name_'
                 + calcms.getJsName(project));
 
         calcms.registerOnChangeArchive(function() {
-            calcms.showSearchResultsByProject(project, calcms
-                    .getSearchElement().val(), calcms.isArchive());
-        });
+            calcms.searchEvents({
+                project : project, 
+                search : calcms.getSearchElement().val(), 
+                archive : calcms.isArchive()
+            });
+        })
     }
 
     // show events for selected series of project
     calcms.selectSeries = function selectSeries(project, seriesName) {
-        calcms.showEventsByProjectAndSeriesName(project, seriesName, calcms
-                .isArchive());
+        calcms.searchEvents({
+            project : project, 
+            series : seriesName, 
+            archive : calcms.isArchive()
+        });
         calcms.resetSearch();
 
         calcms.registerOnChangeArchive(function() {
-            calcms.showEventsByProjectAndSeriesName(project, seriesName, calcms
-                    .isArchive());
+            calcms.searchEvents({
+                project : project, 
+                series: seriesName, 
+                archive : calcms.isArchive()
+            });
         });
     }
 
@@ -68,17 +79,15 @@ var calcms_settings = new Array();
 
         calcms.set('events_url', '/agenda/sendungen');
         calcms.set('list_url', '/agenda/sendung');
-        calcms.set('next_series_url', '/programm/sendung/serie_plus');
-        calcms.set('prev_series_url', '/programm/sendung/serie_minus');
+        calcms.set('next_episode_url', '/programm/event/next_episode');
+        calcms.set('prev_episode_url', '/programm/event/previous_episode');
 
         calcms.set('ical_url', '/agenda/ical');
         calcms.set('feed_url', '/agenda/feed/');
         calcms.set('playlist_url', '/agenda/playlist/');
 
-        calcms.set('search_url', '/agenda/suche/');
-        calcms.set('search_series_name_url', '/agenda/sendereihe/');
-
-        calcms.set('series_name_url', '/agenda/sendereihen/');
+        calcms.set('search_url', '/agenda/');
+        calcms.set('series_name_url', '/agenda/series/');
 
         calcms.set('comments_url', '/agenda/kommentare/');
         calcms.set('add_comment_url', '/agenda/kommentar_neu/');
@@ -91,7 +100,6 @@ var calcms_settings = new Array();
     // remove empty projects if series have been loaded
     calcms.showAdvancedSearch = function showAdvancedSearch(id) {
         searchReady = 0;
-        var element = $('#calcms_enhanced_search');
         url = calcms.get('series_name_url');
         calcms.updateContainer('calcms_series_names', url, function() {
             calcms.selectProject();
