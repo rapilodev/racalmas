@@ -45,9 +45,9 @@ function hideFinished(){
     $('#info').hide();
 }
 
-function roundSize(size){
-    const MB = 1000*1000;
-    var value= Math.round(size/MB);
+function roundSize(size) {
+    const MB = 1000 * 1000;
+    var value = Math.round(size / MB);
     value += '';
     //if (value.indexOf('.')<0)value+='.0';
     return value;

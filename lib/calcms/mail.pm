@@ -3,7 +3,6 @@ package mail;
 use strict;
 use warnings;
 no warnings 'redefine';
-#use utf8;
 
 use Email::Sender::Simple();
 use Email::Simple();
