@@ -12,11 +12,10 @@
 </IfModule>
 
 <IfModule !mod_perl.c>
-#    AddHandler cgi-script .cgi .pl
+   AddHandler cgi-script .cgi .pl
 </IfModule>
 
 LimitRequestBody 2000000000
-
 Require all granted
 
 AddOutputFilterByType DEFLATE application/json
