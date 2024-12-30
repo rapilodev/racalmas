@@ -739,9 +739,11 @@ sub showEventList {
                     <th class="live">$liveIcon</th>
                     <th class="playout" title="$params->{loc}->{label_playout}">$playoutIcon</th>
                     <th class="archive">$archiveIcon</th>
+                    <!--
                     <th class="project_id">project</th>
                     <th class="studio">studio</th>
                     <th class="creole">wiki format</th>
+                    -->
                  </tr>
             </thead>
             <tbody>
@@ -868,9 +870,11 @@ sub showEventList {
               . qq!<td class="live">$live</td>!
               . qq!<td class="playout" title="$playout_info">$playout</td>!
               . qq!<td class="archived">$archived</td>!
+              . qq{<!--}
               . qq!<td>$event->{project_name} $other_studio</td>!
               . qq!<td>$studio_name $other_studio</td>!
               . qq!<td>$format</td>!
+              . qq{-->}
               . qq!</tr>! . "\n";
         }
         $i++;
