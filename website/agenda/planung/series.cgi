@@ -177,8 +177,7 @@ sub save_schedule {
         my $updates = series_dates::update($config, $entry);
         uac::print_info("schedule saved. $updates dates scheduled");
     } else {
-        series_schedule::insert($config, $entry);
-
+        my $result = series_schedule::insert($config, $entry);
         #timeslots are checked inside
         my $updates = series_dates::update($config, $entry);
         uac::print_info("schedule added. $updates dates added");
