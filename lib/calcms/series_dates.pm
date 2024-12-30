@@ -3,6 +3,7 @@ package series_dates;
 use strict;
 use warnings;
 no warnings 'redefine';
+use feature 'state';
 
 use Data::Dumper;
 use Date::Calc();
@@ -284,8 +285,6 @@ sub update($$) {
         return undef unless defined $entry->{$_}
     };
 
-    my $dbh = db::connect($config);
-
     #delete all dates for series (by studio and series id)
     series_dates::delete($config, $entry);
 
@@ -323,11 +322,11 @@ sub update($$) {
         }
     }
 
-    my $request = { config => $config };
-
     my $i = 0;
     my $j = 0;
+    local $config->{access}->{write} = 1;
     for my $date (keys %$series_dates) {
+        state $dbh = db::connect($config);
         my $series_date = $series_dates->{$date};
 
         #insert date
@@ -343,7 +342,7 @@ sub update($$) {
         if (studio_timeslot_dates::can_studio_edit_events($config, $entry) == 1) {    # by studio_id, start, end
             $entry->{start_date} = time::add_hours_to_datetime($entry->{start}, -$day_start);
             $entry->{end_date}   = time::add_hours_to_datetime($entry->{end},   -$day_start);
-            db::insert($dbh, 'calcms_series_dates', $entry);
+            my $result = db::insert($dbh, 'calcms_series_dates', $entry);
             $i++;
         } else {
             $j++;
@@ -504,8 +503,6 @@ sub delete ($$) {
         return unless defined $entry->{$_}
     };
 
-    my $dbh = db::connect($config);
-
     my $query = qq{
         delete
         from calcms_series_dates
@@ -513,6 +510,8 @@ sub delete ($$) {
     };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id} ];
 
+    local $config->{access}->{write} = 1;
+    my $dbh = db::connect($config);
     db::put($dbh, $query, $bind_values);
 }
 
