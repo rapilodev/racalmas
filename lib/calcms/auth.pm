@@ -76,8 +76,7 @@ sub login($$$) {
     my $session_id = create_session($config, $user, $timeout * 60);
 
     # here timeout is in minutes
-    $timeout = '+' . $timeout . 'm';
-    return $user if create_cookie($session_id, $timeout);
+    return $user if create_cookie($session_id, '+' . $timeout . 'm');
     return undef;
 }
 
