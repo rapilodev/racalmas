@@ -184,7 +184,7 @@ button:hover {
 
 #content div.event img {
     box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.3);
-    border-radius:99px;
+    border-radius:1rem;
 }
 
 #content div.event img.icon {

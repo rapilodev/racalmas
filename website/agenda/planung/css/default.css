@@ -33,6 +33,7 @@ time, mark, audio, video {
     font-size: 100%;
     font: inherit;
     vertical-align: baseline;
+    border-radius: 1rem;
 }
 
 body {
@@ -302,7 +303,7 @@ a {
     padding: 1rem;
 
     border: 1px solid rgba(0, 0, 0, .03);
-    border-radius:0.5rem;
+    border-radius: 1rem;
     position: relative;
 }
 
@@ -433,7 +434,7 @@ div.error {
 div.badge-ok,
 div.badge-warn,
 div.badge-error {
-    border-radius: 0.3rem;
+    border-radius: 1rem;
     display: inline;
     margin-right: 0.5rem;
     margin-top: 0.5rem;
@@ -473,7 +474,7 @@ div.badge-error {
 #content div.card {
     border: 0;
     margin: 1em;
-    border-radius: 0.5rem;
+    border-radius: 1rem;
 }
 
 #content table.table tr:hover {
@@ -645,7 +646,7 @@ input[type='checkbox'] {
 }
 
 #content img{
-    border-radius: 0.3rem;
+    border-radius: 1rem;
 }
 
 #content button.selectImage,
