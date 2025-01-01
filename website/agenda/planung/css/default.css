@@ -121,6 +121,7 @@ body,
     align-items: center;
     justify-content: center;
     z-index: 99;
+    border-radius: 0;
 }
 
 #calcms_nav img{
@@ -155,6 +156,7 @@ body,
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     line-height: 3em;
+    border-radius: 0; 
 }
 
 #calcms_nav select {
@@ -208,9 +210,11 @@ select#project_id {
 
 select#studio_id {
     background-image:url(../image/bright/antenna.svg);
+    padding-left: 2rem;
 }
 select#project_id {
     background-image:url(../image/bright/home.svg);
+    padding-left: 2rem;
 }
 
 
@@ -221,6 +225,11 @@ select#project_id::after {
 
 #calcms_nav #bars {
     cursor: pointer;
+}
+
+#calcms_nav div {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 #calcms_nav.mobile {
@@ -248,8 +257,8 @@ select#project_id::after {
 }
 
 #calcms_nav .dropdown-content a {
-    min-width: 10rem;
     display: inline-flex;
+    width: calc(100% - 1rem);
 }
 
 #calcms_nav > div > a {
@@ -712,6 +721,7 @@ ul.tabContainer li{
                 0 0   2px rgba(0, 0, 0, .12);
     margin-bottom:2px;
     margin-right:-2px;
+    border-radius: 0;
 }
 
 ul.tabContainer li:first-child{

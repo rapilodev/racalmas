@@ -63,11 +63,14 @@ tr.inactive {
 
 #progress_container #progress_done {
     background: rgb(22, 120, 194);
-
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
 }
 
 #progress_container #progress_todo {
     color: #004f9b;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
     background: #ddd;
 }
 
