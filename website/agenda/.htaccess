@@ -118,16 +118,12 @@ RewriteRule ^redaktionen/frb$                      series.cgi?project_id=1&locat
 
 </IfModule>
 
-#  MOD_PERL
 Options -Indexes -MultiViews +FollowSymLinks +ExecCGI
-
-#PerlResponseHandler ModPerl::RegistryPrefork
 <IfModule mod_perl.c>
     <FilesMatch "\.cgi$">
         SetHandler perl-script
-        PerlResponseHandler ModPerl::RegistryPrefork
+        PerlResponseHandler ModPerl::PerlRunPrefork
         PerlOptions +ParseHeaders
-        PerlSetVar PerlRunOnce On
         Options +ExecCGI
     </FilesMatch>
 </IfModule>
