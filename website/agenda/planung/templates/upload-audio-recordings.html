@@ -3,25 +3,19 @@
     <div id="error" class="error" style="display:none"></div>
     <div id="info" class="ok" style="display:none"></div>
 
-    <h2>
-        <TMPL_VAR event.weekday_short_name>, <TMPL_VAR event.start_date_name> <TMPL_VAR event.start_time_name><br>
-        <TMPL_VAR event.full_title><br>
-    </h2>
-
-    <div class="panel">
+    <div style="margin:1rem; display:flex; flex-direction:column; gap:0.5rem;">
+        <h2 id="title">
+            <TMPL_VAR event.weekday_short_name>, <TMPL_VAR event.start_date_name> <TMPL_VAR event.start_time_name><br>
+            <TMPL_VAR event.full_title><br>
+        </h2>
         <img src="<TMPL_VAR event.icon>"><TMPL_VAR event.excerpt><br>
     </div>
 
-    <hr/>
-
     <TMPL_UNLESS isOver>
-
         <div id="progress" style="display:none;vertical-align:middle;background:#aaa;text-align:center;margin:1em;padding:1em;font-size:1em;font-weight:bold;color:#fff" >
             <div>Ich lade jetzt die Datei hoch... Pieps.</div>
             <div><img src="/agenda/planung/image/upload/bird9.gif" /></div>
             <div>Ist das aufregend!</div>
-            <!--<progress id="progressBar"></progress>-->
-
             <div id="progress_container">
                 <div id="progress_done"></div>
                 <div id="progress_todo"></div>
