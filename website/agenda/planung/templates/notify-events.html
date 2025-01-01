@@ -38,9 +38,9 @@
         <td><b><TMPL_VAR start></b></td>
         <td><b><TMPL_VAR full_title></b><td>
         <td>
-            <TMPL_IF live><img src="image/mic.svg" title="live"></TMPL_IF>
-            <TMPL_IF preproduction><img src="image/mic_off.svg" title="preproduction"></TMPL_IF>
-            <TMPL_IF playout><img src="image/play.svg" title="playout"></TMPL_IF>
+            <TMPL_IF live><img src="image/dark/mic.svg" title="live"></TMPL_IF>
+            <TMPL_IF preproduction><img src="image/dark/mic_off.svg" title="preproduction"></TMPL_IF>
+            <TMPL_IF playout><img src="image/dark/play.svg" title="playout"></TMPL_IF>
         </td>
 
 <TMPL_IF noRecipient>
@@ -59,7 +59,7 @@
     <t>
         <td><TMPL_VAR .loc.to></td>
         <td colspan="2"><input name="to" value="<TMPL_VAR mail.To>" type="email" required></td>
-        <td><img class="toggle" title="<TMPL_VAR .loc.show_details>" src="image/arrow-down.svg"></td>
+        <td><img class="toggle" title="<TMPL_VAR .loc.show_details>" src="image/bright/arrow-down.svg"></td>
     </tr>
     </TMPL_IF>
 
