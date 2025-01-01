@@ -739,22 +739,24 @@ ul.tabContainer li:last-child{
 
 #content #dialog{
     position:fixed;
-    z-index:1000;
+    z-index:100;
+    top: 0;
     left: 0;
     right: 0;
-    top: 0;
     bottom: 0;
     margin-left: auto;
     margin-right: auto;
     margin-top: auto;
     margin-bottom: auto;
-    width: 15rem;
-    height: 4rem;
+    width: fit-content;
+    height: fit-content;
     text-align:center;
     align-items:center;
     display:flex;
     flex-direction:column;
     justify-content:space-between;
+    padding: 1rem;
+    gap: 1rem;
 }
 
 #content #dialog #title{
@@ -766,6 +768,10 @@ ul.tabContainer li:last-child{
     flex-direction:row;
     display:flex;
     align-items:center;
+}
+
+#content #dialog img {
+    padding: 1rem;
 }
 
 .right{
