@@ -140,7 +140,7 @@ function commitAction (title, action){
     if ( action == null ) { alert("missing action");return; }
 
     showDialog({
-        title   : '<img src="image/alert.svg">Are you sure?</p>',
+        title   : '<img src="image/dark/alert.svg">Are you sure?</p>',
         buttons : {
             OK     : function(){ action(); },
             Cancel : function(){ $(this).parent().remove(); }
