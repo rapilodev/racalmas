@@ -39,7 +39,19 @@ div#oldSeries a:hover{
     text-decoration:none;
 }
 
-div#search{
+div#search {
     float:right;
+    background: white;
+    padding-left:0.5rem;
+    padding-right:0.5rem;
+    margin: 0.5rem;
 }
 
+div#search::before {
+    content: "🔍";
+    padding-right: 0.5rem;
+}
+
+div#search input{
+    border-bottom: none;
+}
