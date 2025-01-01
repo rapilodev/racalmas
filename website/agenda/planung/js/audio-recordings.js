@@ -1,11 +1,11 @@
 
 function showProgress(){
-    $('#progress').slideDown();
+    $('#progress').slideDown(() => $('#progress').addClass('progress-visible'));
     return false;
 }
 
 function hideProgress(){
-    $('#progress').slideUp();
+    $('#progress').slideUp(() => $('#progress').removeClass('progress-visible'));
     return false;
 }
 
