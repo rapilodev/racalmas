@@ -111,22 +111,6 @@ function resizeCalendarMenu(){
     $('#calendar_weekdays').css("visibility","visible");
 }
 
-function setFilter(){
-    var filter=$('#filter').val();
-    if(filter=='conflicts'){
-        $('#content').addClass("conflicts");
-    }else{
-        $('#content').removeClass("conflicts");
-        $('.event').each(function(){
-            if($(this).hasClass(filter)){
-                $(this).addClass("marked");
-            }else{
-                $(this).removeClass("marked");
-            }
-        });
-    }
-}
-
 // preselect options in select boxes
 function setSelectedOptions(){
     $('#content select').each(
@@ -195,9 +179,6 @@ function updateUrlParameters(url){
         url=setUrlParameter(url, 'd', 0);
     }
 
-    var filter=$('#filter').val();
-    if(filter!='no markup')
-        url=setUrlParameter(url, 'filter',     $filter);
     url=setUrlParameter(url, 'project_id', $('#project_id').val());
     url=setUrlParameter(url, 'studio_id',  $('#studio_id').val());
     url=setUrlParameter(url, 'day_start',  $('#day_start').val());
@@ -454,7 +435,6 @@ function getSwitch(id, text, active, klass){
 }
 
 function initCalendarMenu(){
-    //add filters to header
     var html='';
     html += getSwitch('show_events', label_events || "label", true);
     html += getSwitch('show_schedule', label_schedule || "schedule", true);
@@ -471,7 +451,6 @@ function initCalendarMenu(){
     if(getUrlParameter('d')=='0') unselectCheckbox('#show_descriptions');
 
     setSelectedOptions();
-    setFilter();
     setDatePicker();
     initTodayButton();
     resizeCalendarMenu();
