@@ -530,7 +530,7 @@ function initRmsPlot(){
                 details += '<div class="text">'+content+'</div>';
                 if (start!=null) details += '<button '+deleteHandler+'>delete</button>';
                 details += "</div>";
-                $(this).append(img + details);
+                $(this).prepend(img + details);
             }
 
             $(this).find('img').each(function(){
