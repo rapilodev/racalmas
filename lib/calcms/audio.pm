@@ -103,6 +103,15 @@ sub formatLoudness {
     return qq{<div class="badge-$class">$prefix$value dB</div>};
 }
 
+sub badge {
+    my ($label, $value) = @_;
+    return '' if !$value && !$label; 
+    return qq{<div class="badge-ok">} . join(': ', 
+        ($label ? qq{<b>$label</b>} : ()), 
+        ($value ? $value : ())
+    ) . qq{</div>};
+}
+
 sub formatFile{
     my ($file, $event_id) = @_;
 

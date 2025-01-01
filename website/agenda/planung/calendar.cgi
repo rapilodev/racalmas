@@ -370,47 +370,47 @@ sub showCalendar {
                 $format =~ s/MPEG Audio Version 1 Layer 3/MP3/g;
                 $format .= ' ' . ($date->{'format_settings'} || '')
                   if defined $date->{'format_settings'};
-                $format .= '<br>';
             }
 
             $date->{play}      = 1;
             $date->{series_id} = -1;
             $date->{event_id}  = $id;
-            $date->{title}     = '';
-            $date->{title} .= '<b>errors</b>: ' . $date->{errors} . '<br>'
+            my @playout = ();
+            push @playout, '<b>errors</b>: ' . $date->{errors}
               if defined $date->{errors};
-            $date->{title} .= audio::formatDuration(
+            push @playout, audio::formatDuration(
                 $date->{duration},
                 $date->{event_duration},
-                sprintf("duration: %.1g h", $date->{duration} / 3600) . "<br>",
+                sprintf("duration: %.1g h", $date->{duration} / 3600),
                 sprintf("%d s",             $date->{duration})
             ) if defined $date->{duration};
-            $date->{title} .= audio::formatLoudness($date->{rms_left}, 'L: ') . ', '
+            push @playout, audio::formatLoudness($date->{rms_left}, 'L: ')
               if defined $date->{rms_left};
-            $date->{title} .= audio::formatLoudness($date->{rms_right}, 'R: ') . '<br>'
+            push @playout, audio::formatLoudness($date->{rms_right}, 'R: ')
               if defined $date->{rms_right};
-            $date->{title} .= audio::formatBitrate($date->{bitrate}) if defined $date->{bitrate};
-            $date->{title} .= ' ' . audio::formatBitrateMode($date->{bitrate_mode}) . '<br>'
+            push @playout, audio::formatBitrate($date->{bitrate}) if defined $date->{bitrate};
+            push @playout, ' ' . audio::formatBitrateMode($date->{bitrate_mode})
               if defined $date->{bitrate_mode};
-            $date->{title} .=
-              '<b>replay gain</b> ' . sprintf("%.1f", $date->{replay_gain}) . '<br>'
+            push @playout,
+              '<b>replay gain</b> ' . sprintf("%.1f", $date->{replay_gain})
               if defined $date->{replay_gain};
-            $date->{title} .= audio::formatSamplingRate($date->{sampling_rate})
+            push @playout, audio::formatSamplingRate($date->{sampling_rate})
               if defined $date->{sampling_rate};
-            $date->{title} .= audio::formatChannels($date->{channels}) . '<br>'
+            push @playout, audio::formatChannels($date->{channels})
               if defined $date->{channels};
-            $date->{title} .= int(($date->{'stream_size'} || '0') / (1024 * 1024)) . 'MB<br>'
+            push @playout, audio::badge(int(($date->{'stream_size'} || '0') / (1024 * 1024)) . 'MB')
               if defined $date->{'stream_size'};
-            $date->{title} .= $format if defined $format;
-            $date->{title} .= '<b>library</b>: ' . ($date->{writing_library} || '') . '<br>'
+            push @playout, audio::badge($format) if defined $format;
+            push @playout, audio::badge('library', $date->{writing_library} || '')
               if defined $date->{'writing_library'};
-            $date->{title} .= '<b>path</b>: ' . ($date->{file} || '') . '<br>'
+            push @playout, audio::badge('path', $date->{file} || '')
               if defined $date->{file};
-            $date->{title} .= '<b>updated_at</b>: ' . ($date->{updated_at} || '') . '<br>'
+            push @playout, audio::badge('updated_at', $date->{updated_at} || '')
               if defined $date->{updated_at};
-            $date->{title} .= '<b>modified_at</b>: ' . ($date->{modified_at} || '') . '<br>'
+            push @playout, audio::badge('modified_at', $date->{modified_at} || '')
               if defined $date->{modified_at};
 
+            $date->{title}     = join (' ', @playout);
             $date->{rms_image} = URI::Escape::uri_unescape($date->{rms_image})
               if defined $date->{rms_image};
 
