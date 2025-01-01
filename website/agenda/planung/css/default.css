@@ -207,16 +207,16 @@ select#project_id {
 }
 
 select#studio_id {
-    background-image:url(../image/antenna.svg);
+    background-image:url(../image/bright/antenna.svg);
 }
 select#project_id {
-    background-image:url(../image/home.svg);
+    background-image:url(../image/bright/home.svg);
 }
 
 
 select#studio_id::after,
 select#project_id::after {
-    content : "url(../image/arrow-down.svg)"
+    content : "url(../image/bright/arrow-down.svg)"
 }
 
 #calcms_nav #bars {

@@ -1751,27 +1751,6 @@ sub printToolbar {
         </select>
     };
 
-    #filter
-    my $filter = $params->{filter} || '';
-    $toolbar .= qq{
-        <select id="filter" name="filter" onchange="reloadCalendar()">
-    };
-
-    for my $filter (
-        'no markup', 'conflicts', 'rerun', 'archived',
-        'playout',   'published', 'live',  'draft'
-    ) {
-        my $key = $filter;
-        $key =~ s/ /_/g;
-
-        $toolbar .=
-          qq{<option value="$filter">} . $params->{loc}->{ 'label_' . $key } . '</option>';
-    }
-
-    $toolbar .= q{
-        </select>
-    };
-
     #search
     $toolbar .= qq{
         <form class="search">
