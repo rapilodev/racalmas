@@ -29,7 +29,7 @@ function set_studio(id){
             if(! pair.match(/^studio_id=/)) params.push(pair);
         }
     }
-    //add studio id 
+    //add studio id
     if(id==null)id=-1;
     if(id=='')id=-1;
     params.push('studio_id='+id);
@@ -74,7 +74,7 @@ function set_project(id){
 function contains(s,t){
     if (s==false) return false;
     if (t==false) return false;
-    return s.indexOf(t) != -1; 
+    return s.indexOf(t) != -1;
 }
 
 function updateContainer2(id, url, callback){
@@ -84,11 +84,12 @@ function updateContainer2(id, url, callback){
 }
 
 function showError(s) {
-   if ($('#error').length){
-       $('#error').html(s);
-   } else {
-       showToast(s, {color:"white", background:"red", duration:30000})
-   }
+    console.log(s);
+    if ($('#error').length){
+        $('#error').html(s);
+    } else {
+        showToast(s, {color:"white", background:"red", duration:30000})
+    }
 }
 
 function showInfo(s) {
@@ -121,7 +122,7 @@ function showToast(s, options){
         "bottom" : "3rem",
         "width" : "100%",
         "padding" : "1rem",
-        "border-radius" : "6px"
+        "border-radius" : "1rem"
     }).fadeIn();
     $('#toast').on("click", () => $('#toast').remove());
     setTimeout( function(){
@@ -152,7 +153,7 @@ async function updateContainer(id, url, callback){
             Array.from(script.attributes).forEach(attr => {
                 newScript.setAttribute(attr.name, attr.value);
             });
-            script.parentNode.replaceChild(newScript, script);       
+            script.parentNode.replaceChild(newScript, script);
             console.log("load_script " + newScript.src);
         });
         if (callback != null) callback();
@@ -196,7 +197,7 @@ function fmtDatetime(dateString, options = {}) {
     } catch(e) {
         console.log(e)
         showError(e)
-    }    
+    }
 }
 
 function fmtDate(dateString, options = {}) {
@@ -214,8 +215,15 @@ function fmtDate(dateString, options = {}) {
     } catch(e) {
         console.log(e)
         showError(e)
-    }    
+    }
 }
+
+function missing(...args) {
+    if (args.filter(v => v).length == args.length) return false;
+    showError("Missing param");
+    return true;
+}
+
 
 async function getJson(url, params){
     params = Object.fromEntries(Object.entries(params).filter(([_,v]) => v));
@@ -252,8 +260,7 @@ function getFormValues(form, allowed){
             ([name]) => allowed.includes(name)
         )
     )
-        }
-
+}
 
 function postContainer(url, parameters, callback){
     if (url!='') $.post(url, parameters, callback);
@@ -283,7 +290,7 @@ function setTextWidth(select, minValue){
     $(select).each(
         function(){
             $(this).css('width', maxWidth);
-}
+        }
     );
 }
 
@@ -292,7 +299,7 @@ function commitAction (title, action){
     if ( title  == null )  { alert("missing title");return;  }
     if ( action == null ) { alert("missing action");return; }
     return showDialog({
-        title   : '<img src="image/alert.svg">Are you sure?</p>',
+        title   : '<img src="image/dark/alert.svg">Are you sure?</p>',
         buttons : {
             OK     : function(){ action(); },
             Cancel : function(){ $(this).closest('div#dialog').hide().remove(); }

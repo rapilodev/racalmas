@@ -83,7 +83,7 @@ function uploadFile(uploadButton){
                 $('#progress_container').show();
 
                 xhr.upload.addEventListener(
-                    'progress', 
+                    'progress',
                     function(data) {
                         if (!data.lengthComputable) return;
                         let now = Math.floor(Date.now()/1000);
@@ -98,7 +98,7 @@ function uploadFile(uploadButton){
                         let remaining = Math.round( (duration * data.total / data.loaded) - duration );
                         remaining = formatTime(remaining);
                         duration = formatTime(duration);
-  
+
                         var perc = Math.round(100*loaded/total);
                         $('#progress_done').css("width", perc + "%")
                         $('#progress_todo').css("width", (100-perc)+ "%")
@@ -107,7 +107,7 @@ function uploadFile(uploadButton){
 
                         let content = total + " MB<br>";
                          $('#progressLabel').html(content);
-                    } , 
+                    } ,
                     false
                 );
             }

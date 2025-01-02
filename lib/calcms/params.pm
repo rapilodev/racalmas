@@ -24,8 +24,8 @@ use Exception::Class('ParamError');
 sub get($;$) {
     my ($r, $options) = @_;
     my $MB           = 1000 * 1000;
-    my $tmp_dir      = '/var/tmp/';
-    my $upload_limit = 5 * $MB;
+    my $tmp_dir      = $options->{tmp_dir} // '/var/tmp/';
+    my $upload_limit = $options->{upload}->{limit} // 5 * $MB;
     my $status       = undef;
     my $fh           = undef;
     my $params       = {};
@@ -33,17 +33,22 @@ sub get($;$) {
     set_uri(undef);
 
     # fallback to CGI::Simple if uploads can take more than 64 MB
-    if (defined $r && ($options->{upload}->{limit} // 0) < 64 * $MB) {
+    if (defined $r && ($upload_limit) < 64 * $MB) {
         my $req = Apache2::Request->new($r,
             POST_MAX => $upload_limit,
             TEMP_DIR => $tmp_dir
-        );
+        ) or ParamError->throw(error => "apr error");
         params::set_uri($r->unparsed_uri);
         for my $key ($req->param) {
             $params->{scalar($key)} = scalar($req->param($key));
         }
+        if (defined $params->{upload}) {
+            my $upload = $req->upload('upload') or die "no upr upload";
+            $params->{upload} = $upload->filename();
+            $fh = $upload->fh() or die "no apr filehandle";
+        } 
     } else {
-        $CGI::Simple::POST_MAX = $options->{upload}->{limit} // $upload_limit;
+        $CGI::Simple::POST_MAX = $upload_limit;
         $CGI::Simple::DISABLE_UPLOADS = 0;
         my $cgi = CGI::Simple->new;
 

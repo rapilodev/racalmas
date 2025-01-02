@@ -7,7 +7,6 @@ use feature 'state';
 
 use DBD::mysql();
 use Digest::MD5 qw();
-use Data::Dumper;
 use Try::Tiny;
 use Scalar::Util qw(blessed);
 
@@ -31,8 +30,7 @@ state $connection = {};
 
 sub connect($;$) {
     my ($options, $request) = @_;
-
-    my $access_options = $options->{access};
+    my $access_options = $options->{access} or DatabaseError->throw(error => "missing database access options");
     my $key = Digest::MD5::md5_hex(sort values %$access_options);
     my $cache = $connection->{$key};
     return $cache->{dbh} if defined $cache && ($cache->{expires}//0>time);# && $cache->{dbh}->ping;

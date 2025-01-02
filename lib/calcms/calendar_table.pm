@@ -355,17 +355,17 @@ sub showEventList {
     my $language      = $params->{language};
 
     my $rerunIcon =
-        qq{<img src="image/replay.svg" title="$params->{loc}->{label_rerun}">};
+        qq{<img src="image/dark/replay.svg" title="$params->{loc}->{label_rerun}">};
     my $liveIcon =
-        qq{<img src="image/mic.svg" title="$params->{loc}->{label_live}">};
+        qq{<img src="image/dark/mic.svg" title="$params->{loc}->{label_live}">};
     my $draftIcon =
-        qq{<img src="image/draft.svg" title="$params->{loc}->{label_draft}">};
+        qq{<img src="image/dark/draft.svg" title="$params->{loc}->{label_draft}">};
     my $archiveIcon =
-qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
-    my $playoutIcon    = qq{<img src="image/play.svg">};
-    my $processingIcon = qq{<img src="image/processsing.svg">};
-    my $preparedIcon   = qq{<img src="image/prepared.svg>};
-    my $creoleIcon     = qq{<img src="image/creole.svg>};
+qq{<img src="image/dark/archive.svg" title="$params->{loc}->{label_archived}">};
+    my $playoutIcon    = qq{<img src="image/dark/play.svg">};
+    my $processingIcon = qq{<img src="image/dark/processsing.svg">};
+    my $preparedIcon   = qq{<img src="image/dark/prepared.svg>};
+    my $creoleIcon     = qq{<img src="image/dark/creole.svg>};
 
     my $out = '';
     $out = qq{
@@ -386,9 +386,11 @@ qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
                     <th class="live">$liveIcon</th>
                     <th class="playout" title="$params->{loc}->{label_playout}">$playoutIcon</th>
                     <th class="archive">$archiveIcon</th>
+                    <!--
                     <th class="project_id">project</th>
                     <th class="studio">studio</th>
                     <th class="creole">wiki format</th>
+                    -->
                  </tr>
             </thead>
             <tbody>
@@ -498,8 +500,8 @@ qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
             my $other_studio  = $params->{studio_id} ne $event->{studio_id};
             my $other_project = $params->{project_id} ne $event->{project_id};
             $class .= ' predecessor' if $other_project or $other_studio;
-            $other_studio  = '<img src="image/globe.svg">' if $other_studio;
-            $other_project = '<img src="image/globe.svg">' if $other_project;
+            $other_studio  = '<img src="image/dark/globe.svg">' if $other_studio;
+            $other_project = '<img src="image/dark/globe.svg">' if $other_project;
 
             my $file =
                 $event->{file}
@@ -529,9 +531,11 @@ qq{<img src="image/archive.svg" title="$params->{loc}->{label_archived}">};
                 . qq!<td class="live">$live</td>!
                 . qq!<td class="playout" title="$playout_info">$playout</td>!
                 . qq!<td class="archived">$archived</td>!
+                . qq{<!--}
                 . qq!<td>$event->{project_name} $other_studio</td>!
                 . qq!<td>$studio_name $other_studio</td>!
                 . qq!<td>$format</td>!
+                . qq{-->}
                 . qq!</tr>! . "\n";
         }
     #    $i++;
@@ -1142,9 +1146,9 @@ sub get_event {
             ? 'playout: ' . $event->{file} =~ s/\'/\&apos;/gr
             : 'playout';
 
-        my $playoutClass    = qq{<img src="image/play.svg">};
-        my $processingClass = qq{<img src="image/processing.svg">};
-        my $preparedClass   = qq{<img src="image/prepare.svg">};
+        my $playoutClass    = qq{<img src="image/dark/play.svg">};
+        my $processingClass = qq{<img src="image/dark/processing.svg">};
+        my $preparedClass   = qq{<img src="image/dark/prepare.svg">};
         my $icons           = '';
 
         if (exists $attr->{event}) {
@@ -1154,16 +1158,16 @@ sub get_event {
                 $playout = $preparedClass   if $attr->{upload_status} eq 'done';
             }
             $playout = $playoutClass if exists $attr->{playout};
-            $icons .= '<img src="image/mic.svg" title="live"/>'
+            $icons .= '<img src="image/dark/mic.svg" title="live"/>'
                 if exists($attr->{live}) && exists($attr->{no_rerun});
-            $icons .= '<img src="image/mic_off.svg" title="preproduced"/>'
+            $icons .= '<img src="image/dark/mic_off.svg" title="preproduced"/>'
                 if exists($attr->{preproduced}) && exists($attr->{no_rerun});
-            $icons .= '<img src="image/replay.svg" title="rerun"/>'
+            $icons .= '<img src="image/dark/replay.svg" title="rerun"/>'
                 if exists $attr->{rerun};
             $icons .=
-qq{<img src="image/play.svg" title="$file" onmouseenter="console.log('$file');"/>}
+qq{<img src="image/dark/play.svg" title="$file" onmouseenter="console.log('$file');"/>}
                 if $playout;
-            $icons .= '<img src="image/archive.svg" title="archived"/>'
+            $icons .= '<img src="image/dark/archive.svg" title="archived"/>'
                 if exists $attr->{archived};
         }
 
@@ -1184,8 +1188,6 @@ qq{<div class="text" style="$height">$content</div><div class="icons">$icons</di
     $line .= "\n";
     return $line;
 }
-
-
 
 sub getSeriesEvents {
     my ($config, $request, $options, $params) = @_;
@@ -1209,6 +1211,7 @@ sub getSeriesEvents {
         permissions => $request->{permissions}
     };
     $request2->{params}->{checked}->{published} = 'all';
+    $request2->{params}->{checked}->{phase} = 'all';
     $request2->{params}->{checked}->{draft}     = '1' if $params->{list} == 1;
 
     my $events = events::get($config, $request2);

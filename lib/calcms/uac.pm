@@ -466,7 +466,7 @@ sub get_user_permissions ($$;$) {
 
     # aggregate max permissions
     # should be limited by project and studio
-    for my $user_role(@user_roles) {
+    for my $user_role (@user_roles) {
         if ($user_role->{level} > $max_level) {
             $user_permissions->{level}      = $user_role->{level};
             $user_permissions->{id}         = $user_role->{id};
@@ -812,6 +812,7 @@ sub init{
         my $session = try {
             return auth::get_session($config, $params);
         } catch {
+            use Data::Dumper;print STDERR Dumper($_);
             if (blessed $_ and $_->isa('AuthError') and !params::is_json) {
                 print auth::show_login_form($config, '', $_->message // $_->error);
                 exit;

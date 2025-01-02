@@ -228,7 +228,7 @@ function updateDuration(selector, value){
         }else{
             $(this).removeAttr('selected');
             //console.log("removed "+value)
-}
+        }
     })
     if(durationUpdated==0){
         console.log("added "+value)
@@ -353,20 +353,39 @@ async function modifyEvent(elem, action, callback){
     else callback(json);
     }
 
+function createEvent22(elem, action){
+    if (json.status == "created"){
+        showInfo("created");
+        let event = json.entry;
+        let url="broadcast.cgi?" + new URLSearchParams({
+            action : action,
+            project_id : event.project_id,
+            studio_id : event.studio_id,
+            series_id : event.series_id,
+            event_id : event.event_id
+        }).toString();
+        loadUrl(url);
+    } else showError("Could not create event");
+}
+
 function createEvent2(elem, action){
-        if (json.status == "created"){
-            showInfo("created");
-            let event = json.entry;
-            let url="broadcast.cgi?" + new URLSearchParams({
-                action : "edit",
-                project_id : event.project_id,
-                studio_id : event.studio_id,
-                series_id : event.series_id,
-                event_id : event.event_id
-            }).toString();
-            loadUrl(url);
-        } else showError("Could not create event");
-    })
+    $.post(
+        "broadcast.cgi?" + new URLSearchParams({
+            action: action,
+            project_id : projectId,
+            studio_id : studioId,
+            series_id : seriesId,
+        }).toString(),
+        function(data) {
+            loadUrl("broadcast.cgi?" + new URLSearchParams({
+                action: "edit",
+                project_id : projectId,
+                studio_id : studioId,
+                series_id : newSeriesId,
+                event_id : eventId,
+            }).toString());
+        }
+    );
 }
 
 async function saveEvent(elem, action){

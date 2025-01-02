@@ -291,6 +291,10 @@ sub save_series {
 
         $config->{access}->{write} = 1;
         my $series_id = series::insert($config, $entry);
+        $entry->{series_id} = $series_id;
+        use Data::Dumper;
+        print STDERR Dumper($series_id);
+        print STDERR Dumper($entry);
         InsertError->throw(error => 'could not insert series') unless defined $series_id;
 
         user_stats::increase($config, 'create_series', {
@@ -494,7 +498,7 @@ sub unassign_event {
     );
 
     local $config->{access}->{write} = 1;
-    $result = series::unassign_event($config, {
+    series::unassign_event($config, {
         uac::set($entry, 'project_id', 'studio_id', 'series_id', 'event_id')
     });
 
@@ -635,9 +639,9 @@ sub list_series {
     $params->{series} = \@series;
 
     $params->{image} =
-      studios::getImageById($config, { project_id => $project_id, studio_id => $studio_id })
+      studios::getImageById($config, { project_id => $params->{project_id}, studio_id => $params->{studio_id} })
       if ((!defined $params->{image}) || ($params->{image} eq ''));
-    $params->{image} = project::getImageById($config, { project_id => $project_id })
+    $params->{image} = project::getImageById($config, { project_id => $params->{project_id} })
       if ((!defined $params->{image}) || ($params->{image} eq ''));
 
     $params->{loc} = localization::get($config,

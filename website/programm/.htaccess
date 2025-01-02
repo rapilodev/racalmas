@@ -1,16 +1,22 @@
 <IfModule mod_rewrite.c>
     RewriteEngine on
     RewriteBase /programm
-    RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$   /agenda/aggregate.cgi?from_date=$1&till_date=$2&$3 [L]
-    RewriteRule ^kalender/(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$                       /agenda/aggregate.cgi?date=$1&$2 [L]
-    RewriteRule ^sendungen/(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$                      /agenda/aggregate.cgi?date=$1&$2 [L]
-    RewriteRule ^sendungen/(\d{4}-\d{2})\.html[\?]?(.*)$                            /agenda/aggregate.cgi?month=$1&$2 [L]
-    RewriteRule ^sendungen/month\.html[\?]?(.*)$                                    /agenda/aggregate.cgi?month=this [L]
-    RewriteRule ^sendungen/monat\.html[\?]?(.*)$                                    /agenda/aggregate.cgi?month=this [L]
-    RewriteRule ^sendungen/(.*)$                                                    /agenda/aggregate.cgi?$1 [L]
-    RewriteRule ^sendung/(\d+)\.html[\?]?(.*)$                                      /agenda/aggregate.cgi?event_id=$1&$2 [L]
-    RewriteRule ^sendung/serie_plus/(\d+)\.html[\?]?(.*)$                           /agenda/aggregate.cgi?next_series=$1&$2 [L]
-    RewriteRule ^sendung/serie_minus/(\d+)\.html[\?]?(.*)$                          /agenda/aggregate.cgi?previous_series=$1&$2 [L]
-    RewriteRule ^events/(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$     /agenda/events.cgi?from_date=$1&till_date=$2&template=event_list.html&$3 [L]
-    RewriteRule ^(\d+)$                                                             /agenda/aggregate.cgi?event_id=$1&$2 [L]
+
+    RewriteRule ^kalender/(.*)$                       calendar/$1
+    RewriteRule ^sendungen/monat\.html(.*?)$          events/month.html$1
+    RewriteRule ^sendungen/(.*?)$                     events/$1
+    RewriteRule ^sendung/(.*?)$                       event/$1
+
+    RewriteRule ^calendar/(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$   /agenda/aggregate.cgi?description=html&from_date=$1&till_date=$2&$3 [L]
+    RewriteRule ^calendar/(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$                       /agenda/aggregate.cgi?description=html&date=$1&$2 [L]
+    RewriteRule ^events/(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$     /agenda/events.cgi?description=html&from_date=$1&till_date=$2&from_time=06:00&till_time=06:00&template=event_list.html&phase=all&date_range_include=0&$3 [L]
+    RewriteRule ^events/(\d{4}-\d{2}-\d{2})\.html[\?]?(.*)$                         /agenda/aggregate.cgi?description=html&date=$1&$2 [L]
+    RewriteRule ^events/(\d{4}-\d{2})\.html[\?]?(.*)$                               /agenda/aggregate.cgi?description=html&month=$1&$2 [L]
+    RewriteRule ^events/month\.html[\?]?(.*)$                                       /agenda/aggregate.cgi?description=html&month=this [L]
+    RewriteRule ^events/(.*)$                                                       /agenda/aggregate.cgi?description=html&$1 [L]
+    RewriteRule ^event/next_episode/(\d+)\.html[\?]?(.*)$                           /agenda/aggregate.cgi?description=html&next_series=$1&$2 [L]
+    RewriteRule ^event/previous_episode/(\d+)\.html[\?]?(.*)$                       /agenda/aggregate.cgi?description=html&previous_series=$1&$2 [L]
+    RewriteRule ^event/(\d+)/(.*)$                                                  /agenda/aggregate.cgi?description=html&event_id=$1&$2 [L]
+    RewriteRule ^event/(\d+)\.html[\?]?(.*)$                                        /agenda/aggregate.cgi?description=html&event_id=$1&$2 [L]
+    RewriteRule ^(\d+)$                                                             /agenda/aggregate.cgi?description=html&event_id=$1&$2 [L]
 </IfModule>

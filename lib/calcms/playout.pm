@@ -22,6 +22,9 @@ sub get_columns ($) {
 # get playout entries
 sub get_scheduled($$) {
     my ($config, $condition) = @_;
+    for ('studio_id') {
+        ParamError->throw(error => "missing $_") unless defined $condition->{$_}
+    };
 
     my $date_range_include = 0;
     $date_range_include = 1

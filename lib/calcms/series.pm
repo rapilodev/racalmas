@@ -737,7 +737,7 @@ sub get_images ($$) {
             studio_id  => $options->{studio_id},
             series_id  => $options->{series_id}
         }
-   );
+    );
     my $images = {
         map {
             my $image = $_->{image};

@@ -219,8 +219,9 @@ sub show_event {
         $params->{edit_lock} = 1;
     }
 
-    for my $value ('markdown', 'creole'){
+    for my $value ('markdown', 'creole') {
         $params->{"content_format_$value"}=1 if ($params->{content_format}//'') eq $value;
+    }
 
     $params->{loc} =
         localization::get($config,
@@ -602,6 +603,7 @@ sub get_download_event {
     };
 
     $request2->{params}->{checked}->{published} = 'all';
+    $request2->{params}->{checked}->{phase} = 'all';
     my $events = events::get($config, $request2);
     my $event  = $events->[0];
     return $event;
@@ -685,7 +687,7 @@ sub check_params {
 
     my $checked  = {};
     my $template = '';
-    $checked->{template} = template::check($config, $params->{template}, 'series');
+    $checked->{template} = template::check($config, $params->{template}, 'edit-event');
 
     entry::set_numbers($checked, $params, [
         'id',      'project_id', 'studio_id', 'default_studio_id',
@@ -729,7 +731,7 @@ sub check_params {
     $checked->{action} = entry::element_of($params->{action},
         [ 'save', 'delete', 'download', 'download_audio', 'show_new_event',
             'show_new_event_from_schedule',
-          'create_event', 'create_event_from_schedule', 'get_json'
+          'create_event', 'create_event_from_schedule', 'get_json', 'edit'
         ]
     ) // '';
     return $checked;

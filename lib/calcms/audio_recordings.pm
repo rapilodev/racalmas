@@ -94,10 +94,11 @@ sub get($$) {
 sub update_active($$) {
     my ($config, $entry) = @_;
 
-    return undef unless defined $entry->{project_id};
-    return undef unless defined $entry->{studio_id};
-    return undef unless defined $entry->{event_id};
+    for ('project_id', 'studio_id', 'event_id') {
+        ParamError->throw(error => "audio-recordings: missing $_") unless defined $entry->{$_}
+    };
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{event_id} ];
     my $query = qq{
@@ -128,6 +129,7 @@ sub update($$) {
     my ($config, $entry) = @_;
 
     my $day_start = $config->{date}->{day_starting_hour};
+    local $config->{access}->{write} = 1;
 
     my $dbh = db::connect($config);
     my $bind_values = [
@@ -167,6 +169,7 @@ sub insert ($$) {
         ParamError->throw(error => "audio-recordings: missing $_") unless defined $entry->{$_}
     };
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     $entry = {
         project_id    => $entry->{project_id},
@@ -196,6 +199,7 @@ sub delete ($$) {
         ParamError->throw(error => "audio-recordings: missing $_") unless defined $entry->{$_}
     };
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     my $query = qq{
         delete
@@ -207,37 +211,6 @@ sub delete ($$) {
 
     update_active($config, $entry);
     return $result;
-}
-
-sub update_active($$$) {
-    my ($config, $dbh, $entry) = @_;
-
-    for ('project_id', 'studio_id', 'event_id') {
-        ParamError->throw(error => "audio-recordings: missing $_") unless defined $entry->{$_}
-    };
-
-    my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{event_id} ];
-    my $query = qq{
-        update calcms_audio_recordings
-        set    active=0
-        where  project_id=? and studio_id=? and event_id=? and active=1
-    };
-    db::put($dbh, $query, $bind_values);
-
-    $query = qq{
-        select max(id) id from calcms_audio_recordings
-        where  project_id=? and studio_id=? and event_id=?
-    };
-    my $entries = db::get($dbh, $query, $bind_values);
-    my $max = $entries->[0];
-    return undef unless defined $max->{id};
-
-    $query = qq{
-        update calcms_audio_recordings
-        set    active=1
-        where  id=?
-    };
-    return db::put($dbh, $query, [$max->{id}]);
 }
 
 #do not delete last line!

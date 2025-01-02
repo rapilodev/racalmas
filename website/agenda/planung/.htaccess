@@ -5,9 +5,7 @@
         PerlResponseHandler ModPerl::PerlRunPrefork
         PerlOptions +ParseHeaders
         Options +ExecCGI
-        #PerlSetVar PerlRunOnce On
-        #SetInputFilter apreq2
-        #APREQ2_ReadLimit 200M
+        PerlSetVar PerlRunOnce On
     </FilesMatch>
 </IfModule>
 

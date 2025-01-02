@@ -109,8 +109,8 @@ found <TMPL_VAR sum_events> unassigned events for project <b><TMPL_VAR project_n
         <form action="assignments.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>" method="post" id="assignments_form">
             <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
             <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
-            <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">    
-            <input type="hidden" name="event_ids" value="<TMPL_VAR .event_id>">    
+            <input type="hidden" name="series_id" value="<TMPL_VAR .series_id>">
+            <input type="hidden" name="event_ids" value="<TMPL_VAR .event_id>">
             <input type="hidden" name="action" value="assign_events">
             <button target="_blank"
                 onclick="assign_series_events('<TMPL_VAR .project_id escape=js>', '<TMPL_VAR .studio_id escape=js>', $('#series_id').val());return false;"
@@ -166,7 +166,7 @@ found <TMPL_VAR sum_events> unassigned events for project <b><TMPL_VAR project_n
         </div>
     </div>
 
-</main>    
+</main>
 </body>
 </html>
 

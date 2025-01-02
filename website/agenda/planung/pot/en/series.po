@@ -329,9 +329,6 @@ msgstr "Single Events"
 msgid "single_event"
 msgstr "Single Event"
 
-msgid "label_search"
-msgstr "Search"
-
 msgid "label_clear_search"
 msgstr "clear"
 

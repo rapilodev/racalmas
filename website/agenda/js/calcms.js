@@ -72,8 +72,7 @@ var calcms = (function($) {
     }
 
     my.isArchive = function isArchive() {
-        if ($('#calcms_archive:checked').length == 0) return 0;
-        return 1;
+        return ($('#calcms_archive').val() == 0) ? 0 : 1;
     }
 
     my.getSearchElement = function getSearchElement() {
@@ -180,18 +179,18 @@ var calcms = (function($) {
             url += '/' + weekday;
         } else if (date != '') {
             if (date == 'today') {
-                url += '/heute/';
+                url += '/today/';
             } else {
                 url += '/' + date;
             }
         }
 
         if (search_field != '') {
-            url += "/suche/" + search_field;
+            url += "/search/" + search_field;
         }
 
         if (series_name != null && series_name != '') {
-            url += "/sendereihe/" + series_name;
+            url += "/events/series/" + series_name;
         }
 
         if (url.substr(url.length - 1, url.length) != '/') {
@@ -253,62 +252,37 @@ var calcms = (function($) {
     }
 
     // show all events for a given project
-    my.showSearchResultsByProject = function showSearchResultsByProject(
-            project, value, archive) {
-        if (value != null && value != '') {
-            var url = my.get('search_url');
-            if (project != '' && project != null)
-                url += encodeURIComponent(project) + '/';
-            else
-                url += 'all/';
-            if (value != '' && value != null) url += escapeString(value) + '/';
-            if (archive != null && archive == 0) url += 'kommende/';
-            if (archive != null && archive == 1) url += 'vergangene/';
-            my.updateContainer('calcms_list', url);
+    my.searchEvents = function searchEvents(filter) {
+        console.log(filter);
+        var url = my.get('search_url');
+        if (filter.search != null && filter.search != "all"){
+            url += 'search/' + escapeString(filter.search) + '/';
+            if (filter.project != '' && filter.project != null  && filter.project != 'all')
+                url += 'project/' + escapeString(filter.project) + '/';
+            if (filter.series != '' && filter.series != null) 
+                url += 'series/' + escapeString(value) + '/';
+        } else {
+            if (filter.project != '' && filter.project != null && filter.project != 'all')
+                url += 'project/' + escapeString(filter.project) + '/';
+            if (filter.series != '' && filter.series != null) 
+                url += 'series/' + escapeString(filter.series) + '/';
         }
-    }
-
-    // show all events for a given project and series
-    my.showEventsByProjectAndSeriesName = function showEventsByProjectAndSeriesName(
-            project, seriesName, archive) {
-        if (seriesName != '' && seriesName != null) {
-            var url = my.get('search_series_name_url');
-            if (project != '' && project != null) url += escapeString(project) + '/';
-            if (seriesName != '' && seriesName != null)
-                url += escapeString(seriesName) + '/';
-            if (archive != null && archive == 0) url += 'kommende/';
-            if (archive != null && archive == 1) url += 'vergangene/';
-            my.updateContainer('calcms_list', url);
+        if (filter.archive != null) {
+            if (filter.archive == 0) url += 'phase/upcoming/';
+            if (filter.archive == 1) url += 'phase/completed/';
         }
-    }
-
-    // show all events for a given series
-    my.showEventsBySeriesName = function showEventsBySeriesName(value) {
-        if (value != '' && value != null) {
-            my.updateContainer('calcms_list', my.get('search_series_name_url')
-                + escapeString(value) + '/'
-            );
-        }
-    }
-
-    // show all events for a given program
-    my.showEventsByProgram = function showEventsByProgram(value) {
-        var events_url = my.get('events_url');
-        var url = my.setAndGetUrlParameters('program', value);
-        if (value != '' && value != null) {
-            my.updateContainer('calcms_list', url);
-        }
+        my.updateContainer('calcms_list', url);
     }
 
     // show next event of a given series
     my.showNextSeriesEvent = function showNextSeriesEvent(value) {
-        var events_url = my.get('next_series_url');
+        var events_url = my.get('next_episode_url');
         my.load(events_url + '/' + value + '.html');
     }
 
     // show previous event of a given series
     my.showPrevSeriesEvent = function showPrevSeriesEvent(value) {
-        var events_url = my.get('prev_series_url');
+        var events_url = my.get('previous_episode_url');
         my.load(events_url + '/' + value + '.html');
     }
 
@@ -534,11 +508,7 @@ var calcms = (function($) {
     // init search interface: load search form content if not loaded yet
     my.initSearch = function initSearch(target, field) {
         if (my.get('preloaded') == '') {
-            var program_url = my.get('program_url');
             var series_name_url = my.get('series_name_url');
-
-            if (program_url != null && program_url != '')
-                my.updateContainer('calcms_programs', program_url);
             if (series_name_url != null && series_name_url != '')
                 my.updateContainer('calcms_series_names', series_name_url);
         }

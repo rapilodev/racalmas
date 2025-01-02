@@ -18,7 +18,7 @@ function pageLeaveHandler(){
     $('div.editor input'   ).change(function(){pageHasChanged()});
     $('div.editor textarea').change(function(){pageHasChanged()});
     $('div.editor select'  ).change(function(){pageHasChanged()});
- 
+
     window.onbeforeunload = function() {
         return confirmPageLeave();
     };

@@ -125,10 +125,8 @@ sub modify_results ($$$$) {
 
     my $params = $request->{params}->{checked};
 
-    my $running_event_id = 0;
     my $projects         = {};
     my $studios          = {};
-
     my $running_event_id = @$results ? events::get_running_event_id($dbh) : 0;
     if (@$results) {
         $results->[0]->{__first__} = 1;
@@ -302,14 +300,14 @@ sub modify_results ($$$$) {
         $result->{ 'counter_' . $counter } = 1;
         $counter++;
 
-        if ($params->{excerpt} eq 'summary') {
+        if (($params->{excerpt}//'') eq 'summary') {
             for my $field (qw(excerpt user_excerpt)) {
                 $result->{$field} = substr($result->{$field}, 0, 250) . '...'
                     if length $result->{$field} > 250;
             }
         }
 
-        if ($params->{description} eq 'html') {
+        if (($params->{description}//'') eq 'html') {
             for my $field (qw(content topic)) {
                 $result->{"html_$field"} = events::format($result, $field) if defined $result->{$field};
             }
@@ -523,6 +521,7 @@ sub set_upload_status($$){
         set upload_status=?
         where id=? and upload_status!=?;
     };
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     my $recordings = db::put($dbh, $query, $bindValues);
 }
@@ -583,7 +582,7 @@ sub getDateQueryConditions ($$$) {
         return $date_conds;
     }
 
-    if ($params->{phase} eq 'running') {
+    if ($params->{phase} eq 'ongoing') {
         push @$date_conds, qq{
            (
              (unix_timestamp(end)   >  unix_timestamp(now()))
@@ -1268,7 +1267,6 @@ sub check_params ($$) {
     }
 
     #set time
-    my $time      = time::check_time($params->{time});
     my $from_time = time::check_time($params->{from_time});
     my $till_time = time::check_time($params->{till_time});
 
@@ -1278,7 +1276,7 @@ sub check_params ($$) {
     my $date = ($from_date eq '' && $till_date eq '') ? time::check_date($params->{date}) : '';
 
     #set date interval (including)
-    my $date_range_include = ($params->{date_range_include}//'') eq '1' ?0:1;
+    my $date_range_include = ($params->{date_range_include}//'') eq '1' ? 1 : 0;
 
     my $order = '';
     if (defined $params->{order}) {
@@ -1352,7 +1350,7 @@ sub check_params ($$) {
     my $exclude_event_images = (($params->{exclude_event_images}//'') eq '1') ?1:0;
 
     #show future events by default
-    my $phase = $params->{phase} // 'future';
+    my $phase = $params->{phase} // (defined $params->{time} ? time::check_time($params->{time}) : 'future');
     if ($phase =~ /^(?:future|upcoming)$/) {
         $phase = 'future';
     } elsif ($phase =~/^(?:ongoing|running)$/) {
@@ -1443,7 +1441,7 @@ sub check_params ($$) {
 
     my $checked = {
         date                 => $date,
-        time                 => $time,
+#        time                 => $time,
         from_date            => $from_date,
         till_date            => $till_date,
         date_range_include   => $date_range_include,

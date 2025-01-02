@@ -18,7 +18,7 @@ sub get_session($$) {
         if ($params->{authAction} eq 'login') {
             my ($user, $password, $uri) = ($params->{user}, $params->{password}, $params->{uri});
             print login($config, $user, $password) .  new CGI::Simple()->redirect($uri);
-            exit;
+            return;#exit;
         } elsif($params->{authAction} eq 'logout') {
             print logout($config);
             LogoutDone->throw;

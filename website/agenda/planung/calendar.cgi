@@ -255,7 +255,7 @@ sub check_params {
 
     my $checked = {user => $config->{user}};
     my $template = '';
-    $checked->{template} = template::check($config, $params->{template}, 'series');
+    $checked->{template} = template::check($config, $params->{template}, 'calendar');
 
     #numeric values
     $checked->{list}     = 0;

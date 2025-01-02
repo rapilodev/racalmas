@@ -135,8 +135,6 @@ sub showCalendar {
         project_id => $project_id,
         template   => 'html',
         limit      => 600,
-
-        #get                => 'no_content',
         from_date          => $from,
         till_date          => $till,
         date_range_include => 1,
@@ -517,7 +515,7 @@ sub check_params {
     my $checked  = { user => $config->{user} };
     my $template = '';
     $checked->{template} =
-        template::check($config, $params->{template}, 'series');
+        template::check($config, $params->{template}, 'calendar');
 
     #numeric values
     $checked->{part}     = 0;

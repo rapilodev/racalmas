@@ -77,16 +77,16 @@ sub show_image {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    unless ( defined $params->{project_id} ) {
-        ParamError->throw(error=> "missing project id");
+    unless (defined $params->{project_id}) {
+        ParamError->throw(error => "missing project id");
     }
-    unless ( defined $params->{studio_id} ) {
-        ParamError->throw(error=> "missing studio id");
+    unless (defined $params->{studio_id}) {
+        ParamError->throw(error => "missing studio id");
         return undef;
 }
 
-    if ( $permissions->{read_image} ne '1' ) {
-        PermissionError->throw(error=>"Missing permission to read image");
+    if ($permissions->{read_image} ne '1') {
+        PermissionError->throw(error => "Missing permission to read image");
         return 0;
     }
 
@@ -119,7 +119,7 @@ sub show_image {
     }
 
     #load images matching by search
-    if ( ($params->{search}//'') =~ /\S/ ) {
+    if (($params->{search}//'') =~ /\S/) {
 
         #remove filename from search
         #delete $params->{filename};
@@ -222,7 +222,7 @@ sub show_image {
       $template_params->{allow}->{update_image_own} || $template_params->{allow}->{update_image_others};
     $template_params->{allow}->{delete_image} =
       $template_params->{allow}->{delete_image_own} || $template_params->{allow}->{delete_image_others};
-    return  template::process( $config, $params->{template}, $template_params );
+    print template::process($config, $params->{template}, $template_params);
 }
 
 sub print_js_error {
@@ -240,16 +240,15 @@ sub save_image {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    unless ( check_permission( $config, $user, $permissions, 'update_image', $params->{save_image} ) eq '1' ) {
+    unless (check_permission($config, $user, $permissions, 'update_image', $params->{save_image}) eq '1') {
         print_js_error("missing permission to update image");
         return 0;
     }
 
-    if ( ( $params->{update_name} eq '' ) && ( $params->{update_description} eq '' ) ) {
+    if (($params->{update_name} eq '') && ($params->{update_description} eq '')) {
         print_js_error("empty name or empty description!");
         return 0;
     }
-
     my $image = {};
     $image->{filename}    = $params->{save_image};
     $image->{name}        = $params->{update_name} if $params->{update_name} ne '';
@@ -263,9 +262,6 @@ sub save_image {
     $image->{name} = 'new' if $image->{name} eq '';
 
     images::checkLicence($config, $image);
-
-    local $config->{access}->{write} = 1;
-    my $dbh = db::connect($config);
 
     my $entries = images::get(
         $config,
@@ -286,12 +282,12 @@ sub save_image {
     }
     my $entry = $entries->[0];
     if (defined $entry) {
-        images::update($dbh, $image);
+        images::update($config, $image);
         images::publish($config, $image->{filename}) if (($image->{public} == 1) && ($entry->{public} == 0));
         images::depublish($config, $image->{filename}) if (($image->{public} == 0) && ($entry->{public} == 1));
     } else {
         $image->{created_by} = $user;
-        images::insert($dbh, $image);
+        images::insert($config, $image);
     }
 }
 
@@ -304,18 +300,16 @@ sub delete_image {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    unless ( check_permission( $config, $user, $permissions, 'delete_image', $params->{delete_image} ) eq '1' ) {
+    unless (check_permission($config, $user, $permissions, 'delete_image', $params->{delete_image}) eq '1') {
         PermissionError->throw(error=>'Missing permission to delete image');
     }
 
-    local $config->{access}->{write} = 1;
-    my $dbh   = db::connect($config);
     my $image = {
         project_id => $params->{project_id},
         studio_id  => $params->{studio_id},
         filename   => $params->{delete_image},
     };
-    my $result = images::delete($dbh, $image);
+    my $result = images::delete($config, $image);
 
     return;
 }

@@ -77,18 +77,18 @@
         <form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-template">
             <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
             <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
-            <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">    
+            <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
             <table>
                 <TMPL_UNLESS has_single_events>
-                <tr> <td class="label"><TMPL_VAR .loc.template_series></td>     
+                <tr> <td class="label"><TMPL_VAR .loc.template_series></td>
                      <td><input name="series_name" value="<TMPL_VAR series_name>" placeholder="<TMPL_VAR .loc.template_series>"></td></tr>
                 <TMPL_ELSE>
                      <input type="hidden" name="series_name" value="_single_">
                 </TMPL_UNLESS>
-                <tr> <td class="label"><TMPL_VAR .loc.template_title></td>     
+                <tr> <td class="label"><TMPL_VAR .loc.template_title></td>
                      <td><input name="title" value="<TMPL_VAR title>" placeholder="<TMPL_VAR .loc.template_title>"></td></tr>
                 <tr id="excerpt">
-                    <td class="label"><TMPL_VAR .loc.template_excerpt></td>     
+                    <td class="label"><TMPL_VAR .loc.template_excerpt></td>
                     <td>
                         <div id="excerpt_too_long" class="error" style="display:none"><TMPL_VAR .loc.label_excerpt_too_long></div>
                         <textarea name="excerpt" class="animated" style="width:100%;" maxlength="251" placeholder="<TMPL_VAR .loc.template_excerpt>"><TMPL_VAR excerpt></textarea>
@@ -96,7 +96,7 @@
                 </tr>
                 <tr> <td class="label"><TMPL_VAR .loc.template_topic></td>
                      <td><textarea name="topic" class="animated" style="width:100%;" placeholder="<TMPL_VAR .loc.template_topic>"><TMPL_VAR topic></textarea></td></tr>
-                <tr> <td class="label"><TMPL_VAR .loc.template_content></td>    
+                <tr> <td class="label"><TMPL_VAR .loc.template_content></td>
                      <td><textarea name="content" class="animated" style="width:100%;" placeholder="<TMPL_VAR .loc.template_content>"><TMPL_VAR content></textarea></td></tr>
                 <tr> <td class="label"><TMPL_VAR .loc.template_image></td>
                      <td>
@@ -111,10 +111,10 @@
                         <input id="image_<TMPL_VAR .series_id>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.template_image>" readonly="readonly">
                     </TMPL_IF>
                 </td></tr>
-                <tr> <td class="label"><TMPL_VAR .loc.template_duration></td>    
+                <tr> <td class="label"><TMPL_VAR .loc.template_duration></td>
                      <td><input name="default_duration" value="<TMPL_VAR default_duration>" style="width:3em" placeholder="<TMPL_VAR .loc.template_duration>"> <TMPL_VAR .loc.minutes></td></tr>
 
-                <tr> <td class="label"><TMPL_VAR .loc.template_live></td>    
+                <tr> <td class="label"><TMPL_VAR .loc.template_live></td>
                      <td><input name="live" type="checkbox"<TMPL_IF live> value="1" checked="checked"<TMPL_ELSE> value="0"</TMPL_IF> ></td></tr>
 
                 <TMPL_UNLESS has_single_events>
@@ -122,13 +122,13 @@
                      <td><input name="count_episodes" type="checkbox"<TMPL_IF count_episodes> value="1" checked="checked"<TMPL_ELSE> value="0"</TMPL_IF> ></td></tr>
                 </TMPL_UNLESS>
 
-                <tr> <td class="label"><TMPL_VAR .loc.template_podcast_url></td>    
+                <tr> <td class="label"><TMPL_VAR .loc.template_podcast_url></td>
                      <td><input name="podcast_url" style="width:100%;" value="<TMPL_VAR podcast_url>" placeholder="<TMPL_VAR .loc.template_podcast_url>"></td></tr>
 
-                <tr> <td class="label"><TMPL_VAR .loc.template_archive_url></td>    
+                <tr> <td class="label"><TMPL_VAR .loc.template_archive_url></td>
                      <td><input name="archive_url" style="width:100%;" value="<TMPL_VAR archive_url>" placeholder="<TMPL_VAR .loc.template_archive_url>"></td></tr>
 
-                <tr> <td class="label"><TMPL_VAR .loc.template_comments></td>    
+                <tr> <td class="label"><TMPL_VAR .loc.template_comments></td>
                      <td><textarea name="comment" class="animated" style="width:100%;" placeholder="<TMPL_VAR .loc.template_comments>"><TMPL_VAR comment></textarea></td></tr>
                 <!--<tr> <td class="label">studio</td>     <td><TMPL_VAR studio></td></tr>-->
 
@@ -283,14 +283,14 @@
                 </form>
             </div>
             </TMPL_LOOP>
-            
+
             <div class="row schedule row<TMPL_IF show_hint_to_add_schedule> active</TMPL_IF>">
                 <form id="schedule_add" method="post"
                     action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-schedule"
                 >
                     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
                     <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>" />
-                    <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>" />    
+                    <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>" />
 
                     <div class="cell exclude">
                         <div class="label"><TMPL_VAR .loc.exception></div>
@@ -533,7 +533,7 @@
         style="background:none"
     ><TMPL_VAR .loc.modified> <TMPL_VAR .loc.at> <TMPL_VAR modified_at> <TMPL_VAR .loc.by> <TMPL_VAR modified_by>.</div>
 
-</main>    
+</main>
 </body>
 </html>
 

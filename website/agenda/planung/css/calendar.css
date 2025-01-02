@@ -184,7 +184,7 @@ button:hover {
 
 #content div.event img {
     box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.3);
-    border-radius:99px;
+    border-radius:1rem;
 }
 
 #content div.event img.icon {
@@ -296,17 +296,9 @@ input.tablesorter-filter {
     white-space: nowrap;
 }
 
-#event_list tr td.series_name {
-
-}
-
 #event_list tr td.title {
     text-overflow: ellipsis;
     overflow: hidden;
-}
-
-#event_list tr td.user_title {
-
 }
 
 #event_list tr td.episode {
@@ -385,7 +377,7 @@ input.tablesorter-filter {
 }
 
 #content .weak span {
-    border-radius: 4px;
+    border-radius: 1rem;
 }
 
 #content .schedule,
@@ -413,6 +405,7 @@ div#toolbar {
     align-items: center;
     vertical-align: middle;
     left: 0;
+    border-radius: 0;
 }
 
 div#toolbar div {
@@ -420,7 +413,8 @@ div#toolbar div {
     vertical-align: middle;
 }
 
-div#toolbar select {
+div#toolbar select,
+div#toolbar input {
     padding: 8px;
     margin-left: 6px;
 }
@@ -430,10 +424,11 @@ div#toolbar input.search {
 }
 
 #content #toolbar div {
+    padding: 6px;
+}
+
+#content #toolbar #selectDate {
     padding: 0;
-    padding-left: 6px;
-    padding-top: 6px;
-    padding-bottom: 6px;
 }
 
 #content #toolbar div:hover,
@@ -445,10 +440,9 @@ div#toolbar input.search {
     padding-bottom: 6px;
 }
 
-#content #toolbar div,
-#content #toolbar div:hover {
-    padding-top: 0px;
-    padding-bottom: 3px;
+#content #toolbar div#selectDate:hover {
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 #content #toolbar div#current_date {
@@ -493,7 +487,7 @@ div#toolbar input.search {
     z-index: 99;
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .12), 0 2px 10px 0
         rgba(0, 0, 0, .09);
-    border-radius: 3px;
+    border-radius: 1rem;
     cursor: pointer;
 }
 
@@ -564,7 +558,7 @@ div.play .error {
     padding-top: 0px;
     padding-bottom: 12px;
     padding-right: 28px;
-    border-radius:6px;
+    border-radius: 1rem;
 }
 
 #content div.ok,
@@ -573,16 +567,12 @@ div.play .error {
     padding-top: 3px;
     padding-bottom: 3px;
     margin: 1px;
-    border-radius: 4px;
+    border-radius: 1rem;
     text-align: center;
 }
 
 #content tr.event.predecessor{
-    #background:#f0cccc;
     opacity:0.5;
-}
-#content tr.event.predecessor:hover{
-    #background:#fdcccc
 }
 
 /* switch start, Code Copyright 2018 Materialize. Code released under the MIT license. */
@@ -615,7 +605,7 @@ div.play .error {
     width: 36px;
     height: 14px;
     background-color: rgba(0,0,0,0.38);
-    border-radius: 15px;
+    border-radius: 1rem;
     margin-right: 10px;
     -webkit-transition: background 0.3s ease;
     transition: background 0.3s ease;
@@ -631,7 +621,7 @@ switch label .lever::before {
     display: inline-block;
     width: 20px;
     height: 20px;
-    border-radius: 50%;
+    border-radius: 1rem;
     left: 0;
     top: -3px;
     -webkit-transition: left 0.3s ease, background .3s ease, -webkit-box-shadow 0.1s ease, -webkit-transform .1s ease;

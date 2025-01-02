@@ -6,6 +6,12 @@ no warnings 'redefine';
 
 our @EXPORT_OK = qw(error load_file save_file append_file);
 
+#$main::SIG{__DIE__} = sub {
+#    print STDOUT "Status: 500\n";
+#    print "Content-type:text/plain\n\n@_\n";
+#    exit(500);
+#};
+
 use config();
 
 #TODO: check if config is given

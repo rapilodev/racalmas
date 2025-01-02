@@ -227,7 +227,6 @@
         </TMPL_IF>
     </div>
     </TMPL_UNLESS>
-
     <!-- download output -->
     <TMPL_IF download>
         <div type="hidden" class="panel" name="event_id" ><TMPL_VAR download escape=none></div>
@@ -244,7 +243,7 @@
             <td>
                 <TMPL_IF .allow.update_event_field_title>
                     <input name="title" value="<TMPL_VAR title>" placeholder="<TMPL_VAR .loc.label_title>">
-        <TMPL_ELSE>
+                <TMPL_ELSE>
                     <TMPL_VAR title>
                 </TMPL_IF>
 
@@ -333,7 +332,7 @@
                     <TMPL_ELSE>
                         <TMPL_IF playout><TMPL_VAR .loc.label_playout></TMPL_IF>
                     </TMPL_IF>
-                    <TMPL_IF path><img src="image/play.svg" style="color:#03a9f4"></TMPL_IF>
+                    <TMPL_IF path><img src="image/dark/play.svg" style="color:#03a9f4"></TMPL_IF>
                 </span>
 
                 <TMPL_IF .allow.update_event_status_archived>
@@ -366,7 +365,6 @@
         </tr>
 
     </table>
-
 
     <!-- edit event content -->
     <table id="edit_content_<TMPL_VAR event_id>" class="edit_event" >
@@ -481,33 +479,6 @@
         </tr>
 
     </table>
-
-    <!-- buttons -->
-    <TMPL_UNLESS edit_lock>
-
-    <div class="buttons" style="text-align:center;clear:both">
-        <TMPL_IF show_new_event_from_schedule>
-            <TMPL_IF .allow.create_event_from_schedule>
-                <button class="primary"
-                    onclick="createEvent2($(this), 'create_event_from_schedule');leavePage();return false"
-                ><TMPL_VAR .loc.button_create></button>
-             </TMPL_IF>
-        <TMPL_ELSIF show_new_event>
-            <TMPL_IF .allow.create_event>
-                <button class="primary"
-                    onclick="createEvent2($(this), 'create_event');leavePage();return false"
-                ><TMPL_VAR .loc.button_create></button>
-             </TMPL_IF>
-        <TMPL_ELSE>
-            <TMPL_IF .allow.update_event>
-                <button class="primary"
-                    onclick="saveEvent($(this), 'save');return false"
-                ><TMPL_VAR .loc.button_save></button>
-            </TMPL_IF>
-                </TMPL_IF>
-    </div>
-    </TMPL_UNLESS>
-
     </form>
 </div>
 
@@ -537,6 +508,6 @@
 </div>
 </TMPL_UNLESS>
 
-</main>    
+</main>
 </body>
 </html>

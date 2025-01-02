@@ -104,24 +104,24 @@
 <div class="panel">
 <table class="table">
 <TMPL_LOOP users>
-    
-<tr id="view_<TMPL_VAR id>" class="list<TMPL_IF disabled> disabled</TMPL_IF>">    
-    <td>    
+
+<tr id="view_<TMPL_VAR id>" class="list<TMPL_IF disabled> disabled</TMPL_IF>">
+    <td>
         <div style="float:left;font-weight:bold;"><TMPL_VAR name></div>
     </td>
 
     <td class="view_<TMPL_VAR id>">
         <TMPL_VAR full_name>
-    </td>    
+    </td>
 
 <TMPL_IF showMail>
     <td class="view_<TMPL_VAR id>">
         <TMPL_VAR email>
-    </td>    
-</TMPL_IF>        
+    </td>
+</TMPL_IF>
 
     <td class="view_<TMPL_VAR id>">
-        <div id="view_roles_<TMPL_VAR id>">        
+        <div id="view_roles_<TMPL_VAR id>">
             <TMPL_LOOP user_roles><TMPL_VAR role><br/></TMPL_LOOP>
         </div>
 
@@ -164,7 +164,7 @@
 
     <TMPL_IF allow.update_user>
 <tr id="edit_<TMPL_VAR id>" class="list editor"  style="display:none">
-    <td colspan="5">    
+    <td colspan="5">
         <div class="card">
         <form method="post" id="user_<TMPL_VAR id>">
         <table>
@@ -182,7 +182,7 @@
                 </td>
             </tr>
 
-            <tr>    
+            <tr>
                 <td></td>
                 <td class="buttons" colspan="2">
                     <input type="hidden" name="user_id" value="<TMPL_VAR id>">

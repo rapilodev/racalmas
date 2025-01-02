@@ -3,16 +3,15 @@
     font-style: normal;
     font-weight: 400;
     src: local('Roboto'), local('Roboto-Regular'),
-       url('../fonts/roboto-v18-latin_latin-ext-regular.woff2') format('woff2'),
+       url('../fonts/roboto.woff2') format('woff2'),
 }
 
-/* open-sans-regular - latin_latin-ext */
 @font-face {
     font-family: 'Open Sans';
     font-style: normal;
     font-weight: 400;
     src: local('Open Sans Regular'), local('OpenSans-Regular'),
-       url('../fonts/open-sans-v15-latin_latin-ext-regular.woff2') format('woff2'),
+       url('../fonts/open-sans.woff2') format('woff2'),
 }
 
 html, body, div, span, applet, object, iframe,
@@ -34,6 +33,7 @@ time, mark, audio, video {
     font-size: 100%;
     font: inherit;
     vertical-align: baseline;
+    border-radius: 1rem;
 }
 
 body {
@@ -48,6 +48,7 @@ body #content {
     text-align: left;
     min-width: min-content;
     max-width: 960px;
+    margin-top: 3rem;
     margin-left: auto;
     margin-right: auto;
 }
@@ -120,13 +121,13 @@ body,
     align-items: center;
     justify-content: center;
     z-index: 99;
+    border-radius: 0;
 }
 
 #calcms_nav img{
     opacity: 0.9;
     padding-right: 3px;
 }
-
 
 #calcms_nav,
 #calcms_nav a,
@@ -155,6 +156,7 @@ body,
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     line-height: 3em;
+    border-radius: 0; 
 }
 
 #calcms_nav select {
@@ -179,12 +181,10 @@ body,
 }
 
 #calcms_nav {
-    position: sticky;
+    position: fixed;
     top: 0;
-    /*
     left: 0;
     right: 0;
-    */
 }
 
 #calcms_nav div a,
@@ -202,27 +202,34 @@ body,
 
 select#studio_id,
 select#project_id {
-    padding:6px;
-    padding-left:36px;
+    padding:0.8rem;
+    padding-left:24px;
     background-repeat:no-repeat;
     background-position:6px center;
 }
 
 select#studio_id {
-    background-image:url(../image/white/antenna.svg);
+    background-image:url(../image/bright/antenna.svg);
+    padding-left: 2rem;
 }
 select#project_id {
-    background-image:url(../image/white/home.svg);
+    background-image:url(../image/bright/home.svg);
+    padding-left: 2rem;
 }
 
 
 select#studio_id::after,
 select#project_id::after {
-    content : "url(../image/white/arrow-down.svg)"
+    content : "url(../image/bright/arrow-down.svg)"
 }
 
 #calcms_nav #bars {
     cursor: pointer;
+}
+
+#calcms_nav div {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 #calcms_nav.mobile {
@@ -250,8 +257,8 @@ select#project_id::after {
 }
 
 #calcms_nav .dropdown-content a {
-    min-width: 10rem;
     display: inline-flex;
+    width: calc(100% - 1rem);
 }
 
 #calcms_nav > div > a {
@@ -305,7 +312,7 @@ a {
     padding: 1rem;
 
     border: 1px solid rgba(0, 0, 0, .03);
-    border-radius:0.5rem;
+    border-radius: 1rem;
     position: relative;
 }
 
@@ -355,7 +362,7 @@ table {
     vertical-align: middle;
 }
 
-td{
+td.label{
     vertical-align: top;
 }
 
@@ -436,7 +443,7 @@ div.error {
 div.badge-ok,
 div.badge-warn,
 div.badge-error {
-    border-radius: 0.3rem;
+    border-radius: 1rem;
     display: inline;
     margin-right: 0.5rem;
     margin-top: 0.5rem;
@@ -476,7 +483,7 @@ div.badge-error {
 #content div.card {
     border: 0;
     margin: 1em;
-    border-radius: 0.5rem;
+    border-radius: 1rem;
 }
 
 #content table.table tr:hover {
@@ -533,8 +540,6 @@ table.tablesorter tr {
     background:none;
     box-shadow:none;
     transition: all 0.1s linear;
-    padding-top:0;
-    padding-bottom:0;
 }
 #content button.text:hover{
     color:#1678c2;
@@ -650,7 +655,7 @@ input[type='checkbox'] {
 }
 
 #content img{
-    border-radius: 0.3rem;
+    border-radius: 1rem;
 }
 
 #content button.selectImage,
@@ -714,8 +719,9 @@ ul.tabContainer li{
     border: 1px solid rgba(0, 0, 0, .03);
     box-shadow: 0 2px 2px rgba(0, 0, 0, .24),
                 0 0   2px rgba(0, 0, 0, .12);
-    margin-bottom:-14px;
-    z-index:10;
+    margin-bottom:2px;
+    margin-right:-2px;
+    border-radius: 0;
 }
 
 ul.tabContainer li:first-child{
@@ -733,22 +739,24 @@ ul.tabContainer li:last-child{
 
 #content #dialog{
     position:fixed;
-    z-index:1000;
+    z-index:100;
+    top: 0;
     left: 0;
     right: 0;
-    top: 0;
     bottom: 0;
     margin-left: auto;
     margin-right: auto;
     margin-top: auto;
     margin-bottom: auto;
-    width: 15rem;
-    height: 6rem;
+    width: fit-content;
+    height: fit-content;
     text-align:center;
     align-items:center;
     display:flex;
     flex-direction:column;
     justify-content:space-between;
+    padding: 1rem;
+    gap: 1rem;
 }
 
 #content #dialog #title{
@@ -760,6 +768,10 @@ ul.tabContainer li:last-child{
     flex-direction:row;
     display:flex;
     align-items:center;
+}
+
+#content #dialog img {
+    padding: 1rem;
 }
 
 .right{
@@ -782,9 +794,3 @@ ul.tabContainer li:last-child{
     align-items: center;
 }
 
-/*
-body {
-    background:center url("/agenda_files/media/images/bg.png");
-    background-attachment: fixed;
-}
-*/

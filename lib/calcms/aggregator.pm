@@ -19,8 +19,10 @@ sub get_list($$) {
     #customize prefiltered request parameters
     $request->{params}->{original}->{date} = $request->{params}->{checked}->{date};
     if ($params->{event_id} ne '') {
+        $request->{params}->{original}->{description} = 'html';
         $request->{params}->{original}->{template} = 'event_details.html';
     } else {
+        $request->{params}->{original}->{description} = 'none';
         $request->{params}->{original}->{template} = 'event_list.html';
     }
     $request->{params}->{checked} = events::check_params($config, $request->{params}->{original});
@@ -28,11 +30,6 @@ sub get_list($$) {
     my $content = '';
     my $results = events::get($config, $request);
     events::render($content, $config, $request, $results);
-
-    #set url to embed as last loaded url in javascript
-    my $date = $params->{date} || '';
-    $date = 'heute' if $params->{date} eq 'today';
-    $date = $results->[0]->{day} if $params->{event_id} ne '';
 
     my $url = $config->{controllers}->{events} . '/' . $params->{from_date} . '/' . $params->{till_date};
 
@@ -70,13 +67,13 @@ sub get_menu($$$$) {
         $request->{params}->{original}->{event_id} = undef;
         $request->{params}->{original}->{date}     = $date;
         $request->{params}->{original}->{excerpt}  = 'none';
-        $request->{params}->{original}->{content}  = 'none';
+        $request->{params}->{original}->{description}  = 'none';
         $request->{params}->{checked} = events::check_params($config, $request->{params}->{original});
         $results = events::get($config, $request);
     } else {
         $request->{params}->{checked}->{template} = template::check($config, 'event_menu.html');
         $request->{params}->{original}->{excerpt}  = 'none';
-        $request->{params}->{original}->{content}  = 'none';
+        $request->{params}->{original}->{description}  = 'none';
     }
 
     #events menu
@@ -151,13 +148,13 @@ sub check_params($$) {
 
     #filter for date
     my $time = time::check_time($params->{time});
-    if ((defined $params->{today}) && ($params->{today} eq '1')) {
+    if ((defined $params->{today}) && ($params->{today} eq '1')) { # TODO: date=today, month=current
         $date = time::time_to_date(time());
         $params->{date} = $date;
     }
 
     if (defined $params->{month}){
-        if ($params->{month} eq 'this') {
+        if ($params->{month} eq 'this') { # TODO:CURRENT
             my ($y, $m) = split /-/, time::time_to_date();
             $params->{from_date} = time::datetime_to_date("$y-$m-01");
             $params->{till_date} = time::datetime_to_date("$y-$m-".Date::Calc::Days_in_Month($y,$m));

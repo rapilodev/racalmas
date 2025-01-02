@@ -11,7 +11,7 @@ sub get_tags($) {
     my $query = qq{
         select    name, count(name) sum from calcms_tags
         group by name
-        order by sum desc    
+        order by sum desc
     };
     my $tags = db::get($dbh, $query);
     return $tags;

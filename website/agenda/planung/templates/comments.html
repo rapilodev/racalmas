@@ -2,7 +2,6 @@ Content-type:text/html
 
 <!doctype html>
 <TMPL_IF .allow.read_comment>
-
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -28,7 +27,7 @@ Content-type:text/html
 <body>
 
 <div id="comments">
-    <select id="selectCommentsByAge" onchange="showCommentsByAge($(this).val())">    
+    <select id="selectCommentsByAge" onchange="showCommentsByAge($(this).val())">
         <option value="">w&auml;hlen</option>
         <option value="1">Stunde </option>
         <option value="6">6 Stunden</option>
@@ -38,7 +37,7 @@ Content-type:text/html
         <option value="2160">3 Monate</option>
         <option value="4360">6 Monate</option>
         <option value="999999999">alle</option>
-    </select>    
+    </select>
 
     <div style="text-align:right">
         <form action="comment.cgi">

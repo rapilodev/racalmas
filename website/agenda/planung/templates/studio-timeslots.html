@@ -61,7 +61,7 @@
                             <option value="7"><TMPL_VAR .loc.weekly></option>
                             <option value="14"><TMPL_VAR .loc.every_two_weeks></option>
                             <option value="28"><TMPL_VAR .loc.every_four_weeks></option>
-                        </select>                    
+                        </select>
                     </div>
 
                     <div class="cell week_of_month">
@@ -127,7 +127,7 @@
                 </form>
             </div>
             </TMPL_LOOP>
-            
+
             <!-- add schedule-->
             <div class="row schedule row">
                 <form id="schedule_add" method="post" action="studio-timeslots.cgi">
@@ -163,7 +163,7 @@
                             <option value="7"><TMPL_VAR .loc.weekly></option>
                             <option value="14"><TMPL_VAR .loc.every_two_weeks></option>
                             <option value="28"><TMPL_VAR .loc.every_four_weeks></option>
-                        </select>                    
+                        </select>
                     </div>
 
                     <div class="cell week_of_month">
@@ -221,7 +221,7 @@
                                 <option value="<TMPL_VAR id>" <TMPL_IF selected>selected="selected"</TMPL_IF>><TMPL_VAR name></option>
                             </TMPL_LOOP>
                         </select>
-        </div>
+                    </div>
 
                     <TMPL_IF .allow.update_schedule>
                     <div class="cell">
