@@ -5,7 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 
 use config();
 use params();
@@ -37,18 +37,18 @@ sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
 
     #process header
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
-    my $out = template::process( $config, template::check( $config, 'roles.html' ), $headerParams );
-    uac::check( $config, $params, $user_presets );
+    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    my $out = template::process($config, template::check($config, 'roles.html'), $headerParams);
+    uac::check($config, $params, $user_presets);
 
-    if ( defined $params->{action} ) {
-        return $out .= save_roles( $config, $request ) if ( $params->{action} eq 'save' );
+    if (defined $params->{action}) {
+        return $out .= save_roles($config, $request) if ($params->{action} eq 'save');
     }
 
     #show current roles
     $config->{access}->{write} = 0;
-    return $out . show_roles( $config, $request );
+    return $out . show_roles($config, $request);
 }
 
 # update roles in database:
@@ -63,7 +63,7 @@ sub save_roles {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    unless ( $permissions->{update_role} == 1 ) {
+    unless ($permissions->{update_role} == 1) {
         PermissionError->throw(error=>'Missing permission to update_role');
     }
 
@@ -150,15 +150,15 @@ sub save_roles {
         #if you are not admin
         next if check_level($permissions, $role->{level}) == 0;
 
-        if ( $role->{project_id} eq '' ) {
+        if ($role->{project_id} eq '') {
             ParamError->throw(error=> 'missing parameter project_id!');
             next;
         }
-        if ( $role->{studio_id} eq '' ) {
+        if ($role->{studio_id} eq '') {
             ParamError->throw(error=> 'missing parameter studio_id!');
             next;
         }
-        if ( ( $role->{role} eq '' ) && ( $id ne '' ) ) {
+        if (($role->{role} eq '') && ($id ne '')) {
             ParamError->throw(error=> 'missing parameter role!');
             next;
         }
@@ -170,7 +170,7 @@ sub save_roles {
 
             #insert role
             next if $role->{role} eq '';
-            if ( defined $role_from_db ) {
+            if (defined $role_from_db) {
                 ExistError->throw(error=> "a role with name '$role->{role}' already exists!");
                 next;
             }
@@ -181,9 +181,9 @@ sub save_roles {
         } else {
 
             #update role
-            if ( ( defined $role_from_db ) && ( $id ne $role_from_db->{id} ) ) {
-                ExistError->throw( 'you cannot rename role to existing role!'
-                      . " '$role->{role}' ($id) != '$role_from_db->{role}' ($role_from_db->{id})" );
+            if ((defined $role_from_db) && ($id ne $role_from_db->{id})) {
+                ExistError->throw('you cannot rename role to existing role!'
+                      . " '$role->{role}' ($id) != '$role_from_db->{role}' ($role_from_db->{id})");
                 next;
             }
             print "update $role->{role}<br>\n";
@@ -230,7 +230,7 @@ sub show_roles {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{read_role} == 1 ) {
+    unless ($permissions->{read_role} == 1) {
         PermissionError->throw(error=>'Missing permission to read_role');
         return;
     }

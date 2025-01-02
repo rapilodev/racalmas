@@ -5,7 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use params();
@@ -26,12 +26,12 @@ uac::init($r, \&check_params, \&main);
 sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
     $params = $request->{params}->{checked};
-    $params = uac::set_template_permissions( $request->{permissions}, $params );
-    $params->{loc} = localization::get( $config, { user => $session->{user}, file => 'select-series' } );
+    $params = uac::set_template_permissions($request->{permissions}, $params);
+    $params->{loc} = localization::get($config, { user => $session->{user}, file => 'select-series' });
     uac::check($config, $params, $user_presets);
     my $permissions = $request->{permissions};
     PermissionError->throw(error=>'Missing permission to read_series')unless $permissions->{read_series};
-    return show_series( $config, $request );
+    return show_series($config, $request);
 }
 
 
@@ -40,7 +40,7 @@ sub show_series {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{read_series} == 1 ) {
+    unless ($permissions->{read_series} == 1) {
         PermissionError->throw(error=>'Missing permission to read_series');
     }
 
@@ -74,7 +74,7 @@ sub show_series {
     $params->{studios} = $user_studios;
     $params->{series}  = $series;
 
-    return template::process( $config, $params->{template}, $params );
+    return template::process($config, $params->{template}, $params);
 }
 
 sub check_params {

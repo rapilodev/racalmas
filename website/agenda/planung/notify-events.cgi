@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+##!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -6,7 +6,7 @@ no warnings 'redefine';
 use utf8;
 
 use Data::Dumper;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use params();
@@ -35,18 +35,18 @@ sub main {
 
     my $out;
     #show header
-    unless ( params::is_json() || ( $params->{template} =~ /\.txt/ ) ) {
-        my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-        $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
-        $out .= template::process( $config, template::check( $config, 'default.html' ), $headerParams );
+    unless (params::is_json() || ($params->{template} =~ /\.txt/)) {
+        my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+        $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+        $out .= template::process($config, template::check($config, 'default.html'), $headerParams);
     }
     uac::check($config, $params, $user_presets);
 
     $config->{access}->{write} = 0;
-    if ( $params->{action} eq 'send' ) {
-        return sendMail( $config, $request );
+    if ($params->{action} eq 'send') {
+        return sendMail($config, $request);
     }
-    return $out . show_events( $config, $request );
+    return $out . show_events($config, $request);
 }
 
 #show existing event history
@@ -56,14 +56,14 @@ sub show_events {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    for my $attr ( 'project_id', 'studio_id') {    # 'series_id','event_id'
-        unless ( defined $params->{$attr} ) {
-            ParamError->throw(error=> "missing " . $attr . " to show changes" );
+    for my $attr ('project_id', 'studio_id') {    # 'series_id','event_id'
+        unless (defined $params->{$attr}) {
+            ParamError->throw(error=> "missing " . $attr . " to show changes");
             return;
         }
 }
 
-    unless ( $permissions->{read_event} == 1 ) {
+    unless ($permissions->{read_event} == 1) {
         PermissionError->throw(error=> "missing permissions to show changes");
     }
 
@@ -96,8 +96,8 @@ sub show_events {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
 
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'notify-events' } );
-    return template::process( $config, $params->{template}, $params );
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'notify-events' });
+    return template::process($config, $params->{template}, $params);
 
 }
 
@@ -107,14 +107,14 @@ sub sendMail {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    for my $attr ( 'project_id', 'studio_id', 'series_id', 'event_id' ) {
-        unless ( defined $params->{$attr} ) {
-            ParamError->throw(error=> "missing " . $attr . " to send notification" );
+    for my $attr ('project_id', 'studio_id', 'series_id', 'event_id') {
+        unless (defined $params->{$attr}) {
+            ParamError->throw(error=> "missing " . $attr . " to send notification");
             return;
         }
     }
 
-    unless ( $permissions->{read_event} == 1 ) {
+    unless ($permissions->{read_event} == 1) {
         PermissionError->throw(error=> "missing permissions to send notification");
     }
 
@@ -128,7 +128,7 @@ sub sendMail {
     };
     my $events = series::get_events($config, $options);
 
-    unless ( scalar(@$events) == 1 ) {
+    unless (scalar(@$events) == 1) {
         ExistError->throw(error=> "did not found exactly one event");
     }
 

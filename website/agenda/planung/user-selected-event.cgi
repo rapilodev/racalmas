@@ -5,7 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use params();
@@ -28,8 +28,8 @@ uac::init($r, \&check_params, \&main);
 sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
     $params = $request->{params}->{checked};
-    return unless uac::check( $config, $params, {} ) == 1;
-    return log_event_selection( $config, $request, $session->{user} );
+    return unless uac::check($config, $params, {}) == 1;
+    return log_event_selection($config, $request, $session->{user});
 }
 
 sub get_select_fields {
@@ -51,7 +51,7 @@ sub log_event_selection {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{read_event} == 1 ) {
+    unless ($permissions->{read_event} == 1) {
         PermissionError->throw(error=>'Missing permission to read_event');
     }
 
@@ -60,17 +60,17 @@ sub log_event_selection {
 
     my $entry = { user => $user };
     $entry->{$_} = $params->{$_} for @$select_fields;
-    my $preset = user_selected_events::get( $config, $entry );
-    $entry->{$_} = $params->{$_} for ( @$select_fields, @$value_fields);
-    for ( @$select_fields, @$value_fields ) {
+    my $preset = user_selected_events::get($config, $entry);
+    $entry->{$_} = $params->{$_} for (@$select_fields, @$value_fields);
+    for (@$select_fields, @$value_fields) {
         ParamError->throw(error=> "missing $_") unless defined $entry->{$_};
 }
 
     if ($preset) {
-        user_selected_events::update( $config, $entry );
+        user_selected_events::update($config, $entry);
         return uac::json({status => "updated"});
     } else {
-        user_selected_events::insert( $config, $entry );
+        user_selected_events::insert($config, $entry);
         return uac::json({status => "inserted"});
     }
 }

@@ -33,6 +33,10 @@
     padding:6px;
     margin:0;
 }
+
+.card input{
+	min-width:20rem;
+}
 </style>
 
 <script type="text/javascript">
@@ -87,7 +91,7 @@
         <table>
         <tr>    <td><TMPL_VAR .loc.label_name></td>            <td><input name="user_name"      value="<TMPL_VAR user_name>"></td>    </tr>
         <tr>    <td><TMPL_VAR .loc.label_full_name></td>    <td><input name="user_full_name" value="<TMPL_VAR user_full_name>"></td>    </tr>
-        <tr>    <td><TMPL_VAR .loc.label_email></td>        <td><input name="user_email"      value="<TMPL_VAR user_email>"></td>    </tr>
+        <tr>    <td><TMPL_VAR .loc.label_email></td>        <td><input name="user_email"      value="<TMPL_VAR user_email>" type="email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"></td>    </tr>
         <tr>    <td><TMPL_VAR .loc.label_password></td>        <td><input name="user_password"  value="<TMPL_VAR password>"></td>    </tr>
         <tr>    <td><TMPL_VAR .loc.label_password2></td>    <td><input name="user_password2" value="<TMPL_VAR password2>"></td>    </tr>
         <tr>    <td class="buttons" colspan="3">
@@ -172,7 +176,7 @@
             <tr>    <td><TMPL_VAR .loc.label_name></td>       <td><TMPL_VAR name></td></tr>
             <tr>    <td><TMPL_VAR .loc.label_full_name></td> <td><input name="user_full_name" value="<TMPL_VAR full_name>"></td></tr>
             <TMPL_if .allow.read_user>
-            <tr>    <td><TMPL_VAR .loc.label_email></td>       <td><input name="user_email" value="<TMPL_VAR email>"></td></tr>
+            <tr>    <td><TMPL_VAR .loc.label_email></td>       <td><input name="user_email" value="<TMPL_VAR email>" type="email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"></td></tr>
             </TMPL_IF>
             <tr>    <td><TMPL_VAR .loc.label_disabled></td>
                 <td>

@@ -65,8 +65,8 @@
     <TMPL_IF mail.To>
     <t>
         <td><TMPL_VAR .loc.to></td>
-        <td colspan="2"><input name="to" value="<TMPL_VAR mail.To>"></td>
-        <td><img class="toggle" title="<TMPL_VAR .loc.show_details>" src="image/dark/arrow-down.svg"></td>
+        <td colspan="2"><input name="to" value="<TMPL_VAR mail.To>" type="email" required></td>
+        <td><img class="toggle" title="<TMPL_VAR .loc.show_details>" src="image/bright/arrow-down.svg"></td>
     </tr>
     </TMPL_IF>
 
@@ -86,7 +86,7 @@
     <TMPL_IF mail.Cc>
     <tr class="details">
         <td><TMPL_VAR .loc.cc></td>
-        <td><input name="cc" value="<TMPL_VAR mail.Cc>"></td>
+        <td><input name="cc" value="<TMPL_VAR mail.Cc>" type="email" required></td>
     </tr>
     </TMPL_IF>
 

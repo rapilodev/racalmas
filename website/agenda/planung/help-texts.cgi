@@ -58,7 +58,7 @@ sub save_help {
         unless (defined $params->{$attr}) {
             uac::print_error($attr . ' not given!');
             return;
-}
+        }
     }
 
     my $entry = {};
@@ -80,7 +80,6 @@ sub save_help {
     } else {
         my $schedule_id = help_texts::insert($config, $entry);
     }
-    $config->{access}->{write} = 0;
     return uac::json [];
 }
 

@@ -496,9 +496,7 @@ div#toolbar input.search {
 }
 
 #calendar td div.play img {
-    position: absolute;
-    top: 1em;
-    right: 1em;
+    float:right;
     width: 40%;
     height: 40%;
     display: none;
@@ -572,7 +570,11 @@ div.play .error {
 }
 
 #content tr.event.predecessor{
+    #background:#f0cccc;
     opacity:0.5;
+}
+#content tr.event.predecessor:hover{
+    #background:#fdcccc
 }
 
 /* switch start, Code Copyright 2018 Materialize. Code released under the MIT license. */

@@ -339,6 +339,9 @@ msgstr "Einzelsendungen"
 msgid "single_event"
 msgstr "Einzelsendung"
 
+msgid "label_search"
+msgstr "Suche"
+
 msgid "label_clear_search"
 msgstr "löschen"
 

@@ -9,7 +9,7 @@ $Data::Dumper::Sortkeys = 1;
 use MIME::Base64();
 use Encode::Locale();
 use File::Basename qw(basename);
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny qw(try catch finally);
 
 use params();
@@ -41,7 +41,7 @@ sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
     $params = $request->{params}->{checked};
     my $out = $session->{header} // '';
-    if ( $params->{action} =~ m/^(edit|show_new_event|show_new_event_from_schedule)$/ ) {
+    if ($params->{action} =~ m/^(edit|show_new_event|show_new_event_from_schedule)$/) {
         my $headerParams =
             uac::set_template_permissions($request->{permissions}, $params);
         $headerParams->{loc} = localization::get($config,

@@ -5,7 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use config();
@@ -27,26 +27,26 @@ sub main {
     $params = $request->{params}->{checked};
 
     #process header
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
-    my $out = template::process( $config, template::check( $config, 'projects-header.html' ), $headerParams );
+    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    my $out = template::process($config, template::check($config, 'projects-header.html'), $headerParams);
     uac::check($config, $params, $user_presets);
 
-    if ( defined $params->{action} ) {
-        return $out . save_project( $config, $request ) if ( $params->{action} eq 'save' );
-        return $out . delete_project( $config, $request ) if ( $params->{action} eq 'delete' );
-        return $out . assign_studio( $config, $request ) if ( $params->{action} eq 'assign_studio' );
-        return $out . unassign_studio( $config, $request ) if ( $params->{action} eq 'unassign_studio' );
+    if (defined $params->{action}) {
+        return $out . save_project($config, $request) if ($params->{action} eq 'save');
+        return $out . delete_project($config, $request) if ($params->{action} eq 'delete');
+        return $out . assign_studio($config, $request) if ($params->{action} eq 'assign_studio');
+        return $out . unassign_studio($config, $request) if ($params->{action} eq 'unassign_studio');
     }
     $config->{access}->{write} = 0;
-    return $out . show_projects( $config, $request );
+    return $out . show_projects($config, $request);
 }
 
 sub delete_project {
     my ($config, $request) = @_;
 
     my $permissions = $request->{permissions};
-    unless ( $permissions->{delete_project} == 1 ) {
+    unless ($permissions->{delete_project} == 1) {
         PermissionError->throw(error=>'Missing permission to delete_project');
     }
 
@@ -87,8 +87,8 @@ sub save_project {
     }
 
     my $project_id = $params->{pid} || '';
-    if ( $project_id ne '' ) {
-        unless ( $permissions->{update_project} == 1 ) {
+    if ($project_id ne '') {
+        unless ($permissions->{update_project} == 1) {
             PermissionError->throw(error=>'Missing permission to update_project');
 }
         $entry->{project_id} = $project_id;
@@ -98,11 +98,11 @@ sub save_project {
         project::update($config, $entry);
         uac::print_info("project saved");
     } else {
-        unless ( $permissions->{create_project} == 1 ) {
+        unless ($permissions->{create_project} == 1) {
             PermissionError->throw(error=>'Missing permission to create_project');
         }
-        my $projects = project::get( $config, { name => $entry->{name} } );
-        if ( scalar @$projects > 0 ) {
+        my $projects = project::get($config, { name => $entry->{name} });
+        if (scalar @$projects > 0) {
             ExistError->throw(error=> "project with name '$entry->{name}' already exists");
     }
         delete $entry->{project_id};
@@ -119,13 +119,13 @@ sub assign_studio {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{assign_project_studio} == 1 ) {
+    unless ($permissions->{assign_project_studio} == 1) {
         PermissionError->throw(error=>'Missing permission to assign_project_studio');
         }
 
-    for my $param ( 'pid', 'sid' ) {
-        unless ( defined $params->{$param} ) {
-            ParamError->throw(error=> 'missing ' . $param );
+    for my $param ('pid', 'sid') {
+        unless (defined $params->{$param}) {
+            ParamError->throw(error=> 'missing ' . $param);
             return;
         }
     }
@@ -147,13 +147,13 @@ sub unassign_studio {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{assign_project_studio} == 1 ) {
+    unless ($permissions->{assign_project_studio} == 1) {
         PermissionError->throw(error=>'Missing permission to assign_project_studio');
     }
 
-    for my $param ( 'pid', 'sid' ) {
-        unless ( defined $params->{$param} ) {
-            ParamError->throw(error=> 'missing ' . $param );
+    for my $param ('pid', 'sid') {
+        unless (defined $params->{$param}) {
+            ParamError->throw(error=> 'missing ' . $param);
             return;
         }
     }
@@ -175,7 +175,7 @@ sub show_projects {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    unless ($permissions->{read_project} == 1 ) {
+    unless ($permissions->{read_project} == 1) {
         PermissionError->throw(error=>'Missing permission to read_project');
     }
 
@@ -218,7 +218,7 @@ sub show_projects {
     $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'projects' });
     uac::set_template_permissions($permissions, $params);
 
-    return template::process( $config, $params->{template}, $params );
+    return template::process($config, $params->{template}, $params);
 }
 
 sub check_params {

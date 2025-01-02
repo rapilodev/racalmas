@@ -5,7 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use config();
@@ -27,24 +27,24 @@ sub main {
     $params = $request->{params}->{checked};
 
     #process header
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
-    my $out =  template::process( $config, template::check( $config, 'studios-header.html' ), $headerParams );
+    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    my $out =  template::process($config, template::check($config, 'studios-header.html'), $headerParams);
     uac::check($config, $params, $user_presets);
 
-    if ( defined $params->{action} ) {
-        return $out . save_studio( $config, $request ) if ( $params->{action} eq 'save' );
-        return $out . delete_studio( $config, $request ) if ( $params->{action} eq 'delete' );
+    if (defined $params->{action}) {
+        return $out . save_studio($config, $request) if ($params->{action} eq 'save');
+        return $out . delete_studio($config, $request) if ($params->{action} eq 'delete');
     }
     $config->{access}->{write} = 0;
-    return $out . show_studios( $config, $request );
+    return $out . show_studios($config, $request);
 }
 
 sub delete_studio {
     my ($config, $request) = @_;
 
     my $permissions = $request->{permissions};
-    unless ( $permissions->{update_studio} == 1 ) {
+    unless ($permissions->{update_studio} == 1) {
         PermissionError->throw(error=>'Missing permission to update_studio');
         return;
     }
@@ -93,7 +93,7 @@ sub save_studio {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{update_studio} == 1 ) {
+    unless ($permissions->{update_studio} == 1) {
         PermissionError->throw(error=>'Missing permission to update_studio');
         return;
     }
@@ -106,13 +106,13 @@ sub save_studio {
             $entry->{$param} = $params->{$param} || '';
         }
     }
-}
+
     local $config->{access}->{write} = 1;
     if ((defined $entry->{id}) && ($entry ne '')) {
         studios::update($config, $entry);
     } else {
-        my $studios = studios::get( $config, { name => $entry->{name} } );
-        if ( scalar @$studios > 0 ) {
+        my $studios = studios::get($config, { name => $entry->{name} });
+        if (scalar @$studios > 0) {
             ExistError->throw(error=> "studio with name '$entry->{name}' already exists");
         }
         $entry->{id} = studios::insert($config, $entry);
@@ -177,7 +177,7 @@ sub show_studios {
     $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'studios' });
     uac::set_template_permissions($permissions, $params);
 
-    return $out . template::process( $config, $params->{template}, $params );
+    return $out . template::process($config, $params->{template}, $params);
 }
 
 sub check_params {

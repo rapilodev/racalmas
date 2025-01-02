@@ -11,7 +11,7 @@ use Date::Calc();
 use Time::Local();
 use File::Temp();
 use File::Copy();
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use config();
@@ -64,13 +64,13 @@ sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
     $params = $request->{params}->{checked};
 
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
 
-    exit unless uac::check( $config, $params, $user_presets ) == 1;
+    exit unless uac::check($config, $params, $user_presets) == 1;
     print q{Content-type: text/plain; char-set:utf-8;\n\n};
 
-    uploadRecording( $config, $request );
+    uploadRecording($config, $request);
 }
 
 sub uploadRecording {
@@ -80,31 +80,31 @@ sub uploadRecording {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    unless ( $permissions->{upload_audio_recordings} == 1 ) {
+    unless ($permissions->{upload_audio_recordings} == 1) {
         PermissionError->throw(error=>'Missing permission to upload_audio_recordings');
         return;
     }
 
-    for my $attr ( 'project_id', 'studio_id', 'series_id', 'event_id' ) {
-        unless ( defined $params->{$attr} ) {
-            ParamError->throw(error=> "missing " . $attr . " to upload productions" );
+    for my $attr ('project_id', 'studio_id', 'series_id', 'event_id') {
+        unless (defined $params->{$attr}) {
+            ParamError->throw(error=> "missing " . $attr . " to upload productions");
             return;
         }
     }
 
-    if ( defined $fh ) {
+    if (defined $fh) {
         print STDERR "upload\n";
 
         events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploading' });
 
-        my $fileInfo = uploadFile( $config, $fh, $params->{event_id}, $session->{user}, $params->{upload} );
+        my $fileInfo = uploadFile($config, $fh, $params->{event_id}, $session->{user}, $params->{upload});
         $params->{error} .= $fileInfo->{error} if defined $fileInfo->{error};
         $params->{path} = $fileInfo->{path};
         $params->{size} = $fileInfo->{size};
 
         if ($params->{error} eq ''){
             events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploaded' });
-            $params = updateDatabase( $config, $params, $session->{user} );
+            $params = updateDatabase($config, $params, $session->{user});
         }else{
             events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'upload failed' });
         }
@@ -113,11 +113,11 @@ sub uploadRecording {
         $params->{error} .= 'Could not get file handle';
     }
 
-    if ( $params->{error} ne '' ) {
-        if ( $params->{error} =~ /limit/ ) {
+    if ($params->{error} ne '') {
+        if ($params->{error} =~ /limit/) {
             $params->{error} .=
                 "audio file size is limited to "
-              . int( $uploadLimit / 1000000 ) . " MB!"
+              . int($uploadLimit / 1000000) . " MB!"
               . "Please make it smaller and try again!";
         } else {
             $params->{error} .= "Error:'$error'";
@@ -147,7 +147,7 @@ sub uploadFile {
     $time =~ s/[^a-zA-Z0-9\.\-\_]//g;
 
     $filename =~ s/\.(mp3)$//g;
-    $filename = join( '-', ( $time, 'id' . $eventId, $userName, $filename ) ) . '.mp3';
+    $filename = join('-', ($time, 'id' . $eventId, $userName, $filename)) . '.mp3';
     $filename =~ s/[^a-zA-Z0-9\.\-\_]//g;
 
     my $tempFile = $targetDir . '/' . $filename . '.tmp';
@@ -159,11 +159,11 @@ sub uploadFile {
     my $size = 0;
     my $data = '';
     $time = time();
-    while ( my $bytesRead = $fh->read( $data, 65000 ) ) {
+    while (my $bytesRead = $fh->read($data, 65000)) {
         print DAT $data;
         $size += $bytesRead;
         $data = '';
-        if ( time() - $start >= 1){
+        if (time() - $start >= 1){
             print "$size\n";
             $start = $time;
         }
@@ -184,7 +184,7 @@ sub updateDatabase {
     my $params = shift;
     my $user   = shift;
 
-    my $eventDuration = getEventDuration( $config, $params->{event_id} );
+    my $eventDuration = getEventDuration($config, $params->{event_id});
 
     my $entry = {
         project_id    => $params->{project_id},
@@ -210,9 +210,9 @@ sub updateDatabase {
         }
     );
 
-    if ( ( defined $entries ) && ( scalar @$entries > 0 ) ) {
+    if ((defined $entries) && (scalar @$entries > 0)) {
         print STDERR "update\n";
-        audio_recordings::update( $config, $dbh, $entry );
+        audio_recordings::update($config, $dbh, $entry);
         my $entry = $entries->[0];
         $params->{id} = $entry->{id};
     } else {
@@ -224,7 +224,7 @@ sub updateDatabase {
         $entry->{rmsRight}      = 0.0;
         $entry->{audioDuration} = 0.0;
         $entry->{modified_at}   = time();
-        $params->{id}           = audio_recordings::insert( $config, $dbh, $entry );
+        $params->{id}           = audio_recordings::insert($config, $dbh, $entry);
     }
     $config->{access}->{write} = 0;
     $params->{action_result} = 'done!';
@@ -254,13 +254,13 @@ sub getEventDuration {
         config => $config
     };
     $request->{params}->{checked}->{published} = 'all';
-    my $events = events::get( $config, $request );
-    if ( scalar @$events == 0 ) {
+    my $events = events::get($config, $request);
+    if (scalar @$events == 0) {
         print STDERR "getEventDuration: no event found with event_id=$eventId\n";
     }
     my $event = $events->[0];
     my $duration =
-      time::get_duration_seconds( $event->{start}, $event->{end}, $config->{date}->{time_zone} );
+      time::get_duration_seconds($event->{start}, $event->{end}, $config->{date}->{time_zone});
     return $duration;
 }
 
@@ -268,20 +268,20 @@ sub check_params {
     my ($config, $params) = @_;
     my $checked = {};
     $checked->{error} = '';
-    $checked->{template} = template::check( $config, $params->{template}, 'upload-audio-recordings2' );
+    $checked->{template} = template::check($config, $params->{template}, 'upload-audio-recordings2');
 
-    entry::set_numbers( $checked, $params, [
+    entry::set_numbers($checked, $params, [
         'project_id', 'studio_id', 'default_studio_id', 'series_id', 'event_id', 'id']);
 
-    if ( defined $checked->{studio_id} ) {
+    if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;
     }
 
-    $checked->{action} = entry::element_of( $params->{action}, ['upload', 'delete'] );
+    $checked->{action} = entry::element_of($params->{action}, ['upload', 'delete']);
 
-    entry::set_strings( $checked, $params, [ 'name', 'description', 'path' ]);
+    entry::set_strings($checked, $params, [ 'name', 'description', 'path' ]);
 
     $checked->{upload} = $params->{upload};
     return $checked;

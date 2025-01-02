@@ -6,7 +6,7 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use ModPerl::Util ();
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use config;
@@ -32,23 +32,23 @@ sub main {
 
     #process header
     my $out;
-    unless ( params::is_json() ) {
-        my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-        $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
-        $out .=  template::process( $config, template::check( $config, 'show-playout-header.html' ),
-            $headerParams );
+    unless (params::is_json()) {
+        my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+        $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+        $out .=  template::process($config, template::check($config, 'show-playout-header.html'),
+            $headerParams);
     }
     uac::check($config, $params, $user_presets);
 
     my $permissions = $request->{permissions};
     $params->{action} = '' unless defined $params->{action};
 
-    showPlayout( $config, $request );
+    showPlayout($config, $request);
 
     print STDERR "$0 ERROR: " . $params->{error} . "\n" if $params->{error} ne '';
     $params->{loc} =
-      localization::get( $config, { user => $params->{presets}->{user}, file => 'event,comment' } );
-    return $out .= template::process( $config, $params->{template}, $params );
+      localization::get($config, { user => $params->{presets}->{user}, file => 'event,comment' });
+    return $out .= template::process($config, $params->{template}, $params);
 }
 
 sub showPlayout {
@@ -57,9 +57,9 @@ sub showPlayout {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    for my $attr ( 'project_id', 'studio_id' ) {
-        unless ( defined $params->{$attr} ) {
-            ParamError->throw(error=> "missing $attr to show playout" );
+    for my $attr ('project_id', 'studio_id') {
+        unless (defined $params->{$attr}) {
+            ParamError->throw(error=> "missing $attr to show playout");
         }
     }
 

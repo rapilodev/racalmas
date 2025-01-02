@@ -6,7 +6,7 @@ no warnings 'redefine';
 
 use URI::Escape();
 use Encode();
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use params();
@@ -36,16 +36,16 @@ sub main {
     $params = $request->{params}->{checked};
 
     #process header
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
     uac::check($config, $params, $user_presets);
 
     my $permissions = $request->{permissions};
     PermissionError->throw(error => 'scan_series_events') unless $permissions->{scan_series_events} == 1;
 
-    if ( defined $params->{action} ) {
-        return assign_events( $config, $request ) if ( $params->{action} eq 'assign_events' );
-        return  template::process( $config, template::check( $config, 'assignments-header.html' ), $headerParams )
+    if (defined $params->{action}) {
+        return assign_events($config, $request) if ($params->{action} eq 'assign_events');
+        return  template::process($config, template::check($config, 'assignments-header.html'), $headerParams)
             . show_events($config, $request) if $params->{action} eq 'get';
     }
     ActionError->throw(error => "invalid action");
@@ -57,7 +57,7 @@ sub show_events {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{assign_series_events} == 1 ) {
+    unless ($permissions->{assign_series_events} == 1) {
         PermissionError->throw(error => 'assign_series_events');
     }
 
@@ -150,7 +150,7 @@ sub show_events {
     $params->{project_name}      = $project_name;
     $params->{studio_name}       = $studio_name;
 
-    return template::process( $config, $params->{template}, $params );
+    return template::process($config, $params->{template}, $params);
 }
 
 sub assign_events {
@@ -158,7 +158,7 @@ sub assign_events {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{assign_series_events} == 1 ) {
+    unless ($permissions->{assign_series_events} == 1) {
         PermissionError->throw(error => 'assign_series_events');
     }
 
@@ -167,7 +167,7 @@ sub assign_events {
         if (defined $params->{$attr}) {
             $entry->{$attr} = $params->{$attr};
         } else {
-            ParamError->throw(error => $attr . ' not given!' );
+            ParamError->throw(error => $attr . ' not given!');
         }
     }
 

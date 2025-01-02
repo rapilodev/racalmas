@@ -39,7 +39,7 @@ function loadComments(eventId, callback){
             if(callback!=null){
                 //console.log("callback");
                 callback();
-        }
+            }
         }
     );
 }
@@ -69,7 +69,7 @@ function hideComments(elemId){
         element.slideUp("normal",function(){
             element.empty();
         });
-}
+    }
 }
 
 function scrollToComment(eventId){

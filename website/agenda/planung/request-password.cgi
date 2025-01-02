@@ -5,7 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use params();
@@ -21,7 +21,7 @@ my $r = shift;
 my ($params, $error) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
-$params = check_params( $config, $params );
+$params = check_params($config, $params);
 
 print "Content-type:text/html\n\n";
 print qq{<!DOCTYPE html>
@@ -46,10 +46,10 @@ sub error{
     print qq{<div class="error">$_[0]</div>\n};
 }
 
-if ( defined $params->{user} ) {
-    sendToken( $config, $params );
+if (defined $params->{user}) {
+    sendToken($config, $params);
 } else {
-    checkToken( $config, $params );
+    checkToken($config, $params);
 }
 
 sub sendToken {

@@ -5,7 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use config();
@@ -30,20 +30,20 @@ sub main {
     $params = $request->{params}->{checked};
 
     #process header
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
-    my $out = template::process( $config, template::check( $config, 'default.html' ), $headerParams );
+    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    my $out = template::process($config, template::check($config, 'default.html'), $headerParams);
     uac::check($config, $params, $user_presets);
 
     our $errors = [];
 
-    if ( defined $params->{action} ) {
-        return $out . update_settings( $config, $request ) if ( $params->{action} eq 'save' );
-        return $out . updateDefaultProjectStudio( $config, $request )
-          if ( $params->{action} eq 'updateDefaultProjectStudio' );
+    if (defined $params->{action}) {
+        return $out . update_settings($config, $request) if ($params->{action} eq 'save');
+        return $out . updateDefaultProjectStudio($config, $request)
+          if ($params->{action} eq 'updateDefaultProjectStudio');
     }
     $config->{access}->{write} = 0;
-    return $out . show_settings( $config, $request );
+    return $out . show_settings($config, $request);
 }
 
 sub show_settings {
@@ -90,7 +90,7 @@ sub show_settings {
 
     uac::set_template_permissions($permissions, $params);
 
-    return template::process( $config, $params->{template}, $params );
+    return template::process($config, $params->{template}, $params);
 }
 
 sub updateDefaultProjectStudio {

@@ -1,11 +1,11 @@
 
 function showProgress(){
-    $('#progress').slideDown();
+    $('#progress').slideDown(() => $('#progress').addClass('progress-visible'));
     return false;
 }
 
 function hideProgress(){
-    $('#progress').slideUp();
+    $('#progress').slideUp(() => $('#progress').removeClass('progress-visible'));
     return false;
 }
 
@@ -104,6 +104,7 @@ function uploadFile(uploadButton){
                         $('#progress_todo').css("width", (100-perc)+ "%")
                         $('#progress_done').html(loaded + " MB");
                         $('#progress_todo').html(remaining+" left");
+                        document.title = perc + "%" + $('#title').text();
 
                         let content = total + " MB<br>";
                          $('#progressLabel').html(content);

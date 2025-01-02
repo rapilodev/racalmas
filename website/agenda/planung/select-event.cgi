@@ -5,7 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use params();
@@ -28,11 +28,11 @@ uac::init($r, \&check_params, \&main);
 sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
     $params = $request->{params}->{checked};
-    $params = uac::set_template_permissions( $request->{permissions}, $params );
-    $params->{loc} = localization::get( $config, { user => $session->{user}, file => 'select-event' } );
+    $params = uac::set_template_permissions($request->{permissions}, $params);
+    $params->{loc} = localization::get($config, { user => $session->{user}, file => 'select-event' });
 
     uac::check($config, $params, $user_presets);
-    return show_events( $config, $request );
+    return show_events($config, $request);
     }
 
 #TODO: filter by published, draft
@@ -41,7 +41,7 @@ sub show_events {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{read_event} == 1 ) {
+    unless ($permissions->{read_event} == 1) {
         PermissionError->throw(error=>'Missing permission to read_event');
     }
 
@@ -132,7 +132,7 @@ sub show_events {
     $params->{series}  = $series;
     $params->{events}  = $events;
     $params->{years}   = $years;
-    return template::process( $config, $params->{template}, $params );
+    return template::process($config, $params->{template}, $params);
 }
 
 sub check_params {

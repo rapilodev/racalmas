@@ -5,7 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use Data::Dumper;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use config();
@@ -29,22 +29,22 @@ sub main {
     $params = $request->{params}->{checked};
 
     #process header
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
-    my $out = template::process( $config, template::check( $config, 'default.html' ), $headerParams );
+    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    my $out = template::process($config, template::check($config, 'default.html'), $headerParams);
     uac::check($config, $params, $user_presets);
 
     our $errors = [];
 
-    if ( defined $params->{action} ) {
-        return $out . update_user_roles( $config, $request ) if ( $params->{action} eq 'assign' );
-        return $out . update_user( $config, $request ) if ( $params->{action} eq 'save' );
-        return $out . delete_user( $config, $request ) if ( $params->{action} eq 'delete' );
-        if ( $params->{action} eq 'change_password' ) {
-            return $out . change_password( $config, $request, $session->{user} );
+    if (defined $params->{action}) {
+        return $out . update_user_roles($config, $request) if ($params->{action} eq 'assign');
+        return $out . update_user($config, $request) if ($params->{action} eq 'save');
+        return $out . delete_user($config, $request) if ($params->{action} eq 'delete');
+        if ($params->{action} eq 'change_password') {
+            return $out . change_password($config, $request, $session->{user});
         }
     }
-    return $out . show_users( $config, $request );
+    return $out . show_users($config, $request);
 }
 
 sub show_users {
@@ -54,7 +54,7 @@ sub show_users {
 
     my $permissions = $request->{permissions};
 
-    unless ( ( defined $permissions->{read_user} ) && ( $permissions->{read_user} == 1 ) ) {
+    unless ((defined $permissions->{read_user}) && ($permissions->{read_user} == 1)) {
         PermissionError->throw(error=>'Missing permission to read_user');
         return;
     }
@@ -140,10 +140,10 @@ sub show_users {
     $params->{users}       = \@users;
     $params->{studios}     = $studios;
     $params->{permissions} = $permissions;
-    $params->{loc}         = localization::get( $config, { user => $params->{presets}->{user}, file => 'users' } );
-    uac::set_template_permissions( $permissions, $params );
+    $params->{loc}         = localization::get($config, { user => $params->{presets}->{user}, file => 'users' });
+    uac::set_template_permissions($permissions, $params);
 
-    return template::process( $config, $params->{template}, $params );
+    return template::process($config, $params->{template}, $params);
 
 }
 
@@ -164,8 +164,8 @@ sub update_user {
         $user->{disabled} = $params->{disabled} || 0;
     }
 
-    if ( ( !defined $user->{id} ) || ( $user->{id} eq '' ) ) {
-        unless ( $permissions->{create_user} == 1 ) {
+    if ((!defined $user->{id}) || ($user->{id} eq '')) {
+        unless ($permissions->{create_user} == 1) {
             PermissionError->throw(error=>'Missing permission to create_user');
             return;
         }
@@ -196,7 +196,7 @@ sub update_user {
         local $config->{access}->{write} = 1;
         uac::insert_user($config, $user);
     } else {
-        unless ( $permissions->{update_user} == 1 ) {
+        unless ($permissions->{update_user} == 1) {
             PermissionError->throw(error=>'Missing permission to update_user');
             return;
         }
@@ -221,21 +221,21 @@ sub change_password {
     $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'users' });
     uac::set_template_permissions($permissions, $params);
 
-    return template::process( $config, template::check( $config, 'change-password' ), $params );
+    return template::process($config, template::check($config, 'change-password'), $params);
     }
 
 sub delete_user {
     my ($config, $request) = @_;
 
     my $permissions = $request->{permissions};
-    unless ( $permissions->{delete_user} == 1 ) {
+    unless ($permissions->{delete_user} == 1) {
         PermissionError->throw(error=>'Missing permission to delete_user');
         return;
     }
 
     local $config->{access}->{write} = 1;
     my $params = $request->{params}->{checked};
-    return uac::delete_user( $config, $params->{user_id} );
+    return uac::delete_user($config, $params->{user_id});
 }
 
 # add or remove user from role for given studio_id
@@ -244,7 +244,7 @@ sub update_user_roles {
     my ($config, $request) = @_;
 
     my $permissions = $request->{permissions};
-    unless ( $permissions->{update_user_role} == 1 ) {
+    unless ($permissions->{update_user_role} == 1) {
         PermissionError->throw(error=>'Missing permission to update_user_role');
         return;
     }
@@ -307,9 +307,9 @@ sub update_user_roles {
             my $update = 0;
             $update = 1 if defined $permissions->{is_admin};
             $update = 1
-              if ( ( $role_by_id->{ $user_role->{role_id} }->{level} < $max_level )
-                && ( $max_user_level < $max_level ) );
-            if ( $update == 0 ) {
+              if (($role_by_id->{ $user_role->{role_id} }->{level} < $max_level)
+                && ($max_user_level < $max_level));
+            if ($update == 0) {
                 PermissionError->throw(error=>"Missing permission to $message");
                 next;
             }
@@ -337,9 +337,9 @@ sub update_user_roles {
             my $update = 0;
             $update = 1 if defined $permissions->{is_admin};
             $update = 1
-              if ( ( $role_by_id->{ $role->{id} }->{level} < $max_level )
-                && ( $max_user_level < $max_level ) );
-            if ( $update == 0 ) {
+              if (($role_by_id->{ $role->{id} }->{level} < $max_level)
+                && ($max_user_level < $max_level));
+            if ($update == 0) {
                 PermissionError->throw(error=>"Missing permission to $message");
                 next;
             }
@@ -350,7 +350,7 @@ sub update_user_roles {
                     studio_id  => $studio_id,
                     user_id    => $user_id,
                     role_id    => $role_id
-        }
+                }
             );
             uac::print_info($message);
         }

@@ -21,9 +21,9 @@ function hide_details() {
 
     $('table.panel img.toggle').on("click", function() {
         if( $(this).attr("src").indexOf("arrow-up") < 0 ){
-            $(this).attr("src", "image/dark/arrow-up.svg");
+            $(this).attr("src", "image/bright/arrow-up.svg");
         } else {
-            $(this).attr("src", "image/dark/arrow-down.svg");
+            $(this).attr("src", "image/bright/arrow-down.svg");
         }
         $(this).closest('tbody').children("tr.details").each(function() {
             $(this).toggle();

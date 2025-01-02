@@ -5,7 +5,7 @@ use warnings;
 no warnings 'redefine';
 
 use URI::Escape();
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use params();
@@ -32,34 +32,34 @@ sub main {
     $params = $request->{params}->{checked};
 
     #process header
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'all,menu' } );
+    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'all,menu' });
 
     my $out;
     my $action = $params->{action} || '';
-    if ( $action eq 'show_dates' ) {
+    if ($action eq 'show_dates') {
         #print "Content-type:text/html\n\n";
     } else {
-        $out .= template::process( $config, template::check( $config, 'default.html' ), $headerParams );
+        $out .= template::process($config, template::check($config, 'default.html'), $headerParams);
     }
     uac::check($config, $params, $user_presets);
 
-    if ( $action eq 'show_dates' ) {
+    if ($action eq 'show_dates') {
         print "Content-Type:text/html\n\n";
     } else {
-        $out .=  template::process( $config, template::check( $config, 'studio-timeslots-header.html' ), $headerParams );
+        $out .=  template::process($config, template::check($config, 'studio-timeslots-header.html'), $headerParams);
     }
 
-    if ( defined $params->{action} ) {
-        return $out . save_schedule( $config, $request ) if ( $params->{action} eq 'save_schedule' );
-        return $out . delete_schedule( $config, $request ) if ( $params->{action} eq 'delete_schedule' );
-        if ( $params->{action} eq 'show_dates' ) {
-            return $out . showDates( $config, $request );
+    if (defined $params->{action}) {
+        return $out . save_schedule($config, $request) if ($params->{action} eq 'save_schedule');
+        return $out . delete_schedule($config, $request) if ($params->{action} eq 'delete_schedule');
+        if ($params->{action} eq 'show_dates') {
+            return $out . showDates($config, $request);
         }
     }
 
     $config->{access}->{write} = 0;
-    return $out . showTimeslotSchedule( $config, $request );
+    return $out . showTimeslotSchedule($config, $request);
 }
 
 #insert or update a schedule and update all schedule dates
@@ -71,9 +71,8 @@ sub save_schedule {
         unless $permissions->{update_studio_timeslot_schedule} == 1;
 
     my $params = $request->{params}->{checked};
-
-    for my $attr ('project_id', 'studio_id', 'start', 'end', 'end_date', 'schedule_studio_id' ) {
-        ParamError->throw(error=> "missing $attr" ) unless defined $params->{$attr};
+    for my $attr ('project_id', 'studio_id', 'start', 'end', 'end_date', 'schedule_studio_id') {
+        ParamError->throw(error=> "missing $attr") unless defined $params->{$attr};
     }
 
     my $entry = {map {$_ => $params->{$_}} ('project_id', 'start', 'end', 'end_date')};
@@ -113,11 +112,11 @@ sub delete_schedule {
     my $params = $request->{params}->{checked};
 
     my $entry = {};
-    for my $attr ( 'project_id', 'studio_id', 'schedule_id' ) {
-        if ( defined $params->{$attr} ) {
+    for my $attr ('project_id', 'studio_id', 'schedule_id') {
+        if (defined $params->{$attr}) {
             $entry->{$attr} = $params->{$attr};
         } else {
-            ParamError->throw(error=> "missing $attr" );
+            ParamError->throw(error=> "missing $attr");
         }
     }
 
@@ -191,7 +190,7 @@ sub showTimeslotSchedule {
     #copy entry values to params
     $params->{$_} = $result->{$_} for keys %$result;
 
-    return template::process( $config, $params->{template}, $params );
+    return template::process($config, $params->{template}, $params);
 }
 
 sub showDates {
@@ -267,8 +266,8 @@ sub showDates {
     #copy entry values to params
     $params->{$_} = $result->{$_} for keys %$result;
 
-    my $template = template::check( $config, 'studio-timeslot-dates' );
-    return template::process( $config, $template, $params );
+    my $template = template::check($config, 'studio-timeslot-dates');
+    return template::process($config, $template, $params);
 }
 
 sub check_params {

@@ -6,7 +6,7 @@ no warnings 'redefine';
 use utf8;
 
 use Data::Dumper;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Image::Magick();
 use Image::Magick::Square;
 use Try::Tiny;

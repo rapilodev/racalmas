@@ -6,7 +6,7 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use URI::Escape();
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 
 use params();
 use config();
@@ -28,18 +28,18 @@ uac::init($r, \&check_params, \&main);
 sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
     $params = $request->{params}->{checked};
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
-    my $out =  template::process( $config, template::check( $config, 'default.html' ), $headerParams );
+    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    my $out =  template::process($config, template::check($config, 'default.html'), $headerParams);
     uac::check($config, $params, $user_presets);
 
-    if ( defined $params->{action} ) {
-        return $out . save_schedule( $config, $request ) if ( $params->{action} eq 'save_schedule' );
-        return $out . delete_schedule( $config, $request ) if ( $params->{action} eq 'delete_schedule' );
+    if (defined $params->{action}) {
+        return $out . save_schedule($config, $request) if ($params->{action} eq 'save_schedule');
+        return $out . delete_schedule($config, $request) if ($params->{action} eq 'delete_schedule');
     }
 
-    $out.= template::process( $config, template::check( $config, 'worktime-header.html' ), $headerParams );
-    return show_work_schedule( $config, $request );
+    $out.= template::process($config, template::check($config, 'worktime-header.html'), $headerParams);
+    return show_work_schedule($config, $request);
 }
 
 #insert or update a schedule and update all schedule dates
@@ -49,13 +49,13 @@ sub save_schedule {
     my $params = $request->{params}->{checked};
 
     my $permissions = $request->{permissions};
-    unless ( $permissions->{update_schedule} == 1 ) {
+    unless ($permissions->{update_schedule} == 1) {
         PermissionError->throw(error=>'Missing permission to update_schedule');
         return;
     }
 
-    for my $attr ( 'project_id', 'studio_id', 'start' ) {
-        ParamError->throw(error=> "missing $attr" ) unless defined $params->{$attr};
+    for my $attr ('project_id', 'studio_id', 'start') {
+        ParamError->throw(error=> "missing $attr") unless defined $params->{$attr};
     }
 
     my $entry = {};
@@ -108,7 +108,7 @@ sub delete_schedule {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{delete_schedule} == 1 ) {
+    unless ($permissions->{delete_schedule} == 1) {
         PermissionError->throw(error=>'Missing permission to delete_schedule');
         return;
     }
@@ -118,7 +118,7 @@ sub delete_schedule {
         if (defined $params->{$attr}) {
             $entry->{$attr} = $params->{$attr};
         } else {
-            ParamError->throw(error=> "missing $attr" );
+            ParamError->throw(error=> "missing $attr");
         }
     }
 
@@ -137,7 +137,7 @@ sub show_work_schedule {
     PermissionError->throw(error=>'Missing permission to read_series')
         unless $permissions->{read_series} == 1;
 
-    for my $param ( 'project_id', 'studio_id' ) {
+    for my $param ('project_id', 'studio_id') {
         ParamError->throw(error=>"missing $param") unless defined $params->{$param};
     }
 
@@ -173,6 +173,7 @@ sub show_work_schedule {
         if ($params->{schedule_id} eq $schedule->{schedule_id}) {
             $schedule->{selected} = 1;
         }
+    }
     my $serie = {};
     $serie->{schedule} = $schedules;
 
@@ -209,8 +210,8 @@ sub show_work_schedule {
         $params->{$key} = $serie->{$key};
     }
 
-    $params->{loc} = localization::get( $config, { user => $params->{presets}->{user}, file => 'work-time' } );
-    print template::process( $config, $params->{template}, $params );
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'work-time' });
+    print template::process($config, $params->{template}, $params);
 }
 
 sub check_params {

@@ -28,7 +28,7 @@ sub main {
     $loc->{usecase} = $params->{usecase};
     my $json = JSON::to_json( $loc, { pretty => 1 } );
     return $header . $json;
-    }
+}
 
 sub check_params {
     my ($config, $params) = @_;

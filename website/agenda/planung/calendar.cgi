@@ -10,7 +10,7 @@ use JSON;
 use Data::Dumper;
 use URI::Escape();
 use DateTime();
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 use Exception::Class qw(
     ActionError AppError AssignError AuthError ConfigError DatabaseError
@@ -56,17 +56,17 @@ sub main {
         }
     }
     $params = $request->{params}->{checked};
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
 
     my $start_of_day = $params->{day_start};
     my $end_of_day   = $start_of_day;
-    $end_of_day += 24 if ( $end_of_day <= $start_of_day );
+    $end_of_day += 24 if ($end_of_day <= $start_of_day);
     our $hour_height = 60;
     our $yzoom       = 1.5;
 
     my $out = $session->{header} if $session->{header};
-    $out .= template::process( $config, template::check( $config, 'calendar-header.html' ), $headerParams );
+    $out .= template::process($config, template::check($config, 'calendar-header.html'), $headerParams);
     return $out . showCalendar(
         $config, $request,
         {
@@ -90,7 +90,7 @@ sub showCalendar {
 
     my $params = $request->{params}->{checked};
     my $permissions = $request->{permissions} || {};
-    unless ( $permissions->{read_series} == 1 ) {
+    unless ($permissions->{read_series} == 1) {
         PermissionError->throw(error=>'Missing permission to read_series');
     }
 
@@ -101,19 +101,19 @@ sub showCalendar {
 
     my $out = '';
     #get colors from user settings
-    $out .= user_settings::getColorCss( $config, { user => $params->{presets}->{user} } );
+    $out .= user_settings::getColorCss($config, { user => $params->{presets}->{user} });
 
     $params->{loc} =
-      localization::get( $config, { user => $params->{presets}->{user}, file => 'all,calendar' } );
+      localization::get($config, { user => $params->{presets}->{user}, file => 'all,calendar' });
     my $language = $user_settings->{language} || 'en';
     $params->{language} = $language;
-    $out .=  localization::getJavascript( $params->{loc} );
+    $out .=  localization::getJavascript($params->{loc});
 
-    my $calendar = calendar_table::getCalendar( $config, $params, $language );
+    my $calendar = calendar_table::getCalendar($config, $params, $language);
     my $options  = {};
     my $events   = [];
 
-    $out .= getToolbar( $config, $params, $calendar );
+    $out .= getToolbar($config, $params, $calendar);
     $out .=  qq{<div id="calendarTable"> </div>};
     $out .=  qq{
             </main>
@@ -267,7 +267,7 @@ sub check_params {
       ]);
 
     if ($checked->{user} and $checked->{project_id} and $checked->{studio_id}){
-        my $start = user_day_start::get( $config, {
+        my $start = user_day_start::get($config, {
             user       => $checked->{user},
             project_id => $checked->{project_id},
             studio_id  => $checked->{studio_id}

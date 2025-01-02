@@ -7,7 +7,7 @@ no warnings 'redefine';
 use Data::Dumper;
 use URI::Escape();
 use Encode();
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use params();
@@ -37,19 +37,19 @@ sub main {
     $params = $request->{params}->{checked};
 
     #process header
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
     uac::check($config, $params, $user_presets);
 
     my $permissions = $request->{permissions};
     PermissionError->throw(error=>'Missing permission to scan_series_events')
         unless $permissions->{scan_series_events} == 1;
 
-    if ( defined $params->{action} ) {
-        return assign_series(   $config, $request ) if $params->{action} eq 'assign_series';
-        return unassign_series( $config, $request ) if $params->{action} eq 'unassign_series';
-        return  template::process( $config, template::check( $config, 'assign-series-header.html' ), $headerParams )
-                . show_series( $config, $request ) if $params->{action} eq 'get';
+    if (defined $params->{action}) {
+        return assign_series($config, $request) if $params->{action} eq 'assign_series';
+        return unassign_series($config, $request) if $params->{action} eq 'unassign_series';
+        return  template::process($config, template::check($config, 'assign-series-header.html'), $headerParams)
+                . show_series($config, $request) if $params->{action} eq 'get';
 
     }
     ActionError->throw(error => "invalid action");
@@ -61,16 +61,16 @@ sub show_series {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{assign_series_events} == 1 ) {
+    unless ($permissions->{assign_series_events} == 1) {
         PermissionError->throw(error=>'Missing permission to assign_series_events');
     }
 
-    my $projects = project::get( $config, { project_id => $params->{project_id} } );
+    my $projects = project::get($config, { project_id => $params->{project_id} });
     my $project = $projects->[0];
     return unless scalar @$projects == 1;
 
-    my $studios = studios::get( $config,
-        { project_id => $params->{project_id}, studio_id => $params->{studio_id} } );
+    my $studios = studios::get($config,
+        { project_id => $params->{project_id}, studio_id => $params->{studio_id} });
     my $studio = $studios->[0];
     return unless scalar @$studios == 1;
 
@@ -113,7 +113,7 @@ sub show_series {
     $params->{project_name} = $project_name;
     $params->{studio_name}  = $studio_name;
 
-    print template::process( $config, $params->{template}, $params );
+    print template::process($config, $params->{template}, $params);
 }
 
 sub assign_series {
@@ -130,7 +130,7 @@ sub assign_series {
         if (defined $params->{$attr}) {
             $entry->{$attr} = $params->{$attr};
         } else {
-            ParamError->throw(error=> "missing $attr" );
+            ParamError->throw(error=> "missing $attr");
         }
     }
 
@@ -180,7 +180,7 @@ sub unassign_series {
         if (defined $params->{$attr}) {
             $entry->{$attr} = $params->{$attr};
         } else {
-            ParamError->throw(error=> "missing $attr" );
+            ParamError->throw(error=> "missing $attr");
         }
     }
 
@@ -196,7 +196,7 @@ sub unassign_series {
         }
     );
 
-    if ( @$series > 0 ) {
+    if (@$series > 0) {
 
         # assign series to project/studio
         project::unassign_series(

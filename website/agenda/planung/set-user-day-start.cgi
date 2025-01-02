@@ -5,7 +5,7 @@ use warnings;
 no warnings 'redefine';
 use Data::Dumper;
 
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use params();
@@ -30,14 +30,14 @@ sub main {
     $params = $request->{params}->{checked};
 
     $params = $request->{params}->{checked};
-    $params = uac::set_template_permissions( $request->{permissions}, $params );
-    $params->{loc} = localization::get( $config, { user => $session->{user}, file => 'select-event' } );
+    $params = uac::set_template_permissions($request->{permissions}, $params);
+    $params->{loc} = localization::get($config, { user => $session->{user}, file => 'select-event' });
 
     #process header
     print "Content-type:text/text; charset=UTF-8;\n\n";
 
     uac::check($config, $params, $user_presets);
-    set_start_date( $config, $request );
+    set_start_date($config, $request);
 }
 
 sub set_start_date {
@@ -45,7 +45,7 @@ sub set_start_date {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{read_event} == 1 ) {
+    unless ($permissions->{read_event} == 1) {
         PermissionError->throw(error=>'Missing permission to read_event');
         return;
     }

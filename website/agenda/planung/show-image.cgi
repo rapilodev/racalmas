@@ -6,7 +6,7 @@ no warnings 'redefine';
 use utf8;
 
 use Data::Dumper;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use params();
@@ -29,7 +29,7 @@ sub main {
     $params = $request->{params}->{checked};
 
     uac::check($config, $params, $user_presets);
-    showImage( $config, $request );
+    showImage($config, $request);
 }
 
 #TODO: filter by published, draft
@@ -39,29 +39,29 @@ sub showImage {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    unless ( $permissions->{read_event} == 1 ) {
+    unless ($permissions->{read_event} == 1) {
         PermissionError->throw(error=>'Missing permission to read_image');
         return;
     }
 
-    unless ( defined $params->{filename} ) {
+    unless (defined $params->{filename}) {
         PermissionError->throw(error=>'Missing permission to missing filename');
         return;
     }
 
-    my $filename = images::getInternalPath( $config, $params );
-    unless ( defined $filename ) {
+    my $filename = images::getInternalPath($config, $params);
+    unless (defined $filename) {
         PermissionError->throw(error=>"Missing permission to could not find path");
         return;
     }
 
-    unless ( -e $filename ) {
+    unless (-e $filename) {
         PermissionError->throw(error=>"Missing permission to read $filename");
         return;
     }
 
     my $image = images::readFile($filename);
-    if ( defined $image->{error} ) {
+    if (defined $image->{error}) {
         PermissionError->throw(error=>"Missing permission to read $filename, $image->{error}");
         return;
     }

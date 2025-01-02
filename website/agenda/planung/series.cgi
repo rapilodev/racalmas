@@ -6,7 +6,7 @@ no warnings 'redefine';
 
 use URI::Escape();
 use Encode();
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny qw(try catch finally);
 
 use utf8();
@@ -978,7 +978,7 @@ sub check_params {
 
     $checked->{action} = entry::element_of(
         $params->{action},
-        [ qw( show_series list_series
+        [ qw(show_series list_series
             create_series delete_series save_series
             save_schedule delete_schedule
             add_user remove_user

@@ -6,7 +6,7 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use URI::Escape();
-use Scalar::Util qw( blessed );
+use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use localization();
@@ -37,13 +37,13 @@ sub main {
     $params = $request->{params}->{checked};
 
     #process header
-    my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
 
     uac::check($config, $params, $user_presets);
 
-    if ( defined $params->{action} ) {
-        deleteFromPlayout( $config, $request ) if ( $params->{action} eq 'delete' );
+    if (defined $params->{action}) {
+        deleteFromPlayout($config, $request) if ($params->{action} eq 'delete');
     } else {
         print "missing action\n";
     }
@@ -54,12 +54,12 @@ sub deleteFromPlayout {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ( $permissions->{update_event_status_playout} == 1 ) {
+    unless ($permissions->{update_event_status_playout} == 1) {
         PermissionError->throw(error=>'Missing permission to update_event_status_playout');
     }
 
-    for my $attr ( 'project_id', 'studio_id', 'start_date' ) {
-        unless ( defined $params->{$attr} ) {
+    for my $attr ('project_id', 'studio_id', 'start_date') {
+        unless (defined $params->{$attr}) {
             ParamError->throw(error=>"missing $attr");
         }
     }
