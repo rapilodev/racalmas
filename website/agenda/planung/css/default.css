@@ -86,7 +86,8 @@ body,
 }
 
 #content div.panel-header,
-#content .label {
+#content .label,
+::placeholder {
     font-family: Roboto condensed, Roboto, sans-serif;
 }
 
