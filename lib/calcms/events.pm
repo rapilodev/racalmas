@@ -40,13 +40,11 @@ our @EXPORT_OK = qw(
 sub init {
 }
 
-sub get_cached_or_render($$$) {
-    my ($response, $config, $request) = @_;
-
+sub get_cached_or_render($$) {
+    my ($config, $request) = @_;
     my $params = $request->{params}->{checked};
     my $results = events::get($config, $request);
-    events::render($response, $config, $request, $results);
-    return $response;
+    return events::render($config, $request, $results);
 }
 
 sub get_prev{
@@ -99,9 +97,7 @@ sub get_next{
 sub get($$);
 sub get($$) {
     my ($config, $request) = @_;
-
     my $dbh = db::connect($config, $request);
-
     (my $query, my $bind_values) = events::get_query($dbh, $config, $request);
     my $results = db::get($dbh, $$query, $bind_values);
     $results = events::add_recordings($dbh, $config, $request, $results) if $request->{params}->{checked}->{all_recordings};
@@ -122,9 +118,7 @@ sub get($$) {
 
 sub modify_results ($$$$) {
     my ($dbh, $config, $request, $results) = @_;
-
     my $params = $request->{params}->{checked};
-
     my $projects         = {};
     my $studios          = {};
     my $running_event_id = @$results ? events::get_running_event_id($dbh) : 0;
@@ -910,8 +904,8 @@ sub get_query($$$) {
     return (\$query, $bind_values);
 }
 
-sub render($$$$;$) {
-    my ($response, $config, $request, $results, $root_params) = @_;
+sub render($$$;$) {
+    my ($config, $request, $results, $root_params) = @_;
 
     my $params = $request->{params}->{checked};
     if (ref($root_params) eq 'HASH') {
@@ -997,9 +991,7 @@ sub render($$$$;$) {
         $tparams->{$attr} = $config->{$attr};
     }
 
-    $_[0] = template::process($config, $params->{template}, $tparams);
-
-    return $_[0];
+    return template::process($config, $params->{template}, $tparams);
 }
 
 sub get_running_event_id($) {

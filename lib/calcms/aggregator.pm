@@ -29,7 +29,7 @@ sub get_list($$) {
 
     my $content = '';
     my $results = events::get($config, $request);
-    events::render($content, $config, $request, $results);
+    $content = events::render($config, $request, $results);
 
     my $url = $config->{controllers}->{events} . '/' . $params->{from_date} . '/' . $params->{till_date};
 
@@ -77,9 +77,7 @@ sub get_menu($$$$) {
     }
 
     #events menu
-    my $output = '';
-    events::render($output, $config, $request, $results);
-
+    my $output = events::render($config, $request, $results);
     return { content => $output };
 }
 
@@ -124,9 +122,7 @@ sub get_newest_comments($$) {
         config     => $config,
         connection => $request->{connection}
     };
-    my $content = '';
-    comments::get_cached_or_render($content, $config, $request);
-    return { content => $content };
+    return { content => comments::get_cached_or_render($config, $request) };
 }
 
 sub check_params($$) {

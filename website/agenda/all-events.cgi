@@ -13,12 +13,9 @@ binmode STDOUT, ":encoding(UTF-8)";
 my $r = shift;
 my ($params, $error) = params::get($r);
 if ($0 =~ /all-events.*?\.cgi$/) {
-
     my $config = config::getFromScriptLocation();
-
     $params->{template} = '' unless defined $params->{template};
     $params->{exclude_event_images} = 1;
-
     my $request = {
         url    => $ENV{QUERY_STRING},
         params => {
@@ -26,8 +23,7 @@ if ($0 =~ /all-events.*?\.cgi$/) {
             checked  => events::check_params($config, $params),
         },
     };
-
-    events::get_cached_or_render('print', $config, $request);
+    print events::get_cached_or_render($config, $request);
 }
 
 1;

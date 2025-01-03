@@ -31,19 +31,11 @@ my $request = {
 
 $params = $request->{params}->{checked};
 
-#connect
 my $dbh = db::connect($config);
-
-#fill template
 my $template_parameters = {};
 $template_parameters->{projects}         = getProjects($dbh, $config, $params);
-
-#output template
 my $template = $params->{template};
-my $out      = template::process( $config, $params->{template}, $template_parameters );
-print $out;
-
-$out = undef;
+print template::process( $config, $params->{template}, $template_parameters );
 
 sub getProjects {
     my $dbh    = shift;

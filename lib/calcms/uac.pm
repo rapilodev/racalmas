@@ -14,23 +14,23 @@ use List::Util qw(none all);
 use auth();
 use params();
 use db();
-use template();
 use project();
 use studios();
 use user_settings();
 use user_default_studios();
+require "startup.pl";
 
-our @EXPORT_OK = qw(
-  get_user get_users update_user insert_user delete_user
-  get_roles insert_role update_role  get_role_columns
-  get_studios_by_user get_users_by_studio
-  get_projects_by_user
-  get_user_role get_studio_roles
-  assign_user_role remove_user_role
-  get_user_permissions get_user_presets
-  prepare_request set_template_permissions
-  permission_denied
-);
+#our @EXPORT_OK = qw(
+#  get_user get_users update_user insert_user delete_user
+#  get_roles insert_role update_role  get_role_columns
+#  get_studios_by_user get_users_by_studio
+#  get_projects_by_user#
+#  get_user_role get_studio_roles
+#  assign_user_role remove_user_role
+#  get_user_permissions get_user_presets
+#  prepare_request set_template_permissions
+#  permission_denied
+#);
 
 # get user by name
 sub get_user($$) {
@@ -812,7 +812,7 @@ sub init{
         my $session = try {
             return auth::get_session($config, $params);
         } catch {
-            use Data::Dumper;print STDERR Dumper($_);
+            #use Data::Dumper;print STDERR Dumper($_);
             if (blessed $_ and $_->isa('AuthError') and !params::is_json) {
                 print auth::show_login_form($config, '', $_->message // $_->error);
                 exit;

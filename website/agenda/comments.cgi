@@ -28,9 +28,7 @@ if ($0 =~ /comments.*?\.cgi$/) {
         },
     };
 
-    my $output = '';
-    comments::get_cached_or_render($output, $config, $request, 'filter_locked');
-    print $output;
+    print comments::get_cached_or_render($config, $request, 'filter_locked');
 }
 
 #do not delete last line

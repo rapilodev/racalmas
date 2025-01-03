@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-no warnings 'redefine';
+#no warnings 'redefine';
 
 use Data::Dumper;
 use Scalar::Util qw(blessed);
@@ -33,7 +33,6 @@ sub main {
     PermissionError->throw(error=>'Missing permission to read_series')unless $permissions->{read_series};
     return show_series($config, $request);
 }
-
 
 sub show_series {
     my ($config, $request) = @_;

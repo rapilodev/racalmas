@@ -24,8 +24,8 @@ sub get_session($$) {
             LogoutDone->throw;
         }
     }
-    my $session_id = read_cookie();
-    my $session    = read_session($config, $session_id);
+    my $session_id = read_cookie() or die;
+    my $session    = read_session($config, $session_id) or die;
     $params->{$_} = $session->{$_} for qw(user expires);
     $session->{params} = $params;
     return $session;
@@ -78,9 +78,9 @@ sub create_cookie($$) {
 sub read_cookie() {
     my %cookie = CGI::Cookie->fetch;
     my $cookie = $cookie{'sessionID'};
-    SessionError->throw(message => 'please_login') unless defined $cookie;
+    AuthError->throw(message => 'please_login') unless defined $cookie;
     my $session_id = $cookie->value;
-    SessionError->throw(message => 'please_login') unless defined $session_id;
+    AuthError->throw(message => 'please_login') unless defined $session_id;
     return $session_id;
 }
 

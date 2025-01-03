@@ -17,12 +17,8 @@ our @EXPORT_OK =
 sub init() {
 }
 
-sub get_cached_or_render($$$;$) {
-
-    #    my $response=$_[0];
-    my $config      = $_[1];
-    my $request     = $_[2];
-    my $mark_locked = $_[3];
+sub get_cached_or_render($$;$) {
+    my ($config, $request, $mark_locked) = @_;
 
     my $params = $request->{params}->{checked};
     $config->{app_name} = $config->{controllers}->{comments};
@@ -64,7 +60,7 @@ sub get_cached_or_render($$$;$) {
         $results = \@results2;
     }
 
-    comments::render($_[0], $config, $request, $results);
+    return comments::render($config, $request, $results);
 
 }
 
@@ -200,15 +196,10 @@ sub modify_results($$$) {
     return $results;
 }
 
-sub render($$$$) {
-
-    #    my $response    =$_[0];
-    my $config  = $_[1];
-    my $request = $_[2];
-    my $results = $_[3];
+sub render($$$) {
+    my ($config, $request, $results) = @_;
 
     my $params = $request->{params}->{checked};
-
     my %template_parameters = %$params;
     my $template_parameters = \%template_parameters;
 
@@ -220,7 +211,7 @@ sub render($$$$) {
     $template_parameters->{event_id}    = $params->{event_id};
     $template_parameters->{event_start} = $params->{event_start};
     $template_parameters->{controllers} = $config->{controllers};
-    $_[0] = template::process($config, $params->{template}, $template_parameters);
+    return template::process($config, $params->{template}, $template_parameters);
 }
 
 #check if comment exists already

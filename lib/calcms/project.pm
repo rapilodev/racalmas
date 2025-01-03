@@ -9,7 +9,6 @@ use Date::Calc;
 
 use config();
 use log();
-use template();
 use images();
 
 our @EXPORT_OK = qw(

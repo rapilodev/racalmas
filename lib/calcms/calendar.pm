@@ -15,14 +15,11 @@ our @EXPORT_OK = qw(init get_cached_or_render get render get_calendar_weeks conf
 sub init() {
 }
 
-sub get_cached_or_render($$$) {
-    #   my $output  = $_[0]
-    my $config  = $_[1];
-    my $request = $_[2];
-
+sub get_cached_or_render($$) {
+    my ($config, $request) = @_;
     my $parms = $request->{params}->{checked};
     my $calendar = calendar::get($config, $request);
-    calendar::render($_[0], $config, $request, $calendar);
+    return calendar::render($config, $request, $calendar);
 }
 
 sub get($$) {
@@ -271,19 +268,13 @@ sub get($$) {
 
 }
 
-sub render($$$$) {
-
-    #    my $out     = $_[0];
-    my $config   = $_[1];
-    my $request  = $_[2];
-    my $calendar = $_[3];
-
+sub render($$$) {
+    my ($config, $request, $calendar) = @_;
     my $parms = $request->{params}->{checked};
     my $template_parameters = $calendar;
     $template_parameters->{base_url}         = $config->{locations}->{base_url};
     $template_parameters->{widget_render_url}= $config->{locations}->{widget_render_url};
-
-    $_[0] = template::process($config, $parms->{template}, $template_parameters);
+    return template::process($config, $parms->{template}, $template_parameters);
 }
 
 sub get_calendar_weeks($$$) {

@@ -5,7 +5,6 @@ use warnings;
 no warnings 'redefine';
 
 use config();
-use template();
 
 our @EXPORT_OK = qw(get insert update insert_or_update delete delete_files);
 

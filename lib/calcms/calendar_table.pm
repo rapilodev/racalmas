@@ -6,8 +6,6 @@ no warnings 'redefine';
 
 use Data::Dumper;
 use Date::Calc();
-
-use template();
 use events();
 
 sub break_dates {
