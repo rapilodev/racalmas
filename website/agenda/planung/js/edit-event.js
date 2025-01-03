@@ -103,54 +103,6 @@ function copyFromEvent(resultSelector){
     return 1;
 }
 
-async function loadEvent(projectId,studioId,seriesId,eventId, callback){
-
-    var url="broadcast.cgi?" + new URLSearchParams({
-        action: "get_json",
-        project_id : projectId,
-        studio_id : studioId,
-        series_id : seriesId,
-        event_id : eventId,
-        json: 1,
-        get_rerun: 1,
-    }).toString();
-    console.log("modifyEvent:" + url);
-    let response = await fetch(url, {
-        method: 'GET',
-        cache: "no-store",
-    });
-    let json = await response.json();
-    console.log(json)
-    if (json.error) showError(json.error);
-    else callback(json);
-
-    console.log("loadEvent: "+url)
-    var event = json;
-    $("#edit_event input[name='title']").attr('value', event.title)
-    $("#edit_event input[name='user_title']").attr('value', event.user_title)
-    $("#edit_event input[name='episode']").attr('value', event.episode)
-
-    updateCheckBox( "#edit_event input[name='live']", event.live);
-    updateCheckBox( "#edit_event input[name='published']", event.published);
-    updateCheckBox( "#edit_event input[name='archived']", event.archived);
-    updateCheckBox( "#edit_event input[name='rerun']", event.rerun);
-    updateCheckBox( "#edit_event input[name='playout']", event.playout);
-    updateCheckBox( "#edit_event input[name='draft']", event.draft);
-
-    $("#edit_event textarea[name='excerpt'").html(event.excerpt);
-    $("#edit_event textarea[name='user_excerpt'").html(event.user_excerpt);
-    $("#edit_event textarea[name='topic']").html(event.topic);
-    $("#edit_event textarea[name='content']").html(event.content);
-
-    updateImage("#edit_event input[name='image']", event.image);
-    $("#edit_event input[name='podcast_url']").attr('value', event.podcast_url);
-    $("#edit_event input[name='archive_url']").attr('value', event.archive_url);
-
-    updateDuration("#edit_event #duration", event.duration);
-
-    if (callback != null) callback();
-    console.log("loadEvent done")
-}
 
 // load series selection
 function selectChangeSeries(resultSelector){
@@ -310,8 +262,8 @@ function copyEventToClipboard(){
     copyText.setSelectionRange(0, 99999);
     document.execCommand("copy");
     $(copyText).remove();
-    showInfo("copied")
-            }
+    showInfo("copied");
+}
 
 function listEvents(project_id, studio_id, series_id) {
     loadUrl( 'calendar.cgi?' + new URLSearchParams({
@@ -333,12 +285,61 @@ function deleteFromSchedule(project_id, studio_id, series_id, start) {
     }).toString() + '#tabs-schedule');
 }
 
-async function modifyEvent(elem, action, callback){
-    let form = elem.closest('form');
-    let url = form.attr('action');
+async function loadEvent(projectId,studioId,seriesId,eventId, callback){
+
+    var url="broadcast.cgi?" + new URLSearchParams({
+        action: "get_json",
+        project_id : projectId,
+        studio_id : studioId,
+        series_id : seriesId,
+        event_id : eventId,
+        json: 1,
+        get_rerun: 1,
+    }).toString();
+    console.log("modifyEvent:" + url);
+    let response = await fetch(url, {
+        method: 'GET',
+        cache: "no-store",
+    });
+    let json = await response.json();
+    console.log(json)
+    if (json.error) showError(json.error);
+    else callback(json);
+
+    console.log("loadEvent: "+url)
+    var event = json;
+    $("#edit_event input[name='title']").attr('value', event.title)
+    $("#edit_event input[name='user_title']").attr('value', event.user_title)
+    $("#edit_event input[name='episode']").attr('value', event.episode)
+
+    updateCheckBox( "#edit_event input[name='live']", event.live);
+    updateCheckBox( "#edit_event input[name='published']", event.published);
+    updateCheckBox( "#edit_event input[name='archived']", event.archived);
+    updateCheckBox( "#edit_event input[name='rerun']", event.rerun);
+    updateCheckBox( "#edit_event input[name='playout']", event.playout);
+    updateCheckBox( "#edit_event input[name='draft']", event.draft);
+
+    $("#edit_event textarea[name='excerpt'").html(event.excerpt);
+    $("#edit_event textarea[name='user_excerpt'").html(event.user_excerpt);
+    $("#edit_event textarea[name='topic']").html(event.topic);
+    $("#edit_event textarea[name='content']").html(event.content);
+
+    updateImage("#edit_event input[name='image']", event.image);
+    $("#edit_event input[name='podcast_url']").attr('value', event.podcast_url);
+    $("#edit_event input[name='archive_url']").attr('value', event.archive_url);
+
+    updateDuration("#edit_event #duration", event.duration);
+
+    if (callback != null) callback();
+    showInfo("event loaded");
+}
+
+async function modifyEvent(form, action, callback){
+    let url = 'broadcast.cgi';
     let data = new URLSearchParams();
-    data.append("action",action);
-    for (let pair of new FormData(form.get(0))) {
+    data.append("action", action);
+    console.log(form)
+    for (let pair of new FormData(form)) {
         data.append(pair[0], pair[1]);
     }
     console.log("modifyEvent:" + url);
@@ -351,7 +352,7 @@ async function modifyEvent(elem, action, callback){
     console.log(json)
     if (json.error) showError(json.error);
     else callback(json);
-    }
+}
 
 function createEvent22(elem, action){
     if (json.status == "created"){
@@ -368,7 +369,7 @@ function createEvent22(elem, action){
     } else showError("Could not create event");
 }
 
-function createEvent2(elem, action){
+function createEvent2(action){
     $.post(
         "broadcast.cgi?" + new URLSearchParams({
             action: action,
@@ -388,27 +389,33 @@ function createEvent2(elem, action){
     );
 }
 
-async function saveEvent(elem, action){
+async function saveEvent(selector, action){
     console.log("saveEvent")
-    modifyEvent(elem, action, function(json){
-        if (json.status == "saved") showInfo("event saved");
-        else showError(json.error);
-    })
+    let form = document.querySelector(selector);
+    modifyEvent(form, action, function(json){
+        if (json.status != "saved") return showError(json.error);
+        showInfo("event saved");
+        loadEvent(
+            getProjectId(),
+            getStudioId(),
+            getUrlParameter('series_id'),
+            getUrlParameter('event_id'), function(){}
+        );
+    });
 }
 
-async function deleteEvent(elem, action){
+async function deleteEvent(selector){
     console.log("deleteElem");
-    let form = elem.closest('form');
-    let event_id = form.find("input[name='event_id']").val();
-    commitForm('event_'+event_id, 'delete', 'delete event', function(){
-        modifyEvent(elem, action, function(json) {
+    commitAction('delete event', function() {
+        let form = document.querySelector(selector);
+        modifyEvent(form, 'delete', function(json) {
             if (json.status == "deleted") {
                 showInfo("Event deleted");
                 $('#content').remove();
                 getBack();
             } else showError(json.error);
         })
-    })
+    });
 }
 
 function uploadRecording(project_id, studio_id, series_id, event_id){
@@ -453,12 +460,9 @@ async function loadHelpTexts () {
         cache: "no-store",
     });
     let json = await response.json();
-
     if (json.error) return showError(json.error);
-
-    var data = json;
-    for (key in data){
-        let value = data[key];
+    for (key in json){
+        let value = json[key];
         console.log(key + "=" + value)
         $(`input[name="${key}"]`).hover(function() {
             $(this).attr("title", value)
@@ -473,36 +477,26 @@ $(document).ready(
     function() {
         showDateTimePicker('#start_date');
 
-        $('input[type="checkbox"]').click(
-            function(){
-                if ($(this).attr('value')=='1'){
-                    $(this).attr('value','0');
-                }else{
-                    $(this).attr('value','1');
-                }
+        $('input[type="checkbox"]').click( function() {
+            if ($(this).attr('value')=='1'){
+                $(this).attr('value','0');
+            }else{
+                $(this).attr('value','1');
             }
-        );
+        });
 
-        if($('#calendar').length==0){
-            $('#back_to_calendar').hide();
-        }
+        if($('#calendar').length == 0) $('#back_to_calendar').hide();
         onDateModified();
-
         checkFields();
-
         $('textarea').autosize();
-
         // unset published on setting draft
-        $("#edit_event input[name='draft']").change(
-            function(){
-                if ($(this).val()==1){
-                    console.log( 'unset published' );
-                    updateCheckBox("#edit_event input[name='published']", 0);
-                }
+        $("#edit_event input[name='draft']").change(function() {
+            if ($(this).val()==1){
+                console.log( 'unset published' );
+                updateCheckBox("#edit_event input[name='published']", 0);
             }
-        )
+        });
         loadHelpTexts();
-        console.log("done");
+        showInfo("done");
     }
 );
-

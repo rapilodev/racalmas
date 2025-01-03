@@ -127,6 +127,55 @@
         </TMPL_IF>
     </TMPL_UNLESS>
     </TMPL_UNLESS>
+
+    <TMPL_UNLESS new_event>
+    <div class="buttons">
+        <TMPL_UNLESS show_new_event>
+            <TMPL_IF .allow.read_event>
+                <button target="_blank" class="text"
+                    onclick="showHistory('<TMPL_VAR project_id>', '<TMPL_VAR studio_id>', '<TMPL_VAR series_id>', '<TMPL_VAR event_id>');"
+                ><TMPL_VAR .loc.button_show_changes></button>
+            </TMPL_IF>
+        </TMPL_UNLESS>
+    </div>
+    </TMPL_UNLESS>
+
+    <!-- header buttons -->
+    <TMPL_UNLESS edit_lock>
+    <div class="buttons" style="text-align:center;clear:both">
+        <TMPL_IF show_new_event_from_schedule>
+            <TMPL_IF .allow.create_event_from_schedule>
+                <button class="primary"
+                    onclick="createEvent2('#edit_event form#event_<TMPL_VAR event_id>', 'create_event_from_schedule');leavePage();return false"
+                ><TMPL_VAR .loc.button_create></button>
+             </TMPL_IF>
+        <TMPL_ELSIF show_new_event>
+            <TMPL_IF .allow.create_event>
+                <button class="primary"
+                    onclick="createEvent2('#edit_event form#event_<TMPL_VAR event_id>', 'create_event');leavePage();return false"
+                ><TMPL_VAR .loc.button_create></button>
+             </TMPL_IF>
+        <TMPL_ELSE>
+            <TMPL_IF .allow.update_event>
+                <button class="primary"
+                    onclick="saveEvent('#edit_event form#event_<TMPL_VAR event_id>', 'save');return false"
+                ><TMPL_VAR .loc.button_save></button>
+            </TMPL_IF>
+        </TMPL_IF>
+        <TMPL_IF .allow.delete_event>
+            <TMPL_UNLESS new_event>
+                <button class="text"
+                    onclick="deleteEvent('#edit_event form#event_<TMPL_VAR event_id>', 'delete'); return false;"
+                ><TMPL_VAR .loc.button_delete></button>
+            </TMPL_UNLESS>
+        </TMPL_IF>
+    </div>
+    </TMPL_UNLESS>
+    <!-- download output -->
+    <TMPL_IF download>
+        <div type="hidden" class="panel" name="event_id" ><TMPL_VAR download escape=none></div>
+    </TMPL_IF>
+
 </div>
 
 <!-- edit -->
@@ -164,7 +213,7 @@
                 <button onclick="hideSelectRerun('rerunEventId')"><TMPL_VAR .loc.button_cancel></button>
                 <button onclick="if ($('#rerunEventId').val()) copyFromEvent('rerunEventId')"><TMPL_VAR .loc.button_apply></button>
             </div>
-</div>
+        </div>
     </TMPL_IF>
 
     <!-- move to other series -->
@@ -186,51 +235,13 @@
 
     <!-- edit event -->
 <div id="edit_event" class="panel">
-<form id="event_<TMPL_VAR event_id>" method="post"
-    action="broadcast.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id><TMPL_UNLESS new_event>&event_id=<TMPL_VAR .event_id></TMPL_UNLESS>"
->
+<form id="event_<TMPL_VAR event_id>">
     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
     <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
     <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
     <TMPL_UNLESS new_event>
     <input type="hidden" name="event_id"   value="<TMPL_VAR .event_id>">
     </TMPL_UNLESS>
-
-    <!-- header buttons -->
-    <TMPL_UNLESS edit_lock>
-    <div class="buttons" style="text-align:center;clear:both">
-        <TMPL_IF show_new_event_from_schedule>
-            <TMPL_IF .allow.create_event_from_schedule>
-                <button class="primary"
-                    onclick="createEvent2($(this), 'create_event_from_schedule');leavePage();return false"
-                ><TMPL_VAR .loc.button_create></button>
-             </TMPL_IF>
-        <TMPL_ELSIF show_new_event>
-            <TMPL_IF .allow.create_event>
-                <button class="primary"
-                    onclick="createEvent2($(this), 'create_event');leavePage();return false"
-                ><TMPL_VAR .loc.button_create></button>
-             </TMPL_IF>
-        <TMPL_ELSE>
-            <TMPL_IF .allow.update_event>
-                <button class="primary"
-                    onclick="saveEvent($(this), 'save');return false"
-                ><TMPL_VAR .loc.button_save></button>
-            </TMPL_IF>
-        </TMPL_IF>
-        <TMPL_IF .allow.delete_event>
-            <TMPL_UNLESS new_event>
-                <button class="text"
-                    onclick="var elem = $(this); deleteEvent($(this), 'delete'); return false;"
-                ><TMPL_VAR .loc.button_delete></button>
-            </TMPL_UNLESS>
-        </TMPL_IF>
-    </div>
-    </TMPL_UNLESS>
-    <!-- download output -->
-    <TMPL_IF download>
-        <div type="hidden" class="panel" name="event_id" ><TMPL_VAR download escape=none></div>
-    </TMPL_IF>
 
     <!-- edit event time -->
     <!-- <TMPL_UNLESS new_event>style="display:none"</TMPL_UNLESS> -->
@@ -270,6 +281,7 @@
             <td class="label"></td>
             <td>
                 <TMPL_VAR start> - <TMPL_VAR full_title>
+                <button class="text" onclick="copyEventToClipboard();"><img src="image/dark/copy.svg"></button>
             </td>
         </tr>
         </TMPL_UNLESS>
@@ -480,6 +492,11 @@
 
     </table>
     </form>
+
+        <TMPL_IF modified_at>
+            <span class="label"><TMPL_VAR .loc.label_modified_at> <TMPL_VAR modified_at> <TMPL_VAR .loc.label_modified_by> <TMPL_VAR modified_by>.</span>
+        </TMPL_IF>
+
 </div>
 
 <TMPL_IF .allow.read_comment>
@@ -489,24 +506,6 @@
 </div>
 </TMPL_IF>
 </div>
-
-<TMPL_UNLESS new_event>
-<div class="buttons">
-    <TMPL_UNLESS show_new_event>
-        <TMPL_IF .allow.read_event>
-            <button target="_blank" class="text"
-                onclick="showHistory('<TMPL_VAR project_id>', '<TMPL_VAR studio_id>', '<TMPL_VAR series_id>', '<TMPL_VAR event_id>');"
-            ><TMPL_VAR .loc.button_show_changes></button>
-        </TMPL_IF>
-    </TMPL_UNLESS>
-
-    <button class="text" onclick="copyEventToClipboard();"><TMPL_VAR .loc.button_copy_to_clipboard></button>
-
-    <TMPL_IF modified_at>
-        <span class="label"><TMPL_VAR .loc.label_modified_at> <TMPL_VAR modified_at> <TMPL_VAR .loc.label_modified_by> <TMPL_VAR modified_by>.</span>
-    </TMPL_IF>
-</div>
-</TMPL_UNLESS>
 
 </main>
 </body>
