@@ -282,7 +282,7 @@ var calcms = (function($) {
 
     // show previous event of a given series
     my.showPrevSeriesEvent = function showPrevSeriesEvent(value) {
-        var events_url = my.get('previous_episode_url');
+        var events_url = my.get('prev_episode_url');
         my.load(events_url + '/' + value + '.html');
     }
 
