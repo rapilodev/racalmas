@@ -1,25 +1,3 @@
-
-<IfModule mod_perl.c>
-    <FilesMatch "\.cgi$">
-        SetHandler perl-script
-        PerlResponseHandler ModPerl::PerlRunPrefork
-        PerlOptions +ParseHeaders
-        Options +ExecCGI
-    </FilesMatch>
-</IfModule>
-
-<IfModule !mod_perl.c>
-   AddHandler cgi-script .cgi .pl
-</IfModule>
-
 LimitRequestBody 2000000000
+Options -Indexes -MultiViews +FollowSymLinks +ExecCGI
 Require all granted
-
-AddOutputFilterByType DEFLATE application/json
-AddOutputFilterByType DEFLATE application/xml
-AddOutputFilterByType DEFLATE application/json
-AddOutputFilterByType DEFLATE application/json
-AddOutputFilterByType DEFLATE text/css
-AddOutputFilterByType DEFLATE text/javascript
-AddOutputFilterByType DEFLATE text/html
-AddOutputFilterByType DEFLATE text/plain
