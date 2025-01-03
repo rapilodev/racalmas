@@ -146,13 +146,13 @@
         <TMPL_IF show_new_event_from_schedule>
             <TMPL_IF .allow.create_event_from_schedule>
                 <button class="primary"
-                    onclick="createEvent2('#edit_event form#event_<TMPL_VAR event_id>', 'create_event_from_schedule');leavePage();return false"
+                    onclick="createEventFromSchedule('#edit_event form#event_<TMPL_VAR event_id>');leavePage();return false"
                 ><TMPL_VAR .loc.button_create></button>
              </TMPL_IF>
         <TMPL_ELSIF show_new_event>
             <TMPL_IF .allow.create_event>
                 <button class="primary"
-                    onclick="createEvent2('#edit_event form#event_<TMPL_VAR event_id>', 'create_event');leavePage();return false"
+                    onclick="createEvent2('#edit_event form#event_<TMPL_VAR event_id>');leavePage();return false"
                 ><TMPL_VAR .loc.button_create></button>
              </TMPL_IF>
         <TMPL_ELSE>
@@ -247,11 +247,9 @@
     <!-- <TMPL_UNLESS new_event>style="display:none"</TMPL_UNLESS> -->
     <table id="edit_time_<TMPL_VAR event_id>" class="edit_event" >
         <tr>
-            <td class="label"><strong>
-                <TMPL_IF has_single_events><TMPL_VAR .loc.single_event><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF>
-                </strong>
-            </td>
+            <td class="label"><TMPL_VAR .loc.lable_title></td>
             <td>
+                <TMPL_IF has_single_events><TMPL_VAR .loc.single_event><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF><br>
                 <TMPL_IF .allow.update_event_field_title>
                     <input name="title" value="<TMPL_VAR title>" placeholder="<TMPL_VAR .loc.label_title>">
                 <TMPL_ELSE>
@@ -277,11 +275,11 @@
         </tr>
 
         <TMPL_UNLESS show_new_event>
-        <tr>
+        <tr id="copy_event_line">
             <td class="label"></td>
             <td>
                 <TMPL_VAR start> - <TMPL_VAR full_title>
-                <button class="text" onclick="copyEventToClipboard();"><img src="image/dark/copy.svg"></button>
+                <button class="text" onclick="copyEventToClipboard();return false;"><img src="image/dark/copy.svg"></button>
             </td>
         </tr>
         </TMPL_UNLESS>
@@ -325,7 +323,7 @@
             <td class="label"><TMPL_VAR .loc.label_status></td>
             <td>
                 <TMPL_IF .allow.update_event_status_live>
-                    <input type="checkbox" name="live"        <TMPL_IF live>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF> > <TMPL_VAR .loc.label_live>
+                    <input type="checkbox" name="live" <TMPL_IF live>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF> > <TMPL_VAR .loc.label_live> </input>
                 <TMPL_ELSE>
                     <TMPL_IF live><TMPL_VAR .loc.label_live></TMPL_IF>
                 </TMPL_IF>

@@ -93,19 +93,19 @@ function showError(s) {
 }
 
 function showInfo(s) {
-   if ($('#info').length){
-       $('#info').html(s);
-   } else {
-       showToast(s, {color:"white", background:"green"})
+    if ($('#info').length){
+        $('#info').html(s);
+    } else {
+        showToast(s, {color:"white", background:"green"})
     }
 }
 
 function showWarn(s) {
-   if ($('#warn').length){
-       $('#warn').html(s);
-   } else {
-       showToast(s, {color:"black", background:"yellow"})
-}
+    if ($('#warn').length){
+        $('#warn').html(s);
+    } else {
+        showToast(s, {color:"black", background:"yellow"})
+    }
 }
 
 function showToast(s, options){
@@ -260,6 +260,14 @@ function getFormValues(form, allowed){
             ([name]) => allowed.includes(name)
         )
     )
+}
+
+function formToParams(form){
+    let params = new URLSearchParams();
+    for (let pair of new FormData(form)) {
+        params.append(pair[0], pair[1]);
+    }
+    return params;
 }
 
 function postContainer(url, parameters, callback){

@@ -91,15 +91,10 @@ function copyFromEvent(resultSelector){
     var seriesId  = $('#selectEvent #seriesId').val();
     var eventId   = $('#selectEvent #eventId').val();
 
-    loadEvent(projectId, studioId, seriesId, eventId, function(){
-        console.log("loadEvent:",projectId, studioId, seriesId, eventId)
-        console.log("loadEvent.callback: hideSelectRerun")
+    loadEvent(projectId, studioId, seriesId, eventId, function() {
         hideSelectRerun();
-        console.log("loadEvent.callback: updateCheckbox")
         updateCheckBox( "#edit_event input[name='published']", 1);
-        console.log("loadEvent.callback: done")
     });
-    console.log("copyFromEvent done")
     return 1;
 }
 
@@ -113,7 +108,6 @@ function selectChangeSeries(resultSelector){
         resultElemId: resultSelector,
         selectSeries: 1,
     }).toString();
-    console.log(url);
     updateContainer('changeSeriesContainer', url, function(){
         $('#selectSeries').removeClass('panel');
         $('#selectChangeSeries').addClass('panel');
@@ -129,7 +123,6 @@ function changeSeries(seriesId) {
     var seriesId= getUrlParameter('series_id');
     var eventId= getUrlParameter('event_id');
     var newSeriesId= $('#changeSeriesId').val();
-    console.log(`changeSeries ${seriesId}`)
     if (projectId <=0 ) return;
     if (studioId <=0 ) return;
     if (seriesId <=0 ) return;
@@ -138,8 +131,6 @@ function changeSeries(seriesId) {
 
     $('div.buttons').show();
     $('#selectChangeSeries').hide('slideUp');
-
-    console.log('move to '+projectId+', '+studioId+', '+seriesId+', '+eventId+' -> series '+newSeriesId);
     $.post(
         url="series.cgi?" + new URLSearchParams({
             action: "reassign_event",
@@ -176,21 +167,17 @@ function updateDuration(selector, value){
         if ($(this).attr('value')==value){
             $(this).attr('selected','selected');
             durationUpdated=1;
-            //console.log("updated "+value)
         }else{
             $(this).removeAttr('selected');
-            //console.log("removed "+value)
         }
     })
     if(durationUpdated==0){
-        console.log("added "+value)
         $(selector).append('<option value="'+value+'">'+value+'</option>');
     }
 }
 
 function updateImage(selector, value){
     if (value == null) {
-        console.log("update image with null");
         return;
     }
     value=value.replace("http://","//");
@@ -211,7 +198,6 @@ function checkExcerptField(){
     var elem=$('textarea[name="excerpt"]');
     if (elem.length==0) return 0;
     var length = elem.val().length;
-    console.log("length="+length);
     if (length > 250){
         $('#excerpt_too_long').show();
     }else{
@@ -224,7 +210,6 @@ function checkExcerptExtensionField(){
     var elem=$('textarea[name="user_excerpt"]');
     if (elem.length==0) return 0;
     var length = elem.val().length;
-    console.log("length="+length);
     if (length > 250){
         $('#excerpt_extension_too_long').show();
     }else{
@@ -248,7 +233,6 @@ function checkFields(){
 }
 
 function copyEventToClipboard(){
-    console.log(this)
     var text = $('textarea[name="excerpt"]').val()+"\n";
     if ($('textarea[name="user_excerpt"]').val()) text += $('textarea[name="user_excerpt"]').val()+"\n";
     text += $('textarea[name="topic"]').val()+"\n\n";
@@ -296,17 +280,14 @@ async function loadEvent(projectId,studioId,seriesId,eventId, callback){
         json: 1,
         get_rerun: 1,
     }).toString();
-    console.log("modifyEvent:" + url);
     let response = await fetch(url, {
         method: 'GET',
         cache: "no-store",
     });
     let json = await response.json();
-    console.log(json)
     if (json.error) showError(json.error);
-    else callback(json);
+    else if (callback != null) callback(json);
 
-    console.log("loadEvent: "+url)
     var event = json;
     $("#edit_event input[name='title']").attr('value', event.title)
     $("#edit_event input[name='user_title']").attr('value', event.user_title)
@@ -319,96 +300,82 @@ async function loadEvent(projectId,studioId,seriesId,eventId, callback){
     updateCheckBox( "#edit_event input[name='playout']", event.playout);
     updateCheckBox( "#edit_event input[name='draft']", event.draft);
 
-    $("#edit_event textarea[name='excerpt'").html(event.excerpt);
-    $("#edit_event textarea[name='user_excerpt'").html(event.user_excerpt);
-    $("#edit_event textarea[name='topic']").html(event.topic);
-    $("#edit_event textarea[name='content']").html(event.content);
+    for (let field in ['excerpt', 'user_excerpt', 'topic', 'content']) {
+        $(`#edit_event textarea[name='${field}']`).html(event[field]).trigger('change')
+    }
 
     updateImage("#edit_event input[name='image']", event.image);
     $("#edit_event input[name='podcast_url']").attr('value', event.podcast_url);
     $("#edit_event input[name='archive_url']").attr('value', event.archive_url);
 
     updateDuration("#edit_event #duration", event.duration);
-
+    if (eventId != getUrlParameter('event_id')) $('#copy_event_line').hide();
     if (callback != null) callback();
     showInfo("event loaded");
 }
 
-async function modifyEvent(form, action, callback){
-    let url = 'broadcast.cgi';
-    let data = new URLSearchParams();
-    data.append("action", action);
-    console.log(form)
-    for (let pair of new FormData(form)) {
-        data.append(pair[0], pair[1]);
-    }
-    console.log("modifyEvent:" + url);
-    let response = await fetch(url, {
+async function modifyEvent(params, callback){
+    let response = await fetch('broadcast.cgi', {
         method: 'POST',
-        body: data,
+        body: params,
         cache: "no-store",
     });
     let json = await response.json();
-    console.log(json)
     if (json.error) showError(json.error);
     else callback(json);
 }
 
-function createEvent22(elem, action){
-    if (json.status == "created"){
-        showInfo("created");
-        let event = json.entry;
-        let url="broadcast.cgi?" + new URLSearchParams({
-            action : action,
+// where is this used?
+function createEvent2(selector) {
+    let params = formToParams(document.querySelector(selector));
+    params.append("action",'create_event');
+    alert("TODO")
+    modifyEvent(params, function(data) {
+        loadUrl("broadcast.cgi?" + new URLSearchParams({
+            action: "edit",
+            project_id : getProjectId(),
+            studio_id : getStudioId(),
+            series_id : getUrlParameter('series_id'),
+            event_id : data.eventId,
+        }).toString());
+    });
+}
+
+function createEventFromSchedule(selector) {
+    let params = formToParams(document.querySelector(selector));
+    params.append('action', 'create_event_from_schedule');
+    modifyEvent(params, function(json) {
+        var event = json.entry;
+        loadUrl("broadcast.cgi?" + new URLSearchParams({
+            action: "edit",
             project_id : event.project_id,
             studio_id : event.studio_id,
             series_id : event.series_id,
-            event_id : event.event_id
-        }).toString();
-        loadUrl(url);
-    } else showError("Could not create event");
-}
-
-function createEvent2(action){
-    $.post(
-        "broadcast.cgi?" + new URLSearchParams({
-            action: action,
-            project_id : projectId,
-            studio_id : studioId,
-            series_id : seriesId,
-        }).toString(),
-        function(data) {
-            loadUrl("broadcast.cgi?" + new URLSearchParams({
-                action: "edit",
-                project_id : projectId,
-                studio_id : studioId,
-                series_id : newSeriesId,
-                event_id : eventId,
-            }).toString());
-        }
-    );
+            event_id : event.event_id,
+        }).toString());
+    });
 }
 
 async function saveEvent(selector, action){
-    console.log("saveEvent")
-    let form = document.querySelector(selector);
-    modifyEvent(form, action, function(json){
+    let params = formToParams(document.querySelector(selector));
+    params.append("action", action);
+    modifyEvent(params, function(json){
         if (json.status != "saved") return showError(json.error);
         showInfo("event saved");
         loadEvent(
             getProjectId(),
             getStudioId(),
             getUrlParameter('series_id'),
-            getUrlParameter('event_id'), function(){}
+            getUrlParameter('event_id')
         );
     });
 }
 
 async function deleteEvent(selector){
-    console.log("deleteElem");
     commitAction('delete event', function() {
-        let form = document.querySelector(selector);
-        modifyEvent(form, 'delete', function(json) {
+        let params = formToParams(document.querySelector(selector));
+        params.append('action','delete');
+        modifyEvent(params, function(json) {
             if (json.status == "deleted") {
                 showInfo("Event deleted");
                 $('#content').remove();
@@ -439,7 +406,6 @@ function downloadRecording(project_id, studio_id, series_id, event_id){
 }
 
 function showHistory(project_id, studio_id, series_id, event_id) {
-    console.log(showHistory)
     loadUrl("event-history.cgi?" + new URLSearchParams({
         action: "show",
         project_id : project_id,
@@ -463,7 +429,6 @@ async function loadHelpTexts () {
     if (json.error) return showError(json.error);
     for (key in json){
         let value = json[key];
-        console.log(key + "=" + value)
         $(`input[name="${key}"]`).hover(function() {
             $(this).attr("title", value)
         });
@@ -476,7 +441,6 @@ async function loadHelpTexts () {
 $(document).ready(
     function() {
         showDateTimePicker('#start_date');
-
         $('input[type="checkbox"]').click( function() {
             if ($(this).attr('value')=='1'){
                 $(this).attr('value','0');
@@ -484,7 +448,6 @@ $(document).ready(
                 $(this).attr('value','1');
             }
         });
-
         if($('#calendar').length == 0) $('#back_to_calendar').hide();
         onDateModified();
         checkFields();
@@ -492,11 +455,10 @@ $(document).ready(
         // unset published on setting draft
         $("#edit_event input[name='draft']").change(function() {
             if ($(this).val()==1){
-                console.log( 'unset published' );
                 updateCheckBox("#edit_event input[name='published']", 0);
             }
         });
         loadHelpTexts();
-        showInfo("done");
+        showInfo("event loaded");
     }
 );
