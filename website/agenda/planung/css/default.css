@@ -34,6 +34,7 @@ time, mark, audio, video {
     font: inherit;
     vertical-align: baseline;
     border-radius: 1rem;
+    text-wrap: balance;
 }
 
 body {
