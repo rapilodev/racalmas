@@ -1,3 +1,4 @@
+"use strict";
 
 function showProgress(){
     $('#progress').slideDown(() => $('#progress').addClass('progress-visible'));

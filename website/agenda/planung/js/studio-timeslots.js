@@ -94,10 +94,9 @@ function initScheduleFields(){
 
 $(document).ready(
     function(){
-    setupLocalization(function(){
-        addBackButton();
-        updateWeekdays();
-    });
+    loadLocalization();
+    addBackButton();
+    updateWeekdays();
 
     setTabs('#tabs');
 

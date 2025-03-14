@@ -45,7 +45,7 @@ sub main {
         my $headerParams =
             uac::set_template_permissions($request->{permissions}, $params);
         $headerParams->{loc} = localization::get($config,
-            { user => $session->{user}, file => 'menu' });
+            { user => $session->{user}, file => 'menu.po' });
         $out .=
             template::process($config,
             template::check($config, 'event-header.html'),
@@ -225,7 +225,7 @@ sub show_event {
 
     $params->{loc} =
         localization::get($config,
-        { user => $params->{presets}->{user}, file => 'event' });
+        { user => $params->{presets}->{user}, file => 'broadcast.po,image.po' });
     return template::process($config, template::check($config, 'edit-event'),
         $params);
 }
@@ -354,7 +354,7 @@ sub show_new_event {
 
     $params->{loc} =
         localization::get($config,
-        { user => $params->{presets}->{user}, file => 'event,comment' });
+        { user => $params->{presets}->{user}, file => 'broadcast.po,comment.po,image.po' });
     return template::process($config, template::check($config, 'edit-event'),
         $params);
 }

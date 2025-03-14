@@ -1,3 +1,4 @@
+var loc = getLocalization();
 var region='<TMPL_VAR loc.region escape=js>';
 
 function add_studio(){

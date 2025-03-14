@@ -70,7 +70,7 @@ $request = uac::prepare_request($request, $user_presets);
 $params = $request->{params}->{checked};
 my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
 $headerParams->{loc} = localization::get($config, { user => $user, file => 'menu' });
-template::process($config, 'print', template::check($config, 'header.html'), $headerParams);
+print template::process($config, template::check($config, 'header.html'), $headerParams);
 
 exit unless uac::check($config, $params, $user_presets) == 1;
 
@@ -91,7 +91,7 @@ if ($params->{action} eq 'upload') {
 }
 
 $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'image' });
-template::process($config, 'print', $params->{template}, $params);
+print template::process($config, $params->{template}, $params);
 
 sub upload_file {
     my ($config, $params, $fh, $user) = @_;

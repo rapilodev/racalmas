@@ -43,12 +43,12 @@ sub get($$) {
     $loc = $options->{loc} if defined $options->{loc};
 
     my $files = $options->{file};
-    $files =~ s/[^a-zA-Z\,\_\-]//g;
+    $files =~ s/[^a-zA-Z\,\_\-\.]//g;
 
     #get all comma separated po files
-    for my $file (split /\,/, $files) {
-        my $po_file = $config->{locations}->{admin_pot_dir} . '/' . $language . '/' . $file . '.po';
-        $loc = read_po_file($po_file, $loc);
+    for my $file (split /\,+/, $files) {
+        my $po_file = $file =~ /\.po$/ ? $file : "$file.po";
+        $loc = read_po_file("$config->{locations}->{admin_pot_dir}/$language/$po_file", $loc);
     }
     return $loc;
 }

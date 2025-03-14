@@ -1,3 +1,5 @@
+"use strict";
+
 var days=1;
 
 var leftMouseButton=1;
@@ -341,6 +343,7 @@ function checkStudio(){
 }
 
 function show_not_assigned_to_series_dialog(){
+    var loc = getLocalization();
     showDialog({
         title   : loc['label_event_not_assigned_to_series'],
         buttons : {
@@ -349,6 +352,7 @@ function show_not_assigned_to_series_dialog(){
         }
 
 function show_schedule_series_dialog(project_id, studio_id, series_id, start_date){
+    var loc = getLocalization();
     jQuery.getJSON(
         "series.cgi?" + new URLSearchParams({
             action : "list_series",

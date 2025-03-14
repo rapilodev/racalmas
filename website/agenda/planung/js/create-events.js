@@ -1,3 +1,5 @@
+"use strict";
+
 async function create_events(form_id){
     let form = $("#"+form_id);
     let json = postJson("create-events.cgi?", {

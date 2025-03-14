@@ -1,3 +1,5 @@
+"use strict";
+
 function getController(){
     var url=window.location.href;
 
@@ -77,6 +79,25 @@ function contains(s,t){
     return s.indexOf(t) != -1;
 }
 
+function element(tag, params) {
+    return Object.assign(document.createElement(tag), params);
+}
+
+function button({ id, text, onClick, title = "" }) {
+    var button =  element("button", {
+        id, textContent: text, className: "button", title
+    });
+    button.addEventListener("click", onClick);
+    return button;
+}
+
+function icon(project_id, studio_id, filename) {
+    return element('img', {
+        id: "imagePreview",
+        src : `show-image.cgi?project_id=${project_id}&studio_id=${studio_id}&filename=${filename}&type=icon`
+    });
+}
+
 function updateContainer2(id, url, callback){
     if (id==null) return;
     if ($("#"+id).length==0) return;
@@ -132,10 +153,19 @@ function showToast(s, options){
     }, duration);
 }
 
+function loadCss(url) {
+    let link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = url;
+    document.head.appendChild(link);
+}
+
 async function updateContainer(id, url, callback){
-    if (id==null) throw Error(`id is null`);
-    var target = id=='body' ? document.documentElement.innerHTML : document.getElementById(id);
-    if (target == null) throw Error(`id ${id} no found`);
+    console.log(url);
+    if (!id) throw Error(`id is null`);
+    var target = id=='body' ? document.body : document.getElementById(id);
+    if (!target) throw Error(`updateContainer: element with id ${id} no found`);
+    console.log($("#id"));
     let response = await fetch(url, {"cache": "no-store"});
     if(!response.headers.has("content-type")){
         showError("No content type");
@@ -144,9 +174,11 @@ async function updateContainer(id, url, callback){
     }
     if(response.status != 200) return showError(response.statusText);
     let type = response.headers.get("content-type").split(";")[0];
-    if (type == "text/html"){
+    if (type == "text/html") {
+        console.log("html")
         target.innerHTML = await response.text();
         // load scripts from response
+        /*
         target.querySelectorAll('script').forEach(script => {
             const newScript = document.createElement('script');
             newScript.text = script.textContent;
@@ -156,11 +188,13 @@ async function updateContainer(id, url, callback){
             script.parentNode.replaceChild(newScript, script);
             console.log("load_script " + newScript.src);
         });
+        */
         if (callback != null) callback();
     } else if (type == "application/json"){
        let json = await response.json();
        showError(json.error);
     }
+    return target;
 }
 
 function loadUrl(uri){
@@ -226,16 +260,23 @@ function missing(...args) {
 
 
 async function getJson(url, params){
-    params = Object.fromEntries(Object.entries(params).filter(([_,v]) => v));
-    if (params) url += new URLSearchParams(params).toString();
-    console.log("url:"+url)
+    url += url.includes('?') ? '' : '?';
+    if (params instanceof URLSearchParams) {
+        url += params.toString();
+    } else if (params && typeof params === 'object') {
+        params = Object.fromEntries(Object.entries(params).filter(([_, v]) => v));
+        if (Object.keys(params).length) url += new URLSearchParams(params).toString();
+    }
+    console.log("url:", url);
     let response = await fetch(url, {
         method: 'GET',
         cache: "no-store",
-        headers : {"accept" : 'application/json'}
+        headers : {"Accept" : 'application/json'}
     });
-    if(response.status!=200) return showError(response.statusText);
-    if (!response.headers.get("content-type").startsWith("application/json")) return showError("invalid response type for "+url);
+    if (response.status !== 200) return showError(response.statusText);
+    if (
+        (!response.headers.get("content-type") || '').startsWith("application/json")
+    ) return showError("invalid response type for "+url);
     let json = await response.json();
     if (json.error) return showError(json.error);
     return json;
@@ -426,18 +467,6 @@ function setupMenu(update){
     oldWidth = width;
 }
 
-// will be overridden by calendar.js
-function setupMenuHeight() {
-    /*
-    var content=$('#content');
-    content.css("position", "relative");
-    var menu=$('#calcms_nav');
-    var top = menu.height();
-    content.css("top", top+"px");
-    return top;
-    */
-}
-
 function getProjectId(){
     return $('#project_id').val();
 }
@@ -576,15 +605,33 @@ function setTabs(id, callback) {
     return false;
 }
 
+// Localization
+
+var loc;
+function getLocalization() {
+    if (loc == null){
+        loc = new Array();
+        loc['back'] = 'zurück';
+    }
+    return loc;
+}
+
+async function loadLocalization(usecases) {
+    let json = await getJson(
+        "localization.cgi?usecase=" + ['all', getController(), usecases].join(",")
+    )
+    Object.assign(loc, json);
+}
+
 $(document).ready(
-    function(){
+    async function() {
         setupMenu();
         checkSession();
         setMissingUrlParameters();
 
         $(window).resize(function() {
-            setupMenuHeight();
-            setupMenu();
+            //if(setupMenuHeight) setupMenuHeight();
+            if(setupMenu) setupMenu();
         });
 
         if(getController()=='calendar'){
@@ -594,9 +641,8 @@ $(document).ready(
             return;
         }else{
             //use javascript localization
-            setupLocalization(function(){
-                addBackButton();
-            });
+            await loadLocalization();
+            addBackButton();
         }
         initLabels();
         let title = '';

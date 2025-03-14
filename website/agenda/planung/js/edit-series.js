@@ -1,3 +1,5 @@
+"use strict";
+
 // set checkbox values checked depending on value
 function initCheckBoxes() {
     $('div.editor input[type="checkbox"]').each(
@@ -108,6 +110,7 @@ function initSelectChangeHandler(selector, name, title) {
             }
 
             // find option with empty value
+            var loc = getLocalization();
             $(this).children().each(function() {
                 if ($(this).attr('value') == '') {
                     // add selected option
@@ -128,6 +131,7 @@ function addSelectChangeHandler(selector, name, title) {
     $(selector).each(
         function() {
             $(this).change(function() {
+                var loc = getLocalization();
                 if ($(this).val() == '') {
                     //replace select by input, copy value from select to input,
                     var value = $(this).attr('value');
@@ -170,7 +174,7 @@ function updateWeekdays() {
 // change create schedule button name (add/remove)
 function updateScheduleButtonName() {
     var buttonChecked = $('#schedule_add input[name="exclude"]');
-
+    var loc = getLocalization();
     if (buttonChecked.prop('checked')) {
         $('#addScheduleButton').text(loc['label_remove_schedule']);
     } else {
@@ -414,6 +418,7 @@ async function previewRebuildEpisodes(project_id, studio_id, series_id) {
     doc.setAttribute("class", "card");
     doc.setAttribute("id", "rebuild");
 
+    var loc = getLocalization();
     const closeButton = document.createElement("button");
     closeButton.setAttribute("class", "right")
     closeButton.textContent = loc["button_close"];
@@ -458,12 +463,9 @@ async function previewRebuildEpisodes(project_id, studio_id, series_id) {
 
 $(document).ready(
     function() {
-        setupLocalization(
-            function() {
-                addBackButton();
-                updateWeekdays();
-            }
-        );
+        loadLocalization();
+        addBackButton();
+        updateWeekdays();
 
         showDateTimePicker('input.datetimepicker.start', {
             onSelect: function() { updateWeekdays(); }

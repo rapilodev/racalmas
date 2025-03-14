@@ -1,3 +1,5 @@
+"use strict";
+
 function setCookie(name, value) {
     document.cookie = name + "=" + value + "; SameSite=strict;"
 }
@@ -105,7 +107,8 @@ function addBackButton(){
 
     var backButton=$('#backButton');
     if(backButton.length>0)return;
-    if (loc['button_back']==null)return;
+    var loc = getLocalization();
+    if (loc==null || loc['button_back']==null)return;
 
     // add back button if history exists
     var history=getHistory();
@@ -119,7 +122,7 @@ function addBackButton(){
             +'</a></div>'
         );
     }
-    setupMenuHeight();
+    //if (setupMenuHeight) setupMenuHeight();
     //showHistory();
 }
 

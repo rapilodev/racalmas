@@ -1,113 +1,56 @@
+Content-type:text/html; charset=utf8;
 
-<link type="text/css" href="css/image.css" rel="stylesheet"/>
-<script src="js/image.js" type="text/javascript"></script>
-<script src="js/page-leave-handler.js" type="text/javascript"></script>
-
-<TMPL_IF .allow.create_image>
-<script src="js/image-upload.js" type="text/javascript"></script>
-</TMPL_IF>
-
-<script>
-    var project_id="<TMPL_VAR .project_id>";
-    var studio_id="<TMPL_VAR .studio_id>";
-    var selectedImageTab='select';
-
-    $(document).ready(
-        function() {
-            addLocalization('image');
-
-            //add tab change handler
-            setTabs("#image-tabs", function(){
-                selectedImageTab = getSelectedTab('image-tabs');
-
-                <TMPL_IF .allow.create_image>
-                    if(selectedImageTab=="upload"){
-                        initUploadDialog();
-                        $('#imageList').hide();
-                        return;
-                    }
-                </TMPL_IF>
-
-                //TODO: add confirm handler
-                $('#imageList').show();
-            });
-            // get initially selected tab
-            selectedImageTab = getSelectedTab('image-tabs');
-            pageLeaveHandler();
-        }
-    );
-</script>
-
-<div id="content">
 <TMPL_IF .allow.read_image>
+<div id="content">
+<div id="status"></div>
+<div class="split panel">
+    <div id="abort-image-editor" class="close-button">&#x2715;</div>
 
-<div id="image-tabs">
-    <ul>
-        <li>
-            <a href="#image-tabs-select" value="select">
-                <TMPL_VAR .loc.tab_select>
-                <TMPL_IF .allow.update_image> / <TMPL_VAR .loc.tab_edit> </TMPL_IF>
-            </a>
-        </li>
-
-        <TMPL_IF .allow.create_image>
-        <li>
-            <a href="#image-tabs-upload" value="upload"><TMPL_VAR .loc.tab_upload></a>
-        </li>
-        </TMPL_IF>
-    </ul>
-
-    <!-- select image -->
-    <div id="image-tabs-select">
-    </div>
-
-    <!-- upload images -->
-    <TMPL_IF .allow.create_image>
-    <div id="image-tabs-upload" class="panel">
-    </div>
-    </TMPL_IF>
-</div>
-
-<div id="imageList" class="panel">
-
-    <div style="clear:both; display:flex; flex-direction:row;">
+    <div id="imageList">
         <div>
-            <form id="image_manager" action="image.cgi">
-                <input name="search" value="<TMPL_VAR search escape=none>" style="width:20em;">
-                <input type="hidden" name="filename" value="<TMPL_VAR filename escape=js>">
-                <button onclick="searchImage('<TMPL_VAR target escape=js>', '<TMPL_VAR .project_id escape=js>', '<TMPL_VAR .studio_id escape=js>', '<TMPL_VAR .series_id escape=js>', '<TMPL_VAR .event_id escape=js>', '<TMPL_VAR .pid escape=js>'); return false;"><TMPL_VAR .loc.button_search></button>
-            </form>
-            <TMPL_VAR count> <TMPL_VAR .loc.label_search_hits><br />
-            <div class="images"
-                style="overflow-y:scroll"
-                target="<TMPL_VAR .target>"
-                projectId="<TMPL_VAR .project_id>"
-                studioId="<TMPL_VAR .studio_id>"
-                seriesId="<TMPL_VAR .series_id>"
-                eventId="<TMPL_VAR .event_id>"
-                pid="<TMPL_VAR .pid>"
-            >
-                <TMPL_LOOP images>
-                    <div class="image"
-                        id="img_<TMPL_VAR id>"
-                        style="background-image:url('show-image.cgi?project_id=<TMPL_VAR .project_id escape=js>&studio_id=<TMPL_VAR .studio_id escape=js>&type=icon&filename=<TMPL_VAR filename escape=js>')"
-                        title="<TMPL_VAR description>"
-                        filename="<TMPL_VAR filename>"
-                    >
-                        <div class="label"><TMPL_VAR name></div>
-                    </div>
-                </TMPL_LOOP>
-            </div>
+            <input id="search-field" placeholder="Suche">
+            <button id="search-button"><TMPL_VAR .loc.button_search></button>
         </div>
-        <div id="img_editor" >
+        <div class="images"></div>
+    </div>
+
+    <div id="imageEditor" class="editor">
+        <div id="tools"></div>
+        <div class="panel-body">
+        <TMPL_IF name="allow.create_image">
+            <label><TMPL_VAR .loc.label_file></label><br>
+            <input type="file" name="upload" accept="image/*" maxlength="2000000" size="10" required />
+            <button onclick="uploadImage();return false"><TMPL_VAR .loc.button_upload></button><br>
+        </TMPL_IF>
+
+        <form id="image-form" method="post" action="image.cgi" onsubmit="return false;"
+        >
+            <input id="project_id" type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+            <input id="studio_id" type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+            <input id="public" type="hidden" class="public" name="public" <TMPL_IF public>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF> /><br>
+    
+            <label><TMPL_VAR .loc.label_name></label><br>
+            <input id="name" name="name" value="<TMPL_VAR name escape=none>" class="field" size="40" maxlength="100" placeholder="<TMPL_VAR .loc.label_mandatory_field>"><br>
+    
+            <label><TMPL_VAR .loc.label_author>/<TMPL_VAR .loc.label_licence></label><br>
+            <input id="license" name="licence" value="<TMPL_VAR licence>" class="field<TMPL_IF missing_licence> error</TMPL_IF>" size="40" placeholder="<TMPL_VAR .loc.label_mandatory_field_licence>" required/><br>
+    
+            <label><TMPL_VAR .loc.label_description></label><br>
+            <textarea id="description" name="description" cols="50" rows="5"><TMPL_VAR description escape=none></textarea><br>
+        </form>
+        <TMPL_IF name="allow.update_image">
+            <button id="save-image"><TMPL_VAR .loc.button_save></button/>
+        </TMPL_IF>
+
+        <TMPL_IF name="allow.delete_image">
+            <button id="delete-image"><TMPL_VAR .loc.button_delete></button>
+        </TMPL_IF>
+    
+        <div id="image_properties">
+        </div>
+    
         </div>
     </div>
 </div>
-
+</div>--
 </TMPL_IF>
-</main>
-</center>
-</body>
-
-</html>
-

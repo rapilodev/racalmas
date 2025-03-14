@@ -1,22 +1,12 @@
-
-<script src="js/edit-image.js" type="text/javascript"></script>
-<script src="js/page-leave-handler.js" type="text/javascript"></script>
-
-<TMPL_IF no_results>
-found no image
-</TMPL_IF>
-
+<TMPL_IF no_results>found no image</TMPL_IF>
 <TMPL_LOOP images>
 <TMPL_IF filename>
 <div id="imageEditor" class="editor">
-
     <TMPL_IF public>
         <button onclick="assignImage('<TMPL_VAR filename  escape=js>', '<TMPL_VAR .target escape=js>', '<TMPL_VAR .project_id escape=js>', '<TMPL_VAR .studio_id escape=js>', '<TMPL_VAR .series_id escape=js>', '<TMPL_VAR .event_id escape=js>', '<TMPL_VAR .pid escape=js>'); return false">
             <TMPL_VAR .label_assign_to_by_label>
         </button>
-
         <button onclick="depublishImage('<TMPL_VAR id escape=js>', '<TMPL_VAR filename  escape=js>'); return false;"><TMPL_VAR .loc.button_depublish></button>
-
     <TMPL_ELSE>
         <div class="warn"><TMPL_VAR .label_warn_not_public_by_label></div>
         <TMPL_IF missing_licence>
@@ -27,14 +17,9 @@ found no image
     </TMPL_IF>
 
     <div class="panel-body">
-        <div id="status"></div>
-
-    <form id="save_img_<TMPL_VAR id>"
-        method="post"
-        action="image.cgi"
-        onsubmit="saveImage('<TMPL_VAR id escape=js>','<TMPL_VAR filename escape=js>');return false;"
+    <div id="status"></div>
+    <form id="save_img_<TMPL_VAR id>" method="post" action="image.cgi" onsubmit="saveImage('<TMPL_VAR id escape=js>','<TMPL_VAR filename escape=js>');return false;"
     >
-
         <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
         <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
         <input type="hidden" class="public" name="public" <TMPL_IF public>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF> /><br>
@@ -63,15 +48,8 @@ found no image
             <TMPL_VAR .loc.label_modified_at> <TMPL_VAR modified_at> <TMPL_VAR .loc.label_modified_by> <TMPL_VAR modified_by><br>
             <TMPL_VAR .loc.label_link>: {{<TMPL_VAR filename escape=none>|<TMPL_VAR name>}}<br>
         </div>
-
     </form>
-
     </div>
 </div>
 </TMPL_IF>
 </TMPL_LOOP>
-
-</main>
-</body>
-</html>
-

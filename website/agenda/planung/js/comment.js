@@ -1,3 +1,5 @@
+"use strict";
+
 function showCommentsByAge(age){
     var url='comment.cgi?';
     url += '&action=show';

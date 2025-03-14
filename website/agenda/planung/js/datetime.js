@@ -1,3 +1,5 @@
+"use strict";
+
 function showDateTimePicker(selector, options){
     var defaults = {
         locale: { firstDayOfWeek: 1 },
@@ -121,6 +123,7 @@ var weekdays=['Mo','Di','Mi','Do','Fr','Sa','So'];
 
 function getWeekday(date){
     if (!date) return '?';
+    var loc = getLocalization();
 
     if (loc['weekday_Mo']!=null) weekdays[0]=loc['weekday_Mo'];
     if (loc['weekday_Tu']!=null) weekdays[1]=loc['weekday_Tu'];

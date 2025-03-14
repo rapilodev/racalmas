@@ -1,3 +1,5 @@
+"use strict";
+
 /*
     show a series, its template, users and events
 */
@@ -84,8 +86,9 @@ function setSelectedOptions(){
 }
 
 function initSelectChangeHandler(selector, name, title){
+    var loc = getLocalization();
     $(selector).each(
-        function(){
+        function() {
             //replace select by input, if no matching field
             var value=$(this).attr('value');
 
@@ -117,6 +120,7 @@ function initSelectChangeHandler(selector, name, title){
 function addSelectChangeHandler(selector, name, title){
     $(selector).each(
         function(){
+            var loc = getLocalization();
             $(this).change(function(){
                 if($(this).val()==''){
                     //replace select by input, copy value from select to input,
@@ -150,6 +154,7 @@ function updateWeekdays(){
 // change create schedule button name (add/remove)
 function updateScheduleButtonName(){
     var buttonChecked=$('#schedule_add input[name="exclude"]');
+    var loc = getLocalization();
 
     if(buttonChecked.prop('checked')){
         $('#addScheduleButton').text(loc['label_remove_schedule']);
@@ -184,12 +189,9 @@ function setInputWidth(){
 
 $(document).ready(
     function(){
-        setupLocalization(
-            function(){
-                addBackButton();
-                updateWeekdays();
-            }
-        );
+        loadLocalization();
+        addBackButton();
+        updateWeekdays();
 
         showDateTimePicker('.datetimepicker.start', {
             onSelect: function(){updateWeekdays();}

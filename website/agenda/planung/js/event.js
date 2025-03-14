@@ -15,4 +15,3 @@ function edit_event(event_id, series_id, studio_id, project_id, hide_series){
         loadUrl(url);
     }
 }
-

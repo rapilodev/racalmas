@@ -1,27 +1,29 @@
+"use strict";
+
 var green = "#6f6";
 
-function updateCalendarLink(){
+function updateCalendarLink() {
     var link=$('a#menu_calendar');
     var url=link.attr('href');
-    date=$('#start_date').attr('value');
+    var date=$('#start_date').attr('value');
     date=parseDateTime(date);
     date=formatDate(date);
     url=setUrlParameter(url, "date", date);
     link.attr('href',url);
 }
 
-function onDateModified(){
-    var value=addMinutes($('#start_date').val(), $('#duration').val());
+function onDateModified() {
+    var value = addMinutes($('#start_date').val(), $('#duration').val());
     $('#end_date').html(value);
 
-    var startDate=parseDateTime($('#start_date').val());
+    var startDate = parseDateTime($('#start_date').val());
     var weekday=getWeekday(startDate);
     $('#start_date_weekday').html(weekday);
 
     updateCalendarLink();
 }
 
-function selectRerun(resultSelector, tillDate){
+function selectRerun(resultSelector, tillDate) {
     $('#selectRerun').show();
     $('#selectRerun input:radio.default').attr("value","1");
     $('#selectRerun input:radio.default').prop("checked",true);
@@ -30,7 +32,7 @@ function selectRerun(resultSelector, tillDate){
 }
 
 // hide buttons and events
-function hideSelectRerun(resultSelector, tillDate){
+function hideSelectRerun(resultSelector, tillDate) {
     $('#selectRerun').hide();
     $('#import_rerun_header').hide('slideUp');
     $('#import_rerun').hide();
@@ -39,7 +41,7 @@ function hideSelectRerun(resultSelector, tillDate){
     $('#edit_event').show();
 }
 
-function selectOldEventFromSeries(resultSelector, tillDate){
+function selectOldEventFromSeries(resultSelector, tillDate) {
     $('#edit_event').hide();
     $('#import_rerun').show();
     $('#import_rerun_header').show('slideUp');
@@ -59,7 +61,7 @@ function selectOldEventFromSeries(resultSelector, tillDate){
     updateContainer('import_rerun', url);
 }
 
-function selectOtherEvent(resultSelector){
+function selectOtherEvent(resultSelector) {
     $('#edit_event').hide();
     $('#import_rerun').show();
     $('#import_rerun_header').show('slideUp');
@@ -78,10 +80,10 @@ function selectOtherEvent(resultSelector){
     updateContainer('import_rerun', url);
 }
 
-function copyFromEvent(resultSelector){
+function copyFromEvent(resultSelector) {
     resultSelector='#'+resultSelector;
     var eventId=$(resultSelector).val();
-    if (eventId<=0){
+    if (eventId<=0) {
         alert("no valid event selected");
         return
     }
@@ -100,7 +102,7 @@ function copyFromEvent(resultSelector){
 
 
 // load series selection
-function selectChangeSeries(resultSelector){
+function selectChangeSeries(resultSelector) {
     var url='select-series.cgi?' + new URLSearchParams({
         project_id : getProjectId(),
         studio_id : getStudioId(),
@@ -108,7 +110,7 @@ function selectChangeSeries(resultSelector){
         resultElemId: resultSelector,
         selectSeries: 1,
     }).toString();
-    updateContainer('changeSeriesContainer', url, function(){
+    updateContainer('changeSeriesContainer', url, function() {
         $('#selectSeries').removeClass('panel');
         $('#selectChangeSeries').addClass('panel');
         $('div.buttons').hide();
@@ -140,7 +142,7 @@ function changeSeries(seriesId) {
             event_id : eventId,
             new_series_id: newSeriesId,
         }).toString(),
-        function(data){
+        function(data) {
             loadUrl("broadcast.cgi?" + new URLSearchParams({
                 action: "edit",
                 project_id : projectId,
@@ -154,7 +156,7 @@ function changeSeries(seriesId) {
 }
 
 // hide change series on abort
-function hideChangeSeries(){
+function hideChangeSeries() {
     $('#selectChangeSeries').hide('slideUp');
     $('#changeSeriesContainer').html('');
     $('div.buttons').show();
@@ -162,43 +164,44 @@ function hideChangeSeries(){
 
 var durationUpdated=0;
 
-function updateDuration(selector, value){
-    $(selector+" option").each(function(){
-        if ($(this).attr('value')==value){
+function updateDuration(selector, value) {
+    $(selector+" option").each(function() {
+        if ($(this).attr('value')==value) {
             $(this).attr('selected','selected');
             durationUpdated=1;
         }else{
             $(this).removeAttr('selected');
         }
     })
-    if(durationUpdated==0){
+    if(durationUpdated==0) {
         $(selector).append('<option value="'+value+'">'+value+'</option>');
     }
 }
 
-function updateImage(selector, value){
-    if (value == null) {
-        return;
-    }
-    value=value.replace("http://","//");
-    $(selector).attr('value', value);
-    $(selector).parent().find('button img').attr('src',value);
+function updateImage(input, button, filename) {
+    console.log(input, button, filename)
+    if (file == null) alert("cannot update image");
+    file = file.replace("http://", "//");
+    input.value = file;
+    button.querySelector('img').replaceWith(
+        icon(getProjectId(), getStudioId(), filename)
+    );
 }
 
-function updateCheckBox(selector, value){
+function updateCheckBox(selector, value) {
     $(selector).attr('value', value)
-    if (value==1){
+    if (value==1) {
         $(selector).prop( "checked", true );
     } else {
         $(selector).prop( "checked", false );
     }
 }
 
-function checkExcerptField(){
+function checkExcerptField() {
     var elem=$('textarea[name="excerpt"]');
     if (elem.length==0) return 0;
     var length = elem.val().length;
-    if (length > 250){
+    if (length > 250) {
         $('#excerpt_too_long').show();
     }else{
         $('#excerpt_too_long').hide();
@@ -206,11 +209,11 @@ function checkExcerptField(){
     return 1;
 }
 
-function checkExcerptExtensionField(){
+function checkExcerptExtensionField() {
     var elem=$('textarea[name="user_excerpt"]');
     if (elem.length==0) return 0;
     var length = elem.val().length;
-    if (length > 250){
+    if (length > 250) {
         $('#excerpt_extension_too_long').show();
     }else{
         $('#excerpt_extension_too_long').hide();
@@ -218,21 +221,21 @@ function checkExcerptExtensionField(){
     return 1;
 }
 
-function checkFields(){
-    if (checkExcerptField()){
-        $('textarea[name="excerpt"]').on("keyup", function(){
+function checkFields() {
+    if (checkExcerptField()) {
+        $('textarea[name="excerpt"]').on("keyup", function() {
             checkExcerptField();
         });
     }
 
-    if (checkExcerptExtensionField()){
-        $('textarea[name="user_excerpt"]').on("keyup", function(){
+    if (checkExcerptExtensionField()) {
+        $('textarea[name="user_excerpt"]').on("keyup", function() {
             checkExcerptExtensionField();
         });
     }
 }
 
-function copyEventToClipboard(){
+function copyEventToClipboard() {
     var text = $('textarea[name="excerpt"]').val()+"\n";
     if ($('textarea[name="user_excerpt"]').val()) text += $('textarea[name="user_excerpt"]').val()+"\n";
     text += $('textarea[name="topic"]').val()+"\n\n";
@@ -269,7 +272,7 @@ function deleteFromSchedule(project_id, studio_id, series_id, start) {
     }).toString() + '#tabs-schedule');
 }
 
-async function loadEvent(projectId,studioId,seriesId,eventId, callback){
+async function loadEvent(projectId,studioId,seriesId,eventId, callback) {
 
     var url="broadcast.cgi?" + new URLSearchParams({
         action: "get_json",
@@ -314,7 +317,7 @@ async function loadEvent(projectId,studioId,seriesId,eventId, callback){
     showInfo("event loaded");
 }
 
-async function modifyEvent(params, callback){
+async function modifyEvent(params, callback) {
     let response = await fetch('broadcast.cgi', {
         method: 'POST',
         body: params,
@@ -329,7 +332,6 @@ async function modifyEvent(params, callback){
 function createEvent2(selector) {
     let params = formToParams(document.querySelector(selector));
     params.append("action",'create_event');
-    alert("TODO")
     modifyEvent(params, function(data) {
         loadUrl("broadcast.cgi?" + new URLSearchParams({
             action: "edit",
@@ -356,10 +358,10 @@ function createEventFromSchedule(selector) {
     });
 }
 
-async function saveEvent(selector, action){
+async function saveEvent(selector, action) {
     let params = formToParams(document.querySelector(selector));
     params.append("action", action);
-    modifyEvent(params, function(json){
+    modifyEvent(params, function(json) {
         if (json.status != "saved") return showError(json.error);
         showInfo("event saved");
         loadEvent(
@@ -371,7 +373,7 @@ async function saveEvent(selector, action){
     });
 }
 
-async function deleteEvent(selector){
+async function deleteEvent(selector) {
     commitAction('delete event', function() {
         let params = formToParams(document.querySelector(selector));
         params.append('action','delete');
@@ -385,7 +387,7 @@ async function deleteEvent(selector){
     });
 }
 
-function uploadRecording(project_id, studio_id, series_id, event_id){
+function uploadRecording(project_id, studio_id, series_id, event_id) {
     loadUrl("audio-recordings.cgi?" + new URLSearchParams({
         action: "show",
         project_id : project_id,
@@ -395,7 +397,7 @@ function uploadRecording(project_id, studio_id, series_id, event_id){
     }).toString());
 }
 
-function downloadRecording(project_id, studio_id, series_id, event_id){
+function downloadRecording(project_id, studio_id, series_id, event_id) {
     loadUrl("broadcast.cgi?" + new URLSearchParams({
         action: "download",
         project_id : project_id,
@@ -427,7 +429,7 @@ async function loadHelpTexts () {
     });
     let json = await response.json();
     if (json.error) return showError(json.error);
-    for (key in json){
+    for (let key in json) {
         let value = json[key];
         $(`input[name="${key}"]`).hover(function() {
             $(this).attr("title", value)
@@ -441,24 +443,33 @@ async function loadHelpTexts () {
 $(document).ready(
     function() {
         showDateTimePicker('#start_date');
+        onDateModified();
         $('input[type="checkbox"]').click( function() {
-            if ($(this).attr('value')=='1'){
+            if ($(this).attr('value')=='1') {
                 $(this).attr('value','0');
             }else{
                 $(this).attr('value','1');
             }
         });
         if($('#calendar').length == 0) $('#back_to_calendar').hide();
-        onDateModified();
         checkFields();
         $('textarea').autosize();
         // unset published on setting draft
         $("#edit_event input[name='draft']").change(function() {
-            if ($(this).val()==1){
+            if ($(this).val()==1) {
                 updateCheckBox("#edit_event input[name='published']", 0);
             }
         });
         loadHelpTexts();
         showInfo("event loaded");
+        loadLocalization('image');
+        
+        // image manager
+        let button = document.querySelector("button.select-image");
+        let input = document.querySelector("input.image");
+        button.addEventListener("click", () => selectImage(
+            button.dataset,
+            (filename) => {updateImage(input, button, filename)}
+        ));
     }
 );
