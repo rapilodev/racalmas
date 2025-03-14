@@ -34,7 +34,6 @@ time, mark, audio, video {
     font: inherit;
     vertical-align: baseline;
     border-radius: 1rem;
-    text-wrap: balance;
 }
 
 body {
@@ -62,8 +61,7 @@ h2{
 }
 
 div {
-    transition: background-color 0.5s linear;
-    transition: z-index 2s linear;
+    transition: background-color 0.5s linear, z-index 2s linear;
 }
 
 #selectImage #content {
@@ -103,7 +101,7 @@ body,
     box-sizing:border-box;
 }
 
-@media handheld {
+@media (max-width: 800px) {
     body {
         max-width: 800px;
         font-size: 1em;
@@ -197,7 +195,6 @@ body,
 
 #calcms_nav select,
 #calcms_nav option {
-    border: 0;
     text-align: left;
     border: none;
 }
@@ -222,7 +219,10 @@ select#project_id {
 
 select#studio_id::after,
 select#project_id::after {
-    content : "url(../image/bright/arrow-down.svg)"
+    background-image: url(../image/bright/arrow-down.svg);
+    background-position: right center;
+    background-repeat: no-repeat;
+    padding-right: 2rem;
 }
 
 #calcms_nav #bars {
@@ -384,23 +384,6 @@ td.label{
     position: relative;
     top: 3em;
     padding:0;
-}
-
-#jobs th {
-    text-align: left;
-}
-
-#jobs td.status.finished a {
-    color: #000;
-}
-
-#jobs td.status.ongoing a {
-    text-decoration: blink;
-    color: green;
-}
-
-#jobs td.status.scheduled a {
-    color: green;
 }
 
 #content ul.error{
@@ -641,7 +624,7 @@ input[type='checkbox'] {
 }
 
 #content div.formField div.label {
-    display: hide;
+    display: none;
     padding-left: 1em;
     color: #999;
 }
