@@ -4,7 +4,7 @@
   --font-roboto-condensed: 'Roboto Condensed', Roboto, sans-serif;
   --font-open-sans: 'Open Sans', sans-serif;
 
-  /* Global Colors */
+  /* Global Colors (Light Mode) */
   --color-body: #000;
   --bg-body: #efefef;
 
@@ -47,6 +47,45 @@
   --space-lg: 1.5rem;
   --space-xl: 2rem;
   --space-xxl: 3rem;
+}
+
+/* Dark Mode Overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Global Colors */
+    --color-body: #fff;
+    --bg-body: #121212;
+
+    /* Navigation */
+    --nav-bg: #222;
+    --nav-hover-bg: #333;
+    --nav-text: #fff;
+    --nav-border: #444;
+    --logout-color: #ff4444;
+
+    /* Buttons & Form Elements */
+    --button-bg: #0d6efd;
+    --button-hover-bg: #0b5ed7;
+    --button-text: #fff;
+    --border-color: #444;
+    --accent-border: #5bc0de;
+
+    /* Panels & Cards */
+    --panel-bg: #1e1e1e;
+    --panel-border: rgba(255,255,255,0.1);
+
+    /* Status Colors */
+    --ok-bg: #28a745;
+    --ok-text: #fff;
+    --warn-bg: #ffc107;
+    --warn-text: #000;
+    --error-bg: #dc3545;
+    --error-text: #fff;
+
+    /* Shadows */
+    --shadow-light: 0 1px 3px rgba(0,0,0,0.6), 0 1px 3px rgba(0,0,0,0.6);
+    --shadow-heavy: 0 14px 28px rgba(0,0,0,0.8), 0 10px 10px rgba(0,0,0,0.8);
+  }
 }
 
 /* Fonts */
