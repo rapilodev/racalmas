@@ -143,7 +143,7 @@ sub showTimeslotSchedule {
     $params->{'allow'}->{$_} = $request->{permissions}->{$_} for (keys %{$request->{permissions}});
 
     $params->{loc} =
-      localization::get($config, {user => $params->{presets}->{user}, file => 'all,studio-timeslots'});
+      localization::get($config, {user => $params->{presets}->{user}, file => 'all,studio-timeslots.po'});
 
     my $studio_id  = $params->{studio_id};
     my $project_id = $params->{project_id};
@@ -226,7 +226,7 @@ sub showDates {
     );
 
     $params->{loc} =
-      localization::get($config, {user => $params->{presets}->{user}, file => 'all,studio-timeslots'});
+      localization::get($config, {user => $params->{presets}->{user}, file => 'all,studio-timeslots.po'});
     my $language = $params->{loc}->{region};
 
     # translate weekday names to selected language

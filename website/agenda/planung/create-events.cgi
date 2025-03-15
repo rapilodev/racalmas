@@ -54,7 +54,7 @@ sub show_events {
 
 my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
     $headerParams->{loc} = localization::get(
-        $config, { user => $session->{user}, file => 'menu' }
+        $config, { user => $session->{user}, file => 'menu.po' }
     );
     my $header = template::process($config,
         template::check($config, 'create-events-header.html'), $headerParams
@@ -66,7 +66,7 @@ my $headerParams = uac::set_template_permissions($request->{permissions}, $param
     $params->{action} = 'show';
     $params->{loc} = localization::get($config, {
         user => $params->{presets}->{user},
-        file => 'create-events'
+        file => 'create-events.po'
     });
 
     return $header . template::process($config, $params->{template}, $params);

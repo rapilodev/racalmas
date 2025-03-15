@@ -1,27 +1,19 @@
-
 #content .label {
     width: 10ch;
-    padding: 0;
-    margin: 0;
-    color: #555;
+    color: var(--border-color);
 }
 
 #content div.project {
     min-width: 40ch;
 }
 
-#content div.editor {
-    clear: both;
-}
-
+#content div.editor,
 #content div.view {
     clear: both;
 }
 
 #content div.editor div.right {
     float: right;
-    padding: 0;
-    margin: 0;
 }
 
 #content div.editor div.buttons {
@@ -31,37 +23,36 @@
 
 #content div.editor div.buttons button,
 #content div.editor div.buttons input {
-    margin-left: 1em;
+    margin-left: var(--space-md);
 }
 
 #content div.view {
     text-align: left;
 }
 
-#content div.flex{
+#content div.flex {
     align-items: inherit;
 }
 
-body #content{
-    max-width:none;
+body #content {
+    max-width: none;
 }
 
-.buttons{
+.buttons {
     display: flex;
 }
 
 #content .bottom,
-.bottom{
+.bottom {
     position: absolute;
-    bottom: 1rem;
+    bottom: var(--space-lg);
 }
 
 #content .bottom.right,
-.bottom.right{
-    position: absolute;
-    right: 1rem;
+.bottom.right {
+    right: var(--space-lg);
 }
 
 #content div.title {
-    font-size:1.5rem;
+    font-size: var(--space-xl);
 }

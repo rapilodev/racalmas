@@ -40,7 +40,7 @@ sub main {
     my $out = '';
     if (!params::is_json() && $params->{action} eq 'show') {
         my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
-        $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+        $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu.po' });
         $out = template::process($config, template::check($config, 'header.html'), $headerParams);
         $out .= template::process($config, template::check($config, 'comment-header.html'), $headerParams);
     };
@@ -108,7 +108,7 @@ sub show {
     $template_parameters->{controllers}   = $config->{controllers};
     $template_parameters->{allow}         = $permissions;
     $template_parameters->{loc} =
-      localization::get($config, { user => $params->{presets}->{user}, file => 'comment' });
+      localization::get($config, { user => $params->{presets}->{user}, file => 'comment.po' });
 
     #print STDERR Dumper($template_parameters);
     return template::process($config, $params->{template}, $template_parameters);

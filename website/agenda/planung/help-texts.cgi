@@ -28,7 +28,7 @@ sub main {
     my $headerParams
         = uac::set_template_permissions($request->{permissions}, $params);
     $headerParams->{loc}
-        = localization::get($config, {user => $session->{user}, file => 'menu'});
+        = localization::get($config, {user => $session->{user}, file => 'menu.po'});
     my $out = template::process($config, template::check($config, 'default.html'),
         $headerParams);
     return unless uac::check($config, $params, $user_presets) == 1;
@@ -166,7 +166,7 @@ sub edit_help {
     }];
 
     $params->{loc} = localization::get($config,
-        {user => $params->{presets}->{user}, file => 'edit-help-texts'});
+        {user => $params->{presets}->{user}, file => 'edit-help-texts.po'});
     return template::process($config, $params->{template}, $params);
     }
 

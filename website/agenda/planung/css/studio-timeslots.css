@@ -6,12 +6,14 @@
 }
 
 #content .label {
+    color: #555;
     padding: 0;
     margin: 0;
-    color: #555;
 }
 
-#content div.header {
+#content div.header,
+#content div.show_schedule_head,
+#content div.show_schedule {
     clear: both;
 }
 
@@ -46,8 +48,8 @@
 }
 
 #content .editor .cell {
-    display: table-cell ;
-    vertical-align:baseline;
+    display: table-cell;
+    vertical-align: baseline;
     text-align: left;
 }
 
@@ -61,15 +63,6 @@
     padding-bottom: 9px;
 }
 
-#content div.show_schedule_head {
-    clear: both;
-}
-
-#content div.show_schedule {
-    clear: both;
-    padding: 0;
-}
-
 #content div.show_schedule table {
     width: 66%;
 }
@@ -77,12 +70,8 @@
 #content div.show_schedule td {
     width: 10em;
 }
-/* weekday start*/
-#content div.show_schedule td:nth-child(1) {
-    width: 2em;
-}
 
-/* weekday end*/
+#content div.show_schedule td:nth-child(1),
 #content div.show_schedule td:nth-child(3) {
     width: 2em;
 }

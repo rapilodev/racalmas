@@ -380,7 +380,7 @@ qq{<img src="image/dark/archive.svg" title="$params->{loc}->{label_archived}">};
                     <th class="title">$params->{loc}->{label_title}</th>
                     <th class="episode">$params->{loc}->{label_episode}</th>
                     <th class="rerun">$rerunIcon</th>
-                    <th class="draft">$draftIcon</th>
+                    <th class="ddraft">$draftIcon</th>
                     <th class="live">$liveIcon</th>
                     <th class="playout" title="$params->{loc}->{label_playout}">$playoutIcon</th>
                     <th class="archive">$archiveIcon</th>
@@ -525,7 +525,7 @@ qq{<img src="image/dark/archive.svg" title="$params->{loc}->{label_archived}">};
                 . qq!<td class="title">$title</td>!
                 . qq!<td class="episode">$event->{episode}</td>!
                 . qq!<td class="rerun">$rerun</td>!
-                . qq!<td class="draft">$draft</td>!
+                . qq!<td class="ddraft">$draft</td>!
                 . qq!<td class="live">$live</td>!
                 . qq!<td class="playout" title="$playout_info">$playout</td>!
                 . qq!<td class="archived">$archived</td>!
@@ -680,7 +680,7 @@ sub getTableHeader {
     my $out = '';
 
     my $numberOfDays = scalar(@$days);
-    my $width        = int(85 / $numberOfDays);
+    my $width        = int(100 / $numberOfDays);
     $out .= qq!
         <script>
             var days=$numberOfDays;
@@ -693,7 +693,7 @@ sub getTableHeader {
             #calendar div.work,
             #calendar div.play,
             #calendar div.grid {
-                width: $width%
+                width: calc(${width}% - 5px)
             }
         </style>
     !;
@@ -1094,7 +1094,7 @@ sub get_event {
     }
 
     my $ystart = $event->{ystart} - $yoffset;
-    my $yend   = $event->{yend} - $yoffset - 10;
+    my $yend   = $event->{yend} - $yoffset;
 
     $ystart = int($ystart * $yzoom);
     $yend   = int($yend * $yzoom);

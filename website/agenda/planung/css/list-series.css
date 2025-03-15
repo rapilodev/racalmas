@@ -1,57 +1,113 @@
-h2{
-    display:inline;
+h2 {
+    display: inline;
 }
 
-#content{
-    height:1000px;
+#content {
+    height: 1000px;
 }
 
-div#oldSeries{
-    clear:both;
+#content .label {
+    width: 10ch;
+    color: var(--border-color);
 }
 
-div#newSeries,
-div#oldSeries{
+#content div.project {
+    min-width: 40ch;
+}
+
+#content div.editor,
+#content div.view {
+    clear: both;
+}
+
+#content div.editor div.right {
+    float: right;
+}
+
+#content div.editor div.buttons {
+    text-align: center;
+    padding: 0;
+}
+
+#content div.editor div.buttons button,
+#content div.editor div.buttons input {
+    margin-left: var(--space-md);
+}
+
+#content div.view {
+    text-align: left;
+}
+
+#content div.flex {
+    align-items: inherit;
+}
+
+body #content {
+    max-width: none;
+}
+
+.buttons {
+    display: flex;
+}
+
+#content .bottom,
+.bottom {
+    position: absolute;
+    bottom: var(--space-lg);
+}
+
+#content .bottom.right,
+.bottom.right {
+    right: var(--space-lg);
+}
+
+#content div.title {
+    font-size: var(--space-xl);
+}
+
+div#oldSeries {
+    clear: both;
+}
+
+div#newSeries, div#oldSeries {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
 }
 
-div#newSeries a,
-div#oldSeries a{
-    color:#fff;
-    background:#1abc9c;
-    padding:0.5rem;
-    margin:0.5rem;
-    cursor:pointer;
-    text-align:center;
-    display:table-cell;
-    vertical-align:middle;
-    width:10rem;
-    height:4rem;
-    line-height:1.4rem;
+div#newSeries a, div#oldSeries a {
+    color: var(--button-text);
+    background: var(--button-bg);
+    padding: var(--space-sm);
+    margin: var(--space-sm);
+    cursor: pointer;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+    width: 10rem;
+    height: 4rem;
+    line-height: 1.4rem;
 }
 
-div#newSeries a:hover,
-div#oldSeries a:hover{
-    background:#1dd2af;
-    text-decoration:none;
+div#newSeries a:hover, div#oldSeries a:hover {
+    background: var(--button-hover-bg);
+    text-decoration: none;
 }
 
 div#search {
-    float:right;
-    background: white;
-    padding-left:0.5rem;
-    padding-right:0.5rem;
-    margin: 0.5rem;
+    float: right;
+    background: var(--panel-bg);
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
+    margin: var(--space-sm);
 }
 
 div#search::before {
     content: "🔍";
-    padding-right: 0.5rem;
+    padding-right: var(--space-sm);
 }
 
-div#search input{
+div#search input {
     border-bottom: none;
 }

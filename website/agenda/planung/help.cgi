@@ -31,7 +31,7 @@ sub main {
 
     #process header
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu.po' } );
     my $out = template::process( $config, template::check( $config, 'default.html' ), $headerParams );
     uac::check($config, $params, $user_presets);
 

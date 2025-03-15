@@ -2,7 +2,7 @@
     width: 10ch;
     padding: 0;
     margin: 0;
-    color: #555;
+    color: var(--border-color);
 }
 
 #content div.studio {
@@ -30,7 +30,7 @@
 
 #content div.editor div.buttons button,
 #content div.editor div.buttons input {
-    margin-left: 1em;
+    margin-left: var(--space-md);
 }
 
 #content div.view {
@@ -42,7 +42,7 @@
 }
 
 body #content{
-    max-width:none;
+    max-width: none;
 }
 
 .buttons{
@@ -52,16 +52,15 @@ body #content{
 #content .bottom,
 .bottom{
     position: absolute;
-    bottom: 1rem;
+    bottom: var(--space-lg);
 }
 
 #content .bottom.right,
 .bottom.right{
     position: absolute;
-    right: 1rem;
+    right: var(--space-lg);
 }
 
 #content .panel{
     min-height: 25rem;
 }
-

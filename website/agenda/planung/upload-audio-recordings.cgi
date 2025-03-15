@@ -65,7 +65,7 @@ sub main {
     $params = $request->{params}->{checked};
 
     my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
-    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu.po' });
 
     exit unless uac::check($config, $params, $user_presets) == 1;
     print q{Content-type: text/plain; char-set:utf-8;\n\n};

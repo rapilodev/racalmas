@@ -115,7 +115,7 @@ sub showCalendar {
 
     $params->{loc} =
         localization::get($config,
-        { user => $params->{presets}->{user}, file => 'all,calendar' });
+        { user => $params->{presets}->{user}, file => 'all,calendar.po' });
     my $language = $user_settings->{language} || 'en';
     $params->{language} = $language;
 

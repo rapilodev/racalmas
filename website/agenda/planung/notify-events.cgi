@@ -37,7 +37,7 @@ sub main {
     #show header
     unless (params::is_json() || ($params->{template} =~ /\.txt/)) {
         my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
-        $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+        $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu.po' });
         $out .= template::process($config, template::check($config, 'default.html'), $headerParams);
     }
     uac::check($config, $params, $user_presets);
@@ -96,7 +96,7 @@ sub show_events {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
 
-    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'notify-events' });
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'notify-events.po' });
     return template::process($config, $params->{template}, $params);
 
 }

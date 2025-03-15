@@ -29,7 +29,7 @@ sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
     $params = $request->{params}->{checked};
     my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
-    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu.po' });
     my $out =  template::process($config, template::check($config, 'default.html'), $headerParams);
     uac::check($config, $params, $user_presets);
 
@@ -39,7 +39,7 @@ sub main {
     }
 
     $out.= template::process($config, template::check($config, 'worktime-header.html'), $headerParams);
-    return show_work_schedule($config, $request);
+    return $out . show_work_schedule($config, $request);
 }
 
 #insert or update a schedule and update all schedule dates
@@ -210,8 +210,8 @@ sub show_work_schedule {
         $params->{$key} = $serie->{$key};
     }
 
-    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'work-time' });
-    print template::process($config, $params->{template}, $params);
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'work-time.po' });
+    return template::process($config, $params->{template}, $params);
 }
 
 sub check_params {

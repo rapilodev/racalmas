@@ -152,7 +152,7 @@ sub authenticate($$$) {
 
 sub show_login_form ($$$) {
     my ($config, $user, $message) = @_;
-    my $loc = localization::get($config, { user => $user, file => 'login' });
+    my $loc = localization::get($config, { user => $user, file => 'login.po' });
     my $uri = params::get_uri() // '';
     $uri =~ s/_=\d+//;
     my $requestReset = '';

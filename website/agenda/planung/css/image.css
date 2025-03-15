@@ -1,28 +1,22 @@
-* {
-  box-sizing: border-box;
-}
+@charset "UTF-8";
 
 .close-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: white;
-  border: 1px solid gray;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 50%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: background 0.2s, transform 0.2s;
-}
-
-input.field {
-    width: 100%;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--button-bg);
+    border: 1px solid var(--button-border);
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background 0.2s, transform 0.2s;
 }
 
 #image-manager {
@@ -32,8 +26,8 @@ input.field {
     border-radius: 0;
 }
 
-#image-manager div.split{
-    display:flex;
+#image-manager div.split {
+    display: flex;
     width: 80vw;
 }
 
@@ -45,7 +39,7 @@ input.field {
 #image-manager div.image {
     display: inline-block;
     vertical-align: top;
-    border: 1px solid gray;
+    border: 1px solid var(--image-border);
     margin: 6px;
     padding: 0;
     text-align: left;
@@ -55,7 +49,7 @@ input.field {
     vertical-align: bottom;
 }
 
-#image-manager .split{
+#image-manager .split {
     width: 100%;
     height: 100%;
 }
@@ -64,26 +58,25 @@ input.field {
     text-align: right;
     padding: 0;
     margin: 0;
-    color: white;
+    color: var(--close-btn-color);
     float: right;
 }
 
 #image-manager div.image:hover {
     cursor: pointer;
-    background-color: #39a1f4;
+    background-color: var(--image-hover-bg);
     font-weight: bold;
     opacity: 0.9;
     filter: contrast(120%);
-    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18), 0 4px 15px 0
-        rgba(0, 0, 0, .15);
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18), 0 4px 15px 0 rgba(0, 0, 0, .15);
 }
 
 #image-manager div.image .label {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     text-align: center;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--label-bg);
+    color: var(--label-color);
     vertical-align: bottom;
     opacity: 0.9;
     padding: 6px;
@@ -92,14 +85,13 @@ input.field {
 }
 
 #image-manager div.image.active .label {
-    background-color: #39a1f4;
+    background-color: var(--active-label-bg);
     font-weight: bold;
 }
 
 #image-manager div.image.active {
-    border: 1px solid #39a1f4;
-    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18), 0 4px 15px 0
-        rgba(0, 0, 0, .15);
+    border: 1px solid var(--active-border-color);
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18), 0 4px 15px 0 rgba(0, 0, 0, .15);
 }
 
 #image-manager div.image.inactive {
@@ -109,22 +101,22 @@ input.field {
 #imageEditor {
     overflow-y: scroll;
     padding: 1rem;
-    min-width:20rem;
+    min-width: 20rem;
 }
 
-#image-manager #imageEditor input, 
+#image-manager #imageEditor input,
 #image-manager #imageEditor select,
 #image-manager #imageEditor textarea {
     margin-left: 0;
     margin-bottom: 1rem;
     padding: 1rem;
-    width:100%;
+    width: 100%;
 }
 
 #image-manager label {
     margin-top: 1rem;
     text-transform: uppercase;
-    color: #999;
+    color: var(--label-color);
 }
 
 #image-editor-container {
@@ -133,5 +125,5 @@ input.field {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #cccc;
+    background-color: var(--editor-bg);
 }

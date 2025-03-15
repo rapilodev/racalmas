@@ -57,7 +57,7 @@ sub main {
     }
     $params = $request->{params}->{checked};
     my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
-    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu.po' });
 
     my $start_of_day = $params->{day_start};
     my $end_of_day   = $start_of_day;
@@ -104,7 +104,7 @@ sub showCalendar {
     $out .= user_settings::getColorCss($config, { user => $params->{presets}->{user} });
 
     $params->{loc} =
-      localization::get($config, { user => $params->{presets}->{user}, file => 'all,calendar' });
+      localization::get($config, { user => $params->{presets}->{user}, file => 'all,calendar.po' });
     my $language = $user_settings->{language} || 'en';
     $params->{language} = $language;
     $out .=  localization::getJavascript($params->{loc});

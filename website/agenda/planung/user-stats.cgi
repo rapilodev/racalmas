@@ -29,7 +29,7 @@ sub main {
 
     #process header
     my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
-    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu.po' });
     my $out =  template::process($config, template::check($config, 'default.html'), $headerParams);
     uac::check($config, $params, $user_presets);
     return $out . show_active_users($config, $request) if $params->{action} eq 'show-active-users';
@@ -47,7 +47,7 @@ sub show_user_stats {
     $params->{user_stats}  = user_stats::get_stats($config, $params);
     $params->{permissions} = $permissions;
 
-    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'user-stats' });
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'user-stats.po' });
     uac::set_template_permissions($permissions, $params);
     my $template = template::check($config, 'user-stats');
     return template::process($config, $template, $params);
@@ -67,7 +67,7 @@ sub show_active_users{
     $params->{user_stats}  = $user_stats;
     $params->{permissions} = $permissions;
 
-    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'user-stats' });
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'user-stats.po' });
     uac::set_template_permissions($permissions, $params);
     my $template = template::check($config, 'user-active');
     return template::process($config, $template, $params);

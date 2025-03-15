@@ -42,7 +42,7 @@ sub main {
         my $headerParams
             = uac::set_template_permissions($request->{permissions}, $params);
         $headerParams->{loc} = localization::get($config,
-            {user => $session->{user}, file => 'menu'}
+            {user => $session->{user}, file => 'menu.po'}
 );
         $out .= template::process($config,
             template::check($config, 'series-header.html'), $headerParams
@@ -645,7 +645,7 @@ sub list_series {
       if ((!defined $params->{image}) || ($params->{image} eq ''));
 
     $params->{loc} = localization::get($config,
-        { user => $params->{presets}->{user}, file => 'all,series' });
+        { user => $params->{presets}->{user}, file => 'all,series.po' });
     return template::process($config, $params->{template}, $params);
 }
 
@@ -842,7 +842,7 @@ sub show_series {
 
     $params->{loc} = localization::get($config, {
         user => $params->{presets}->{user}, 
-        file => 'all,series'
+        file => 'all,series.po'
     });
     return template::process($config, $params->{template}, $params);
 }

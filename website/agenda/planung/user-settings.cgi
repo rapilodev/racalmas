@@ -31,7 +31,7 @@ sub main {
 
     #process header
     my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
-    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu.po' });
     my $out = template::process($config, template::check($config, 'default.html'), $headerParams);
     uac::check($config, $params, $user_presets);
 
@@ -82,7 +82,7 @@ sub show_settings {
     $params->{ 'period_' . $period } = 1;
 
     $params->{loc} =
-      localization::get($config, { language => $language, file => 'user-settings' });
+      localization::get($config, { language => $language, file => 'user-settings.po' });
 
     for my $color (@{ $params->{colors} }) {
         $color->{title} = $params->{loc}->{ $color->{title} };

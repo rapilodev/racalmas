@@ -30,7 +30,7 @@ sub main {
 
     #process header
     my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
-    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu.po' });
     my $out = template::process($config, template::check($config, 'default.html'), $headerParams);
     uac::check($config, $params, $user_presets);
 
@@ -140,7 +140,7 @@ sub show_users {
     $params->{users}       = \@users;
     $params->{studios}     = $studios;
     $params->{permissions} = $permissions;
-    $params->{loc}         = localization::get($config, { user => $params->{presets}->{user}, file => 'users' });
+    $params->{loc}         = localization::get($config, { user => $params->{presets}->{user}, file => 'users.po' });
     uac::set_template_permissions($permissions, $params);
 
     return template::process($config, $params->{template}, $params);
@@ -218,7 +218,7 @@ sub change_password {
 
     $params->{errors} = $result->{error}   if defined $result->{error};
     $params->{info}   = $result->{success} if defined $result->{success};
-    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'users' });
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'users.po' });
     uac::set_template_permissions($permissions, $params);
 
     return template::process($config, template::check($config, 'change-password'), $params);

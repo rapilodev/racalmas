@@ -6,10 +6,10 @@
 
 #content #seriesContainer {
     max-width: 80ch;
-    overflow:clip;
+    overflow: clip;
     text-overflow: ellipsis;
 }
 
-form table td:first-child{
+form table td:first-child {
     width: 10ch;
 }

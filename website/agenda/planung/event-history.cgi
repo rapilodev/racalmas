@@ -36,7 +36,7 @@ sub main {
     $params = $request->{params}->{checked};
 
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu' } );
+    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu.po' } );
     my $out = template::process( $config, template::check( $config, 'default.html' ), $headerParams );
     uac::check($config, $params, $user_presets);
 
@@ -86,7 +86,7 @@ sub show_history {
     for my $permission (keys %{$permissions}) {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
-    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'event-history' });
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'event-history.po' });
 
     return template::process( $config, template::check( $config, 'event-history' ), $params );
 }

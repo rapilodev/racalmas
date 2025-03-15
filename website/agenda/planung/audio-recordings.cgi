@@ -44,7 +44,7 @@ sub main {
         my $headerParams
             = uac::set_template_permissions($request->{permissions}, $params);
         $headerParams->{loc} = localization::get($config,
-            {user => $session->{user}, file => 'menu'});
+            {user => $session->{user}, file => 'menu.po'});
         my $out
             = template::process($config,
                 template::check($config, 'default.html'),
@@ -58,7 +58,7 @@ sub main {
         print STDERR "$0 ERROR: " . $params->{error} . "\n"
             if $params->{error} ne '';
         $params->{loc} = localization::get($config,
-            {user => $params->{presets}->{user}, file => 'audio-recordings'});
+            {user => $params->{presets}->{user}, file => 'audio-recordings.po'});
         $out .= template::process($config, $params->{template}, $params);
         return $out;
 

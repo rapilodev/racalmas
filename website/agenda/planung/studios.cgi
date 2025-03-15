@@ -28,7 +28,7 @@ sub main {
 
     #process header
     my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
-    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu.po' });
     my $out =  template::process($config, template::check($config, 'studios-header.html'), $headerParams);
     uac::check($config, $params, $user_presets);
 
@@ -174,10 +174,10 @@ sub show_studios {
     }
 
     $params->{studios} = $studios;
-    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'studios' });
+    $params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'studios.po' });
     uac::set_template_permissions($permissions, $params);
 
-    return $out . template::process($config, $params->{template}, $params);
+    return template::process($config, $params->{template}, $params);
 }
 
 sub check_params {

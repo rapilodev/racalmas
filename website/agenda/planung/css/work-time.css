@@ -34,14 +34,13 @@
     padding: 0;
 }
 
-#content .editor div.buttons button,
-#content .editor div.buttons input {
+#content .editor div.buttons button, #content .editor div.buttons input
+    {
     margin-left: 1em;
 }
 
-#content .editor input,
-#content .editor textarea,
-#content .editor button {
+#content .editor input, #content .editor textarea, #content .editor button
+    {
     padding: 6px;
 }
 
@@ -110,9 +109,7 @@
     background:#eee;
 }
 */
-
-#content div.editor,
-#content div.row.schedule {
+#content div.editor, #content div.row.schedule {
     padding-left: 0;
     padding-right: 0;
 }
@@ -125,8 +122,7 @@
     padding-right: 0;
 }
 
-#content div.cell.exclude,
-#content div.cell.weekday {
+#content div.cell.exclude, #content div.cell.weekday {
     margin-left: 0;
 }
 
@@ -142,75 +138,63 @@
     width: 1em;
 }
 
-#content div.cell.weekday,
-#content div.cell.weekday input,
-#content div.cell.weekday select{
+#content div.cell.weekday, #content div.cell.weekday input, #content div.cell.weekday select
+    {
     width: 2em;
     padding-top: 2em;
 }
 
-#content div.cell.start,
-#content div.cell.start input,
-#content div.cell.start select{
+#content div.cell.start, #content div.cell.start input, #content div.cell.start select
+    {
     width: 9em;
 }
 
-#content div.cell.duration,
-#content div.cell.duration input,
-#content div.cell.duration select{
+#content div.cell.duration, #content div.cell.duration input, #content div.cell.duration select
+    {
     width: 7em;
 }
 
-#content div.cell.title,
-#content div.cell.title input,
-#content div.cell.title select{
+#content div.cell.title, #content div.cell.title input, #content div.cell.title select
+    {
     width: 6em;
 }
 
-#content div.cell.type,
-#content div.cell.type input,
-#content div.cell.type select{
+#content div.cell.type, #content div.cell.type input, #content div.cell.type select
+    {
     width: 6em;
 }
 
-#content div.cell.period_type,
-#content div.cell.period_type input,
+#content div.cell.period_type, #content div.cell.period_type input,
     #content div.cell.period_type select {
     width: 7em;
 }
 
-#content div.cell.period_type.isSingle,
-#content div.cell.period_type select.isSingle{
+#content div.cell.period_type.isSingle, #content div.cell.period_type select.isSingle
+    {
     width: 9em;
 }
 
-#content div.cell.end,
-#content div.cell.end input,
-#content div.cell.end select{
+#content div.cell.end, #content div.cell.end input, #content div.cell.end select
+    {
     width: 6em;
 }
 
-#content div.cell.frequency,
-#content div.cell.frequency input,
-#content div.cell.frequency select{
+#content div.cell.frequency, #content div.cell.frequency input, #content div.cell.frequency select
+    {
     width: 6em;
 }
 
-
-#content div.cell.week_of_month,
-#content div.cell.week_of_month input,
+#content div.cell.week_of_month, #content div.cell.week_of_month input,
     #content div.cell.week_of_month select {
     width: 6em;
 }
 
-#content div.cell.schedule_weekday,
-#content div.cell.schedule_weekday input,
+#content div.cell.schedule_weekday, #content div.cell.schedule_weekday input,
     #content div.cell.schedule_weekday select {
     width: 4em;
 }
 
-#content div.cell.schedule_month,
-#content div.cell.schedule_month input,
+#content div.cell.schedule_month, #content div.cell.schedule_month input,
     #content div.cell.schedule_month select {
     width: 6em;
 }
@@ -260,10 +244,3 @@ form {
         display: none;
     }
 }
-
-/*
-#content div.show_schedule tr:nth-child(odd){
-    background:#f0f0f0;
-}
-
-*/

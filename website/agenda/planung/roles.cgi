@@ -38,7 +38,7 @@ sub main {
 
     #process header
     my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
-    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+    $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu.po' });
     my $out = template::process($config, template::check($config, 'roles.html'), $headerParams);
     uac::check($config, $params, $user_presets);
 
@@ -267,7 +267,7 @@ sub show_roles {
 
     $out .= '<div class="panel">';
     $out .= '<table class="table">';
-    my $localization = localization::get($config, { user => $params->{presets}->{user}, file => 'roles' });
+    my $localization = localization::get($config, { user => $params->{presets}->{user}, file => 'roles.po' });
     for my $key (keys %$localization) {
         $localization->{$key} =~ s/\(/<span class\=\"comment\">/;
         $localization->{$key} =~ s/\)/<\/span>/;
@@ -345,7 +345,7 @@ sub show_roles {
     $out .= '<input type="submit" name="action" value="save">' if defined $permissions->{update_role};
     $out .= '</form>';
     $out .= '</div>';
-    print $out. "\n";
+    return $out. "\n";
 }
 
 # sort columns by group and action

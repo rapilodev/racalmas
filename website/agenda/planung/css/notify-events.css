@@ -1,45 +1,45 @@
-table#events{
-    transition:all 2s;
+table#events {
+    transition: all 2s;
 }
 
-table#events div.error{
+table#events div.error {
     background: #f33;
-    color:white;
-    padding:1rem;
+    color: white;
+    padding: 1rem;
     width: 30rem;
 }
 
-
-table#events div.done{
+table#events div.done {
     background: #3f3;
-    color:white;
-    padding:1rem;
+    color: white;
+    padding: 1rem;
     width: 30rem;
 }
 
-table#events td:nth-of-type(1){
-    width:15ch;
+table#events td:nth-of-type(1) {
+    width: 15ch;
 }
 
-table#events td:nth-of-type(4){
-    width:12ch;
+table#events td:nth-of-type(4) {
+    width: 12ch;
 }
 
-td.action, input.action{
-    width:5ch;
+td.action, input.action {
+    width: 5ch;
 }
 
-form input{
-    width:100%;
+form input {
+    width: 100%;
 }
 
-img.toggle{
-    background:#1678c2;
-    cursor:grab;
-    transition:all 0.5s;
+img.toggle {
+    background: #1678c2;
+    cursor: grab;
+    transition: all 0.5s;
 }
 
-img.toggle:hover{
+img.toggle:hover {
     transform: scale(1.2);
-    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18), 0 4px 15px 0 rgba(0, 0, 0, .15);
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18), 0 4px 15px 0
+        rgba(0, 0, 0, .15);
 }

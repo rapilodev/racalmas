@@ -34,7 +34,7 @@ sub main {
     my $out;
     unless (params::is_json()) {
         my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
-        $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu' });
+        $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu.po' });
         $out .=  template::process($config, template::check($config, 'show-playout-header.html'),
             $headerParams);
     }
@@ -47,7 +47,7 @@ sub main {
 
     print STDERR "$0 ERROR: " . $params->{error} . "\n" if $params->{error} ne '';
     $params->{loc} =
-      localization::get($config, { user => $params->{presets}->{user}, file => 'event,comment' });
+      localization::get($config, { user => $params->{presets}->{user}, file => 'broadcast.po,comment.po' });
     return $out .= template::process($config, $params->{template}, $params);
 }
 
