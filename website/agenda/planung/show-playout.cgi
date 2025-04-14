@@ -24,7 +24,7 @@ use entry;
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-uac::init($r, \&check_params, \&main);
+print uac::init($r, \&check_params, \&main);
 
 sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
@@ -75,10 +75,7 @@ sub showPlayout {
         }
     );
 
-    unless (defined $events) {
-        uac::print_error("not found");
-        return;
-    }
+    ParamError->throw(error=>"missing $param") unless defined $events;
 
     for my $event (@$events) {
         $event->{stream_size} ||= '';

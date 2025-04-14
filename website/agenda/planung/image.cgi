@@ -30,10 +30,11 @@ use series();
 use localization();
 
 binmode STDOUT, ":utf8";
+binmode STDOUT, ":encoding(utf8)";
 
 my $r = shift;
 
-uac::init($r, \&check_params, \&main);
+print uac::init($r, \&check_params, \&main);
 
 sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
@@ -50,7 +51,7 @@ sub main {
     my $action = $params->{action} or ParamError->throw("invalid action");
     return show($config, $request, $session->{user}, $local_media_url)   if $action eq 'show';
     return get_image($config, $request, $session->{user}, $local_media_dir) if $action eq 'get';
-        return delete_image( $config, $request, $session->{user}, $local_media_dir) if $action eq 'delete';
+    return delete_image( $config, $request, $session->{user}, $local_media_dir) if $action eq 'delete';
     return save_image( $config, $request, $session->{user} ) if $action eq 'save';
 }
 
@@ -120,8 +121,9 @@ sub save_image {
         die("missing permission to update image");
         return 0;
     }
-    die "empty name" unless ($params->{name} // '');
-    die "empty description" unless ($params->{description} // '');
+    die "empty filename" unless ($params->{filename} // '');
+    #die "empty name" unless ($params->{name} // '');
+    #die "empty description" unless ($params->{description} // '');
 
     my $image = {};
     $image->{filename}    = $params->{filename};
@@ -137,9 +139,14 @@ sub save_image {
     images::checkLicence($config, $image);
 
     my $entries = images::get($config, {
-    filename   => $image->{filename},
-    project_id => $image->{project_id},
-    studio_id  => $image->{studio_id}
+        filename   => $image->{filename},
+        project_id => $image->{project_id},
+        studio_id  => $image->{studio_id}
+    });
+    use Data::Dumper;print STDERR Dumper($entries, {
+        filename   => $image->{filename},
+        project_id => $image->{project_id},
+        studio_id  => $image->{studio_id}
     });
 
     die 'more than one matching result found' if scalar @$entries > 1;
@@ -229,6 +236,7 @@ sub check_params {
     entry::set_numbers($checked, $params, [
         'project_id', 'studio_id', 'series_id', 'event_id', 'pid', 'sid', 'default_studio_id', 'limit'
     ]);
+    $checked->{limit} //= 100;
     $checked->{limit} = 100 if $checked->{limit} < 0 or $checked->{limit} > 100;
 
     if (defined $checked->{studio_id}) {
@@ -238,7 +246,7 @@ sub check_params {
     }
 
     entry::set_strings($checked, $params, [
-        'search', 'description', 'licence', 'filename', 'target' ]);
+        'name', 'description', 'licence', 'filename', 'target', 'search' ]);
 
     entry::set_bools($checked, $params, [ 'public']);
     return $checked;

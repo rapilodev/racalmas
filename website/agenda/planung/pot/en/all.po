@@ -27,3 +27,12 @@ msgstr "Su"
 
 msgid "label_search"
 msgstr "🔍 Search"
+
+msgid "label_saved"
+msgstr "Changes saved"
+
+msgid "label_login_required"
+msgstr "Please login again"
+
+msgid "label_ask_for_commit"
+msgstr "Are you sure?"

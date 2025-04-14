@@ -5,6 +5,20 @@ pre {
     white-space: pre-wrap;
 }
 
+body #content {
+    display: flex;
+    flex-direction: col;
+    max-width: 1280px !important;
+}
+
+#buttons {
+    width: fit-content;
+}
+
+div.editor {
+    width: 100%;
+}
+
 /* In the editor, images inside links within paragraphs float right */
 #content div.editor div p a img {
     float: right;
@@ -25,6 +39,17 @@ pre {
 #content div.editor span.label {
     width: 6rem;
     color: var(--editor-label-color, #666);
+}
+
+#content div.editor td#title {
+    vertical-align: middle;
+    text-align: center;
+    font-weight: bold;
+}
+
+#content div.editor td#title input {
+    width: auto;
+    field-sizing: content;
 }
 
 /* Editor images are standardized */
@@ -90,11 +115,15 @@ div.buttons {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
+    width: min-content;
+    align-content: last baseline;
+    gap: 1rem;
 }
 
 /* Limit button width inside the buttons container */
 div.buttons button {
-    max-width: 12rem;
+    width: 12rem;
+    padding:1rem;
 }
 
 /* Optional Dark Mode Adjustments for Editor Labels */

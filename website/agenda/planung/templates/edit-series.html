@@ -515,14 +515,12 @@
     <!-- delete series -->
     <TMPL_IF .allow.delete_series>
     <div id="tabs-delete" class="panel">
-        <center>
         <div><TMPL_VAR .loc.label_delete_series></div>
         <div>
             <button
             onclick="commitDeleteSeries('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
             ><TMPL_VAR .loc.button_delete_series></button>
         </div>
-        </center>
     </div>
     </TMPL_IF>
 

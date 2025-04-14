@@ -162,8 +162,8 @@ sub show_login_form ($$$) {
         };
     }
 
-    return qq{
-Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+    return qq{Status: 401
+Cache-Control: no-store, no-cache, must-revalidate, max-age=01
 Pragma: no-cache
 Expires: 0
 Content-type:text/html
@@ -219,6 +219,7 @@ Content-type:text/html
         animation-name:form;
         animation-duration: 1s;
         animation-timing-function:ease;
+        border-radius:1rem;
     }
 
     button:hover{
@@ -233,6 +234,8 @@ Content-type:text/html
     }
 
     #login_form .message{
+        border-top-left-radius:1rem;
+        border-top-right-radius:1rem;
         color:white;
         background:#004f9b;
         text-align:left;
@@ -240,6 +243,7 @@ Content-type:text/html
         padding:1rem;
         margin:-1rem;
         margin-bottom:0;
+        box-shadow: 1rem 1rem 1rem #eee;
     }
     input.button,
     button.button{
@@ -251,6 +255,7 @@ Content-type:text/html
         border:0;
         font-weight:bold;
         cursor:pointer;
+        border-radius:1rem;
     }
     a{
         text-decoration:none;
@@ -262,13 +267,13 @@ Content-type:text/html
         animation-timing-function:ease;
     }
     \@keyframes login{
-        00%   {transform-origin: 0px; transform: scale(0.9); scaleX(1); opacity:0.7; }
-        100% {transform-origin: 0px;  transform: scale(1);   scaleX(1); opacity:1;   }
+        00%  {transform-origin: 0px; transform: scale(0.9); scaleX(1); opacity:0.7; }
+        100% {transform-origin: 0px; transform: scale(1);   scaleX(1); opacity:1;   }
     }
 
     \@keyframes form{
-        00%   { box-shadow: 0rem 0rem 1rem #eee; transform: translateX(1rem) translateY(1rem);}
-        100% { box-shadow: 1rem 1rem 1rem #eee; transform: translateX(0) translateY(0);}
+        00%  { box-shadow: 0rem 0rem 1rem #eee; transform: translateX(1rem) translateY(1rem);}
+        100% { box-shadow: 1rem 1rem 1rem #eee; transform: translateX(0) translateY(0);      }
     }
 </style>
 </head>

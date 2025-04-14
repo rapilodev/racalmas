@@ -23,7 +23,7 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-uac::init($r, \&check_params, \&main);
+print uac::init($r, \&check_params, \&main);
 
 sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
@@ -71,17 +71,12 @@ sub save_schedule {
     for my $type ('single', 'days', 'week_of_month') {
         $found = 1 if ($entry->{period_type} eq $type);
     }
-    if ($found == 0) {
-        uac::print_error('no period type selected!');
-        return;
-    }
+    ParamError->throw(error=> 'no period type selected!' if $found == 0;
 
     $entry->{exclude} = 0 if ($entry->{exclude} ne '1');
 
-    if (($entry->{end} ne '') && ($entry->{end} le $entry->{start})) {
-        uac::print_error('start date should be before end date!');
-        return;
-    }
+    ParamError->throw(error=> 'start date should be before end date!' if 
+        ($entry->{end} ne '') && ($entry->{end} le $entry->{start});
 
     #TODO: check if schedule is in studio_timeslots
 

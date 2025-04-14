@@ -551,7 +551,6 @@
     <!-- delete series -->
     <TMPL_IF .allow.delete_series>
     <div id="tabs-delete" class="panel">
-        <center>
         <div><TMPL_VAR .loc.label_delete_series></div>
         <div>
             <form method="post" action="series.cgi#tabs-delete" id="series_<TMPL_VAR .series_id>">
@@ -564,7 +563,6 @@
                 ><TMPL_VAR .loc.button_delete_series></button>
             </form>
         </div>
-        </center>
     </div>
     </TMPL_IF>
 

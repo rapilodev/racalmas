@@ -197,8 +197,7 @@
 /* Remove padding/margin for delete cells */
 #content div.cell.delete,
 #content div.cell.delete button {
-    padding: 0;
-    margin: 0;
+    margin-right: 0;
 }
 
 /* Event creation/publish button sizes */

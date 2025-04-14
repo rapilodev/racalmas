@@ -1,16 +1,17 @@
 "use strict";
 
 function getParent() {
-    return document.querySelector("body > center > #content");
+    return document.querySelector("body > #content");
 }
 
 function closeImageManager() {
-    getParent().style.display = 'block';
+    getParent().style.display = 'flex';
     $('#image-manager').hide(1000).remove();
 }
 
 var commitImageHandler;
 var target;
+var permissions;
 
 // open image editor, pid used for projects
 async function selectImage(image, callback) {
@@ -27,6 +28,11 @@ async function selectImage(image, callback) {
     $("#image-manager").on("click", "#search-button",
         () => searchImage(project_id, studio_id, $("input#search-field").val())
     );
+    
+    permissions = getJson('permissions.cgi', {
+        "project_id" : project_id,
+        "studio_id" : studio_id
+    });
 
     let [manager, file_images, series_images, search_images] = await Promise.all([
         updateContainer('image-manager', 'image.cgi?' + new URLSearchParams({
@@ -34,7 +40,6 @@ async function selectImage(image, callback) {
             "project_id": project_id,
             "studio_id": studio_id
         }).toString()),
-
         image.filename ? getJson('image.cgi', {
             "action": 'get',
             "project_id": project_id,
@@ -87,12 +92,13 @@ function listImages(project_id, studio_id, images) {
             filename: image.filename
         }).toString();
         div.style.backgroundImage = `url('${url}')`;
+        
         div.addEventListener('click', function() {
             loadImageEditor(project_id, studio_id, div.dataset.filename);
         });
         container.append(div);
     }
-
+    loadImageEditor(images[0].project_id, images[0].studio_id, images[0].filename);
     setActiveImage(document.querySelector("div.images div.image"));
     console.log("images initialized")
 
@@ -116,55 +122,61 @@ function updateActiveImage() {
 
 function parseImageForm() {
     let image = {};
-    let editor = document.querySelector("#imageEditor");
-    image.name = editor.querySelector("#name").value;
-    image.description = editor.querySelector("#description").value;
-    image.license = editor.querySelector("#license").value;
+    let editor = document.querySelector("#image-editor");
     image.project_id = editor.querySelector("#project_id").value;
     image.studio_id = editor.querySelector("#studio_id").value;
+    image.name = editor.querySelector("#name").value;
+    image.description = editor.querySelector("#description").value;
+    image.licence = editor.querySelector("#licence").value;
     image.public = editor.querySelector("#public").value;
-    console.log(image)
+    image.filename = editor.querySelector("#filename").value;
     return image;
 }
 
 function setImageForm(image){
-    let editor = document.querySelector("#imageEditor");
-    editor.querySelector("#name").value = image.name || '';
-    editor.querySelector("#description").value = image.description || '';
-    editor.querySelector("#license").value = image.license || '';
-    editor.querySelector("#public").checked = !!image.public;
+    let editor = document.querySelector("#image-editor");
     editor.querySelector("#project_id").value = image.project_id || 0;
     editor.querySelector("#studio_id").value = image.studio_id || 0;
+    editor.querySelector("#name").value = image.name || '';
+    editor.querySelector("#description").value = image.description || '';
+    editor.querySelector("#licence").value = image.licence || '';
+    console.log(image.licence)
+    editor.querySelector("#public").checked = !!image.public;
+    editor.querySelector("#filename").value = image.filename || '';
 }
 
 // show or edit image properties
 async function loadImageEditor(project_id, studio_id, filename) {
     var loc = getLocalization();
-    let editor = document.querySelector("#imageEditor");
+    let editor = document.querySelector("#image-editor");
     let json = await getJson('image.cgi', {
         "action": 'get',
         "project_id": project_id,
         "studio_id": studio_id,
         "filename": filename
     });
-    console.log(json)
+    console.log("load",json)
     let image = json.images[0];
 
     setImageForm(image);
 
-    document.querySelector('#image_properties').innerHTML = `
+    document.querySelector('#image-properties').innerHTML = `
     ${loc.label_created_at} ${image.created_at} ${loc.label_created_by} ${image.created_by}<br>
     ${loc.label_modified_at} ${image.modified_at} ${loc.label_modified_by} ${image.modified_by}<br>
     ${loc.label_link} {{${image.filename}|${image.name}}}<br>
     `;
 
-    let tools = editor.querySelector("#tools");
+    let tools = document.querySelector("#image-tools");
     tools.innerHTML = '';
+
     if (image.public) {
         tools.appendChild(button({
             id: "assignButton",
             text: loc["label_assign_to_" + target],
-            onClick: () => commitImageHandler()
+            onClick: () => {
+                closeImageManager();
+                commitImageHandler(image)
+            }
         }));
         tools.appendChild(button({
             id: "depublishButton",
@@ -177,7 +189,7 @@ async function loadImageEditor(project_id, studio_id, filename) {
             textContent: loc['label_warn_not_public_' + target]
         }));
 
-        if (image.license) {
+        if (image.licence) {
             tools.appendChild(button({
                 id: "publishButton",
                 text: loc.button_publish,
@@ -191,8 +203,45 @@ async function loadImageEditor(project_id, studio_id, filename) {
         }
     }
     
-    editor.querySelector("#save-image").addEventListener("click", () => saveImage(parseImageForm()));
-    editor.querySelector("#delete-image").addEventListener("click", () => askDeleteImage(parseImageForm().filename));
+    if (!editor.querySelector("#save-image.has-handlers")) {
+        editor.querySelector("#save-image").classList.add("has-handlers");
+        editor.querySelector("#save-image").addEventListener(
+            "click", () => saveImage(parseImageForm()));
+    }
+    if (!editor.querySelector("#delete-image.has-handlers")) {
+        editor.querySelector("#delete-image").classList.add("has-handlers");
+        editor.querySelector("#delete-image").addEventListener(
+            "click", () => askDeleteImage(parseImageForm().filename));
+    }
+
+    if (permissions.create_image) {
+        tools.append(
+            element("label", {
+                textContent: loc.label_file, 
+                for: "upload"
+            }),
+            element("input", {
+                type: "file",
+                name: "upload",
+                accept: "image/*",
+                maxlength: "2000000",
+                size: "10",
+                required: true
+            }),
+            element("button", {
+                textContent: loc.button_upload,
+                onClick: () => {uploadImage(); return false;},
+            })
+        );
+    }
+    if (permissions.delete_image) {
+        tools.appendChild(
+            element("button", {
+                textContent: loc.delete_upload,
+                onClick: () => {deleteImage();return false;},
+            })
+        )
+    }
 }
 
 async function searchImage(project_id, studio_id, search) {
@@ -208,22 +257,25 @@ async function searchImage(project_id, studio_id, search) {
     return false;
 }
 
-function saveImage(image) {
+async function saveImage(image) {
     image.action = "save";
-    return postJson('image.cgi?', image);
+    console.log("save",image)
+    var doc = await postJson('image.cgi?', image);
+    showInfo(loc.label_saved);
+    console.log(doc)
+    loadImageEditor(image.project_id, image.studio_id, image.filename)
 }
 
 function depublishImage() {
-    image = parseImageForm();
+    let image = parseImageForm();
     image.public = 0;
     saveImage(image);
 }
 
 function publishImage() {
-    image = parseImageForm();
+    let image = parseImageForm();
     image.public = 1;
     saveImage(image);
-    loadImageEditor(image.project_id, image.studio_id, image.filename)
 }
 
 function askDeleteImage(filename) {
@@ -257,7 +309,7 @@ function uploadImage() {
         var filename = $("#upload_image_filename").html();
         var title = $("#upload_image_title").html();
         //remove existing image from list
-        $('#imageList div.images #img_' + image_id).remove();
+        $('#image-list div.images #img_' + image_id).remove();
         var url = icon(getProjectId(), getStudioId(), filename).src;
 
         var html = '<div';
@@ -271,7 +323,7 @@ function uploadImage() {
         html += '</div>';
 
         //add image to list
-        $('#imageList div.images').prepend(html);
+        $('#image-list div.images').prepend(html);
         return false;
     });
 
@@ -294,4 +346,3 @@ $(document).ready(function() {
     checkbox.change(() => updateCheckBox(checkbox));
     console.log("image handler initialized");
 });
-

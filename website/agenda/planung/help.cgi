@@ -23,7 +23,7 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-uac::init($r, \&check_params, \&main);
+print uac::init($r, \&check_params, \&main);
 
 sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;

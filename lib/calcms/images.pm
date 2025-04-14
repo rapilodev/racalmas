@@ -397,8 +397,8 @@ sub depublish ($$) {
     my ($config, $filename) = @_;
 
     print STDERR "depublish\n";
-    return undef unless defined $config;
-    return undef unless defined $filename;
+    die unless defined $config;
+    die unless defined $filename;
     my $errors = [];
     for my $type ('images', 'thumbs', 'icons') {
         my $path = getPath($config, { filename => $filename, type => $type });
@@ -418,7 +418,7 @@ sub checkLicence ($$) {
     return undef unless defined $config;
     return undef unless defined $result;
 
-    return if $result->{licence} =~ /\S/;
+    return if ($result->{licence}//'') =~ /\S/;
     if ((defined $result->{public}) && ($result->{public} eq '1')) {
         depublish($config, $result->{filename});
         $result->{public} = 0;

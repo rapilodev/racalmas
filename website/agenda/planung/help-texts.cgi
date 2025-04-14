@@ -18,7 +18,7 @@ use JSON;
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-uac::init($r, \&check_params, \&main);
+print uac::init($r, \&check_params, \&main);
 
 sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
@@ -55,10 +55,7 @@ sub save_help {
     }
 
     for my $attr ('project_id', 'studio_id', 'table', 'column', 'text') {
-        unless (defined $params->{$attr}) {
-            uac::print_error($attr . ' not given!');
-            return;
-        }
+        ActionError->throw(error => $attr . ' not given!') unless defined $params->{$attr};
     }
 
     my $entry = {};
@@ -93,10 +90,7 @@ sub delete_help {
     }
 
     for my $attr ('project_id', 'studio_id', 'table', 'column', 'text') {
-        unless (defined $params->{$attr}) {
-            uac::print_error($attr . ' not given!');
-            return;
-        }
+        ActionError->throw(error => $attr . ' not given!') unless defined $params->{$attr};
     }
 
     my $entry = {};
@@ -122,10 +116,7 @@ sub edit_help {
     }
 
     for my $param ('project_id', 'studio_id') {
-        unless (defined $params->{$param}) {
-            uac::print_error("missing $param");
-            return;
-}
+        ActionError->throw(error => "missing $param") unless defined $params->{$param};
     }
 
     my $table = "calcms_events";
@@ -174,10 +165,7 @@ sub get_help {
     my ($config, $request) = @_;
     my $params = $request->{params}->{checked};
     for my $param ('project_id', 'studio_id') {
-        unless (defined $params->{$param}) {
-            uac::print_error("missing $param");
-            return;
-        }
+        ActionError->throw(error => "missing $param") unless defined $params->{$param};
     }
 
     my $table = "calcms_events";

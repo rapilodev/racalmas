@@ -20,8 +20,8 @@
 }
 
 #image-manager {
-    width: 100vw;
-    height: 100vw;
+    width: 100%;
+    height: 100v;
     z-index: 1;
     border-radius: 0;
 }
@@ -98,15 +98,15 @@
     opacity: 0.5;
 }
 
-#imageEditor {
+#image-editor {
     overflow-y: scroll;
     padding: 1rem;
     min-width: 20rem;
 }
 
-#image-manager #imageEditor input,
-#image-manager #imageEditor select,
-#image-manager #imageEditor textarea {
+#image-manager #image-editor input,
+#image-manager #image-editor select,
+#image-manager #image-editor textarea {
     margin-left: 0;
     margin-bottom: 1rem;
     padding: 1rem;

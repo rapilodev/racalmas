@@ -25,7 +25,7 @@ use localization();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-uac::init($r, \&check_params, \&main);
+print uac::init($r, \&check_params, \&main);
 
 sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
@@ -87,7 +87,7 @@ sub save_schedule {
     #set schedule's studio to value from schedule_studio_id
     $entry->{studio_id} = $params->{schedule_studio_id} if defined $params->{schedule_studio_id};
 
-    return uac::print_error('start date should be before end date!')
+    AppError->throw(error=>'start date should be before end date!')
         if $entry->{end} ne '' && $entry->{end} le $entry->{start};
 
     local $config->{access}->{write} = 1;

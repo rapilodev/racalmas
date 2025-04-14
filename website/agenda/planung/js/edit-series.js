@@ -493,7 +493,6 @@ $(document).ready(
         setInputWidth();
         checkFields();
 
-        $('textarea').autosize();
         $('table#schedule_table').tablesorter({
             widgets: ["filter"],
             usNumberFormat: false

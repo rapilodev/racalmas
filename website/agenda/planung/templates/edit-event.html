@@ -15,6 +15,11 @@
     <script src="js/image.js" type="text/javascript"></script>
 
     <script>
+        var allow = {
+                <TMPL_IF .allow.read_image>read_image : true,</TMPL_IF>
+                <TMPL_IF .allow.create_image>create_image : true,</TMPL_IF>
+                <TMPL_IF .allow.delete_image>delete_image : true,</TMPL_IF>
+        };
         var region='<TMPL_VAR loc.region escape=js>';
         var event_id='<TMPL_VAR event_id escape=js>';
         <TMPL_IF .forced_change>pageHasChangedCounter=1;</TMPL_IF>
@@ -72,45 +77,6 @@
             ><TMPL_VAR .loc.button_event_list></button>
     </TMPL_IF>
 
-    <TMPL_IF new_event>
-        <TMPL_IF .allow.delete_schedule>
-            <button class="text"
-                onclick="deleteFromSchedule('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>','<TMPL_VAR start escape=url>');return false;"
-            ><TMPL_VAR .loc.button_delete_from_schedule></button>
-    </TMPL_IF>
-    <TMPL_ELSE>
-        <TMPL_IF .allow.assign_series_events>
-            <button class="text" onclick="selectChangeSeries('changeSeriesId');"
-            ><TMPL_VAR loc.button_assign_series></button>
-        </TMPL_IF>
-    </TMPL_IF>
-
-    <TMPL_UNLESS new_event>
-    <TMPL_IF .allow.update_event>
-        <button class="text"
-            onclick="selectRerun('rerunEventId', <TMPL_VAR start_date>)"
-        ><TMPL_VAR .loc.button_rerun></button>
-    </TMPL_IF>
-    </TMPL_UNLESS>
-
-    <TMPL_UNLESS new_event>
-        <TMPL_UNLESS is_over>
-        <TMPL_IF .allow.upload_audio_recordings>
-            <button class="text"
-                onclick="uploadRecording('<TMPL_VAR .project_id>',<TMPL_VAR .studio_id>,'<TMPL_VAR .series_id>','<TMPL_VAR .event_id>');"
-            ><TMPL_VAR .loc.button_upload></button>
-        </TMPL_IF>
-        </TMPL_UNLESS>
-
-        <TMPL_IF is_over>
-        <TMPL_IF .allow.create_download>
-            <button class="text"
-                onclick="downloadRecording('<TMPL_VAR .project_id>',<TMPL_VAR .studio_id>,'<TMPL_VAR .series_id>','<TMPL_VAR .event_id>');"
-            ><TMPL_VAR .loc.button_download></button>
-        </TMPL_IF>
-        </TMPL_IF>
-    </TMPL_UNLESS>
-
     <TMPL_UNLESS new_event>
     <TMPL_UNLESS show_new_event>
         <TMPL_IF .allow.read_event>
@@ -139,43 +105,11 @@
     </div>
     </TMPL_UNLESS>
 
-    <!-- header buttons -->
-    <TMPL_UNLESS edit_lock>
-    <div class="buttons" style="text-align:center;clear:both">
-        <TMPL_IF show_new_event_from_schedule>
-            <TMPL_IF .allow.create_event_from_schedule>
-                <button class="primary"
-                    onclick="createEventFromSchedule('#edit_event form#event_<TMPL_VAR event_id>');leavePage();return false"
-                ><TMPL_VAR .loc.button_create></button>
-             </TMPL_IF>
-        <TMPL_ELSIF show_new_event>
-            <TMPL_IF .allow.create_event>
-                <button class="primary"
-                    onclick="createEvent2('#edit_event form#event_<TMPL_VAR event_id>');leavePage();return false"
-                ><TMPL_VAR .loc.button_create></button>
-             </TMPL_IF>
-        <TMPL_ELSE>
-            <TMPL_IF .allow.update_event>
-                <button class="primary"
-                    onclick="saveEvent('#edit_event form#event_<TMPL_VAR event_id>', 'save');return false"
-                ><TMPL_VAR .loc.button_save></button>
-            </TMPL_IF>
-        </TMPL_IF>
-        <TMPL_IF .allow.delete_event>
-            <TMPL_UNLESS new_event>
-                <button class="text"
-                    onclick="deleteEvent('#edit_event form#event_<TMPL_VAR event_id>', 'delete'); return false;"
-                ><TMPL_VAR .loc.button_delete></button>
-            </TMPL_UNLESS>
-        </TMPL_IF>
-    </div>
-    </TMPL_UNLESS>
     <!-- download output -->
     <TMPL_IF download>
         <div type="hidden" class="panel" name="event_id" ><TMPL_VAR download escape=none></div>
     </TMPL_IF>
-
-</div>
+</div> <!--  buttons -->
 
 <!-- edit -->
 <div class="editor">
@@ -246,9 +180,9 @@
     <!-- <TMPL_UNLESS new_event>style="display:none"</TMPL_UNLESS> -->
     <table id="edit_time_<TMPL_VAR event_id>" class="edit_event" >
         <tr>
-            <td class="label"><TMPL_VAR .loc.lable_title></td>
-            <td>
-                <TMPL_IF has_single_events><TMPL_VAR .loc.single_event><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF><br>
+            <td colspan="2" id="title">
+                <TMPL_VAR .loc.lable_title>
+                <TMPL_IF has_single_events><TMPL_VAR .loc.single_event><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF>
                 <TMPL_IF .allow.update_event_field_title>
                     <input name="title" value="<TMPL_VAR title>" placeholder="<TMPL_VAR .loc.label_title>" />
                 <TMPL_ELSE>
@@ -269,9 +203,11 @@
                     <TMPL_VAR .loc.label_episode>: <TMPL_VAR episode>
                 </TMPL_IF>
                 </TMPL_UNLESS>
+                <button class="text" onclick="copyEventToClipboard();return false;"><img src="image/dark/copy.svg"></button>
             </td>
         </tr>
 
+    <!-- 
         <TMPL_UNLESS show_new_event>
         <tr id="copy_event_line">
             <td class="label"></td>
@@ -281,7 +217,7 @@
             </td>
         </tr>
         </TMPL_UNLESS>
-
+     -->
         <TMPL_IF .allow.update_event_time>
         <!-- event time edit -->
         <tr>
@@ -499,7 +435,91 @@
     <div class="event" id="event_<TMPL_VAR id>_comments" style="line-height:100%;display:none;"> </div>
 </div>
 </TMPL_IF>
+
+</div> <!-- Editor -->
 </div>
+
+<!-- buttons -->
+<div class="buttons">
+
+    <!-- header buttons -->
+    <TMPL_UNLESS edit_lock>
+        <TMPL_IF show_new_event_from_schedule>
+            <TMPL_IF .allow.create_event_from_schedule>
+                <button class="primary"
+                    onclick="createEventFromSchedule('#edit_event form#event_<TMPL_VAR event_id>');leavePage();return false"
+                ><TMPL_VAR .loc.button_create></button>
+             </TMPL_IF>
+        <TMPL_ELSIF show_new_event>
+            <TMPL_IF .allow.create_event>
+                <button class="primary"
+                    onclick="createEvent2('#edit_event form#event_<TMPL_VAR event_id>');leavePage();return false"
+                ><TMPL_VAR .loc.button_create></button>
+             </TMPL_IF>
+        <TMPL_ELSE>
+            <TMPL_IF .allow.update_event>
+                <button class="primary"
+                    onclick="saveEvent('#edit_event form#event_<TMPL_VAR event_id>', 'save');return false"
+                ><TMPL_VAR .loc.button_save></button>
+            </TMPL_IF>
+        </TMPL_IF>
+    </TMPL_UNLESS>
+
+    <TMPL_UNLESS new_event>
+        <TMPL_UNLESS is_over>
+        <TMPL_IF .allow.upload_audio_recordings>
+            <button class="text"
+                onclick="uploadRecording('<TMPL_VAR .project_id>',<TMPL_VAR .studio_id>,'<TMPL_VAR .series_id>','<TMPL_VAR .event_id>');"
+            ><TMPL_VAR .loc.button_upload></button>
+        </TMPL_IF>
+        </TMPL_UNLESS>
+
+        <TMPL_IF is_over>
+        <TMPL_IF .allow.create_download>
+            <button class="text"
+                onclick="downloadRecording('<TMPL_VAR .project_id>',<TMPL_VAR .studio_id>,'<TMPL_VAR .series_id>','<TMPL_VAR .event_id>');"
+            ><TMPL_VAR .loc.button_download></button>
+        </TMPL_IF>
+        </TMPL_IF>
+    </TMPL_UNLESS>
+
+    <TMPL_UNLESS new_event>
+    <TMPL_IF .allow.update_event>
+        <button class="text"
+            onclick="selectRerun('rerunEventId', <TMPL_VAR start_date>)"
+        ><TMPL_VAR .loc.button_rerun></button>
+    </TMPL_IF>
+    </TMPL_UNLESS>
+
+    <TMPL_IF new_event>
+        <TMPL_IF .allow.delete_schedule>
+            <button class="text"
+                onclick="deleteFromSchedule('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>','<TMPL_VAR start escape=url>');return false;"
+            ><TMPL_VAR .loc.button_delete_from_schedule></button>
+    </TMPL_IF>
+    <TMPL_ELSE>
+        <TMPL_IF .allow.assign_series_events>
+            <button class="text" onclick="selectChangeSeries('changeSeriesId');"
+            ><TMPL_VAR loc.button_assign_series></button>
+        </TMPL_IF>
+    </TMPL_IF>
+
+    <TMPL_UNLESS edit_lock>
+        <TMPL_IF .allow.delete_event>
+            <TMPL_UNLESS new_event>
+                <button class="text"
+                    onclick="deleteEvent('#edit_event form#event_<TMPL_VAR event_id>', 'delete'); return false;"
+                ><TMPL_VAR .loc.button_delete></button>
+            </TMPL_UNLESS>
+        </TMPL_IF>
+    </TMPL_UNLESS>
+
+    <!-- download output -->
+    <TMPL_IF download>
+        <div type="hidden" class="panel" name="event_id" ><TMPL_VAR download escape=none></div>
+    </TMPL_IF>
+</div> <!--  buttons -->
+
 
 </main>
 </body>

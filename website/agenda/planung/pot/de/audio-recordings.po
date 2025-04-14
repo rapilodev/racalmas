@@ -14,7 +14,7 @@ msgid "play"
 msgstr "Abspielen"
 
 msgid "upload"
-msgstr "Hochladen"
+msgstr "Sendung Hochladen"
 
 msgid "file"
 msgstr "Datei"

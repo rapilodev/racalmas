@@ -179,10 +179,10 @@ function updateDuration(selector, value) {
 }
 
 function updateImage(input, button, filename) {
-    console.log(input, button, filename)
-    if (file == null) alert("cannot update image");
-    file = file.replace("http://", "//");
-    input.value = file;
+    console.log("upadtImage",input, button, filename)
+    if (filename == null) alert("cannot update image");
+    filename = filename.replace("http://", "//");
+    input.value = filename;
     button.querySelector('img').replaceWith(
         icon(getProjectId(), getStudioId(), filename)
     );
@@ -314,7 +314,7 @@ async function loadEvent(projectId,studioId,seriesId,eventId, callback) {
     updateDuration("#edit_event #duration", event.duration);
     if (eventId != getUrlParameter('event_id')) $('#copy_event_line').hide();
     if (callback != null) callback();
-    showInfo("event loaded");
+    //showInfo("event loaded");
 }
 
 async function modifyEvent(params, callback) {
@@ -363,7 +363,7 @@ async function saveEvent(selector, action) {
     params.append("action", action);
     modifyEvent(params, function(json) {
         if (json.status != "saved") return showError(json.error);
-        showInfo("event saved");
+        showInfo(loc.label_saved);
         loadEvent(
             getProjectId(),
             getStudioId(),
@@ -440,36 +440,33 @@ async function loadHelpTexts () {
     }
 }
 
-$(document).ready(
-    function() {
-        showDateTimePicker('#start_date');
-        onDateModified();
-        $('input[type="checkbox"]').click( function() {
-            if ($(this).attr('value')=='1') {
-                $(this).attr('value','0');
-            }else{
-                $(this).attr('value','1');
-            }
-        });
-        if($('#calendar').length == 0) $('#back_to_calendar').hide();
-        checkFields();
-        $('textarea').autosize();
-        // unset published on setting draft
-        $("#edit_event input[name='draft']").change(function() {
-            if ($(this).val()==1) {
-                updateCheckBox("#edit_event input[name='published']", 0);
-            }
-        });
-        loadHelpTexts();
-        showInfo("event loaded");
-        loadLocalization('image');
-        
-        // image manager
-        let button = document.querySelector("button.select-image");
-        let input = document.querySelector("input.image");
-        button.addEventListener("click", () => selectImage(
-            button.dataset,
-            (filename) => {updateImage(input, button, filename)}
-        ));
-    }
-);
+$(document).ready(function() {
+    showDateTimePicker('#start_date');
+    onDateModified();
+    $('input[type="checkbox"]').click( function() {
+        if ($(this).attr('value')=='1') {
+            $(this).attr('value','0');
+        }else{
+            $(this).attr('value','1');
+        }
+    });
+    if($('#calendar').length == 0) $('#back_to_calendar').hide();
+    checkFields();
+    // unset published on setting draft
+    $("#edit_event input[name='draft']").change(function() {
+        if ($(this).val()==1) {
+            updateCheckBox("#edit_event input[name='published']", 0);
+        }
+    });
+    loadHelpTexts();
+    //showInfo("event loaded");
+    loadLocalization('image');
+    
+    // image manager
+    let button = document.querySelector("button.select-image");
+    let input = document.querySelector("input.image");
+    button.addEventListener("click", () => selectImage(
+        button.dataset,
+        (image) => updateImage(input, button, image.filename)
+    ));
+});

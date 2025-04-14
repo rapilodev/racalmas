@@ -31,35 +31,32 @@ use time();
 binmode STDOUT, ":utf8";
 
 my $r = shift;
-uac::init($r, \&check_params, \&main, {upload => {limit => 700_000_000}});
+print uac::init($r, \&check_params, \&main, {upload => {limit => 700_000_000}});
 
 sub main {
     my ($config, $session, $params, $user_presets, $request, $fh) = @_;
 
     $params = $request->{params}->{checked};
     uac::check($config, $params, $user_presets);
-    my $permissions = $request->{permissions};
 
     if ($params->{action} eq 'show') {
-        my $headerParams
-            = uac::set_template_permissions($request->{permissions}, $params);
+        my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
         $headerParams->{loc} = localization::get($config,
             {user => $session->{user}, file => 'menu.po'});
-        my $out
-            = template::process($config,
+        my $out = template::process($config,
                 template::check($config, 'default.html'),
                 $headerParams);
-        $out
-            .= template::process($config,
+        $out .= template::process($config,
                 template::check($config, 'audio-recordings-header.html'),
                 $headerParams)
             unless params::is_json;
-        show_audio_recording($config, $request);
+        $params = show_audio_recording($config, $request);
         print STDERR "$0 ERROR: " . $params->{error} . "\n"
             if $params->{error} ne '';
         $params->{loc} = localization::get($config,
             {user => $params->{presets}->{user}, file => 'audio-recordings.po'});
         $out .= template::process($config, $params->{template}, $params);
+        print STDERR "$0 ERROR2: " . $params->{action} . "\n$out";
         return $out;
 
     } elsif ($params->{action} eq 'upload') {
@@ -228,7 +225,7 @@ sub show_audio_recording {
     my $start    = time::datetime_to_utc($event->{start}, $timeZone);
     my $end      = time::datetime_to_utc($event->{end}, $timeZone);
     if ($now > $end) {
-        uac::print_error("upload is expired due to the show is over");
+        #AppError->throw("upload is expired due to the show is over");
         $params->{isOver} = 1;
     }
     my $days = 24 * 60 * 60;
@@ -236,6 +233,7 @@ sub show_audio_recording {
 
     $params->{event}            = $event;
     $params->{audio_recordings} = $audioRecordings;
+    return $params;
 }
 
 sub get_duration {

@@ -54,9 +54,6 @@ function showComments(elemId){
     }else{
         element.slideDown();
     }
-
-    //console.log("autosize");
-    $("#comments textarea").autosize();
 }
 
 function hideComments(elemId){

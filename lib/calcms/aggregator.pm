@@ -98,10 +98,7 @@ sub get_calendar($$$) {
     push @$options, 'till_date=' . $params->{till_date} if $params->{till_date} ne '';
     $ENV{QUERY_STRING} = '' . join("&", @$options);
 
-    my $content = '';
-    calendar::get_cached_or_render($content, $config, $request);
-
-    return { content => $content };
+    return { content => calendar::get_cached_or_render($config, $request) };
 }
 
 sub get_newest_comments($$) {

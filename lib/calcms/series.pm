@@ -633,7 +633,12 @@ sub get_event_age($$) {
         $conditions = join(' and ', @conditions);
     }
     my $query = qq{
-        select s.id series_id, s.series_name, s.title, s.has_single_events has_single_events, (to_days(now())-to_days(max(e.start))) days_over
+        select 
+        s.id series_id, 
+        s.series_name, 
+        s.title, 
+        s.has_single_events has_single_events, (to_days(now())-to_days(max(e.start))) days_over,
+        s.image
         from      calcms_project_series ps
         left join calcms_series s         on ps.series_id=s.id
         left join calcms_series_events se on s.id=se.series_id

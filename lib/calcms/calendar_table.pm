@@ -786,10 +786,8 @@ sub getTableBody {
     my $project_id = $params->{project_id};
     my $studio_id  = $params->{studio_id};
 
+    ParamError->throw(error=>"no dates found at the selected time span") if scalar(@{$days}) == 0;
     my $out;
-    if (scalar(@{$days}) == 0) {
-        $out .= uac::print_error("no dates found at the selected time span");
-    }
 
     $out = q{
         <div id="calendar" style="display:none">

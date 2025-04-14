@@ -12,16 +12,14 @@ Access-Control-Allow-Origin: <TMPL_VAR base_domain>
     <TMPL_INCLUDE header-head.html>
 </head>
 <body>
-<center>
-    <TMPL_IF action_result>
-        <br/> <br/> <br/>
-        <div class="ok head"><TMPL_VAR action_result></div>
-    </TMPL_IF>
-    <TMPL_IF error>
-        <br/> <br/> <br/>
-        <div class="error head"><TMPL_VAR error></div>
-    </TMPL_IF>
-    <TMPL_IF subheader>
-        <div><TMPL_VAR subheader></div>
-    </TMPL_IF>
-
+<TMPL_IF action_result>
+    <br/> <br/> <br/>
+    <div class="ok head"><TMPL_VAR action_result></div>
+</TMPL_IF>
+<TMPL_IF error>
+    <br/> <br/> <br/>
+    <div class="error head"><TMPL_VAR error></div>
+</TMPL_IF>
+<TMPL_IF subheader>
+    <div><TMPL_VAR subheader></div>
+</TMPL_IF>
