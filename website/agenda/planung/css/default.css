@@ -349,7 +349,6 @@ label,
 div.formField div.label {
   padding-left: var(--space-md);
   color: var(--body-color);
-  opacity:0.5;
 }
 
 #content div.panel-header{
@@ -460,7 +459,11 @@ td.label { vertical-align: top; }
 /* Form Elements */
 button,
 select,
-input { padding: var(--space-sm) 0; }
+input {
+    padding: var(--space-sm) 0; 
+    border: 0;
+    min-width: fit-content;
+}
 
 #content div.flex {
   display: flex;
@@ -534,9 +537,6 @@ div#tabs > div { background: var(--panel-bg); }
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
-
-/* Editor */
-#content .editor input.datetimepicker { padding: 0; }
 
 /* Dialog */
 #dialog {
@@ -625,7 +625,6 @@ button.selectImage img { width: 32px; height: 32px; }
 
 /* Inputs & Textareas */
 input {
-  border: none;
   border-bottom: 1px solid var(--border-color);
   color: var(--color-body);
   background: var(--panel-bg);
@@ -640,11 +639,11 @@ textarea {
   color: var(--color-body);
   background: var(--panel-bg);
   padding: var(--space-sm);
-  border: 0;
   box-sizing: border-box;
   font-weight: normal;
   border-bottom: 1px solid var(--border-color);
   resize: vertical;
+  overflow: hidden;
 }
 textarea:hover,
 textarea:focus { border-bottom: 1px solid var(--accent-border); }
@@ -673,36 +672,64 @@ div.formField input { clear: both; }
     opacity : 0.9;
 }
 
+input.datetimepicker {
+    width:5rem !important;
+    
+}
+
+div.horizon {
+    display:flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 1rem;
+}
+
+div.form-group,
+.editor {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
 /* floating label*/
+div.editor {
+    div.has-label,
+    div:has(label) {
+        position: relative;
+    }
 
-div {
-  position: relative;
-}
+    label {
+        padding:0;
+        margin:0;
+        border:0;
+        position: absolute;
+        left: 1em;
+        top: 1em;
+        color: #555;
+        font-size: 1rem;
+        pointer-events: none;
+        background: inherit;
+        z-index: 10;
+        transition: 0.2s ease;
+    }
 
-label {
-  position: absolute;
-  top: 1rem;
-  left: 0.75rem;
-  color: #888;
-  font-size: 1rem;
-  pointer-events: none;
-  padding: 0 0.25rem;
-  transition: 0.2s ease;
-}
+    div:has(input[type="text"]:focus) label,
+    div:has(input[type="text"]:not(:placeholder-shown)) label,
+    div:has(input:not([type]):focus) label,
+    div:has(input:not([type]):not(:placeholder-shown)) label,
+    div:has(textarea:focus) label,
+    div:has(textarea:not(:placeholder-shown)) label,
+    div:has(select:focus) label,
+    div:has(select:not(:placeholder-shown)) label{
+        top: -0.5em;
+        color: #555;
+        font-size:0.9rem;
+    }
 
-input[type="text"] {
-  padding: 1rem;
-  font-size: 1rem;
-}
-
-div:has(input[type="text"]:focus),
-div:has(input[type="text"]:not(:placeholder-shown)) {
-}
-
-div:has(input[type="text"]:focus) label,
-div:has(input[type="text"]:not(:placeholder-shown)) label {
-  top: -0.5rem;
-  left: 0.5rem;
-  font-size: 0.8rem;
-  color: #000;
+    input[type="text"], input:not([type]), textarea, select {
+        padding: 1em 0.5em 1em 0.5em;
+        border: 1px solid #ccc;
+        border-radius:0.5em;
+        background: #f9f9f9;
+    }
 }
