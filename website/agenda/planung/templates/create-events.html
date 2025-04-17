@@ -14,26 +14,23 @@ $(document).ready(function() {
 var series_id=0;
 </script>
 <h1><TMPL_VAR loc.title></h1>
-<div class="panel">
 <form id="create_event_form" method="post">
+<div class="panel editor">
     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
     <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
     <input type="hidden" id="select_series_id" name="series_id" value="<TMPL_VAR .series_id>">
 
-    <table><tr>
-    <td class="label"><TMPL_VAR loc.create_till></td>
-    <td>
-    <select name="duration">
-        <option value="1" <TMPL_VAR duration1>><TMPL_VAR loc.today></option>
-        <option value="7" <TMPL_VAR duration7>><TMPL_VAR loc.1week></option>
-        <option value="14" <TMPL_VAR duration14>><TMPL_VAR loc.2week></option>
-        <option value="21" <TMPL_VAR duration21>><TMPL_VAR loc.3week></option>
-        <option value="28" <TMPL_VAR duration28>><TMPL_VAR loc.4week></option>
-        <option value="56" <TMPL_VAR duration56>><TMPL_VAR loc.8week></option>
-    </select>
-    </td>
-    </tr>
-    </table>
+    <div>
+        <label><TMPL_VAR loc.create_till></label>
+        <select name="duration">
+            <option value="1" <TMPL_VAR duration1>><TMPL_VAR loc.today></option>
+            <option value="7" <TMPL_VAR duration7>><TMPL_VAR loc.1week></option>
+            <option value="14" <TMPL_VAR duration14>><TMPL_VAR loc.2week></option>
+            <option value="21" <TMPL_VAR duration21>><TMPL_VAR loc.3week></option>
+            <option value="28" <TMPL_VAR duration28>><TMPL_VAR loc.4week></option>
+            <option value="56" <TMPL_VAR duration56>><TMPL_VAR loc.8week></option>
+        </select>
+    </div>
 
     <div id="seriesContainer"></div>
     <div id="stats"></div>

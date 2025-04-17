@@ -626,44 +626,28 @@ function getInputWidth(input) {
     const style = window.getComputedStyle(input);
     ctx.font = `${style.fontSize} ${style.fontFamily}`;
     const metrics = ctx.measureText(text);
-    return metrics.width + 16 + "px";
+    return metrics.width + "px";
 }
 
 function setInputAutoWidth() {
     document.querySelectorAll("input").forEach(input => {
+        //console.log(input.type)
+        if (input.type=="checkbox")return;
         input.style.width = getInputWidth(input);
     });
     document.body.addEventListener("input", function(e) {
         if (e.target.tagName.toLowerCase() === "input") {
-            e.target.style.width = getInputWidth(e.target);
+            const input = e.target;
+            console.log(input)
+            if (input.type=="checkbox")return;
+            input.style.width = getInputWidth(input);
         }
     });
 }
 
-/*
-function getTextareaHeight(textarea) {
-    const style = window.getComputedStyle(textarea);
-    const mirror = document.createElement("div");
-    mirror.style.position = "absolute";
-    mirror.style.visibility = "hidden";
-    mirror.style.whiteSpace = "pre-wrap";
-    mirror.style.wordWrap = "break-word";
-    mirror.style.boxSizing = style.boxSizing;
-    mirror.style.width = textarea.offsetWidth + "px";
-    mirror.style.font = style.font;
-    mirror.style.padding = style.padding;
-    mirror.style.border = style.border;
-    mirror.style.lineHeight = style.lineHeight;
-    mirror.textContent = textarea.value || textarea.placeholder || " ";
-    document.body.appendChild(mirror);
-    const height = mirror.scrollHeight + "px";
-    mirror.remove();
-    return height;
-}
-*/
 function getTextareaHeight(textarea) {
     textarea.style.height = "auto";
-    return textarea.scrollHeight + "px";
+    return textarea.scrollHeight + 6 + "px";
 }
 
 function setTextareaAutoHeight() {
@@ -704,5 +688,4 @@ $(document).ready(async function() {
     document.title = title
     setInputAutoWidth();
     setTextareaAutoHeight();
-
 });

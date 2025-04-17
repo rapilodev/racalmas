@@ -62,46 +62,92 @@
         <div style="float:left;font-weight:bold;"><TMPL_VAR name></div>
         <button onclick="edit_user('<TMPL_VAR id escape=js>')">edit</button>
     </div>
-    <div id="view_<TMPL_VAR id escape=js>" class="view">
-        <div class="label">name</div>         <div><TMPL_VAR name> &nbsp;</div>
-        <div class="label">full name</div>     <div><TMPL_VAR full_name> &nbsp;</div>
-        <div class="label">password</div>     <div><TMPL_VAR password> &nbsp;</div>
-        <div class="label">email</div>         <div><TMPL_VAR email> &nbsp;</div>
-        <div class="label">roles</div>         <div><TMPL_LOOP roles><TMPL_VAR name> </TMPL_LOOP> &nbsp;</div>
+    <div id="view_<TMPL_VAR id escape=js>" class="view editor" >
+        <div>
+            <label>name</label>
+            <div><TMPL_VAR name> &nbsp;</div>
+        </div>
+        <div>
+            <label>full name</label>
+            <div><TMPL_VAR full_name> &nbsp;</div>
+        </div>
+        <div>
+            <label>password</label>
+            <div><TMPL_VAR password> &nbsp;</div>
+        </div>
+        <div>
+            <label>email</label>
+            <div><TMPL_VAR email> &nbsp;</div>
+        </div>
+        <div>
+            <label>roles</label>
+            <div><TMPL_LOOP roles><TMPL_VAR name> </TMPL_LOOP> &nbsp;</div>
+        </div>
     </div>
+
+    <form method="post">
     <div id="edit_<TMPL_VAR id>" class="editor"  style="display:none">
-        <form method="post">
-        <div class="label">name</div>         <div><input name="name" value="<TMPL_VAR name>"></div>
-        <div class="label">full name</div>     <div><input name="full_name" value="<TMPL_VAR full_name>"></div>
-        <div class="label">password</div>     <div><input type="password" name="password"></div>
-        <div class="label">password</div>     <div><input type="password" name="password2"></div>
-        <div class="label">email</div>         <div><input name="email" value="<TMPL_VAR email>"></div>
+        <div>
+            <label>name</label>
+            <div><input name="name" value="<TMPL_VAR name>"></div>
+        </div>
+        <div>
+            <label>full name</label>
+            <div><input name="full_name" value="<TMPL_VAR full_name>"></div>
+        </div>
+        <div>
+            <label>password</label>
+            <div><input type="password" name="password"></div>
+        </div>
+        <div>
+            <label>password</dlabeliv>
+            <div><input type="password" name="password2"></div>
+        </div>
+        <div>
+            <label>email</label>
+            <div><input name="email" value="<TMPL_VAR email>"></div>
+        </div>
         <div class="buttons">
             <button onclick="cancel_edit_user('<TMPL_VAR id escape=js>');return false;">cancel</button>
             <input type=submit name="action" value="save">
             <div class="right"><input type=submit name="action" value="delete"></div>
             <input type="hidden" name="id" value="<TMPL_VAR id>">
         </div>
-        </form>
     </div>
+    </form>
 </div>
 </TMPL_LOOP>
 
 <div style="clear:both" class="newuser">
     <button onclick="add_user('<TMPL_VAR name escape=js>')">add user</button>
+    <form method="post">
     <div id="edit_new" class="user editor" style="display:none">
-        <form method="post">
-        <div class="label">name</div>         <div><input name="name" value="<TMPL_VAR name>"></div>
-        <div class="label">full name</div>     <div><input name="full_name" value="<TMPL_VAR full_name>"></div>
-        <div class="label">password</div>     <div><input type="password" name="password"></div>
-        <div class="label">password</div>     <div><input type="password" name="password2"></div>
-        <div class="label">email</div>         <div><input name="email" value="<TMPL_VAR email>"></div>
+        <div>
+            <label>name</label>
+            <div><input name="name" value="<TMPL_VAR name>"></div>
+        </div>
+        <div>
+            <label>full name</label>
+            <div><input name="full_name" value="<TMPL_VAR full_name>"></div>
+        </div>
+        <div>
+            <label>password</label>
+            <div><input type="password" name="password"></div>
+        </div>
+        <div>
+            <label>password</label>
+            <div><input type="password" name="password2"></div>
+        </div>
+        <div>
+            <label>email</label>
+            <div><input name="email" value="<TMPL_VAR email>"></div>
+        </div>
         <div class="buttons">
             <button onclick="cancel_edit_user('new');return false;">cancel</button>
             <input type=submit name="action" value="save">
         </div>
-        </form>
     </div>
+    </form>
 </div>
 
 </body>

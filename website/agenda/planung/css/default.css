@@ -154,6 +154,7 @@ body #content {
   margin: var(--space-xxl) auto 0;
 }
 
+
 h1 { font-size: 3rem; }
 h2 { font-size: 2rem; }
 
@@ -408,6 +409,7 @@ td.label { vertical-align: top; }
   border: 0;
   padding: var(--space-md) 0;
   color: var(--color-body);
+  white-space: pre-wrap;
 }
 
 /* Messages */
@@ -692,7 +694,7 @@ div.form-group,
 }
 
 /* floating label*/
-div.editor {
+div.editor2 {
     div.has-label,
     div:has(label) {
         position: relative;
@@ -732,4 +734,273 @@ div.editor {
         border-radius:0.5em;
         background: #f9f9f9;
     }
+}
+
+div.editor3 {
+    div:has(label + *) {
+        position: relative;
+    }
+
+    label {
+        padding: 0 0.25em;
+        margin: 0;
+        border: 0;
+        position: absolute;
+        left: 0.5em;
+        top: 1em;
+        color: #555;
+        font-size: 1rem;
+        pointer-events: none;
+        background: inherit;
+        z-index: 1;
+        transition: top 0.2s ease, font-size 0.2s ease, color 0.2s ease;
+    }
+
+    div:has(label + :focus) label,
+    div:has(label + :not(:placeholder-shown)) label {
+        top: -0.5em;
+        color: #337ab7;
+        font-size: 0.85rem;
+        z-index: 2;
+    }
+
+    div:has(label + *) > label + * {
+        display: block;
+        width: 100%;
+        padding: 1.2em 0.5em 0.8em 0.5em;
+        border: 1px solid #ccc;
+        border-radius: 0.3em;
+        background: #f9f9f9;
+        font-size: 1rem;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 0;
+    }
+
+    div:has(label + *) > label + *:is(input, textarea, select) {
+        line-height: 1.5;
+    }
+
+    div:has(label + *) > label + *:is(div) {
+        min-height: 3em;
+        cursor: text;
+    }
+ 
+    div:has(label + input[type="checkbox"]) label {
+        position: static;
+        padding: 0 0.5em 0 0;
+        font-size: 1rem;
+        color: #333;
+        display: inline-block;
+        background: none;
+        top: auto;
+        left: auto;
+        transition: none;
+    }
+
+    div:has(label + input[type="checkbox"]) > label + input[type="checkbox"] {
+        position: static;
+        width: auto;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 0.5em;
+        padding: 0;
+        border: none;
+        background: none;
+    }
+
+    div:has(label + input[type="checkbox"]) {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+}
+
+
+div.editor4 {
+  div:has(label ~ *:not(input[type="hidden"])) {
+    position: relative;
+  }
+
+  label {
+    padding: 0 0.25em;
+    margin: 0;
+    border: 0;
+    position: absolute;
+    left: 0.5em;
+    top: 1em;
+    color: #555;
+    font-size: 1rem;
+    pointer-events: none;
+    background: inherit;
+    z-index: 1;
+    transition: top 0.2s ease, font-size 0.2s ease, color 0.2s ease;
+  }
+
+  div:has(label ~ *:not(input[type="hidden"]):is(:focus, :not(:placeholder-shown))) label {
+    top: -0.5em;
+    color: #337ab7;
+    font-size: 0.85rem;
+    z-index: 2;
+  }
+
+  div:has(label ~ *:not(input[type="hidden"])) > label ~ *:not(input[type="hidden"]) {
+    display: block;
+    width: 100%;
+    padding: 1.2em 0.5em 0.8em 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 0.3em;
+    background: #f9f9f9;
+    font-size: 1rem;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 0;
+  }
+
+  div:has(label ~ *:not(input[type="hidden"])) > label ~ *:not(input[type="hidden"]):is(input, textarea, select) {
+      line-height: 1.5;
+  }
+
+  div:has(label ~ *:not(input[type="hidden"])) > label ~ *:not(input[type="hidden"]):is(div) {
+      min-height: 3em;
+      cursor: text;
+  }
+
+  div:has(label ~ input[type="checkbox"]) {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      position: static;
+  }
+
+  div:has(label ~ input[type="checkbox"]) label {
+      position: static;
+      padding: 0;
+      font-size: 1rem;
+      color: #333;
+      pointer-events: auto;
+      background: none;
+      z-index: auto;
+      transition: none;
+      order: 1;
+  }
+
+  div:has(label ~ input[type="checkbox"]) > label ~ input[type="checkbox"] {
+      position: static;
+      width: auto;
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: none;
+      z-index: auto;
+      order: 0;
+  }
+}
+
+
+div.editor {
+  --label-color: #555;
+  --label-color-focus: #337ab7;
+  --label-font-size: 1rem;
+  --label-font-size-float: 0.85rem;
+  --input-padding-v: 0.8em;
+  --input-padding-h: 0.5em;
+  --input-border-color: #ccc;
+  --input-bg-color: #f9f9f9;
+  --input-font-size: 1rem;
+  --transition-speed: 0.2s;
+  --label-top-static: 1em;
+  --label-top-float: -0.5em;
+  --input-padding-top: calc(var(--input-padding-v) + var(--label-font-size) * 0.7);
+
+  div:has(label ~ *:not(input[type="hidden"])) {
+    position: relative;
+  }
+
+  label {
+    padding: 0 0.25em;
+    margin: 0;
+    border: 0;
+    position: absolute;
+    left: var(--input-padding-h);
+    top: var(--label-top-static);
+    color: var(--label-color);
+    font-size: var(--label-font-size);
+    pointer-events: none;
+    background: var(--input-bg-color); /* Match input background */
+    z-index: 1;
+    transition: top var(--transition-speed) ease,
+                font-size var(--transition-speed) ease,
+                color var(--transition-speed) ease;
+  }
+
+  div:has(label ~ *:not(input[type="hidden"]):is(:focus, :not(:placeholder-shown))) label {
+    top: var(--label-top-float);
+    color: var(--label-color-focus);
+    font-size: var(--label-font-size-float);
+    z-index: 2;
+  }
+
+  div:has(label ~ *:not(input[type="hidden"])) > label ~ *:not(input[type="hidden"]) {
+    display: block;
+    width: 100%;
+    padding: var(--input-padding-top) var(--input-padding-h) var(--input-padding-v) var(--input-padding-h);
+    border: 1px solid var(--input-border-color);
+    border-radius: 0.3em;
+    background: var(--input-bg-color);
+    font-size: var(--input-font-size);
+    box-sizing: border-box;
+    position: relative;
+    z-index: 0;
+  }
+
+  div:has(label ~ *:not(input[type="hidden"])) > label ~ *:not(input[type="hidden"]):is(input, textarea, select) {
+      line-height: 1.5;
+  }
+
+  div:has(label ~ *:not(input[type="hidden"])) > label ~ *:not(input[type="hidden"]):is(div) {
+      min-height: calc(var(--input-padding-top) + var(--input-padding-v) + var(--input-font-size) * 1.5);
+      cursor: text;
+  }
+
+  div:has(label ~ input[type="checkbox"]) {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      position: static;
+      padding: 0;
+      border: none;
+      background: none;
+  }
+
+  div:has(label ~ input[type="checkbox"]) label {
+      position: static;
+      padding: 0;
+      font-size: var(--label-font-size);
+      color: #333;
+      pointer-events: auto;
+      background: none;
+      z-index: auto;
+      transition: none;
+      order: 1;
+      top: auto;
+      left: auto;
+  }
+
+  div:has(label ~ input[type="checkbox"]) > label ~ input[type="checkbox"] {
+      position: static;
+      width: auto;
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: none;
+      z-index: auto;
+      order: 0; /* Checkbox before label */
+       font-size: initial; /* Reset font size if needed */
+       line-height: initial; /* Reset line height if needed */
+  }
 }

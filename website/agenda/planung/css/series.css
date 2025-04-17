@@ -1,28 +1,7 @@
-/* events.css */
+/* series.css */
 
-/* Ensure content container fills available vertical space */
 #content {
     min-height: 100%;
-}
-
-/* Remove padding from tables with class "td" */
-#content table.td {
-    padding: 0;
-}
-
-/* Editor label cells: use variable spacing and consistent color */
-#content .editor td.label {
-    max-width: min-content;
-    padding-top: var(--space-sm);
-}
-#content .editor span.label {
-    width: 6rem;
-    color: var(--label-color, #555);
-}
-
-/* Series table rounded corners */
-#content table.series {
-    border-radius: 1rem;
 }
 
 /* Series header styling */
@@ -34,21 +13,6 @@
 /* Clear floats for headers */
 #content div.header {
     clear: both;
-}
-
-/* Align elements to the right */
-#content .right {
-    float: right;
-}
-
-/* Editor container: use default panel background so that it adapts to light/dark */
-#content .editor {
-    padding: var(--space-sm);
-    clear: both;
-    background: var(--panel-bg);
-}
-#content .editor td {
-    padding: 0;
 }
 
 /* Center buttons inside editor */
@@ -67,32 +31,6 @@
     height: 24px;
 }
 
-/* Set fixed dimensions for textareas */
-#content textarea {
-    width: 600px;
-    height: 100px;
-}
-
-/* Series table borders & inner table widths */
-#content table.series {
-    border: 1px solid var(--border-color, #ddd);
-}
-#content table.series table {
-    width: 100%;
-}
-
-/* Alternate row background in series table */
-#content table.series tr:nth-child(4n+1) {
-    background-color: var(--series-row-bg, #eee);
-}
-#content table.series tr.active td {
-    background-color: var(--series-active-bg, #aaa);
-}
-
-/* Series table column widths and cell padding */
-#content .series table td:nth-child(1) {
-    width: 10rem;
-}
 #content .series table td {
     padding: var(--space-sm);
 }
@@ -140,70 +78,11 @@
 #content div.cell.weekday {
     margin-left: 0;
 }
-#content div.cell.containsInput,
-#content div.cell.containsSelect {
-    margin-right: var(--space-md);
-}
 
-/* Specific cell widths for schedule layout */
-#content div.cell.exclude,
-#content div.cell.nextDay {
-    width: 2ch;
-}
 #content div.cell.weekday,
 #content div.cell.weekday input,
 #content div.cell.weekday select {
     width: 2.5ch;
-    padding-top: 1.6rem;  /* Consider defining a variable if needed */
-}
-#content div.cell.start,
-#content div.cell.start input,
-#content div.cell.start select,
-#content div.cell.duration,
-#content div.cell.duration input,
-#content div.cell.duration select,
-#content div.cell.period_type,
-#content div.cell.period_type input,
-#content div.cell.period_type select,
-#content div.cell.period_type.isSingle,
-#content div.cell.period_type select.isSingle,
-#content div.cell.end,
-#content div.cell.end input,
-#content div.cell.end select,
-#content div.cell.frequency,
-#content div.cell.frequency input,
-#content div.cell.frequency select {
-    width: 14ch;
-}
-#content div.cell.week_of_month,
-#content div.cell.week_of_month input,
-#content div.cell.week_of_month select {
-    width: 7ch;
-}
-#content div.cell.schedule_weekday,
-#content div.cell.schedule_weekday input,
-#content div.cell.schedule_weekday select {
-    width: 2.5ch;
-}
-#content div.cell.schedule_month,
-#content div.cell.schedule_month input,
-#content div.cell.schedule_month select {
-    width: 7ch;
-}
-#content div.cell.frequency button {
-    width: 10ch;
-}
-
-/* Remove padding/margin for delete cells */
-#content div.cell.delete,
-#content div.cell.delete button {
-    margin-right: 0;
-}
-
-/* Event creation/publish button sizes */
-#content .create_events,
-#content .publish_events {
-    width: 5rem;
 }
 
 /* Schedule display container */
@@ -211,18 +90,6 @@
     overflow: auto;
     height: 20rem;
     clear: both;
-}
-#content div.show_schedule table {
-    width: 24rem;
-}
-#content div.show_schedule td {
-    width: 10rem;
-}
-#content div.show_schedule td:nth-child(1) {
-    width: 2rem;
-}
-#content div.show_schedule tr.exclude td {
-    text-decoration: line-through;
 }
 
 /* Margin adjustment for excluded inputs */

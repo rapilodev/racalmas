@@ -1,18 +1,8 @@
-/* events.css */
-
-/* Preformatted text should wrap */
-pre {
-    white-space: pre-wrap;
-}
 
 body #content {
     display: flex;
     flex-direction: col;
     max-width: 1280px !important;
-}
-
-#buttons {
-    width: fit-content;
 }
 
 div.editor {

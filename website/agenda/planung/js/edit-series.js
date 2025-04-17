@@ -149,28 +149,6 @@ function addSelectChangeHandler(selector, name, title) {
     );
 }
 
-// print selected weekday before datetime picker
-function updateWeekdays() {
-    $('.schedule input.datetimepicker.start').each(
-        function() {
-            var weekday = getWeekday(parseDateTime($(this).val()));
-            if (weekday == null) weekday = '';
-            if (weekday == 'undefined,') weekday = '';
-            $(this).parent().prev().html(weekday);
-        }
-    );
-
-    $('#tabs-events td.date').each(
-        function() {
-            var weekday = getWeekday(parseDateTime($(this).text()));
-            //console.log(weekday)
-            if (weekday == null) weekday = '';
-            if (weekday == 'undefined,') weekday = '';
-            $(this).prev().html(weekday);
-        }
-    );
-}
-
 // change create schedule button name (add/remove)
 function updateScheduleButtonName() {
     var buttonChecked = $('#schedule_add input[name="exclude"]');
@@ -465,14 +443,9 @@ $(document).ready(
     function() {
         loadLocalization();
         addBackButton();
-        updateWeekdays();
 
-        showDateTimePicker('input.datetimepicker.start', {
-            onSelect: function() { updateWeekdays(); }
-        });
-        showDatePicker('input.datetimepicker.end', {
-            onSelect: function() { updateWeekdays(); }
-        });
+        showDateTimePicker('input.datetimepicker.start')
+        showDatePicker('input.datetimepicker.end');
 
         initCheckBoxes();
         addCheckBoxHandler();

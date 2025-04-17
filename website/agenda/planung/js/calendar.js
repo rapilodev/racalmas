@@ -412,7 +412,7 @@ function show_schedule_series_dialog(project_id, studio_id, series_id, start_dat
 }
 
 function setDatePicker(){
-    var datePicker=showDatePicker('#selectDate', {
+    var datePicker = showDatePicker('#selectDate', {
         wrap:true,
         onSelect : function(dates, inst) {
             var date = dates[0];

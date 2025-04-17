@@ -60,9 +60,9 @@ div#oldSeries {
 
 div#newSeries, div#oldSeries {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
-    grid-template-rows: repeat(auto-fill, minmax(9rem, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, 20ch);
+    grid-template-rows: repeat(auto-fill, 20ch);
+    align-items: first basline;
 }
 
 div#newSeries a, div#oldSeries a {
@@ -74,7 +74,7 @@ div#newSeries a, div#oldSeries a {
     height: 150px;
     width: 150px;
     padding: 0;
-    color: var(--button-text);
+    color: var(--button-bg);
     cursor: pointer;
     text-decoration: none;
     overflow: hidden;
@@ -87,22 +87,17 @@ div#newSeries a::before, div#oldSeries a::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.0);
-    backdrop-filter: grayscale(0.2);
     z-index: 1;
 }
 
 div#newSeries a span, div#oldSeries a span {
     position: relative;
     z-index: 2;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
     height: 100%;
     padding: 0.5rem;
     width: 100%;
     border-radius: 0;
     font-weight: 600;
-    color: #fff;
 }
 
 div#newSeries a:hover, div#oldSeries a:hover {

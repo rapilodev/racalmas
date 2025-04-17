@@ -15,15 +15,6 @@ function setSelectedOptions(){
     );
 }
 
-function updateWeekdays(){
-    $('.schedule input.datetimepicker').each(
-        function(){
-            var weekday=getWeekday(parseDateTime($(this).val()));
-            $(this).parent().prev().html(weekday);
-        }
-    );
-}
-
 function showDates(){
     var date=$('#show_date select').val();
 
@@ -96,10 +87,8 @@ $(document).ready(
     function(){
     loadLocalization();
     addBackButton();
-    updateWeekdays();
 
     setTabs('#tabs');
-
     initTextWidth();
 
     setTextWidth('.datetimepicker.start',     130);
@@ -108,15 +97,9 @@ $(document).ready(
     setTextWidth('.datetimepicker.weekday',   20);
     setTextWidth('.datetimepicker.frequency', 20);
 
-    showDateTimePicker('.datetimepicker.start', {
-        onSelect: function(){updateWeekdays();}
-    });
-    showDateTimePicker('.datetimepicker.end', {
-        onSelect: function(){updateWeekdays();}
-    });
-    showDatePicker('.datetimepicker.end_date', {
-        onSelect: function(){updateWeekdays();}
-    });
+    showDateTimePicker('.datetimepicker.start');
+    showDateTimePicker('.datetimepicker.end');
+    showDatePicker('.datetimepicker.end_date');
 
     initScheduleFields();
     setSelectedOptions();

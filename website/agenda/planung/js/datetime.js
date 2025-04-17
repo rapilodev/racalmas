@@ -1,10 +1,15 @@
 "use strict";
 
 function showDateTimePicker(selector, options){
+    
     var defaults = {
         locale: { firstDayOfWeek: 1 },
         enableTime: true,
-        time_24hr: true
+        time_24hr: true,
+        dateFormat: "Y-m-d H:i:S",
+        altInput: true,
+        altFormat: "D, j.m.Y H:i",
+        locale: "de", // German
     }
     if (options){
         if (options["onSelect"]) defaults["onChange"] = options["onSelect"];
@@ -17,6 +22,9 @@ function showDateTimePicker(selector, options){
 function showDatePicker(selector, options){
     var defaults = {
         locale: { firstDayOfWeek: 1 },
+        altInput: true,
+        altFormat: "D, j.m.Y",
+        locale: "de", // German
     }
     if (options){
         if (options["onSelect"]) defaults["onChange"] = options["onSelect"];
@@ -135,5 +143,3 @@ function getWeekday(date){
 
     return weekdays[(date.getDay()-1+7)%7]+','
 }
-
-
