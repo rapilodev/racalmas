@@ -61,8 +61,8 @@ $(document).ready(
 <div class="warn head"><TMPL_VAR loc.label_edit_lock></div>
 </TMPL_IF>
 
-<!-- buttons -->
-<div class="buttons">
+<!-- sidebar -->
+<div class="sidebar">
     <TMPL_IF series_id>
         <TMPL_IF .allow.read_series>
         <button
@@ -94,7 +94,7 @@ $(document).ready(
     </TMPL_UNLESS>
 
     <TMPL_UNLESS new_event>
-    <div class="buttons">
+    <div class="sidebar">
         <TMPL_UNLESS show_new_event>
             <TMPL_IF .allow.read_event>
                 <button target="_blank" class="text"
@@ -109,7 +109,7 @@ $(document).ready(
     <TMPL_IF download>
         <div type="hidden" class="panel" name="event_id" ><TMPL_VAR download escape=none></div>
     </TMPL_IF>
-</div> <!--  buttons -->
+</div> <!--  sidebar -->
 
 <!-- edit -->
 <div class="panel">
@@ -175,10 +175,12 @@ $(document).ready(
 
     <!-- edit event time -->
     <!-- <TMPL_UNLESS new_event>style="display:none"</TMPL_UNLESS> -->
-    <div id="edit_time_<TMPL_VAR event_id>" class="edit_event form-group">
-        <div id="title" class="horizon editor">
+    <div id="edit_time_<TMPL_VAR event_id>" class="edit_event row">
+        <div id="title" class="row editor">
             <div>
-                <TMPL_IF has_single_events><TMPL_VAR .loc.single_event><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF>
+                <label><TMPL_VAR .loc.label_series></label>
+                <span>
+                <TMPL_IF has_single_events><TMPL_VAR .loc.single_event><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></span>
             </div>
 
             <div>
@@ -211,12 +213,13 @@ $(document).ready(
             </div>
 
             <div>
+                <label>&nbsp;</label>
                 <button class="text" onclick="copyEventToClipboard();return false;"><img src="image/dark/copy.svg"></button>
             </div>
         </div>
 
         <TMPL_IF .allow.update_event_time>
-        <div class="horizon editor">
+        <div class="row editor">
         <!-- event time edit -->
             <div>
                 <label><TMPL_VAR .loc.label_when></label>
@@ -238,7 +241,7 @@ $(document).ready(
             </div>
         </div>
         <TMPL_ELSE>
-        <div class="horizon editor">
+        <div class="row editor">
             <!-- event time read -->
             <TMPL_IF .allow.read_event>
                 <TMPL_UNLESS new_event></TMPL_UNLESS>
@@ -252,7 +255,7 @@ $(document).ready(
         </div>
         </TMPL_IF>
 
-        <div class="horizon editor">
+        <div class="row editor">
             <TMPL_IF .allow.update_event_status_live>
             <div>
                 <label><TMPL_VAR .loc.label_live></label>
@@ -362,7 +365,7 @@ $(document).ready(
         </div>
 
         <TMPL_IF .allow.read_image>
-        <div class="horizon">
+        <div class="row">
             <TMPL_IF .allow.update_event_field_image>
             <div>
                 <label><TMPL_VAR .loc.label_image></label>
@@ -430,10 +433,10 @@ $(document).ready(
 
 </div> <!-- Editor -->
 
-<!-- buttons -->
-<div class="buttons">
+<!-- sidebar -->
+<div class="sidebar">
 
-    <!-- header buttons -->
+    <!-- header sidebar -->
     <TMPL_UNLESS edit_lock>
         <TMPL_IF show_new_event_from_schedule>
             <TMPL_IF .allow.create_event_from_schedule>
@@ -514,7 +517,7 @@ $(document).ready(
         <label><TMPL_VAR .loc.label_modified_at> <TMPL_VAR modified_at> <TMPL_VAR .loc.label_modified_by> <TMPL_VAR modified_by>.</span>
     </TMPL_IF>
 
-</div> <!--  buttons -->
+</div> <!--  sidebar -->
 
 
 

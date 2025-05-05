@@ -74,6 +74,7 @@ function set_project(id) {
 function contains(s, t) {
     if (s == false) return false;
     if (t == false) return false;
+    if (s == null) return false;
     return s.indexOf(t) != -1;
 }
 
@@ -216,7 +217,7 @@ function fmtDatetime(dateString, options = {}) {
             day: 'numeric',
             hour: 'numeric',
             minute: 'numeric',
-            "12hour": false
+            "hour12": false
         };
         const language = Intl.NumberFormat().resolvedOptions().locale;
         return new Intl.DateTimeFormat(language, { ...defaultOptions, ...options }).format(date);
@@ -613,32 +614,37 @@ function getLocalization() {
 }
 
 async function loadLocalization(usecases) {
-    let json = await getJson(
-        "localization.cgi?usecase=" + ['all', getController(), usecases].join(",")
-    )
-    Object.assign(loc, json);
+    try {
+        const usecaseList = ['all', getController(), usecases].filter(Boolean).join(",");
+        const json = await getJson(`localization.cgi?usecase=${encodeURIComponent(usecaseList)}`);
+        Object.assign(loc, json);
+    } catch (error) {
+        console.error("Failed to load localization:", error);
+    }
 }
 
 function getInputWidth(input) {
-    const text = input.value || input.placeholder || "";
+    const labelText = [...input.parentNode.children]
+      .slice(0, [...input.parentNode.children].indexOf(input))
+      .reverse()
+      .find(e => e.tagName === 'LABEL')?.textContent.trim();
+    const text = [input.value, labelText].filter(Boolean).reduce((a, b) => a.length >= b.length ? a : b, "");
     const canvas = getInputWidth.canvas || (getInputWidth.canvas = document.createElement("canvas"));
     const ctx = canvas.getContext("2d");
     const style = window.getComputedStyle(input);
     ctx.font = `${style.fontSize} ${style.fontFamily}`;
-    const metrics = ctx.measureText(text);
-    return metrics.width + "px";
+    const metrics = ctx.measureText(text+"----");
+    return metrics.width +"px";
 }
 
 function setInputAutoWidth() {
     document.querySelectorAll("input").forEach(input => {
-        //console.log(input.type)
         if (input.type=="checkbox")return;
         input.style.width = getInputWidth(input);
     });
     document.body.addEventListener("input", function(e) {
         if (e.target.tagName.toLowerCase() === "input") {
             const input = e.target;
-            console.log(input)
             if (input.type=="checkbox")return;
             input.style.width = getInputWidth(input);
         }
@@ -647,7 +653,7 @@ function setInputAutoWidth() {
 
 function getTextareaHeight(textarea) {
     textarea.style.height = "auto";
-    return textarea.scrollHeight + 6 + "px";
+    return textarea.scrollHeight + 32 + "px";
 }
 
 function setTextareaAutoHeight() {
@@ -672,12 +678,9 @@ $(document).ready(async function() {
     });
 
     if (getController() == 'calendar') {
-        //use build-in localization
-        console.log("add back")
         addBackButton();
         return;
     } else {
-        //use javascript localization
         await loadLocalization();
         addBackButton();
     }

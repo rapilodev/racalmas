@@ -47,6 +47,7 @@
   --space-lg: 1.5rem;
   --space-xl: 2rem;
   --space-xxl: 3rem;
+  --gap: 1rem;
 }
 
 /* Dark Mode Overrides */
@@ -135,7 +136,11 @@ summary, time, mark, audio, video {
   vertical-align: baseline;
   border-radius: var(--space-md);
   box-sizing: border-box;
-  transition: all 0.5s linear;
+}
+
+* {
+      transition: all 0.5s linear;
+    
 }
 
 /* Global */
@@ -149,14 +154,13 @@ body {
 body #content {
   color: var(--color-body);
   text-align: left;
-  min-width: min-content;
-  max-width: 960px;
+  min-width: 960px;
   margin: var(--space-xxl) auto 0;
 }
 
 
 h1 { font-size: 3rem; }
-h2 { font-size: 2rem; }
+h2 { font-size: 2rem; margin-bottom:1rem;}
 
 div { transition: background-color 0.5s linear, z-index 2s linear; }
 
@@ -352,10 +356,6 @@ div.formField div.label {
   color: var(--body-color);
 }
 
-#content div.panel-header{
-  font-size: 1rem;
-}
-
 /* Panels & Cards */
 .panel {
   background: var(--panel-bg);
@@ -364,6 +364,12 @@ div.formField div.label {
   border: 1px solid var(--panel-border);
   border-radius: var(--space-md);
   position: relative;
+  flex-grow:1;
+}
+
+.panel:has(textarea) {
+  flex-grow:0;
+    
 }
 
 .panel,
@@ -378,6 +384,7 @@ div.formField div.label {
 }
 
 #content div.panel-header {
+  font-size: 1rem;
   font-weight: bold;
   clear: both;
   text-align: left;
@@ -461,10 +468,10 @@ td.label { vertical-align: top; }
 /* Form Elements */
 button,
 select,
-input {
+input:not([type="checkbox"]) {
     padding: var(--space-sm) 0; 
     border: 0;
-    min-width: fit-content;
+    min-width: 3rem;
 }
 
 #content div.flex {
@@ -481,7 +488,7 @@ input {
 }
 
 /* Table Hover */
-#content table.table tr:hover { background: #ebebeb; }
+#content table.table tr:hover { filter:brightness(95%); }
 #content div.card tr { border-bottom: none; }
 #content div.card tr:hover { background: none; }
 
@@ -494,7 +501,7 @@ input {
 #content table.table td {
   padding: var(--space-xs);
   text-align: left;
-  vertical-align: middle;
+  vertical-align: baseline;
 }
 
 /* Custom Select Option */
@@ -515,29 +522,24 @@ div#tabs > div { background: var(--panel-bg); }
 #content ul.tabContainer {
   background: none;
   display: block;
-  margin: 0 var(--space-md) calc(-1 * var(--space-md)) var(--space-md);
     li {
-      background: var(--panel-bg);
       display: inline-block;
       padding: var(--space-md);
       cursor: pointer;
-      border: 1px solid rgba(0,0,0,0.03);
-      box-shadow: 0 2px 2px rgba(0,0,0,0.24), 0 0 2px rgba(0,0,0,0.12);
       margin-bottom: var(--space-xs);
       margin-right: calc(-1 * var(--space-xs));
       border-radius: 0;
     }
     li:first-child { border-top-left-radius: var(--space-sm); }
     li:last-child { border-top-right-radius: var(--space-sm); }
-    li.active { background: #1678c2; }
-    li:hover { border-bottom-color: #1678c2; }
+    li.active { border-bottom: 1px solid var(--button-bg); }
+    li:hover { border-bottom: 1px solid var(--button-bg); font-weight:600;}
     li a:hover { text-decoration: none; }
-    li.active a,
-    li.active a:hover { color: var(--button-text); }
 }
-#content ul.tabContainer + div.panel {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+
+#content .page-title {
+    padding:1rem;
+    font-size:1.5rem;
 }
 
 /* Dialog */
@@ -557,7 +559,7 @@ div#tabs > div { background: var(--panel-bg); }
   align-items: center;
   justify-content: space-between;
   padding: var(--space-md);
-  gap: var(--space-md);
+  gap: var(--gap);
     #title { display: flex; align-items: center; }
     #buttons { display: flex; flex-direction: row; align-items: center; }
     img { padding: var(--space-md); }
@@ -573,6 +575,7 @@ div#tabs > div { background: var(--panel-bg); }
 /* Buttons & Inputs */
 button {
   font-size: 1rem;
+  width: fit-content;
 }
 
 input[type="submit"],
@@ -603,14 +606,17 @@ button:focus {
 
 button.primary {
   border: 1px solid #167ec2;
-  box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18), 0 4px 15px 0 rgba(0,0,0,0.15);
+  abox-shadow: 0 5px 11px 0 rgba(0,0,0,0.18), 0 4px 15px 0 rgba(0,0,0,0.15);
+}
+
+
+.sidebra button:not(.primary) {
+  min-width:10rem;
 }
 
 button:not(.primary) {
-  color: var(--button-bg);
-  border: 1px solid var(--button-bg);
-  background: var(--panel-body);
-  box-shadow: none
+  color: #000;
+  background: #ccc;
 }
 
 button[disabled] {
@@ -622,9 +628,9 @@ button.selectImage {
   float: left;
   min-width: 32px;
 }
-button.selectImage,
-button.selectImage img { width: 32px; height: 32px; }
-
+/*
+button.selectImage,button.selectImage img { width: 32px; height: 32px; }
+*/
 /* Inputs & Textareas */
 input {
   border-bottom: 1px solid var(--border-color);
@@ -638,6 +644,8 @@ input:focus { border-bottom: 1px solid var(--accent-border); }
 input.image { width: 28ch; }
 
 textarea {
+  width: 100%;
+  max-width:80ch;
   color: var(--color-body);
   background: var(--panel-bg);
   padding: var(--space-sm);
@@ -675,245 +683,42 @@ div.formField input { clear: both; }
 }
 
 input.datetimepicker {
-    width:5rem !important;
+    width:20ch !important;
     
 }
 
-div.horizon {
-    display:flex;
+div.row {
+    display: flex;
     flex-direction: row;
     align-items: baseline;
-    gap: 1rem;
+    flex-wrap:wrap;
+    gap: var(--gap);
+    
 }
 
 div.form-group,
 .editor {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--gap);
 }
 
 /* floating label*/
-div.editor2 {
-    div.has-label,
-    div:has(label) {
-        position: relative;
-    }
-
-    label {
-        padding:0;
-        margin:0;
-        border:0;
-        position: absolute;
-        left: 1em;
-        top: 1em;
-        color: #555;
-        font-size: 1rem;
-        pointer-events: none;
-        background: inherit;
-        z-index: 10;
-        transition: 0.2s ease;
-    }
-
-    div:has(input[type="text"]:focus) label,
-    div:has(input[type="text"]:not(:placeholder-shown)) label,
-    div:has(input:not([type]):focus) label,
-    div:has(input:not([type]):not(:placeholder-shown)) label,
-    div:has(textarea:focus) label,
-    div:has(textarea:not(:placeholder-shown)) label,
-    div:has(select:focus) label,
-    div:has(select:not(:placeholder-shown)) label{
-        top: -0.5em;
-        color: #555;
-        font-size:0.9rem;
-    }
-
-    input[type="text"], input:not([type]), textarea, select {
-        padding: 1em 0.5em 1em 0.5em;
-        border: 1px solid #ccc;
-        border-radius:0.5em;
-        background: #f9f9f9;
-    }
-}
-
-div.editor3 {
-    div:has(label + *) {
-        position: relative;
-    }
-
-    label {
-        padding: 0 0.25em;
-        margin: 0;
-        border: 0;
-        position: absolute;
-        left: 0.5em;
-        top: 1em;
-        color: #555;
-        font-size: 1rem;
-        pointer-events: none;
-        background: inherit;
-        z-index: 1;
-        transition: top 0.2s ease, font-size 0.2s ease, color 0.2s ease;
-    }
-
-    div:has(label + :focus) label,
-    div:has(label + :not(:placeholder-shown)) label {
-        top: -0.5em;
-        color: #337ab7;
-        font-size: 0.85rem;
-        z-index: 2;
-    }
-
-    div:has(label + *) > label + * {
-        display: block;
-        width: 100%;
-        padding: 1.2em 0.5em 0.8em 0.5em;
-        border: 1px solid #ccc;
-        border-radius: 0.3em;
-        background: #f9f9f9;
-        font-size: 1rem;
-        box-sizing: border-box;
-        position: relative;
-        z-index: 0;
-    }
-
-    div:has(label + *) > label + *:is(input, textarea, select) {
-        line-height: 1.5;
-    }
-
-    div:has(label + *) > label + *:is(div) {
-        min-height: 3em;
-        cursor: text;
-    }
- 
-    div:has(label + input[type="checkbox"]) label {
-        position: static;
-        padding: 0 0.5em 0 0;
-        font-size: 1rem;
-        color: #333;
-        display: inline-block;
-        background: none;
-        top: auto;
-        left: auto;
-        transition: none;
-    }
-
-    div:has(label + input[type="checkbox"]) > label + input[type="checkbox"] {
-        position: static;
-        width: auto;
-        display: inline-block;
-        vertical-align: middle;
-        margin-right: 0.5em;
-        padding: 0;
-        border: none;
-        background: none;
-    }
-
-    div:has(label + input[type="checkbox"]) {
-        display: flex;
-        align-items: center;
-        gap: 0.5em;
-    }
-}
-
-
-div.editor4 {
-  div:has(label ~ *:not(input[type="hidden"])) {
-    position: relative;
-  }
-
-  label {
-    padding: 0 0.25em;
-    margin: 0;
-    border: 0;
-    position: absolute;
-    left: 0.5em;
-    top: 1em;
-    color: #555;
-    font-size: 1rem;
-    pointer-events: none;
-    background: inherit;
-    z-index: 1;
-    transition: top 0.2s ease, font-size 0.2s ease, color 0.2s ease;
-  }
-
-  div:has(label ~ *:not(input[type="hidden"]):is(:focus, :not(:placeholder-shown))) label {
-    top: -0.5em;
-    color: #337ab7;
-    font-size: 0.85rem;
-    z-index: 2;
-  }
-
-  div:has(label ~ *:not(input[type="hidden"])) > label ~ *:not(input[type="hidden"]) {
-    display: block;
-    width: 100%;
-    padding: 1.2em 0.5em 0.8em 0.5em;
-    border: 1px solid #ccc;
-    border-radius: 0.3em;
-    background: #f9f9f9;
-    font-size: 1rem;
-    box-sizing: border-box;
-    position: relative;
-    z-index: 0;
-  }
-
-  div:has(label ~ *:not(input[type="hidden"])) > label ~ *:not(input[type="hidden"]):is(input, textarea, select) {
-      line-height: 1.5;
-  }
-
-  div:has(label ~ *:not(input[type="hidden"])) > label ~ *:not(input[type="hidden"]):is(div) {
-      min-height: 3em;
-      cursor: text;
-  }
-
-  div:has(label ~ input[type="checkbox"]) {
-      display: flex;
-      align-items: center;
-      gap: 0.5em;
-      position: static;
-  }
-
-  div:has(label ~ input[type="checkbox"]) label {
-      position: static;
-      padding: 0;
-      font-size: 1rem;
-      color: #333;
-      pointer-events: auto;
-      background: none;
-      z-index: auto;
-      transition: none;
-      order: 1;
-  }
-
-  div:has(label ~ input[type="checkbox"]) > label ~ input[type="checkbox"] {
-      position: static;
-      width: auto;
-      display: inline-block;
-      vertical-align: middle;
-      margin: 0;
-      padding: 0;
-      border: none;
-      background: none;
-      z-index: auto;
-      order: 0;
-  }
-}
-
 
 div.editor {
   --label-color: #555;
   --label-color-focus: #337ab7;
   --label-font-size: 1rem;
-  --label-font-size-float: 0.85rem;
+  --label-font-size-float: 1rem;
   --input-padding-v: 0.8em;
   --input-padding-h: 0.5em;
-  --input-border-color: #ccc;
-  --input-bg-color: #f9f9f9;
+  --input-border-color: #f9f9f9;
+  --input-bg-color:     #f9f9f9;
   --input-font-size: 1rem;
   --transition-speed: 0.2s;
   --label-top-static: 1em;
   --label-top-float: -0.5em;
-  --input-padding-top: calc(var(--input-padding-v) + var(--label-font-size) * 0.7);
+  --input-padding-top: calc(var(--input-padding-v));
 
   div:has(label ~ *:not(input[type="hidden"])) {
     position: relative;
@@ -929,11 +734,12 @@ div.editor {
     color: var(--label-color);
     font-size: var(--label-font-size);
     pointer-events: none;
-    background: var(--input-bg-color); /* Match input background */
     z-index: 1;
     transition: top var(--transition-speed) ease,
                 font-size var(--transition-speed) ease,
                 color var(--transition-speed) ease;
+    background: var(--input-bg-color);
+    brightness:(90%);
   }
 
   div:has(label ~ *:not(input[type="hidden"]):is(:focus, :not(:placeholder-shown))) label {
@@ -945,11 +751,10 @@ div.editor {
 
   div:has(label ~ *:not(input[type="hidden"])) > label ~ *:not(input[type="hidden"]) {
     display: block;
-    width: 100%;
     padding: var(--input-padding-top) var(--input-padding-h) var(--input-padding-v) var(--input-padding-h);
     border: 1px solid var(--input-border-color);
-    border-radius: 0.3em;
     background: var(--input-bg-color);
+    border-radius: 0.3em;
     font-size: var(--input-font-size);
     box-sizing: border-box;
     position: relative;
@@ -968,11 +773,16 @@ div.editor {
   div:has(label ~ input[type="checkbox"]) {
       display: flex;
       align-items: center;
-      gap: 0.5em;
+      gap: var(--gap);
       position: static;
       padding: 0;
       border: none;
       background: none;
+  }
+
+  div.list > div:has(label ~ input[type="checkbox"]) {
+      flex-direction:column;
+      align-items: start;
   }
 
   div:has(label ~ input[type="checkbox"]) label {
@@ -1000,7 +810,30 @@ div.editor {
       background: none;
       z-index: auto;
       order: 0; /* Checkbox before label */
-       font-size: initial; /* Reset font size if needed */
-       line-height: initial; /* Reset line height if needed */
+      font-size: initial; /* Reset font size if needed */
+      line-height: initial; /* Reset line height if needed */
   }
+}
+
+body #content {
+    display: flex;
+    flex-direction: row;
+    max-width: 1280px !important;
+    justify-content: center;
+}
+
+div.sidebar {
+    padding:1rem;
+    max-width:250px;
+    width: fit-content;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    align-content: baseline;
+    gap: 1rem;
+}
+
+div.buttons button {
+    padding:1rem;
 }

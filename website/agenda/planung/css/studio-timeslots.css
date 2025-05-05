@@ -1,50 +1,8 @@
-#content {
+main#content {
     margin-top: 3rem;
     padding: 1rem;
-    max-width: 960px;
+    max-width: fit-content;
     min-height: 100%;
-}
-
-#content .label {
-    color: #555;
-    padding: 0;
-    margin: 0;
-}
-
-#content div.header,
-#content div.show_schedule_head,
-#content div.show_schedule {
-    clear: both;
-}
-
-#content .right {
-    float: right;
-    padding: 0;
-    margin: 0;
-}
-
-#content .editor {
-    clear: both;
-}
-
-#content .editor div.buttons {
-    text-align: center;
-    padding: 0;
-}
-
-#content .editor div.buttons button,
-#content .editor div.buttons input {
-    margin-left: 1rem;
-}
-
-#content .editor input,
-#content .editor textarea,
-#content .editor button {
-    padding: 0.5rem;
-}
-
-#content .editor .row {
-    clear: both;
 }
 
 #content .editor .cell {
@@ -53,52 +11,7 @@
     text-align: left;
 }
 
-#content .frequency {
-    width: 6em;
-}
-
-#content .editor div.cell.weekday {
-    vertical-align: bottom;
-    width: 2.5ch;
-    padding-bottom: 9px;
-}
-
-#content div.show_schedule table {
-    width: 66%;
-}
-
-#content div.show_schedule td {
-    width: 10em;
-}
-
-#content div.show_schedule td:nth-child(1),
-#content div.show_schedule td:nth-child(3) {
-    width: 2em;
-}
 
 #content div.show_schedule tr.exclude td {
     text-decoration: line-through;
-}
-
-#content div.buttons {
-    padding-left: 1rem;
-}
-
-#content div.editor input.image {
-    width: 90%;
-}
-
-button {
-    cursor: pointer;
-}
-
-form {
-    padding: 0;
-    margin: 0;
-}
-
-@media print {
-    input, button {
-        display: none;
-    }
 }

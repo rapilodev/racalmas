@@ -23,7 +23,7 @@
 
 <!-- view series -->
 <div id="view_<TMPL_VAR .series_id>" class="view" style="clear:both">
-    <div class="buttons">
+    <div class="sidebar">
         <TMPL_IF .allow.read_event>
             <button
                 onclick="window.location='calendar.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>&list=1'"
@@ -169,7 +169,7 @@
                 </tr>
             </table>
 
-            <div class="buttons">
+            <div class="sidebar">
                 <TMPL_IF .allow.update_series_template>
                     <button type=submit name="action" value="save"
                         class="primary"

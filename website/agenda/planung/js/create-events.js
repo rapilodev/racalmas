@@ -63,11 +63,7 @@ function selectChangeSeries(resultSelector){
     });
 }
 
-function init(){
+$(document).ready(function() {
     selectChangeSeries('select_series_id');
     show_events('create_event_form');
-}
-
-$(document).ready(function() {
-    init();
 });

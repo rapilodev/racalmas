@@ -1,7 +1,13 @@
 /* series.css */
 
-#content {
+body #content {
+    max-width:none!important;
+    min-width: fit-content;
     min-height: 100%;
+}
+
+#content.tabs.panel{
+    max-width:fit-content;
 }
 
 /* Series header styling */
@@ -15,74 +21,16 @@
     clear: both;
 }
 
-/* Center buttons inside editor */
-#content .editor div.buttons {
-    text-align: center;
-}
-#content .editor div.buttons button,
-#content .editor div.buttons input {
-    margin-left: var(--space-md);
-}
-
-/* Image preview for events */
-#imagePreview {
-    border: none;
-    width: 24px;
-    height: 24px;
-}
-
-#content .series table td {
-    padding: var(--space-sm);
-}
-
-/* Editor row minimum height */
-#content .editor .row {
-    min-height: 4rem;
-}
-
-/* Editor form layout for rows */
-#content .editor .row form {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: center;
-}
-
 /* Schedule tab dimensions */
 #content #tabs-schedule {
     width: 1000px;
     max-width: none;
 }
 
-/* Editor cells: center text and add right padding */
-#content .editor .cell {
-    text-align: center;
-    padding-right: var(--space-sm);
-}
-
 /* Active row styling in editor: use a variable for background (default yellow) */
 #content .editor .row.active {
     background: var(--active-row-bg, #ff0);
     min-height: 4rem;
-}
-
-/* Center text in input/select within cells */
-#content div.cell select,
-#content div.cell input {
-    text-align: center;
-}
-
-/* Reset margins for specific cell types */
-#content div.cell.exclude,
-#content div.cell.nextDay,
-#content div.cell.weekday {
-    margin-left: 0;
-}
-
-#content div.cell.weekday,
-#content div.cell.weekday input,
-#content div.cell.weekday select {
-    width: 2.5ch;
 }
 
 /* Schedule display container */
@@ -92,58 +40,15 @@
     clear: both;
 }
 
-/* Margin adjustment for excluded inputs */
-input.exclude {
-    margin-top: var(--space-sm);
-}
-
-/* Editor image inputs stretch to 90% */
-#content div.editor input.image {
-    width: 90%;
+ul.tabContainer {
+    margin: -1rem -1rem 1rem -1rem
 }
 
 /* Tabs container: clear floats and use panel background */
 div#tabs > div {
     clear: both;
     background: var(--panel-bg);
-}
-
-/* Ensure tab containers, buttons, and row forms are flex-centered */
-ul.tabContainer,
-div.buttons,
-div.row form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Tabs events cells: force zero width for specific columns */
-#content #tabs-events td.weekday,
-#content #tabs-events td.date,
-#content #tabs-events td.time,
-#content #tabs-events td.spacer {
-    width: 0;
-}
-
-/* Global button pointer */
-button {
-    cursor: pointer;
-}
-
-/* Hide inputs and buttons when printing */
-@media print {
-    input, button {
-        display: none;
-    }
-}
-
-/* Editor form table background and cell padding */
-div.editor > form > table {
-    background: var(--panel-bg);
-}
-div.editor > form > table td {
-    padding-left: var(--space-md);
-    padding-right: var(--space-md);
+    flex-grow:1;
 }
 
 /* Rebuild episodes section */
@@ -159,7 +64,3 @@ div.editor > form > table td {
 #rebuild tr.warn  { background: var(--rebuild-warn-bg, #ff9); }
 #rebuild tr.ok    { background: var(--rebuild-ok-bg, #9f9); }
 
-/* Event history background */
-#event_history {
-    background: var(--panel-bg);
-}

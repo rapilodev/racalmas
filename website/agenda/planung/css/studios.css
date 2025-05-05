@@ -1,21 +1,3 @@
-#content .label {
-    width: 10ch;
-    padding: 0;
-    margin: 0;
-    color: var(--border-color);
-}
-
-#content div.studio {
-    min-width: 40ch;
-}
-
-#content div.editor {
-    clear: both;
-}
-
-#content div.view {
-    clear: both;
-}
 
 #content div.editor div.right {
     float: right;

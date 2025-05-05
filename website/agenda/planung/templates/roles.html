@@ -1,11 +1,6 @@
 <TMPL_INCLUDE default.html>
 
 <style type="text/css">
-/*
-    input.disabled{
-        filter: contrast(1.0);
-    }
-*/
 div#edit_roles{
     overflow: auto;
 }
@@ -21,25 +16,23 @@ div#edit_roles .comment{
 
 </style>
 <script type="text/javascript">
-$(document).ready(
-    function() {
-        $("input.disabled").attr('disabled', 'disabled');
-        var width=960/($("input.role").length);
-        $("input.role").css('width', width+'px');
+$(document).ready(function() {
+    $("input.disabled").attr('disabled', 'disabled');
+    var width=960/($("input.role").length);
+    $("input.role").css('width', width+'px');
 
-        //$("#edit_roles").height($('#content').height());
+    //$("#edit_roles").height($('#content').height());
 
-        $('input[type="checkbox"]').click(
-            function(){
-                if ($(this).attr('value')=='1'){
-                    $(this).attr('value','0');
-                }else{
-                    $(this).attr('value','1');
-                }
+    $('input[type="checkbox"]').click(
+        function(){
+            if ($(this).attr('value')=='1'){
+                $(this).attr('value','0');
+            }else{
+                $(this).attr('value','1');
             }
-        );
-    }
-);
+        }
+    );
+});
 
 function add_user_role(){
     if ($('#new_user_role').css('display')=='none'){
@@ -50,7 +43,8 @@ function add_user_role(){
         $('#add_user_role_button').html('add user role');
     }
 }
-
 </script>
 
-<h2>Edit Roles</h2>
+<div class="sidebar">
+    <h2>Edit Roles</h2>
+</div>

@@ -38,7 +38,7 @@ var region='<TMPL_VAR loc.region escape=js>';
             <label><TMPL_VAR .loc.label_email></label>
             <input name="email">
         </div>
-        <div class="buttons">
+        <div class="sidebar">
             <button class="text cancel" onclick="cancel_edit_project($(this),'new');return false;"><TMPL_VAR .loc.button_cancel></button>
             <button type=submit name="action" value="save"><TMPL_VAR .loc.button_create></button>
         </div>
@@ -148,7 +148,7 @@ var region='<TMPL_VAR loc.region escape=js>';
         <input type="email" name="email" value="<TMPL_VAR email>">
     </div>
 
-    <div class="buttons">
+    <div class="sidebar">
         <button type=submit name="action" value="save"><TMPL_VAR .loc.button_save></button>
         <TMPL_IF .allow.delete_project>
             <div class="right">

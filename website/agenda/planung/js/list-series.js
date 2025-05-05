@@ -1,4 +1,5 @@
-function add_series(){
+function add_series() {
+    $('#add-series').toggle();
     $('#edit_new').toggle();
     return false;
 }
@@ -17,16 +18,13 @@ function view_series_details(project_id, studio_id, series_id) {
     if(elem.hasClass('active')){
         elem.removeClass('active');
         $('.series_details_'+series_id).slideToggle(
-            function(){
-                $('#series_details_'+series_id).html('');
-            }
+            () =>  $('#series_details_'+series_id).html('')
         );
     } else {
         elem.addClass('active');
         showSeries(project_id,studio_id,series_id);
     }
 }
-
 
 function searchEventsAt(selector, searchValue) {
     $(selector).each(function(){
@@ -76,11 +74,6 @@ async function createSeries(form) {
     showSeries(json.entry.project_id, json.entry.studio_id, json.entry.series_id);
 }
 
-$(document).ready(
-    function() {
-        var series=$('div#newSeries div').length+$('div#oldSeries div').length;
-        if(series<40)series=40;
-        $('#content').css('height', series*1.7+'rem' );
-        searchEvents();
-    }
-);
+$(document).ready(function() {
+    searchEvents();
+});

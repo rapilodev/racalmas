@@ -1,110 +1,157 @@
 <script src="js/image.js" type="text/javascript"></script>
 <script type="text/javascript">
-    var region='<TMPL_VAR loc.region escape=js>';
+    var region = '<TMPL_VAR loc.region escape=js>';
 </script>
 
-<h2><TMPL_VAR .loc.title></h2>
-
-<TMPL_IF .allow.update_studio>
-<div style="clear:both" class="newstudio">
-    <button onclick="add_studio('<TMPL_VAR name escape=js>')"><TMPL_VAR .loc.button_add_studio></button><br/>
-    <div id="edit_new" class="panel panel-body" style="clear:both;display:none">
-        <form method="post">
-            <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-            <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
-            <table>
-                <tr><td class="label"><TMPL_VAR .loc.label_name></td>              <td><input name="name"        ></td></tr>
-                <tr><td class="label"><TMPL_VAR .loc.label_description></td>      <td><input name="description" ></td></tr>
-                <tr><td class="label"><TMPL_VAR .loc.label_location></td>          <td><input name="location"    ></td></tr>
-                <tr><td class="label"><TMPL_VAR .loc.label_stream></td>          <td><input name="stream"      ></td></tr>
-                <tr>
-                    <td></td>
-                    <td class="buttons">
-                        <button class="text" onclick="cancel_edit_studio($(this), 'new');return false;"><TMPL_VAR .loc.button_cancel></button>
-                        <button type=submit name="action" value="save"><TMPL_VAR .loc.button_create></button>
-                    </td>
-                </tr>
-            </table>
-        </form>
-    </div>
-</div>
-</TMPL_IF>
-
-<div style="clear:both" class="flex">
-<TMPL_LOOP studios>
-<div class="panel studio">
-    <div class="panel-header">
-        <TMPL_VAR name>
-    </div>
-
-    <!-- view studio -->
-    <div id="view_<TMPL_VAR id>" class="panel-body">
-        <table>
-            <tr><td class="label"><TMPL_VAR .loc.label_image></td>              <td><img src="show-image.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=thumbs"> &nbsp;</td></tr>
-            <tr><td class="label"><TMPL_VAR .loc.label_description></td>      <td><TMPL_VAR description> &nbsp;</td></tr>
-            <tr><td class="label"><TMPL_VAR .loc.label_location></td>          <td><TMPL_VAR location> &nbsp;</td></tr>
-            <tr><td class="label"><TMPL_VAR .loc.label_stream></td>          <td><TMPL_VAR stream> &nbsp;</td></tr>
-        </table>
-    </div>
+<div class="sidebar">
+    <h2>
+        <TMPL_VAR .loc.title>
+    </h2>
 
     <TMPL_IF .allow.update_studio>
-    <!-- update studio -->
-    <div id="edit_<TMPL_VAR id>" class="editor" style="display:none">
-        <form method="post" id="studio_<TMPL_VAR id>">
-            <input type="hidden" name="id" value="<TMPL_VAR id>">
-            <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-            <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
-            <table>
-                <tr><td class="label"><TMPL_VAR .loc.label_name></td>              <td><input name="name" value="<TMPL_VAR name>"></td></tr>
-                <tr><td class="label"><TMPL_VAR .loc.label_description></td>     <td><input name="description" value="<TMPL_VAR description>"></td></tr>
-                <tr><td class="label"><TMPL_VAR .loc.label_location></td>          <td><input name="location" value="<TMPL_VAR location>"></td></tr>
-                <TMPL_IF stream>
-                    <tr><td class="label"><TMPL_VAR .loc.label_stream></td>      <td><input name="stream" value="<TMPL_VAR stream>"></td></tr>
-                </TMPL_IF>
-                <tr><td class="label">
-                    <TMPL_VAR .loc.label_image></td>
-                    <td>
-                        <button
-                            class="selectImage"
-                            onclick="selectImage('<TMPL_VAR name escape=javascript>', '<TMPL_VAR image escape=javascript>', 'studio', '<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>'); return false;"
-                        >
-                            <img id="imagePreview" src="show-image.cgi?project_id=<TMPL_VAR .project_id escape=js>&studio_id=<TMPL_VAR .studio_id escape=js>&filename=<TMPL_VAR image escape=js>&type=icon">
-                        </button>
-                        <input id="image_<TMPL_VAR id escape=js>" name="image" value="<TMPL_VAR image escape=js>" class="image" placeholder="<TMPL_VAR .loc.template_image escape=js>">
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td class="buttons">
-                        <button type=submit name="action" value="save"><TMPL_VAR .loc.button_save></button>
-                        <button type=submit class="text" name="action" value="delete"
-                        onclick="commitForm('studio_<TMPL_VAR id escape=js>','delete','<TMPL_VAR .loc.button_delete escape=js>');return false;"
-                        ><TMPL_VAR .loc.button_delete></button>
-                    </td>
-                </tr>
-            </table>
+    <div class="newstudio">
+        <button onclick="add_studio('<TMPL_VAR name escape=js>')">
+            <TMPL_VAR .loc.button_add_studio>
+        </button>
+        <form method="post">
+        <div id="edit_new" class="editor panel" style="display: none">
+            <input type="hidden" name="project_id"
+                value="<TMPL_VAR .project_id>"> <input
+                type="hidden" name="studio_id"
+                value="<TMPL_VAR .studio_id>">
+            <div>
+                <label><TMPL_VAR .loc.label_name></label>
+                <input name="name">
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_description></label>
+                <input name="description">
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_location></label>
+                <input name="location">
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_stream></label>
+                <input name="stream">
+            </div>
+            <div>
+                <button class="text"
+                    onclick="cancel_edit_studio($(this), 'new');return false;">
+                    <TMPL_VAR .loc.button_cancel>
+                </button>
+                <button type=submit name="action" value="save">
+                    <TMPL_VAR .loc.button_create>
+                </button>
+            </div>
+        </div>
         </form>
     </div>
+    </TMPL_IF>
+</div>
 
-    <div class="panel-body" style="display:flex">
-        <TMPL_IF .allow.read_event>
+<div class="list">
+    <TMPL_LOOP studios>
+    <div class="panel editor studio">
+        <div class="panel-header">
+            <TMPL_VAR name>
+        </div>
+
+        <!-- view studio -->
+        <div id="view_<TMPL_VAR id>" class="panel-body">
+            <div>
+                <label><TMPL_VAR .loc.label_image></label>
+                <img
+                    src="show-image.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&filename=<TMPL_VAR image>&type=thumbs"
+                >
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_description></label>
+                <TMPL_VAR description>
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_location></label>
+                <TMPL_VAR location>
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_stream></label>
+                <TMPL_VAR stream>
+            </div>
+        </div>
+
+        <TMPL_IF .allow.update_studio> <!-- update studio -->
+        <form method="post" id="studio_<TMPL_VAR id>">
+            <div id="edit_<TMPL_VAR id>" class="editor" style="display: none">
+                <input type="hidden" name="id" value="<TMPL_VAR id>">
+                <input type="hidden" name="project_id"
+                    value="<TMPL_VAR .project_id>"> <input
+                    type="hidden" name="studio_id"
+                    value="<TMPL_VAR .studio_id>">
+                <div>
+                    <label><TMPL_VAR .loc.label_name></label>
+                    <input name="name" value="<TMPL_VAR name>">
+                </div>
+                <div>
+                    <label><TMPL_VAR .loc.label_description></label>
+                    <input name="description"
+                        value="<TMPL_VAR description>">
+                </div>
+                <div>
+                    <label><TMPL_VAR .loc.label_location></label>
+                    <input name="location" value="<TMPL_VAR location>">
+                </div>
+                <div>
+                    <TMPL_IF stream> <label><TMPL_VAR
+                            .loc.label_stream></label> <input
+                        name="stream" value="<TMPL_VAR stream>">
+                    </TMPL_IF>
+                </div>
+                <div>
+                    <label><TMPL_VAR .loc.label_image></label>
+                    <button class="selectImage"
+                        onclick="selectImage('<TMPL_VAR name escape=javascript>', '<TMPL_VAR image escape=javascript>', 'studio', '<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>'); return false;">
+                        <img id="imagePreview"
+                            src="show-image.cgi?project_id=<TMPL_VAR .project_id escape=js>&studio_id=<TMPL_VAR .studio_id escape=js>&filename=<TMPL_VAR image escape=js>&type=icon">
+                    </button>
+                    <input id="image_<TMPL_VAR id escape=js>"
+                        name="image" value="<TMPL_VAR image escape=js>"
+                        class="image"
+                        placeholder="<TMPL_VAR .loc.template_image escape=js>">
+                </div>
+                <div>
+                    <button type=submit name="action" value="save">
+                        <TMPL_VAR .loc.button_save>
+                    </button>
+                    <button type=submit class="text" name="action"
+                        value="delete"
+                        onclick="commitForm('studio_<TMPL_VAR id escape=js>','delete','<TMPL_VAR .loc.button_delete escape=js>');return false;">
+                        <TMPL_VAR .loc.button_delete>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="panel-body" style="display: flex">
+            <TMPL_IF .allow.read_event>
             <button target="_blank" class="text bottom"
-                onclick="loadUrl('event-history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR id>');"
-            ><TMPL_VAR .loc.button_show_changes></button>
-        </TMPL_IF>
+                onclick="loadUrl('event-history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR id>');">
+                <TMPL_VAR .loc.button_show_changes>
+            </button>
+            </TMPL_IF>
 
-        <TMPL_IF .allow.update_studio>
+            <TMPL_IF .allow.update_studio>
             <button class="bottom right"
                 onclick="edit_studio($(this), '<TMPL_VAR id escape=js>')"
                 data-action="<TMPL_VAR .loc.button_edit escape=HTML>"
-                data-cancel="<TMPL_VAR .loc.button_cancel escape=HTML>"
-            ><TMPL_VAR .loc.button_edit></button>
+                data-cancel="<TMPL_VAR .loc.button_cancel escape=HTML>">
+                <TMPL_VAR .loc.button_edit>
+            </button>
+            </TMPL_IF>
+        </div>
+
         </TMPL_IF>
     </div>
-
-    </TMPL_IF>
-</div>
-</TMPL_LOOP>
+    </TMPL_LOOP>
 
 </div>
 </main>

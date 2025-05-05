@@ -22,13 +22,13 @@
     margin:0;
 }
 
-#content div.editor div.buttons{
+#content div.editor div.sidebar{
     text-align:center;
     padding:0;
 }
 
-#content div.editor div.buttons button,
-#content div.editor div.buttons input{
+#content div.editor div.sidebar button,
+#content div.editor div.sidebar input{
     margin-left:1em;
 }
 
@@ -107,7 +107,7 @@
             <label>email</label>
             <div><input name="email" value="<TMPL_VAR email>"></div>
         </div>
-        <div class="buttons">
+        <div class="sidebar">
             <button onclick="cancel_edit_user('<TMPL_VAR id escape=js>');return false;">cancel</button>
             <input type=submit name="action" value="save">
             <div class="right"><input type=submit name="action" value="delete"></div>
@@ -142,7 +142,7 @@
             <label>email</label>
             <div><input name="email" value="<TMPL_VAR email>"></div>
         </div>
-        <div class="buttons">
+        <div class="sidebar">
             <button onclick="cancel_edit_user('new');return false;">cancel</button>
             <input type=submit name="action" value="save">
         </div>

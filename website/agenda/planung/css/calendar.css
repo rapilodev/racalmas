@@ -192,6 +192,52 @@ div#toolbar input.search {
     background: #105a91;
 }
 
+#content #toolbar div {
+    padding: 6px;
+}
+
+#content #selectDate {
+    padding: 0;
+}
+
+#content #toolbar div:hover, 
+#content #toolbar select:hover, 
+#content #toolbar input:hover
+    {
+    background: #ccc;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+#content div#selectDate:hover {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+#content div#selectDate input.input {
+    display:none;
+}
+
+#content div#current_date {
+    cursor: pointer;
+    font-size: var(--space-lg);
+    width: 5rem;
+    text-align: center;
+    padding: 6px;
+}
+
+
+#content div#previous_month, 
+#content div#next_month {
+    cursor: pointer;
+    font-size: 1.7rem;
+    padding: 6px;
+}
+
+#content input#start_date {
+    display: none;
+}
+
 #series td {
     padding: 6px;
 }
@@ -332,43 +378,6 @@ div#toolbar input.search {
     text-align: center;
 }
 
-#content #toolbar div {
-    padding: 6px;
-}
-
-#content #toolbar #selectDate {
-    padding: 0;
-}
-
-#content #toolbar div:hover, #content #toolbar select:hover, #content #toolbar input:hover
-    {
-    background: #ccc;
-    padding-top: 6px;
-    padding-bottom: 6px;
-}
-
-#content #toolbar div#selectDate:hover {
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-#content #toolbar div#current_date {
-    cursor: pointer;
-    font-size: var(--space-lg);
-    width: 5rem;
-    text-align: center;
-    padding: 6px;
-}
-
-#content #toolbar div#previous_month, #content #toolbar div#next_month {
-    cursor: pointer;
-    font-size: 1.7rem;
-    padding: 6px;
-}
-
-#content #toolbar input#start_date {
-    display: none;
-}
 
 #content div.event, #content div.schedule, #content div.grid, #content div.play,
     #content div.error {
@@ -505,54 +514,3 @@ input.tablesorter-filter {
 }/* switch end */
 
 
-#event_list {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-#event_list tr {
-    border-bottom: 1px solid var(--color-border);
-}
-
-#event_list th, #event_list td {
-    padding: var(--space-xs) var(--space-sm);
-    text-align: left;
-}
-
-#event_list th:hover {
-    cursor: pointer;
-}
-
-#event_list td.day_of_year,
-#event_list td.weekday,
-#event_list td.start_date,
-#event_list td.start_time,
-#event_list td.episode,
-#event_list td.rerun {
-    white-space: nowrap;
-}
-
-#event_list td.start_date {
-    font-family: monospace;
-}
-
-#event_list td.title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-#event_list td:nth-child(1),
-#event_list td:nth-child(2),
-#event_list td:nth-child(7),
-#event_list td:nth-child(9),
-#event_list td:nth-child(10) {
-    width: var(--space-xl);
-    text-align: center;
-    padding: var(--space-xs) 0;
-}
-
-#event_list tr:hover {
-    border-left: 2px solid var(--color-nav-hover);
-    border-right: 2px solid var(--color-nav-hover);
-    cursor: pointer;
-}

@@ -2,17 +2,50 @@
 var region='<TMPL_VAR loc.region escape=js>';
 </script>
 
-<h2><TMPL_VAR .loc.title></h2>
+<div class="sidebar">
+    <div class="page-title"><TMPL_VAR .loc.title></div>
+    <button onclick="$('#oldSeries').slideToggle()"><TMPL_VAR .loc.button_old_series></button>
+</div>
 
-<div id="search"><input id="searchField" type="search" name="search" value="" 
-    onkeyup="searchEvents()" placeholder="<TMPL_VAR .loc.label_search>"
-><button id="clearSearch" onclick="clearSearch()"><TMPL_VAR .loc.label_clear_search></div>
+<!-- container -->
+<div id="container">
+    <div id="newSeries" class="series new">
+    <TMPL_LOOP series><TMPL_IF is_new>
+        <a class="panel"
+            onclick="view_series_details('<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR series_id escape=js>')"
+            href="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>&action=show_series"
+        >
+        <div class="series-name"><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></div>
+        <TMPL_IF title><div class="series-title"><TMPL_VAR title></div></TMPL_IF>
+        </a>
+    </TMPL_IF></TMPL_LOOP>
+    </div>
+    
+    <div id="oldSeries" class="series old" style="display:none;">
+    <TMPL_LOOP series><TMPL_IF is_old>
+        <a class="panel"
+            onclick="view_series_details('<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR series_id escape=js>')"
+            href="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>&action=show_series"
+        >
+        <div class="series-name"><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></div>
+        <TMPL_IF title><div class="series-title"><TMPL_VAR title></div></TMPL_IF>
+        </a>
+    </TMPL_IF></TMPL_LOOP>
+    </div>
 
-<!-- create a new series -->
-<TMPL_IF .allow.create_series>
-<div style="clear:both" class="newseries">
-    <button onclick="add_series('<TMPL_VAR series_name escape=js>')"><TMPL_VAR .loc.button_add_series></button>
-    <div id="edit_new" class="editor card" style="display:none;clear:both">
+</div>
+<!-- container end-->
+
+<div class="sidebar">
+    <div id="search"><input id="searchField" type="search" name="search" value="" 
+        onkeyup="searchEvents()" placeholder="<TMPL_VAR .loc.label_search>"
+    ><button id="clearSearch" onclick="clearSearch()"><TMPL_VAR .loc.label_clear_search></button></div>
+
+    <button id="add-series" onclick="add_series('<TMPL_VAR series_name escape=js>')">+ <TMPL_VAR .loc.button_add_series></button>
+
+    <!-- create a new series -->
+    <TMPL_IF .allow.create_series>
+    <div id="edit_new" class="editor panel" style="display:none;">
         <form method="post" action="series.cgi">
             <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
             <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
@@ -29,50 +62,15 @@ var region='<TMPL_VAR loc.region escape=js>';
             </div>
 
             <div class="formField">
-                <button onclick="createSeries($(this).closest('form'));return false"
+                <button onclick="createSeries($(this).closest('form'));$('#add-series').show();return false"
                     ><TMPL_VAR .loc.button_create></button>
-                <button onclick="$('#edit_new').hide();return false;"><TMPL_VAR .loc.button_cancel></button>
+                <button onclick="$('#edit_new').hide();$('#add-series').show();return false;"><TMPL_VAR .loc.button_cancel></button>
             </div>
         </form>
     </div>
-</div>
-</TMPL_IF>
-
-<div style="clear:both">
-    <button onclick="$('#oldSeries').slideToggle()"><TMPL_VAR .loc.button_old_series></button>
-</div>
-
-<div id="newSeries">
-<TMPL_LOOP series>
-    <TMPL_IF is_new>
-    <a class="panel"
-        onclick="view_series_details('<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR series_id escape=js>')"
-        href="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>&action=show_series"
-    >
-        <span>
-            <b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b>
-            <TMPL_IF title> <br> <TMPL_VAR title></TMPL_IF>
-        </span>
-    </a>
     </TMPL_IF>
-</TMPL_LOOP>
+
 </div>
-
-<div id="oldSeries" style="display:none;">
-<TMPL_LOOP series>
-    <TMPL_IF is_old>
-    <a class="panel"
-        onclick="view_series_details('<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR series_id escape=js>')"
-        href="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>&action=show_series"
-    >
-        <span>
-            <b><TMPL_IF has_single_events><TMPL_VAR .loc.single_events><TMPL_ELSE><TMPL_VAR series_name></TMPL_IF></b>
-            <TMPL_IF title> <br> <TMPL_VAR title></TMPL_IF>
-        </span>
-    </a>
-    </TMPL_IF>
-</TMPL_LOOP>
-
 </main>
 </body>
 </html>

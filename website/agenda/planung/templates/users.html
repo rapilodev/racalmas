@@ -41,30 +41,11 @@
     }
 </script>
 
-<h2><TMPL_VAR .loc.title></h2>
 <TMPL_INCLUDE status.html>
 
-<TMPL_IF allow.create_user>
-<div style="clear:both" class="newuser">
-    <button onclick="add_user('<TMPL_VAR name escape=js>')"><TMPL_VAR .loc.button_add_user></button>
-    <div id="edit_new" class="user editor panel" style="display:none">
-        <form method="post">
-        <table>
-        <tr>    <td><TMPL_VAR .loc.label_name></td>            <td><input name="user_name"      value="<TMPL_VAR user_name>"></td>    </tr>
-        <tr>    <td><TMPL_VAR .loc.label_full_name></td>    <td><input name="user_full_name" value="<TMPL_VAR user_full_name>"></td>    </tr>
-        <tr>    <td><TMPL_VAR .loc.label_email></td>        <td><input name="user_email"      value="<TMPL_VAR user_email>" type="email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"></td>    </tr>
-        <tr>    <td><TMPL_VAR .loc.label_password></td>        <td><input name="user_password"  value="<TMPL_VAR password>"></td>    </tr>
-        <tr>    <td><TMPL_VAR .loc.label_password2></td>    <td><input name="user_password2" value="<TMPL_VAR password2>"></td>    </tr>
-        <tr>    <td class="buttons" colspan="3">
-                <button onclick="cancel_edit_user('new');return false;" class="text"><TMPL_VAR .loc.button_cancel></button>
-                <button type=submit name="action" value="save"><TMPL_VAR .loc.button_create_user></button>
-            </td>
-        </tr>
-        </table>
-        </form>
-    </div>
+<div class="sidebar">
+    <h2><TMPL_VAR .loc.title></h2>
 </div>
-</TMPL_IF>
 
 <div class="panel">
 <table class="table">
@@ -89,90 +70,112 @@
         <div id="view_roles_<TMPL_VAR id>">
             <TMPL_LOOP user_roles><TMPL_VAR role><br/></TMPL_LOOP>
         </div>
-
-        <TMPL_IF allow.update_user_role>
-        <div id="edit_roles_<TMPL_VAR id>" class="card list editor" style="display:none">
-            <form method="post">
-            <table>
-            <tr>
-                <td>
-                <TMPL_LOOP roles>
-                    <input type="checkbox"
-                        name="role_<TMPL_VAR id>"
-                        <TMPL_IF assigned>checked="checked"</TMPL_IF>
-                    ><TMPL_VAR role><br>
-                </TMPL_LOOP>
-                    <button type="submit" name="action" value="assign"><TMPL_VAR .loc.button_assign_role></button>
-                    <input type="hidden" name="user_id" value="<TMPL_VAR id>">
-                    <input class="studio_id"  type="hidden" name="studio_id"  value="<TMPL_VAR studio_id>">
-                    <input class="project_id" type="hidden" name="project_id" value="<TMPL_VAR project_id>">
-                </td>
-            </tr>
-            </table>
-            </form>
-        </div>
-        </TMPL_IF>
     </td>
-
-    <td>
-        <TMPL_IF allow.update_user>
-            <button class="text" onclick="edit_user('<TMPL_VAR id escape=js>')"><TMPL_VAR .loc.button_edit_user></button>
-        </TMPL_IF>
-
-        <TMPL_IF allow.update_user_role>
-            <button class="text" onclick="edit_roles('<TMPL_VAR id escape=js>')"><TMPL_VAR .loc.button_edit_roles></button>
-        </TMPL_IF>
-        <!--    </div> -->
-    </td>
-</tr>
-    <!--</div>-->
 
     <TMPL_IF allow.update_user>
-<tr id="edit_<TMPL_VAR id>" class="list editor"  style="display:none">
-    <td colspan="5">
-        <div class="card">
+    <td>
+        <button class="text" onclick="edit_user('<TMPL_VAR id escape=js>')"><TMPL_VAR .loc.button_edit_user></button>
+
         <form method="post" id="user_<TMPL_VAR id>">
-        <table>
-
-            <tr>    <td><TMPL_VAR .loc.label_name></td>       <td><TMPL_VAR name></td></tr>
-            <tr>    <td><TMPL_VAR .loc.label_full_name></td> <td><input name="user_full_name" value="<TMPL_VAR full_name>"></td></tr>
-            <TMPL_if .allow.read_user>
-            <tr>    <td><TMPL_VAR .loc.label_email></td>       <td><input name="user_email" value="<TMPL_VAR email>" type="email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"></td></tr>
-            </TMPL_IF>
-            <tr>    <td><TMPL_VAR .loc.label_disabled></td>
-                <td>
-                    <TMPL_IF allow.disable_user>
-                    <input type="checkbox" name="disabled" value="1" <TMPL_IF disabled>checked="checked"</TMPL_IF> >
-                    </TMPL_IF>
-                </td>
-            </tr>
-
-            <tr>
-                <td></td>
-                <td class="buttons" colspan="2">
-                    <input type="hidden" name="user_id" value="<TMPL_VAR id>">
-                    <button type=submit name="action" value="save"><TMPL_VAR .loc.button_save_user></button>
-                </td>
-                <td colspan="2">
-
-                    <TMPL_IF allow.delete_user>
-                    <div class="right">
-                        <button type=submit name="action" value="delete"
-                        onclick="commitForm('user_<TMPL_VAR id escape=js>','delete','<TMPL_VAR .loc.button_delete_user escape=js>');return false;"
-                    ><TMPL_VAR .loc.button_delete_user></div>
-                    </TMPL_IF>
-                </td>
-            </tr>
-
-        </table>
-        </form>
+        <div id="edit_<TMPL_VAR id>" class="list editor" style="display:none">
+            <div>
+                <label><TMPL_VAR .loc.label_name></label>
+                <input disabled value="<TMPL_VAR name>">
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_full_name></label>
+                <input name="user_full_name" value="<TMPL_VAR full_name>">
+            </div>
+            <div>
+                <TMPL_if .allow.read_user>
+                    <label><TMPL_VAR .loc.label_email></label>
+                    <input name="user_email" value="<TMPL_VAR email>" type="email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">
+                </TMPL_IF>
+            </div>
+            <div>
+                <TMPL_IF allow.disable_user>
+                <label><TMPL_VAR .loc.label_disabled></label>
+                <input type="checkbox" name="disabled" value="1" <TMPL_IF disabled>checked="checked"</TMPL_IF> >
+                </TMPL_IF>
+            </div>
+            <div class="buttons">
+                <input type="hidden" name="user_id" value="<TMPL_VAR id>">
+                <button type=submit class="primary" name="action" value="save"><TMPL_VAR .loc.button_save_user></button>
+                <TMPL_IF allow.delete_user>
+                <div class="right">
+                    <button type=submit name="action" value="delete"
+                    onclick="commitForm('user_<TMPL_VAR id escape=js>','delete','<TMPL_VAR .loc.button_delete_user escape=js>');return false;"
+                ><TMPL_VAR .loc.button_delete_user></div>
+                </TMPL_IF>
+            </div>
         </div>
+        </form>
     </td>
-</tr>
     </TMPL_IF>
+
+    <TMPL_IF allow.update_user_role>
+    <td>
+        <button class="text" onclick="edit_roles('<TMPL_VAR id escape=js>')"><TMPL_VAR .loc.button_edit_roles></button>
+
+        <form method="post">
+        <div id="edit_roles_<TMPL_VAR id>" class="list editor" style="display:none;padding:1rem;">
+            <TMPL_LOOP roles>
+                <div>
+                <label><TMPL_VAR role></label>
+                <input type="checkbox"
+                    name="role_<TMPL_VAR id>"
+                    <TMPL_IF assigned>checked="checked"</TMPL_IF>
+                >
+                </div>
+            </TMPL_LOOP>
+            <button type="submit" name="action" value="assign"><TMPL_VAR .loc.button_assign_role></button>
+            <input type="hidden" name="user_id" value="<TMPL_VAR id>">
+            <input class="studio_id"  type="hidden" name="studio_id"  value="<TMPL_VAR studio_id>">
+            <input class="project_id" type="hidden" name="project_id" value="<TMPL_VAR project_id>">
+        </div>
+        </form>
+    </td>
+    </TMPL_IF>
+</tr>
 
 </TMPL_LOOP>
 </table>
+</div>
+<!-- end panel -->
+<div class="sidebar">
+    <TMPL_IF allow.create_user>
+    <div style="clear:both" class="newuser">
+        <button onclick="add_user('<TMPL_VAR name escape=js>')"><TMPL_VAR .loc.button_add_user></button>
+        <form method="post">
+        <div id="edit_new" class="user editor panel" style="display:none">
+            <div>
+                <label><TMPL_VAR .loc.label_name></label>
+                <input name="user_name" value="<TMPL_VAR user_name>">
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_full_name></label>
+                <input name="user_full_name" value="<TMPL_VAR user_full_name>">
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_email></label>
+                <input name="user_email" value="<TMPL_VAR user_email>" type="email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_password></label>
+                <input name="user_password" value="<TMPL_VAR password>">
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_password2></label>
+                <input name="user_password2" value="<TMPL_VAR password2>">
+            </div>
+            <div>
+                <button onclick="cancel_edit_user('new');return false;" class="text"><TMPL_VAR .loc.button_cancel></button>
+                <button class="primary" type=submit name="action" value="save"><TMPL_VAR .loc.button_create_user></button>
+            </div>
+        </div>
+        </form>
+    </div>
+    </TMPL_IF>
 </div>
 
 </body>

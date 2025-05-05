@@ -41,7 +41,7 @@ msgid "button_event_list"
 msgstr "Sendungen zeigen"
 
 msgid "button_create_event"
-msgstr "Sendung anlegen"
+msgstr "neue Sendung anlegen"
 
 
 msgid "tab_template"
@@ -207,7 +207,7 @@ msgid "tab_delete"
 msgstr "Sendereihe löschen"
 
 msgid "button_delete_series"
-msgstr "Diese Sendereihe löschen"
+msgstr "Sendereihe löschen"
 
 msgid "label_delete_series"
 msgstr "Die Sendereihe, ihre Vorlage, Planung wird gelöscht und alle Nutzer entfernt.\nDie einzelnen Sendungen der Sendereihe werden nicht gelöscht."
@@ -262,7 +262,7 @@ msgid "till"
 msgstr "bis"
 
 msgid "modified"
-msgstr "bearbeited"
+msgstr "bearbeitet"
 
 msgid "added"
 msgstr "hinzugefügt"

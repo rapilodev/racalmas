@@ -257,14 +257,6 @@ sub show_roles {
         <input type="hidden" name="studio_id"  value="$studio_id">
     };
 
-    if (defined $permissions->{update_role}) {
-
-        #add new user role button
-        $out .= q{
-            <button id="add_user_role_button" onclick="add_user_role();return false;">add user role</button>
-        }
-    }
-
     $out .= '<div class="panel">';
     $out .= '<table class="table">';
     my $localization = localization::get($config, { user => $params->{presets}->{user}, file => 'roles.po' });
@@ -345,6 +337,14 @@ sub show_roles {
     $out .= '<input type="submit" name="action" value="save">' if defined $permissions->{update_role};
     $out .= '</form>';
     $out .= '</div>';
+    $out .= '</div>';
+    if (defined $permissions->{update_role}) {
+        $out .= q{
+            <div class="sidebar">
+                <button id="add_user_role_button" onclick="add_user_role();return false;">add user role</button>
+            </div>
+        }
+    }
     return $out. "\n";
 }
 

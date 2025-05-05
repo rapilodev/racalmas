@@ -8,7 +8,7 @@ function showDateTimePicker(selector, options){
         time_24hr: true,
         dateFormat: "Y-m-d H:i:S",
         altInput: true,
-        altFormat: "D, j.m.Y H:i",
+        altFormat: "D, j.n.Y H:i",
         locale: "de", // German
     }
     if (options){
@@ -23,7 +23,7 @@ function showDatePicker(selector, options){
     var defaults = {
         locale: { firstDayOfWeek: 1 },
         altInput: true,
-        altFormat: "D, j.m.Y",
+        altFormat: "D, j.n.Y",
         locale: "de", // German
     }
     if (options){

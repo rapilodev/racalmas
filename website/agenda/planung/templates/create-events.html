@@ -9,13 +9,17 @@ $(document).ready(function() {
 
 <script src="js/create-events.js" type="text/javascript"></script>
 <link rel="stylesheet" href="css/create-events.css" type="text/css" />
-
 <script>
-var series_id=0;
+    var series_id=0;
 </script>
-<h1><TMPL_VAR loc.title></h1>
+
+<div class="sidebar">
+</div>
+
+<div class="panel">
+    <h2><TMPL_VAR loc.title></h2>
 <form id="create_event_form" method="post">
-<div class="panel editor">
+<div class="editor">
     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
     <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
     <input type="hidden" id="select_series_id" name="series_id" value="<TMPL_VAR .series_id>">
@@ -34,22 +38,22 @@ var series_id=0;
 
     <div id="seriesContainer"></div>
     <div id="stats"></div>
-
     <TMPL_IF .allow.assign_series_events>
-    <button target="_blank" name="action" value="create_events" onclick="create_events('create_event_form');return false;"><TMPL_VAR loc.create_button></button>
+    <button class="primary"  target="_blank" name="action" value="create_events" onclick="create_events('create_event_form');return false;"><TMPL_VAR loc.create_button></button>
     </TMPL_IF>
+</div>
 </form>
 
-    <table id="events">
-        <thead>
-        <tr>
-            <th class="label">Start</th>
-            <th class="label">End</th>
-            <th class="label">Series</th>
-        </thead>
-        <tbody></tbody>
-    </table>
-</div>
+<table id="events">
+    <thead>
+    <tr>
+        <th class="label">Start</th>
+        <th class="label">End</th>
+        <th class="label">Series</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
 
 </div>
 </body>

@@ -1,113 +1,14 @@
-h2 {
-    display: inline;
+body main#content {
+    max-width: none !important;
 }
 
-#content .label {
-    width: 10ch;
-    color: var(--border-color);
-}
-
-#content div.editor, #content div.view {
-    clear: both;
-}
-
-#content div.editor div.right {
-    float: right;
-}
-
-#content div.editor div.buttons {
-    text-align: center;
-    padding: 0;
-}
-
-#content div.editor div.buttons button, #content div.editor div.buttons input
-    {
-    margin-left: var(--space-md);
-}
-
-#content div.view {
-    text-align: left;
-}
-
-#content div.flex {
-    align-items: inherit;
-}
-
-body #content {
+main {
     max-width: none;
 }
 
-.buttons {
-    display: flex;
-}
-
-#content .bottom, .bottom {
-    position: absolute;
-    bottom: var(--space-lg);
-}
-
-#content .bottom.right, .bottom.right {
-    right: var(--space-lg);
-}
-
-#content div.title {
-    font-size: var(--space-xl);
-}
-
-div#oldSeries {
-    clear: both;
-}
-
-div#newSeries, div#oldSeries {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 20ch);
-    grid-template-rows: repeat(auto-fill, 20ch);
-    align-items: first basline;
-}
-
-div#newSeries a, div#oldSeries a {
-    position: relative;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    line-height: 1.4rem;
-    height: 150px;
-    width: 150px;
-    padding: 0;
-    color: var(--button-bg);
-    cursor: pointer;
-    text-decoration: none;
-    overflow: hidden;
-}
-
-div#newSeries a::before, div#oldSeries a::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-
-div#newSeries a span, div#oldSeries a span {
-    position: relative;
-    z-index: 2;
-    height: 100%;
-    padding: 0.5rem;
-    width: 100%;
-    border-radius: 0;
-    font-weight: 600;
-}
-
-div#newSeries a:hover, div#oldSeries a:hover {
-    transform: scale(1.1);
-    transition: transform 0.3s ease-in-out;
-    text-decoration: none;
-}
-
 div#search {
-    float: right;
+    display: flex;
+    align-items: baseline;
     background: var(--panel-bg);
     padding-left: var(--space-sm);
     padding-right: var(--space-sm);
@@ -122,4 +23,39 @@ div#search::before {
 
 div#search input {
     border-bottom: none;
+}
+
+#container {
+    position: relative;
+    background: #eee;
+    border-radius: 0;
+}
+
+#content .label {
+    width: 10ch;
+    color: var(--border-color);
+}
+
+#content div.series.old {
+    opacity: 0.4;
+}
+
+#content div.series a {
+    height: 150px;
+    width: 150px;
+    color: var(--button-bg);
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0.5rem;
+    float: left;
+}
+
+#content div.series a:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s ease-in-out;
+    text-decoration: none;
+}
+
+#content div.series div.series-name {
+    font-weight: 600;
 }

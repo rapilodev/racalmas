@@ -33,40 +33,29 @@ function edit_series_members(series_id) {
     $('.edit_series_members_' + series_id).toggle();
 }
 
-// show/hide schedule fields depending on period type for a given schedule element
-function showScheduleFields(id) {
-    var select = '#' + id + ' select[name="period_type"]';
-    var type = $(select).val();
-    //hide and show values for different schedule types
-    if (type == 'single') {
-        $('#' + id + ' div.cell.frequency').hide();
-        $('#' + id + ' div.cell.end').hide();
-        $('#' + id + ' div.cell.schedule_weekday').hide();
-        $('#' + id + ' div.cell.week_of_month').hide();
-        $('#' + id + ' div.cell.schedule_month').hide();
-        $('#' + id + ' div.cell.nextDay').hide();
-    } else if (type == 'days') {
-        $('#' + id + ' div.cell.frequency').show();
-        $('#' + id + ' div.cell.end').show();
-        $('#' + id + ' div.cell.schedule_weekday').hide();
-        $('#' + id + ' div.cell.week_of_month').hide();
-        $('#' + id + ' div.cell.schedule_month').hide();
-        $('#' + id + ' div.cell.nextDay').hide();
-    } else if (type == 'week_of_month') {
-        $('#' + id + ' div.cell.frequency').hide();
-        $('#' + id + ' div.cell.end').show();
-        $('#' + id + ' div.cell.schedule_weekday').show();
-        $('#' + id + ' div.cell.week_of_month').show();
-        $('#' + id + ' div.cell.schedule_month').show();
-        $('#' + id + ' div.cell.nextDay').show();
-    }
-}
-
 // show/hide schedule fields for all schedules
-function initScheduleFields() {
-    $('div.row.schedule form').each(function() {
-        var id = $(this).attr('id');
-        if (contains(id, 'schedule_')) showScheduleFields(id);
+function updateScheduleFields() {
+    document.querySelectorAll('div.schedule').forEach(schedule => {
+        const type = schedule.querySelector('select[name="period_type"]').value;
+        const get = cls => schedule.querySelector(`div.cell.${cls}`);
+        const cells = {
+            frequency: get('frequency'),
+            end: get('end'),
+            weekday: get('schedule_weekday'),
+            weekOfMonth: get('week_of_month'),
+            month: get('schedule_month'),
+            nextDay: get('nextDay')
+        };
+        const visible = new Set(
+            type === 'days' ? [cells.frequency, cells.end] :
+            type === 'week_of_month' ? [cells.end, cells.weekday, cells.weekOfMonth, cells.month, cells.nextDay] :
+            []
+        );
+        // 'single' type leaves visible empty (everything hidden)
+    
+        Object.entries(cells).filter(Boolean).forEach(([key, cell]) => {
+            cell.style.display = visible.has(cell) ? '' : 'none';
+        });
     });
 }
 
@@ -121,7 +110,6 @@ function initSelectChangeHandler(selector, name, title) {
                     );
                 }
             });
-            setInputWidth();
         }
     );
 }
@@ -140,10 +128,8 @@ function addSelectChangeHandler(selector, name, title) {
                         + '<input name="' + name + '" value="' + value + '" class="' + name + '">'
                     );
                 } else {
-                    //set selected value to select
                     $(this).attr('value', $(this).val());
                 }
-                setInputWidth();
             });
         }
     );
@@ -158,28 +144,6 @@ function updateScheduleButtonName() {
     } else {
         $('#addScheduleButton').text(loc['label_add_schedule']);
     }
-}
-
-// set css class on parent div to add margin on input fields
-function setInputWidth() {
-    $('#content .editor div.cell input').each(function() {
-        $(this).parent().addClass('containsInput');
-        $(this).parent().removeClass('containsSelect');
-    });
-    $('#content .editor div.cell select').each(function() {
-        $(this).parent().addClass('containsSelect');
-        $(this).parent().removeClass('containsInput');
-    });
-
-    $('#content .editor div.cell select[name="period_type"]').each(function() {
-        if ($(this).val() == 'single') {
-            $(this).parent().addClass('isSingle');
-            $(this).addClass('isSingle');
-        } else {
-            $(this).parent().removeClass('isSingle');
-            $(this).removeClass('isSingle');
-        }
-    });
 }
 
 function checkExcerptField() {
@@ -198,7 +162,7 @@ function checkFields() {
     $('textarea[name="excerpt"]').on("keyup", function() {
         checkExcerptField();
     });
-    }
+}
 
 async function addUser(form) {
     let response = await fetch("series.cgi?", {
@@ -212,7 +176,7 @@ async function addUser(form) {
             user_id: form.find("select[name='user_id'] option").filter(':selected').val(),
         })
     });
-    if(response.status!=200) showError(response.statusText);
+    if (response.status != 200) showError(response.statusText);
     let json = await response.json();
     if (json.error) {
         showError(json.error);
@@ -230,7 +194,7 @@ async function addUser(form) {
 function commitRemoveUser(project_id, studio_id, series_id, user_id) {
     let dialog = commitAction(
         '<TMPL_VAR .loc.button_remove_member escape=js>',
-        async function(){
+        async function() {
             let response = await fetch("series.cgi?", {
                 method: 'POST',
                 cache: "no-store",
@@ -255,8 +219,8 @@ function commitRemoveUser(project_id, studio_id, series_id, user_id) {
 }
 
 function commitDeleteSeries(project_id, studio_id, series_id) {
-    commitAction( '<TMPL_VAR .loc.button_remove_series escape=js>',
-        async function(){
+    commitAction('<TMPL_VAR .loc.button_remove_series escape=js>',
+        async function() {
             let response = await fetch("series.cgi?", {
                 method: 'POST',
                 body: new URLSearchParams({
@@ -278,7 +242,7 @@ function commitDeleteSeries(project_id, studio_id, series_id) {
 }
 
 function showSeries(project_id, studio_id, series_id, tab) {
-    loadUrl( "series.cgi?" + new URLSearchParams({
+    loadUrl("series.cgi?" + new URLSearchParams({
         action: "show_series",
         project_id: project_id,
         studio_id: studio_id,
@@ -289,14 +253,14 @@ function showSeries(project_id, studio_id, series_id, tab) {
 async function saveSchedule(form) {
     var formData = new FormData(form.get(0));
     formData.append("action", "save_schedule");
-    let response = await fetch("series.cgi?",{
+    let response = await fetch("series.cgi?", {
         method: 'POST',
         cache: "no-store",
         body: new URLSearchParams(formData)
     });
     if (response.status != 200) { showError(response.statusText); return }
     let json = await response.json();
-    if (json.error) { showError(json.error); return;}
+    if (json.error) { showError(json.error); return; }
     console.log(json)
     showInfo("schedule saved");
     if (json.status == "schedule added") {
@@ -309,27 +273,27 @@ async function saveSchedule(form) {
     }
 }
 
-function deleteSchedule(form){
+function deleteSchedule(form) {
     commitAction('<TMPL_VAR .loc.button_delete_schedule escape=js>',
-    async function () {
-        var formData = new FormData(form.get(0));
-        formData.append("action", "delete_schedule");
-        let response = await fetch("series.cgi?",{
-            method: 'POST',
-            cache: "no-store",
-            body: new URLSearchParams(formData)
+        async function() {
+            var formData = new FormData(form.get(0));
+            formData.append("action", "delete_schedule");
+            let response = await fetch("series.cgi?", {
+                method: 'POST',
+                cache: "no-store",
+                body: new URLSearchParams(formData)
+            });
+            if (response.status != 200) { showError(response.statusText); return }
+            let json = await response.json();
+            if (json.error) { showError(json.error); return; }
+            showInfo("schedule deleted");
+            showSeries(
+                form.find("input[name='project_id']").val(),
+                form.find("input[name='studio_id']").val(),
+                form.find("input[name='series_id']").val(),
+                '#tabs-schedule'
+            );
         });
-        if (response.status != 200) { showError(response.statusText); return }
-        let json = await response.json();
-        if (json.error) { showError(json.error); return;}
-        showInfo("schedule deleted");
-        showSeries(
-            form.find("input[name='project_id']").val(),
-            form.find("input[name='studio_id']").val(),
-            form.find("input[name='series_id']").val(),
-            '#tabs-schedule'
-        );
-    });
 }
 
 function listEvents(project_id, studio_id, series_id) {
@@ -366,7 +330,7 @@ async function rebuildEpisodes(project_id, studio_id, series_id) {
         studio_id: studio_id,
         series_id: series_id,
         action: 'set_rebuild_episodes',
-    }).toString(),{
+    }).toString(), {
         cache: "no-store",
     });
     let json = await response.json();
@@ -439,36 +403,33 @@ async function previewRebuildEpisodes(project_id, studio_id, series_id) {
     }
 }
 
-$(document).ready(
-    function() {
-        loadLocalization();
-        addBackButton();
+$(document).ready( function() {
+    loadLocalization();
+    addBackButton();
 
-        showDateTimePicker('input.datetimepicker.start')
-        showDatePicker('input.datetimepicker.end');
+    showDateTimePicker('input.datetimepicker.start');
+    showDatePicker('input.datetimepicker.end');
 
-        initCheckBoxes();
-        addCheckBoxHandler();
+    initCheckBoxes();
+    addCheckBoxHandler();
 
-        setTabs('#tabs');
+    setTabs('#tabs');
 
-        updateScheduleButtonName();
-        initScheduleFields();
-        setSelectedOptions();
+    updateScheduleButtonName();
+    updateScheduleFields();
+    setSelectedOptions();
 
-        //if value is not selected in a option, replace select box by input field
-        initSelectChangeHandler('#tabs-schedule .frequency select', 'frequency', 'frequency_days');
-        addSelectChangeHandler('#tabs-schedule .frequency select', 'frequency', 'frequency_days');
+    //if value is not selected in a option, replace select box by input field
+    initSelectChangeHandler('#tabs-schedule .frequency select', 'frequency', 'frequency_days');
+    addSelectChangeHandler('#tabs-schedule .frequency select', 'frequency', 'frequency_days');
 
-        initSelectChangeHandler('#tabs-schedule .duration select', 'duration', 'duration_in_minutes');
-        addSelectChangeHandler('#tabs-schedule .duration select', 'duration', 'duration_in_minutes');
+    initSelectChangeHandler('#tabs-schedule .duration select', 'duration', 'duration_in_minutes');
+    addSelectChangeHandler('#tabs-schedule .duration select', 'duration', 'duration_in_minutes');
 
-        setInputWidth();
-        checkFields();
+    checkFields();
 
-        $('table#schedule_table').tablesorter({
-            widgets: ["filter"],
-            usNumberFormat: false
-        });
-    }
-);
+    $('table#schedule_table').tablesorter({
+        widgets: ["filter"],
+        usNumberFormat: false
+    });
+});

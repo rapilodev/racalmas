@@ -344,5 +344,5 @@ $(document).ready(function() {
     var checkbox = $("#img_editor input[name='public']");
     updateCheckBox(checkbox);
     checkbox.change(() => updateCheckBox(checkbox));
-    console.log("image handler initialized");
+    //console.log("image handler initialized");
 });
