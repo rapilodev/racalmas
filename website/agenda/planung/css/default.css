@@ -576,6 +576,7 @@ div#tabs > div { background: var(--panel-bg); }
 button {
   font-size: 1rem;
   width: fit-content;
+  cursor: pointer;
 }
 
 input[type="submit"],
