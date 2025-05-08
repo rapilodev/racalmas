@@ -93,13 +93,13 @@ $(document).ready(
 
     setTextWidth('.datetimepicker.start',     130);
     setTextWidth('.datetimepicker.end',       130);
-    setTextWidth('.datetimepicker.end_date',  90);
+    setTextWidth('.datepicker.end_date',  90);
     setTextWidth('.datetimepicker.weekday',   20);
     setTextWidth('.datetimepicker.frequency', 20);
 
     showDateTimePicker('.datetimepicker.start');
     showDateTimePicker('.datetimepicker.end');
-    showDatePicker('.datetimepicker.end_date');
+    showDatePicker('.datepicker.end_date');
 
     initScheduleFields();
     setSelectedOptions();

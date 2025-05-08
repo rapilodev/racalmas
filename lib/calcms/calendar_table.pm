@@ -711,6 +711,7 @@ sub getTableHeader {
     my $ypos     = 0;
     my $old_week = undef;
     my $dt       = undef;
+    my $d = 0;
     for my $day(@$days) {
         my $events = $events_by_day->{$day};
 
@@ -725,15 +726,15 @@ sub getTableHeader {
         }
 
         #header
-        $out .= qq{<td>};
+        $out .= qq{<td class="d$d">};
         my $event   = $events->[0];
         my $content = '';
         my $class   = 'date';
         if ($day eq '0') {
             $out .= qq{<div id="position"></div></td>};
+            $d++;
             next;
         } else {
-
             #print weekday
             $dt->set_locale($language);
             $content = $dt->day_name() . '<br>';
@@ -800,7 +801,7 @@ sub getTableBody {
     my $ypos     = 1;
     my $dt       = undef;
     my $old_week = undef;
-
+    my $d=0;
     for my $day(@$days) {
         my $events = $events_by_day->{$day};
 
@@ -814,7 +815,8 @@ sub getTableBody {
             $old_week = $week;
         }
 
-        $out .= qq{<td>};    # width="$width">};
+        $out .= qq{<td class="d$d">};
+        $d++;
 
         for my $event(@$events) {
             my $content = '';

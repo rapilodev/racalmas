@@ -520,8 +520,10 @@ input:not([type="checkbox"]) {
 div#tabs > div { background: var(--panel-bg); }
 
 #content ul.tabContainer {
+  margin: -0 1rem 1rem 1rem;
   background: none;
   display: block;
+  min-width: 640px;
     li {
       display: inline-block;
       padding: var(--space-md);
@@ -586,7 +588,7 @@ button {
   cursor: pointer;
   display: inline;
   border: 0;
-  padding: 0 var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
   margin: var(--space-xs);
   text-decoration: none;
   border-radius: var(--space-md);
@@ -607,17 +609,19 @@ button:focus {
 
 button.primary {
   border: 1px solid #167ec2;
-  abox-shadow: 0 5px 11px 0 rgba(0,0,0,0.18), 0 4px 15px 0 rgba(0,0,0,0.15);
+  box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18), 0 4px 15px 0 rgba(0,0,0,0.15);
 }
 
 
-.sidebra button:not(.primary) {
+.sidebar button:not(.primary) {
   min-width:10rem;
 }
 
 button:not(.primary) {
   color: #000;
+  border: 1px solid #bbb;  
   background: #ccc;
+  box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18);
 }
 
 button[disabled] {
@@ -684,8 +688,11 @@ div.formField input { clear: both; }
 }
 
 input.datetimepicker {
-    width:20ch !important;
-    
+    width:19ch !important;
+}
+
+input.datepicker {
+    width:14ch !important;
 }
 
 div.row {
@@ -694,7 +701,6 @@ div.row {
     align-items: baseline;
     flex-wrap:wrap;
     gap: var(--gap);
-    
 }
 
 div.form-group,

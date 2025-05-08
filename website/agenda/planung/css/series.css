@@ -40,10 +40,6 @@ body #content {
     clear: both;
 }
 
-ul.tabContainer {
-    margin: -1rem -1rem 1rem -1rem
-}
-
 /* Tabs container: clear floats and use panel background */
 div#tabs > div {
     clear: both;

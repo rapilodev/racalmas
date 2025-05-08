@@ -1,0 +1,51 @@
+#event_list {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#event_list tr {
+    border-bottom: 1px solid var(--color-border);
+}
+
+#event_list th, #event_list td {
+    padding: var(--space-xs) var(--space-sm);
+    text-align: left;
+}
+
+#event_list th:hover {
+    cursor: pointer;
+}
+
+#event_list td.day_of_year,
+#event_list td.weekday,
+#event_list td.start_date,
+#event_list td.start_time,
+#event_list td.episode,
+#event_list td.rerun {
+    white-space: nowrap;
+}
+
+#event_list td.start_date {
+    font-family: monospace;
+}
+
+#event_list td.title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#event_list td:nth-child(1),
+#event_list td:nth-child(2),
+#event_list td:nth-child(7),
+#event_list td:nth-child(9),
+#event_list td:nth-child(10) {
+    width: var(--space-xl);
+    text-align: center;
+    padding: var(--space-xs) 0;
+}
+
+#event_list tr:hover {
+    border-left: 2px solid var(--color-nav-hover);
+    border-right: 2px solid var(--color-nav-hover);
+    cursor: pointer;
+}

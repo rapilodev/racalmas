@@ -181,7 +181,7 @@ $(document).ready(
         addBackButton();
 
         showDateTimePicker('.datetimepicker.start');
-        showDatePicker('.datetimepicker.end');
+        showDatePicker('.datetime.end');
 
         initCheckBoxes();
         addCheckBoxHandler();

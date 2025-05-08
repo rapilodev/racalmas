@@ -203,7 +203,7 @@
 
                 <div class="cell end">
                     <label><TMPL_VAR .loc.schedule_end></label>
-                    <input name="end"  value="<TMPL_VAR end>" class="datetimepicker end" placeholder=" "/>
+                    <input name="end"  value="<TMPL_VAR end>" class="datetimepicker datepicker end" placeholder=" "/>
                 </div>
 
                 <div class="cell frequency">
@@ -260,7 +260,7 @@
                 </div>
 
                 <div class="cell save"><br>
-                    <button onclick="saveSchedule($(this).closest('form'));return false;"
+                    <button class="primary" onclick="saveSchedule($(this).closest('form'));return false;"
                     ><TMPL_VAR .loc.button_save_schedule></button>
                 </div>
                 <TMPL_IF .allow.delete_schedule>
@@ -376,7 +376,7 @@
                 <TMPL_IF .allow.update_schedule>
                     <div class="cell save">
                         <br/>
-                        <button id="addScheduleButton"
+                        <button class="primary" id="addScheduleButton"
                             onclick="saveSchedule($(this).closest('form'));return false"
                             ><TMPL_VAR .loc.button_add_schedule></button>
                         <TMPL_IF show_hint_to_add_schedule><TMPL_VAR .loc.label_hint_to_add_schedule></TMPL_IF>

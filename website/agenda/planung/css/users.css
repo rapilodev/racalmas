@@ -1,0 +1,4 @@
+#content .disabled {
+    color: var(--color-body);
+    opacity: 0.6;
+}

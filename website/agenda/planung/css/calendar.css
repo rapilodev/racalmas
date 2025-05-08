@@ -1,8 +1,5 @@
 body #content {
-    flex-direction: column;
-}
-
-body #content{
+    flex-direction: row;
     max-width:100%!important;
     width:100%;
 }
@@ -84,9 +81,26 @@ body #content{
     z-index: 0;
 }
 
+#calendarTable,
+#calendar,
+#calendar_weekdays,
+#calendar table{
+    width:100%;
+}
+
+#calendar,
+#calendar table{
+    height:100%;
+}
+
+#calendar .d0,
+#calendar div.time,
+#calendar_weekdays .d0 {
+    width:10%!important;
+    height:4em;
+}
 #calendar_weekdays div.date, #calendar div.time {
     text-align: center;
-    vertical-align: middle;
     z-index: 5;
 }
 
@@ -125,13 +139,33 @@ body #content{
     border-top: 1px solid #fff;
 }
 
+#acalendar_weekdays div.date,
+#acalendar_weekdays div.header,
+div#toolbar,
+a#calendar_weekdays {
+    border:0;
+    background:#ddd;
+    border-radius:0;
+}
+
 div#toolbar {
-    display: flex;
+    padding:1rem;
     flex-wrap: wrap;
-    align-items: baseline;
-    border-radius: 0;
-    text-align:right;
-    gap: 0.5rem;
+    gap: 1rem;
+    display: flex;
+    justify-content: start;
+    max-width: 15%;
+    flex-direction: column;
+    align-items: end;
+    position: static;
+}
+
+input.search {
+    width:100%;
+}
+
+div#toolbar form {
+    display: contents;
 }
 
 div#toolbar select, div#toolbar input {
@@ -204,7 +238,6 @@ div#toolbar select, div#toolbar input {
     margin-top: -2px;
     filter: grayscale(60%);
     opacity: 0.8;
-    vertical-align: middle;
     width: 14px;
     height: 14px;
 }

@@ -35,26 +35,18 @@ function cancel_edit_event() {
 }
 
 function setupMenuHeight() {
-    if ($('#calendar').length > 0) {
-        var top = $('#calcms_nav').height();
-        top += $('#toolbar').height() + 2;
-        var weekdays = document.querySelector("#calendar_weekdays");
-        //$('#calendar_weekdays').css("top", top);
-        var weekday_height = 30;
-        weekdays.querySelectorAll("table td div").forEach(
-            function(div) {
-                var height = div.offsetHeight + 14;
-                if (height > weekday_height) weekday_height = height;
-            }
-        );
-        top += weekday_height + 1 - 10;
-        //$('#calendar').css("top", top);
-        return top;
-    } else {
-        var top = $('#calcms_nav').height();
-        //$('#content').css("top", top);
-        return top;
-    }
+    var top = $('#calcms_nav').height();
+    if ($('#calendar').length == 0) return top;
+    var weekdays = document.querySelector("#calendar_weekdays");
+    var weekday_height = 30;
+    weekdays.querySelectorAll("table td div").forEach(
+        function(div) {
+            var height = div.offsetHeight + 14;
+            if (height > weekday_height) weekday_height = height;
+        }
+    );
+    top += weekday_height + 1 - 10;
+    return top;
 }
 
 function resizeCalendarMenu() {
@@ -65,6 +57,7 @@ function resizeCalendarMenu() {
     var menuHeight = setupMenuHeight();
 
     var width = $(window).width() - 0;
+    width -=  $('#toolbar').width();
     var height = $(window).height() - menuHeight;
 
     if ($('#calendar').css('display') == 'none') {
@@ -72,17 +65,10 @@ function resizeCalendarMenu() {
     } else {
         $('body #content').css('max-width', width);
     }
-    $('div#calendar').css('width', width);
-    $('div#calendar_weekdays').css('width', width);
-    $('div#calendar').css('height', height);
-
-    // remove border for scroll
-    $('#calendar table').css('width', width - 20);
-    $('#calendar_weekdays table').css('width', width - 20);
     $('#calendar table').css('height', height);
 
     //set spacing between table columns
-    var columnSpacing = Math.round($(window).width() / 72);
+    var columnSpacing = Math.round($(window).width() / 100);
     if (columnSpacing < 0) columnSpacing = 0;
     columnSpacing = Math.ceil(columnSpacing);
 
