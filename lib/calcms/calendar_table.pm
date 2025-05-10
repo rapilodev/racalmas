@@ -662,7 +662,7 @@ sub calcCalendarTable {
 
 }
 
-sub getTableHeader {
+sub getTable {
     my ($config, $permissions, $params, $cal_options) = @_;
 
     my $days          = $cal_options->{days};
@@ -685,24 +685,14 @@ sub getTableHeader {
         <script>
             var days=$numberOfDays;
         </script>
-        <style>
-            #calendar div.time,
-            #calendar_weekdays div.date,
-            #calendar div.event,
-            #calendar div.schedule,
-            #calendar div.work,
-            #calendar div.play,
-            #calendar div.grid {
-                width: calc(${width}% - 5px)
-            }
-        </style>
     !;
 
+#style="visibility:hidden"
     $out .= q{
-        <div id="calendar_weekdays" style="visibility:hidden">
+        <div id="calendar">
             <table>
-                <tbody>
-                    <tr>
+                <thead>
+                    <tr id="weekdays">
     };
 
     my $next_day_found = 0;
@@ -714,25 +704,24 @@ sub getTableHeader {
     my $d = 0;
     for my $day(@$days) {
         my $events = $events_by_day->{$day};
-
         if ($day ne '0') {
             $dt = time::get_datetime($day . 'T00:00:00',
                 $config->{date}->{time_zone});
             my $week = $dt->week_number();
             if ((defined $old_week) && ($week ne $old_week)) {
-                $out .= qq{<td class="week"><div class="week"></div></td>};
+                $out .= qq{<th class="week"><div class="week"></div></th>};
             }
             $old_week = $week;
         }
 
         #header
-        $out .= qq{<td class="d$d">};
+        $out .= qq{<th class="col$d">};
+        $d = 1;
         my $event   = $events->[0];
         my $content = '';
         my $class   = 'date';
         if ($day eq '0') {
             $out .= qq{<div id="position"></div></td>};
-            $d++;
             next;
         } else {
             #print weekday
@@ -741,7 +730,6 @@ sub getTableHeader {
             $content .= $dt->strftime('%d. %b %Y') . '<br>';
             $content .= time::dayOfYear($event->{start}) . '<br>';
 
-            #$class="date";
             if (($day ge $date) && ($next_day_found == 0)) {
                 $class          = "date today";
                 $next_day_found = 1;
@@ -764,48 +752,23 @@ sub getTableHeader {
 
         calc_positions([$event], $cal_options);
         $out .= get_event($params, $event, $ypos, $yoffset, $yzoom);
-
-        $out .= '</td>';
+        $out .= '</th>';
     }
     $out .= q{
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    };
-    return $out;
-}
-
-sub getTableBody {
-    my ($config, $permissions, $params, $cal_options) = @_;
-
-    my $days          = $cal_options->{days};
-    my $events_by_day = $cal_options->{events_by_day};
-    my $yoffset       = $cal_options->{yoffset};
-    my $yzoom         = $cal_options->{yzoom};
-
-    my $project_id = $params->{project_id};
-    my $studio_id  = $params->{studio_id};
-
-    ParamError->throw(error=>"no dates found at the selected time span") if scalar(@{$days}) == 0;
-    my $out;
-
-    $out = q{
-        <div id="calendar" style="display:none">
-            <table>
-                <tbody>
-                    <tr>
+        </tr>
+        </thead>
+        <tbody class="table-scroll">
+        <tr>
     };
 
     #print events with weekday and date
-    my $ypos     = 1;
-    my $dt       = undef;
-    my $old_week = undef;
-    my $d=0;
+    $ypos     = 1;
+    $dt       = undef;
+    $old_week = undef;
+    $d=0;
     for my $day(@$days) {
         my $events = $events_by_day->{$day};
-
-        if ($day ne '0') {
+        if ($d ne '0') {
             $dt = time::get_datetime($day . 'T00:00:00',
                 $config->{date}->{time_zone});
             my $week = $dt->week_number();
@@ -815,44 +778,33 @@ sub getTableBody {
             $old_week = $week;
         }
 
-        $out .= qq{<td class="d$d">};
-        $d++;
+        $out .= qq{<td class="col$d">};
+        $d = 1;
 
         for my $event(@$events) {
             my $content = '';
-            if ((defined $event->{series_name})
-                && ($event->{series_name} ne ''))
-            {
+            if (length($event->{series_name})) {
                 $event->{series_name} = $params->{loc}->{single_event}
-                    if $event->{series_name} eq ''
-                    || $event->{series_name} eq '_single_';
-                $content = '<b>' . $event->{series_name} . '</b><br>';
+                    if !length $event->{series_name} || $event->{series_name} eq '_single_';
+                $content .= qq{<div class="series">$event->{series_name}</div>};
             }
 
-            if ((defined $event->{title}) && (defined $event->{title} ne '')) {
-                $content .= $event->{title};
-                unless ($event->{title} =~ /\#\d+/) {
-                    $content .= ' #' . $event->{episode}
-                        if ((defined $event->{episode})
-                        && ($event->{episode} ne ''));
-                }
+            if (length($event->{title})) {
+                $content .= (($event->{title} =~ /\#\d+/)
+                    ? $event->{title}
+                    : (length($event->{episode})
+                        ? "$event->{title} #$event->{episode}"
+                        : $event->{title}));
             }
             $content = $event->{start} if $day eq '0';
-            $event->{project_id} = $project_id
-                unless defined $event->{project_id};
-            $event->{studio_id} = $studio_id unless defined $event->{studio_id};
-            $event->{content}   = $content
-                unless ((defined $event->{class})
-                && ($event->{class} eq 'time now'));
+            $event->{project_id} //= $project_id;
+            $event->{studio_id} //= $studio_id;
+            $event->{content}   = $content unless ($event->{class}//'') eq 'time now';
             $event->{class} = 'event' if $day ne '0';
-            $event->{class} = 'grid'
-                if ((defined $event->{grid}) && ($event->{grid} == 1));
-            $event->{class} = 'schedule'
-                if ((defined $event->{schedule}) && ($event->{schedule} == 1));
-            $event->{class} = 'work'
-                if ((defined $event->{work}) && ($event->{work} == 1));
-            $event->{class} = 'play'
-                if ((defined $event->{play}) && ($event->{play} == 1));
+            $event->{class} = 'grid' if $event->{grid};
+            $event->{class} = 'schedule' if $event->{schedule};
+            $event->{class} = 'work' if $event->{work};
+            $event->{class} = 'play' if $event->{play};
 
             if ($event->{class} eq 'event') {
                 $event->{content} .= '<br><span class="weak">';
@@ -874,7 +826,6 @@ sub getTableBody {
                     audio::formatLoudness($event->{rms_right}, 'R: ', 'round')
                     if defined $event->{rms_right};
 
-#$event->{content} .= formatBitrate($event->{bitrate}) if defined $event->{bitrate};
                 $event->{content} .= '</span>';
             }
 
@@ -885,10 +836,10 @@ sub getTableBody {
         $out .= '</td>';
     }
     $out .= q{
-                                </tr>
-                            </tbody>
-                        </table>
-                       </div><!--table-->
+                </tr>
+            </tbody>
+        </table>
+       </div><!--table-->
     };
 
     return $out;
@@ -1017,7 +968,7 @@ sub get_create_series_form {
     my $studio_id  = $params->{studio_id};
     return qq{
         <div>
-            <b>} . $params->{loc}->{label_create_series} . qq{</b>
+            <b>$params->{loc}->{label_create_series}</b>
             <form method="post" action="series.cgi">
                 <input type="hidden" name="project_id" value="$project_id">
                 <input type="hidden" name="studio_id"  value="$studio_id">
@@ -1067,29 +1018,25 @@ sub get_event {
     $id = 'play_' . $event->{project_id} . '_' . $event->{studio_id}
         if defined $event->{play};
 
-    my $class     = $event->{class} || '';
+    my @class     = ($event->{class} || ());
     my $showIcons = 0;
-    if ($class =~ /(event|schedule)/) {
-        $class .= ' scheduled' if defined $event->{scheduled};
-        $class .= ' no_series'
-            if (($class eq 'event') && ($event->{series_id} eq '-1'));
-        $class .= " error x$event->{error}" if defined $event->{error};
+    if (grep m/(event|schedule)/, @class) {
+        push @class, ' scheduled' if defined $event->{scheduled};
+        push @class,  'no_series' if (grep 'event', @class) && $event->{series_id} eq '-1';
+        push @class,  "error x$event->{error}" if defined $event->{error};
 
         for my $filter(
             'rerun', 'archived',           'playout', 'published',
             'live',  'disable_event_sync', 'draft'
-           )
-        {
-            $class .= ' ' . $filter
-                if ((defined $event->{$filter}) && ($event->{$filter} eq '1'));
+        ) {
+            push @class,  $filter if defined $event->{$filter} && $event->{$filter} eq '1';
         }
-        $class .= ' preproduced'
-            unless ((defined $event->{'live'}) && ($event->{'live'} eq '1'));
-        $class .= ' no_playout'
-            unless ((defined $event->{'playout'})
-            && ($event->{'playout'} eq '1'));
-        $class .= ' no_rerun'
-            unless ((defined $event->{'rerun'}) && ($event->{'rerun'} eq '1'));
+        push @class, 'preproduced'
+            unless defined $event->{'live'} && $event->{'live'} eq '1';
+        push @class, 'no_playout'
+            unless defined $event->{'playout'} && $event->{'playout'} eq '1';
+        push @class, 'no_rerun'
+            unless defined $event->{'rerun'} && $event->{'rerun'} eq '1';
         $showIcons = 1;
     }
 
@@ -1100,35 +1047,21 @@ sub get_event {
     $yend   = int($yend * $yzoom);
     my $height = $yend - $ystart + 1;
 
-    if ($ypos > 0) {
-        $height = q{height:} .($height) . 'px;';
-    } else {
-        $height = '';
-    }
+    $height = ($ypos > 0) ? qq{height:$height} . 'px;' : '';
+    my $content = '<div class="header">' . ($event->{content} // '') .'</div>';
 
-    my $content = '<div class="header">';
-    $content .=
-        qq!<img class="icon" src="! .($event->{series_icon_url}) . q!">!
-        if $class =~ /event/;
-    $content .= $event->{content} || '';
-    $content .= '</div>';
-
-    if ($class =~ /schedule/) {
+    if (grep /schedule/, @class) {
         my $frequency = getFrequency($event);
         $content .= "<br>($frequency)" if defined $frequency;
     }
 
-    my $attr = '';
-    if ($class =~ /play/) {
-        $attr .= ' rms="' . $event->{rms_image} . '"'
-            if defined $event->{rms_image};
-        $attr .= ' start="' . $event->{start} . '"' if defined $event->{start};
+    my @attr = '';
+    if (grep /play/, @class) {
+        push  @attr, ' rms="' . $event->{rms_image} . '"' if defined $event->{rms_image};
+        push  @attr, ' start="' . $event->{start} . '"' if defined $event->{start};
     }
 
-    if (defined $event->{upload}) {
-        $content .= '<br>uploading <progress max="10" ></progress> ';
-    }
-
+    $content .= '<br>uploading <progress max="10" ></progress> ' if defined $event->{upload};
     $content .= q{<div class="scrollable">};
     $content .= q{<div class="excerpt">} . $event->{excerpt} . q{</div>}
         if defined $event->{excerpt};
@@ -1137,54 +1070,48 @@ sub get_event {
     $content .= q{</div>};
 
     if ($showIcons) {
-        my $attr = { map {$_ => undef} split(/\s+/, $class) };
-
+        my $attr = { map {$_ => undef} @class };
         my $file =
             $event->{file}
             ? 'playout: ' . $event->{file} =~ s/\'/\&apos;/gr
             : 'playout';
-
         my $playoutClass    = qq{<img src="image/dark/play.svg">};
         my $processingClass = qq{<img src="image/dark/processing.svg">};
         my $preparedClass   = qq{<img src="image/dark/prepare.svg">};
-        my $icons           = '';
-
+        my @icons           = ();
         if (exists $attr->{event}) {
             my $playout = '';
             if (exists $attr->{upload_status}) {
-                $playout = $processingClass if $attr->{upload_status} ne '';
+                $playout = $processingClass if length $attr->{upload_status};
                 $playout = $preparedClass   if $attr->{upload_status} eq 'done';
             }
             $playout = $playoutClass if exists $attr->{playout};
-            $icons .= '<img src="image/dark/mic.svg" title="live"/>'
+            push  @icons, '<img src="image/dark/mic.svg" title="live"/>'
                 if exists($attr->{live}) && exists($attr->{no_rerun});
-            $icons .= '<img src="image/dark/mic_off.svg" title="preproduced"/>'
+            push  @icons, '<img src="image/dark/mic_off.svg" title="preproduced"/>'
                 if exists($attr->{preproduced}) && exists($attr->{no_rerun});
-            $icons .= '<img src="image/dark/replay.svg" title="rerun"/>'
+            push  @icons, '<img src="image/dark/replay.svg" title="rerun"/>'
                 if exists $attr->{rerun};
-            $icons .=
-qq{<img src="image/dark/play.svg" title="$file" onmouseenter="console.log('$file');"/>}
+            push  @icons, qq{<img src="image/dark/play.svg" title="$file" onmouseenter="console.log('$file');"/>}
                 if $playout;
-            $icons .= '<img src="image/dark/archive.svg" title="archived"/>'
+            push  @icons, '<img src="image/dark/archive.svg" title="archived"/>'
                 if exists $attr->{archived};
+            push  @icons, qq!<img class="icon" src="! .($event->{series_icon_url}) . q!">!;
         }
-
-        $content =
-qq{<div class="text" style="$height">$content</div><div class="icons">$icons</div>};
+        my $icons = join '', @icons;
+        $content = qq{
+            <div class="icons">$icons</div>
+            <div class="text" style="$height">$content</div>
+        };
     }
 
-    my $time = '';
-    $time = qq{ time="$event->{time}"} if $class =~ m/time/;
+    my $time = (grep m/time/, @class) ? qq{ time="$event->{time}"} : '';
+    my $date = (grep m/date/, @class) ? qq{ date="$event->{date}"} : '';
 
-    my $date = '';
-    $date = qq{ date="$event->{date}"} if $class =~ m/date/;
-
-    my $line = q{<div } . qq{class="$class" id="$id"};
-    $line .= qq{ style="} . $height . q{top:} . $ystart . q{px;"};
-    $line .= $time . $date . qq{ $attr};
-    $line .= qq{>$content</div>};
-    $line .= "\n";
-    return $line;
+    return sprintf(
+        q{<div class="%s" id="%s" style="%s top:%spx;"%s%s %s>%s</div>},
+        join(" ",@class), $id, $height, $ystart, $time, $date, join("", @attr), $content
+    );
 }
 
 sub getSeriesEvents {

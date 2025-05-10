@@ -94,7 +94,7 @@ sub showCalendar {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions} || {};
-    PermissionError->throw(error => 'Missing permission to read_series') 
+    PermissionError->throw(error => 'Missing permission to read_series')
         unless $permissions->{read_series};
 
     #get range from user settings

@@ -493,8 +493,7 @@ sub showCalendar {
         calendar_table::calcCalendarTable($config, $permissions, $params, $calendar,
             $events_by_day, $cal_options);
         
-        $out .= calendar_table::getTableHeader($config, $permissions, $params, $cal_options);
-        $out .= calendar_table::getTableBody($config, $permissions, $params, $cal_options);
+        $out .= calendar_table::getTable($config, $permissions, $params, $cal_options);
         if ($params->{part} == 0) {
             #TODO: load dynamically
             $out .= calendar_table::getSeries($config, $permissions, $params, $cal_options);
