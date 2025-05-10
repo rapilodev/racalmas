@@ -667,6 +667,21 @@ function setTextareaAutoHeight() {
     });
 }
 
+function fullwidth(el) {
+    const style = getComputedStyle(el);
+    return el.offsetWidth +
+        parseFloat(style.marginLeft) +
+        parseFloat(style.marginRight);
+}
+
+function fullheight(el) {
+    const style = getComputedStyle(el);
+    return el.offsetHeight +
+        parseFloat(style.marginTop) +
+        parseFloat(style.marginBottom);
+}
+
+
 $(document).ready(async function() {
     setupMenu();
     checkSession();

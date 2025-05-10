@@ -51,25 +51,39 @@ function setupMenuHeight() {
 }
 
 function resizeCalendarMenu() {
-    const cal = $('#calendar');
-    const height = $(window).height() - setupMenuHeight();
-    cal.find('tbody').css('height', height);
+    const cal = document.getElementById('calendar');
+    if (!cal) return; // Exit if #calendar doesn't exist
+    const content = document.getElementById('content');
 
-    const width = cal.outerWidth(true);
-    $('#content').css('max-width', width);
+    const height = window.innerHeight - setupMenuHeight();
+    cal.querySelector('tbody').style.height = `${height}px`;
 
-    const columnSpacing = 8;
-    cal.find('td.week, th.week').css({ width: columnSpacing, 'max-width': columnSpacing });
+    const width = fullwidth(cal);
+    content.style.maxWidth = `${width}px`;
 
-    const space = cal.find('thead div.week').length * columnSpacing;
-    const dateWidth = cal.find('th.col0').outerWidth(true);
-    const dateHeight = cal.find('td.col0 .time').outerHeight(true);
+    const columnSpacing = 24;
+    cal.querySelectorAll('td.week, th.week').forEach(
+        el => el.style.width = el.style.maxWidth = `${columnSpacing}px`
+    );
 
-    const cols = cal.find('th.col1').length;
+    const weekCount = cal.querySelectorAll('th.week').length;
+    const space = weekCount * columnSpacing;
+
+    //const thCol0 = cal.querySelector('th.col0');
+    const tdCol0 = cal.querySelector('td.col0')
+    const time = Array.from(tdCol0.querySelectorAll('.time'))
+        .find(el => !el.classList.contains('now'));
+    const dateWidth = fullwidth(time);
+    const dateHeight = 0.5 * fullheight(time);
+
+    const cols = cal.querySelectorAll('th.col1').length;
     let colWidth = Math.round((width - dateWidth - space) / cols) - 20;
+    console.log(Math.round(colWidth / dateHeight), dateHeight)
     colWidth = dateHeight * Math.round(colWidth / dateHeight);
 
-    cal.find('.col1, .col1 > div').css({ width: colWidth, 'max-width': colWidth });
+    cal.querySelectorAll('.col1, .col1 > div').forEach(
+        el => el.style.width = el.style.maxWidth = `${colWidth}px`
+    );
 }
 
 // preselect options in select boxes
