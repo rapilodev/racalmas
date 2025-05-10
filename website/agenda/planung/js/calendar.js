@@ -28,7 +28,7 @@ function isChecked(selector) {
 
 function cancel_edit_event() {
     $('#calendar').show();
-    $('#calendar_weekdays').show();
+    //$('#calendar_weekdays').show();
     $('#event_editor').hide();
     resizeCalendarMenu();
     return false;
@@ -37,54 +37,39 @@ function cancel_edit_event() {
 function setupMenuHeight() {
     var top = $('#calcms_nav').height();
     if ($('#calendar').length == 0) return top;
-    var weekdays = document.querySelector("#calendar_weekdays");
-    var weekday_height = 30;
-    weekdays.querySelectorAll("table td div").forEach(
-        function(div) {
-            var height = div.offsetHeight + 14;
+    var weekdays = document.querySelector("#weekdays");
+    var weekday_height = 0;
+    weekdays.querySelectorAll("td div").forEach(
+        (div) => {
+            let height = div.offsetHeight + 14;
             if (height > weekday_height) weekday_height = height;
         }
     );
-    top += weekday_height + 1 - 10;
+    top += weekday_height;
+    top +=  1 - 10;
     return top;
 }
 
 function resizeCalendarMenu() {
-    $('#calendar').hide();
-    $('#calendar_weekdays').css("visibility", "hidden");
+    const cal = $('#calendar');
+    const height = $(window).height() - setupMenuHeight();
+    cal.find('tbody').css('height', height);
 
-    //after getting menu heigth, hide calendar again
-    var menuHeight = setupMenuHeight();
+    const width = cal.outerWidth(true);
+    $('#content').css('max-width', width);
 
-    var width = $(window).width() - 0;
-    width -=  $('#toolbar').width();
-    var height = $(window).height() - menuHeight;
+    const columnSpacing = 8;
+    cal.find('td.week, th.week').css({ width: columnSpacing, 'max-width': columnSpacing });
 
-    if ($('#calendar').css('display') == 'none') {
-        $('body #content').css('max-width', '960');
-    } else {
-        $('body #content').css('max-width', width);
-    }
-    $('#calendar table').css('height', height);
+    const space = cal.find('thead div.week').length * columnSpacing;
+    const dateWidth = cal.find('th.col0').outerWidth(true);
+    const dateHeight = cal.find('td.col0 .time').outerHeight(true);
 
-    //set spacing between table columns
-    var columnSpacing = Math.round($(window).width() / 100);
-    if (columnSpacing < 0) columnSpacing = 0;
-    columnSpacing = Math.ceil(columnSpacing);
+    const cols = cal.find('th.col1').length;
+    let colWidth = Math.round((width - dateWidth - space) / cols) - 20;
+    colWidth = dateHeight * Math.round(colWidth / dateHeight);
 
-    $('div.week').css('width', columnSpacing);
-    $('div.week').css('margin-left', -columnSpacing);
-
-    //calculate cell-width
-    if ($(window).width() < 720) {
-        $('#calendar td.week').hide();
-    } else {
-        $('#calendar td.week').show();
-    }
-    menuHeight = setupMenuHeight();
-
-    $('#calendar').show();
-    $('#calendar_weekdays').css("visibility", "visible");
+    cal.find('.col1, .col1 > div').css({ width: colWidth, 'max-width': colWidth });
 }
 
 // preselect options in select boxes
@@ -215,10 +200,9 @@ function getNearestDatetime() {
 
     var xMin = 9999999;
     var yMin = 9999999;
-    var minutes = 0;
 
     //get date
-    $('#calendar_weekdays div.date').each(
+    $('#calendar tr#weekdays div.date').each(
         function() {
             var xpos = $(this).offset().left;
             var offset = $(this).width() / 2;
@@ -266,7 +250,7 @@ function getNearestDatetime() {
                 var height = $(this).height() + 14;
                 var m = ((delta + height * 1.5) - 8) % height;
                 m = m * 60 / height;
-                minute = Math.floor(m / 5) * 5;
+                minute = Math.floor(m / 15) * 15;
                 minute = (minute + 60) % 60;
                 if (minute < 10) minute = '0' + minute;
             }
@@ -277,43 +261,39 @@ function getNearestDatetime() {
 
 var mouseX = 0;
 var mouseY = 0;
-var mouseMoved = 0;
-var mouseUpdate = 0;
+var mouseMoved = false;
+var mouseUpdate = false;
+var mouse_update_id=null;
 function showMouse() {
     //if mouse moves save position
-    $("#calendar").mousemove(
-        function(event) {
-            mouseX = event.pageX;
-            mouseY = event.pageY;
-            mouseMoved = 1;
-        }
-    );
+    $("#calendar").off('mousemove').on('mousemove', (event) => {
+        mouseX = event.pageX;
+        mouseY = event.pageY;
+        mouseMoved = true;
+    });
 
-    // Get a reference to the last interval, then clean all
-    var interval_id = window.setInterval("", 9999);
-    for (var i = 1; i < interval_id; i++)
-        window.clearInterval(i);
+    if (mouse_update_id !== null) {
+        clearInterval(mouse_update_id);
+    }
 
-    var interval = window.setInterval(
-        function() {
-            if (mouseMoved == 0) return;
-            if (mouseUpdate == 1) return;
-            mouseMoved = 0;
-            mouseUpdate = 1;
-            var text = getNearestDatetime();
+    mouse_update_id = setInterval(
+        () => {
+            if (!mouseMoved || mouseUpdate) return;
+            mouseMoved = false;
+            mouseUpdate = true;
+
+            const text = getNearestDatetime();
             $('#position').text(text);
-            mouseUpdate = 0;
-        }, 500
-    );
 
+            mouseUpdate = false;
+        }, 200
+    );
 }
 
 function checkStudio() {
-    if ($('#studio_id').val() == '-1') {
-        showDialog({ title: "please select a studio" });
-        return 0;
-    }
-    return 1;
+    if ($('#studio_id').val() != '-1') return 1;
+    showDialog({ title: "please select a studio" });
+    return 0;
 }
 
 function show_not_assigned_to_series_dialog() {
@@ -460,7 +440,6 @@ function initCalendarMenu() {
     html += getSwitch('show_playout', label_playout || "playout", true);
     html += getSwitch('show_descriptions', label_descriptions || "descriptions", false);
     html += getSwitch('show_worktime', label_worktime || "worktime", false);
-    html += getSwitch('pin', label_pin || "label", false, 'right');
     $('#toolbar').append(html);
 
     if (getUrlParameter('s') == '0') unselectCheckbox('#show_schedule');
@@ -582,7 +561,7 @@ function loadCalendar(url, mouseButton) {
         return true;
     }
 
-    $('#calendarTable').css('opacity', '0.3');
+    //$('#calendarTable').css('opacity', '0.3');
     if (url == null) {
         url = window.location.href;
         url = updateUrlParameters(url);
@@ -591,11 +570,13 @@ function loadCalendar(url, mouseButton) {
     url = url.replace("calendar.cgi", "calendar-content.cgi");
     updateContainer('calendarTable', url, function() {
         updateTable();
-        $('#calendarTable').css('opacity', '1.0');
+      //  $('#calendarTable').css('opacity', '1.0');
         $('#current_date').html(current_date);
         updateUrls(url);
         initRmsPlot();
         adjustColors();
+        resizeCalendarMenu();
+
     });
 }
 
@@ -767,19 +748,6 @@ function updateTable() {
         }
     );
 
-    $('input#pin').off();
-    $('input#pin').on("click", function() {
-        var button = $(this);
-        var elem = $('#content #calendar').first();
-        if (button.hasClass("pressed")) {
-            button.removeClass("pressed");
-            elem.removeClass("pin");
-        } else {
-            button.addClass("pressed");
-            elem.addClass("pin");
-        }
-    });
-
     //set checkboxes from url parameters and update all urls
     $('#calendar').show();
 
@@ -939,6 +907,15 @@ $(document).ready(function() {
     } else {
         loadCalendarList();
     }
-
+    if (!new URLSearchParams(window.location.search).has('list')) {
+        document.body.style.overflowY = 'hidden';
+        document.querySelector('body').addEventListener('keydown', e => {
+          var el = document.querySelector('.table-scroll');
+          const k = e.key;
+          const h = el.clientHeight;
+          const s = k === 'ArrowDown' ? 200 : k === 'ArrowUp' ? -200 : k === 'PageDown' ? h : k === 'PageUp' ? -h : 0;
+          if (s) { el.scrollBy({top:s, behavior: 'smooth'}); e.preventDefault(); }
+        });
+    }
 });
 

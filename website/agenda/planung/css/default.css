@@ -406,7 +406,7 @@ div.formField div.label {
 #content div,
 td,
 tr,
-table { vertical-align: middle; }
+table { vertical-align: baseline; }
 td.label { vertical-align: top; }
 #content td { padding: var(--space-sm); }
 

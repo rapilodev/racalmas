@@ -1,7 +1,7 @@
 body #content {
     flex-direction: row;
-    max-width:100%!important;
-    width:100%;
+    max-width: 100% !important;
+    width: 100%;
 }
 
 @media print {
@@ -19,57 +19,13 @@ body #content {
     }
 }
 
-@media screen {
-    #content #calendar {
-        overflow-x: hidden;
-        overflow-y: scroll;
-    }
-    #content #calendar.pin {
-        overflow-x: initial;
-        overflow-y: initial;
-    }
-}
-
-#content #calendar_weekdays, #content #calendar_weekdays table, #content #calendar
-{
-    position: relative;
-}
-
-#calendar_weekdays table td, #calendar table td {
-    min-width: 100px;
-}
-
-#calendar table td {
-    word-wrap: break-word;
-    hyphens: auto;
-}
-
-@media ( min-width : 720rem) {
-    #calendar div.text {
-        padding-right: 16px;
-    }
-}
-
-#calendar div.schedule div.text, #calendar div.event div.text {
-    top: 0;
-    left: 0;
-    padding-left: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    padding: var(--space-sm);
+#calendar div.schedule div.text, 
+#calendar div.event div.text {
+    padding: 1rem;
 }
 
 #calendar div.event div.icons {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    margin: 0;
-    width: 24px;
-    font-size: 24px;
-}
-
-#calendar div.icons img {
-    margin: -0.var(--space-xxl);
+    float: right;
 }
 
 #calendar div.time.now {
@@ -81,87 +37,56 @@ body #content {
     z-index: 0;
 }
 
-#calendarTable,
-#calendar,
-#calendar_weekdays,
-#calendar table{
-    width:100%;
+#calendar .week{
+    width:1rem;
 }
 
-#calendar,
-#calendar table{
-    height:100%;
+#calendar .col0, 
+#calendar .col0 > *{
+    width:150px;
+    max-width:150px;
 }
 
-#calendar .d0,
-#calendar div.time,
-#calendar_weekdays .d0 {
-    width:10%!important;
-    height:4em;
-}
-#calendar_weekdays div.date, #calendar div.time {
+#calendar div.date, #calendar div.time {
     text-align: center;
     z-index: 5;
 }
 
-#calendar_weekdays div.date.today {
+#calendar div.date.today {
     text-decoration: underline;
     border-radius: 0;
 }
 
-#calendar_weekdays td.week, #calendar td.week {
-    padding: 0;
-    width: 0px;
-    min-width: 0px;
-    max-width: 0px;
-}
-
-#calendar_weekdays td.week div, #calendar td.week div {
-    padding: 0;
-    min-width: 1px;
-    background: #ccc;
-}
-
-#calendar td.week {
-    height: 100hv;
-}
-
-#calendar td.week div {
-    height: 100hv;
-}
-
-#calendar div.time, #calendar_weekdays div.date, #calendar div.event,
-    #calendar div.schedule, #calendar div.work, #calendar div.play {
+#calendar div.time, #calendar div.date, 
+#calendar div.event, #calendar div.schedule,
+#calendar div.work, #calendar div.play {
     position: absolute;
     overflow: hidden;
-    margin-left: 0;
-    border-bottom: 1px solid #fff;
     border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
 }
 
-#acalendar_weekdays div.date,
-#acalendar_weekdays div.header,
 div#toolbar,
-a#calendar_weekdays {
-    border:0;
-    background:#ddd;
-    border-radius:0;
+a#calendar {
+    border: 0;
+    background: #ddd;
+    border-radius: 0;
 }
 
 div#toolbar {
-    padding:1rem;
-    flex-wrap: wrap;
+    padding: 1rem;
     gap: 1rem;
     display: flex;
     justify-content: start;
-    max-width: 15%;
+    min-width: 200px;
     flex-direction: column;
     align-items: end;
     position: static;
+    flex-wrap: wrap;
 }
 
 input.search {
-    width:100%;
+    width: 100%;
 }
 
 div#toolbar form {
@@ -190,8 +115,9 @@ div#toolbar select, div#toolbar input {
     display: none;
 }
 
-#calendar div.badge-ok, #calendar div.badge-warn, #calendar div.badge-error
-    {
+#calendar div.badge-ok,
+#calendar div.badge-warn,
+#calendar div.badge-error {
     font-size: small;
     font-weight: bold;
 }
@@ -219,7 +145,7 @@ div#toolbar select, div#toolbar input {
 
 #calendar div.event:hover {
     min-height: 4rem !important;
-    z-index: 99;
+    z-index: 6;
     box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
     transition: all 0.3s;
 }
@@ -238,8 +164,8 @@ div#toolbar select, div#toolbar input {
     margin-top: -2px;
     filter: grayscale(60%);
     opacity: 0.8;
-    width: 14px;
-    height: 14px;
+    width: 24px;
+    height: 24px;
 }
 
 #content div.event div.excerpt {
@@ -316,7 +242,7 @@ div#toolbar select, div#toolbar input {
     cursor: pointer;
 }
 
-#content #calendar_weekdays td:nth-child(1) div.date a {
+#content #calendar td:nth-child(1) div.date a {
     font-size: 1.7rem;
 }
 
@@ -324,10 +250,6 @@ div#toolbar select, div#toolbar input {
     word-wrap: break-word;
     word-break: normal;
     text-align: center;
-}
-
-#content div.event, #content div.schedule, #content div.grid, #content div.play,
-    #content div.error {
 }
 
 #content div.ok, #content div.warn, #content div.error {
@@ -350,6 +272,10 @@ div#toolbar select, div#toolbar input {
     justify-content: center;
     align-items: center;
     height: 100%;
+}
+
+div.series {
+    font-weight:600;
 }
 
 div.rms_detail {
@@ -385,4 +311,36 @@ div.event .error, div.play .error {
 
 input.tablesorter-filter {
     width: 4em;
+}
+
+#content #calendarTable,
+#content #calendar, 
+#content #calendar table {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#calendar table {
+    border-collapse: collapse;
+}
+
+#calendar table td {
+    padding: 0;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+/* scroll table */
+
+#calendar table thead {
+    display: block;
+    height: 4rem;
+}
+
+#calendar table tbody {
+    display: block;
+    position: relative;
+    overflow-y: auto;
+    width: 100%;
 }
