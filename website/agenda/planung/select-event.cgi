@@ -159,9 +159,8 @@ sub check_params {
         $checked->{year} = $params->{year};
     }
 
-    # set defaults for project and studio id if not given
-    $checked->{s_id} = $params->{studio_id}  // '-1' unless defined $params->{s_id};
-    $checked->{p_id} = $params->{project_id} // '-1' unless defined $params->{p_id};
+    $checked->{s_id} //= $params->{studio_id}  or die "missing s_id or studio_id";
+    $checked->{p_id} //= $params->{project_id} or die "missing p_id or project_id";
 
     if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
