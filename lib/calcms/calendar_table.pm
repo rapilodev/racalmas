@@ -797,38 +797,36 @@ sub getTable {
                         : $event->{title}));
             }
             $content = $event->{start} if $day eq '0';
+            $event->{content}   = $content unless ($event->{class}//'') eq 'time now';
             $event->{project_id} //= $project_id;
             $event->{studio_id} //= $studio_id;
-            $event->{content}   = $content unless ($event->{class}//'') eq 'time now';
             $event->{class} = 'event' if $day ne '0';
             $event->{class} = 'grid' if $event->{grid};
             $event->{class} = 'schedule' if $event->{schedule};
             $event->{class} = 'work' if $event->{work};
             $event->{class} = 'play' if $event->{play};
 
-            if ($event->{class} eq 'event') {
-                $event->{content} .= '<br><span class="weak">';
-                $event->{content} .=
-                    audio::formatFile($event->{file}, $event->{event_id});
-                $event->{content} .= audio::formatDuration(
-                    $event->{duration},
-                    $event->{event_duration},
-                    sprintf("%d min",($event->{duration} + 30) / 60),
-                    sprintf("%d s", $event->{duration})
-                   )
-                    . ' '
-                    if defined $event->{duration};
-                $event->{content} .=
-                    audio::formatLoudness($event->{rms_left}, 'L: ', 'round')
-                    . ' '
-                    if defined $event->{rms_left};
-                $event->{content} .=
-                    audio::formatLoudness($event->{rms_right}, 'R: ', 'round')
-                    if defined $event->{rms_right};
-
-                $event->{content} .= '</span>';
-            }
-
+            $event->{content} .= join '', (
+                q{<br><span class="weak">},
+                (defined $event->{duration}
+                    ? audio::formatDuration(
+                        $event->{duration},
+                        $event->{event_duration},
+                        sprintf("%d min",($event->{duration} + 30) / 60),
+                        sprintf("%d s", $event->{duration}))
+                    : ''
+                ),
+                ($event->{rms_left}
+                    ? audio::formatLoudness($event->{rms_left}, 'L: ', 'round') 
+                    : ''
+                ),
+                ($event->{rms_right} 
+                    ? audio::formatLoudness($event->{rms_right}, 'R: ', 'round') 
+                    : ''
+                ),
+                audio::formatFile($event->{file}, $event->{event_id}),
+                '</span>'
+            ) if $event->{class} eq 'event';
             $out .= get_event($params, $event, $ypos, $yoffset, $yzoom);
 
             $ypos++;

@@ -38,7 +38,7 @@ body #content {
 }
 
 #calendar .week{
-    width:1rem;
+    width:24px;
 }
 
 #calendar .col0, 
@@ -343,4 +343,8 @@ input.tablesorter-filter {
     position: relative;
     overflow-y: auto;
     width: 100%;
+}
+
+.header{
+    word-break: break-all;
 }

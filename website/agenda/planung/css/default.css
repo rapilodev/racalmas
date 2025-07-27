@@ -155,7 +155,7 @@ body #content {
   color: var(--color-body);
   text-align: left;
   min-width: 960px;
-  margin: var(--space-xxl) auto 0;
+  margin: 6rem auto 0;
 }
 
 
@@ -180,7 +180,7 @@ body,
 #content input[type="file"],
 #content .label {
   font-family: var(--font-roboto);
-  font-size: 0.937rem;
+  font-size: 1rem;
 }
 
 /* Media Query */
@@ -678,10 +678,11 @@ input[type="checkbox"] { margin-top: 0; }
 div.formField input { clear: both; }
 
 #toast {
+    display:inline;
     z-index : 9;
     position : fixed;
     bottom: 0rem;
-    width: 100%;
+    right:0;
     padding: 1rem;
     border-radius: 0;
     opacity : 0.9;
@@ -842,5 +843,18 @@ div.sidebar {
 }
 
 div.buttons button {
-    padding:1rem;
+    padding: 1rem;
+}
+
+#breadcrumb {
+    display: block;
+    width:100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    background: linear-gradient(var(--nav-bg),#6666);
+    border-radius: 0;
+}
+
+#breadcrumb:empty {
+    display: none;
 }

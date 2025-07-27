@@ -1,18 +1,15 @@
 <link rel="stylesheet" href="css/user-stats.css" type="text/css" />
 <script src="js/user-stats.js" type="text/javascript"></script>
-
-<h2><TMPL_VAR loc.title></h2>
-<TMPL_INCLUDE status.html>
-
+<<script type="text/javascript">
+set_breadcrumb('<TMPL_VAR .loc.title>');
+</script>
+<div class="sidebar">
+    <TMPL_INCLUDE status.html>
     <button
         onclick="loadUrl('user-stats.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&action=show-active-users');"
         ><TMPL_VAR .loc.button_show_active_users>
     </button>
-
-    <form method="post">
-        <input type="hidden" name="project_id" value="<TMPL_VAR project_id>">
-        <input type="hidden" name="studio_id" value="<TMPL_VAR studio_id>">
-    </form>
+</div>
 
 <div class="panel">
     <table id="user_stats_table">

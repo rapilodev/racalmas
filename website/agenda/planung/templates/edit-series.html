@@ -13,17 +13,18 @@
             }
         );
     </TMPL_IF>
+    set_breadcrumb(`
+            <TMPL_IF has_single_events>
+            <TMPL_VAR .loc.single_events>
+            <TMPL_IF title>&gt; <TMPL_VAR title></TMPL_IF>
+        <TMPL_ELSE>
+            <TMPL_VAR .loc.title> 
+            <TMPL_IF series_name> &gt; <TMPL_VAR series_name></TMPL_IF><TMPL_IF title> - <TMPL_VAR title></TMPL_IF>
+        </TMPL_IF>
+    `);
 </script>
 
 <div class="sidebar">
-    <div class="page-title">
-        <TMPL_IF has_single_events>
-            <TMPL_VAR .loc.single_events> <TMPL_IF title><TMPL_VAR title></TMPL_IF>
-        <TMPL_ELSE>
-            <TMPL_VAR .loc.title>
-            <TMPL_IF series_name> <TMPL_VAR series_name></TMPL_IF><TMPL_IF title> - <TMPL_VAR title></TMPL_IF>
-        </TMPL_IF>
-    </div>
 
     <TMPL_IF .allow.read_event>
         <button onclick="listEvents('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"

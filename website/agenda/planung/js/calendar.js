@@ -62,14 +62,8 @@ function resizeCalendarMenu() {
     content.style.maxWidth = `${width}px`;
 
     const columnSpacing = 24;
-    cal.querySelectorAll('td.week, th.week').forEach(
-        el => el.style.width = el.style.maxWidth = `${columnSpacing}px`
-    );
-
     const weekCount = cal.querySelectorAll('th.week').length;
     const space = weekCount * columnSpacing;
-
-    //const thCol0 = cal.querySelector('th.col0');
     const tdCol0 = cal.querySelector('td.col0')
     const time = Array.from(tdCol0.querySelectorAll('.time'))
         .find(el => !el.classList.contains('now'));

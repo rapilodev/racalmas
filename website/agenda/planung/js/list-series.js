@@ -76,4 +76,5 @@ async function createSeries(form) {
 
 $(document).ready(function() {
     searchEvents();
+    set_breadcrumb("Sendereihen");
 });

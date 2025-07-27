@@ -97,6 +97,10 @@ function icon(project_id, studio_id, filename) {
     });
 }
 
+function set_breadcrumb(s) {
+    document.getElementById('breadcrumb').innerHTML=s;
+}
+
 function updateContainer2(id, url, callback) {
     if (id == null) return;
     if ($("#" + id).length == 0) return;
@@ -604,7 +608,7 @@ function setTabs(id, callback) {
 
 // Localization
 
-var loc;
+var loc={};
 function getLocalization() {
     if (loc == null) {
         loc = new Array();
@@ -614,12 +618,12 @@ function getLocalization() {
 }
 
 async function loadLocalization(usecases) {
+    const usecaseList = ['all', getController(), usecases].filter(Boolean).join(",");
+    const url = `localization.cgi?usecase=${encodeURIComponent(usecaseList)}`;
     try {
-        const usecaseList = ['all', getController(), usecases].filter(Boolean).join(",");
-        const json = await getJson(`localization.cgi?usecase=${encodeURIComponent(usecaseList)}`);
-        Object.assign(loc, json);
+        Object.assign(loc, await getJson(url));
     } catch (error) {
-        console.error("Failed to load localization:", error);
+        console.error("Failed to load localization:", error, url);
     }
 }
 

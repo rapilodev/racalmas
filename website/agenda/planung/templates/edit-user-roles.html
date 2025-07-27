@@ -54,8 +54,9 @@
         $('#view_'+name).show();
         return false;
     }
+    set_breadcrumb('<TMPL_VAR .loc.title>');
 </script>
-<h2>users</h2>
+
 <TMPL_LOOP users>
 <div class="user">
     <div id="header">

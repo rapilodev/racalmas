@@ -311,53 +311,30 @@ sub showCalendar {
         $date->{play}      = 1;
         $date->{series_id} = -1;
         $date->{event_id}  = $id;
-        $date->{title}     = '';
-        $date->{title} .= '<b>errors</b>: ' . $date->{errors} . '<br>'
-            if defined $date->{errors};
-        $date->{title} .= audio::formatDuration(
-            $date->{duration},
-            $date->{event_duration},
-            sprintf("duration: %.1g h", $date->{duration} / 3600) . "<br>",
-            sprintf("%d s",             $date->{duration})
-        ) if defined $date->{duration};
-        $date->{title} .=
-            audio::formatLoudness($date->{rms_left}, 'L: ') . ', '
-            if defined $date->{rms_left};
-        $date->{title} .=
-            audio::formatLoudness($date->{rms_right}, 'R: ') . '<br>'
-            if defined $date->{rms_right};
-        $date->{title} .= audio::formatBitrate($date->{bitrate})
-            if defined $date->{bitrate};
-        $date->{title} .=
-            ' ' . audio::formatBitrateMode($date->{bitrate_mode}) . '<br>'
-            if defined $date->{bitrate_mode};
-        $date->{title} .=
-            '<b>replay gain</b> '
-            . sprintf("%.1f", $date->{replay_gain}) . '<br>'
-            if defined $date->{replay_gain};
-        $date->{title} .= audio::formatSamplingRate($date->{sampling_rate})
-            if defined $date->{sampling_rate};
-        $date->{title} .= audio::formatChannels($date->{channels}) . '<br>'
-            if defined $date->{channels};
-        $date->{title} .=
-            int(($date->{'stream_size'} || '0') / (1024 * 1024)) . 'MB<br>'
-            if defined $date->{'stream_size'};
-        $date->{title} .= $format if defined $format;
-        $date->{title} .=
-            '<b>library</b>: ' . ($date->{writing_library} || '') . '<br>'
-            if defined $date->{'writing_library'};
-        $date->{title} .= '<b>path</b>: ' . ($date->{file} || '') . '<br>'
-            if defined $date->{file};
-        $date->{title} .=
-            '<b>updated_at</b>: ' . ($date->{updated_at} || '') . '<br>'
-            if defined $date->{updated_at};
-        $date->{title} .=
-            '<b>modified_at</b>: ' . ($date->{modified_at} || '') . '<br>'
-            if defined $date->{modified_at};
-
+        $date->{title} = join '', (
+            $date->{errors} ? '<b>errors</b>: ' . $date->{errors} : '',
+            $date->{duration} ? audio::formatDuration(
+                $date->{duration},
+                $date->{event_duration},
+                sprintf("%.1g h", $date->{duration} / 3600),
+                sprintf("%d s",             $date->{duration})
+            ) : '',
+            $date->{bitrate} ? audio::formatBitrate($date->{bitrate}) : ' ',
+            $date->{bitrate_mode} ? audio::formatBitrateMode($date->{bitrate_mode}) : '',
+            $date->{replay_gain} ? sprintf("<b>replay gain</b> %.1f", $date->{replay_gain}) : '',
+            $date->{sampling_rate} ? audio::formatSamplingRate($date->{sampling_rate}) : '',
+            $date->{channels} ? audio::formatChannels($date->{channels}) : '',
+            $date->{'stream_size'} ?  audio::named_badge("size", int(($date->{'stream_size'}//'0') / (1024 * 1024)) . 'MB') : '',
+            $format ? $format : '',
+            $date->{'writing_library'} ? audio::named_badge("lib", $date->{writing_library}) : '',
+            $date->{rms_left} ? audio::formatLoudness($date->{rms_left}, 'L: ') : '', 
+            $date->{rms_right} ? audio::formatLoudness($date->{rms_right}, 'R: ') : '',
+            $date->{file} ? audio::named_badge('path', $date->{file}) : '',,
+            $date->{updated_at} ?  audio::named_badge('updated_at', $date->{updated_at}) : '',
+            $date->{modified_at} ? audio::named_badge('modified_at', $date->{modified_at}) : ''
+        );
         $date->{rms_image} = URI::Escape::uri_unescape($date->{rms_image})
             if defined $date->{rms_image};
-
         $date->{origStart} = $date->{start};
 
       # set end date seconds to 00 to handle error at break_dates/join_dates

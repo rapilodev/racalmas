@@ -1,13 +1,10 @@
 <script src="js/image.js" type="text/javascript"></script>
 <script type="text/javascript">
     var region = '<TMPL_VAR loc.region escape=js>';
+    set_breadcrumb('<TMPL_VAR .loc.title>');
 </script>
 
 <div class="sidebar">
-    <h2>
-        <TMPL_VAR .loc.title>
-    </h2>
-
     <TMPL_IF .allow.update_studio>
     <div class="newstudio">
         <button onclick="add_studio('<TMPL_VAR name escape=js>')">

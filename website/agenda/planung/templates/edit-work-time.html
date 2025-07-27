@@ -9,6 +9,7 @@
                 }
             );
         </TMPL_IF>
+        set_breadcrumb('<TMPL_VAR .loc.title>');
     </script>
 
 <style>
@@ -16,8 +17,6 @@
         float:right;
     }
 </style>
-
-<h2><TMPL_VAR .loc.title></h2>
 
 <!-- view worktime -->
 <div id="view_<TMPL_VAR .schedule_id>" class="view" style="clear:both">
