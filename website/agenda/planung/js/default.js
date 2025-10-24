@@ -108,7 +108,7 @@ function updateContainer2(id, url, callback) {
 }
 
 function showError(s) {
-    console.log(s);
+    console.log("showError: "+s);
     if ($('#error').length) {
         $('#error').html(s);
     } else {

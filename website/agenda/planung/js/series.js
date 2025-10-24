@@ -1,4 +1,4 @@
-function add_series() {
+function addSeries() {
     $('#edit_new').toggle();
     return false;
 }

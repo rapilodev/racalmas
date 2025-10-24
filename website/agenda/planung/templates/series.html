@@ -42,12 +42,12 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
         onkeyup="searchEvents()" placeholder="<TMPL_VAR .loc.label_search>"
     ><button id="clearSearch" onclick="clearSearch()"><TMPL_VAR .loc.label_clear_search></button></div>
 
-    <button id="add-series" onclick="add_series('<TMPL_VAR series_name escape=js>')">+ <TMPL_VAR .loc.button_add_series></button>
+    <button id="add-series" onclick="addSeries('<TMPL_VAR series_name escape=js>')">+ <TMPL_VAR .loc.button_add_series></button>
 
     <!-- create a new series -->
     <TMPL_IF .allow.create_series>
     <div id="edit_new" class="editor panel" style="display:none;">
-        <form method="post" action="series.cgi">
+        <form id="add_series" method="post" action="series.cgi">
             <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
             <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
             <input type="hidden" name="image" value="<TMPL_VAR .image>">
@@ -63,7 +63,7 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
             </div>
 
             <div class="formField">
-                <button onclick="createSeries($(this).closest('form'));$('#add-series').show();return false"
+                <button onclick="createSeries($('form#add_series'));return false"
                     ><TMPL_VAR .loc.button_create></button>
                 <button onclick="$('#edit_new').hide();$('#add-series').show();return false;"><TMPL_VAR .loc.button_cancel></button>
             </div>

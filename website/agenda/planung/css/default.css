@@ -1,3 +1,4 @@
+
 :root {
   /* Fonts */
   --font-roboto: 'Roboto', sans-serif;
@@ -138,17 +139,19 @@ summary, time, mark, audio, video {
   box-sizing: border-box;
 }
 
+/*
 * {
       transition: all 0.5s linear;
-    
 }
+*/
 
 /* Global */
-body {
+html,body {
   color: var(--color-body);
   background: var(--bg-body);
-  height: 100%;
   text-align: center;
+  overflow-y: auto;
+  height: 100vh;
 }
 
 body #content {
@@ -156,13 +159,14 @@ body #content {
   text-align: left;
   min-width: 960px;
   margin: 6rem auto 0;
+  overflow-y: auto;
 }
 
 
 h1 { font-size: 3rem; }
 h2 { font-size: 2rem; margin-bottom:1rem;}
 
-div { transition: background-color 0.5s linear, z-index 2s linear; }
+diva { transition: background-color 0.5s linear, z-index 2s linear; }
 
 /* Special override */
 #selectImage #content { max-width: none; }
@@ -517,7 +521,11 @@ input:not([type="checkbox"]) {
 }
 
 /* Tabs */
-div#tabs > div { background: var(--panel-bg); }
+div#tabs > div {
+    clear: both;
+    background: var(--panel-bg); 
+    flex-grow:1;
+}
 
 #content ul.tabContainer {
   margin: -0 1rem 1rem 1rem;
@@ -747,7 +755,6 @@ div.editor {
                 font-size var(--transition-speed) ease,
                 color var(--transition-speed) ease;
     background: var(--input-bg-color);
-    brightness:(90%);
   }
 
   div:has(label ~ *:not(input[type="hidden"]):is(:focus, :not(:placeholder-shown))) label {
@@ -840,6 +847,10 @@ div.sidebar {
     justify-content: center;
     align-content: baseline;
     gap: 1rem;
+}
+
+div.sidebar > * {
+    width: 100%;
 }
 
 div.buttons button {

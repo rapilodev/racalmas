@@ -41,11 +41,12 @@ body #content {
 }
 
 /* Tabs container: clear floats and use panel background */
+/*
 div#tabs > div {
     clear: both;
-    background: var(--panel-bg);
     flex-grow:1;
 }
+*/
 
 /* Rebuild episodes section */
 #content #rebuild.card {

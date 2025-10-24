@@ -1,4 +1,4 @@
-function add_series() {
+function addSeries() {
     $('#add-series').toggle();
     $('#edit_new').toggle();
     return false;
@@ -67,11 +67,13 @@ async function createSeries(form) {
         cache: "no-store",
         body: new URLSearchParams(formData)
     });
-    if (response.status != 200) { showError(response.statusText); return }
+    if (response.status == 500) { showError(response.statusText); return }
     let json = await response.json();
+    console.log(json)
     if (json.error) return showError(json.error);
     if (json.status != "series created") return showError("Could not create series");
     showSeries(json.entry.project_id, json.entry.studio_id, json.entry.series_id);
+    $('#add-series').show();
 }
 
 $(document).ready(function() {

@@ -59,3 +59,7 @@ div#search input {
 #content div.series div.series-name {
     font-weight: 600;
 }
+
+.sidebar > div#edit_new input{
+    width: 100%;
+}
