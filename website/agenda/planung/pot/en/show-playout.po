@@ -1,0 +1,2 @@
+msgid "button_back"
+msgstr "zurück"

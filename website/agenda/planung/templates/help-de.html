@@ -1,0 +1,236 @@
+
+= Menü
+== Login
+
+Für das Login ist ein persönliches Konto für jeden Nutzer mit einem Passwort notwendig.
+
+Persönliche Logins dürfen nicht weitergegeben werden, es können eigene Konten mit persönlichen Einstellungen für jeden Nutzer verwendet werden.
+
+Am Ende einer Sitzung bitte ausloggen.
+
+== Einstellungen
+
+Hier können folgende persönliche Einstellungen vorgenomment werden:
+
+* Auswahl der Sprache der Oberfläche (momentan Deutsch und Englisch)
+* Auswahl der Farben für Sendungen, Plantermine, Konflikte, etc.
+* Auswahl der Voreinstellungen für den Kalender
+* Ändern des Passworts
+
+== Projekte und Studios
+
+Alle Sendereihen, Termine, Rechte und Einstellungen werden immer abhängig vom ausgewählen Projekt und Studio angezeigt.
+Ein Projekt kann mehrere voneinander unabhängige Studios beinhalten.
+Das Projekt und das Studio kann oben rechts ausgewählt werden.
+Abhängig von seinen Rechten kann ein Nutzer in verschiedenen Projekten und Studios unterschiedliche Aktionen durchführen.
+
+== Rechte
+Einzelnen Nutzern können verschiedene Rollen im aktuellen Studio zugewiesen werden (z.B. Gast, Redaktion, Programmplanung, Studio Manager).
+Es ist möglich eigene Rollen zu definieren und an Nutzer zu vergeben.
+
+Jeder Nutzer sollte nur die Rechte zugewiesen bekommen, die er wirklich benötigt.
+
+Dies vereinfacht die Benutzung, da Nutzer nur die für ihn wichtigen Punkte sehen und Fehlbedienungen ausgeschlossen werden können, z.B. versehentliches Löschen einer fremden Sendung.
+
+Die Zuweisung von Rollen zu Nutzern ermöglicht ein verteiltes Arbeiten, z.B. jemand kümmert sich um die Sendeplanung und das Anlegen von Sendungen, Redaktionen können eigenständig Inhalte ihrer Sendungen bearbeiten.
+
+Die zugewiesenen Rechte gelten immer nur für das gewählte Projekt und Studio. Die einzelnen Studios bestimmen selbständig, wer welche Rechte in ihrem Studio hat.
+
+== Nutzer
+
+Es können individuelle Benutzerkonten angelegt und bearbeitet werden.
+
+Hier lässt sich die email-Addresse bearbeiten, ein Nutzer sperren oder löschen.
+
+Die Berechtigungen des Nutzers können über ihm zugewiesene Rollen definiert werden.
+
+== Sendezeiten
+
+Hier können für ein Projekt und die Sendezeiten für mehrere Studios eingetragen werden.
+
+Sendungen eines Studios lassen sich nur innerhalb der Sendezeiten des Studios anlegen.
+
+Sendezeiten bestehen aus
+* Datum und Zeit des Beginns des ersten Sendeblocks,
+* Datum und Zeit des Endes des ersten Sendeblocks,
+* in welchem Interval der Sendeblock stattfindet (täglich, wöchentlich, ...)
+* dem geplanten Enddatum des Sendeblocks
+* dem Studio, dass im Sendeblock sendet.
+
+Komplexe Sendezeiten lassen sich über mehrere Definitionen definieren.
+
+== Kalender
+
+Der Kalender zeigt alle Sendungen und die Plantermine seiner Sendereihen an.
+
+Links oben lässt sich der angezeigte Zeitraum auswählen.
+
+Zeiten, in denen Termine für ein Studio angelegt werden können, werden gestrichelt angezeigt.
+
+Für Termine wird der Status (live, vorproduziert, archiviert,...) in Form von Icons angezeigt.
+
+Über die Suche kann eine Liste von Sendungen angezeigt werden, die den Suchtext enthalten.
+
+Über Filter lassen sich Konflikte und Sendungen mit einem bestimmten Status farblich hervorheben.
+
+Mögliche Ursachen für Konflikte:
+
+* mehrere Sendungen zur selben Zeit
+* mehrere Planermine zur selben Zeit
+* eine Sendung und ein Plantermin einer anderen Sendereihe zur selben Zeit
+* eine Sendung ist nicht mit einem Plantermin verknüpft
+
+== Sendereihen
+
+Der Menüpunkt "Sendereihe" zeigt eine Übersicht aller Sendereihen eines Studios an.
+Sendereihen, die lange nicht gesendet wurden, können über "alte Sendungen" eingeblendet werden.
+
+Eine Sendereihe umfasst
+* eine Vorlage für das Anlegen neuer Sendungen,
+* die Verwaltung von Planterminen
+* die Mitglieder der Redaktion der Sendereihe.
+
+Alle Redaktionsmitglieder einer Sendereihe können die Sendungen einer Sendereihe bearbeiten.
+
+== Plantermine
+
+Plantermine ermöglichen eine vorausschauende Planung ohne dass alle Sendungen einer Sendereihe separat angelegt werden müssen.
+Bei Änderungen der Planung können alle Plantermine in einem einzelnen Schritt angelegt, verschoben oder gelöscht werden.
+
+Plantermine können einzelne Termine oder sich wiederholende Termine sein, die innerhalb der Studio-Zeiten liegen müssen.
+
+Plantermine werden im Kalender angezeigt, können aber erst bearbeitet oder veröffentlicht werden, wenn für sie eine Sendung angelegt wurde.
+Sendungen sollten erst angelegt werden, wenn der Plantermin bestätigt wurde.
+
+Sobald eine Sendung angelegt wurde, existiert sie unabhängig vom Plantermin. Eine nachträgliche Änderung der Plantermine hat keine Auswirkungen auf schon bestätigte und angelegte Sendungen.
+
+= Aktionen
+
+== Sendungen planen
+
+Unter "Sendereihen" können Plantermine für eine ausgewählte Sendereihe eingetragen werden.
+
+Plantermin anlegen:
+* im Kalender beim Klick auf den gewünschten freien Zeitbereich innerhalb der Sendezeiten.
+* Unter "Sendereihe" / "Planung" in der Liste der Plantermine
+
+Plantermin löschen:
+* im Kalender beim Klick mit der rechten Maustaste auf einen Plantermin.
+* im Kalender beim Klick auf einen Plantermin, dann unter "Planungstermin löschen"
+* Unter "Sendereihe" / "Planung" in der Luste der Plantermine
+
+== Arten von Planterminen
+
+==== 1. Einzeltermin
+**Start**: das Datum und die Zeit des Termin.
+
+**Dauer** : Anzahl in Minuten
+
+==== 2. Wiederholungstermine mit fester Periode
+
+**Start** : ein festes Datum und eine Zeit
+
+**Dauer** : in Minuten
+
+**wiederholt bis**: bis zu welchem Datum Plantermine erstellt werden sollen
+
+**wie oft**: alle wieviel Tage oder Wochen die Sendung wiederholt wird
+
+Beispiel: alle 2 Wochen
+
+==== 3. Wiederholungstermine auf Basis der Woche im Monat
+
+**Start** : ein festes Datum und eine Zeit
+
+**Dauer** : in Minuten
+
+**wiederholt bis**: bis zu welchem Datum Plantermine erstellt werden sollen
+
+**Woche** : die wievielte Woche im Monat
+
+**Wochentag**: welcher Wochentag
+
+**wie oft**: jedes Mal, jedes 2te Mal,... Die Wiedeholung beginnt mit dem ausgewählten Starttermin.
+
+Beispiel: jeden 5.Montag im Monat, jedes 2te Mal
+
+==== 4. Ausnahmen
+
+Wenn bestimmte geplante Termine nicht stattfinden sollen, können separate Ausnahmetermine über das Häkchen "Ausnahme" angelegt werden.
+
+Ausnahmetermine erscheinen
+* nicht als Plantermin im Kalender und
+* durchgestrichen in der Liste der geplanten Termine einer Sendereihe.
+
+für Einzeltermine: der Plantermin kann einfach gelöscht werden.
+
+für Wiederholungstermine: der ausfallende Plantermin kann als zusätzlicher Einzel-Planungstermin definiert werden.
+
+Es ist auch möglich, wiederholende Ausnahmen zu definieren. Beispiel:
+* ein Plantermin alle 2 Wochen und zusätzlich
+* ein Ausnahmetermin alle 3 Wochen
+
+== Sendereihe anlegen
+
+im Menüpunkt "Sendereihe" unter "Sendereihe hinzugügen"
+
+== Sendereihe bearbeiten
+
+im Menüpunkt "Sendereihe" per Klick auf die Sendereihe
+
+beim Bearbeiten einer Sendung per "Sendereihe bearbeiten"
+
+== Sendung anlegen
+
+Um eine Sendung anzulegen, muss ein Plantermin für die Sendereihe der Sendung existieren.
+Im Kalender kann dazu ein freier Sendetermin mit der Maus gewählt werden und ein Plantermin angelegt werden.
+Existiert der Plantermin, kann per Klick auf den Plantermin eine neue Sendung angelegt werden.
+
+Beim Anlegen einer Sendung wird die Vorlage aus der Sendereihe in die Sendung kopiert.
+Solbald die Sendung angelegt wurde, kann die Sendung von der Redaktion der Sendereihe bearbeitet werden.
+
+Für nummerierte Sendungen wird die Nummer der Episode automatisch ermittelt, falls eine vorherige Sendung eine Episode eingetragen hat.
+Ist der Titel der Sendung identisch zu einer existierenden, wird sie automatisch als Wiederholung gekennzeichnet.
+
+== Sendung bearbeiten
+
+Nachdem eine Sendung angelegt wurde, kann sie im Kalender oder in der Liste der Sendungen der Sendereihe bearbeitet werden.
+
+=== Sendebeschreibung
+
+Dies umfasst einzelne Felder für den Titel, den Auszug, aktuelle Themen, die Sendebeschreibung und ein Bild.
+
+Für Titel und Auszug existieren separate Felder, die von der Redaktion bearbeitet werden können,
+falls die Redaktion keine Rechte für die Bearbeitung der Felder Titel und Auszug besitzt.
+
+=== Status
+
+Von der Planung bis zur Archivierung kann der aktuelle Status einer Sendung über StatusFelder geändert werden.
+Im Kalender kann nach dem Status gefiltert werden.
+
+Folgende Status-Felder gibt es:
+* **Live-Sendung**: die Sendung ist keine Vorproduktion
+* **veröffentlicht**: die Sendung ist auf der Webseite sichtbar
+* **im Playout**: die Vorproduktion ist ins Playout-System eingetragen
+* **Wiederholung**: die Sendung ist eine Wiederholung
+* **archiviert**: nach der Sendung wurde der Mittschnitt archiviert, z.B. auf CBA, FRN
+* **kein Google Import**: der Inhalt der Sendung soll nicht durch einen Google-Import überschrieben werden
+
+=== Aktionen beim Bearbeiten einer Sendung
+
+* Sendereihe bearbeiten: Vorlage, Planung, Redaktion der Sendereihe ändern
+* Sendungen zeigen: alle Sendungen der Sendereihe zeigen
+* in andere Sendereihe verschieben: die Sendung wird von der ausgewählten Sendereihe abgekoppelt und in eine andere Sendereihe verschoben.
+* Mittschnitt runterladen: Sobald ein Mittschnitt für die Sendung existiert (nach Ausstrahlung) wird ein temporärer Link zum Mittschnitt erzeugt (momentan nur Piradio).
+* Wiederholung von alter Sendung: Der Inhalt der Sendebeschreibung wird von einer auswählbaren existierenden Sendung kopiert.
+* Erinnerung: Eine Mail zur Erinnerung wird generiert und in einem externen Email-Programm anagezeigt.
+* Änderungen: Eine Liste der Änderungen an dem Sendeeintrag
+* Löschen: Die Sendung und ihre Beschreibung wird gelöscht
+* Programmansicht: die Sendung wird im Programmplan angezeigt.
+
+=== Bedingungen zum Bearbeiten einer Sendung
+
+* Die Sendung muss einer Sendereihe zugeordnet sein.
+* Die Sendung muss innerhalb der Sendezeiten des ausgewählten Projekts und Studios liegen.
+* Der Benutzer muss der Redaktion der Sendereihe zugeordnet sein
+* Der Benutzer benötigt Redaktionsrechte

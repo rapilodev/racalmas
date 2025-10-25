@@ -1,0 +1,231 @@
+<div id="toc"><h1 class="hide">Table of Contents</h1></div>
+
+= Menu
+== Login
+
+To log in a account and a password is required for each user.
+An account allows to set individual settings for each user.
+Personal accounts should not be shared.
+Please log out at end of each session.
+
+== Settings
+
+A user can customize following user settings:
+
+* The language of the user interface (English, German)
+* Colors for broadcasts, schedules, conflicts and more.
+* default time range displayed at the calendar
+* change the password
+
+== Projects and Studios
+
+All Series, Dates, Permissions and Settings are displayed depending on the selected project and studio.
+A project consists of one or more studios.
+Project and studio can be selected at the top right of each page.
+A user can execute different actions depending on the permissions the user has for the selected project and studio.
+
+== Permissions
+A user can be assigned to different roles for a selected project and studio
+(for example Guest, Editor, Program Scheduler, Studio Manager).
+A role is a set of selected permissions.
+It is possible to define new roles and assign them to selected users.
+
+Each user should get only the permissions he or she really needs.
+This eases using the system, due to a user only sees the actions that are assigned to the role.
+It can prevent failures, for example deleting a broadcast the user is not assigned to.
+
+By assigning roles to users the workflow can be done by multiple users with different roles.
+For example one can schedule the program, while editors can fill in the content for their broadcasts.
+
+Permissions of an user can be individually set for each project and studio.
+
+== Users
+
+At the menu Users you can edit the user accounts.
+User accounts can be locked or deleted, one can edit the email address and assign roles to the user account.
+
+== Time Slots
+
+At the Time Slots menu you can assign time spans for each studio of the project.
+One can create broadcasts only within the broadcast date ranges of the selected studio.
+This prevents to create broadcasts out of the time slots defined.
+
+Time Slot definition consists of
+* start date and time of the first time slot,
+* end date and time of the first time slot,
+* The interval of the time slot (daily, weekly, and more)
+* the end date of the last time slot
+* the studio which broadcasts at the selected time slot.
+
+You can define multiple time slots for each studio
+
+== Calendar
+
+The calendar shows all broadcasts and schedules of the series assigned to the selected project and studios.
+
+You can select the displayed time range at the upper left.
+
+Time slots of the studio are displayed dashed.
+
+There are icons to show the status of each broadcast (live, preproduced, archived,...).
+
+By using the search field one can find a list of broadcasts and schedules containing the search value.
+
+There are filters to mark conflicts and status by different colors.
+
+Possible conflicts:
+
+* multiple broadcasts at the same time
+* multiple schedules at the same time
+* a broadcast at the same time as a schedule of another series.
+* a broadcast is not assigned to a schedule or a series.
+
+== Series
+
+The series menu gives an overview of all series of the selected project and studio.
+Series that have no broadcasts in the previous weeks can be displayed by "old series" button.
+
+The series consist of
+* a template for creating new broadcasts
+* the series schedule
+* the editors of the series
+
+All editors of a series can edit the broadcasts of a series.
+
+== Schedule
+
+schedule dates allow to schedule broadcasts without separately creating single broadcasts for a series.
+Schedule dates can be created, moved or deleted in a single step.
+
+Schedule dates can be single dates or recurring dates. Both have to be inside the time slots of the project and studio.
+
+Schedule dates are displayed in the calendar. One can create a broadcasts from an existing schedule date only. This should be done if the schedule date has been confirmed to avoid unneccessary editing of the date.
+
+If a broadcast entry has been created it exists independent on the schedule date. If the schedule date is changed after creating a broadcast from the broadcast will not be changed.
+
+= Actions
+
+== schedule Broadcasts
+
+At "Series" menu schedule dates can be edited for the selected series.
+
+create schedule dates:
+* at Calendar click on a free date of one of the displayed time slots. (Studio time slots are to be defined before.)
+* at Series / Schedule one can edit the schedule
+
+delete schedule dates:
+* at Calendar right mouse clock on a schedule date.
+* at Calendar select a schedule date, then select the remove schedule button.
+* At Series / Schedule one can edit the schedule
+
+== Types of schedule dates
+
+==== 1. single date
+**Start**: the date and time of the single schedule
+
+**Duration** : in minutes
+
+==== 2. Recurring Schedule with fix interval
+
+**Start** : the start date and time of the first broadcast
+
+**Duration** : in minutes
+
+**End**: date of the last broadcast
+
+**interval**: Interval of recurrence (daily, weekly, ...)
+
+==== 3. Recurring Schedule based on week of month
+
+**Start** : the start date and time of the first broadcast
+
+**Duration** : in minutes
+
+**End**: date of the last broadcast
+
+**Week of Month** : from first to fifth week of month
+
+**Weekday**: the weekday
+
+**every nth time**: if not every date of the recurring schedule should be used, one can select to use the 5th Monday of a month, each other time.
+
+==== 4. Exceptions
+
+On having multiple recurring schedules one can use exceptions to define single or recurring dates a broadcast should not happen.
+
+Exception schedule dates are
+* not displayed in the calendar
+* displayed striked through at the list of scheduled dates of a series.
+
+Exceptions for single date : the schedule date will be deleted
+
+Exceptions for recurring schedule dates: a single exception will be created for the date the broadcast will not take place at.
+
+Additionally it is possible to create recurring exceptions.
+Example 1: a schedule every two weeks and an exception schedule every three weeks
+Example 2: a daily schedule for the whole year and an exception schedule from first until last of May.
+
+== create series
+
+At menu "Series" click "add Series" button
+
+== edit Series
+
+At menu "Series" select the series to edit
+
+At editing a broadcast event, click on "edit series"
+
+== create a broadcast event
+
+To create a broadcast event a schedule has to be created for the series first.
+At calendar choose a free time slot and create a schedule.
+At calendar select the schedule date to create a new broadcast.
+
+On creating broadcast Bthe template of the series will be copied to the broadcast.
+Once the broadast has been created the entry can be edited by the editors of the broadcast.
+
+The number of the episode will be increased automatically if "count episodes" has been selected at series template.
+A broadcast event will be marked as recurring event if the title of the broadcast is the same as the title of an existing broadcast.
+
+== edit a broadcast
+
+Once a broadcast has been created, it can be edited by selecting at Calendar or at list of broadcasts at Series.
+
+=== Broadcast description
+
+There are fields for the title, the excerpt, current topice, a textual description and an image.
+
+There are separate fields for title and excerpt that can be used to be edited by editors, in case editors have not the
+permission to edit title and excerpt themself.
+In general editing each field can be selected for each role of the permission sets.
+
+=== Status
+
+The current status of a broadcast can be set to communicate it to other users.
+The status can be filtered at Calendar.
+
+There are following status fields:
+* **Live**: This is a live broadcast (no preproduction)
+* **published**: The broadcast is scheduled and published at the public broadcast schedule
+* **playout**: The preproduction has been scheduled at the playout system
+* **rerun**: The broadcast is a rerun of an existing broadcast
+* **archived**: the broadcast audio has been archived
+
+=== Actions on editing a broadcast event
+
+* edit series: change template, schedule and editors of the series
+* show events: show all broadcast events of the same series
+* move to other series: the broadcast will be moved to another series.
+* download record: creates a temporary link to download the record.
+* copy existing event: the description will be copied from an existing event to the current one.
+* reminder: a mail to remind the editors will be opened in an external mail program.
+* changes: shows the list of changes at the selected event
+* delete: deletes the broadcast and its description
+* show event: show the event at the publich program
+
+=== Preconditions to create/add a series
+
+* The broadcast event has to be assigned to a series.
+* the broadcast time has to be inside the time slots of the selected project and studios.
+* The user has to be a member of the editors of the series.
+* The user needs permissiosn to "edit series he/she is assigned to"
