@@ -28,7 +28,7 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
     <div id="result" style="display:none"> </div>
 </div>
 
-<div id="forms">
+<div id="forms" class="scrollable">
 <TMPL_LOOP events>
     <form id="event_<TMPL_VAR event_id>">
         <input type="hidden" name="project_id" value="<TMPL_VAR project_id>">
@@ -112,6 +112,10 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
 </table>
 </form>
 </TMPL_LOOP>
+</div>
+
+<div class="sidebar">
+    <div id="result" style="display:none"> </div>
 </div>
 
 </body>

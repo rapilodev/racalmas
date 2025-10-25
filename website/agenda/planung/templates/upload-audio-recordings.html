@@ -1,61 +1,12 @@
+<script type="javascript">
+    set_breadcrumb('<TMPL_VAR title>');
+</script>
 
 <TMPL_IF .allow.upload_audio_recordings>
-    <div translate="yes" id="error" class="error" style="display:none"></div>
-    <div translate="yes" id="info" class="ok" style="display:none"></div>
+<div translate="yes" id="error" class="error" style="display:none"></div>
+<div translate="yes" id="info" class="ok" style="display:none"></div>
 
-    <div class="panel">
-        <h2>
-        <TMPL_VAR event.full_title><br>
-            <TMPL_VAR event.weekday_short_name>, <TMPL_VAR event.start_date_name> <TMPL_VAR event.start_time_name><br>
-        </h2>
-
-        <div style="padding-top:1rem;padding-bottom:1rem;">
-        <TMPL_VAR event.excerpt>
-        </div>
-
-        <TMPL_UNLESS isOver>
-        <div id="progress">
-            <div><TMPL_VAR loc.upload_start></div>
-            <div><TMPL_VAR loc.upload_message></div>
-
-            <div id="progress_container">
-                <div id="progress_done"></div>
-                <div id="progress_todo"></div>
-            </div>
-            <div id="progressLabel"></div>
-        </div>
-
-        <form name="audio_recordings_upload" id="audio_recordings_upload" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="project_id" value="<TMPL_VAR project_id>" />
-        <input type="hidden" name="studio_id"  value="<TMPL_VAR studio_id>" />
-        <input type="hidden" name="series_id"  value="<TMPL_VAR series_id>" />
-        <input type="hidden" name="event_id"   value="<TMPL_VAR event_id>" />
-        <input type="hidden" name="action"     value="upload" />
-        <input type="hidden" name="json"       value="1" />
-
-        <div id="upload">
-            <div><TMPL_VAR loc.file></div>
-
-            <div><input type="file" id="file" name="upload" size="20" /></div>
-            <div colspan="2" style="text-align:right;padding-right:0.5em;" id="uploadSize"></div>
-
-            <div colspan="2" style="text-align:right;padding-right:0.5em;" >
-                <button id="uploadButton" name="action" value="upload" tabindex="0"><TMPL_VAR loc.upload></button>
-            </div>
-
-            <div>
-                <TMPL_IF filename>
-                    <TMPL_VAR filename escape=none>"
-                </TMPL_IF>
-            </div>
-        </div>
-
-        </form>
-        </TMPL_UNLESS>
-    </div>
-
-</TMPL_IF>
-
+<div class="panel scrollable">
 <table>
     <tr>
         <th><TMPL_VAR loc.action></th>
@@ -102,7 +53,59 @@
         </tr>
     </TMPL_LOOP>
 </table>
+ </div>
 
+<div class="sidebar">
+    <script>
+    set_breadcrumb('<TMPL_VAR loc.title> - <TMPL_VAR event.full_title> <TMPL_VAR event.weekday_short_name>, <TMPL_VAR event.start_date_name> <TMPL_VAR event.start_time_name>');
+    </script>
+
+    <div style="padding-top:1rem;padding-bottom:1rem;">
+    <TMPL_VAR event.excerpt>
+    </div>
+
+    <TMPL_UNLESS isOver>
+    <div id="progress">
+        <div><TMPL_VAR loc.upload_start></div>
+        <div><TMPL_VAR loc.upload_message></div>
+
+        <div id="progress_container">
+            <div id="progress_done"></div>
+            <div id="progress_todo"></div>
+        </div>
+        <div id="progressLabel"></div>
+    </div>
+
+    <form name="audio_recordings_upload" id="audio_recordings_upload" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="project_id" value="<TMPL_VAR project_id>" />
+    <input type="hidden" name="studio_id"  value="<TMPL_VAR studio_id>" />
+    <input type="hidden" name="series_id"  value="<TMPL_VAR series_id>" />
+    <input type="hidden" name="event_id"   value="<TMPL_VAR event_id>" />
+    <input type="hidden" name="action"     value="upload" />
+    <input type="hidden" name="json"       value="1" />
+
+    <div id="upload">
+        <div><TMPL_VAR loc.file></div>
+
+        <div><input type="file" id="file" name="upload" size="20" /></div>
+        <div colspan="2" style="text-align:right;padding-right:0.5em;" id="uploadSize"></div>
+
+        <div colspan="2" style="text-align:right;padding-right:0.5em;" >
+            <button id="uploadButton" name="action" value="upload" tabindex="0"><TMPL_VAR loc.upload></button>
+        </div>
+
+        <div>
+            <TMPL_IF filename>
+                <TMPL_VAR filename escape=none>"
+            </TMPL_IF>
+        </div>
+    </div>
+
+    </form>
+    </TMPL_UNLESS>
+</div>
+</TMPL_IF>
+ 
 </main>
 </body>
 </html>

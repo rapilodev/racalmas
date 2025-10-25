@@ -150,18 +150,27 @@ html,body {
   color: var(--color-body);
   background: var(--bg-body);
   text-align: center;
-  overflow-y: auto;
+  overflow: hidden;
   height: 100vh;
+  border-radius:0;
 }
 
 body #content {
   color: var(--color-body);
   text-align: left;
   min-width: 960px;
-  margin: 6rem auto 0;
+  margin: 3px 0;
   overflow-y: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  height: calc(100vh - 5rem);
+  overflow: hidden;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
 }
-
 
 h1 { font-size: 3rem; }
 h2 { font-size: 2rem; margin-bottom:1rem;}
@@ -187,25 +196,15 @@ body,
   font-size: 1rem;
 }
 
-/* Media Query */
-@media (max-width: 800px) {
-  body { max-width: 800px; font-size: 1em; }
-  input, button { padding: var(--space-md); }
-  #calcms_nav { min-width: 640px; max-width: 800px; }
-}
-
 /* Navigation */
 #calcms_nav {
   display: flex;
   flex-wrap: wrap;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   z-index: 99;
   border-radius: 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
   background-color: var(--nav-bg);
   box-shadow: #000 0 0 6px;
   border-bottom: 1px #fff;  
@@ -347,6 +346,10 @@ a {
   background: var(--panel-bg);
 }
 
+#content > .panel {
+    border-radius:0;
+}
+
 #content div.panel-header,
 #content .label,
 label,
@@ -363,7 +366,6 @@ div.formField div.label {
 /* Panels & Cards */
 .panel {
   background: var(--panel-bg);
-  margin: var(--space-md);
   padding: var(--space-md);
   border: 1px solid var(--panel-border);
   border-radius: var(--space-md);
@@ -373,7 +375,6 @@ div.formField div.label {
 
 .panel:has(textarea) {
   flex-grow:0;
-    
 }
 
 .panel,
@@ -837,16 +838,28 @@ body #content {
     justify-content: center;
 }
 
+
+div.container{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 div.sidebar {
-    padding:1rem;
     max-width:250px;
     width: fit-content;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
     align-content: baseline;
-    gap: 1rem;
+    padding: var(--space-md);
+    gap: var(--space-md);
+    flex-shrink: 0;
+    overflow: hidden;    
+    justify-content: flex-start;
+    flex-direction: column;
+    border-radius:0;
+    background:#ddd;
 }
 
 div.sidebar > * {
@@ -868,4 +881,29 @@ div.buttons button {
 
 #breadcrumb:empty {
     display: none;
+}
+
+
+.scrollable {
+  flex: 1;
+  overflow-y: auto;
+  min-width: 0;
+  padding: 1rem;
+}
+
+@media (max-width: 960px) {
+  body { max-width: 960px; font-size: 1em; }
+  input, button { padding: var(--space-md); }
+  #calcms_nav { min-width: 640px; max-width: 800px; }
+  body main#content { flex-direction:column }
+  body div.sidebar { order:0; max-width:100%; float:right}
+  .scrollable{ order:1; }
+  body,
+  body #content,
+  div.scrollable, 
+  body div.sidebar {
+    overflow: auto;
+    overflow-y: auto;
+    flex-direction:column;
+  }
 }

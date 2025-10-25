@@ -644,6 +644,8 @@ function getInputWidth(input) {
 function setInputAutoWidth() {
     document.querySelectorAll("input").forEach(input => {
         if (input.type=="checkbox")return;
+        if (input.type=="file")return;
+        if (input.type=="submit")return;
         input.style.width = getInputWidth(input);
     });
     document.body.addEventListener("input", function(e) {
@@ -710,4 +712,5 @@ $(document).ready(async function() {
     document.title = title
     setInputAutoWidth();
     setTextareaAutoHeight();
+    $('.scrollable').focus();
 });

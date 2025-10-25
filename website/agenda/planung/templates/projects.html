@@ -5,49 +5,9 @@ var region='<TMPL_VAR loc.region escape=js>';
 set_breadcrumb('<TMPL_VAR .loc.title>');
 </script>
 
-<TMPL_IF .allow.create_project>
-<div style="clear:both" class="newproject">
-    <button onclick="add_project('<TMPL_VAR name escape=js>')"><TMPL_VAR .loc.button_add_project></button><br/>
-
-    <form method="post">
-    <div id="edit_new" class="panel project editor" style="clear:both;display:none">
-        <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-        <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
-        <div>
-            <label><TMPL_VAR .loc.label_name></label>
-            <input name="name">
-        </div>
-        <div>
-            <label><TMPL_VAR .loc.label_title></label>
-            <input name="title">
-        </div>
-        <div>
-            <label><TMPL_VAR .loc.label_subtitle></label>
-            <input name="subtitle">
-        </div>
-        <div>
-            <label><TMPL_VAR .loc.label_start_date></label>
-            <input name="start_date" class="date">
-        </div>
-        <div>
-            <label><TMPL_VAR .loc.label_end_date></label>
-            <input name="end_date" class="date">
-        </div>
-        <div>
-            <label><TMPL_VAR .loc.label_email></label>
-            <input name="email">
-        </div>
-        <div class="sidebar">
-            <button class="text cancel" onclick="cancel_edit_project($(this),'new');return false;"><TMPL_VAR .loc.button_cancel></button>
-            <button type=submit name="action" value="save"><TMPL_VAR .loc.button_create></button>
-        </div>
-    </div>
-    </form>
-</div>
-</TMPL_IF> <!--  create project -->
 
 <!-- projects -->
-<div style="clear:both" class="flex">
+<div style="clear:both" class="flex scrollable">
 <TMPL_LOOP projects>
 <div class="panel project">
 
@@ -216,6 +176,47 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
 </TMPL_LOOP>
 </div>
 <!--  projects -->
+
+<TMPL_IF .allow.create_project>
+<div style="clear:both" class="newproject">
+    <button onclick="add_project('<TMPL_VAR name escape=js>')"><TMPL_VAR .loc.button_add_project></button><br/>
+
+    <form method="post">
+    <div id="edit_new" class="panel project editor" style="clear:both;display:none">
+        <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+        <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
+        <div>
+            <label><TMPL_VAR .loc.label_name></label>
+            <input name="name">
+        </div>
+        <div>
+            <label><TMPL_VAR .loc.label_title></label>
+            <input name="title">
+        </div>
+        <div>
+            <label><TMPL_VAR .loc.label_subtitle></label>
+            <input name="subtitle">
+        </div>
+        <div>
+            <label><TMPL_VAR .loc.label_start_date></label>
+            <input name="start_date" class="date">
+        </div>
+        <div>
+            <label><TMPL_VAR .loc.label_end_date></label>
+            <input name="end_date" class="date">
+        </div>
+        <div>
+            <label><TMPL_VAR .loc.label_email></label>
+            <input name="email">
+        </div>
+        <div class="sidebar">
+            <button class="text cancel" onclick="cancel_edit_project($(this),'new');return false;"><TMPL_VAR .loc.button_cancel></button>
+            <button type=submit name="action" value="save"><TMPL_VAR .loc.button_create></button>
+        </div>
+    </div>
+    </form>
+</div>
+</TMPL_IF> <!--  create project -->
 
 </main>
 </body>

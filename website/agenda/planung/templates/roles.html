@@ -17,6 +17,8 @@ div#edit_roles .comment{
 </style>
 <script type="text/javascript">
 $(document).ready(function() {
+    set_breadcrumb('Edit Roles');
+
     $("input.disabled").attr('disabled', 'disabled');
     var width=960/($("input.role").length);
     $("input.role").css('width', width+'px');
@@ -44,7 +46,3 @@ function add_user_role(){
     }
 }
 </script>
-
-<div class="sidebar">
-    <h2>Edit Roles</h2>
-</div>

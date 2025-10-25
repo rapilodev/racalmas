@@ -4,52 +4,9 @@
     set_breadcrumb('<TMPL_VAR .loc.title>');
 </script>
 
-<div class="sidebar">
-    <TMPL_IF .allow.update_studio>
-    <div class="newstudio">
-        <button onclick="add_studio('<TMPL_VAR name escape=js>')">
-            <TMPL_VAR .loc.button_add_studio>
-        </button>
-        <form method="post">
-        <div id="edit_new" class="editor panel" style="display: none">
-            <input type="hidden" name="project_id"
-                value="<TMPL_VAR .project_id>"> <input
-                type="hidden" name="studio_id"
-                value="<TMPL_VAR .studio_id>">
-            <div>
-                <label><TMPL_VAR .loc.label_name></label>
-                <input name="name">
-            </div>
-            <div>
-                <label><TMPL_VAR .loc.label_description></label>
-                <input name="description">
-            </div>
-            <div>
-                <label><TMPL_VAR .loc.label_location></label>
-                <input name="location">
-            </div>
-            <div>
-                <label><TMPL_VAR .loc.label_stream></label>
-                <input name="stream">
-            </div>
-            <div>
-                <button class="text"
-                    onclick="cancel_edit_studio($(this), 'new');return false;">
-                    <TMPL_VAR .loc.button_cancel>
-                </button>
-                <button type=submit name="action" value="save">
-                    <TMPL_VAR .loc.button_create>
-                </button>
-            </div>
-        </div>
-        </form>
-    </div>
-    </TMPL_IF>
-</div>
-
-<div class="list">
+<div class="list scrollable">
     <TMPL_LOOP studios>
-    <div class="panel editor studio">
+    <div class="panel editor studio scrollable">
         <div class="panel-header">
             <TMPL_VAR name>
         </div>
@@ -149,7 +106,49 @@
         </TMPL_IF>
     </div>
     </TMPL_LOOP>
+</div>
 
+<div class="sidebar">
+    <TMPL_IF .allow.update_studio>
+    <div class="newstudio">
+        <button onclick="add_studio('<TMPL_VAR name escape=js>')">
+            <TMPL_VAR .loc.button_add_studio>
+        </button>
+        <form method="post">
+        <div id="edit_new" class="editor panel" style="display: none">
+            <input type="hidden" name="project_id"
+                value="<TMPL_VAR .project_id>"> <input
+                type="hidden" name="studio_id"
+                value="<TMPL_VAR .studio_id>">
+            <div>
+                <label><TMPL_VAR .loc.label_name></label>
+                <input name="name">
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_description></label>
+                <input name="description">
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_location></label>
+                <input name="location">
+            </div>
+            <div>
+                <label><TMPL_VAR .loc.label_stream></label>
+                <input name="stream">
+            </div>
+            <div>
+                <button class="text"
+                    onclick="cancel_edit_studio($(this), 'new');return false;">
+                    <TMPL_VAR .loc.button_cancel>
+                </button>
+                <button type=submit name="action" value="save">
+                    <TMPL_VAR .loc.button_create>
+                </button>
+            </div>
+        </div>
+        </form>
+    </div>
+    </TMPL_IF>
 </div>
 </main>
 </body>

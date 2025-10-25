@@ -1,9 +1,8 @@
-body main#content {
-    max-width: none !important;
-}
 
-main {
-    max-width: none;
+#newSeries, #oldSeries {
+    display: flex;
+    gap: 1rem;
+    flex-wrap:wrap;
 }
 
 div#search {
@@ -23,12 +22,6 @@ div#search::before {
 
 div#search input {
     border-bottom: none;
-}
-
-#container {
-    position: relative;
-    background: #eee;
-    border-radius: 0;
 }
 
 #content .label {

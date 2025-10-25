@@ -75,7 +75,7 @@ sub showPlayout {
         }
     );
 
-    ParamError->throw(error=>"missing $param") unless defined $events;
+    ParamError->throw(error=>"missing events") unless defined $events;
 
     for my $event (@$events) {
         $event->{stream_size} ||= '';

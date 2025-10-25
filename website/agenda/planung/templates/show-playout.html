@@ -1,36 +1,38 @@
 <link href="css/theme.default.css" rel="stylesheet">
 <script src="js/image.js" type="text/javascript"></script>
+<div class="panel scrollable">
 
 <table id="playout-table" class="table">
-
-<thead>
-<tr>
-    <th>start</th>
-    <th>path</th>
-    <th>properties</th>
-    <th>image</th>
-</tr>
-</thead>
-
-<tbody>
-<TMPL_LOOP events>
-<tr class="<TMPL_VAR class>">
-    <td class="start"><TMPL_VAR start></td>
-    <td class="path"><div><TMPL_VAR file></div></td>
-    <td class="properties">
-        <TMPL_VAR duration escape="text">
-        <TMPL_VAR rms_left escape="text">
-        <TMPL_VAR rms_right escape="text">
-        <TMPL_VAR bitrate escape="text">
-        <TMPL_VAR bitrate_mode escape="text">
-        <TMPL_VAR sampling_rate escape="text">
-        <TMPL_VAR channels escape="text">
-        <TMPL_VAR stream_size> bytes
-    </td>
-    <td class="image"><TMPL_IF rms_image><a href="/media/playout/<TMPL_VAR rms_image>"><img src="/media/playout/<TMPL_VAR rms_image>"></a></TMPL_IF></td>
-</tr>
-</TMPL_LOOP>
-</tbody>
+    <thead>
+        <tr>
+            <th>start</th>
+            <th>path</th>
+            <th>properties</th>
+            <th>image</th>
+        </tr>
+    </thead>
+    <tbody>
+        <TMPL_LOOP events>
+        <tr class="<TMPL_VAR class>">
+            <td class="start"><TMPL_VAR start></td>
+            <td class="path"><div>
+                    <TMPL_VAR file>
+                </div></td>
+            <td class="properties"><TMPL_VAR duration
+                    escape="text"> <TMPL_VAR rms_left
+                    escape="text"> <TMPL_VAR rms_right
+                    escape="text"> <TMPL_VAR bitrate
+                    escape="text"> <TMPL_VAR bitrate_mode
+                    escape="text"> <TMPL_VAR
+                    sampling_rate escape="text"> <TMPL_VAR
+                    channels escape="text"> <TMPL_VAR
+                    stream_size> bytes </td>
+            <td class="image"><TMPL_IF rms_image>
+                <a href="/media/playout/<TMPL_VAR rms_image>"><img
+                    src="/media/playout/<TMPL_VAR rms_image>"></a></TMPL_IF></td>
+        </tr>
+        </TMPL_LOOP>
+    </tbody>
 </table>
 
-
+</div>

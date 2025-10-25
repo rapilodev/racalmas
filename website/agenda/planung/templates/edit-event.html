@@ -33,6 +33,7 @@ var event_id='<TMPL_VAR event_id escape=js>';
 </TMPL_IF>
 $(document).ready(
     function(){
+        set_breadcrumb('<TMPL_VAR .loc.title>');
         loadComments('<TMPL_VAR .event_id escape=js>', function(){
             // initially hide comments
             $('#event_<TMPL_VAR id>_comments').hide();
@@ -111,8 +112,8 @@ $(document).ready(
     </TMPL_IF>
 </div> <!--  sidebar -->
 
-<!-- edit -->
-<div class="panel">
+<!-- edit1 -->
+<div class="container panel scrollable">
 
     <!-- import rerun from old event of series or any event of any project -->
     <TMPL_IF .allow.update_event>

@@ -33,7 +33,7 @@
     </TMPL_IF>
 </div>
 
-<div id="tabs"  class="panel">
+<div id="tabs"  class="panel container scrollable">
 <ul>
     <TMPL_IF .allow.update_series_template>
         <li><a href="#tabs-template"><TMPL_VAR .loc.tab_template></a></li>
@@ -71,7 +71,7 @@
             <label><TMPL_VAR .loc.template_duration> (<TMPL_VAR .loc.minutes>)</label>
             <input name="default_duration" value="<TMPL_VAR default_duration>" placeholder=" ">
         </div>
-    <div class="sidebar" style="float:right">
+    <div style="float:right">
         <TMPL_IF .allow.update_series_template>
             <button type=submit name="action" value="save_series" class="primary"
             ><TMPL_VAR .loc.button_save_template></button>
@@ -423,6 +423,7 @@
             <TMPL_IF .allow.read_image>
             <td class="logo"><img width="33" height="33" src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR image>"></td>
             </TMPL_IF>
+        
             <td class="weekday"><TMPL_VAR weekday_short_name></td>
             <td class="date"><TMPL_VAR start_date></td>
             <td class="time"><TMPL_VAR start_time_name></td>

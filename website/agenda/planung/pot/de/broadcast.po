@@ -3,7 +3,7 @@ msgid "region"
 msgstr "de"
 
 msgid "title"
-msgstr "edit events"
+msgstr "Sendungen bearbeiten"
 
 msgid "button_edit_series"
 msgstr "Sendereihe bearbeiten"
