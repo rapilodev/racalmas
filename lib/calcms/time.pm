@@ -4,9 +4,11 @@ use strict;
 use warnings;
 no warnings 'redefine';
 use utf8;
+use feature 'state';
 
 use Time::Local();
 use DateTime();
+use DateTime::TimeZone;
 use Date::Calc();
 use Date::Manip();
 use POSIX qw(strftime);
@@ -26,7 +28,7 @@ our @EXPORT_OK = qw(
   add_days_to_date
   datetime_to_array date_to_array array_to_date array_to_datetime array_to_time array_to_time_hm
   date_cond time_cond check_date check_time check_datetime check_year_month
-  datetime_to_rfc822 get_datetime datetime_to_utc datetime_to_utc_datetime
+  datetime_to_rfc822 get_datetime datetime_to_epoch epoch_to_utc_datetime datetime_to_utc_datetime datetime_to_ics
   get_duration get_duration_seconds
   getDurations getWeekdayIndex getWeekdayNames getWeekdayNamesShort getMonthNames getMonthNamesShort
 );
@@ -107,7 +109,7 @@ sub getMonthNamesShort(;$) {
 
 sub getWeekdayIndex(;$) {
     my ($weekday) = @_;
-    $weekday ||= '';
+    $weekday //= '';
     return $WEEKDAY_INDEX->{$weekday};
 }
 
@@ -163,43 +165,73 @@ sub format_time($) {
 }
 
 # convert datetime to unix time
-sub datetime_to_time ($){
-    my $datetime = $_[0];
-
-    if ($datetime =~ /(\d\d\d\d)\-(\d+)\-(\d+)[T\s](\d+)\:(\d+)(\:(\d+))?/) {
+sub datetime_to_time ($) {
+    my ($datetime) = @_;
+    if ($datetime =~ /(\d{4})-(\d+)-(\d+)[T\s](\d+):(\d+)(?::(\d+))?/) {
         my $year   = $1;
         my $month  = $2 - 1;
         my $day    = $3;
         my $hour   = $4;
         my $minute = $5;
-        my $second = $8 || 0;
-        return (Time::Local::timelocal($second, $minute, $hour, $day, $month, $year)
-            or TimeCalcError->throw(error=> "datetime_to_time: no valid date time found!($datetime)\n"));
-
-    } else {
-        TimeCalcError->throw(error=> "datetime_to_time: no valid date time found!($datetime)\n");
+        my $second = $6 // 0;
+        my $epoch = Time::Local::timelocal(
+            $second, $minute, $hour, $day, $month, $year
+        );
+        return $epoch;
     }
+    TimeCalcError->throw(
+        error => "datetime_to_time: no valid date time found! ($datetime)"
+    );
 }
 
 #get rfc822 datetime string from datetime string
 sub datetime_to_rfc822($) {
-    my $datetime = $_[0];
+    my ($datetime) = @_;
     my $time     = datetime_to_time($datetime);
     return POSIX::strftime("%a, %d %b %Y %H:%M:%S %z", localtime($time));
 }
 
-#get seconds from epoch
-sub datetime_to_utc($$) {
-    my ($datetime, $time_zone) = @_;
-    $datetime = get_datetime($datetime, $time_zone);
-    return $datetime->epoch();
+#get seconds from 1970-01-01
+sub datetime_to_epoch($$) {
+    my ($datetime, $timezone) = @_;
+    return get_datetime($datetime, $timezone)->epoch();
+}
+
+# get full utc datetime including timezone offset
+sub epoch_to_utc_datetime($) {
+    my ($epoch) = @_;
+    return undef unless defined $epoch;
+    my @t = gmtime($epoch);
+    return sprintf('%04d-%02d-%02dT%02d:%02d:%02dZ',
+        $t[5] + 1900, $t[4] + 1, $t[3], $t[2], $t[1], $t[0]);
+}
+
+# ICal spec RFC 5545, floating, like 20231225T093000
+sub datetime_to_rfc5545($) {
+    my ($datetime) = @_;
+    $datetime =~ tr/-: //d;
+    return substr($datetime, 8, 0, 'T');
+}
+
+# RFC3339, like 2025-06-01T12:00:00+02:00
+sub datetime_to_rfc3339($$) {
+    my ($datetime, $timezone) = @_;
+    my $dt = get_datetime($datetime, $timezone);
+    return sprintf(
+        "%04d-%02d-%02dT%02d:%02d:%02d%+03d:%02d",
+        $dt->year, $dt->month, $dt->day,
+        $dt->hour, $dt->minute, $dt->second,
+        int($dt->offset / 3600),
+        abs($dt->offset % 3600) / 60,
+    );
 }
 
 # get full utc datetime including timezone offset
 sub datetime_to_utc_datetime($$) {
-    my ($datetime, $time_zone) = @_;
-    $datetime = get_datetime($datetime, $time_zone);
-    return $datetime->format_cldr("yyyy-MM-ddTHH:mm:ssZZZZZ");
+    my ($datetime, $timezone) = @_;
+    warn Dumper($datetime);
+    my $dt = datetime_to_epoch($datetime, $timezone);
+    return epoch_to_utc_datetime($dt);
 }
 
 #add hours to datetime string
@@ -268,18 +300,14 @@ sub datetime_to_array(;$) {
 
 # convert datetime to date
 sub datetime_to_date(;$) {
-    my $datetime = $_[0] || '';
-    if ($datetime =~ /(\d\d\d\d)\-(\d+)\-(\d+)/) {
-        my $year  = $1;
-        my $month = $2;
-        my $day   = $3;
-        return sprintf("%04d-%02d-%02d", $year, $month, $day);
-    }
+    my ($datetime) = @_;
+    state $re = qr/^(\d{4})-(\d{1,2})-(\d{1,2})/;
+    return sprintf('%04d-%02d-%02d', $1, $2, $3) if ($datetime // '') =~ /$re/;
     return undef;
 }
 
 #convert datetime array or single value to datetime string
-sub array_to_datetime(;$) {
+sub array_to_datetime {
     my ($date, $month, $day, $hour, $minute, $second) = @_;
 
     if (ref($date) eq 'ARRAY') {
@@ -293,7 +321,7 @@ sub array_to_datetime(;$) {
 }
 
 #convert date array or single values to date string
-sub array_to_date($;$$) {
+sub array_to_date {
     my ($date, $month, $day) = @_;
     if (ref($date) eq 'ARRAY') {
         return sprintf("%04d-%02d-%02d", $date->[0], $date->[1], $date->[2]);
@@ -301,7 +329,7 @@ sub array_to_date($;$$) {
     return sprintf("%04d-%02d-%02d", $date, $month, $day);
 }
 
-sub array_to_time(;$) {
+sub array_to_time {
     my ($date, $minute, $second) = @_;
     if (ref($date) eq 'ARRAY') {
         return sprintf("%02d:%02d:%02d", $date->[3], $date->[4], $date->[5]);
@@ -311,7 +339,7 @@ sub array_to_time(;$) {
     return sprintf("%02d:%02d:%02d", $date, $minute, $second);
 }
 
-sub array_to_time_hm(;$) {
+sub array_to_time_hm {
     my ($date, $minute) = @_;
     if (ref($date) eq 'ARRAY') {
         return sprintf("%02d:%02d", $date->[3], $date->[4]);
@@ -341,9 +369,7 @@ sub dayOfYear($) {
 # get duration in minutes
 sub get_duration($$$) {
     my ($start, $end, $timezone) = @_;
-    $start = time::get_datetime($start, $timezone);
-    $end   = time::get_datetime($end,   $timezone);
-    my $duration = $end->epoch() - $start->epoch();
+    my $duration = datetime_to_epoch($start, $timezone) - datetime_to_epoch($end, $timezone);
     return $duration / 60;
 }
 
@@ -521,15 +547,6 @@ sub time_format($) {
     return $datetime;
 }
 
-#get offset from given time_zone
-sub utc_offset($) {
-    my ($time_zone) = @_;
-
-    my $datetime = DateTime->now();
-    $datetime->set_time_zone($time_zone);
-    return $datetime->strftime("%z");
-}
-
 #get weekday from (yyyy,mm,dd)
 sub weekday($$$) {
     my ($year, $month, $day) = @_;
@@ -560,12 +577,13 @@ sub get_event_date($) {
 #get datetime object from datetime string
 sub get_datetime(;$$) {
     my ($datetime, $timezone) = @_;
-
     return unless defined $datetime;
     return if $datetime eq '';
     my @l = @{ time::datetime_to_array($datetime) };
     return undef if scalar(@l) == 0;
 
+    state %tz_cache;
+    my $tz = $tz_cache{$timezone} //= DateTime::TimeZone->new(name => $timezone);
     # catch invalid datees
     $datetime = undef;
     eval {
@@ -576,7 +594,7 @@ sub get_datetime(;$$) {
             hour      => $l[3],
             minute    => $l[4],
             second    => $l[5],
-            time_zone => $timezone
+            time_zone => $tz
         );
     };
     return undef unless defined $datetime;
