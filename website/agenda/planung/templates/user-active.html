@@ -7,7 +7,9 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
     <TMPL_INCLUDE status.html>
     <button
         onclick="loadUrl('user-stats.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&action=show-user-stats')"
-        ><TMPL_VAR .loc.button_show_user_stats>
+        >
+        <sprite-icon name="account"></sprite-icon>
+        <TMPL_VAR .loc.button_show_user_stats>
     </button>
 </div>
 

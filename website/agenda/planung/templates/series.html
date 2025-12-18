@@ -4,7 +4,10 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
 </script>
 
 <div class="sidebar">
-    <button onclick="$('#oldSeries').slideToggle()"><TMPL_VAR .loc.button_old_series></button>
+    <button onclick="$('#oldSeries').slideToggle()" class="toggle-rotate">
+        <TMPL_VAR .loc.button_old_series>
+        <sprite-icon name="arrow-up" ></sprite-icon>
+    </button>
 </div>
 
 <!-- container -->
@@ -41,7 +44,9 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
         onkeyup="searchEvents()" placeholder="<TMPL_VAR .loc.label_search>"
     ><button id="clearSearch" onclick="clearSearch()"><TMPL_VAR .loc.label_clear_search></button></div>
 
-    <button id="add-series" onclick="addSeries('<TMPL_VAR series_name escape=js>')">+ <TMPL_VAR .loc.button_add_series></button>
+    <button id="add-series" onclick="addSeries('<TMPL_VAR series_name escape=js>')">
+       <sprite-icon name="add"></sprite-icon><TMPL_VAR .loc.button_add_series>
+   </button>
 
     <!-- create a new series -->
     <TMPL_IF .allow.create_series>

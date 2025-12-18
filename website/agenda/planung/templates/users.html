@@ -90,7 +90,8 @@
             <div>
                 <TMPL_if .allow.read_user>
                     <label><TMPL_VAR .loc.label_email></label>
-                    <input name="user_email" value="<TMPL_VAR email>" type="email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">
+                    <input name="user_email" value="<TMPL_VAR email>" type="email" required
+                        pattern="[a-zA-Z0-9._%+\-]+@([a-zA-Z0-9\-]+\.)+[A-Za-z]{2,}">
                 </TMPL_IF>
             </div>
             <div>
@@ -146,7 +147,10 @@
 <div class="sidebar">
     <TMPL_IF allow.create_user>
     <div style="clear:both" class="newuser">
-        <button onclick="add_user('<TMPL_VAR name escape=js>')"><TMPL_VAR .loc.button_add_user></button>
+        <button onclick="add_user('<TMPL_VAR name escape=js>')">
+            <sprite-icon name="create"></sprite-icon>
+            <TMPL_VAR .loc.button_add_user>
+        </button>
         <form method="post">
         <div id="edit_new" class="user editor panel" style="display:none">
             <div>

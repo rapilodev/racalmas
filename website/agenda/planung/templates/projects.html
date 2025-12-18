@@ -111,9 +111,12 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
         <button type=submit name="action" value="save"><TMPL_VAR .loc.button_save></button>
         <TMPL_IF .allow.delete_project>
             <div class="right">
-                <button type=submit class="text" name="action" value="delete"
-                    onclick="commitForm('project_<TMPL_VAR project_id>','delete','<TMPL_VAR .loc.button_delete escape=js>');return false;"
-                ><TMPL_VAR .loc.button_delete></button>
+            <button type=submit class="text" name="action" value="delete"
+                onclick="commitForm('project_<TMPL_VAR project_id>','delete','<TMPL_VAR .loc.button_delete escape=js>');return false;"
+            >
+                <sprite-icon name="delete"></sprite-icon>
+                <TMPL_VAR .loc.button_delete>
+            </button>
             </div>
         </TMPL_IF>
     </div>

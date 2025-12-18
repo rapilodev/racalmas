@@ -112,6 +112,7 @@
     <TMPL_IF .allow.update_studio>
     <div class="newstudio">
         <button onclick="add_studio('<TMPL_VAR name escape=js>')">
+            <sprite-icon name="add"></sprite-icon>
             <TMPL_VAR .loc.button_add_studio>
         </button>
         <form method="post">
@@ -139,9 +140,11 @@
             <div>
                 <button class="text"
                     onclick="cancel_edit_studio($(this), 'new');return false;">
+                    <sprite-icon name="cancel"></sprite-icon>
                     <TMPL_VAR .loc.button_cancel>
                 </button>
                 <button type=submit name="action" value="save">
+                    <sprite-icon name="save"></sprite-icon>
                     <TMPL_VAR .loc.button_create>
                 </button>
             </div>

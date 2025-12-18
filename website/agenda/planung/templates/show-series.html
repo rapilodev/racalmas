@@ -28,7 +28,10 @@
             <button
                 onclick="window.location='calendar.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>&list=1'"
                 style="float:left"
-            ><TMPL_VAR .loc.button_event_list></button>
+            >
+                <sprite-icon name="list"></sprite-icon>
+                <TMPL_VAR .loc.button_event_list>
+            </button>
         </TMPL_IF>
 
         <TMPL_IF .allow.create_event>
@@ -38,7 +41,10 @@
                 <input  type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
                 <input  type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
                 <input  type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
-                <button type="submit" name="action"     value="show_new_event"><TMPL_VAR .loc.button_create_event></button>
+                <button type="submit" name="action"     value="show_new_event">
+                    <sprite-icon name="create"></sprite-icon>
+                    <TMPL_VAR .loc.button_create_event>
+                </button>
             </form>
         </TMPL_IF>
 
@@ -47,7 +53,10 @@
                 class="text"
                 onclick="loadUrl('event-history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR series_id>');"
                 style="float:left"
-            ><TMPL_VAR .loc.button_show_changes></button>
+            >
+                <sprite-icon name="history"></sprite-icon>
+                <TMPL_VAR .loc.button_show_changes>
+            </button>
         </TMPL_IF>
 
         <TMPL_IF .allow.update_event>
@@ -55,7 +64,10 @@
                 <input  type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
                 <input  type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
                 <input  type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
-                <button type="submit" name="action"     value="rebuild_episodes" class="text"><TMPL_VAR .loc.button_rebuild_episodes></button>
+                <button type="submit" name="action"     value="rebuild_episodes" class="text">
+                    <sprite-icon name="build"></sprite-icon>
+                    <TMPL_VAR .loc.button_rebuild_episodes>
+                </button>
             </form>
         </TMPL_IF>
 
@@ -173,7 +185,10 @@
                 <TMPL_IF .allow.update_series_template>
                     <button type=submit name="action" value="save"
                         class="primary"
-                    ><TMPL_VAR .loc.button_save_template></button>
+                    >
+                        <sprite-icon name="save"></sprite-icon>
+                        <TMPL_VAR .loc.button_save_template>
+                    </button>
                 </TMPL_IF>
                 <!--
                 <button onclick="cancel_edit_series('<TMPL_VAR series_id escape=js>');return false;">cancel</button>
@@ -460,7 +475,7 @@
                 </TMPL_IF>
                 <td class="weekday"><TMPL_VAR weekday_short_name></td>
                 <td class="date"><TMPL_VAR start_date></td>
-                <td class="time"><TMPL_VAR start_time_name></td>
+                <td class="time"><TMPL_VAR start_time></td>
                 <td class="spacer">-</td>
                 <td class="time"><TMPL_VAR end_time></td>
                 <td class="title"><TMPL_VAR full_title></td>

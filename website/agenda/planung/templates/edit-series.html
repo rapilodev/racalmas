@@ -29,7 +29,7 @@
     <TMPL_IF .allow.read_event>
         <button onclick="listEvents('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
             style="float:left"
-        ><TMPL_VAR .loc.button_event_list></button>
+        ><sprite-icon name="documents"></sprite-icon><TMPL_VAR .loc.button_event_list></button>
     </TMPL_IF>
 </div>
 
@@ -48,7 +48,7 @@
 <!-- edit template-->
 <TMPL_IF .allow.update_series_template>
 <div id="tabs-template">
-<form method="post" action="series.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>#tabs-template">
+<form id="edit_series"#tabs-template">
 <div id="edit_<TMPL_VAR .series_id>" class="editor">
     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
     <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
@@ -73,7 +73,8 @@
         </div>
     <div style="float:right">
         <TMPL_IF .allow.update_series_template>
-            <button type=submit name="action" value="save_series" class="primary"
+            <button name="action" value="save_series" class="primary"
+            onclick="saveSeries('form#edit_series', 'save_series');return false;"
             ><TMPL_VAR .loc.button_save_template></button>
         </TMPL_IF>
     </div>
@@ -426,7 +427,7 @@
         
             <td class="weekday"><TMPL_VAR weekday_short_name></td>
             <td class="date"><TMPL_VAR start_date></td>
-            <td class="time"><TMPL_VAR start_time_name></td>
+            <td class="time"><TMPL_VAR start_time></td>
             <td class="spacer">-</td>
             <td class="time"><TMPL_VAR end_time></td>
             <td class="title"><TMPL_VAR full_title></td>
@@ -508,13 +509,13 @@
 <div class="sidebar">
     <TMPL_IF .allow.create_event>
         <button onclick="showNewEvent('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
-        >+ <TMPL_VAR .loc.button_create_event></button>
+        ><sprite-icon name="add"></sprite-icon><TMPL_VAR .loc.button_create_event></button>
     </TMPL_IF>
 
     <TMPL_IF .allow.update_event>
         <button onclick="previewRebuildEpisodes('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
             class="text"
-        ><TMPL_VAR .loc.button_rebuild_episodes></button>
+        ><sprite-icon name="build"></sprite-icon><TMPL_VAR .loc.button_rebuild_episodes></button>
     </TMPL_IF>
 
     <!-- delete series -->
@@ -522,7 +523,7 @@
         <button
             onclick="commitDeleteSeries('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
             title="<TMPL_VAR .loc.label_delete_series>"
-            ><TMPL_VAR .loc.button_delete_series></button>
+            ><sprite-icon name="delete"></sprite-icon><TMPL_VAR .loc.button_delete_series></button>
     </TMPL_IF>
     
     <div class="label right"><TMPL_VAR .loc.modified> <TMPL_VAR .loc.at> <TMPL_VAR modified_at> <TMPL_VAR .loc.by> <TMPL_VAR modified_by>.</div>

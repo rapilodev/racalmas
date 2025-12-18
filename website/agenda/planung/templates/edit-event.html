@@ -68,14 +68,14 @@ $(document).ready(
         <TMPL_IF .allow.read_series>
         <button
             onclick="view_series_details('<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR series_id escape=js>')"
-        ><TMPL_VAR .loc.button_edit_series></button>
+        ><sprite-icon name="edit"></sprite-icon><TMPL_VAR .loc.button_edit_series></button>
         </TMPL_IF>
     </TMPL_IF>
 
     <TMPL_IF .allow.read_event>
     <button
         onclick="listEvents('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>')"
-    ><TMPL_VAR .loc.button_event_list></button>
+    ><sprite-icon name="documents"></sprite-icon><TMPL_VAR .loc.button_event_list></button>
     </TMPL_IF>
 
     <TMPL_UNLESS new_event>
@@ -83,32 +83,30 @@ $(document).ready(
         <TMPL_IF .allow.read_event>
             <button target="_blank" class="text"
                 onclick="window.open('/programm/sendung/<TMPL_VAR event_id>.html', '_blank');"
-            ><TMPL_VAR .loc.button_show_event></button>
+            ><sprite-icon name="open"></sprite-icon><TMPL_VAR .loc.button_show_event></button>
         </TMPL_IF>
 
         <TMPL_IF .allow.read_comment>
             <button id="showComment" class="text"
                 onclick="showEventComments('<TMPL_VAR id escape=js>')"
-            ><TMPL_VAR .loc.label_comments></button>
+            ><sprite-icon name="comment"></sprite-icon><TMPL_VAR .loc.label_comments></button>
         </TMPL_IF>
     </TMPL_UNLESS>
     </TMPL_UNLESS>
 
     <TMPL_UNLESS new_event>
-    <div class="sidebar">
         <TMPL_UNLESS show_new_event>
             <TMPL_IF .allow.read_event>
                 <button target="_blank" class="text"
                     onclick="showHistory('<TMPL_VAR project_id>', '<TMPL_VAR studio_id>', '<TMPL_VAR series_id>', '<TMPL_VAR event_id>');"
-                ><TMPL_VAR .loc.button_show_changes></button>
+                ><sprite-icon name="history"></sprite-icon><TMPL_VAR .loc.button_show_changes></button>
             </TMPL_IF>
         </TMPL_UNLESS>
-    </div>
     </TMPL_UNLESS>
 
     <!-- download output -->
     <TMPL_IF download>
-        <div type="hidden" class="panel" name="event_id" ><TMPL_VAR download escape=none></div>
+        <div type="hidden" class="panel" name="event_id"><sprite-icon name="download"></sprite-icon><TMPL_VAR download escape=none></div>
     </TMPL_IF>
 </div> <!--  sidebar -->
 
@@ -120,7 +118,7 @@ $(document).ready(
     <div id="selectRerun" style="display:none;" class="select panel">
 
         <div class="panel-header">
-            <b><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time_name></b>,
+            <b><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time></b>,
             <TMPL_VAR .loc.label_overwrite_event> <TMPL_VAR .loc.label_rerun>
         </div>
 
@@ -215,7 +213,7 @@ $(document).ready(
 
             <div>
                 <label>&nbsp;</label>
-                <button class="text" onclick="copyEventToClipboard();return false;"><img src="image/dark/copy.svg"></button>
+                <button class="text" onclick="copyEventToClipboard();return false;"><sprite-icon name="copy"></sprite-icon></button>
             </div>
         </div>
 
@@ -247,7 +245,7 @@ $(document).ready(
             <TMPL_IF .allow.read_event>
                 <TMPL_UNLESS new_event></TMPL_UNLESS>
                 <div>
-                    <TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time_name> - <TMPL_VAR end_time>
+                    <TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time> - <TMPL_VAR end_time>
                     <label><TMPL_VAR .loc.label_when></label>
                     <input type="hidden" id="start_date" name="start_date" value="<TMPL_VAR start>" />
                     <TMPL_LOOP durations><TMPL_IF selected><input type="hidden" name="duration" value="<TMPL_VAR value>" /></TMPL_IF></TMPL_LOOP>
@@ -286,7 +284,7 @@ $(document).ready(
                 </div>
             </TMPL_IF>
 
-            <TMPL_IF path><img src="image/dark/play.svg" style="color:#03a9f4"></TMPL_IF>
+            <TMPL_IF path><sprite-icon name="play" style="color:#03a9f4"></sprite-icon></TMPL_IF>
 
             <TMPL_IF .allow.update_event_status_archived>
             <div>
@@ -443,19 +441,19 @@ $(document).ready(
             <TMPL_IF .allow.create_event_from_schedule>
                 <button class="primary"
                     onclick="createEventFromSchedule('form#edit_event_<TMPL_VAR event_id>');leavePage();return false"
-                ><TMPL_VAR .loc.button_create></button>
+                ><sprite-icon name="create"></sprite-icon><TMPL_VAR .loc.button_create></button>
              </TMPL_IF>
         <TMPL_ELSIF show_new_event>
             <TMPL_IF .allow.create_event>
                 <button class="primary"
                     onclick="createEvent2('form#edit_event_<TMPL_VAR event_id>');leavePage();return false"
-                ><TMPL_VAR .loc.button_create></button>
+                ><sprite-icon name="create"></sprite-icon><TMPL_VAR .loc.button_create></button>
              </TMPL_IF>
         <TMPL_ELSE>
             <TMPL_IF .allow.update_event>
                 <button class="primary"
                     onclick="saveEvent('form#edit_event_<TMPL_VAR event_id>', 'save');return false"
-                ><TMPL_VAR .loc.button_save></button>
+                ><sprite-icon name="save"></sprite-icon><TMPL_VAR .loc.button_save></button>
             </TMPL_IF>
         </TMPL_IF>
     </TMPL_UNLESS>
@@ -465,7 +463,7 @@ $(document).ready(
         <TMPL_IF .allow.upload_audio_recordings>
             <button class="text"
                 onclick="uploadRecording('<TMPL_VAR .project_id>',<TMPL_VAR .studio_id>,'<TMPL_VAR .series_id>','<TMPL_VAR .event_id>');"
-            ><TMPL_VAR .loc.button_upload></button>
+            ><sprite-icon name="upload"></sprite-icon><TMPL_VAR .loc.button_upload></button>
         </TMPL_IF>
         </TMPL_UNLESS>
 
@@ -473,7 +471,7 @@ $(document).ready(
         <TMPL_IF .allow.create_download>
             <button class="text"
                 onclick="downloadRecording('<TMPL_VAR .project_id>',<TMPL_VAR .studio_id>,'<TMPL_VAR .series_id>','<TMPL_VAR .event_id>');"
-            ><TMPL_VAR .loc.button_download></button>
+            ><sprite-icon name="download"></sprite-icon><TMPL_VAR .loc.button_download></button>
         </TMPL_IF>
         </TMPL_IF>
     </TMPL_UNLESS>
@@ -482,7 +480,7 @@ $(document).ready(
     <TMPL_IF .allow.update_event>
         <button class="text"
             onclick="selectRerun('rerunEventId', <TMPL_VAR start_date>)"
-        ><TMPL_VAR .loc.button_rerun></button>
+        ><sprite-icon name="rerun"></sprite-icon><TMPL_VAR .loc.button_rerun></button>
     </TMPL_IF>
     </TMPL_UNLESS>
 
@@ -490,12 +488,12 @@ $(document).ready(
         <TMPL_IF .allow.delete_schedule>
             <button class="text"
                 onclick="deleteFromSchedule('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>','<TMPL_VAR start escape=url>');return false;"
-            ><TMPL_VAR .loc.button_delete_from_schedule></button>
+            ><sprite-icon name="delete"></sprite-icon><TMPL_VAR .loc.button_delete_from_schedule></button>
     </TMPL_IF>
     <TMPL_ELSE>
         <TMPL_IF .allow.assign_series_events>
             <button class="text" onclick="selectChangeSeries('changeSeriesId');"
-            ><TMPL_VAR loc.button_assign_series></button>
+            ><sprite-icon name="assign"></sprite-icon><TMPL_VAR loc.button_assign_series></button>
         </TMPL_IF>
     </TMPL_IF>
 
@@ -504,7 +502,7 @@ $(document).ready(
             <TMPL_UNLESS new_event>
                 <button class="text"
                     onclick="deleteEvent('form#edit_event_<TMPL_VAR event_id>', 'delete'); return false;"
-                ><TMPL_VAR .loc.button_delete></button>
+                ><sprite-icon name="delete"></sprite-icon><TMPL_VAR .loc.button_delete></button>
             </TMPL_UNLESS>
         </TMPL_IF>
     </TMPL_UNLESS>

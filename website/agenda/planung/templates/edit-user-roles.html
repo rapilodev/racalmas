@@ -109,9 +109,17 @@
             <div><input name="email" value="<TMPL_VAR email>"></div>
         </div>
         <div class="sidebar">
-            <button onclick="cancel_edit_user('<TMPL_VAR id escape=js>');return false;">cancel</button>
-            <input type=submit name="action" value="save">
-            <div class="right"><input type=submit name="action" value="delete"></div>
+            <button onclick="cancel_edit_user('<TMPL_VAR id escape=js>');return false;">
+                <sprite-icon name="cancel"></sprite-icon>Cancel
+            </button>
+            <div>
+                <sprite-icon name="save"></sprite-icon>
+                <input type=submit name="action" value="save">
+            </div>
+            <div class="right">
+                <sprite-icon name="delete"></sprite-icon>
+                <input type=submit name="action" value="delete">
+            </div>
             <input type="hidden" name="id" value="<TMPL_VAR id>">
         </div>
     </div>
@@ -144,7 +152,10 @@
             <div><input name="email" value="<TMPL_VAR email>"></div>
         </div>
         <div class="sidebar">
-            <button onclick="cancel_edit_user('new');return false;">cancel</button>
+            <button onclick="cancel_edit_user('new');return false;">
+            <sprite-icon name="cancel"></sprite-icon>
+            Cancel
+            </button>
             <input type=submit name="action" value="save">
         </div>
     </div>
