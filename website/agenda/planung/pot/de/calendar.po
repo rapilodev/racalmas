@@ -8,7 +8,7 @@ msgid "button_today"
 msgstr "Heute"
 
 msgid "button_search"
-msgstr "🔍 Suche"
+msgstr "Suche"
 
 msgid "label_pin"
 msgstr "Anpinnen"
@@ -138,3 +138,6 @@ msgstr "WT"
 
 msgid "label_day_of_year"
 msgstr "TiJ"
+
+msgid "id"
+msgstr "Nr."

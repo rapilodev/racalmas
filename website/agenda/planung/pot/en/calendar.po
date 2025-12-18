@@ -5,7 +5,7 @@ msgid "button_today"
 msgstr "today"
 
 msgid "button_search"
-msgstr "🔍 search"
+msgstr "search"
 
 msgid "label_pin"
 msgstr "pin"
@@ -132,3 +132,6 @@ msgstr "wd"
 
 msgid "label_day_of_year"
 msgstr "doy"
+
+msgid "label_id"
+msgstr "Id"

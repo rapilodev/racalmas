@@ -28,6 +28,9 @@ msgstr "Su"
 msgid "label_search"
 msgstr "🔍 Search"
 
+msgid "label_error"
+msgstr "Action failed"
+
 msgid "label_saved"
 msgstr "Changes saved"
 

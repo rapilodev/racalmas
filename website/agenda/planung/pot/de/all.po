@@ -31,6 +31,9 @@ msgstr "Suche"
 msgid "label_saved"
 msgstr "Änderungen gespeichert"
 
+msgid "label_error"
+msgstr "Aktion fehlgeschlagen"
+
 msgid "label_login_required"
 msgstr "Bitte neu anmelden"
 
