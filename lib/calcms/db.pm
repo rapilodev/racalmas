@@ -33,7 +33,7 @@ sub connect($;$) {
     my $access_options = $options->{access} or DatabaseError->throw(error => "missing database access options");
     my $key = Digest::MD5::md5_hex(sort values %$access_options);
     my $cache = $connection->{$key};
-    return $cache->{dbh} if defined $cache && ($cache->{expires}//0>time);# && $cache->{dbh}->ping;
+    return $cache->{dbh} if defined $cache && ($cache->{expires}//0>time) && $cache->{dbh}->ping;
     $database = $access_options->{database};
     my $dsn = "DBI:mysql:database=$access_options->{database};host=$access_options->{hostname};port=$access_options->{port};"
             . "mysql_enable_utf8=1;mysql_init_command=SET time_zone='$options->{date}->{time_zone}'";
@@ -42,6 +42,7 @@ sub connect($;$) {
     my $dbh = DBI->connect($dsn, $username, $password, {
         RaiseError => 1,
         mysql_enable_utf8 => 1,
+        mysql_enable_utf8mb4 => 1,
         mysql_auto_reconnect => 1,
         mysql_use_result=> 1
     }) or die "could not connect to database: $DBI::errstr";
