@@ -353,24 +353,25 @@ sub showEventList {
     my $language      = $params->{language};
 
     my $rerunIcon =
-        qq{<img src="image/dark/replay.svg" title="$params->{loc}->{label_rerun}">};
+        qq{<sprite-icon name="replay" title="$params->{loc}->{label_rerun}"></sprite-icon>};
     my $liveIcon =
-        qq{<img src="image/dark/mic.svg" title="$params->{loc}->{label_live}">};
+        qq{<sprite-icon name="mic" title="$params->{loc}->{label_live}"></sprite-icon>};
     my $draftIcon =
-        qq{<img src="image/dark/draft.svg" title="$params->{loc}->{label_draft}">};
+        qq{<sprite-icon name="draft" title="$params->{loc}->{label_draft}"></sprite-icon>};
     my $archiveIcon =
-qq{<img src="image/dark/archive.svg" title="$params->{loc}->{label_archived}">};
-    my $playoutIcon    = qq{<img src="image/dark/play.svg">};
-    my $processingIcon = qq{<img src="image/dark/processsing.svg">};
-    my $preparedIcon   = qq{<img src="image/dark/prepared.svg>};
-    my $creoleIcon     = qq{<img src="image/dark/creole.svg>};
+qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite-icon>};
+    my $playoutIcon    = qq{<sprite-icon name="play"></sprite-icon>};
+    my $processingIcon = qq{<sprite-icon name="processsing"></sprite-icon>};
+    my $preparedIcon   = qq{<sprite-icon name="prepared"></sprite-icon>};
+    my $creoleIcon     = qq{<sprite-icon name="creole"></sprite-icon>};
 
     my $out = '';
     $out = qq{
-        <div id="event_list">
+        <div id="event_list" class="scrollable">
         <table>
             <thead>
                 <tr>
+                    <th class="id">$params->{loc}->{label_id}</th>
                     <th class="day_of_year">$params->{loc}->{label_day_of_year}</th>
                     <th class="weekday">$params->{loc}->{label_weekday}</th>
                     <th class="start_date">$params->{loc}->{label_start}</th>
@@ -453,7 +454,7 @@ qq{<img src="image/dark/archive.svg" title="$params->{loc}->{label_archived}">};
             $event->{start}              ||= '';
             $event->{weekday_short_name} ||= '';
             $event->{start_date_name}    ||= '';
-            $event->{start_time_name}    ||= '';
+            $event->{start_time}         ||= '';
             $event->{end_time}           ||= '';
             $event->{series_name}        ||= '';
             $event->{title}              ||= '';
@@ -498,8 +499,8 @@ qq{<img src="image/dark/archive.svg" title="$params->{loc}->{label_archived}">};
             my $other_studio  = $params->{studio_id} ne $event->{studio_id};
             my $other_project = $params->{project_id} ne $event->{project_id};
             $class .= ' predecessor' if $other_project or $other_studio;
-            $other_studio  = '<img src="image/dark/globe.svg">' if $other_studio;
-            $other_project = '<img src="image/dark/globe.svg">' if $other_project;
+            $other_studio  = '<sprite-icon name="globe"></sprite-icon>' if $other_studio;
+            $other_project = '<sprite-icon name="globe></sprite-icon>' if $other_project;
 
             my $file =
                 $event->{file}
@@ -511,15 +512,16 @@ qq{<img src="image/dark/archive.svg" title="$params->{loc}->{label_archived}">};
 
             my $format = { "markdown" => "-", "creole" => "Creole" }
                 ->{ $event->{content_format} // '' } // 'Creole';
+                #use Data::Dumper;warn Dumper($event);
             $out .=
                   qq!<tr id="$id" class="$class" start="$event->{start}" >!
+                . qq!<td class="id">$event->{id}</td>!
                 . qq!<td class="day_of_year">!
-                .(
-                defined $event->{start} ? time::dayOfYear($event->{start}) : '')
+                .(defined $event->{start} ? time::dayOfYear($event->{start}) : '')
                 . q!</td>!
                 . qq!<td class="weekday">$event->{weekday_short_name},</td>!
                 . qq!<td class="start_date" data-text="$event->{start_datetime}">$event->{start_date_name}</td>!
-                . qq!<td class="start_time">$event->{start_time_name} - $event->{end_time}</td>!
+                . qq!<td class="start_time">$event->{start_time} - $event->{end_time}</td>!
                 . qq!<td class="series_name">$event->{series_name}</td>!
                 . qq!<td class="series_id">$event->{series_id}</td>!
                 . qq!<td class="title">$title</td>!
@@ -529,12 +531,13 @@ qq{<img src="image/dark/archive.svg" title="$params->{loc}->{label_archived}">};
                 . qq!<td class="live">$live</td>!
                 . qq!<td class="playout" title="$playout_info">$playout</td>!
                 . qq!<td class="archived">$archived</td>!
-                . qq{<!--}
-                . qq!<td>$event->{project_name} $other_studio</td>!
-                . qq!<td>$studio_name $other_studio</td>!
-                . qq!<td>$format</td>!
-                . qq{-->}
-                . qq!</tr>! . "\n";
+                #. qq{<!--}
+                #. qq!<td>$event->{project_name} $other_studio</td>!
+                #. qq!<td>$studio_name $other_studio</td>!
+                #. qq!<td>$format</td>!
+                #. qq{-->}
+                #. qq!</tr>! 
+                . "\n";
         }
     #    $i++;
     }
@@ -570,13 +573,10 @@ qq{<img src="image/dark/archive.svg" title="$params->{loc}->{label_archived}">};
             </main>
             <script>
                 var region='} . $params->{loc}->{region} . q{';
-                var calendarTable=0;
                 var label_events='} . $params->{loc}->{label_events} . q{';
                 var label_schedule='} . $params->{loc}->{label_schedule} . q{';
                 var label_worktime='} . $params->{loc}->{label_worktime} . q{';
                 var label_playout='} . $params->{loc}->{label_playout} . q{';
-                var label_descriptions='}
-        . $params->{loc}->{label_descriptions} . q{';
                 var label_pin='} . $params->{loc}->{label_pin} . q{';
             </script>
         </body>
@@ -786,7 +786,6 @@ sub getTable {
             if (length($event->{series_name})) {
                 $event->{series_name} = $params->{loc}->{single_event}
                     if !length $event->{series_name} || $event->{series_name} eq '_single_';
-                $content .= qq{<div class="series">$event->{series_name}</div>};
             }
 
             if (length($event->{title})) {
@@ -885,13 +884,10 @@ sub getJavascript {
     my $out = q{
         <script>
             var region='} . $params->{loc}->{region} . q{';
-            var calendarTable=1;
             var startOfDay=} . $startOfDay . q{;
             var label_events='} . $params->{loc}->{label_events} . q{';
             var label_schedule='} . $params->{loc}->{label_schedule} . q{';
             var label_worktime='} . $params->{loc}->{label_worktime} . q{';
-            var label_descriptions='}
-        . $params->{loc}->{label_descriptions} . q{';
             var label_playout='} . $params->{loc}->{label_playout} . q{';
             var label_pin='} . $params->{loc}->{label_pin} . q{';
         </script>
@@ -1060,12 +1056,12 @@ sub get_event {
     }
 
     $content .= '<br>uploading <progress max="10" ></progress> ' if defined $event->{upload};
-    $content .= q{<div class="scrollable">};
-    $content .= q{<div class="excerpt">} . $event->{excerpt} . q{</div>}
-        if defined $event->{excerpt};
-    $content .= q{<div class="excerpt">} . $event->{html_topic} . q{</div>}
-        if defined $event->{topic};
-    $content .= q{</div>};
+    #$content .= q{<div class="scrollable">};
+    #$content .= q{<div class="excerpt">} . $event->{excerpt} . q{</div>}
+    #    if defined $event->{excerpt};
+    #$content .= q{<div class="excerpt">} . $event->{html_topic} . q{</div>}
+    #    if defined $event->{topic};
+    #$content .= q{</div>};
 
     if ($showIcons) {
         my $attr = { map {$_ => undef} @class };
@@ -1073,9 +1069,9 @@ sub get_event {
             $event->{file}
             ? 'playout: ' . $event->{file} =~ s/\'/\&apos;/gr
             : 'playout';
-        my $playoutClass    = qq{<img src="image/dark/play.svg">};
-        my $processingClass = qq{<img src="image/dark/processing.svg">};
-        my $preparedClass   = qq{<img src="image/dark/prepare.svg">};
+        my $playoutClass    = qq{<sprite-icon name="play"></sprite-icon>};
+        my $processingClass = qq{<sprite-icon name="processing"></sprite-icon>};
+        my $preparedClass   = qq{<sprite-icon name="prepare"></sprite-icon>};
         my @icons           = ();
         if (exists $attr->{event}) {
             my $playout = '';
@@ -1084,17 +1080,18 @@ sub get_event {
                 $playout = $preparedClass   if $attr->{upload_status} eq 'done';
             }
             $playout = $playoutClass if exists $attr->{playout};
-            push  @icons, '<img src="image/dark/mic.svg" title="live"/>'
+            push @icons, qq{<span class="header">$event->{series_name}</span>};
+            push  @icons, '<sprite-icon name="mic" title="live"></sprite-icon>'
                 if exists($attr->{live}) && exists($attr->{no_rerun});
-            push  @icons, '<img src="image/dark/mic_off.svg" title="preproduced"/>'
+            push  @icons, '<sprite-icon name="mic-off" title="preproduced"></sprite-icon>'
                 if exists($attr->{preproduced}) && exists($attr->{no_rerun});
-            push  @icons, '<img src="image/dark/replay.svg" title="rerun"/>'
+            push  @icons, '<sprite-icon name="replay" title="rerun"></sprite-icon>'
                 if exists $attr->{rerun};
-            push  @icons, qq{<img src="image/dark/play.svg" title="$file" onmouseenter="console.log('$file');"/>}
+            push  @icons, qq{<sprite-icon name="play" title="$file" onmouseenter="console.log('$file');"></sprite-icon>}
                 if $playout;
-            push  @icons, '<img src="image/dark/archive.svg" title="archived"/>'
+            push  @icons, '<sprite-icon name="archive" title="archived"></sprite-icon>'
                 if exists $attr->{archived};
-            push  @icons, qq!<img class="icon" src="! .($event->{series_icon_url}) . q!">!;
+            push @icons, qq{<img class="icon" src="$event->{series_icon_url}">};
         }
         my $icons = join '', @icons;
         $content = qq{
