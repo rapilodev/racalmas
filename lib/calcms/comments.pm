@@ -145,19 +145,14 @@ sub modify_results($$$) {
     my $request = $_[2];
 
     my $params = $request->{params}->{checked};
-
-    my $time_diff = '';
-    if ($params->{template} =~ /\.xml/) {
-        $time_diff = time::utc_offset($config->{date}->{time_zone});
-        $time_diff =~ s/(\d\d)(\d\d)/$1\:$2/g;
-    }
-
+    my $time_zone = $config->{date}->{time_zone};
     my $language = $config->{date}->{language} || 'en';
+    my $locale = $language eq 'de' ? 'de_DE' : 'en_US';
 
     for my $result (@$results) {
         $result->{allow}->{new_comments} = 1 if ($params->{allow}->{new_comments});
         $result->{start_date_name} = time::date_format($config, $result->{created_at}, $language);
-        $result->{start_time_name} = time::time_format($result->{created_at});
+        $result->{start_time} = time::time_format($result->{created_at});
         my $comment_limit = 100;
         if (length($result->{content}) > $comment_limit) {
             $result->{short_content} = substr($result->{content}, 0, $comment_limit) . '...';
@@ -183,13 +178,11 @@ sub modify_results($$$) {
             $result->{program}     = markup::html_to_plain($result->{program});
 
             if (defined $result->{created_at}) {
-                $result->{created_at} =~ s/ /T/gi;
-                $result->{created_at} .= $time_diff;
+                $result->{created_at} = time::datetime_to_rfc3339($result->{created_at}, $time_zone);
             }
 
             if (defined $result->{modified_at}) {
-                $result->{modified_at} =~ s/ /T/gi;
-                $result->{modified_at} .= $time_diff;
+                $result->{modified_at} = time::datetime_to_rfc3339($result->{modified_at}, $time_zone);
             }
         }
     }
