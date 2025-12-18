@@ -341,7 +341,10 @@ sub show_roles {
     if (defined $permissions->{update_role}) {
         $out .= q{
             <div class="sidebar">
-                <button id="add_user_role_button" onclick="add_user_role();return false;">add user role</button>
+                <button id="add_user_role_button" onclick="add_user_role();return false;">
+                    <sprite-icon name="add"></sprite-icon>
+                    add user role
+                </button>
             </div>
         }
     }
