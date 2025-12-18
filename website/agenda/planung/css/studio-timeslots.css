@@ -14,3 +14,7 @@ main#content {
 #content div.show_schedule tr.exclude td {
     text-decoration: line-through;
 }
+
+body main#content {
+    max-width: none !important;
+}

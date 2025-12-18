@@ -19,13 +19,28 @@ body #content {
     }
 }
 
-#calendar div.schedule div.text, 
-#calendar div.event div.text {
-    padding: 1rem;
+#calendar div.event div.icons {
+    display: flex;
+    width: 100%;
+    gap: 6px;
+    font-size:1.2rem;
 }
 
-#calendar div.event div.icons {
-    float: right;
+#calendar div.event div.icons span.header,
+#content div.schedule div.header,
+#content div.event div.header {
+    font-size:1rem;
+}
+
+#calendar div.event div.icons > *:first-child {
+    flex-grow:1;
+}
+
+#calendar div.event div.icons svg,
+#calendar div.event div.icons img {
+    margin:0;
+    padding-right:0;
+    font-size:16px;
 }
 
 #calendar div.time.now {
@@ -159,13 +174,15 @@ div#toolbar select, div#toolbar input {
     border-radius: var(--space-md);
 }
 
-#content div.event img.icon {
-    margin-right: 8px;
-    margin-top: -2px;
+#content div.event .icon {
     filter: grayscale(60%);
     opacity: 0.8;
-    width: 24px;
-    height: 24px;
+    width: 1em;
+    height: 1em;
+}
+
+.loading {
+    opacity: 0.5;
 }
 
 #content div.event div.excerpt {
@@ -177,10 +194,13 @@ div#toolbar select, div#toolbar input {
 /* calendar list*/
 #content div.event {
     z-index: 5;
+    padding:0.5rem;
+    justify-content:space-between;
 }
 
 #content div.schedule {
     font-weight: normal;
+    padding:0.5rem;
     z-index: 4;
 }
 
@@ -319,6 +339,7 @@ input.tablesorter-filter {
     position: relative;
     width: 100%;
     height: 100%;
+    transition: opacity 0.5s ease;
 }
 
 #calendar table {

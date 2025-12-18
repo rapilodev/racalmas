@@ -21,10 +21,12 @@ body #content {
     clear: both;
 }
 
-/* Schedule tab dimensions */
+#content #tabs-template {
+    max-width:960px;
+}
+
 #content #tabs-schedule {
-    width: 1000px;
-    max-width: none;
+    min-width: 960px;
 }
 
 /* Active row styling in editor: use a variable for background (default yellow) */

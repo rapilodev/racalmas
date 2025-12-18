@@ -153,6 +153,8 @@ html,body {
   overflow: hidden;
   height: 100vh;
   border-radius:0;
+  grid-template-rows: auto 1fr;
+    display: grid;
 }
 
 body #content {
@@ -269,7 +271,7 @@ body,
 #calcms_nav select#project_id {
   padding-left: var(--space-xl);
   background-repeat: no-repeat;
-  background-position: 6px center;
+  background-position: 1em center;
 }
 
 #calcms_nav select#studio_id {
@@ -454,9 +456,20 @@ td.label { vertical-align: top; }
 #content div.warn { background: var(--warn-bg); }
 #content div.error { color: var(--error-text); background: var(--error-bg); }
 
-#content div.badge-ok { color: var(--ok-text); background: var(--ok-bg); }
-#content div.badge-warn { background: var(--warn-bg); }
-#content div.badge-error { color: var(--error-text); background: var(--error-bg); }
+#content div.badge-ok { 
+    color: var(--ok-text);
+    background: var(--ok-bg);
+    text-wrap:none;
+}
+#content div.badge-warn {
+    background: var(--warn-bg);
+    text-wrap:none;
+}
+#content div.badge-error {
+    color: var(--error-text);
+    background: var(--error-bg);
+    text-wrap:none;
+}
 
 /* Badges */
 #content div.badge-ok,
@@ -845,27 +858,6 @@ div.container{
   flex-direction: column;
 }
 
-div.sidebar {
-    max-width:250px;
-    width: fit-content;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    align-content: baseline;
-    padding: var(--space-md);
-    gap: var(--space-md);
-    flex-shrink: 0;
-    overflow: hidden;    
-    justify-content: flex-start;
-    flex-direction: column;
-    border-radius:0;
-    background:#ddd;
-}
-
-div.sidebar > * {
-    width: 100%;
-}
-
 div.buttons button {
     padding: 1rem;
 }
@@ -883,12 +875,30 @@ div.buttons button {
     display: none;
 }
 
+sprite-icon {
+  vertical-align: middle;
+}
+
+sprite-icon svg {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+  vertical-align: text-top;
+  padding-right:0.5em;
+  font-size:inherit;
+}
+
+#calcms_nav sprite-icon svg {
+  padding-right:0.2em;
+}
 
 .scrollable {
   flex: 1;
   overflow-y: auto;
   min-width: 0;
+  min-height: 0;
   padding: 1rem;
+  height: 100%;
 }
 
 @media (max-width: 960px) {
@@ -906,4 +916,100 @@ div.buttons button {
     overflow-y: auto;
     flex-direction:column;
   }
+}
+
+div.sidebar {
+    max-width:250px;
+    width: fit-content;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: baseline;
+    padding: var(--space-md);
+    flex-shrink: 0;
+    overflow: hidden;    
+    justify-content: flex-start;
+    flex-direction: column;
+    border-radius:0;
+    background:#ddd;
+    gap: var(--gap);
+}
+
+div.sidebar > * {
+    width: 100%;
+    text-align: left;
+}
+
+div.sidebar {
+    background: none;
+}
+
+div.sidebar button {
+    background: none;
+    border:none;
+    box-shadow:none;
+}
+
+div.sidebar .formField input{
+    min-width: 100%;
+}
+
+.sidebar {
+    width: 220px;
+    background: #2b2b2b;
+    padding: 1rem 0;
+    font-family: sans-serif;
+}
+
+/* Menu item base style */
+.sidebar .menu-item,
+.sidebar > button {
+    padding: 0;
+    display: flex;
+    width: 100%;
+    background: none;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    text-align: left;
+    gap:0;
+    border-radius:0;
+    line-height:1rem;
+    min-height: 2rem;
+}
+
+.sidebar .menu-item .icon,
+.sidebar > button .icon {
+    margin-right: 1rem;
+}
+
+.sidebar .menu-item:hover,
+.sidebar > button:hover {
+    color: var(--nav-bg);
+    text-decoration: none;
+}
+
+.sidebar .menu-item.active,
+.sidebar > button.active {
+    background: #505050;
+    color: #fff;
+}
+
+.sidebar > button {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar > button > sprite-icon svg {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.toggle-rotate svg {
+    transition: transform 0.3s ease;
+    transform-origin: 50% 50%;
+}
+
+.toggle-rotate.rotated svg {
+    transform: rotate(180deg);
 }
