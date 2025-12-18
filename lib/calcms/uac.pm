@@ -784,23 +784,21 @@ Content-Type:application/json; charset=utf-8
 sub error_handler {
     use Data::Dumper;print STDERR Dumper(\@_);
     my $last = $_[-1];
-    print "Status: 512\n";
-    #print "Content-Type: application/json\n";
-    #use Data::Dumper;print STDERR Dumper($last);
+    my $msg = '';
     if (blessed($last) and $last->isa("APR::Request::Error")){
-        print json({error => $last->{func}});
-    } else{
+        $msg = $last->{func};
+    } else {
         my $error = $_[0];
-        my $response = {};
         if (blessed $error) {
-            $response->{error} = $error->{message} // $error->{error} // 'Unknown error';
+            $msg = $error->{message} // $error->{error} // 'Unknown error';
         } elsif (ref $error eq 'SCALAR') {
-            $response->{error} = $$error;
+            $msg = $$error;
         } else {
-            $response->{error} = $error // 'Unknown error';
+            $msg = $error // 'Unknown error';
         }
-        print json($response);
     }
+    warn json({error => $msg});
+    print "Status: 512\n". json({error => $msg});
     exit;
 };
 
@@ -819,6 +817,8 @@ sub init{
                 } else {
                     $error = auth::show_login_form($config, '', $_->message // $_->error);
                 }
+            } else {
+                $error = $_->message;
             }
         };
         return $error if $error;
