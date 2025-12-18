@@ -1,4 +1,6 @@
 BEGIN {
+    #$ENV{NYTPROF}="trace=1:start=begin:file=/var/tmp/nytprof.out";
+    #use Devel::NYTProf;
     use File::Basename qw(dirname);
     use lib dirname(__FILE__);
 }
@@ -9,6 +11,7 @@ local $SIG{__WARN__} = \&Apache2::ServerRec::warn;
 # ^ use ErrorLog file set at Apache2 configuration
 #   see https://perl.apache.org/docs/2.0/api/Apache2/Log.html for details
 
+use Apache::DBI;
 use Data::Dumper;
 use Time::Local();
 use Date::Calc();
