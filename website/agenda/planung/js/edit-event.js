@@ -119,7 +119,7 @@ function selectChangeSeries(resultSelector) {
 }
 
 // will be fired on updatine resultSelector of series selection
-function changeSeries(seriesId) {
+async function changeSeries(seriesId) {
     var projectId= $('#selectSeries #projectId').val();
     var studioId= $('#selectSeries #studioId').val();
     var seriesId= getUrlParameter('series_id');
@@ -133,25 +133,22 @@ function changeSeries(seriesId) {
 
     $('div.buttons').show();
     $('#selectChangeSeries').hide('slideUp');
-    $.post(
-        url="series.cgi?" + new URLSearchParams({
-            action: "reassign_event",
-            project_id : projectId,
-            studio_id : studioId,
-            series_id : seriesId,
-            event_id : eventId,
-            new_series_id: newSeriesId,
-        }).toString(),
-        function(data) {
-            loadUrl("broadcast.cgi?" + new URLSearchParams({
-                action: "edit",
-                project_id : projectId,
-                studio_id : studioId,
-                series_id : newSeriesId,
-                event_id : eventId,
-            }).toString());
-        }
-    );
+    let json = await postJson("series.cgi", {
+        action: "reassign_event",
+        project_id : projectId,
+        studio_id : studioId,
+        series_id : seriesId,
+        event_id : eventId,
+        new_series_id: newSeriesId,
+    });
+    if (!json) return;
+    loadUrl("broadcast.cgi?" + new URLSearchParams({
+        action: "edit",
+        project_id : projectId,
+        studio_id : studioId,
+        series_id : newSeriesId,
+        event_id : eventId,
+    }).toString());
     return false;
 }
 
@@ -318,14 +315,9 @@ async function loadEvent(projectId,studioId,seriesId,eventId, callback) {
 }
 
 async function modifyEvent(params, callback) {
-    let response = await fetch('broadcast.cgi', {
-        method: 'POST',
-        body: params,
-        cache: "no-store",
-    });
-    let json = await response.json();
-    if (json.error) showError(json.error);
-    else callback(json);
+    let json = await postJson('broadcast.cgi', params);
+    if (!json) return;
+    callback(json);
 }
 
 // where is this used?

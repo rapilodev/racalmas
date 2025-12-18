@@ -1,5 +1,38 @@
 "use strict";
 
+if (!customElements.get('sprite-icon')) {
+    class SpriteIcon extends HTMLElement {
+        static get observedAttributes() {
+            return ['name'];
+        }
+    
+        connectedCallback() {
+            this.renderIcon();
+        }
+    
+        attributeChangedCallback(attrName, oldValue, newValue) {
+            if (attrName === 'name' && oldValue !== newValue) {
+                this.renderIcon();
+            }
+        }
+    
+        renderIcon() {
+            const iconName = this.getAttribute('name');
+            if (!iconName) return;
+            this.innerHTML = '';
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('role', 'img');
+            svg.setAttribute('aria-hidden', 'true');
+            if (this.className) svg.setAttribute('class', this.className);
+            const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+            use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `icons/sprite.svg#icon-bright-${iconName}`);
+            svg.appendChild(use);
+            this.appendChild(svg);
+        }
+    }
+    customElements.define('sprite-icon', SpriteIcon);
+}
+
 function getController() {
     var url = window.location.href;
     var parts = url.split('.cgi');
@@ -255,7 +288,120 @@ function missing(...args) {
     return true;
 }
 
+async function fetchJson(url, options = {}) {
+    const {
+        method = 'GET',
+        params = null,
+        headers = {},
+        showErrors = true
+    } = options;
+    
+    try {
+        const fetchOptions = {
+            method: method.toUpperCase(),
+            cache: "no-store",
+            headers: {
+                "accept": 'application/json',
+                ...headers
+            }
+        };
+        
+        // Handle URL params for GET/DELETE or body for POST/PUT/PATCH
+        if (['GET', 'HEAD', 'DELETE'].includes(fetchOptions.method)) {
+            // Add params to URL
+            if (params) {
+                const searchParams = new URLSearchParams(params);
+                url += (url.includes('?') ? '&' : '?') + searchParams.toString();
+            }
+        } else {
+            // Add body for POST/PUT/PATCH
+            if (params) {
+                // Check if params is FormData or plain object
+                if (params instanceof FormData) {
+                    fetchOptions.body = new URLSearchParams(params);
+                } else if (typeof params === 'object') {
+                    fetchOptions.body = new URLSearchParams(params);
+                } else {
+                    fetchOptions.body = params;
+                }
+            }
+        }
+        
+        const response = await fetch(url, fetchOptions);
+        
+        // Check content type
+        const contentType = response.headers.get("content-type") || '';
+        if (!contentType.startsWith("application/json")) {
+            const error = new Error(`Invalid response type for ${url}`);
+            error.type = 'INVALID_CONTENT_TYPE';
+            throw error;
+        }
+        
+        // Check authentication
+        if (response.status === 401) {
+            const error = new Error(loc.login_required);
+            error.type = 'UNAUTHORIZED';
+            throw error;
+        }
+        
+        // Parse JSON
+        let json;
+        try {
+            json = await response.json();
+        } catch (e) {
+            const error = new Error(`Invalid JSON response from ${url}`);
+            error.type = 'INVALID_JSON';
+            error.cause = e;
+            throw error;
+        }
+        
+        // Check application-level errors
+        if (json.error) {
+            const error = new Error(json.error);
+            error.type = 'APPLICATION_ERROR';
+            throw error;
+        }
+        
+        // Check HTTP status
+        if (!response.ok) {
+            const error = new Error(response.statusText || `HTTP ${response.status}`);
+            error.type = 'HTTP_ERROR';
+            error.status = response.status;
+            throw error;
+        }
+        
+        return json;
+        
+    } catch (error) {
+        if (showErrors) {
+            showError(error.message);
+        }
+        console.error(`fetchJson [${method}] ${url}:`, error);
+        return null;
+    }
+}
 
+// Convenience wrappers
+async function getJson(url, params = null, options = {}) {
+    return fetchJson(url, { method: 'GET', params, ...options });
+}
+
+async function postJson(url, params = null, options = {}) {
+    return fetchJson(url, { method: 'POST', params, ...options });
+}
+
+async function putJson(url, params = null, options = {}) {
+    return fetchJson(url, { method: 'PUT', params, ...options });
+}
+
+async function deleteJson(url, params = null, options = {}) {
+    return fetchJson(url, { method: 'DELETE', params, ...options });
+}
+
+async function patchJson(url, params = null, options = {}) {
+    return fetchJson(url, { method: 'PATCH', params, ...options });
+}
+/*
 async function getJson(url, params) {
     url += url.includes('?') ? '' : '?';
     if (params instanceof URLSearchParams) {
@@ -270,13 +416,32 @@ async function getJson(url, params) {
         cache: "no-store",
         headers: { "Accept": 'application/json' }
     });
-    if (
-        (!response.headers.get("content-type") || '').startsWith("application/json")
-    ) return showError("invalid response type for " + url);
-    if (response.status == 401) return showError(loc.login_required);
-    let json = await response.json();
-    if (json.error) return showError(json.error);
-    if (response.status !== 200) return showError(response.statusText);
+    let contentType = response.headers.get("content-type") || '';
+    if (!contentType.startsWith("application/json")) {
+        showError("invalid response type for " + url);
+        return null;
+    }
+    if (response.status == 401) {
+        showError(loc.login_required);
+        return null;
+    }        
+    let json;
+    try{
+        json = await response.json();
+    } catch(e) {
+        showError("Invalid JSON response from " + url);
+        console.error("JSON parse error:", e);
+        return null;        
+    };
+    
+    if (json.error) {
+        showError(json.error);
+        return null;
+    }        
+    if (response.status !== 200) {
+        showError(response.statusText);
+        return null;
+    }        
     return json;
 }
 
@@ -291,12 +456,13 @@ async function postJson(url, params) {
         (!response.headers.get("content-type") || '').startsWith("application/json")
     ) return showError("invalid response type for " + url);
     if (response.status == 401) return showError(loc.login_required);
-    let json = await response.json();
+    let json;
+    try{ json = await response.json();} catch(e){}
     if (json.error) return showError(json.error);
     if (response.status !== 200) return showError(response.statusText);
     return json;
 }
-
+*/
 function getFormValues(form, allowed) {
     return Object.fromEntries(
         new FormData(form).filter(
@@ -311,10 +477,6 @@ function formToParams(form) {
         params.append(pair[0], pair[1]);
     }
     return params;
-}
-
-function postContainer(url, parameters, callback) {
-    if (url != '') $.post(url, parameters, callback);
 }
 
 // init getTextWidth
@@ -404,21 +566,9 @@ function commitForm(formElement, action, title, callback) {
 }
 
 function setUrlParameter(url, name, value) {
-    if (url == null) url = window.location.href;
-    //separate url and comments
-    var comments = url.split('#');
-    url = comments.shift();
-    var comment = comments.join('#');
-
-    url = removeUrlParameter(url, name);
-    if (!contains(url, '?')) url += '?';
-    //add parameter
-    url += '&' + name + '=' + encodeURIComponent(value);
-    url = url.replace('?&', '?');
-    //add comments
-    if ((comments != null) && (comments != '')) url += '#' + comments;
-
-    return url;
+    const u = new URL(url, window.location.href);
+    u.searchParams.set(name, value);
+    return u.toString();
 }
 
 function removeUrlParameter(url, name) {
@@ -430,10 +580,8 @@ function removeUrlParameter(url, name) {
 }
 
 function getUrlParameter(name) {
-    var r = new RegExp("[\\?&]" + name + "=([^&#]*)")
-    var results = r.exec(window.location.href);
-    if (results == null) return null;
-    return results[1];
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
 }
 
 function handleBars() {
@@ -533,7 +681,6 @@ function checkSession() {
 
 function checkLabel(element) {
     var value = element.val();
-    console.log(">" + value + "<");
     if (value == '') {
         element.parent().find('div.label').hide();
         element.css("padding-top", "8px");
@@ -687,7 +834,6 @@ function fullheight(el) {
         parseFloat(style.marginBottom);
 }
 
-
 $(document).ready(async function() {
     setupMenu();
     checkSession();
@@ -713,4 +859,10 @@ $(document).ready(async function() {
     setInputAutoWidth();
     setTextareaAutoHeight();
     $('.scrollable').focus();
+    document.title = $('#breadcrumb').text();
+
+    // rotate on click (for up/down lists)
+    $(document).on('click', '.toggle-rotate', function() {
+        $(this).toggleClass('rotated');
+    });
 });

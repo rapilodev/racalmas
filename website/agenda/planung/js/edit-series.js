@@ -1,5 +1,33 @@
 "use strict";
 
+//todo: reload content only
+function loadSeries(projectId, studioId, seriesId) {
+    loadUrl("series.cgi?" + new URLSearchParams({
+        action: "show_series",
+        project_id : projectId,
+        studio_id : studioId,
+        series_id : seriesId,
+    }).toString());
+}
+
+
+async function saveSeries(selector, action, ) {
+    let params = formToParams(document.querySelector(selector));
+    params.append("action", action);
+    let json = await postJson("series.cgi", params);
+    if (!json) return;
+    if(json.status != 'series saved') return showError(loc.label_error);
+    showInfo(loc.label_saved);
+}
+
+/*
+loadSeries(
+    getProjectId(),
+    getStudioId(),
+    getUrlParameter('series_id'),
+);
+*/
+
 // set checkbox values checked depending on value
 function initCheckBoxes() {
     $('div.editor input[type="checkbox"]').each(
@@ -165,23 +193,14 @@ function checkFields() {
 }
 
 async function addUser(form) {
-    let response = await fetch("series.cgi?", {
-        method: 'POST',
-        cache: "no-store",
-        body: new URLSearchParams({
-            action: "add_user",
-            project_id: form.find("input[name='project_id']").val(),
-            studio_id: form.find("input[name='studio_id']").val(),
-            series_id: form.find("input[name='series_id']").val(),
-            user_id: form.find("select[name='user_id'] option").filter(':selected').val(),
-        })
+    let json = await postJson("series.cgi", {
+        action: "add_user",
+        project_id: form.find("input[name='project_id']").val(),
+        studio_id: form.find("input[name='studio_id']").val(),
+        series_id: form.find("input[name='series_id']").val(),
+        user_id: form.find("select[name='user_id'] option").filter(':selected').val(),
     });
-    if (response.status != 200) showError(response.statusText);
-    let json = await response.json();
-    if (json.error) {
-        showError(json.error);
-        return;
-    }
+    if (!json) return;
     showSeries(
         form.find("input[name='project_id']").val(),
         form.find("input[name='studio_id']").val(),
@@ -195,22 +214,14 @@ function commitRemoveUser(project_id, studio_id, series_id, user_id) {
     let dialog = commitAction(
         '<TMPL_VAR .loc.button_remove_member escape=js>',
         async function() {
-            let response = await fetch("series.cgi?", {
-                method: 'POST',
-                cache: "no-store",
-                body: new URLSearchParams({
-                    action: "remove_user",
-                    project_id: project_id,
-                    studio_id: studio_id,
-                    series_id: series_id,
-                    user_id: user_id,
-                })
+            let json = await postJson("series.cgi", {
+                action: "remove_user",
+                project_id: project_id,
+                studio_id: studio_id,
+                series_id: series_id,
+                user_id: user_id,
             });
-            let json = await response.json();
-            if (json.error) {
-                showError(json.error);
-                return;
-            }
+            if (!json) return;
             showInfo("User removed");
             $('tr#edit_series_members_' + user_id).remove();
             dialog.remove();
@@ -221,21 +232,13 @@ function commitRemoveUser(project_id, studio_id, series_id, user_id) {
 function commitDeleteSeries(project_id, studio_id, series_id) {
     commitAction('<TMPL_VAR .loc.button_remove_series escape=js>',
         async function() {
-            let response = await fetch("series.cgi?", {
-                method: 'POST',
-                body: new URLSearchParams({
-                    action: "delete_series",
-                    project_id: project_id,
-                    studio_id: studio_id,
-                    series_id: series_id,
-                })
+            let json =postJson("series.cgi", {
+                action: "delete_series",
+                project_id: project_id,
+                studio_id: studio_id,
+                series_id: series_id,
             });
-            console.log(response)
-            let json = await response.json();
-            if (json.error) {
-                showError(json.error);
-                return;
-            }
+            if (!json) return;
             showInfo("Series removed");
         }
     );
@@ -253,15 +256,8 @@ function showSeries(project_id, studio_id, series_id, tab) {
 async function saveSchedule(form) {
     var formData = new FormData(form.get(0));
     formData.append("action", "save_schedule");
-    let response = await fetch("series.cgi?", {
-        method: 'POST',
-        cache: "no-store",
-        body: new URLSearchParams(formData)
-    });
-    if (response.status != 200) { showError(response.statusText); return }
-    let json = await response.json();
-    if (json.error) { showError(json.error); return; }
-    console.log(json)
+    let json = await postJson("series.cgi", formData);
+    if (!json) return;
     showInfo("schedule saved");
     if (json.status == "schedule added") {
         showSeries(
@@ -273,20 +269,14 @@ async function saveSchedule(form) {
     }
 }
 
-function deleteSchedule(form) {
+async function deleteSchedule(form) {
     commitAction('<TMPL_VAR .loc.button_delete_schedule escape=js>',
         async function() {
             var formData = new FormData(form.get(0));
             formData.append("action", "delete_schedule");
-            let response = await fetch("series.cgi?", {
-                method: 'POST',
-                cache: "no-store",
-                body: new URLSearchParams(formData)
-            });
-            if (response.status != 200) { showError(response.statusText); return }
-            let json = await response.json();
-            if (json.error) { showError(json.error); return; }
+            let json = await postJson("series.cgi", formData);
             showInfo("schedule deleted");
+            if (!json) return;
             showSeries(
                 form.find("input[name='project_id']").val(),
                 form.find("input[name='studio_id']").val(),
