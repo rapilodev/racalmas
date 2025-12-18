@@ -222,8 +222,8 @@ sub show_audio_recording {
 
     my $now      = time();
     my $timeZone = $config->{date}->{time_zone};
-    my $start    = time::datetime_to_utc($event->{start}, $timeZone);
-    my $end      = time::datetime_to_utc($event->{end}, $timeZone);
+    my $start    = time::datetime_to_epoch($event->{start}, $timeZone);
+    my $end      = time::datetime_to_epoch($event->{end}, $timeZone);
     if ($now > $end) {
         #AppError->throw("upload is expired due to the show is over");
         $params->{isOver} = 1;
