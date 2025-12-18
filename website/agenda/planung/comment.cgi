@@ -120,7 +120,7 @@ sub modify_comments {
     my $language = $config->{date}->{language} || 'en';
     for my $result (@$results) {
         $result->{start_date_name}          = time::date_format($config, $result->{created_at}, $language);
-        $result->{start_time_name}          = time::time_format($result->{created_at});
+        $result->{start_time}          = time::time_format($result->{created_at});
         $result->{ $result->{lock_status} } = 1;
         $result->{ $result->{news_status} } = 1;
     }

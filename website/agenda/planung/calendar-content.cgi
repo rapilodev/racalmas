@@ -401,13 +401,6 @@ sub showCalendar {
     }
 
     my $out = "Content-type:text/html; charset=utf-8;\n\n";
-    $out .= qq{
-        <script>
-            var current_date="$calendar->{month} $calendar->{year}";
-            var previous_date="$calendar->{previous_date}";
-            var next_date="$calendar->{next_date}";
-        </script>
-        };
 
     #filter events by time
     unless ($params->{list} == 1) {
@@ -567,6 +560,5 @@ sub check_params {
             'details',  'show',        'edit_event', 'save_event'
         ]
     );
-
     return $checked;
 }
