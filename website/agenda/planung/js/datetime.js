@@ -1,7 +1,6 @@
 "use strict";
 
 function showDateTimePicker(selector, options){
-    
     var defaults = {
         locale: { firstDayOfWeek: 1 },
         enableTime: true,
@@ -57,7 +56,6 @@ function parseDateTime(datetime){
         console.log("datetime.js parseDateTime() is undefined or null");
         return null;
     }
-
     var dateTime = datetime.split(/[ T]+/);
 
     var date = dateTime[0].split("-");
@@ -78,24 +76,27 @@ function parseDateTime(datetime){
     return new Date(yyyy,mm,dd,h,m,s);
 }
 
-function formatDateTime(datetime){
-    var string= 1900+datetime.getYear()+'-';
-    if (datetime.getMonth()<10)  { string+='0'+(datetime.getMonth()+1)  } else {string+=(datetime.getMonth()+1) };
-    string+='-'
-    if (datetime.getDate()<10)   { string+='0'+datetime.getDate()    } else {string+=datetime.getDate()    };
-    string+=' '
-    if (datetime.getHours()<10)  { string+='0'+datetime.getHours()  } else {string+=datetime.getHours()  };
-    string+=':'
-    if (datetime.getMinutes()<10){ string+='0'+datetime.getMinutes()} else {string+=datetime.getMinutes()};
-    return string;
+function formatDateTime(datetime) {
+    const year    = datetime.getFullYear();
+    const month   = String(datetime.getMonth() + 1).padStart(2, "0");
+    const day     = String(datetime.getDate()).padStart(2, "0");
+    const hours   = String(datetime.getHours()).padStart(2, "0");
+    const minutes = String(datetime.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
-function formatDate(datetime){
-    var string= 1900+datetime.getYear()+'-';
-    if (datetime.getMonth()<9)  { string+='0'+(datetime.getMonth()+1)  } else {string+=(datetime.getMonth()+1) };
-    string+='-'
-    if (datetime.getDate()<10)   { string+='0'+datetime.getDate()    } else {string+=datetime.getDate()    };
-    return string;
+function formatDate(date){
+    const year  = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day   = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
+function formatLocalDate(date){
+    const locale = navigator.language;
+    return new Date(date).toLocaleDateString(locale, {
+        dateStyle: "medium"
+    });
 }
 
 function formatTime(datetime){
