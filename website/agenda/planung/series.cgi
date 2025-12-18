@@ -342,7 +342,7 @@ sub save_series {
         });
     }
     ActionError->throw(error => "Invalid save action");
-    }
+}
 
 sub assign_event {
     my ($config, $request) = @_;

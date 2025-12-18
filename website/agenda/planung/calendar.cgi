@@ -127,14 +127,6 @@ sub showCalendar {
     # time has to be set when events come in
     $out .= calendar_table::getJavascript($config, $permissions, $params,
         $cal_options);
-    $out .= qq{
-        <script>
-            var current_date="$calendar->{month} $calendar->{year}";
-            var previous_date="$calendar->{previous_date}";
-            var next_date="$calendar->{next_date}";
-        </script>
-        </body>
-    };
     $out .= qq{</body></html>};
     return $out;
 }
@@ -147,12 +139,12 @@ sub getToolbar {
 
     $toolbar .= qq!
         <div class="row">
-            <div id="previous_month"><a id="previous">&laquo;</a></div>
+            <div id="previous_month"><button id="previous">&laquo;</button></div>
             <div id="selectDate" data-toggle>
                 <input id="start_date" data-input/>
                 <div id="current_date">$calendar->{month} $calendar->{year}</div>
             </div>
-            <div id="next_month"><a id="next">&raquo;</a></div>
+            <div id="next_month"><button id="next">&raquo;</button></div>
             <button id="setToday">!
       . $params->{loc}->{button_today}
       . q!</button>
@@ -213,15 +205,17 @@ sub getToolbar {
             <input type="hidden" name="date"      value="$params->{date}">
             <input type="hidden" name="list"      value="1">
             <input class="search" name="search" value="$params->{search}" placeholder="}
-      . $params->{loc}->{button_search} . qq{">
-            <button type="submit" name="action" value="search">}
-      . $params->{loc}->{button_search} . qq{</button>
+      .$params->{loc}->{button_search} . qq{">
+            <button type="submit" name="action" value="search">
+                <sprite-icon name="search"></sprite-icon>
+                $params->{loc}->{button_search} 
+              </button>
         </form>
     };
 
     #
-    $toolbar .= qq{
-        <button id="editSeries">}
+    $toolbar .= qq{<button id="editSeries">}
+      . '<sprite-icon name="edit"></sprite-icon>'
       . $params->{loc}->{button_edit_series}
       . qq{</button>
     } if $params->{list} == 1;
