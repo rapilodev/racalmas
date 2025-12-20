@@ -139,6 +139,9 @@ summary, time, mark, audio, video {
   box-sizing: border-box;
 }
 
+tr, td {
+    border-radius: 0;
+}
 /*
 * {
       transition: all 0.5s linear;
@@ -553,6 +556,7 @@ div#tabs > div {
       margin-bottom: var(--space-xs);
       margin-right: calc(-1 * var(--space-xs));
       border-radius: 0;
+      border-bottom: 1px solid #ccc;
     }
     li:first-child { border-top-left-radius: var(--space-sm); }
     li:last-child { border-top-right-radius: var(--space-sm); }
@@ -708,6 +712,7 @@ div.formField input { clear: both; }
     padding: 1rem;
     border-radius: 0;
     opacity : 0.9;
+    width:100%;
 }
 
 input.datetimepicker {
@@ -721,6 +726,14 @@ input.datepicker {
 div.row {
     display: flex;
     flex-direction: row;
+    align-items: baseline;
+    flex-wrap:wrap;
+    gap: var(--gap);
+}
+
+div.col {
+    display: flex;
+    flex-direction: column;
     align-items: baseline;
     flex-wrap:wrap;
     gap: var(--gap);
@@ -842,7 +855,28 @@ div.editor {
       font-size: initial; /* Reset font size if needed */
       line-height: initial; /* Reset line height if needed */
   }
+  
+  & div:has(img.cover-art),
+  & button:has(img.cover-art) {
+    padding: 0 !important;
+    background: none !important;
+    margin:0;
+    background:none;
+    border-radius:1em;
+    border:0;
+  }
 }
+
+.conver-art {
+    width:8em;
+    height:8em;
+    padding:0;
+    margin:0;
+    background:none;
+    border:0;
+    border-radius:1em;
+}
+
 
 body #content {
     display: flex;
@@ -880,12 +914,17 @@ sprite-icon {
 }
 
 sprite-icon svg {
-  width: 1em;
-  height: 1em;
+  width: 1.3em;
+  height: 1.3em;
   fill: currentColor;
   vertical-align: text-top;
   padding-right:0.5em;
   font-size:inherit;
+}
+
+.sidebar > button > sprite-icon svg {
+  width: 1.3em;
+  height: 1.3em;
 }
 
 #calcms_nav sprite-icon svg {
@@ -963,7 +1002,7 @@ div.sidebar .formField input{
 
 /* Menu item base style */
 .sidebar .menu-item,
-.sidebar > button {
+.sidebar > button:not(primary) {
     padding: 0;
     display: flex;
     width: 100%;
@@ -999,10 +1038,9 @@ div.sidebar .formField input{
   display: flex;
   align-items: center;
 }
-
-.sidebar > button > sprite-icon svg {
-  width: 1.5em;
-  height: 1.5em;
+.asidebar > button.primary {
+    background:var(--button-bg);
+    color:var(--button-text);
 }
 
 .toggle-rotate svg {
