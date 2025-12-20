@@ -3,7 +3,7 @@ msgid "region"
 msgstr "de"
 
 msgid "title"
-msgstr "Sendungen bearbeiten"
+msgstr "Sendung bearbeiten"
 
 msgid "button_edit_series"
 msgstr "Sendereihe bearbeiten"
@@ -11,7 +11,7 @@ msgstr "Sendereihe bearbeiten"
 msgid "button_download"
 msgstr "Mittschnitt runterladen"
 
-msgid "button_upload"
+msgid "button_upload_audio"
 msgstr "Vorproduktion hochladen"
 
 msgid "button_create"

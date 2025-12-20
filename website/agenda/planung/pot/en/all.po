@@ -1,3 +1,6 @@
+msgid "locale"
+msgstr "en-GB"
+
 msgid "button_back"
 msgstr "back"
 

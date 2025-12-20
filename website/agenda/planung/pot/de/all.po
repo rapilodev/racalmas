@@ -1,3 +1,6 @@
+msgid "locale"
+msgstr "de-DE"
+
 msgid "button_back"
 msgstr "zurück"
 
@@ -39,4 +42,3 @@ msgstr "Bitte neu anmelden"
 
 msgid "label_ask_for_commit"
 msgstr "Sind sie sicher?"
-
