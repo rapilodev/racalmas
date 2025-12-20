@@ -1,5 +1,5 @@
 <TMPL_IF .allow.read_event>
-<script type="text/javascript">
+<script type="text/javascript" defer>
 <TMPL_IF .getBack>
 $(document).ready(function() {
     getBack()
@@ -8,9 +8,9 @@ $(document).ready(function() {
 set_breadcrumb('<TMPL_VAR .loc.title>');
 </script>
 
-<script src="js/create-events.js" type="text/javascript"></script>
+<script src="js/create-events.js" type="text/javascript " defer></script>
 <link rel="stylesheet" href="css/create-events.css" type="text/css" />
-<script>
+<script defer>
     var series_id=0;
 </script>
 
