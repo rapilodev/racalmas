@@ -5,7 +5,7 @@ Access-Control-Allow-Origin: *
 <html>
 <body>
 <TMPL_IF no_result>
-    <script>
+    <script defer>
     jQuery( document ).ready(function() {
         //load next shows into current playlist
         if(jQuery('#coming_shows').length!=0){

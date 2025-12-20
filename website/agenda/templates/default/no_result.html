@@ -1,7 +1,7 @@
 <TMPL_IF no_result>
 <div id="empty_or_not">
 
-    <script>
+    <script defer>
     jQuery( document ).ready(function() {
         //load next shows into current playlist
         if(jQuery('#coming_shows').length!=0) jQuery('#coming_shows').load('/agenda/playlistLong/');
