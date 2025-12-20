@@ -122,7 +122,7 @@ sub checkToken {
             password_requests::delete($config, { user => $user });
             my $url = $config->{locations}->{editor_base_url};
             print qq{
-                <script type="text/javascript">
+                <script type="text/javascript" defer>
                 setTimeout(() => window.location = "$url", 3000);
                 </script>
                 You will be forwarded to $url …
