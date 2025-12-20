@@ -94,7 +94,7 @@ sub main {
     
     </style>
 
-    <script>
+    <script defer>
     set_breadcrumb('<TMPL_VAR .loc.title>');
     
     function addToToc(selector){
