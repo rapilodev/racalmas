@@ -1,14 +1,14 @@
+if (typeof window.namespace_datetime_js === 'undefined') { function namespace_datetime_js(){}
 "use strict";
 
 function showDateTimePicker(selector, options){
     var defaults = {
-        locale: { firstDayOfWeek: 1 },
+        locale: { firstDayOfWeek: 1, locale: "de"},
         enableTime: true,
         time_24hr: true,
         dateFormat: "Y-m-d H:i:S",
         altInput: true,
-        altFormat: "D, j.n.Y H:i",
-        locale: "de", // German
+        altFormat: "D, j.n.Y H:i"
     }
     if (options){
         if (options["onSelect"]) defaults["onChange"] = options["onSelect"];
@@ -20,10 +20,9 @@ function showDateTimePicker(selector, options){
 
 function showDatePicker(selector, options){
     var defaults = {
-        locale: { firstDayOfWeek: 1 },
+        locale: { firstDayOfWeek: 1, locale: "de" },
         altInput: true,
         altFormat: "D, j.n.Y",
-        locale: "de", // German
     }
     if (options){
         if (options["onSelect"]) defaults["onChange"] = options["onSelect"];
@@ -35,7 +34,7 @@ function showDatePicker(selector, options){
 
 function showYearPicker(selector, options){
     $(selector).each( function(){
-        var year=new Date().getYear()+1900;
+        var year=new Date().getFullYear();
         var html='<select>';
         for (var i=year-10; i<year+10; i++){
             var selected='';
@@ -52,51 +51,28 @@ function showYearPicker(selector, options){
 
 
 function parseDateTime(datetime){
-    if (! datetime){
-        console.log("datetime.js parseDateTime() is undefined or null");
-        return null;
-    }
-    var dateTime = datetime.split(/[ T]+/);
+    if (!datetime) return null;
 
-    var date = dateTime[0].split("-");
-    var yyyy = date[0];
-    var mm = date[1]-1;
-    var dd = date[2];
+    const [datePart, timePart] = datetime.split(/[ T]+/);
+    const [y, m, d] = datePart.split('-').map(Number);
+    if (!y || m < 1 || m > 12 || d < 1 || d > 31) return null;
 
-    var h=0;
-    var m=0;
-    var s=0;
-    if (dateTime.length>1){
-        var time = dateTime[1].split(":");
-        h = time[0];
-        m = time[1];
-        s = 0;
+    let h = 0, min = 0;
+    if (timePart) {
+        [h, min] = timePart.split(':').map(Number);
+        if (h > 23 || min > 59) return null;
     }
 
-    return new Date(yyyy,mm,dd,h,m,s);
-}
-
-function formatDateTime(datetime) {
-    const year    = datetime.getFullYear();
-    const month   = String(datetime.getMonth() + 1).padStart(2, "0");
-    const day     = String(datetime.getDate()).padStart(2, "0");
-    const hours   = String(datetime.getHours()).padStart(2, "0");
-    const minutes = String(datetime.getMinutes()).padStart(2, "0");
-    return `${year}-${month}-${day} ${hours}:${minutes}`;
+    const dt = new Date(y, m - 1, d, h, min, 0);
+    return isNaN(dt) ? null : dt;
 }
 
 function formatDate(date){
+    if (!(date instanceof Date) || isNaN(date)) return '';    
     const year  = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day   = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
-}
-
-function formatLocalDate(date){
-    const locale = navigator.language;
-    return new Date(date).toLocaleDateString(locale, {
-        dateStyle: "medium"
-    });
 }
 
 function formatTime(datetime){
@@ -107,40 +83,80 @@ function formatTime(datetime){
     return string;
 }
 
+function formatLocalDate(date){
+    const locale = navigator.language;
+    return new Date(date).toLocaleDateString(locale, {
+        dateStyle: "medium"
+    });
+}
+
+// todo: 
+function fmtDatetime(dateString, options = {}) {
+    try {
+        const date = new Date(dateString);
+        const defaultOptions = {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            "hour12": false
+        };
+        const language = Intl.NumberFormat().resolvedOptions().locale;
+        return new Intl.DateTimeFormat(language, { ...defaultOptions, ...options }).format(date);
+    } catch (e) {
+        console.log(e)
+        showError(e)
+    }
+}
+
+function fmtDate(dateString, options = {}) {
+    try {
+        const date = new Date(dateString);
+        const defaultOptions = {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric'
+        };
+        const mergedOptions = { ...defaultOptions, ...options };
+        const language = Intl.NumberFormat().resolvedOptions().locale;
+        return new Intl.DateTimeFormat(language, mergedOptions).format(date);
+    } catch (e) {
+        console.log(e)
+        showError(e)
+    }
+}
+
+
 //todo: separate weekday and formating
 function addMinutes(datetime, minutes){
     var startDate=parseDateTime(datetime);
-    var endDate=new Date(startDate.getTime()+minutes*60*1000);
-    var weekday=getWeekday(endDate);
-    var formatedDate=weekday+" "+formatDateTime(endDate);
-    return formatedDate;
+    if (!startDate) return null;
+    return new Date(startDate.getTime()+minutes*60*1000);
 }
 
 function addHours(datetime, hours){
     var startDate=parseDateTime(datetime);
+    if (!startDate) return null;
     var endDate=new Date(startDate.getTime()+hours*60*60*1000);
     return endDate;
 }
 
 function addDays(datetime, days){
-    var startDate=parseDateTime(datetime);
-    var endDate=new Date(startDate.getTime()+days*24*60*60*1000);
-    return endDate;
+    const d = datetime instanceof Date ? new Date(datetime) : parseDateTime(datetime);
+    if (!d) return null;
+    d.setDate(d.getDate() + days);
+    return d;
 }
-
-var weekdays=['Mo','Di','Mi','Do','Fr','Sa','So'];
 
 function getWeekday(date){
     if (!date) return '?';
     var loc = getLocalization();
+    var locale = loc.locale;
+    return new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date) + ',';
+}
 
-    if (loc['weekday_Mo']!=null) weekdays[0]=loc['weekday_Mo'];
-    if (loc['weekday_Tu']!=null) weekdays[1]=loc['weekday_Tu'];
-    if (loc['weekday_We']!=null) weekdays[2]=loc['weekday_We'];
-    if (loc['weekday_Th']!=null) weekdays[3]=loc['weekday_Th'];
-    if (loc['weekday_Fr']!=null) weekdays[4]=loc['weekday_Fr'];
-    if (loc['weekday_Sa']!=null) weekdays[5]=loc['weekday_Sa'];
-    if (loc['weekday_Su']!=null) weekdays[6]=loc['weekday_Su'];
-
-    return weekdays[(date.getDay()-1+7)%7]+','
+//end of guard
 }

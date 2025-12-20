@@ -24,26 +24,6 @@ function nextDate() {
     return result;
 }
 
-function openNewTab(url) {
-    window.open(url, '_blank');
-}
-
-function selectCheckbox(selector) {
-    $(selector).each(function() {
-        $(this).prop('checked', 'checked');
-    })
-}
-
-function unselectCheckbox(selector) {
-    $(selector).each(function() {
-        $(this).removeProp('checked');
-    })
-}
-
-function isChecked(selector) {
-    return $(selector).prop('checked');
-}
-
 function cancel_edit_event() {
     $('#calendar').show();
     //$('#calendar_weekdays').show();
@@ -102,20 +82,17 @@ function resizeCalendarTable() {
 
 // preselect options in select boxes
 function setSelectedOptions() {
-    $('#content select').each(
-        function() {
-            var value = $(this).attr('value');
-            if (value == null) return;
-            $(this).children().each(
-                function() {
-                    console.log("set option "+ $(this).attr('name'))
-                    if ($(this).attr('value') == value) {
-                        $(this).attr('selected', 'selected');
-                    }
+    $('#content select').each(function() {
+        var value = $(this).attr('value');
+        if (value == null) return;
+        $(this).children().each(
+            function() {
+                if ($(this).attr('value') == value) {
+                    $(this).attr('selected', 'selected');
                 }
-            );
-        }
-    );
+            }
+        );
+    });
 }
 
 function update_url(url) {
@@ -140,21 +117,21 @@ function update_urlParameters(url) {
     if (url==null)    url = window.location.href;
     url = url.replace("calendar-content.cgi", "calendar.cgi");
 
-    var range = $('#range').val();
-    if (range == 'events') {
-        url = setUrlParameter(url, 'list', 1);
-    } else {
-        url = setUrlParameter(url, 'range', $('#range').val());
-    }
-
-    url = setUrlParameter(url, 's', isChecked('#show_schedule') ? 1 : 0);
-    url = setUrlParameter(url, 'e', isChecked('#show_events') ? 1 : 0);
-    url = setUrlParameter(url, 'w', isChecked('#show_worktime') ? 1 : 0);
-    url = setUrlParameter(url, 'p', isChecked('#show_playout') ? 1 : 0);
     url = setUrlParameter(url, 'project_id', $('#project_id').val());
     url = setUrlParameter(url, 'studio_id', $('#studio_id').val());
-    url = setUrlParameter(url, 'day_start', $('#day_start').val());
-
+    url = setUrlParameter(url, 's', isChecked('#show_schedule') ? 1 : 0);
+    url = setUrlParameter(url, 'e', isChecked('#show_events') ? 1 : 0);
+    if(isTableView()){
+        url = setUrlParameter(url, 'w', isChecked('#show_worktime') ? 1 : 0);
+        url = setUrlParameter(url, 'p', isChecked('#show_playout') ? 1 : 0);
+        url = setUrlParameter(url, 'day_start', $('#day_start').val());
+        var range = $('#range').val();
+        if (range == 'events') {
+            url = setUrlParameter(url, 'list', 1);
+        } else {
+            url = setUrlParameter(url, 'range', $('#range').val());
+        }
+    }
     return url;
 }
 
@@ -347,7 +324,16 @@ function show_schedule_series_dialog(project_id, studio_id, series_id, start_dat
                     var series_id = $('#dialog #series_select').val();
                     var duration = $('#dialog #series_duration').val();
                     var start_date = $('#dialog #series_date').val();
-                    var url = 'series.cgi?action=show_series&project_id=' + project_id + '&studio_id=' + studio_id + '&series_id=' + series_id + '&start=' + escape(start_date) + '&duration=' + duration + '&show_hint_to_add_schedule=1#tabs-schedule';
+                    var params = new URLSearchParams({
+                      action: 'show_series',
+                      project_id: project_id,
+                      studio_id: studio_id,
+                      series_id: series_id,
+                      start: start_date,
+                      duration: duration,
+                      show_hint_to_add_schedule: 1
+                    });
+                    var url = 'series.cgi?' + params.toString() + '#tabs-schedule';                    
                     loadUrl(url);
                 },
                 Cancel: function() { $(this).closest('div#dialog').remove() }
@@ -383,17 +369,19 @@ function setDatePicker() {
 // add name=value to current url
 function getUrl(name, value) {
     let url = update_urlParameters();
-    if ((name != null) && (value != null)) {
-        url = setUrlParameter(url, name, value);
-    }
+    if ((name == null) || (value == null)) return url;
+    url = setUrlParameter(url, name, value);
     return url;
 }
 
 function updateDayStart() {
-    var url = "set-user-day-start.cgi?";
-    url += "&project_id=" + getProjectId();
-    url += "&studio_id=" + getStudioId();
-    url += "&day_start=" + $('#day_start').val();
+    var params = new URLSearchParams({
+      project_id: getProjectId(),
+      studio_id: getStudioId(),
+      day_start: $('#day_start').val()
+    });
+
+    var url = 'set-user-day-start.cgi?' + params.toString();
     $.get(url);
 }
 
@@ -454,11 +442,13 @@ function showRmsPlot(id, project_id, studio_id, start, elem) {
 }
 
 function deleteFromPlayout(id, projectId, studioId, start) {
-    var url = 'playout.cgi';
-    url += '?action=delete';
-    url += '&project_id=' + escape(projectId);
-    url += '&studio_id=' + escape(studioId);
-    url += '&start_date=' + escape(start);
+    var params = new URLSearchParams({
+      action: 'delete',
+      project_id: projectId,
+      studio_id: studioId,
+      start_date: start
+    });
+    var url = 'playout.cgi?' + params.toString();
     $('#' + id).load(url);
     return false;
 }
@@ -521,11 +511,10 @@ function initRmsPlot() {
     );
 }
 
-function loadCalendarList() {
-    console.log("load ist")
-    let url = update_urlParameters();
+function loadCalendarList(url) {
+    document.title = "Sendungen " ;
+    url = setUrlParameter(url, 'part', '1');
     url = url.replace("calendar.cgi", "calendar-content.cgi");
-    console.log(url)
     updateContainer('calendarTable', url, function() {
         $('#calendarTable').removeClass("loading");
         setupCalendar();
@@ -539,15 +528,12 @@ function loadCalendarTable(url, mouseButton) {
     
     $('#current_date').html(formatLocalDate(currentDate()));
 
+    
+    
     // open calendar in new tab on middle mouse button
     if ((mouseButton != null) && (mouseButton == middleMouseButton)) {
-        let url = update_urlParameters();
         openNewTab(url);
         return true;
-    }
-
-    if (url == null) {
-        let url = update_urlParameters();
     }
     url = setUrlParameter(url, 'part', '1');
     url = url.replace("calendar.cgi", "calendar-content.cgi");
@@ -574,26 +560,19 @@ function getMouseOverText(elem) {
         return 'edit work schedule'
     if (elem.hasClass('grid') || elem.parent().hasClass('grid'))
         return 'click to create schedule'
+    return '';
 }
 
 function setup_filter() {
     var html = '';
     html += getSwitch('show_events', label_events || "label", true);
     html += getSwitch('show_schedule', label_schedule || "schedule", true);
-    html += getSwitch('show_playout', label_playout || "playout", true);
-    html += getSwitch('show_worktime', label_worktime || "worktime", false);
     $('#toolbar').append(html);
 
     if (getUrlParameter('s') == '0') unselectCheckbox('#show_schedule');
     if (getUrlParameter('e') == '0') unselectCheckbox('#show_events');
-    if (getUrlParameter('p') == '0') unselectCheckbox('#show_playout');
-    if (getUrlParameter('w') == '0') unselectCheckbox('#show_worktime');
-
     show_schedule();
     show_events();
-    show_playout();
-    show_worktime();
-    //show_descriptions();
 
     $('#show_events').off();
     $('#show_events').on("click",
@@ -609,32 +588,45 @@ function setup_filter() {
             update_url();
         }
     );
-    $('#show_playout').off();
-    $('#show_playout').on("click",
-        function() {
-            show_playout();
-            update_url();
-        }
-    );
-    $('#show_worktime').off();
-    $('#show_worktime').on("click",
-        function() {
-            show_worktime();
-            if (isChecked('#show_worktime')) {
-                unselectCheckbox('#show_events');
-                unselectCheckbox('#show_schedule');
-                unselectCheckbox('#show_playout');
-            } else {
-                selectCheckbox('#show_events');
-                selectCheckbox('#show_schedule');
-                selectCheckbox('#show_playout');
+
+    if(isTableView()){
+        let html = '';
+        html += getSwitch('show_playout', label_playout || "playout", true);
+        html += getSwitch('show_worktime', label_worktime || "worktime", false);
+        $('#toolbar').append(html);
+
+        if (getUrlParameter('p') == '0') unselectCheckbox('#show_playout');
+        if (getUrlParameter('w') == '0') unselectCheckbox('#show_worktime');
+        show_playout();
+        show_worktime();
+        $('#show_playout').off();
+        $('#show_playout').on("click",
+            function() {
+                show_playout();
+                update_url();
             }
-            show_events();
-            show_schedule();
-            show_playout();
-            update_url();
-        }
-    );
+        );
+        $('#show_worktime').off();
+        $('#show_worktime').on("click",
+            function() {
+                show_worktime();
+                if (isChecked('#show_worktime')) {
+                    unselectCheckbox('#show_events');
+                    unselectCheckbox('#show_schedule');
+                    unselectCheckbox('#show_playout');
+                } else {
+                    selectCheckbox('#show_events');
+                    selectCheckbox('#show_schedule');
+                    selectCheckbox('#show_playout');
+                }
+                show_events();
+                show_schedule();
+                show_playout();
+                update_url();
+            }
+        );
+    }
+
 }
 
 function setup_actions() {
@@ -706,7 +698,7 @@ function setupCalendar() {
     setup_actions();
 
     if (isTableView()) {
-        document.title = "kalender " + title; 
+        document.title = "Kalender " + title; 
         setup_date_select();
         showMouse();
         $('#calendar > table > tbody > tr > td > div').mouseover(function() {
@@ -727,13 +719,19 @@ function setupCalendar() {
                 usNumberFormat: false
             });
         }
+        $('#event_list table > tbody > tr').mouseover(function() {
+            var text = getMouseOverText($(this));
+            if ($(this).attr("title") == text) return;
+            $(this).attr("title", text);
+        });
+        
     }
 
     $('#editSeries').on("click",
         function() {
             var id = $('#event_list tbody tr').first().attr('id');
-            const [className, projectId, studioId, seriesId] = id.split('_').split('_');
-            var url = 'series.cgi'             + new URLSearchParams({
+            const [className, projectId, studioId, seriesId] = id.split('_');//.split('_');
+            var url = 'series.cgi' + new URLSearchParams({
                 project_id: projectId,
                 studio_id: studioId,
                 series_id: seriesId,
@@ -758,8 +756,13 @@ function handleEvent(id, event) {
     if (studio_id < 0) { alert("please select a studio"); return; }
     if (series_id < 0) return;
     if (event_id < 0) return;
-
-    var url = "broadcast.cgi?action=edit&project_id=" + project_id + "&studio_id=" + studio_id + "&series_id=" + series_id + "&event_id=" + event_id;
+    var url = 'broadcast.cgi?' + new URLSearchParams({
+        project_id: project_id,
+        studio_id: studio_id,
+        series_id: series_id,
+        event_id: event_id,
+        action: 'edit'
+    }).toString();
     if (event.which == 1) {
         loadUrl(url);
     }
@@ -869,7 +872,13 @@ function handleWorktime(id, event) {
     if (schedule_id < 0) return;
     var start_date = $('#'+id).attr("start");
 
-    var url = "work-time.cgi?action=show_new_event_from_schedule&project_id=" + project_id + "&studio_id=" + studio_id + "&schedule_id=" + schedule_id + "&start_date=" + start_date;
+    var url = "work-time.cgi?" + new URLSearchParams({
+        action: "show_new_event_from_schedule",
+        project_id: project_id,
+        studio_id: studio_id,
+        schedule_id: schedule_id,
+        start_date: start_date,
+    }).toString();
     if (event.which == 1) {
         loadUrl(url);
     }
@@ -895,29 +904,43 @@ function hexToRgbA(hex) {
 function setColors() {
     var elem = $('.schedule').get(0);
     if (elem == null) return;
-    var color1 = window.getComputedStyle(elem).backgroundColor;
-    var color2 = color1.replace('rgb', 'rgba').replace(')', ', 0.4)')
-    $('.schedule').css('background', 'repeating-linear-gradient(to bottom, ' + color1 + ', ' + color1 + ' 1px, ' + color2 + ' 1px, ' + color2 + ' 2px) ');
+    var col1 = window.getComputedStyle(elem).backgroundColor;
+    var col2 = col1.replace('rgb', 'rgba').replace(')', ', 0.4)')
+    $('.schedule').css('background', 
+        `repeating-linear-gradient(to bottom, ${col1}, ${col1} 1px, ${col2} 1px, ${col2} 2px)`
+    );
+}
+
+function setupScrollbar() {
+    document.body.style.overflowY = 'hidden';
+    var body = document.querySelector('body');
+    body.addEventListener('keydown', e => {
+      var el = document.querySelector('.table-scroll');
+      const k = e.key;
+      const h = el.clientHeight;
+      const s = k === 'ArrowDown' ? 200 : k === 'ArrowUp' ? -200 : k === 'PageDown' ? h : k === 'PageUp' ? -h : 0;
+      if (s) { el.scrollBy({top:s, behavior: 'smooth'}); e.preventDefault(); }
+    });
+    
 }
 
 $(document).ready(function() {
     setup_filter();
     setDatePicker();
-    resizeCalendarTable();
-    setSelectedOptions();
+    let url = update_urlParameters();
     if (isListView()){
-        loadCalendarList();
+        loadCalendarList(url);
     } else if (isTableView()) {
-        loadCalendarTable();
-        document.body.style.overflowY = 'hidden';
-        document.querySelector('body').addEventListener('keydown', e => {
-          var el = document.querySelector('.table-scroll');
-          const k = e.key;
-          const h = el.clientHeight;
-          const s = k === 'ArrowDown' ? 200 : k === 'ArrowUp' ? -200 : k === 'PageDown' ? h : k === 'PageUp' ? -h : 0;
-          if (s) { el.scrollBy({top:s, behavior: 'smooth'}); e.preventDefault(); }
+        resizeCalendarTable();
+        setSelectedOptions();
+        $('#toolbar select#range').on('change', () => reloadCalendarTable());
+        $('#toolbar select#day_start').on('change', () => {
+            updateDayStart();
+            reloadCalendarTable()
         });
+        loadCalendarTable(url);
     }
+    setupScrollbar();
 });
 
 $(window).on('beforeunload', function() {

@@ -1,5 +1,8 @@
+if (typeof window.namespace_default_js === 'undefined') { function namespace_default_js(){}
+
 "use strict";
 
+// <sprite-icon name="help"> support
 if (!customElements.get('sprite-icon')) {
     class SpriteIcon extends HTMLElement {
         static get observedAttributes() {
@@ -42,6 +45,9 @@ function getController() {
     return usecase;
 }
 
+function openNewTab(url) {
+    window.open(url, '_blank');
+}
 
 function set_studio(id) {
     var url = window.location.href;
@@ -131,13 +137,8 @@ function icon(project_id, studio_id, filename) {
 }
 
 function set_breadcrumb(s) {
-    document.getElementById('breadcrumb').innerHTML=s;
-}
-
-function updateContainer2(id, url, callback) {
-    if (id == null) return;
-    if ($("#" + id).length == 0) return;
-    $("#" + id).load(url, callback);
+    document.getElementById('breadcrumb').innerHTML = s;
+    document.title = s;    
 }
 
 function showError(s) {
@@ -166,6 +167,7 @@ function showWarn(s) {
 }
 
 function showToast(s, options) {
+    console.log("showToast", s)
     $('#toast').remove();
     let duration = options.duration || 1000;
     let color = options.color || "#000";
@@ -244,43 +246,6 @@ function loadUrl(uri) {
     $('body').css('cursor', 'wait');
 }
 
-function fmtDatetime(dateString, options = {}) {
-    try {
-        const date = new Date(dateString);
-        const defaultOptions = {
-            weekday: 'short',
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            "hour12": false
-        };
-        const language = Intl.NumberFormat().resolvedOptions().locale;
-        return new Intl.DateTimeFormat(language, { ...defaultOptions, ...options }).format(date);
-    } catch (e) {
-        console.log(e)
-        showError(e)
-    }
-}
-
-function fmtDate(dateString, options = {}) {
-    try {
-        const date = new Date(dateString);
-        const defaultOptions = {
-            weekday: 'short',
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric'
-        };
-        const mergedOptions = { ...defaultOptions, ...options };
-        const language = Intl.NumberFormat().resolvedOptions().locale;
-        return new Intl.DateTimeFormat(language, mergedOptions).format(date);
-    } catch (e) {
-        console.log(e)
-        showError(e)
-    }
-}
 
 function missing(...args) {
     if (args.filter(v => v).length == args.length) return false;
@@ -326,7 +291,7 @@ async function fetchJson(url, options = {}) {
                 }
             }
         }
-        
+        console.log(["fetch",url, fetchOptions])
         const response = await fetch(url, fetchOptions);
         
         // Check content type
@@ -750,6 +715,7 @@ function setTabs(id, callback) {
         return false;
     });
     $(id + ' ul').addClass("tabContainer");
+    $(id).show()
     return false;
 }
 
@@ -834,6 +800,27 @@ function fullheight(el) {
         parseFloat(style.marginBottom);
 }
 
+function selectCheckbox(selector) {
+    $(selector).each(function() {
+        $(this).prop('checked', 'checked');
+    })
+}
+
+function unselectCheckbox(selector) {
+    $(selector).each(function() {
+        $(this).removeProp('checked');
+    })
+}
+
+function isChecked(selector) {
+    return $(selector).prop('checked');
+}
+
+function getGlobalTitle() {
+    return $('#breadcrumb').text() || $('.panel-header').first().text() || $('h2').first().text()
+    // breadcrumb is set externally
+}
+
 $(document).ready(async function() {
     setupMenu();
     checkSession();
@@ -851,18 +838,17 @@ $(document).ready(async function() {
         await loadLocalization();
         addBackButton();
     }
+    document.title = getGlobalTitle();
     initLabels();
-    let title = '';
-    if (title == '') title = $('.panel-header').first().text();
-    if (title == '') title = $('h2').first().text();
-    document.title = title
     setInputAutoWidth();
     setTextareaAutoHeight();
     $('.scrollable').focus();
-    document.title = $('#breadcrumb').text();
 
     // rotate on click (for up/down lists)
     $(document).on('click', '.toggle-rotate', function() {
         $(this).toggleClass('rotated');
     });
 });
+
+// end global ifdef
+};

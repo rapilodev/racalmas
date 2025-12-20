@@ -261,6 +261,7 @@ async function saveImage(image) {
     image.action = "save";
     console.log("save",image)
     var doc = await postJson('image.cgi?', image);
+    if (!doc) return;
     showInfo(loc.label_saved);
     console.log(doc)
     loadImageEditor(image.project_id, image.studio_id, image.filename)

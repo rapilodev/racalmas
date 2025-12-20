@@ -19,22 +19,16 @@ function changeFile(fileInput){
     var file = fileInput.files[0];
     var size = file.size / (1000*1000);
     $('#uploadSize').html(size + " MB");
-    if (size > 700){
+    if (size < 1){
         $('#uploadButton').hide();
-        showError("file is too large. maximum size is 700 MB!");
+        showError("File is too small!");
+    } else if (size > 700){
+        $('#uploadButton').hide();
+        showError("File is too big!");
     }else{
         $('#uploadButton').show();
         $('#uploadButton').focus();
     }
-}
-
-function showError(error){
-    $('#error').html(error);
-    $('#error').show();
-}
-
-function hideError(){
-    $('#error').hide();
 }
 
 function showInfoAndReload(s) {
@@ -160,30 +154,23 @@ async function deleteFile(elem) {
     }
 }
 
-$(document).ready(
-    function() {
-        $('#file').on('change',
-            function() {
-                changeFile(this);
-                return false;
-            }
-        );
+$(document).ready(function() {
+    $('#file').on('change', function() {
+        changeFile(this);
+        return false;
+    });
 
-        $('#uploadButton').on('click',
-            function() {
-                uploadFile(this);
-                return false;
-            }
-        );
+    $('#uploadButton').on('click', function() {
+        uploadFile(this);
+        return false;
+    });
+    $('#uploadButton').hide();
 
-        $('#deleteButton').on('click',
-            function() {
-                deleteFile($(this));
-                return false;
-            }
-        );
+    $('#deleteButton').on('click', function() {
+        deleteFile($(this));
+        return false;
+    });
 
-        var number = 1 + Math.floor(11 * Math.random());
-        $('#progress img').attr("src", "/agenda/planung/image/upload/bird" + number + ".gif");
-    }
-);
+    var number = 1 + Math.floor(11 * Math.random());
+    $('#progress img').attr("src", "/agenda/planung/image/upload/bird" + number + ".gif");
+});

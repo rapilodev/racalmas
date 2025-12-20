@@ -13,11 +13,11 @@ function updateCalendarLink() {
 }
 
 function onDateModified() {
-    var value = addMinutes($('#start_date').val(), $('#duration').val());
-    $('#end_date').html(value);
+    var end = addMinutes($('#start_date').val(), $('#duration').val());
+    $('#end_date').html(fmtDatetime(end));
 
     var startDate = parseDateTime($('#start_date').val());
-    var weekday=getWeekday(startDate);
+    var weekday = getWeekday(startDate);
     $('#start_date_weekday').html(weekday);
 
     updateCalendarLink();
@@ -175,10 +175,13 @@ function updateDuration(selector, value) {
     }
 }
 
-function updateImage(input, button, filename) {
-    console.log("upadtImage",input, button, filename)
-    if (filename == null) alert("cannot update image");
-    filename = filename.replace("http://", "//");
+function updateImage(filename) {
+    if (filename == null) {
+        throw new Error("cannot update image");
+    }
+    filename = filename.replace(/^https?:\/\//, "//");
+    let input = document.querySelector("form > div#edit_event input.image");
+    let button = document.querySelector("form > div#edit_event button.select-image");
     input.value = filename;
     button.querySelector('img').replaceWith(
         icon(getProjectId(), getStudioId(), filename)
@@ -231,6 +234,15 @@ function checkFields() {
         });
     }
 }
+
+function getEventTitle(){
+    const title = document.getElementById('title');
+    const series  = title.querySelector('#series_name')?.textContent.trim() || '';
+    const name    = title.querySelector('input[name="title"]')?.value.trim() || '';
+    const episode = title.querySelector('input[name="episode"]')?.value.trim() || '';
+    const result = `${series}${name ? ' - ' + name : ''}${episode ? ' #' + episode : ''}`;
+    return result;}
+
 
 function copyEventToClipboard() {
     var text = $('textarea[name="excerpt"]').val()+"\n";
@@ -303,8 +315,7 @@ async function loadEvent(projectId,studioId,seriesId,eventId, callback) {
     for (let field in ['excerpt', 'user_excerpt', 'topic', 'content']) {
         $(`#edit_event textarea[name='${field}']`).html(event[field]).trigger('change')
     }
-
-    updateImage("#edit_event input[name='image']", event.image);
+    updateImage(event.image);
     $("#edit_event input[name='podcast_url']").attr('value', event.podcast_url);
     $("#edit_event input[name='archive_url']").attr('value', event.archive_url);
 
@@ -320,26 +331,42 @@ async function modifyEvent(params, callback) {
     callback(json);
 }
 
-// where is this used?
-function createEvent2(selector) {
+// create event from series, hint createEvent is given
+function createEventForSeries(selector) {
     let params = formToParams(document.querySelector(selector));
     params.append("action",'create_event');
-    modifyEvent(params, function(data) {
+    showInfo("wird angelegt")
+    modifyEvent(params, function(doc) {
+        if (doc.status == 'created') {
+            showInfo("angelegt")
+        } else {
+            showError("could not create");
+            return 1;
+        }
+        let event = doc.entry;
+        showInfo(event.event_id + " angelegt")
         loadUrl("broadcast.cgi?" + new URLSearchParams({
             action: "edit",
-            project_id : getProjectId(),
-            studio_id : getStudioId(),
-            series_id : getUrlParameter('series_id'),
-            event_id : data.eventId,
+            project_id : event.project_id,
+            studio_id : event.studio_id,
+            series_id : event.series_id,
+            event_id : event.event_id,
         }).toString());
+        // TODO: Edit in place without reloading the whole page
     });
 }
 
 function createEventFromSchedule(selector) {
     let params = formToParams(document.querySelector(selector));
     params.append('action', 'create_event_from_schedule');
-    modifyEvent(params, function(json) {
-        var event = json.entry;
+    modifyEvent(params, function(doc) {
+        if (doc.status == 'created') {
+            showInfo("angelegt")
+        } else {
+            showError("could not create");
+            return 1;
+        }
+        let event = doc.entry;
         loadUrl("broadcast.cgi?" + new URLSearchParams({
             action: "edit",
             project_id : event.project_id,
@@ -348,6 +375,7 @@ function createEventFromSchedule(selector) {
             event_id : event.event_id,
         }).toString());
     });
+    // TODO: Edit in place without reloading the whole page
 }
 
 async function saveEvent(selector, action) {
@@ -456,9 +484,12 @@ $(document).ready(function() {
     
     // image manager
     let button = document.querySelector("button.select-image");
-    let input = document.querySelector("input.image");
     button.addEventListener("click", () => selectImage(
         button.dataset,
-        (image) => updateImage(input, button, image.filename)
+        (image) => updateImageimage.filename
     ));
+    $('form').on('input', function() {
+        set_breadcrumb(getEventTitle());
+    });
+    set_breadcrumb(getEventTitle());
 });
