@@ -629,7 +629,7 @@ sub get_user_presets($$) {
     $projects = \@projects;
 
     if ($project_id ne '' && $project_id ne '-1') {
-        Uacu->throw(error => "project $project_id is not assigned to user $user")
+        UacError->throw(error => "project $project_id is not assigned to user $user")
         if none { $_->{project_id} eq $project_id } @projects;
     } else {
         $project_id = $projects->[0]->{project_id};

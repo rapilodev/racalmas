@@ -367,17 +367,15 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
 
     my $out = '';
     $out = qq{
-        <div id="event_list" class="scrollable">
+        <div id="event_list" class="table-scroll scrollable">
         <table>
             <thead>
                 <tr>
-                    <th class="id">$params->{loc}->{label_id}</th>
                     <th class="day_of_year">$params->{loc}->{label_day_of_year}</th>
                     <th class="weekday">$params->{loc}->{label_weekday}</th>
                     <th class="start_date">$params->{loc}->{label_start}</th>
                     <th class="start_time">$params->{loc}->{label_end}</th>
                     <th class="series_name">$params->{loc}->{label_series}</th>
-                    <th class="series_id">sid</th>
                     <th class="title">$params->{loc}->{label_title}</th>
                     <th class="episode">$params->{loc}->{label_episode}</th>
                     <th class="rerun">$rerunIcon</th>
@@ -388,7 +386,8 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
                     <!--
                     <th class="project_id">project</th>
                     <th class="studio">studio</th>
-                    <th class="creole">wiki format</th>
+                    <th class="series_id">sid</th>
+                    <th class="id">$params->{loc}->{label_id}</th>
                     -->
                  </tr>
             </thead>
@@ -493,8 +492,7 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
             }
             $playout = $playoutIcon if $event->{playout} eq '1';
 
-            my $title = $event->{title};
-            $title .= ': ' . $event->{user_title} if $event->{user_title} ne '';
+            my $title = join ': ', ($event->{title}, $event->{user_title});
 
             my $other_studio  = $params->{studio_id} ne $event->{studio_id};
             my $other_project = $params->{project_id} ne $event->{project_id};
@@ -513,9 +511,7 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
             my $format = { "markdown" => "-", "creole" => "Creole" }
                 ->{ $event->{content_format} // '' } // 'Creole';
                 #use Data::Dumper;warn Dumper($event);
-            $out .=
-                  qq!<tr id="$id" class="$class" start="$event->{start}" >!
-                . qq!<td class="id">$event->{id}</td>!
+            $out .= qq!<tr id="$id" class="$class" start="$event->{start}" >!
                 . qq!<td class="day_of_year">!
                 .(defined $event->{start} ? time::dayOfYear($event->{start}) : '')
                 . q!</td>!
@@ -523,7 +519,6 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
                 . qq!<td class="start_date" data-text="$event->{start_datetime}">$event->{start_date_name}</td>!
                 . qq!<td class="start_time">$event->{start_time} - $event->{end_time}</td>!
                 . qq!<td class="series_name">$event->{series_name}</td>!
-                . qq!<td class="series_id">$event->{series_id}</td>!
                 . qq!<td class="title">$title</td>!
                 . qq!<td class="episode">$event->{episode}</td>!
                 . qq!<td class="rerun">$rerun</td>!
@@ -531,15 +526,16 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
                 . qq!<td class="live">$live</td>!
                 . qq!<td class="playout" title="$playout_info">$playout</td>!
                 . qq!<td class="archived">$archived</td>!
-                #. qq{<!--}
-                #. qq!<td>$event->{project_name} $other_studio</td>!
-                #. qq!<td>$studio_name $other_studio</td>!
-                #. qq!<td>$format</td>!
-                #. qq{-->}
-                #. qq!</tr>! 
+                . qq{<!--}
+                . qq!<td>$event->{project_name} $other_studio</td>!
+                . qq!<td>$studio_name $other_studio</td>!
+                . qq!<td class="series_id">$event->{series_id}</td>!
+                . qq!<td class="id">$event->{id}</td>!
+                . qq!<tr id="$id" class="$class" start="$event->{start}" >!
+                . qq{-->}
+                . qq!</tr>! 
                 . "\n";
         }
-    #    $i++;
     }
     $out .= qq{
                 </tbody>
@@ -571,7 +567,7 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
 
     $out .= qq{
             </main>
-            <script>
+            <script defer>
                 var region='} . $params->{loc}->{region} . q{';
                 var label_events='} . $params->{loc}->{label_events} . q{';
                 var label_schedule='} . $params->{loc}->{label_schedule} . q{';
@@ -682,7 +678,7 @@ sub getTable {
     my $numberOfDays = scalar(@$days);
     my $width        = int(100 / $numberOfDays);
     $out .= qq!
-        <script>
+        <script defer>
             var days=$numberOfDays;
         </script>
     !;
@@ -882,7 +878,7 @@ sub getJavascript {
     my $startOfDay = ($cal_options->{min_hour} // 0) % 24;
 
     my $out = q{
-        <script>
+        <script defer>
             var region='} . $params->{loc}->{region} . q{';
             var startOfDay=} . $startOfDay . q{;
             var label_events='} . $params->{loc}->{label_events} . q{';

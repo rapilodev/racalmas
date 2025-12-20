@@ -90,7 +90,7 @@ sub read_po_file($$) {
 sub getJavascript ($){
     my ($loc) = @_;
 
-    my $out = '<script>';
+    my $out = '<script defer>';
     $out .= "var loc={};\n";
     for my $key (sort keys %$loc) {
         $out .= qq{loc['$key']='$loc->{$key}';} . "\n";
