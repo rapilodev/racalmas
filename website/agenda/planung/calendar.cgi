@@ -161,7 +161,7 @@ sub getToolbar {
             $params->{loc}->{label_day}     => '1',
         };
         $toolbar .= qq{
-            <select id="range" name="range" onchange="reloadCalendar()" value="$params->{range}">
+            <select id="range" name="range" value="$params->{range}">
         };
 
         #    my $options=[];
@@ -182,7 +182,7 @@ sub getToolbar {
         # start of day
         my $day_start = $params->{day_start} || '';
         $toolbar .= qq{
-            <select id="day_start" name="day_start" onchange="updateDayStart();reloadCalendar()" value="$day_start">
+            <select id="day_start" name="day_start" value="$day_start">
         };
         for my $hour (0 .. 24) {
             my $selected = '';
