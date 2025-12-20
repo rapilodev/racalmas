@@ -5,8 +5,8 @@
 <link rel="stylesheet" href="/css/style.css"> <!--calcms start-->
 <link rel="alternate" type="application/atom+xml" title="Sendeplan Atom" href="/agenda/atom/" /> <link rel="alternate" type="application/rss+xml" title="Sendeplan RSS" href="/agenda/rss/" />
 <link rel="alternate" type="application/atom+xml" title="Sendekommentare" href="/agenda/feed_kommentare/" /> <link rel="stylesheet" type="text/css" media="screen" href="/agenda/css/calcms.css" />
-<script type="text/javascript" src="/agenda/js/jquery.min.js"></script> <script type="text/javascript" src="/agenda/js/calcms.js"></script>
-<script type="text/javascript" src="/agenda/js/calcms.cust.js"></script> <!--calcms end--></head> <body>
+<script type="text/javascript" src="/agenda/js/jquery.min.js " defer></script> <script type="text/javascript" src="/agenda/js/calcms.js " defer></script>
+<script type="text/javascript" src="/agenda/js/calcms.cust.js " defer></script> <!--calcms end--></head> <body>
 <div id="container"> <header id="header">
 <h1><a href="/">calcms</a></h1> </header>
 <nav id="nav-main"> <ul>
@@ -25,7 +25,7 @@
 
 <div id="empty_or_not">
 
-    <script>
+    <script defer>
     jQuery( document ).ready(function() {
         //load next shows into current playlist
         if(jQuery('#coming_shows').length!=0) jQuery('#coming_shows').load('/agenda/playlistLong/');
