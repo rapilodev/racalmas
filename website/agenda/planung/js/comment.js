@@ -1,3 +1,4 @@
+if (window.namespace_comment_js) throw "stop"; window.namespace_comment_js = true;
 "use strict";
 
 function showCommentsByAge(age){

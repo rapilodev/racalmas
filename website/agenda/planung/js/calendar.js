@@ -1,3 +1,4 @@
+if (window.namespace_calendar_js) throw "stop"; window.namespace_calendar_js = true;
 "use strict";
 
 var days = 1;
@@ -924,7 +925,7 @@ function setupScrollbar() {
     
 }
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded",function() {
     setup_filter();
     setDatePicker();
     let url = update_urlParameters();

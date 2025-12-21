@@ -1,3 +1,6 @@
+if (window.namespace_series_js) throw "stop"; window.namespace_series_js = true;
+"use strict";
+
 function addSeries() {
     $('#edit_new').toggle();
     return false;

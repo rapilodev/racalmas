@@ -1,3 +1,6 @@
+if (window.namespace_studio_timeslotes_js) throw "stop"; window.namespace_studio_timeslots_js = true;
+"use strict";
+
 // preselect options in select boxes
 function setSelectedOptions(){
     $('#edit_schedule select').each(
@@ -83,9 +86,8 @@ function initScheduleFields(){
     });
 }
 
-$(document).ready(
-    function(){
-    loadLocalization();
+document.addEventListener("DOMContentLoaded", async function() {
+    await loadLocalization();
     addBackButton();
 
     setTabs('#tabs');

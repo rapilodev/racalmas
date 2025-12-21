@@ -1,3 +1,6 @@
+if (window.namespace_list_series_js) throw "stop"; window.namespace_list_series_js = true;
+"use strict";
+
 function addSeries() {
     $('#add-series').toggle();
     $('#edit_new').toggle();
@@ -76,7 +79,7 @@ async function createSeries(form) {
     $('#add-series').show();
 }
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded",function() {
     searchEvents();
     set_breadcrumb("Sendereihen");
 });

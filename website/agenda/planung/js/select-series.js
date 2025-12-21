@@ -1,3 +1,6 @@
+if (window.namespace_select_series_js) throw "stop"; window.namespace_select_series_js = true;
+"use strict";
+
 function updateProjectStudioId(){
     var elem=$('#selectSeries #selectProjectStudio');
     if (elem.length==0)return;
@@ -51,7 +54,7 @@ function selectSeriesAction(resultElemId){
     $('#'+resultElemId).trigger('change');
 }
 
-$(document).ready(
+document.addEventListener("DOMContentLoaded",
     function(){
         updateProjectStudioId();
         console.log("yes")

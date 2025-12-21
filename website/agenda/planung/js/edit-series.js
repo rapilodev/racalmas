@@ -1,3 +1,4 @@
+if (window.namespace_edit_series_js) throw "stop"; window.namespace_edit_series_js = true;
 "use strict";
 
 //todo: reload content only
@@ -393,8 +394,8 @@ async function previewRebuildEpisodes(project_id, studio_id, series_id) {
     }
 }
 
-$(document).ready( function() {
-    loadLocalization();
+document.addEventListener("DOMContentLoaded", async function() {
+    await loadLocalization();
     addBackButton();
 
     showDateTimePicker('input.datetimepicker.start');

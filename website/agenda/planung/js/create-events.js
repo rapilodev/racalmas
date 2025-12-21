@@ -1,3 +1,4 @@
+if (window.namespace_create_events_js) throw "stop"; window.namespace_create_events_js = true;
 "use strict";
 
 async function create_events(form_id){
@@ -63,7 +64,7 @@ function selectChangeSeries(resultSelector){
     });
 }
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded",function() {
     selectChangeSeries('select_series_id');
     show_events('create_event_form');
 });

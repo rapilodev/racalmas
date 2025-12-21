@@ -1,3 +1,4 @@
+if (window.namespace_history_js) throw "stop"; window.namespace_history_js = true;
 "use strict";
 
 function setCookie(name, value) {
@@ -125,7 +126,7 @@ function addBackButton(){
     //showHistory();
 }
 
-$(document).ready(function(){
+document.addEventListener("DOMContentLoaded",function(){
     //clearCookie();
     appendHistory();
 });

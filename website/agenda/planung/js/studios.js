@@ -1,3 +1,6 @@
+if (window.namespace_studios_js) throw "stop"; window.namespace_studios_js = true;
+"use strict";
+
 var loc = getLocalization();
 var region='<TMPL_VAR loc.region escape=js>';
 

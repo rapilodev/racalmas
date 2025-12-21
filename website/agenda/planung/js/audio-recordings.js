@@ -1,3 +1,4 @@
+if (window.namespace_audio_recordings_js) throw "stop"; window.namespace_audio_recordings_js = true;
 "use strict";
 
 function showProgress(){
@@ -154,7 +155,7 @@ async function deleteFile(elem) {
     }
 }
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded",function() {
     $('#file').on('change', function() {
         changeFile(this);
         return false;

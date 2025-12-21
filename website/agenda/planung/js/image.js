@@ -1,3 +1,4 @@
+if (window.namespace_image_js) throw "stop"; window.namespace_image_js = true;
 "use strict";
 
 function getParent() {
@@ -335,13 +336,13 @@ function uploadImage() {
     return false;
 };
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", async function() {
     function updateCheckBox(selector, value) {
         $(selector).attr('value', value)
         $(selector).prop("checked", value == 1);
     }
 
-    loadLocalization('image');
+    await loadLocalization('image');
     var checkbox = $("#img_editor input[name='public']");
     updateCheckBox(checkbox);
     checkbox.change(() => updateCheckBox(checkbox));

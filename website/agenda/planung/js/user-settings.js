@@ -1,6 +1,9 @@
+if (window.namespace_user_settings_js) throw "stop"; window.namespace_user_settings_js = true;
+"use strict";
+
 var selectedId;
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded",function() {
     $('input.color').click(function() {
         selectedId = ($(this).attr('id'));
         showColors();

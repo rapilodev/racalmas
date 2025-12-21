@@ -1,3 +1,6 @@
+if (window.namespace_event_js) throw "stop"; window.namespace_event_js = true;
+"use strict";
+
 // TODO: add project_id
 function edit_event(event_id, series_id, studio_id, project_id, hide_series){
     var elem=$('#event_'+event_id);

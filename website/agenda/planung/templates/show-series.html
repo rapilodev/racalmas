@@ -7,7 +7,7 @@
     var selectImageId='';
     <TMPL_IF .forced_change>pageHasChangedCounter=1;</TMPL_IF>
     <TMPL_IF .getBack>
-        $(document).ready(
+    document.addEventListener("DOMContentLoaded",
             function(){
                 getBack()
             }

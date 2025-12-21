@@ -1,3 +1,5 @@
+if (window.namespace_projects_js) throw "stop"; window.namespace_projects_js = true;
+"use strict";
 
 function edit_project_assignments(name){
     if ($('#assign_'+name).css('display')=='none'){
@@ -46,7 +48,7 @@ function add_project(){
     return false;
 }
 
-$(document).ready(
+document.addEventListener("DOMContentLoaded",
     function(){
         showDatePicker('input.date');
     }

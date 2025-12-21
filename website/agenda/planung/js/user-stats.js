@@ -1,4 +1,7 @@
-$(document).ready(
+if (window.namespace_user_stats_js) throw "stop"; window.namespace_user_stats_js = true;
+"use strict";
+
+document.addEventListener("DOMContentLoaded",
     function(){
         $('table#user_stats_table').tablesorter({
             widgets: ["filter"],

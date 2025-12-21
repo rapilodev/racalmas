@@ -1,3 +1,5 @@
+if (window.namespace_notify_events_js) throw "stop"; window.namespace_notify_events_js = true;
+"use strict";
 function register_buttons() {
     $("#forms form").on('click', 'button', function( event ) {
         event.preventDefault();
@@ -27,7 +29,7 @@ function hide_details() {
 }
 
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded",function() {
     hide_details();
     register_buttons();
 });

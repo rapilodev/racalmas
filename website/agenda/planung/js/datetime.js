@@ -1,4 +1,4 @@
-if (typeof window.namespace_datetime_js === 'undefined') { function namespace_datetime_js(){}
+if (window.namespace_datetime_js) throw "stop"; window.namespace_datetime_js = true;
 "use strict";
 
 function showDateTimePicker(selector, options){

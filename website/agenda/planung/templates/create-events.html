@@ -1,7 +1,7 @@
 <TMPL_IF .allow.read_event>
 <script type="text/javascript" defer>
 <TMPL_IF .getBack>
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded",function() {
     getBack()
 });
 </TMPL_IF>

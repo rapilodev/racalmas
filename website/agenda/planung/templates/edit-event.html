@@ -24,14 +24,14 @@ var region='<TMPL_VAR loc.region escape=js>';
 var event_id='<TMPL_VAR event_id escape=js>';
 <TMPL_IF .forced_change>pageHasChangedCounter=1;</TMPL_IF>
 <TMPL_IF .event_edited>
-    $(document).ready(
+document.addEventListener("DOMContentLoaded",
         function(){
             if ($('div.error').length>0) return;
             if(comeFromCalendar()) getBack();
         }
     );
 </TMPL_IF>
-$(document).ready(
+document.addEventListener("DOMContentLoaded",
     function(){
         set_breadcrumb('<TMPL_VAR .loc.title>');
         loadComments('<TMPL_VAR .event_id escape=js>', function(){

@@ -2,7 +2,7 @@
 <div id="empty_or_not">
 
     <script defer>
-    jQuery( document ).ready(function() {
+    document.addEventListener("DOMContentLoaded",function() {
         //load next shows into current playlist
         if(jQuery('#coming_shows').length!=0) jQuery('#coming_shows').load('/agenda/playlistLong/');
 

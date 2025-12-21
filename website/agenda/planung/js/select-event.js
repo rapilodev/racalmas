@@ -1,3 +1,6 @@
+if (window.namespace_select_event_js) throw "stop"; window.namespace_select_event_js = true;
+"use strict";
+
 function updateProjectStudioId(){
     var elem=$('#selectEvent #selectProjectStudio');
     if (elem.length==0)return;
@@ -123,7 +126,7 @@ function selectEventAction(resultElemId){
     return 1;
 }
 
-$(document).ready(
+document.addEventListener("DOMContentLoaded",
     function(){
         updateProjectStudioId();
         updateSeriesId();

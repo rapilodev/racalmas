@@ -114,7 +114,7 @@ sub main {
         });
     }
 
-    $( document ).ready(function() {
+    document.addEventListener("DOMContentLoaded",function() {
         addToToc('#content h1,#content h2,#content h3,#content h4');
     })
     </script>

@@ -85,7 +85,7 @@ body { font-family: sans-serif; }
 </div>
 <div id="calcms_comments">
     <script defer>
-        jQuery(document).ready(
+    document.addEventListener("DOMContentLoaded",
             function() {
                 calcms.showCommentsByEventIdOrEventStart('<TMPL_VAR event_id escape=js>','<TMPL_VAR start_datetime escape=js>');
             }

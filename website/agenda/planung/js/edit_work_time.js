@@ -1,3 +1,4 @@
+if (window.namespace_edit_work_time_js) throw "stop"; window.namespace_edit_work_time_js = true;
 "use strict";
 
 /*
@@ -175,9 +176,9 @@ function setInputWidth(){
 }
 
 
-$(document).ready(
-    function(){
-        loadLocalization();
+document.addEventListener("DOMContentLoaded",
+    async function(){
+        await loadLocalization();
         addBackButton();
 
         showDateTimePicker('.datetimepicker.start');

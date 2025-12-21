@@ -1,5 +1,4 @@
-if (typeof window.namespace_default_js === 'undefined') { function namespace_default_js(){}
-
+if (window.namespace_default_js) throw "stop"; window.namespace_default_js = true;
 "use strict";
 
 // <sprite-icon name="help"> support
@@ -821,7 +820,7 @@ function getGlobalTitle() {
     // breadcrumb is set externally
 }
 
-$(document).ready(async function() {
+document.addEventListener("DOMContentLoaded",async function() {
     setupMenu();
     checkSession();
     setMissingUrlParameters();
@@ -850,5 +849,4 @@ $(document).ready(async function() {
     });
 });
 
-// end global ifdef
-};
+console.log(window.loadLocalization)

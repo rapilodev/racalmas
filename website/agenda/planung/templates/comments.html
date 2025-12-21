@@ -14,7 +14,7 @@ Content-type:text/html
         var event_id='<TMPL_VAR event_id escape=js>';
         var selectImageId='';
         <TMPL_IF .event_edited>
-            $(document).ready(
+        document.addEventListener("DOMContentLoaded",
                 function(){
                     if ($('div.error').length>0) return;
                     if(comeFromCalendar()) getBack();

@@ -1,3 +1,6 @@
+if (window.page_leave_js) throw "stop"; window.namespace_page_leave_js = true;
+"use strict";
+
 var pageHasChangedCounter=0;
 var pageIsLoaded=0;
 

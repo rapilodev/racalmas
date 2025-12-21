@@ -1,3 +1,4 @@
+if (window.namespace_edit_event_js) throw "stop"; window.namespace_edit_event_js = true;
 "use strict";
 
 var green = "#6f6";
@@ -460,7 +461,8 @@ async function loadHelpTexts () {
     }
 }
 
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", async function() {
+    await loadLocalization('image');
     showDateTimePicker('#start_date');
     onDateModified();
     $('input[type="checkbox"]').click( function() {
@@ -480,7 +482,6 @@ $(document).ready(function() {
     });
     loadHelpTexts();
     //showInfo("event loaded");
-    loadLocalization('image');
     
     // image manager
     let button = document.querySelector("button.select-image");
