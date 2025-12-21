@@ -1,9 +1,9 @@
-<script type="javascript" defer>
-    set_breadcrumb('<TMPL_VAR title>');
-</script>
-
 <TMPL_IF .allow.upload_audio_recordings>
-<div class="panel scrollable">
+<div 
+    data-js-init="calcms.init_audio_recordings"
+    title="<TMPL_VAR loc.title> - <TMPL_VAR event.full_title> <TMPL_VAR event.weekday_short_name>, <TMPL_VAR event.start_date_name> <TMPL_VAR event.start_time>"
+    class="panel scrollable"
+>
 <table>
     <tr>
         <th><TMPL_VAR loc.action></th>
@@ -11,8 +11,8 @@
         <th><TMPL_VAR loc.uploaded_by></th>
         <th><TMPL_VAR loc.uploaded_at></th>
         <th><TMPL_VAR loc.size_in_bytes></th>
-        <th><TMPL_VAR loc.event_duration_in_seconds></th>
-        <th><TMPL_VAR loc.audio_duration_in_seconds></th>
+        <th><TMPL_VAR loc.event_duration></th>
+        <th><TMPL_VAR loc.audio_duration></th>
         <th><TMPL_VAR loc.RMS_L></th>
         <th><TMPL_VAR loc.RMS_R></th>
         <th><TMPL_VAR loc.processed></th>
@@ -55,11 +55,7 @@
 </table>
  </div>
 
-<div class="sidebar">
-    <script defer>
-    set_breadcrumb('<TMPL_VAR loc.title> - <TMPL_VAR event.full_title> <TMPL_VAR event.weekday_short_name>, <TMPL_VAR event.start_date_name> <TMPL_VAR event.start_time>');
-    </script>
-
+<div class="sidebar" >
     <div style="padding-top:1rem;padding-bottom:1rem;">
     <TMPL_VAR event.excerpt>
     </div>
@@ -91,9 +87,9 @@
         <div colspan="2" style="text-align:right;padding-right:0.5em;" id="uploadSize"></div>
 
         <div colspan="2" style="text-align:right;padding-right:0.5em;" >
-            <button id="uploadButton" name="action" value="upload" tabindex="0">
-                <sprite-icon name="upload">
-                <TMPL_VAR loc.upload>
+            <button id="uploadButton" name="action" value="upload" class="primary" tabindex="0">
+                <sprite-icon name="upload"></sprite-icon>
+                <TMPL_VAR loc.button_upload>
             </button>
         </div>
 
@@ -108,7 +104,6 @@
     </TMPL_UNLESS>
 </div>
 </TMPL_IF>
- 
 </main>
 </body>
 </html>

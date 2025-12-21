@@ -42,7 +42,7 @@ sub main {
     if ($params->{action} eq 'show') {
         my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
         $headerParams->{loc} = localization::get($config,
-            {user => $session->{user}, file => 'menu.po'});
+            {user => $session->{user}, file => 'menu.po,audio-recordings.po'});
         my $out = template::process($config,
                 template::check($config, 'default.html'),
                 $headerParams);

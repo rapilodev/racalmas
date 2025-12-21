@@ -41,6 +41,9 @@ function showInfoAndReload(s) {
 function hideInfo() {
     $('#info').hide();
 }
+function hideError() {
+    $('#error').hide();
+}
 
 function roundSize(size) {
     const MB = 1000 * 1000;
@@ -155,12 +158,12 @@ async function deleteFile(elem) {
     }
 }
 
-document.addEventListener("DOMContentLoaded",function() {
-    $('#file').on('change', function() {
-        changeFile(this);
-        return false;
-    });
-
+// init function
+window.calcms??={};
+window.calcms.init_audio_recordings = function(el){
+    console.log(el)
+    set_breadcrumb(el.attr("title"));
+    
     $('#uploadButton').on('click', function() {
         uploadFile(this);
         return false;
@@ -172,6 +175,11 @@ document.addEventListener("DOMContentLoaded",function() {
         return false;
     });
 
+    $('#file').on('change', function() {
+        changeFile(this);
+        return false;
+    });
+
     var number = 1 + Math.floor(11 * Math.random());
     $('#progress img').attr("src", "/agenda/planung/image/upload/bird" + number + ".gif");
-});
+};

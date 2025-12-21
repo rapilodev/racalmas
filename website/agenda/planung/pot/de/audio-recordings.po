@@ -10,6 +10,9 @@ msgstr "Löschen"
 msgid "button_save"
 msgstr "Speichern"
 
+msgid "button_upload"
+msgstr "Vorproduktion hochladen"
+
 msgid "play"
 msgstr "Abspielen"
 
@@ -17,7 +20,7 @@ msgid "upload"
 msgstr "Sendung Hochladen"
 
 msgid "file"
-msgstr "Datei"
+msgstr "Datei auswählen"
 
 msgid "upload_start"
 msgstr "Die Datei wird hochgeladen"
@@ -40,11 +43,11 @@ msgstr "wann hochgeladen"
 msgid "size_in_bytes"
 msgstr "Größe in Bytes"
 
-msgid "event_duration_in_seconds"
-msgstr "Sendungsdauer in Sekunden"
+msgid "event_duration"
+msgstr "Dauer der Sendung"
 
-msgid "Audio_duration_in_seconds"
-msgstr "Dateidauer in Sekunden"
+msgid "audio_duration"
+msgstr "Länge der Datei"
 
 msgid "RMS_L"
 msgstr "RMS links"
