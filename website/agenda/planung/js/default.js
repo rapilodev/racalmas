@@ -208,6 +208,7 @@ async function updateContainer(id, url, callback) {
     if (type == "text/html") {
         console.log("html")
         target.innerHTML = await response.text();
+        initializeComponents(target);
         // load scripts from response
         /*
         target.querySelectorAll('script').forEach(script => {
@@ -820,7 +821,7 @@ function getGlobalTitle() {
     // breadcrumb is set externally
 }
 
-document.addEventListener("DOMContentLoaded",async function() {
+async function initializeComponents(container) {
     setupMenu();
     checkSession();
     setMissingUrlParameters();
@@ -847,6 +848,31 @@ document.addEventListener("DOMContentLoaded",async function() {
     $(document).on('click', '.toggle-rotate', function() {
         $(this).toggleClass('rotated');
     });
-});
+    
+    // Wir suchen alle Elemente mit data-js-init, die NOCH NICHT initialisiert wurden
+    const scope = container ? $(container) : $(document);
+    const initElements = scope.find('[data-js-init]').addBack('[data-js-init]');
+    for (const el of initElements) {
+        const $el = $(el);
+        const funcName = $el.data('js-init');
+        const initFunc = funcName.split('.').reduce((obj, prop) => obj && obj[prop], window);
+        console.log("find "+funcName)
+        if (typeof initFunc === 'function') {
+            try {
+                console.log("run "+funcName)
+                await initFunc($el);
+                
+                $el.removeAttr('data-js-init');
+                $el.attr('data-js-initialized', funcName); 
+            } catch (error) {
+                console.error(`Fehler bei der Initialisierung von "${funcName}" auf Element:`, el, error);
+            }
+        } else {
+            console.warn(`Warnung: Initialisierungs-Funktion "${funcName}" wurde nicht gefunden.`);
+        }
+    }
+}
 
-console.log(window.loadLocalization)
+document.addEventListener("DOMContentLoaded",async function() {
+    await initializeComponents();
+});
