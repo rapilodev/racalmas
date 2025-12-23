@@ -1,9 +1,6 @@
 if (window.namespace_studios_js) throw "stop"; window.namespace_studios_js = true;
 "use strict";
 
-var loc = getLocalization();
-var region='<TMPL_VAR loc.region escape=js>';
-
 function add_studio(){
     $('.editor').hide();
     $('#edit_new').show();
@@ -30,3 +27,8 @@ function cancel_edit_studio(elem, name){
     return false;
 }
 
+// init function
+window.calcms ??= {};
+window.calcms.studio = function(el) {
+    var loc = getLocalization();
+};

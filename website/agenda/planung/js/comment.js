@@ -126,3 +126,7 @@ function setCommentStatusLock(commentId,eventId,status){
     return false;
 }
 
+// init function
+window.calcms??={};
+window.calcms.init_comment = function(el){
+}

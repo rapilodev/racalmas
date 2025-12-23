@@ -8,7 +8,12 @@ Content-Type: text/html; charset=UTF-8;
     <script src="js/select-event.js" type="text/javascript " defer></script>
 </head>
 <body>
-<div id="selectEvent">
+<main id="selectEvent"
+    data-js-init="calcms.init_select_event"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+    style="clear:both" class="flex scrollable"
+>
 
 <TMPL_IF selectProjectStudio>
 <div>

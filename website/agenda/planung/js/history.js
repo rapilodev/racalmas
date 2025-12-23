@@ -122,12 +122,9 @@ function addBackButton(){
             +'</a></div>'
         );
     }
-    //if (setupMenuHeight) setupMenuHeight();
-    //showHistory();
 }
 
-document.addEventListener("DOMContentLoaded",function(){
-    //clearCookie();
-    appendHistory();
-});
-
+// init function
+window.calcms??={};
+window.calcms.init_history = function(el){
+}

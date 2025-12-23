@@ -1,48 +1,12 @@
 <TMPL_IF .allow.scan_series_events>
 
-<script type="text/javascript" defer>
-    <TMPL_IF .getBack>
-    document.addEventListener("DOMContentLoaded",
-            function(){
-                getBack()
-            }
-        );
-    </TMPL_IF>
+<script src="js/assign-series.js" type="text/javascript" defer></script>
+<link href="css/assign-series.css" type="text/css" rel="stylesheet"/>
 
-    function assign_series(project_id, studio_id, series_id){
-        if (project_id=='')return false;
-        if (studio_id=='')return false;
-        if (series_id=='')return false;
-
-        $('#assignments_form input[name="series_id"]').val(series_id);
-        $('#assignments_form input[name="action"]').val("assign_series");
-        //var url="assign-series.cgi?project_id="+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&action=assign_series';
-        //console.log("url:"+url);
-        $('#assignments_form').submit();
-        return false;
-    }
-
-    function unassign_series(project_id, studio_id, series_id){
-        if (project_id=='')return false;
-        if (studio_id=='')return false;
-        if (series_id=='')return false;
-
-        $('#assignments_form input[name="series_id"]').val(series_id);
-        $('#assignments_form input[name="action"]').val("unassign_series");
-        alert("unassign");
-        //var url="assign-series.cgi?project_id="+project_id+'&studio_id='+studio_id+'&series_id='+series_id+'&action=unassign_series';
-        //console.log("url:"+url);
-        $('#assignments_form').submit();
-        return false;
-    }
-</script>
-
-<style>
-    #content{
-        height:100px;
-        overflow:none;
-    }
-</style>
+<main id="content"
+    data-js-init="calcms.init_assign_series"
+    title="<TMPL_VAR .loc.title>"
+>
 
 assign and unassign series to project <b><TMPL_VAR project_name></b> and studio <b><TMPL_VAR studio_name></b>
 

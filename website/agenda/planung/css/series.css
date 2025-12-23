@@ -53,13 +53,12 @@ div#tabs > div {
 /* Rebuild episodes section */
 #content #rebuild.card {
     background: var(--panel-bg);
-    max-width: 1000px;
     margin: 0;
     transition: all 2s;
 }
 #rebuild tr { cursor: pointer; }
 #rebuild td { border: 1px solid var(--border-color, gray); }
+#rebuild tr:hover { background: inherit; }
 #rebuild tr.error { background: var(--rebuild-error-bg, #f99); }
 #rebuild tr.warn  { background: var(--rebuild-warn-bg, #ff9); }
 #rebuild tr.ok    { background: var(--rebuild-ok-bg, #9f9); }
-

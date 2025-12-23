@@ -161,8 +161,6 @@ async function deleteFile(elem) {
 // init function
 window.calcms??={};
 window.calcms.init_audio_recordings = function(el){
-    console.log(el)
-    set_breadcrumb(el.attr("title"));
     
     $('#uploadButton').on('click', function() {
         uploadFile(this);

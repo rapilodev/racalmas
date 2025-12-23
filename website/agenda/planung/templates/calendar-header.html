@@ -4,5 +4,9 @@
 <TMPL_IF list>
 <link rel="stylesheet" href="css/calendar-list.css" type="text/css" />
 </TMPL_IF>
-<script src="js/datetime.js" type="text/javascript" defer></script>
 <script src="js/calendar.js" type="text/javascript" defer></script>
+
+<main id="content"
+    data-js-init="calcms.init_calendar"
+    title="<TMPL_VAR .loc.title>"
+>

@@ -18,6 +18,7 @@ use uac();
 use studios();
 use series();
 use localization();
+binmode STDOUT, ":utf8";
 
 my $r = shift;
 print uac::init($r, \&check_params, \&main);

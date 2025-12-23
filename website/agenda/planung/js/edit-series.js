@@ -21,14 +21,6 @@ async function saveSeries(selector, action, ) {
     showInfo(loc.label_saved);
 }
 
-/*
-loadSeries(
-    getProjectId(),
-    getStudioId(),
-    getUrlParameter('series_id'),
-);
-*/
-
 // set checkbox values checked depending on value
 function initCheckBoxes() {
     $('div.editor input[type="checkbox"]').each(
@@ -233,7 +225,7 @@ function commitRemoveUser(project_id, studio_id, series_id, user_id) {
 function commitDeleteSeries(project_id, studio_id, series_id) {
     commitAction('<TMPL_VAR .loc.button_remove_series escape=js>',
         async function() {
-            let json =postJson("series.cgi", {
+            let json = await postJson("series.cgi", {
                 action: "delete_series",
                 project_id: project_id,
                 studio_id: studio_id,
@@ -316,59 +308,56 @@ function showHistory(project_id, studio_id, series_id) {
 }
 
 async function rebuildEpisodes(project_id, studio_id, series_id) {
-    let response = await fetch('series.cgi?' + new URLSearchParams({
+    var json = await postJson('series.cgi?' + new URLSearchParams({
         project_id: project_id,
         studio_id: studio_id,
         series_id: series_id,
         action: 'set_rebuild_episodes',
-    }).toString(), {
-        cache: "no-store",
-    });
-    let json = await response.json();
-    if (json.error) {
-        showError(json.error);
-    } else {
-        showInfo("episodes rebuit");
-    }
+    }).toString());
+    if (!json) return;
+    showInfo("episodes rebuit");
 }
 
 async function previewRebuildEpisodes(project_id, studio_id, series_id) {
-
-    let response = await fetch('series.cgi?' + new URLSearchParams({
+    let json = await getJson('series.cgi?' + new URLSearchParams({
         project_id: project_id,
         studio_id: studio_id,
         series_id: series_id,
-        action: 'rebuild_episodes',
-    }).toString(), {
-        cache: "no-store"
-    });
-    let json = await response.json();
-    if (json.error) {
-        showError(json.error);
-        return;
-    }
+        action: 'preview_rebuild_episodes',
+    }).toString());
+    console.log(json)
+    if (!json) return;
+
     const doc = document.createElement("div");
-    doc.setAttribute("class", "card");
+    doc.classList.add("class", "card");
+    doc.classList.add("class", "scrollable");
     doc.setAttribute("id", "rebuild");
 
     var loc = getLocalization();
     const closeButton = document.createElement("button");
     closeButton.setAttribute("class", "right")
     closeButton.textContent = loc["button_close"];
-    closeButton.setAttribute("onclick", '$("#rebuild").remove();$("#tabs").show();');
+    closeButton.addEventListener("click", () => {
+        $("#rebuild").remove();
+        $("#tabs").show();
+    });    
     doc.append(closeButton)
+    
+    if(json.result.total==0){
+        doc.append(loc["no_action_needed"])
+        showInfo(loc["no_action_needed"]);
+    }
 
-    $("#rebuild").remove();
-    $("#tabs").hide();
-    $("#tabs").after($(doc));
-    if (json.result.changes > 0 && json.result.conflicts == 0) {
+    //#if (json.result.changes > 0 && json.result.conflicts > 0) {
         const button = document.createElement("button");
         button.textContent = loc["button_commit"];
-        button.setAttribute("onclick",
-            ```rebuildEpisodes('$(project_id)','$(studio_id)','$(series_id)');return false;```
-        );
-        doc.append(button)
-    }
+        button.addEventListener("click", async () => {
+            await rebuildEpisodes(project_id, studio_id, series_id);
+            $("#rebuild").remove();
+            $("#tabs").show();
+        });
+        doc.append(button);
+    //}
     const table = document.createElement("table");
     const thead = document.createElement("thead");
     const tr = document.createElement("tr");
@@ -381,10 +370,15 @@ async function previewRebuildEpisodes(project_id, studio_id, series_id) {
     table.appendChild(thead)
     doc.appendChild(table)
 
-    const tbody = document.createElement("thead");
+    const tbody = document.createElement("tbody");
     table.appendChild(tbody)
     for (let row of json.rows) {
+        row.start = fmtDatetime(row.start)
+        if (row.recurrence=="0") row.recurrence = "-";
+        console.log(row.recurrence_start)
+        row.recurrence_start = row.recurrence_start ? fmtDatetime(row.recurrence_start) : '-';
         const tr = document.createElement("tr");
+        tr.classList.add(row.class)
         for (let col of json.cols) {
             const td = document.createElement("td");
             td.textContent = row[col];
@@ -392,35 +386,45 @@ async function previewRebuildEpisodes(project_id, studio_id, series_id) {
         }
         tbody.appendChild(tr)
     }
+    $(table).tablesorter({
+        widgets: ["filter"],
+        usNumberFormat: false
+    });
+
+    $("#rebuild").remove();
+    $("#tabs").hide();
+    $("#tabs").after($(doc));
 }
 
-document.addEventListener("DOMContentLoaded", async function() {
+// init function
+window.calcms??={};
+window.calcms.init_edit_series = async function(el) {
     await loadLocalization();
     addBackButton();
-
+    
     showDateTimePicker('input.datetimepicker.start');
     showDatePicker('input.datetimepicker.end');
-
+    
     initCheckBoxes();
     addCheckBoxHandler();
-
+    
     setTabs('#tabs');
-
+    
     updateScheduleButtonName();
     updateScheduleFields();
     setSelectedOptions();
-
+    
     //if value is not selected in a option, replace select box by input field
     initSelectChangeHandler('#tabs-schedule .frequency select', 'frequency', 'frequency_days');
     addSelectChangeHandler('#tabs-schedule .frequency select', 'frequency', 'frequency_days');
-
+    
     initSelectChangeHandler('#tabs-schedule .duration select', 'duration', 'duration_in_minutes');
     addSelectChangeHandler('#tabs-schedule .duration select', 'duration', 'duration_in_minutes');
-
+    
     checkFields();
-
+    
     $('table#schedule_table').tablesorter({
         widgets: ["filter"],
         usNumberFormat: false
     });
-});
+}

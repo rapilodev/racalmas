@@ -1,12 +1,15 @@
 <script src="js/image.js" type="text/javascript " defer></script>
-<script type="text/javascript" defer>
-    var region = '<TMPL_VAR loc.region escape=js>';
-    set_breadcrumb('<TMPL_VAR .loc.title>');
-</script>
+
+<main id="content"
+    data-js-init="calcms.init_studios"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+>
+<div class="sidebar"></div>
 
 <div class="list scrollable">
     <TMPL_LOOP studios>
-    <div class="panel editor studio scrollable">
+    <div class="panel editor studio">
         <div class="panel-header">
             <TMPL_VAR name>
         </div>
@@ -74,11 +77,13 @@
                 </div>
                 <div>
                     <button type=submit name="action" value="save">
+                        <sprite-icon name="save"></sprite-icon>
                         <TMPL_VAR .loc.button_save>
                     </button>
                     <button type=submit class="text" name="action"
                         value="delete"
                         onclick="commitForm('studio_<TMPL_VAR id escape=js>','delete','<TMPL_VAR .loc.button_delete escape=js>');return false;">
+                        <sprite-icon name="delete"></sprite-icon>
                         <TMPL_VAR .loc.button_delete>
                     </button>
                 </div>
@@ -86,18 +91,22 @@
         </form>
 
         <div class="panel-body" style="display: flex">
+            <!-- 
             <TMPL_IF .allow.read_event>
             <button target="_blank" class="text bottom"
                 onclick="loadUrl('event-history.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR id>');">
+                <sprite-icon name="change"></sprite-icon>
                 <TMPL_VAR .loc.button_show_changes>
             </button>
             </TMPL_IF>
+            -->
 
             <TMPL_IF .allow.update_studio>
             <button class="bottom right"
                 onclick="edit_studio($(this), '<TMPL_VAR id escape=js>')"
                 data-action="<TMPL_VAR .loc.button_edit escape=HTML>"
                 data-cancel="<TMPL_VAR .loc.button_cancel escape=HTML>">
+                <sprite-icon name="edit"></sprite-icon>
                 <TMPL_VAR .loc.button_edit>
             </button>
             </TMPL_IF>
@@ -110,7 +119,7 @@
 
 <div class="sidebar">
     <TMPL_IF .allow.update_studio>
-    <div class="newstudio">
+    <!--  <div class="newstudio">-->
         <button onclick="add_studio('<TMPL_VAR name escape=js>')">
             <sprite-icon name="add"></sprite-icon>
             <TMPL_VAR .loc.button_add_studio>
@@ -150,9 +159,10 @@
             </div>
         </div>
         </form>
-    </div>
+    <!--  </div>-->
     </TMPL_IF>
 </div>
+
 </main>
 </body>
 </html>

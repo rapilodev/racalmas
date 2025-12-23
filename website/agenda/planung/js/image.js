@@ -30,7 +30,7 @@ async function selectImage(image, callback) {
         () => searchImage(project_id, studio_id, $("input#search-field").val())
     );
     
-    permissions = getJson('permissions.cgi', {
+    permissions = await getJson('permissions.cgi', {
         "project_id" : project_id,
         "studio_id" : studio_id
     });
@@ -336,15 +336,17 @@ function uploadImage() {
     return false;
 };
 
-document.addEventListener("DOMContentLoaded", async function() {
-    function updateCheckBox(selector, value) {
-        $(selector).attr('value', value)
-        $(selector).prop("checked", value == 1);
-    }
+function updateCheckBox(selector, value) {
+    $(selector).attr('value', value)
+    $(selector).prop("checked", value == 1);
+}
 
+// init function
+window.calcms??={};
+window.calcms.init_image = async function(el) {
     await loadLocalization('image');
     var checkbox = $("#img_editor input[name='public']");
     updateCheckBox(checkbox);
     checkbox.change(() => updateCheckBox(checkbox));
     //console.log("image handler initialized");
-});
+}

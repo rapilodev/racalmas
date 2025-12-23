@@ -1,13 +1,16 @@
 <script src="js/image.js" type="text/javascript " defer></script>
 
-<script type="text/javascript" defer>
-var region='<TMPL_VAR loc.region escape=js>';
-set_breadcrumb('<TMPL_VAR .loc.title>');
-</script>
-
-
 <!-- projects -->
-<div style="clear:both" class="flex scrollable">
+<main id="content" 
+    data-js-init="calcms.init_projects"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+>
+
+<div class="sidebar"></div>
+
+<div class="container scrollable gap">
+
 <TMPL_LOOP projects>
 <div class="panel project">
 
@@ -62,7 +65,10 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
     <button class="" onclick="edit_project($(this), '<TMPL_VAR project_id escape=js>')"
         data-action="<TMPL_VAR .loc.button_edit escape=HTML>"
         data-cancel="<TMPL_VAR .loc.button_cancel escape=HTML>"
-    ><TMPL_VAR .loc.button_edit></button>
+    >
+        <sprite-icon name="edit"></sprite-icon>
+        <TMPL_VAR .loc.button_edit>
+    </button>
 </TMPL_IF>
 
 <!-- update project -->
@@ -110,8 +116,12 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
         <input type="email" name="email" value="<TMPL_VAR email>">
     </div>
 
-    <div class="sidebar">
-        <button type=submit name="action" value="save"><TMPL_VAR .loc.button_save></button>
+    <div>
+        <button type=submit name="action" value="save">
+            <sprite-icon name="save"></sprite-icon>
+            <TMPL_VAR .loc.button_save>
+        </button>
+
         <TMPL_IF .allow.delete_project>
             <div class="right">
             <button type=submit class="text" name="action" value="delete"
@@ -127,7 +137,10 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
     <TMPL_IF .allow.update_project>
     <button onclick="edit_project_assignments('<TMPL_VAR project_id escape=js>')"
         class="text" style="float:left;margin:0;padding:0;text-align:left;"
-    ><TMPL_VAR .loc.button_change></button>
+    >
+        <sprite-icon name="assign"></sprite-icon>
+        <TMPL_VAR .loc.button_change>
+    </button>
     </TMPL_IF>
 
 </div>
@@ -180,12 +193,16 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
 
 </div>
 </TMPL_LOOP>
-</div>
-<!--  projects -->
+</div> <!-- container -->
+<!--  end projects -->
 
+<div class="sidebar">
 <TMPL_IF .allow.create_project>
-<div style="clear:both" class="newproject">
-    <button onclick="add_project('<TMPL_VAR name escape=js>')"><TMPL_VAR .loc.button_add_project></button><br/>
+<!-- <div style="clear:both" class="newproject">-->
+    <button onclick="add_project('<TMPL_VAR name escape=js>')"
+        ><sprite-icon name="add"></sprite-icon>
+        <TMPL_VAR .loc.button_add_project>
+    </button><br/>
 
     <form method="post">
     <div id="edit_new" class="panel project editor" style="clear:both;display:none">
@@ -215,15 +232,26 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
             <label><TMPL_VAR .loc.label_email></label>
             <input name="email">
         </div>
-        <div class="sidebar">
-            <button class="text cancel" onclick="cancel_edit_project($(this),'new');return false;"><TMPL_VAR .loc.button_cancel></button>
-            <button type=submit name="action" value="save"><TMPL_VAR .loc.button_create></button>
+        <div>
+            <button class="text cancel" 
+                onclick="cancel_edit_project($(this),'new');return false;"
+            >
+                <sprite-icon name="cancel"></sprite-icon>
+                <TMPL_VAR .loc.button_cancel>
+            </button>
+
+            <button class="primary" type=submit name="action" value="save"
+            >
+                <sprite-icon name="save"></sprite-icon>
+                <TMPL_VAR .loc.button_create>
+            </button>
         </div>
     </div>
     </form>
-</div>
 </TMPL_IF> <!--  create project -->
+</div> <!-- sidebar -->
 
+</div> <!-- container -->
 </main>
 </body>
 </html>

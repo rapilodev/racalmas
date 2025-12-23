@@ -1,0 +1,15 @@
+    body #content {
+        max-width:1920px;
+    }
+    #content div.show_schedule{
+        height:100%;
+        overflow:none;
+    }
+
+    #content div.show_schedule table{
+        width:100%;
+    }
+
+    #editor div p a img {
+        float:right;
+    }

@@ -126,11 +126,10 @@ function selectEventAction(resultElemId){
     return 1;
 }
 
-document.addEventListener("DOMContentLoaded",
-    function(){
-        updateProjectStudioId();
-        updateSeriesId();
-        updateDateRange();
-    }
-);
-
+// init function
+window.calcms ??= {};
+window.calcms.select_event = function(el) {
+    updateProjectStudioId();
+    updateSeriesId();
+    updateDateRange();
+};

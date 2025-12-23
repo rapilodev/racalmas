@@ -172,7 +172,6 @@ body #content {
   align-items: stretch;
   height: calc(100vh - 5rem);
   overflow: hidden;
-  max-width: 1280px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -502,6 +501,10 @@ input:not([type="checkbox"]) {
   justify-content: center;
 }
 
+#content div.gap {
+  gap: var(--gap);
+}
+
 #content div.card {
   border: 0;
   margin: var(--space-md);
@@ -560,8 +563,8 @@ div#tabs > div {
     }
     li:first-child { border-top-left-radius: var(--space-sm); }
     li:last-child { border-top-right-radius: var(--space-sm); }
-    li.active { border-bottom: 1px solid var(--button-bg); }
-    li:hover { border-bottom: 1px solid var(--button-bg); font-weight:600;}
+    li.active { border-bottom: 2px solid var(--button-bg); }
+    li:hover { border-bottom: 2px solid var(--button-bg); opacity:0.5; font-weight:600;}
     li a:hover { text-decoration: none; }
 }
 
@@ -643,12 +646,14 @@ button.primary {
   min-width:10rem;
 }
 
+/*
 button:not(.primary) {
   color: #000;
   border: 1px solid #bbb;  
   background: #ccc;
   box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18);
 }
+*/
 
 button[disabled] {
   opacity: 0.5;
@@ -881,7 +886,6 @@ div.editor {
 body #content {
     display: flex;
     flex-direction: row;
-    max-width: 1280px !important;
     justify-content: center;
 }
 
@@ -983,7 +987,7 @@ div.sidebar {
     background: none;
 }
 
-div.sidebar button {
+div.sidebar button:not(.primary) {
     background: none;
     border:none;
     box-shadow:none;
@@ -1002,7 +1006,7 @@ div.sidebar .formField input{
 
 /* Menu item base style */
 .sidebar .menu-item,
-.sidebar > button:not(primary) {
+.sidebar > button:not(.primary) {
     padding: 0;
     display: flex;
     width: 100%;

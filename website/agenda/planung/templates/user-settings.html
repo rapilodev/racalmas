@@ -1,8 +1,9 @@
 <link rel="stylesheet" href="css/user-settings.css" type="text/css" />
-<script defer>
-set_breadcrumb('<TMPL_VAR .loc.title>');
-</script>
-
+<main id="content"
+    data-js-init="calcms.init_user_settings"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+>
 <TMPL_INCLUDE status.html>
 
 <div class="panel sidebar">
@@ -112,5 +113,6 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
 </form>
 </div>
 
+</main>
 </body>
 </html>

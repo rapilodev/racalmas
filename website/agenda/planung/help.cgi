@@ -19,9 +19,6 @@ use uac();
 use studios();
 use markup();
 use localization();
-#use utf8;
-
-#binmode STDOUT, ":utf8";
 
 my $r = shift;
 print uac::init($r, \&check_params, \&main);
@@ -32,97 +29,20 @@ sub main {
 
     #process header
     my $headerParams = uac::set_template_permissions( $request->{permissions}, $params );
-    $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu.po' } );
+    my $loc = $headerParams->{loc} = localization::get( $config, { user => $session->{user}, file => 'menu.po' } );
     my $out = template::process( $config, template::check( $config, 'default.html' ), $headerParams );
     uac::check($config, $params, $user_presets);
 
-    my $toc = $headerParams->{loc}->{toc};
-
-    $out .= q!
-    <style>
-    #content h1{
-        font-size:1.6em;
-    }
-
-    #content h2{
-        font-size:1.2em;
-        padding-top:1em;
-        padding-left:2em;
-    }
-
-    #content h3{
-        font-size:1em;
-        padding-left:4em;
-    }
-
-    #content h4{
-        font-size:1em;
-        padding-left:4em;
-    }
-
-    #content p{
-        padding-left:6em;
-        line-height:1.5em;
-}
-
-    #content ul{
-        padding-left:7em;
-    }
-
-    #content li{
-        line-height:1.5em;
-    }
-
-    body #content{
-        max-width:60em;
-    }
-
-    #toc.sidebar {
-        flex-wrap: nowrap;
-        overflow: auto;
-    }
-    
-    #toc.sidebar ul{
-        padding-left:0;
-    }
-
-    #toc.sidebar li{
-        line-height:1rem;
-        padding:0;
-        margin:0
-    }
-    
-    </style>
-
-    <script defer>
-    set_breadcrumb('<TMPL_VAR .loc.title>');
-    
-    function addToToc(selector){
-        $(selector).each(function(){
-               if ($(this).hasClass('hide'))return
-            var title=$(this).text();
-            var tag=$(this).prop('tagName');
-            var span=2;
-            if (tag=='H2')span=4;
-            if (tag=='H3')span=6;
-            if (tag=='H4')span=8;
-            var url=title;
-            url=url.replace(/[^a-zA-Z]/g,'-')
-            url=url.replace(/\-+/g, '-')
-            $(this).append('<a name="'+url+'" />');
-            $('#toc').append('<li style="margin-left:'+span+'em"><a href="#'+url+'">'+title+'</a></li>')
-        });
-    }
-
-    document.addEventListener("DOMContentLoaded",function() {
-        addToToc('#content h1,#content h2,#content h3,#content h4');
-    })
-    </script>
+    return $out . qq{
+    <link rel="stylesheet" href="../css/help.css" type="text/css" />
+    <script src="../js/help.js" type="text/javascript " defer></script>
     <div id="toc" class="sidebar scrollable"><h1 class="hide"></div>
-    <div class="panel scrollable">
-    !;
-
-    return $out . markup::creole_to_html( getHelp($config, $headerParams->{loc}->{region} ) );
+    <div
+        data-js-init="calcms.init_help"
+        title="$loc->{title}"
+        data-region="<TMPL_VAR loc.region escape=js>"
+        class="panel scrollable"
+    >} . markup::creole_to_html(getHelp($config, $loc->{region})). q{</div>};
 }
 
 sub getHelp {
@@ -147,4 +67,3 @@ sub check_params {
 
     return $checked;
 }
-

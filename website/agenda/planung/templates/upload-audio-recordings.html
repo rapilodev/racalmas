@@ -1,5 +1,5 @@
 <TMPL_IF .allow.upload_audio_recordings>
-<div 
+<main id="content"
     data-js-init="calcms.init_audio_recordings"
     title="<TMPL_VAR loc.title> - <TMPL_VAR event.full_title> <TMPL_VAR event.weekday_short_name>, <TMPL_VAR event.start_date_name> <TMPL_VAR event.start_time>"
     class="panel scrollable"
@@ -53,7 +53,6 @@
         </tr>
     </TMPL_LOOP>
 </table>
- </div>
 
 <div class="sidebar" >
     <div style="padding-top:1rem;padding-bottom:1rem;">

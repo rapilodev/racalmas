@@ -10,7 +10,6 @@ Content-type:text/html
     <script src="js/comment.js" type="text/javascript " defer></script>
     <script src="js/page-leave-handler.js" type="text/javascript " defer></script>
     <script defer>
-        var region='<TMPL_VAR loc.region escape=js>';
         var event_id='<TMPL_VAR event_id escape=js>';
         var selectImageId='';
         <TMPL_IF .event_edited>
@@ -25,7 +24,10 @@ Content-type:text/html
 </head>
 <body>
 
-<div id="comments">
+<div id="comments"
+    data-js-init="calcms.init_comments"
+    title="<TMPL_VAR .loc.title>"
+>
     <select id="selectCommentsByAge" onchange="showCommentsByAge($(this).val())">
         <option value="">w&auml;hlen</option>
         <option value="1">Stunde </option>

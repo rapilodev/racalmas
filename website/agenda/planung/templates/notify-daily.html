@@ -1,6 +1,10 @@
 <html>
 <body>
-
+<main id="content"
+    data-js-init="calcms.init_notify_daily"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+>
 <table id="events">
 <TMPL_LOOP events>
 <tr id="header_<TMPL_VAR event_id>" class="mailHeader">
@@ -11,6 +15,7 @@
 </tr>
 </TMPL_LOOP>
 </table>
+</main>
 
 </body>
 </html>

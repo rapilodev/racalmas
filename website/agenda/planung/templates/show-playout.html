@@ -1,6 +1,13 @@
 <link href="css/theme.default.css" rel="stylesheet">
 <script src="js/image.js" type="text/javascript " defer></script>
-<div class="panel scrollable">
+<main id="content"
+    data-js-init="calcms.init_show_playout"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+>
+<div class="panel scrollable"
+    style="clear:both" class="flex scrollable"
+>
 
 <table id="playout-table" class="table">
     <thead>
@@ -36,3 +43,4 @@
 </table>
 
 </div>
+</main>

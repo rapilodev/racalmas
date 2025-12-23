@@ -42,11 +42,14 @@
     set_breadcrumb('<TMPL_VAR .loc.title>');
 
 </script>
-
+<main id="content"
+    data-js-init="calcms.init_users"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+>
 <TMPL_INCLUDE status.html>
 
-<div class="sidebar">
-</div>
+<div class="sidebar"></div>
 
 <div class="panel scrollable">
 <table class="table">
@@ -183,5 +186,6 @@
     </TMPL_IF>
 </div>
 
+</main>
 </body>
 </html>

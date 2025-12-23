@@ -4,7 +4,12 @@ Content-type:text/html; charset=utf8;
 <div id="status"></div>
 <div id="content">
 
-<div class="split panel scrollable">
+<main id="content"
+    data-js-init="calcms.init_image"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+    class="split panel scrollable"
+>
     <div id="abort-image-editor" class="close-button">&#x2715;</div>
     <div id="image-tools"></div>
     <div id="image-list">
@@ -41,5 +46,5 @@ Content-type:text/html; charset=utf8;
         </div>
     </div>
 </div>
-</div>--
+</main>
 </TMPL_IF>

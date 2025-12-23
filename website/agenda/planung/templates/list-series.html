@@ -1,8 +1,8 @@
-<script defer>
-var region='<TMPL_VAR loc.region escape=js>';
-set_breadcrumb('<TMPL_VAR .loc.title>');
-</script>
-
+<main id="content"
+    data-js-init="calcms.init_list_series"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+>
 <div class="sidebar">
     <button onclick="$('#oldSeries').slideToggle()" class="toggle-rotate">
         <TMPL_VAR .loc.button_old_series>
@@ -11,7 +11,9 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
 </div>
 
 <!-- container -->
-<div id="container" class="scrollable">
+<div id="container" class="scrollable"
+    <TMPL_IF .getBack>data-get-back="true"</TMPL_IF>
+>
     <div id="newSeries" class="series new">
     <TMPL_LOOP series><TMPL_IF is_new>
         <a class="panel"
@@ -67,9 +69,12 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
             </div>
 
             <div class="formField">
-                <button onclick="createSeries($('form#add_series'));return false"
+                <button class="primary"
+                    onclick="createSeries($('form#add_series'));return false"
                     ><TMPL_VAR .loc.button_create></button>
-                <button onclick="$('#edit_new').hide();$('#add-series').show();return false;"><TMPL_VAR .loc.button_cancel></button>
+
+                <button onclick="$('#edit_new').hide();$('#add-series').show();return false;"
+                    ><TMPL_VAR .loc.button_cancel></button>
             </div>
         </form>
     </div>

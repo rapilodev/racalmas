@@ -48,9 +48,8 @@ function add_project(){
     return false;
 }
 
-document.addEventListener("DOMContentLoaded",
-    function(){
-        showDatePicker('input.date');
-    }
-);
-
+// init function
+window.calcms ??= {};
+window.calcms.init_projects = function(el) {
+    showDatePicker('input.date');
+};

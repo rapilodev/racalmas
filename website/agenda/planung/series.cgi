@@ -4,6 +4,7 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
+use Data::Dumper;
 use URI::Escape();
 use Encode();
 use Scalar::Util qw(blessed);
@@ -27,6 +28,7 @@ use localization();
 use series_schedule();
 use series_events();
 use user_stats();
+binmode STDOUT, ":utf8";
 
 my $r = shift;
 print uac::init($r, \&check_params, \&main);
@@ -43,7 +45,7 @@ sub main {
             = uac::set_template_permissions($request->{permissions}, $params);
         $headerParams->{loc} = localization::get($config,
             {user => $session->{user}, file => 'menu.po'}
-);
+        );
         $out .= template::process($config,
             template::check($config, 'series-header.html'), $headerParams
         );
@@ -56,7 +58,6 @@ sub main {
             if defined $header_template;
     }
     uac::check($config, $params, $user_presets);
-
     my %actions = (
         show_series => \&show_series,
         list_series => \&list_series,
@@ -70,11 +71,11 @@ sub main {
         assign_event => \&assign_event,
         unassign_event => \&unassign_event,
         reassign_event => \&reassign_event,
-        rebuild_episodes => \&rebuild_episodes,
-        set_rebuilt_episodes => \&set_rebuilt_episodes,
+        preview_rebuild_episodes => \&preview_rebuild_episodes,
+        set_rebuild_episodes => \&set_rebuild_episodes,
     );
-
     my $action = $actions{$params->{action}};
+    
     return $out . $action->($config, $request) if defined $action;
     ActionError->throw(error => "invalid action <$params->{action}>");
 }
@@ -292,9 +293,6 @@ sub save_series {
         $config->{access}->{write} = 1;
         my $series_id = series::insert($config, $entry);
         $entry->{series_id} = $series_id;
-        use Data::Dumper;
-        print STDERR Dumper($series_id);
-        print STDERR Dumper($entry);
         InsertError->throw(error => 'could not insert series') unless defined $series_id;
 
         user_stats::increase($config, 'create_series', {
@@ -847,9 +845,9 @@ sub show_series {
     return template::process($config, $params->{template}, $params);
 }
 
-sub set_rebuilt_episodes {
+sub set_rebuild_episodes {
     my ($config, $request) = @_;
-
+#    warn $request;
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     PermissionError->throw(error => 'Missing permission to read_series')
@@ -867,7 +865,7 @@ sub set_rebuilt_episodes {
     for my $permission (keys %{ $request->{permissions} }) {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
-    my $events = series::get_rebuilt_episodes($config, {
+    my $events = series::get_rebuild_episodes($config, {
         uac::set($params, 'project_id', 'studio_id', 'series_id')
     });
 
@@ -876,23 +874,23 @@ sub set_rebuilt_episodes {
         next if $event->{project_id} ne $params->{project_id};
         next if $event->{studio_id} ne $params->{studio_id};
         next if $event->{old_episode} eq $event->{episode};
+        warn Dumper({
+            uac::set($event, 'id', 'episode')
+        });
         series_events::set_episode($config, {
             uac::set($event, 'id', 'episode')
         });
         $updates++;
     }
-    return uac::json(
-        {   "entry" =>
-                { uac::set($params, 'project_id', 'studio_id', 'series_id'), },
-            "status" => "episodes rebuilt"
-        }
-    );
-    }
+    return uac::json({
+        { uac::set($params, 'project_id', 'studio_id', 'series_id'), },
+        "status" => "episodes rebuilt"
+    });
+}
 
-#TODO…
-sub rebuild_episodes {
+
+sub preview_rebuild_episodes {
     my ($config, $request) = @_;
-
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
     PermissionError->throw(error => 'Missing permission to read_series')
@@ -910,7 +908,7 @@ sub rebuild_episodes {
     for my $permission (keys %{ $request->{permissions} }) {
         $params->{'allow'}->{$permission} = $request->{permissions}->{$permission};
     }
-    my $events = series::get_rebuilt_episodes($config, {
+    my $events = series::get_rebuild_episodes($config, {
         uac::set($params, 'project_id', 'studio_id', 'series_id')
     });
 
@@ -918,16 +916,7 @@ sub rebuild_episodes {
     for my $event (@$events) {
         $events_by_id->{ $event->{id} } = $event;
     }
-
-    print "<style>
-        tr        {cursor:pointer}
-        td        {border:1px solid gray}
-        tr.error  {background:#f99}
-        tr.warn   {background:#ff9}
-        tr.ok     {background:#9f9}
-        </style>
-    ";
-
+ 
     my $prev        = undef;
     my $max_episode = 0;
     my $changes     = 0;
@@ -954,26 +943,21 @@ sub rebuild_episodes {
             $errors++;
         }
         $event->{recurrence_start} = $events_by_id->{ $event->{recurrence} }->{start};
-        $event->{recurrence} = '-' unless $event->{recurrence};
+        #$event->{recurrence} = '-' unless $event->{recurrence};
         $prev = $event;
     }
-    my @cols = qw(id start series_name title episode old_episode
+    my @cols = qw(id start series_name title old_episode episode
         recurrence recurrence_start project_name studio_name class);
-    my $out = {
+    return uac::json {
         uac::set($params, 'project_id', 'studio_id', 'series_id'),
-        result => { changes => $changes, conflicts => $errors },
+        result => { changes => $changes, conflicts => $errors, total => $changes + $errors },
         cols   => \@cols,
-        rows   => []
+        rows   => [ map { my $event = $_; +{ map { $_ => $event->{$_} } @cols } } @$events]
     };
-    for my $event (@$events) {
-       push @{ $out->{rows} }, { map {$_ => $event->{$_} // '-'} @cols };
-    }
-    return uac::json $out;
 }
 
 sub check_params {
     my ($config, $params) = @_;
-
     my $checked = {};
 
     $checked->{action} = entry::element_of(
@@ -983,7 +967,8 @@ sub check_params {
             save_schedule delete_schedule
             add_user remove_user
             assign_event unassign_event reassign_event
-            rebuild_episodes set_rebuilt_episodes
+            preview_rebuild_episodes 
+            set_rebuild_episodes
         ) ]
     );
 
@@ -1008,7 +993,7 @@ sub check_params {
     if (defined $checked->{series_id}) {
         $checked->{template} = template::check($config, $params->{template}, 'edit-series');
     } else {
-        $checked->{template} = template::check($config, $params->{template}, 'series');
+        $checked->{template} = template::check($config, $params->{template}, 'list-series');
     }
 
     if ((defined $checked->{action}) && ($checked->{action} eq 'save_schedule')) {

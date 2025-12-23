@@ -143,11 +143,11 @@ sub save_image {
         project_id => $image->{project_id},
         studio_id  => $image->{studio_id}
     });
-    use Data::Dumper;print STDERR Dumper($entries, {
-        filename   => $image->{filename},
-        project_id => $image->{project_id},
-        studio_id  => $image->{studio_id}
-    });
+    #use Data::Dumper;print STDERR Dumper($entries, {
+    #    filename   => $image->{filename},
+    #    project_id => $image->{project_id},
+    #    studio_id  => $image->{studio_id}
+    #});
 
     die 'more than one matching result found' if scalar @$entries > 1;
     die 'image not found in database (for this studio)' if @$entries == 0;

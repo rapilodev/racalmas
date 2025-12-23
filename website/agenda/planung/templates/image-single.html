@@ -1,6 +1,11 @@
 <html>
 <body>
-<TMPL_LOOP images>
-<div class="label"><TMPL_VAR name></div></TMPL_LOOP>
+<main id="content"
+    data-js-init="calcms.init_image_single"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+>
+    <TMPL_LOOP images><div class="label"><TMPL_VAR name></div></TMPL_LOOP>
+</main>
 </body>
 </html>

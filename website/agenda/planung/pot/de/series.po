@@ -26,7 +26,7 @@ msgid "button_rebuild_episodes"
 msgstr "Episoden neuzählen"
 
 msgid "button_commit"
-msgstr "Änderugen übernehmen"
+msgstr "vorgeschlagene Änderungen übernehmen"
 
 msgid "button_close"
 msgstr "Schließen"
@@ -348,4 +348,5 @@ msgstr "löschen"
 msgid "label_excerpt_too_long"
 msgstr "Auszug ist zu lang. Für längeren Text bitte das Feld «aktuelle Themen» verwenden."
 
-
+msgid "no_action_needed"
+msgstr "Keine Änderung erforderlich"

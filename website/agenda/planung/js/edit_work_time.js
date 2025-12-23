@@ -210,4 +210,8 @@ document.addEventListener("DOMContentLoaded",
     }
 );
 
+// init function
+window.calcms??={};
+window.calcms.init_edit_worktime_js = function(el){
+}
 

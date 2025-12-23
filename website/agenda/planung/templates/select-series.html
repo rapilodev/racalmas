@@ -9,7 +9,12 @@ Content-Type: text/html; charset=UTF-8;
     <script src="js/select-series.js" type="text/javascript " defer></script>
 </head>
 <body>
-<div id="selectSeries" class="panel editor">
+<main id="selectSeries" class="panel editor"
+    data-js-init="calcms.init_select_series"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+    style="clear:both" class="flex scrollable"
+>
 <TMPL_IF selectProjectStudio>
 <div>
     <label><TMPL_VAR .loc.label_project> & <TMPL_VAR .loc.label_Studio></label>

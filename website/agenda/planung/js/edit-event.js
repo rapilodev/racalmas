@@ -461,7 +461,9 @@ async function loadHelpTexts () {
     }
 }
 
-document.addEventListener("DOMContentLoaded", async function() {
+// init function
+window.calcms??={};
+window.calcms.init_edit_event = async function(el) {
     await loadLocalization('image');
     showDateTimePicker('#start_date');
     onDateModified();
@@ -493,4 +495,4 @@ document.addEventListener("DOMContentLoaded", async function() {
         set_breadcrumb(getEventTitle());
     });
     set_breadcrumb(getEventTitle());
-});
+}

@@ -9,3 +9,8 @@ document.addEventListener("DOMContentLoaded",
         });
     }
 );
+
+// init function
+window.calcms ??= {};
+window.calcms.user_stats = function(el) {
+}

@@ -157,6 +157,3 @@ function getWeekday(date){
     var locale = loc.locale;
     return new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date) + ',';
 }
-
-//end of guard
-}

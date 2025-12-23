@@ -54,9 +54,9 @@ function selectSeriesAction(resultElemId){
     $('#'+resultElemId).trigger('change');
 }
 
-document.addEventListener("DOMContentLoaded",
-    function(){
-        updateProjectStudioId();
-        console.log("yes")
-    }
-);
+// init function
+window.calcms ??= {};
+window.calcms.select_series = function(el) {
+    updateProjectStudioId();
+    console.log("yes")
+};

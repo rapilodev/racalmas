@@ -14,6 +14,7 @@
 <link type="text/css" href="css/image.css" rel="stylesheet" defer/>
 <script src="js/image.js" type="text/javascript " defer></script>
 
+<!-- TODO: move to edit-event.js -->
 <script defer>
 var allow = {
         <TMPL_IF .allow.read_image>read_image : true,</TMPL_IF>
@@ -56,7 +57,12 @@ document.addEventListener("DOMContentLoaded",
 );
 </script>
 </head>
+
 <body>
+
+<main id="content"
+    data-js-init="calcms.init_edit_event"
+    title="<TMPL_VAR .loc.title>"
 
 <TMPL_IF edit_lock>
 <div class="warn head"><TMPL_VAR loc.label_edit_lock></div>
@@ -111,7 +117,9 @@ document.addEventListener("DOMContentLoaded",
 </div> <!--  sidebar -->
 
 <!-- edit1 -->
-<div class="container panel scrollable">
+<div 
+    class="container panel scrollable"
+>
 
     <!-- import rerun from old event of series or any event of any project -->
     <TMPL_IF .allow.update_event>
@@ -517,8 +525,6 @@ document.addEventListener("DOMContentLoaded",
     </TMPL_IF>
 
 </div> <!--  sidebar -->
-
-
 
 </main>
 </body>

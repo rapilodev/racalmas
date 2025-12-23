@@ -1,0 +1,51 @@
+#content h1 {
+    font-size: 1.6em;
+}
+
+#content h2 {
+    font-size: 1.2em;
+    padding-top: 1em;
+    padding-left: 2em;
+}
+
+#content h3 {
+    font-size: 1em;
+    padding-left: 4em;
+}
+
+#content h4 {
+    font-size: 1em;
+    padding-left: 4em;
+}
+
+#content p {
+    padding-left: 6em;
+    line-height: 1.5em;
+}
+
+#content ul {
+    padding-left: 7em;
+}
+
+#content li {
+    line-height: 1.5em;
+}
+
+body #content {
+    max-width: 60em;
+}
+
+#toc.sidebar {
+    flex-wrap: nowrap;
+    overflow: auto;
+}
+
+#toc.sidebar ul {
+    padding-left: 0;
+}
+
+#toc.sidebar li {
+    line-height: 1rem;
+    padding: 0;
+    margin: 0
+}

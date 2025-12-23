@@ -79,7 +79,9 @@ async function createSeries(form) {
     $('#add-series').show();
 }
 
-document.addEventListener("DOMContentLoaded",function() {
+// init function
+window.calcms ??= {};
+window.calcms.init_list_series = function(el) {
+    console.log(el);
     searchEvents();
-    set_breadcrumb("Sendereihen");
-});
+};

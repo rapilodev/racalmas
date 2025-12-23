@@ -18,3 +18,8 @@ function edit_event(event_id, series_id, studio_id, project_id, hide_series){
         loadUrl(url);
     }
 }
+
+// init function
+window.calcms??={};
+window.calcms.init_events = function(el){
+}

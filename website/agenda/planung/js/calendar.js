@@ -386,12 +386,6 @@ function updateDayStart() {
     $.get(url);
 }
 
-// to be called from elements directly
-function reloadCalendarTable() {
-    if (isListView())throw Error("wrong mode");
-    let url = update_urlParameters();
-    loadCalendarTable(url);
-}
 
 function initTodayButton() {
     $('button#setToday').on('mousedown', function(event) {
@@ -576,12 +570,10 @@ function setup_filter() {
     show_events();
 
     $('#show_events').off();
-    $('#show_events').on("click",
-        function() {
-            show_events();
-            update_url();
-        }
-    );
+    $('#show_events').on("click", function() {
+        show_events();
+        update_url();
+    });
     $('#show_schedule').off();
     $('#show_schedule').on("click",
         function() {
@@ -601,31 +593,27 @@ function setup_filter() {
         show_playout();
         show_worktime();
         $('#show_playout').off();
-        $('#show_playout').on("click",
-            function() {
-                show_playout();
-                update_url();
-            }
-        );
+        $('#show_playout').on("click", function() {
+            show_playout();
+            update_url();
+        });
         $('#show_worktime').off();
-        $('#show_worktime').on("click",
-            function() {
-                show_worktime();
-                if (isChecked('#show_worktime')) {
-                    unselectCheckbox('#show_events');
-                    unselectCheckbox('#show_schedule');
-                    unselectCheckbox('#show_playout');
-                } else {
-                    selectCheckbox('#show_events');
-                    selectCheckbox('#show_schedule');
-                    selectCheckbox('#show_playout');
-                }
-                show_events();
-                show_schedule();
-                show_playout();
-                update_url();
+        $('#show_worktime').on("click", function() {
+            show_worktime();
+            if (isChecked('#show_worktime')) {
+                unselectCheckbox('#show_events');
+                unselectCheckbox('#show_schedule');
+                unselectCheckbox('#show_playout');
+            } else {
+                selectCheckbox('#show_events');
+                selectCheckbox('#show_schedule');
+                selectCheckbox('#show_playout');
             }
-        );
+            show_events();
+            show_schedule();
+            show_playout();
+            update_url();
+        });
     }
 
 }
@@ -925,25 +913,35 @@ function setupScrollbar() {
     
 }
 
-document.addEventListener("DOMContentLoaded",function() {
-    setup_filter();
+$(window).on('beforeunload', function() {
+    stopMouseTracking();
+});
+
+// init function
+window.calcms??={};
+console.log("define init_calendar")
+window.calcms.init_calendar = function(el) {
+    console.log("init_calendar")
     setDatePicker();
     let url = update_urlParameters();
+    console.log(url)
     if (isListView()){
         loadCalendarList(url);
     } else if (isTableView()) {
         resizeCalendarTable();
         setSelectedOptions();
-        $('#toolbar select#range').on('change', () => reloadCalendarTable());
+        $('#toolbar select#range').on('change', () => {
+            let url = update_urlParameters();
+            loadCalendarTable(url);
+        });
         $('#toolbar select#day_start').on('change', () => {
             updateDayStart();
-            reloadCalendarTable()
+            let url = update_urlParameters();
+            loadCalendarTable(url);
         });
+        let url = update_urlParameters();
         loadCalendarTable(url);
     }
-    setupScrollbar();
-});
-
-$(window).on('beforeunload', function() {
-    stopMouseTracking();
-});
+    setup_filter();
+    //setupScrollbar();
+}

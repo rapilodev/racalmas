@@ -1,0 +1,12 @@
+div#edit_roles{
+    overflow: auto;
+}
+
+div#edit_roles td:nth-child(1){
+    max-width:14em;
+}
+
+div#edit_roles .comment{
+    display:block;
+    color:#999;
+}

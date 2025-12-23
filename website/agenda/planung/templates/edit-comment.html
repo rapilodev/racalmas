@@ -2,6 +2,10 @@
 <!DOCTYPE html>
 <html>
 <body>
+<main id="content">
+    data-js-init="calcms.init_edit_comment"
+    title="<TMPL_VAR .loc.title>"
+>
 <TMPL_IF is_empty><TMPL_VAR .loc.label_no_comments_found>
 <TMPL_ELSE>
     <TMPL_LOOP events>
@@ -46,6 +50,7 @@
         </table>
     </TMPL_LOOP>
 </TMPL_IF>
+</main>
 </body>
 </html>
 <TMPL_ELSE>

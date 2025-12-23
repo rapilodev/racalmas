@@ -209,18 +209,6 @@ async function updateContainer(id, url, callback) {
         console.log("html")
         target.innerHTML = await response.text();
         initializeComponents(target);
-        // load scripts from response
-        /*
-        target.querySelectorAll('script').forEach(script => {
-            const newScript = document.createElement('script');
-            newScript.text = script.textContent;
-            Array.from(script.attributes).forEach(attr => {
-                newScript.setAttribute(attr.name, attr.value);
-            });
-            script.parentNode.replaceChild(newScript, script);
-            console.log("load_script " + newScript.src);
-        });
-        */
         if (callback != null) callback();
     } else if (type == "application/json") {
         let json = await response.json();
@@ -831,14 +819,17 @@ async function initializeComponents(container) {
         if (setupMenu) setupMenu();
     });
 
-    if (getController() == 'calendar') {
+    /*
+//    if (getController() == 'calendar') {
         addBackButton();
         return;
     } else {
         await loadLocalization();
         addBackButton();
     }
-    document.title = getGlobalTitle();
+    */
+   
+    appendHistory();
     initLabels();
     setInputAutoWidth();
     setTextareaAutoHeight();
@@ -852,11 +843,17 @@ async function initializeComponents(container) {
     // Wir suchen alle Elemente mit data-js-init, die NOCH NICHT initialisiert wurden
     const scope = container ? $(container) : $(document);
     const initElements = scope.find('[data-js-init]').addBack('[data-js-init]');
+    console.log("initElemnts",initElements)
     for (const el of initElements) {
         const $el = $(el);
         const funcName = $el.data('js-init');
         const initFunc = funcName.split('.').reduce((obj, prop) => obj && obj[prop], window);
         console.log("find "+funcName)
+
+        if (el.getAttribute("data-get-back")) getBack();
+        set_breadcrumb(el.getAttribute("data-title"));
+        document.title = getGlobalTitle();
+        
         if (typeof initFunc === 'function') {
             try {
                 console.log("run "+funcName)
@@ -874,5 +871,6 @@ async function initializeComponents(container) {
 }
 
 document.addEventListener("DOMContentLoaded",async function() {
+    console.log("inita")
     await initializeComponents();
 });

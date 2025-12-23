@@ -8,9 +8,8 @@ function showTable(){
     });
 }
 
-document.addEventListener("DOMContentLoaded",
-    function(){
-        showTable();
-    }
-);
-
+// init function
+window.calcms ??= {};
+window.calcms.show_playout = function(el) {
+    showTable();
+};

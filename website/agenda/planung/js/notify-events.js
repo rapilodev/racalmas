@@ -28,9 +28,9 @@ function hide_details() {
     })
 }
 
-
-document.addEventListener("DOMContentLoaded",function() {
+// init function
+window.calcms ??= {};
+window.calcms.init_notify_events = function(el) {
     hide_details();
     register_buttons();
-});
-
+};

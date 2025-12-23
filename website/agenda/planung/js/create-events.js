@@ -3,7 +3,7 @@ if (window.namespace_create_events_js) throw "stop"; window.namespace_create_eve
 
 async function create_events(form_id){
     let form = $("#"+form_id);
-    let json = postJson("create-events.cgi?", {
+    let json = await postJson("create-events.cgi?", {
         action: "create_events",
         project_id: form.find("input[name='project_id']").val(),
         studio_id: form.find("input[name='studio_id']").val(),
@@ -64,7 +64,12 @@ function selectChangeSeries(resultSelector){
     });
 }
 
-document.addEventListener("DOMContentLoaded",function() {
+// init function
+window.calcms??={};
+window.calcms.init_create_events = function(el) {
+    console.log(el)
+    set_breadcrumb(el.attr("title"));
+    if (el.attr("get-back")) getBack();
     selectChangeSeries('select_series_id');
     show_events('create_event_form');
-});
+};

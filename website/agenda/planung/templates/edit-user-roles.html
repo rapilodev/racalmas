@@ -57,6 +57,12 @@
     set_breadcrumb('<TMPL_VAR .loc.title>');
 </script>
 
+<main id="content"
+    data-js-init="calcms.init_edit_user_roles"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+>
+
 <TMPL_LOOP users>
 <div class="user">
     <div id="header">
@@ -161,6 +167,6 @@
     </div>
     </form>
 </div>
-
+</main>
 </body>
 </html>

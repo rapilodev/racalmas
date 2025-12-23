@@ -7,7 +7,6 @@
 <script src="js/notify-events.js" type="text/javascript " defer></script>
 <link type="text/css" href="css/notify-events.css" rel="stylesheet"/>
 <script defer>
-var region='<TMPL_VAR loc.region escape=js>';
 var event_id='<TMPL_VAR event_id escape=js>';
 var selectImageId='';
 <TMPL_IF .event_edited>
@@ -18,17 +17,21 @@ document.addEventListener("DOMContentLoaded",
         }
     );
 </TMPL_IF>
-set_breadcrumb('<TMPL_VAR .loc.title>');
 </script>
-
 </head>
-<body>
 
+<body>
+<main id="content">
 <div class="sidebar">
     <div id="result" style="display:none"> </div>
 </div>
 
-<div id="forms" class="scrollable">
+<div 
+    data-js-init="calcms.init_notify_events"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+    id="forms" class="scrollable"
+>
 <TMPL_LOOP events>
     <form id="event_<TMPL_VAR event_id>">
         <input type="hidden" name="project_id" value="<TMPL_VAR project_id>">
@@ -117,6 +120,6 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
 <div class="sidebar">
     <div id="result" style="display:none"> </div>
 </div>
-
+</main>
 </body>
 </html>

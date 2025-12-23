@@ -86,33 +86,32 @@ function initScheduleFields(){
     });
 }
 
-document.addEventListener("DOMContentLoaded", async function() {
+// init function
+window.calcms ??= {};
+window.calcms.studio_timeslot = async function(el) {
     await loadLocalization();
     addBackButton();
-
+    
     setTabs('#tabs');
     initTextWidth();
-
+    
     setTextWidth('.datetimepicker.start',     130);
     setTextWidth('.datetimepicker.end',       130);
     setTextWidth('.datepicker.end_date',  90);
     setTextWidth('.datetimepicker.weekday',   20);
     setTextWidth('.datetimepicker.frequency', 20);
-
+    
     showDateTimePicker('.datetimepicker.start');
     showDateTimePicker('.datetimepicker.end');
     showDatePicker('.datepicker.end_date');
-
+    
     initScheduleFields();
     setSelectedOptions();
-
+    
     showYearPicker('#show_date', {
         onSelect: function(){
             showDates();
         }
     });
     showDates();
-});
-
-
-
+};

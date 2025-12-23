@@ -1,8 +1,11 @@
 <link rel="stylesheet" href="css/user-stats.css" type="text/css" />
 <script src="js/user-stats.js" type="text/javascript" defer></script>
-<script type="text/javascript" defer>
-set_breadcrumb('<TMPL_VAR .loc.title>');
-</script>
+
+<main id="content"
+    data-js-init="calcms.init_user_stats"
+    title="<TMPL_VAR .loc.title>"
+    data-region="<TMPL_VAR loc.region escape=js>"
+>
 <div class="sidebar">
     <TMPL_INCLUDE status.html>
     <button
@@ -43,5 +46,6 @@ set_breadcrumb('<TMPL_VAR .loc.title>');
         </tbody>
     </table>
 </div>
+</main>
 </body>
 </html>
