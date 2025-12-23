@@ -87,11 +87,10 @@ sub save_content($$) {
 
     my $dbh = db::connect($config);
     my $result = db::put($dbh, $query, \@bind_values);
-    EventError->throw(error => "Could not save event content") unless $result;
     return $entry;
 }
 
-sub set_episode{
+sub set_episode {
     my ($config, $entry) = @_;
 
     for ('id', 'episode') {
@@ -106,7 +105,6 @@ sub set_episode{
     my $bind_values= [ $entry->{episode}, $entry->{id} ];
     my $dbh = db::connect($config);
     my $result = db::put($dbh, $query, $bind_values);
-    EventError->throw(error => "Could not set episodes") unless $result;
     return $entry;
 }
 
@@ -192,8 +190,6 @@ sub set_playout_status ($$) {
     };
     $bind_values = [ $entry->{playout}, $event_id, $entry->{start} ];
     my $result = db::put($dbh, $sql, $bind_values);
-    EventError->throw(error => "Could not create event") unless defined $result;
-
     return $result;
 }
 
@@ -244,7 +240,6 @@ sub delete_event ($$) {
     };
     my $bind_values = [ $entry->{event_id} ];
     my $result = db::put($dbh, $sql, $bind_values);
-    EventError->throw(error => "cannot delete event") unless defined $result;
 }
 
 #check permissions

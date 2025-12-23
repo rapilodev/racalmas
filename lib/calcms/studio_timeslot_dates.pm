@@ -316,7 +316,7 @@ sub delete {
     };
     my $bind_values = [ $entry->{schedule_id} ];
 
-    db::put($dbh, $query, $bind_values);
+    return db::put($dbh, $query, $bind_values);
 }
 
 # time based filter to check if studio is assigned to an studio at a given time range

@@ -215,7 +215,7 @@ sub update_user($$) {
     };
 
     my $dbh = db::connect($config);
-    db::put($dbh, $query, \@bind_values);
+    return db::put($dbh, $query, \@bind_values);
 }
 
 sub delete_user($$) {
@@ -227,7 +227,7 @@ sub delete_user($$) {
         where id=?
     };
     my $dbh = db::connect($config);
-    db::put($dbh, $query, [$id]);
+    return db::put($dbh, $query, [$id]);
 }
 
 # get all roles used by all users of a studio
@@ -339,7 +339,7 @@ sub update_role($$) {
         where id=?
     };
 
-    db::put($dbh, $query, \@bind_values);
+    return db::put($dbh, $query, \@bind_values);
 }
 
 # delete role from database
@@ -782,8 +782,12 @@ Content-Type:application/json; charset=utf-8
 }
 
 sub error_handler {
-    use Data::Dumper;print STDERR Dumper(\@_);
     my $last = $_[-1];
+    #use Data::Dumper;print STDERR Dumper(\@_);
+    use Data::Dumper;print STDERR Dumper($last->trace->as_string);
+    if (my $e = Exception::Class->caught) {
+        warn $e->trace->as_string;
+    }    
     my $msg = '';
     if (blessed($last) and $last->isa("APR::Request::Error")){
         $msg = $last->{func};

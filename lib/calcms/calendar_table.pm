@@ -878,7 +878,7 @@ sub getJavascript {
     my $startOfDay = ($cal_options->{min_hour} // 0) % 24;
 
     my $out = q{
-        <script defer>
+        <script>
             var region='} . $params->{loc}->{region} . q{';
             var startOfDay=} . $startOfDay . q{;
             var label_events='} . $params->{loc}->{label_events} . q{';

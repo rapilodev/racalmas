@@ -115,13 +115,13 @@ sub update ($$) {
     };
 
     my $dbh = db::connect($config);
-    db::put($dbh, $query, \@bind_values);
+    return db::put($dbh, $query, \@bind_values);
 }
 
 sub delete ($$) {
     my ($config, $studio) = @_;
     my $dbh = db::connect($config);
-    db::put($dbh, 'delete from calcms_studios where id=?', [ $studio->{id} ]);
+    return db::put($dbh, 'delete from calcms_studios where id=?', [ $studio->{id} ]);
 }
 
 #TODO rename to check

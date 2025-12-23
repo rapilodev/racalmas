@@ -1012,7 +1012,7 @@ sub render($$$;$) {
 
     my $timezone = $config->{date}->{time_zone};
     $tparams->{time_zone}  = $timezone;
-    warn Dumper($tparams->{modified_at});
+    #warn Dumper($tparams->{modified_at});
     if ($params->{template} =~ /\.atom\.xml/) {
         $tparams->{modified_at} = time::datetime_to_rfc3339($tparams->{modified_at}, $timezone);
     } elsif ($params->{template} =~ /\.rss\.xml/) {

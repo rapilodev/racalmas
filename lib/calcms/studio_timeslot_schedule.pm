@@ -92,7 +92,7 @@ sub update($$) {
         set    $values
         where  id=?
     };
-    db::put($dbh, $query, \@bind_values);
+    return db::put($dbh, $query, \@bind_values);
 
     $entry->{schedule_id} = $entry->{id};
     delete $entry->{id};
@@ -116,7 +116,7 @@ sub delete ($$){
     };
     my $bind_values = [ $entry->{schedule_id} ];
 
-    db::put($dbh, $query, $bind_values);
+    return db::put($dbh, $query, $bind_values);
 }
 
 #do not delete last line!

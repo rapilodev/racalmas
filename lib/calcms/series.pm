@@ -276,6 +276,7 @@ sub delete($$) {
     };
 
     db::put($dbh, $query, $bind_values);
+    return;
 }
 
 # get users directly assigned to project, studio, series (editors)
@@ -1066,7 +1067,7 @@ sub is_event_assigned_to_user ($$) {
     return 1;
 }
 
-sub get_rebuilt_episodes ($$) {
+sub get_rebuild_episodes ($$) {
     my ($config, $options) = @_;
 
     for ('project_id', 'studio_id', 'series_id') {

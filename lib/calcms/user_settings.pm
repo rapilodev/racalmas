@@ -192,7 +192,7 @@ sub update($$) {
         where  user=?
     };
 
-    db::put($dbh, $query, \@bind_values);
+    return db::put($dbh, $query, \@bind_values);
 }
 
 sub delete ($$) {
@@ -211,7 +211,7 @@ sub delete ($$) {
     };
     my $bind_values = [ $entry->{user} ];
 
-    db::put($dbh, $query, $bind_values);
+    return db::put($dbh, $query, $bind_values);
 }
 
 #do not delete last line!
