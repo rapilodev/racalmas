@@ -119,7 +119,7 @@ sub showCalendar {
     my $options  = {};
     my $events   = [];
 
-    $out .= getToolbar($config, $params, $calendar);
+    $out .= getSidebar($config, $params, $calendar);
     $out .= qq{<div id="calendarTable"> </div>};
     $out .= qq{
             </main>
@@ -131,23 +131,26 @@ sub showCalendar {
     return $out;
 }
 
-sub getToolbar {
+sub getSidebar {
     my ($config, $params, $calendar) = @_;
     my $today   = time::time_to_date();
-    my $class   = $params->{list} ? 'toolbar' : 'toolbar';
-    my $toolbar = qq{<div id="$class">};
+    my $class   = $params->{list} ? 'sidebar' : 'sidebar';
+    my $sidebar = qq{<div class="$class">};
 
-    $toolbar .= qq!
+    $sidebar .= qq!
         <div class="row">
-            <div id="previous_month"><button id="previous">&laquo;</button></div>
+            <div id="previous_month">
+                <button class="primary" id="previous">&laquo;</button></div>
             <div id="selectDate" data-toggle>
                 <input id="start_date" data-input/>
                 <div id="current_date">$calendar->{month} $calendar->{year}</div>
             </div>
-            <div id="next_month"><button id="next">&raquo;</button></div>
-            <button id="setToday">!
-      . $params->{loc}->{button_today}
-      . q!</button>
+            <div id="next_month">
+                <button id="next" class="primary">&raquo;</button>
+            </div>
+            <button id="setToday" class="primary">!
+            . $params->{loc}->{button_today}
+         . q!</button>
         </div>
     !;
 
@@ -160,7 +163,7 @@ sub getToolbar {
             $params->{loc}->{label_1_week}  => '7',
             $params->{loc}->{label_day}     => '1',
         };
-        $toolbar .= qq{
+        $sidebar .= qq{
             <select id="range" name="range" value="$params->{range}">
         };
 
@@ -172,33 +175,33 @@ sub getToolbar {
           )
         {
             my $value = $ranges->{$range} || '';
-            $toolbar .=
+            $sidebar .=
               qq{<option name="$range" value="$value">} . $range . '</option>';
         }
-        $toolbar .= q{
+        $sidebar .= q{
             </select>
         };
 
         # start of day
         my $day_start = $params->{day_start} || '';
-        $toolbar .= qq{
+        $sidebar .= qq{
             <select id="day_start" name="day_start" value="$day_start">
         };
         for my $hour (0 .. 24) {
             my $selected = '';
             $selected = 'selected="selected"' if $hour eq $day_start;
-            $toolbar .=
+            $sidebar .=
                 qq{<option value="$hour">}
               . sprintf("%02d:00", $hour)
               . '</option>';
         }
-        $toolbar .= q{
+        $sidebar .= q{
             </select>
         };
     }
 
     #search
-    $toolbar .= qq{
+    $sidebar .= qq{
         <form class="search">
             <input type="hidden" name="project_id" value="$params->{project_id}">
             <input type="hidden" name="studio_id" value="$params->{studio_id}">
@@ -206,25 +209,24 @@ sub getToolbar {
             <input type="hidden" name="list"      value="1">
             <input class="search" name="search" value="$params->{search}" placeholder="}
       .$params->{loc}->{button_search} . qq{">
-            <button type="submit" name="action" value="search">
+            <button type="submit" name="action" value="search" class="primary">
                 <sprite-icon name="search"></sprite-icon>
                 $params->{loc}->{button_search} 
               </button>
         </form>
     };
 
-    #
-    $toolbar .= qq{<button id="editSeries">}
+    $sidebar .= qq{<button id="editSeries">}
       . '<sprite-icon name="edit"></sprite-icon>'
       . $params->{loc}->{button_edit_series}
       . qq{</button>
     } if $params->{list} == 1;
 
-    $toolbar .= qq{
+    $sidebar .= qq{
         </div>
     };
 
-    return $toolbar;
+    return $sidebar;
 }
 
 sub check_params {

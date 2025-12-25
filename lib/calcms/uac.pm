@@ -784,7 +784,7 @@ Content-Type:application/json; charset=utf-8
 sub error_handler {
     my $last = $_[-1];
     #use Data::Dumper;print STDERR Dumper(\@_);
-    use Data::Dumper;print STDERR Dumper($last->trace->as_string);
+    #use Data::Dumper;print STDERR Dumper($last->trace->as_string);
     if (my $e = Exception::Class->caught) {
         warn $e->trace->as_string;
     }    
