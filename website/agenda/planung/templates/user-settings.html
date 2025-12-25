@@ -95,12 +95,12 @@
     <table>
         <tr>
             <td><TMPL_VAR .loc.label_password></td>
-            <td><input name="user_password"
+            <td><input name="user_password" type="password" minlength="8" pattern="[0-9a-zA-Z]{8,16}" autocomplete="new-password"  required
                 value="<TMPL_VAR password>"></td>
         </tr>
         <tr>
             <td><TMPL_VAR .loc.label_password2></td>
-            <td><input name="user_password2"
+            <td><input name="user_password2" type="password"  minlength="8" pattern="[0-9a-zA-Z]{8,16}" required
                 value="<TMPL_VAR password2>"></td>
         </tr>
     </table>
