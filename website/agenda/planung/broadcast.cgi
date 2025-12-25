@@ -231,7 +231,7 @@ sub show_event {
     }
 
    #$event->{rerun}=1 if ((defined $event->{rerun}) && ($event->{rerun}ne'0') && ($event->{rerun}ne''));
-
+    $event->{episode} = '' unless $event->{episode};
     my $users = series::get_users(
         $config,
         { uac::set($params, 'project_id', 'studio_id', 'series_id') }
