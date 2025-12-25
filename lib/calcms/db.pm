@@ -40,6 +40,7 @@ sub connect($;$) {
     my $dbh = DBI->connect($dsn, $username, $password, {
         RaiseError => 1,
         mysql_enable_utf8 => 1,
+	    mysql_enable_utf8mb4 => 1,
         mysql_auto_reconnect => 1,
         mysql_use_result=> 1
     }) or die "could not connect to database: $DBI::errstr";
