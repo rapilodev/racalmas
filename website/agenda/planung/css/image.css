@@ -75,3 +75,9 @@ input.field{
     text-transform: uppercase;
     color:#999;
 }
+
+#image-editor-container {
+    position: absolute;
+    top : 0;
+    left : 0;
+}

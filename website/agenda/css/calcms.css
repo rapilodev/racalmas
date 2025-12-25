@@ -23,20 +23,15 @@ div, a, audio, img {
 }
 
 @media (prefers-color-scheme: dark) {
-    html,
-    *,
-    .entry-title a,
+	
+    *:not(.mejs-controls *):not(a):not(span),
     #calcms_calendar table thead a:hover,
     #calcms_calendar table thead a:link,
     .main-navigation a:hover,
     .main-navigation a:focus
     {
         color:white !important;
-        background:black !important;
-    }
-
-    #calcms_list h1.summary{
-        background: none !important;
+        background-color:midnightblue !important;
     }
 
     a.load-prev, a.load-next{
@@ -51,6 +46,11 @@ div, a, audio, img {
     a, svg.custom-logo path {
         color: #007acc !important;
         fill: #007acc !important;
+    }
+
+    div#calcms_list .event.running, div#calcms_list .event.running *{
+	background: #339 !important;
+	color:white !important;
     }
 }
 
@@ -90,8 +90,33 @@ div, a, audio, img {
     font-family: Roboto, serif !important;
 }
 
-#page p {
-    font-family: Open Sans, serif !important;
+.custom-logo:hover {
+    transform: scale(0.99);
+}
+
+.custom-logo {
+  transition: all 1s ease;
+}
+
+.custom-logo:hover {
+    transform: scale(0.99);
+}
+
+.custom-logo {
+  transition: all 1s ease;
+}
+
+.custom-logo:hover {
+    transform: scale(0.99);
+}
+
+#page * {
+    font-family: Roboto, serif;
+}
+
+#page p,
+#main article div.entry-content .flex-rows-1 {
+    font-family: Open Sans;
 }
 
 a {
@@ -333,7 +358,7 @@ a.load-prev, a.load-next{
 
 @media all and (max-width: 800px) {
 	body {
-		padding:6px!important;
+		padding:0!important;
 	}
     #calcms_list .events-base .event {
 		padding:1rem;
@@ -533,6 +558,10 @@ a.load-prev, a.load-next{
 }
 
 /* calcms comments */
+#calcms_comments div.comments a {
+	color:none;
+}
+
 #calcms_comments {
     clear: both;
 }
@@ -943,7 +972,7 @@ div#content header h1.entry-title {
     flex-direction: column;
 }
 
-#calcms_details .vevent img {
+#calcms_details .vevent figure {
     min-width: min(600px, 30%);
     max-width: min(600px, 50%);
     float: right;
@@ -951,14 +980,14 @@ div#content header h1.entry-title {
 }
 
 @media ( max-width : 600px) {
-    #calcms_details .vevent img {
+    #calcms_details .vevent figure {
         max-width: 100%;
         float: none;
-        padding: 0 0 1rem 0;
-        margin-left: 0rem;
-    }
-    #calcms_details figure {
         padding: 0;
         margin: 0;
     }
+}
+
+div.wp-playlist-item {
+	border-bottom:0;
 }
