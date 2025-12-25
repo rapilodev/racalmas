@@ -172,7 +172,7 @@ sub modify_results ($$$$) {
         $result->{series_name} = '' if $result->{series_name} eq '_single_';
         $result->{rerun} //= '';
         $result->{title} ||= '';
-        if ($result->{title} =~ /\#(\d+)([a-z])?\s*$/) {
+        if ($result->{title} =~ /\#([1-9]\d*)([a-z])?\s*$/) {
             $result->{episode} //= $1;
             $result->{rerun} = $2 || '' unless $result->{rerun} =~ /\d/;
             $result->{title} =~ s/\#\d+[a-z]?\s*$//;
@@ -715,7 +715,7 @@ sub get_query($$$) {
 
     # location
     my $location_cond = '';
-    if (my @locations = grep {$_ ne ''} split /,/, $params->{location} =~ s/$invalid/%/gr) {
+    if (my @locations = grep {$_ ne ''} split /,/, $params->{location}) {
         $location_cond = ' location in (' . join(',', ('?') x @locations) . ')';
         push @$bind_values, @locations;
     }
@@ -1494,7 +1494,7 @@ sub get_keys($) {
     my $series_name            = $event->{series_name}            // '';
     my $title                  = $event->{title}                  // '';
     my $user_title             = $event->{user_title}             // '';
-    my $episode                = $event->{episode}                // '';
+    my $episode                = $event->{episode}                || ''; # <- episode 0 is '' !
     my $recurrence_count_alpha = $event->{recurrence_count_alpha} // '';
 
     # "<title>: <user-title>"
