@@ -114,7 +114,7 @@ sub check_params {
 
     $checked->{action} = entry::element_of($params->{action},
         ['show-user-stats', 'show-active-users']
- );
+    );
 
     entry::set_numbers($checked, $params, [
         'project_id', 'default_studio_id', 'studio_id', 'series_id']);

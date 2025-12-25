@@ -10,7 +10,6 @@ use Data::Dumper;
 use URI::Escape();
 use DateTime();
 
-use utf8();
 use params();
 use config();
 use entry();
@@ -1904,7 +1903,6 @@ sub getSeriesEvents {
     };
     $request2->{params}->{checked}->{published} = 'all';
     $request2->{params}->{checked}->{draft} = 'all';# if $params->{list} == 1;
-
     my $events = events::get($config, $request2);
 
     series::add_series_ids_to_events($request->{config}, $events);
