@@ -204,9 +204,6 @@ sub isPasswordInvalid($) {
     unless ($password =~ /[0-9]/) {
         return "The password must contain at least one number.";
     }
-    unless ($password =~ /[^a-zA-Z0-9]/) {
-        return "The password must contain at least one special character.";
-    }
     return 0;
 }
 
