@@ -103,12 +103,16 @@ function selectEventAction(resultElemId){
     url += "?project_id="            + getProjectId();
     url += "&studio_id="             + getStudioId();
     url += "&series_id="             + getUrlParameter("series_id");
+//    url += "?project_id="            + projectId;
+//    url += "&studio_id="             + studioId;
+//    url += "&series_id="             + seriesId;
     url += "&filter_project_studio=" + filterProjectStudio;
     url += "&filter_series="         + filterSeries;
     url += "&selected_project="   + projectId;
     url += "&selected_studio="    + studioId;
     url += "&selected_series="    + seriesId;
     url += "&selected_event="     + eventId;
+    console.log("selectEventAction: " + url)
     $.get(url).done(function() {
         console.log("success: "+url)
     }).fail(function(jqXHR, textStatus) {
