@@ -11,8 +11,8 @@ sub to_unicode {
     my ($str) = @_;
     return $str if is_utf8($str);
     return decode('UTF-8', $str);
-	}
-	//$s = unidecode($s);
+    #$s = unidecode($s);
+}
 
 sub send {
     my ($mail) = @_;
