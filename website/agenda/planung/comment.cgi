@@ -42,7 +42,6 @@ sub main {
         my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
         $headerParams->{loc} = localization::get($config, { user => $session->{user}, file => 'menu.po' });
         $out = template::process($config, template::check($config, 'header.html'), $headerParams);
-        $out .= template::process($config, template::check($config, 'comment-header.html'), $headerParams);
     };
     uac::check($config, $params, $user_presets);
 
@@ -60,6 +59,7 @@ sub show {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
+    
     PermissionError->throw(error=>'Missing permission to read_comment')
         unless $permissions->{read_comment} == 1;
 
@@ -68,7 +68,6 @@ sub show {
     }
 
     my $dbh = db::connect($config);
-
     my $comment             = $params->{comment};
     my $template_parameters = {};
 
@@ -168,7 +167,6 @@ sub setRead {
     #todo change set_news_status to read_status in comment module
     $comment->{set_news_status} = $comment->{readStatus};
     $comment->{set_news_status} = 'received' unless $comment->{set_news_status} eq 'unread';
-
     return uac::json(comments::set_news_status($dbh, $config, $comment));
 }
 
