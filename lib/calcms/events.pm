@@ -1481,7 +1481,7 @@ sub get_keys($) {
     my $series_name            = $event->{series_name}            // '';
     my $title                  = $event->{title}                  // '';
     my $user_title             = $event->{user_title}             // '';
-    my $episode                = $event->{episode}                // '';
+    my $episode                = $event->{episode}                || ''; # <- episode 0 is '' !
     my $recurrence_count_alpha = $event->{recurrence_count_alpha} // '';
 
     # "<title>: <user-title>"
