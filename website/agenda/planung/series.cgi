@@ -660,6 +660,7 @@ sub list_series {
     my $newSeries = [];
     my $oldSeries = [];
     for my $serie (sort { lc $a->{series_name} cmp lc $b->{series_name} } (@$series)) {
+		next unless $serie->{series_id}; 
         if ($serie->{days_over} > 30) {
             push @$oldSeries, $serie;
         } else {
