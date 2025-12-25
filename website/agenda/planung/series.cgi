@@ -624,9 +624,9 @@ sub list_series {
 
     my $series_conditions = { uac::set($params, 'project_id', 'studio_id'), };
     my $series = series::get_event_age($config, $series_conditions);
-    for my $serie (sort {lc $a->{series_name} cmp lc $b->{series_name}}
-        (@$series))
-    {
+
+    for my $serie (@$series) {
+        next unless $serie->{series_id}; 
         if ($serie->{days_over} > 30) {
             $serie->{is_old} = 1;
         } else {
