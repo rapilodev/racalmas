@@ -182,6 +182,7 @@ sub show_event {
         $event->{has_single_events} = $series->[0]->{has_single_events};
     }
 
+    $event->{episode} = '' unless $event->{episode};
     my $users = series::get_users(
         $config,
         { uac::set($params, 'project_id', 'studio_id', 'series_id') }
