@@ -40,7 +40,6 @@ sub list_series {
                 location   => $location
             }
         );
-
         $studio_id = $studios->[0]->{id};
     }
 
