@@ -8,7 +8,7 @@ body #content {
     #calcms_nav {
         display: none;
     }
-    #toolbar {
+    a.sidebar {
         display: none;
     }
     tr, td, div.event, div.schedule, div.work, div.play {
@@ -81,14 +81,14 @@ body #content {
     border-bottom: 1px solid #fff;
 }
 
-div#toolbar,
+div.sidebar,
 a#calendar {
     border: 0;
     background: #ddd;
     border-radius: 0;
 }
 
-div#toolbar {
+adiv.sidebar {
     padding: 1rem;
     gap: 1rem;
     display: flex;
@@ -104,11 +104,12 @@ input.search {
     width: 100%;
 }
 
-div#toolbar form {
+div.sidebar form {
     display: contents;
 }
 
-div#toolbar select, div#toolbar input {
+div.sidebar select, 
+div.sidebar input {
     padding: 8px;
 }
 

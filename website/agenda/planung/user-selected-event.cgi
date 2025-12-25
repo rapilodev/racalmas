@@ -64,8 +64,7 @@ sub log_event_selection {
     $entry->{$_} = $params->{$_} for (@$select_fields, @$value_fields);
     for (@$select_fields, @$value_fields) {
         ParamError->throw(error=> "missing $_") unless defined $entry->{$_};
-}
-
+    }
     if ($preset) {
         user_selected_events::update($config, $entry);
         return uac::json({status => "updated"});

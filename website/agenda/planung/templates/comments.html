@@ -1,28 +1,16 @@
-Content-type:text/html
-
-<!doctype html>
 <TMPL_IF .allow.read_comment>
-<html>
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title><TMPL_VAR .doc.title></title>
-    <link type="text/css" href="css/comment.css" rel="stylesheet"/>
-    <script src="js/comment.js" type="text/javascript " defer></script>
-    <script src="js/page-leave-handler.js" type="text/javascript " defer></script>
-    <script defer>
-        var event_id='<TMPL_VAR event_id escape=js>';
-        var selectImageId='';
-        <TMPL_IF .event_edited>
-        document.addEventListener("DOMContentLoaded",
-                function(){
-                    if ($('div.error').length>0) return;
-                    if(comeFromCalendar()) getBack();
-                }
-            );
-        </TMPL_IF>
-    </script>
-</head>
-<body>
+<link type="text/css" href="css/comment.css" rel="stylesheet"/>
+<script src="js/comment.js" type="text/javascript" defer></script>
+<script defer>
+var event_id='<TMPL_VAR event_id escape=js>';
+var selectImageId='';
+<TMPL_IF .event_edited>
+document.addEventListener("DOMContentLoaded", function(){
+    if ($('div.error').length>0) return;
+    if(comeFromCalendar()) getBack();
+});
+</TMPL_IF>
+</script>
 
 <div id="comments"
     data-js-init="calcms.init_comments"
@@ -76,7 +64,6 @@ Content-type:text/html
         </TMPL_LOOP>
     </TMPL_IF>
 </div>
-</body>
 <TMPL_ELSE>
 missing permission to read comment
 </TMPL_IF>

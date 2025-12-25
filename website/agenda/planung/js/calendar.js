@@ -1,5 +1,4 @@
-if (window.namespace_calendar_js) throw "stop";
-window.namespace_calendar_js = true;
+if (window.namespace_calendar_js) throw "stop"; window.namespace_calendar_js = true;
 "use strict";
 
 var days = 1;
@@ -594,8 +593,8 @@ function initTodayButton() {
 function setup_filter() {
     var eventsLabel = label_events || "events";
     var scheduleLabel = label_schedule || "schedule";
-    $('#toolbar').append(getSwitch('show_events', eventsLabel, true));
-    $('#toolbar').append(getSwitch('show_schedule', scheduleLabel, true));
+    $('.sidebar').append(getSwitch('show_events', eventsLabel, true));
+    $('.sidebar').append(getSwitch('show_schedule', scheduleLabel, true));
 
     if (getUrlParameter('s') == '0') {
         unselectCheckbox('#show_schedule');
@@ -616,8 +615,8 @@ function setup_filter() {
     if (isTableView()) {
         var playoutLabel = label_playout || "playout";
         var workLabel = label_worktime || "work";
-        $('#toolbar').append(getSwitch('show_playout', playoutLabel, true));
-        $('#toolbar').append(getSwitch('show_worktime', workLabel, false));
+        $('.sidebar').append(getSwitch('show_playout', playoutLabel, true));
+        $('.sidebar').append(getSwitch('show_worktime', workLabel, false));
 
         if (getUrlParameter('p') == '0') {
             unselectCheckbox('#show_playout');
@@ -734,7 +733,7 @@ window.calcms.init_calendar = function(el) {
         setDatePicker();
         let url = update_urlParameters();
         resizeCalendarTable();
-        $('#toolbar select#range, #toolbar select#day_start').on('change', (e) => {
+        $('.sidebar select#range, .sidebar select#day_start').on('change', (e) => {
             if (e.target.id === 'day_start') {
                 updateDayStart();
             }

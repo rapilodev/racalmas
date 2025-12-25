@@ -8,7 +8,9 @@
 
 <!-- for edit series-->
 <script src="js/series.js" type="text/javascript " defer></script>
+<script src="js/select-series.js" type="text/javascript " defer></script>
 <script src="js/edit-event.js" type="text/javascript " defer></script>
+<script src="js/select-event.js" type="text/javascript " defer></script>
 <script src="js/comment.js" type="text/javascript " defer></script>
 
 <link type="text/css" href="css/image.css" rel="stylesheet" defer/>
@@ -63,6 +65,7 @@ document.addEventListener("DOMContentLoaded",
 <main id="content"
     data-js-init="calcms.init_edit_event"
     title="<TMPL_VAR .loc.title>"
+>
 
 <TMPL_IF edit_lock>
 <div class="warn head"><TMPL_VAR loc.label_edit_lock></div>
@@ -123,7 +126,9 @@ document.addEventListener("DOMContentLoaded",
 
     <!-- import rerun from old event of series or any event of any project -->
     <TMPL_IF .allow.update_event>
-    <div id="selectRerun" style="display:none;" class="select panel">
+    <div id="selectRerun" 
+        data-js-init="calcms.init_select_event"
+        style="display:none;" class="select panel">
 
         <div class="panel-header">
             <b><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time></b>,
@@ -147,8 +152,14 @@ document.addEventListener("DOMContentLoaded",
 
             <input id="rerunEventId" value="-1" style="display:none" onchange="" />
             <div id="import_rerun" class="active text" style="display:none;"></div>
-            <button onclick="hideSelectRerun('rerunEventId')"><TMPL_VAR .loc.button_cancel></button>
-            <button onclick="if ($('#rerunEventId').val()) copyFromEvent('rerunEventId')"><TMPL_VAR .loc.button_apply></button>
+            <button onclick="hideSelectRerun('rerunEventId')">
+                <sprite-icon name="cancel"></sprite-icon>
+                <TMPL_VAR .loc.button_cancel>
+            </button>
+            <button onclick="if ($('#rerunEventId').val()) copyFromEvent('rerunEventId')">
+                <sprite-icon name="rerun"></sprite-icon>
+                <TMPL_VAR .loc.button_apply>
+            </button>
         </div>
     </div>
     </TMPL_IF>

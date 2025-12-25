@@ -45,46 +45,30 @@ function updateEventSelection(resultElemId){
     var projectId = $('#selectEvent #projectId').val();
     var studioId  = $('#selectEvent #studioId').val();
     var seriesId  = $('#selectEvent #seriesId').val();
-    var eventId   = $('#selectEvent #eventId').val();
+    //var eventId   = $('#selectEvent #eventId').val();
     var from_date = $('#selectEvent #fromDate').val();
     var till_date = $('#selectEvent #tillDate').val();
 
     if (projectId == null) return;
     if (studioId  == null) return;
     if (seriesId  == null) return;
-    if (year      == null) return;
+    //if (year      == null) return;
 
-    var url="select-event.cgi";
-    url+="?project_id="   + getProjectId();
-    url+="&studio_id="    + getStudioId();
-    url+="&p_id="         + projectId;
-    url+="&s_id="         + studioId;
-    url+="&series_id="    + seriesId;
-    url+="&resultElemId=" + encodeURIComponent(resultElemId);
+    const params = new URLSearchParams({
+      project_id: getProjectId(),
+      studio_id: getStudioId(),
+      p_id: projectId,
+      s_id: studioId,
+      series_id: seriesId,
+      resultElemId: resultElemId
+    });
 
-    if (from_date !=""){
-        url+="&from_date=" +encodeURIComponent(from_date);
-    }
-
-    if (till_date != ""){
-        url+="&till_date=" +encodeURIComponent(till_date);
-    }
-
-    var elem=$('#selectEvent #selectProjectStudio');
-    if (elem.length!=0){
-        url+="&selectProjectStudio=1";
-    }
-
-    var elem=$('#selectEvent #selectSeries');
-    if (elem.length!=0){
-        url+="&selectSeries=1";
-    }
-
-    var elem=$('#selectEvent #year');
-    if (elem.length!=0){
-        url+="&selectRange=1";
-    }
-
+    if (from_date) params.set("from_date", from_date);
+    if (till_date) params.set("till_date", till_date);
+    if ($('#selectEvent #selectProjectStudio').length) params.set("selectProjectStudio", 1);
+    if ($('#selectEvent #selectSeries').length) params.set("selectSeries", 1);
+    if ($('#selectEvent #year').length) params.set("selectRange", 1);
+    const url = `select-event.cgi?${params.toString()}`;
     var elem=$("#selectEvent").parent();
     url = parseUrl(url);
     console.log(url);
@@ -92,7 +76,7 @@ function updateEventSelection(resultElemId){
 }
 
 // set selected eventId at external result selector
-function selectEventAction(resultElemId){
+async function selectEventAction(resultElemId){
     var projectId = $('#selectEvent #projectId').val();
     var studioId  = $('#selectEvent #studioId').val();
     var seriesId  = $('#selectEvent #seriesId').val();
@@ -102,21 +86,20 @@ function selectEventAction(resultElemId){
     var filterProjectStudio =  $('#selectEvent #selectProjectStudio').length!=0 ? 1:0;
     var filterSeries        =  $('#selectEvent #selectSeries').length!=0 ? 1:0;
 
-    var url = "user-selected-event.cgi";
-    url += "?project_id="            + getProjectId();
-    url += "&studio_id="             + getStudioId();
-    url += "&series_id="             + getUrlParameter("series_id");
-    url += "&filter_project_studio=" + filterProjectStudio;
-    url += "&filter_series="         + filterSeries;
-    url += "&selected_project="   + projectId;
-    url += "&selected_studio="    + studioId;
-    url += "&selected_series="    + seriesId;
-    url += "&selected_event="     + eventId;
-    $.get(url).done(function() {
-        console.log("success: "+url)
-    }).fail(function(jqXHR, textStatus) {
-        console.log("failed: "+url, "status:" + textStatus)
+    const params = new URLSearchParams({
+      project_id: getProjectId(),
+      studio_id: getStudioId(),
+      series_id: getUrlParameter("series_id"),
+      filter_project_studio: filterProjectStudio,
+      filter_series: filterSeries,
+      selected_project: projectId,
+      selected_studio: studioId,
+      selected_series: seriesId,
+      selected_event: eventId
     });
+    const url = `user-selected-event.cgi?${params.toString()}`;
+    let json = await getJson(url);
+    if (!json) return;
 
     console.log(`set: "${resultElemId}"="${eventId}"`)
     // set the result value
@@ -129,6 +112,7 @@ function selectEventAction(resultElemId){
 // init function
 window.calcms ??= {};
 window.calcms.select_event = function(el) {
+    console.log("init select_event")
     updateProjectStudioId();
     updateSeriesId();
     updateDateRange();
