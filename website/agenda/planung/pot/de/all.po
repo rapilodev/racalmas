@@ -25,3 +25,5 @@ msgstr "Sa"
 msgid "weekday_Su"
 msgstr "So"
 
+msgid "label_search"
+msgstr "Suche"
