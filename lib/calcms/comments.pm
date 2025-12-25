@@ -172,20 +172,10 @@ sub modify_results($$$) {
         $result->{widget_render_url} = $config->{locations}->{widget_render_url};
 
         if ($params->{template} =~ /\.xml/) {
-
-            #            $result->{content}    =~s/(\[\[.*?\]\])//gi;
-            #            $result->{content}    =markup::plain_to_xml($result->{content});
-            #            $result->{content}    =$result->{html_content};
-
-            $result->{content}       = markup::html_to_plain($result->{html_content});
-            $result->{short_content} = markup::html_to_plain($result->{short_content});
-            $result->{excerpt}       = "lass dich ueberraschen"
-              if (defined $result->{excerpt}) && ($result->{excerpt} eq '');
-            $result->{excerpt}     = markup::html_to_plain($result->{excerpt});
-            $result->{title}       = markup::html_to_plain($result->{title});
-            $result->{series_name} = markup::html_to_plain($result->{series_name});
-            $result->{program}     = markup::html_to_plain($result->{program});
-
+			for my $w (qw{content short_content excerpt title series_name program}) {
+	            $result->{$w} =~ s/<[^>]+>//g;
+			}
+            $result->{excerpt} = "lass dich ueberraschen" if ($result->{excerpt}//'') eq '';
             if (defined $result->{created_at}) {
                 $result->{created_at} =~ s/ /T/gi;
                 $result->{created_at} .= $time_diff;
