@@ -15,6 +15,7 @@ use Try::Tiny;
 
 use config();
 use params();
+use time();
 use log();
 use entry();
 use localization();
@@ -27,7 +28,6 @@ use audio_recordings();
 use series_events();
 use events();
 use audio();
-use time();
 
 binmode STDOUT, ":utf8";
 
@@ -254,8 +254,8 @@ sub show_audio_recording {
 
     my $now      = time();
     my $timeZone = $config->{date}->{time_zone};
-    my $start    = time::datetime_to_utc($event->{start}, $timeZone);
-    my $end      = time::datetime_to_utc($event->{end}, $timeZone);
+    my $start    = time::datetime_to_epoch($event->{start}, $timeZone);
+    my $end      = time::datetime_to_epoch($event->{end}, $timeZone);
     if ($now > $end) {
         uac::print_error("upload is expired due to the show is over");
         $params->{isOver} = 1;

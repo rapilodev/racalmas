@@ -12,6 +12,7 @@ use utf8();
 use params();
 use config();
 use entry();
+use time();
 use log();
 use template();
 use auth();

@@ -12,6 +12,7 @@ use entry();
 use db();
 use auth();
 use password_requests();
+use time();
 
 binmode STDOUT, ":utf8";
 

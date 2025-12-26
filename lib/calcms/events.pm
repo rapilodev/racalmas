@@ -14,6 +14,7 @@ use template();
 use config();
 use time();
 use db();
+use Datetime::Hash;
 
 use markup();
 use log();
@@ -99,9 +100,7 @@ sub get_next{
 sub get($$);
 sub get($$) {
     my ($config, $request) = @_;
-
     my $dbh = db::connect($config, $request);
-
     (my $query, my $bind_values) = events::get_query($dbh, $config, $request);
     my $results = db::get($dbh, $$query, $bind_values);
     $results = events::add_recordings($dbh, $config, $request, $results) if $request->{params}->{checked}->{all_recordings};
@@ -122,9 +121,7 @@ sub get($$) {
 
 sub modify_results ($$$$) {
     my ($dbh, $config, $request, $results) = @_;
-
     my $params = $request->{params}->{checked};
-
     my $projects         = {};
     my $studios          = {};
     my $running_event_id = @$results ? events::get_running_event_id($dbh) : 0;
@@ -133,32 +130,24 @@ sub modify_results ($$$$) {
         $results->[-1]->{__last__} = 1;
     }
 
-    my $time_diff = '';
-    if ($params->{template} && $params->{template} =~ /\.xml/) {
-        $time_diff = time::utc_offset($config->{date}->{time_zone});
-        $time_diff =~ s/(\d\d)(\d\d)/$1\:$2/g;
-    }
-
     my $previous_result = { start_date => '' };
     my $counter = 1;
     my $is_ics = $params->{template} =~ /\.ics$/;
     my $is_atom = $params->{template} =~ /\.atom\.xml/;
     my $is_rss_xml = $params->{template} =~ /\.rss\.xml/;
+    my $time_zone = $config->{date}->{time_zone};
+    
     for my $result (@$results) {
         if (defined $params->{template}) {
             if ($is_ics) {
                 markup::plain_to_ical($result, qw(content title user_title excerpt user_excerpt series_name));
-                $result->{created_at} =~ tr/ /T/;
-                $result->{created_at} =~ tr/\:\-//d;
-                $result->{modified_at} =~ tr/ /T/;
-                $result->{modified_at} =~ tr/\:\-//d;
+                $result->{created_at} = time::datetime_to_rfc5545($result->{created_at});
+                $result->{modified_at} = time::datetime_to_rfc5545($result->{modified_at});
 
             } elsif ($is_atom) {
                 $result->{excerpt} ||= "lass dich ueberraschen";
-                $result->{created_at} =~ tr/ /T/;
-                $result->{created_at} .= $time_diff;
-                $result->{modified_at} =~ tr/ /T/;
-                $result->{modified_at} .= $time_diff;
+                $result->{created_at} = time::datetime_to_utc_datetime($result->{created_at}, $time_zone);
+                $result->{modified_at} = time::datetime_to_utc_datetime($result->{modified_at}, $time_zone);
             } elsif ($is_rss_xml) {
                 $result->{excerpt} ||= "lass dich ueberraschen";
                 $result->{modified_at} = time::datetime_to_rfc822($result->{modified_at});
@@ -191,7 +180,8 @@ sub modify_results ($$$$) {
         # set title keys
         my $keys = get_keys($result);
         @{$result}{keys %$keys} = values %$keys;
-        $result = calc_dates($config, $result, $params, $previous_result, $time_diff);
+        $result = calc_dates($config, $result, $params);
+        add_first_last_of_day($result, $previous_result);
         get_listen_key($config, $result) unless $params->{set_no_listen_keys};
 
         $result->{event_uri} = join('-', grep { $_ ne '' } $result->{program} // '', $result->{series_name} // '', $result->{title} // '');
@@ -391,7 +381,7 @@ sub add_recurrence_dates {
         if ($rdate){
             $result->{recurrence_date} = $rdate;
             $result->{recurrence_date_name} = time::date_format($config, $rdate, $language);
-            ($result->{recurrence_time_name}) = $rdate =~ m/(\d\d\:\d\d)\:\d\d/ ;
+            ($result->{recurrence_time}) = $rdate =~ m/(\d\d\:\d\d)\:\d\d/ ;
             my $ymd = time::date_to_array($rdate);
             my $weekdayIndex = time::weekday($ymd->[0], $ymd->[1], $ymd->[2]);
             $result->{recurrence_weekday_name}       = time::getWeekdayNames($language)->[$weekdayIndex];
@@ -401,62 +391,68 @@ sub add_recurrence_dates {
 }
 
 sub calc_dates {
-    my ($config, $result, $params, $previous_result, $time_diff) = @_;
+    my ($config, $result, $params) = @_;
 
     $params ||= {};
-    $previous_result ||= {};
-    $time_diff ||= '';
-
+    my $time_zone = $config->{date}->{time_zone};
     my $language = $config->{date}->{language} || 'en';
-    $result->{utc_offset} = $time_diff;
-    $result->{time_zone} = $config->{date}->{time_zone};
-    $result->{start_datetime} = $result->{start} =~ s/ /T/r;
-    $result->{end_datetime} = $result->{end} =~ s/ /T/r;
-    $result->{dtstart} = $result->{start_datetime} =~ s/[:\-]//rg;
-    $result->{dtend} = $result->{end_datetime} =~ s/[:\-]//gr;
-    if ($result->{start_datetime} =~ /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/) {
-        @{$result}{qw(start_year start_month start_day start_hour start_minute)} = ($1, $2, $3, $4, $5);
-    }
+    my $locale = $language eq 'de' ? 'de_DE' : 'en_US';
+    $result->{time_zone} = $time_zone;
+    
+    my $start = Datetime::Hash::format_datetime_cached($result->{start}, $time_zone, $language);
+    $result->{start_datetime} = $start->{datetime};
+    $result->{start_epoch} = $start->{epoch};
+    $result->{start_datetime_utc} = $start->{rfc3339};
+    $result->{dtstart} = $start->{iso8601_basic};
+
+    my $end = Datetime::Hash::format_datetime_cached($result->{end}, $time_zone, $language);
+    $result->{end_datetime} = $end->{datetime};
+    $result->{end_epoch} = $end->{epoch};
+    $result->{end_datetime_utc} = $end->{rfc3339};
+    $result->{dtend} = $end->{iso8601_basic};
+
+    $result->{start_year} = $start->{year};
+    $result->{start_month} = $start->{month};
+    $result->{start_day} = $start->{day};
+    $result->{start_hour} = $start->{hour};
+    $result->{start_minute} = $start->{minute};
+    $result->{start_second} = $start->{second};
+    
     $result->{day} = time::datetime_to_array($result->{start})->[3] < 6
         ? time::add_days_to_date($result->{start}, -1)
         : time::datetime_to_date($result->{start})
         unless defined $result->{day};
 
-    $result->{start_date} ||= time::datetime_to_date($result->{start});
-    $result->{end_date} ||= time::datetime_to_date($result->{end});
+    $result->{start_date} = $start->{date};
+    $result->{start_date_name} = $start->{date_name};
+    $result->{start_time} = $start->{'time'};
+    $result->{start_time_name} = $start->{'time_hm'};
 
-    $result->{start_utc_epoch} = time::datetime_to_utc($result->{start_datetime}, $config->{date}->{time_zone});
-    $result->{start_datetime_utc} = time::datetime_to_utc_datetime($result->{start_datetime}, $config->{date}->{time_zone});
-    $result->{end_utc_epoch} = time::datetime_to_utc($result->{end_datetime}, $config->{date}->{time_zone});
-    $result->{end_datetime_utc} = time::datetime_to_utc_datetime($result->{end_datetime}, $config->{date}->{time_zone});
+    $result->{end_date} = $end->{date};
+    $result->{end_date_name} = $end->{date_name};
+    $result->{end_time} = $end->{'time'};
+    $result->{end_time_name} = $end->{'time_hm'};
 
-    if (defined $previous_result && defined $previous_result->{start_date}
-      && $result->{start_date} ne $previous_result->{start_date}) {
-        $result->{is_first_of_day} = 1;
-        $previous_result->{is_last_of_day} = 1;
-    }
-
-    $result->{start_date_name} = time::date_format($config, $result->{start_date}, $language);
-    $result->{end_date_name} = time::date_format($config, $result->{end_date}, $language);
-    $result->{start_time} = $result->{start_time_name} = $1 if $result->{start} =~ /(\d{2}:\d{2}):\d{2}/;
-    $result->{end_time} = $result->{end_time_name} = $1 if $result->{end} =~ /(\d{2}:\d{2}):\d{2}/;
-
-    if (defined $result->{weekday}) {
-        my $weekdayIndex = time::getWeekdayIndex($result->{weekday}) || 0;
-        $result->{weekday_name} = time::getWeekdayNames($language)->[$weekdayIndex];
-        $result->{weekday_short_name} = time::getWeekdayNamesShort($language)->[$weekdayIndex];
-    }
+    $result->{weekday} = $start->{dow};
+    $result->{weekday_name} = $start->{weekday_long};
+    $result->{weekday_short_name} = $start->{weekday_short};
 
     return $result;
+}
+
+sub add_first_last_of_day($$){
+    my ($entry, $prev) = @_;
+    if ($entry->{start_date} && ($entry->{start_date} ne ($prev->{start_date}//''))) {
+        $entry->{is_first_of_day} = 1;
+        $prev->{is_last_of_day} = 1 if defined $prev->{start_date};
+    }
 }
 
 sub get_listen_key($$){
     my ($config, $event) =@_;
 
     my $time_zone = $config->{date}->{time_zone};
-    my $start = time::datetime_to_utc($event->{start_datetime}, $time_zone);
-    my $now = time::datetime_to_utc(time::time_to_datetime(time()), $time_zone);
-    my $over_since = $now-$start;
+    my $over_since = time() - time::datetime_to_epoch($event->{start_datetime}, $time_zone);
 
     return if $over_since < 0;
     return if $over_since > 7*24*60*60;
@@ -965,20 +961,14 @@ sub render($$$$;$) {
         }
     }
 
-    my $time_diff = time::utc_offset($config->{date}->{time_zone});
-    $time_diff =~ s/(\d\d)(\d\d)/$1\:$2/g;
-    $tparams->{time_zone}  = $config->{date}->{time_zone};
-    $tparams->{utc_offset} = $time_diff;
-
+    my $timezone = $config->{date}->{time_zone};
+    $tparams->{time_zone}  = $timezone;
     if ($params->{template} =~ /\.atom\.xml/) {
-        $tparams->{modified_at} =~ s/ /T/gi;
-        $tparams->{modified_at} .= $time_diff;
+        $tparams->{modified_at} = time::datetime_to_rfc3339($tparams->{modified_at}, $timezone);
     } elsif ($params->{template} =~ /\.rss\.xml/) {
-        $tparams->{modified_at} =
-          time::datetime_to_rfc822($tparams->{modified_at});
+        $tparams->{modified_at} = time::datetime_to_rfc822($tparams->{modified_at});
     } elsif ($params->{template} =~ /\.txt/) {
-        $tparams->{modified_at_utc} =
-          time::datetime_to_utc($tparams->{modified_at}, $config->{date}->{time_zone});
+        $tparams->{modified_at_utc} = time::datetime_to_epoch($tparams->{modified_at}, $timezone);
     }
 
     my $project = $params->{default_project};
@@ -1494,7 +1484,7 @@ sub get_keys($) {
     my $series_name            = $event->{series_name}            // '';
     my $title                  = $event->{title}                  // '';
     my $user_title             = $event->{user_title}             // '';
-    my $episode                = $event->{episode}                || ''; # <- episode 0 is '' !
+    my $episode                = $event->{episode}                // '';
     my $recurrence_count_alpha = $event->{recurrence_count_alpha} // '';
 
     # "<title>: <user-title>"

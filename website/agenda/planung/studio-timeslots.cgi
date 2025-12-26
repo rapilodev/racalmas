@@ -8,6 +8,7 @@ use params();
 use config();
 use entry();
 use log();
+use time();
 use template();
 use auth();
 use uac();

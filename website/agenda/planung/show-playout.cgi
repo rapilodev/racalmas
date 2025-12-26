@@ -9,6 +9,7 @@ use ModPerl::Util ();
 
 use config;
 use log;
+use time();
 use localization;
 use auth;
 use uac;

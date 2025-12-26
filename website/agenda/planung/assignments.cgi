@@ -7,6 +7,7 @@ no warnings 'redefine';
 use URI::Escape();
 use Encode();
 
+use time();
 use params();
 use config();
 use entry();
