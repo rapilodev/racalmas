@@ -1,0 +1,183 @@
+msgid "region"
+msgstr "en"
+
+msgid "title"
+msgstr "edit events"
+
+msgid "button_edit_series"
+msgstr "edit series"
+
+msgid "button_download"
+msgstr "download"
+
+msgid "button_upload"
+msgstr "upload audio"
+
+msgid "button_create"
+msgstr "create"
+
+msgid "button_save"
+msgstr "save"
+
+msgid "button_delete"
+msgstr "delete"
+
+msgid "button_apply"
+msgstr "apply"
+
+msgid "button_unassign_event"
+msgstr "unassign from series"
+
+msgid "button_show_event"
+msgstr "show event"
+
+msgid "button_show_changes"
+msgstr "changes"
+
+msgid "button_reminder"
+msgstr "Reminder"
+
+msgid "button_assign_series"
+msgstr "move to other series"
+
+msgid "button_cancel"
+msgstr "cancel"
+
+msgid "label_series"
+msgstr "Series"
+
+msgid "button_assign"
+msgstr "Assign"
+
+msgid "label_delete"
+msgstr "delete event"
+
+msgid "label_when"
+msgstr "when"
+
+msgid "label_status"
+msgstr "status"
+
+msgid "label_title"
+msgstr "title"
+
+msgid "label_title_extension"
+msgstr "title extension"
+
+msgid "label_excerpt"
+msgstr "excerpt"
+
+msgid "label_excerpt_extension"
+msgstr "excerpt extension"
+
+msgid "label_topics"
+msgstr "current topics"
+
+msgid "label_description"
+msgstr "description"
+
+msgid "label_image"
+msgstr "image"
+
+msgid "label_podcast_url"
+msgstr "podcast URL"
+
+msgid "label_archive_url"
+msgstr "archive URL"
+
+msgid "label_start"
+msgstr "start"
+
+msgid "label_duration"
+msgstr "duration"
+
+msgid "label_end"
+msgstr "end"
+
+msgid "label_episode"
+msgstr "episode"
+
+msgid "label_live"
+msgstr "live"
+
+msgid "label_draft"
+msgstr "draft"
+
+msgid "label_published"
+msgstr "published"
+
+msgid "label_playout"
+msgstr "playout"
+
+msgid "label_archived"
+msgstr "archived"
+
+msgid "label_rerun"
+msgstr "rerun"
+
+msgid "label_no_sync"
+msgstr "no sync"
+
+msgid "label_modified_at"
+msgstr "modified at"
+
+msgid "label_modified_by"
+msgstr "by"
+
+msgid "label_content_format"
+msgstr "wiki Language"
+
+msgid "label_content_format_markdown"
+msgstr "Markdown"
+
+msgid "label_content_format_creole"
+msgstr "Creole"
+
+msgid "button_event_list"
+msgstr "show events"
+
+msgid "button_copy_existing_event"
+msgstr "copy existing event"
+
+msgid "button_rerun"
+msgstr "rerun of ..."
+
+msgid "button_rerun"
+msgstr "rerun"
+
+msgid "label_rerun_select_old"
+msgstr "old event of same series"
+
+msgid "label_rerun_select_other"
+msgstr "another event (extendend select)"
+
+msgid "label_select_event"
+msgstr "select event"
+
+msgid "button_copy_event"
+msgstr "copy"
+
+msgid "label_overwrite_event"
+msgstr "overwrite event by other event"
+
+msgid "button_delete_from_schedule"
+msgstr "delete from schedule"
+
+msgid "single_events"
+msgstr "Single Events"
+
+msgid "single_event"
+msgstr "Single Event"
+
+msgid "label_edit_lock"
+msgstr "The show cannot be edited anymore due to it is over more than two weeks ago."
+
+msgid "label_excerpt_too_long"
+msgstr "excerpt is too long. for longer text please use the field «Current Topics»"
+
+msgid "label_excerpt_extension_too_long"
+msgstr "excerpt is too long. for longer text please use the field «Current Topics»"
+
+msgid "button_copy_to_clipboard"
+msgstr "copy to clipboard"
+

@@ -1,0 +1,134 @@
+msgid "region"
+msgstr "en"
+
+msgid "button_today"
+msgstr "today"
+
+msgid "button_search"
+msgstr "search"
+
+msgid "label_pin"
+msgstr "pin"
+
+msgid "label_month"
+msgstr "month"
+
+msgid "label_4_weeks"
+msgstr "4 weeks"
+
+msgid "label_2_weeks"
+msgstr "2 weeks"
+
+msgid "label_1_week"
+msgstr "1 week"
+
+msgid "label_day"
+msgstr "day"
+
+msgid "label_events"
+msgstr "events"
+
+msgid "label_schedule"
+msgstr "schedule"
+
+msgid "label_worktime"
+msgstr "worktime"
+
+msgid "label_descriptions"
+msgstr "descriptions"
+
+msgid "label_playout"
+msgstr "playout"
+
+msgid "label_no_markup"
+msgstr "no filter"
+
+msgid "label_conflicts"
+msgstr "conflicts"
+
+msgid "label_rerun"
+msgstr "rerun"
+
+msgid "label_draft"
+msgstr "draft"
+
+msgid "label_archived"
+msgstr "archived"
+
+msgid "label_playout"
+msgstr "playout"
+
+msgid "label_published"
+msgstr "published"
+
+msgid "label_live"
+msgstr "live"
+
+msgid "label_disable_event_sync"
+msgstr "no Google Import"
+
+msgid "label_date"
+msgstr "date"
+
+msgid "label_duration"
+msgstr "duration"
+
+msgid "label_series"
+msgstr "series"
+
+msgid "label_assign_event_series"
+msgstr "assign event to series"
+
+msgid "button_assign_event_series"
+msgstr "assign"
+
+msgid "button_edit_series"
+msgstr "edit series"
+
+msgid "label_create_series"
+msgstr "create series"
+
+msgid "button_create_series"
+msgstr "create"
+
+msgid "label_no_studio_selected"
+msgstr "Please select a studio and try again"
+
+msgid "label_event_not_assigned_to_series"
+msgstr "This event is not assigned to any series"
+
+msgid "label_schedule_series"
+msgstr "schedule series"
+
+msgid "label_name"
+msgstr "name"
+
+msgid "label_title"
+msgstr "title"
+
+msgid "label_subtitle"
+msgstr "sub title"
+
+msgid "label_episode"
+msgstr "episode"
+
+msgid "button_cancel"
+msgstr "cancel"
+
+msgid "single_events"
+msgstr "Single Events"
+
+msgid "single_event"
+msgstr "Single Event"
+
+msgid "label_start"
+msgstr "start"
+
+msgid "label_end"
+msgstr "end"
+
+msgid "label_weekday"
+msgstr "wd"
+
+msgid "label_day_of_year"
+msgstr "doy"
