@@ -68,6 +68,7 @@ sub process($$$$) {
     my $out = $html_template->output();
     my $version = "?v=".substr(md5_hex(join("",(stat "js",stat "css",stat "image"))),0,8);
     $out =~ s{(src="js/.*\.js)"}{$1$version"}g;
+    $out =~ s{(href="js/.*\.js)"}{$1$version"}g;
     $out =~ s{(href="css/.*\.css)"}{$1$version"}g;
     $out =~ s{(src="image/.*\.svg)"}{$1$version"}g;
     if ((defined $_[1]) && ($_[1] eq 'print')) {
