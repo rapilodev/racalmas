@@ -416,7 +416,7 @@ sub checkLicence ($$) {
     return undef unless defined $config;
     return undef unless defined $result;
 
-    return if $result->{licence} =~ /\S/;
+    return if ($result->{licence}//'') =~ /\S/;
     if ((defined $result->{public}) && ($result->{public} eq '1')) {
         depublish($config, $result->{filename});
         $result->{public} = 0;
