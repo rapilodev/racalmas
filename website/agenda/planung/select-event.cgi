@@ -69,15 +69,14 @@ sub show_events {
         return;
     }
 
-    my $entry = {
+    my $preset = user_selected_events::get($config, {
         user                    => $request->{user},
         project_id              => $params->{p_id},
         studio_id               => $params->{s_id},
         series_id               => $params->{series_id},
         filter_project_studio   => $params->{selectProjectStudio},
         filter_series           => $params->{selectSeries},
-    };
-    my $preset = user_selected_events::get($config, $entry);
+    });
 
     # get user projects
     my $user_projects = uac::get_projects_by_user($config, { user => $request->{user} });
@@ -142,7 +141,7 @@ sub show_events {
 
     # filter by year
     my $years = [];
-    for my $year (2005 .. 2025) {
+    for my $year (2000 .. (localtime)[5] + 1900) {
         my $date = { year => $year };
         if ($preset){
             $date->{selected} = 1 if $preset_year eq $year;
