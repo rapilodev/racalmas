@@ -171,7 +171,7 @@
 
             <div class="panel-header">
 
-                <b><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time_name></b>,
+                <b><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time></b>,
                 <TMPL_VAR .loc.label_overwrite_event> <TMPL_VAR .loc.label_rerun>
             </div>
 
@@ -329,7 +329,7 @@
                 <TMPL_UNLESS new_event></TMPL_UNLESS>
                 <tr>
                     <td class="label"><TMPL_VAR .loc.label_when></td>
-                    <td><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time_name> - <TMPL_VAR end_time>
+                    <td><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name>, <TMPL_VAR start_time> - <TMPL_VAR end_time>
                         <input type="hidden" id="start_date" name="start_date" value="<TMPL_VAR start>" />
                         <TMPL_LOOP durations><TMPL_IF selected><input type="hidden" name="duration" value="<TMPL_VAR value>" ></TMPL_IF></TMPL_LOOP>
                     </td>

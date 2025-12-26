@@ -20,7 +20,6 @@ my $r = shift;
 (my $cgi, my $params, my $error) = params::get($r);
 
 my $config = config::get('../config/config.cgi');
-
 $params = check_params($config, $params);
 
 print "Content-type:text/html\n\n";

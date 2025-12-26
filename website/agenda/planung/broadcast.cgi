@@ -698,7 +698,7 @@ sub download {
           . qq{<a href="$url" style="color:#39a1f4;" download="$event->{series_name}#$event->{episode}.mp3">}
           . q{Download: }
           . $event->{start_date_name} . ", "
-          . $event->{start_time_name} . " - "
+          . $event->{start_time} . " - "
           . $event->{full_title}
           . qq{</a>\n}
           . qq{<pre>$url</pre>\n}
