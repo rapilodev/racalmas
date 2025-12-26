@@ -379,7 +379,7 @@ sub add_recurrence_dates {
         if ($rdate){
             $result->{recurrence_date} = $rdate;
             $result->{recurrence_date_name} = time::date_format($config, $rdate, $language);
-            ($result->{recurrence_time_name}) = $rdate =~ m/(\d\d\:\d\d)\:\d\d/ ;
+            ($result->{recurrence_time}) = $rdate =~ m/(\d\d\:\d\d)\:\d\d/ ;
             my $ymd = time::date_to_array($rdate);
             my $weekdayIndex = time::weekday($ymd->[0], $ymd->[1], $ymd->[2]);
             $result->{recurrence_weekday_name}       = time::getWeekdayNames($language)->[$weekdayIndex];
@@ -422,20 +422,18 @@ sub calc_dates {
         unless defined $result->{day};
 
     $result->{start_date} = $start->{date};
-    $result->{start_time} = $start->{'time'};
     $result->{start_date_name} = $start->{date_name};
+    $result->{start_time} = $start->{'time'};
+    $result->{start_time_name} = $start->{'time_hm'};
 
     $result->{end_date} = $end->{date};
-    $result->{end_time} = $result->{end_time} = $end->{'time'};
     $result->{end_date_name} = $end->{date_name};
+    $result->{end_time} = $end->{'time'};
+    $result->{end_time_name} = $end->{'time_hm'};
 
     $result->{weekday} = $start->{dow};
-    $result->{weekday_name} = $start->{dow};
-    $result->{weekday_short_name} = $start->{dow};
     $result->{weekday_name} = $start->{weekday_long};
     $result->{weekday_short_name} = $start->{weekday_short};
-    
-    #print STDERR Dumper($result);
     return $result;
 }
 
@@ -1481,7 +1479,7 @@ sub get_keys($) {
     my $series_name            = $event->{series_name}            // '';
     my $title                  = $event->{title}                  // '';
     my $user_title             = $event->{user_title}             // '';
-    my $episode                = $event->{episode}                || ''; # <- episode 0 is '' !
+    my $episode                = $event->{episode}                // '';
     my $recurrence_count_alpha = $event->{recurrence_count_alpha} // '';
 
     # "<title>: <user-title>"

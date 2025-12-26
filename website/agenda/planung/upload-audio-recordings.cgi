@@ -70,12 +70,13 @@ sub main {
     exit unless uac::check($config, $params, $user_presets) == 1;
     print q{Content-type: text/plain; char-set:utf-8;\n\n};
 
-    uploadRecording($config, $request);
+    uploadRecording($config, $request, $session);
 }
 
 sub uploadRecording {
     my $config  = shift;
     my $request = shift;
+    my $session = shift;
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
@@ -96,7 +97,6 @@ sub uploadRecording {
         print STDERR "upload\n";
 
         events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploading' });
-
         my $fileInfo = uploadFile($config, $fh, $params->{event_id}, $session->{user}, $params->{upload});
         $params->{error} .= $fileInfo->{error} if defined $fileInfo->{error};
         $params->{path} = $fileInfo->{path};
@@ -105,7 +105,7 @@ sub uploadRecording {
         if ($params->{error} eq ''){
             events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'uploaded' });
             $params = updateDatabase($config, $params, $session->{user});
-        }else{
+        } else {
             events::set_upload_status($config, {event_id=>$params->{event_id}, upload_status=>'upload failed' });
         }
     } else {
@@ -198,8 +198,6 @@ sub updateDatabase {
 
     #connect
     $config->{access}->{write} = 1;
-    my $dbh = db::connect($config);
-
     my $entries = audio_recordings::get(
         $config,
         {
@@ -212,7 +210,7 @@ sub updateDatabase {
 
     if ((defined $entries) && (scalar @$entries > 0)) {
         print STDERR "update\n";
-        audio_recordings::update($config, $dbh, $entry);
+        audio_recordings::update($config, $entry);
         my $entry = $entries->[0];
         $params->{id} = $entry->{id};
     } else {
@@ -224,7 +222,7 @@ sub updateDatabase {
         $entry->{rmsRight}      = 0.0;
         $entry->{audioDuration} = 0.0;
         $entry->{modified_at}   = time();
-        $params->{id}           = audio_recordings::insert($config, $dbh, $entry);
+        $params->{id}           = audio_recordings::insert($config, $entry);
     }
     $config->{access}->{write} = 0;
     $params->{action_result} = 'done!';

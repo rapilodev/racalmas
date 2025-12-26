@@ -9,6 +9,7 @@ use Encode();
 use Scalar::Util qw(blessed);
 use Try::Tiny;
 
+use time();
 use params();
 use config();
 use entry();

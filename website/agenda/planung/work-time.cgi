@@ -71,12 +71,12 @@ sub save_schedule {
     for my $type ('single', 'days', 'week_of_month') {
         $found = 1 if ($entry->{period_type} eq $type);
     }
-    ParamError->throw(error=> 'no period type selected!' if $found == 0;
+    ParamError->throw(error=> 'no period type selected!') if $found == 0;
 
     $entry->{exclude} = 0 if ($entry->{exclude} ne '1');
 
-    ParamError->throw(error=> 'start date should be before end date!' if 
-        ($entry->{end} ne '') && ($entry->{end} le $entry->{start});
+    ParamError->throw(error=> 'start date should be before end date!')
+        if ($entry->{end} ne '') && ($entry->{end} le $entry->{start});
 
     #TODO: check if schedule is in studio_timeslots
 

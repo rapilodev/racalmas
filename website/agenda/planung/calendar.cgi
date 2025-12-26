@@ -23,6 +23,9 @@ use Exception::Class qw(
 use params();
 use config();
 use entry();
+use time();
+use log();
+use entry();
 use template();
 use auth();
 use uac();

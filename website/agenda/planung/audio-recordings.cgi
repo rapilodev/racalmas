@@ -14,6 +14,7 @@ use Try::Tiny;
 
 use config();
 use params();
+use time();
 use log();
 use entry();
 use localization();
@@ -26,7 +27,6 @@ use audio_recordings();
 use series_events();
 use events();
 use audio();
-use time();
 
 binmode STDOUT, ":utf8";
 

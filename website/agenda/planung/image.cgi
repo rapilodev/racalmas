@@ -12,7 +12,6 @@ use File::stat();
 use Time::localtime();
 use URI::Escape();
 
-use time();
 use images();
 use params();
 use config();
