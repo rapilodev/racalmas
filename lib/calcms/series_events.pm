@@ -499,8 +499,6 @@ sub update_series_images ($$) {
     return "missing series_id"    unless defined $options->{series_id};
     return "missing series_image" unless defined $options->{series_image};
 
-    #print "save $options->{series_image}\n";
-
     my $events = series::get_events(
         $config, uac::set($options, qw(project_id studio_id series_id))
    );
