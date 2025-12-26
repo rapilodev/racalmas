@@ -24,7 +24,6 @@ $events=[
     'end_date_name'        => q|<TMPL_VAR end_date_name>|,
     'end_date'        => q|<TMPL_VAR end_date>|,
     'end_datetime'        => q|<TMPL_VAR end_datetime>|,
-    'end_time_name'        => q|<TMPL_VAR end_time_name>|,
     'end_time'        => q|<TMPL_VAR end_time>|,
     'end'            => q|<TMPL_VAR end>|,
     'event_id'        => q|<TMPL_VAR event_id>|,
@@ -51,7 +50,6 @@ $events=[
     'start_date_name'    => q|<TMPL_VAR start_date_name>|,
     'start_date'        => q|<TMPL_VAR start_date>|,
     'start_datetime'    => q|<TMPL_VAR start_datetime>|,
-    'start_time_name'    => q|<TMPL_VAR start_time_name>|,
     'start_time'        => q|<TMPL_VAR start_time>|,
     'start_year'        => q|<TMPL_VAR start_year>|,
     'start_month'        => q|<TMPL_VAR start_month>|,
@@ -66,9 +64,8 @@ $events=[
     'weekday_short_name'    => q|<TMPL_VAR weekday_short_name>|,
     'weekday'        => q|<TMPL_VAR weekday>|,
     'time_zone'        => q|<TMPL_VAR time_zone>|,
-    'utc_offset'        => q|<TMPL_VAR utc_offset>|,
-    'start_utc_epoch'    => q|<TMPL_VAR start_utc_epoch>|,
-    'end_utc_epoch'        => q|<TMPL_VAR end_utc_epoch>|
+    'start_epoch'    => q|<TMPL_VAR start_epoch>|,
+    'end_epoch'        => q|<TMPL_VAR end_epoch>|
 }<TMPL_UNLESS __last__>,</TMPL_UNLESS>
 </TMPL_LOOP>
 ];

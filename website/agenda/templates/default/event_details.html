@@ -45,7 +45,7 @@ body { font-family: sans-serif; }
     </TMPL_IF>
     <div class="date">
         <TMPL_VAR weekday_name>, <TMPL_VAR start_date_name>,
-        <span style="font-size:1.5rem"><TMPL_VAR start_time_name></span> bis <TMPL_VAR end_time_name> Uhr
+        <span style="font-size:1.5rem"><TMPL_VAR start_time></span> bis <TMPL_VAR end_time> Uhr
     </div>
     <div class="meta">
         <span class="dtstart"><TMPL_VAR start></span>
@@ -80,7 +80,7 @@ body { font-family: sans-serif; }
         ></audio>
     </TMPL_IF>
     <TMPL_IF recurrence_date><a class="recurrence" href="<TMPL_VAR recurrence>.html">
-        Wiederholung vom <TMPL_VAR recurrence_weekday_name>, <TMPL_VAR recurrence_date_name>, <TMPL_VAR recurrence_time_name> Uhr</a>
+        Wiederholung vom <TMPL_VAR recurrence_weekday_name>, <TMPL_VAR recurrence_date_name>, <TMPL_VAR recurrence_time> Uhr</a>
     </TMPL_IF>
 </div>
 <div id="calcms_comments">

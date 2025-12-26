@@ -12,7 +12,7 @@ Access-Control-Allow-Origin: *
         "end"   : "<TMPL_VAR end_date>T<TMPL_VAR end_time>:00",
         "series_name" : "<TMPL_VAR series_name escape=IJSON>",
         "image_url" : "<TMPL_VAR series_image_url escape=IJSON>",
-        <TMPL_IF recurrence_date>"recurrence" : "<TMPL_VAR recurrence_weekday_name>, <TMPL_VAR recurrence_date_name>, <TMPL_VAR recurrence_time_name>",</TMPL_IF>
+        <TMPL_IF recurrence_date>"recurrence" : "<TMPL_VAR recurrence_weekday_name>, <TMPL_VAR recurrence_date_name>, <TMPL_VAR recurrence_time>",</TMPL_IF>
         "topic" : "<TMPL_VAR topic escape=IJSON>",
         "content" : "<TMPL_VAR content escape=IJSON>"
     }
