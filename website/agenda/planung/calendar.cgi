@@ -798,7 +798,7 @@ sub showEventList {
             $event->{start}              ||= '';
             $event->{weekday_short_name} ||= '';
             $event->{start_date_name}    ||= '';
-            $event->{start_time}    ||= '';
+            $event->{start_time_name}    ||= '';
             $event->{end_time}           ||= '';
             $event->{series_name}        ||= '';
             $event->{title}              ||= '';
@@ -860,7 +860,7 @@ sub showEventList {
               . q!</td>!
               . qq!<td class="weekday">$event->{weekday_short_name},</td>!
               . qq!<td class="start_date" data-text="$event->{start_datetime}">$event->{start_date_name}</td>!
-              . qq!<td class="start_time">$event->{start_time} - $event->{end_time}</td>!
+              . qq!<td class="start_time">$event->{start_time_name} - $event->{end_time}</td>!
               . qq!<td class="series_name">$event->{series_name}</td>!
               . qq!<td class="series_id">$event->{series_id}</td>!
               . qq!<td class="title">$title</td>!

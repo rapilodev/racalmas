@@ -983,10 +983,6 @@ div#content header h1.entry-title {
     #calcms_details .vevent figure {
         max-width: 100%;
         float: none;
-        padding: 0 0 1rem 0;
-        margin-left: 0rem;
-    }
-    #calcms_details figure {
         padding: 0;
         margin: 0;
     }
