@@ -22,7 +22,7 @@ Access-Control-Allow-Origin: *
 
 <TMPL_LOOP events>
     <item>
-        <title><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name> - <TMPL_VAR start_time> - <TMPL_VAR end_time> | <TMPL_VAR full_title></title>
+        <title><TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name> - <TMPL_VAR start_time_name> - <TMPL_VAR end_time_name> | <TMPL_VAR full_title></title>
         <description><TMPL_VAR excerpt></description>
         <link>http:<TMPL_VAR base_domain><TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url></link>
         <guid>http:<TMPL_VAR base_domain><TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html</guid>

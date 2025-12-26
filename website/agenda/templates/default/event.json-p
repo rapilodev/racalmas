@@ -44,7 +44,7 @@ Feed = {
     } ],
     "title" : {
       "type" : "text",
-      "$t" : "<TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name> - <TMPL_VAR start_time> - <TMPL_VAR end_time> | <TMPL_VAR full_title>"
+      "$t" : "<TMPL_VAR weekday_short_name>, <TMPL_VAR start_date_name> - <TMPL_VAR start_time_name> - <TMPL_VAR end_time_name> | <TMPL_VAR full_title>"
     },
     "link" : [ {
       "rel" : "alternate",
