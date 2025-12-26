@@ -278,6 +278,7 @@ sub delete($$) {
     };
 
     db::put($dbh, $query, $bind_values);
+    return;
 }
 
 # get users directly assigned to project, studio, series (editors)
