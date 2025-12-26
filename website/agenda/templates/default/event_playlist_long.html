@@ -110,7 +110,7 @@ Access-Control-Allow-Origin: *
     <a href="<TMPL_VAR widget_render_url>/<TMPL_VAR .controllers.event>/<TMPL_VAR event_id>.html#<TMPL_VAR event_uri escape=url>" >
         <div id="event_playlist_<TMPL_VAR event_id>" class="eventContainer event">
             <div class="top" title="<TMPL_VAR full_title><TMPL_IF excerpt>. <TMPL_VAR excerpt></TMPL_IF>">
-                    <TMPL_VAR weekday_short_name> <TMPL_VAR start_time>
+                    <TMPL_VAR weekday_short_name> <TMPL_VAR start_time_name>
             </div>
             <div class="bottom">
                 <TMPL_IF series_name><TMPL_VAR series_name><TMPL_ELSE><TMPL_VAR title></TMPL_IF>
