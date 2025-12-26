@@ -338,3 +338,5 @@ msgstr "clear"
 msgid "label_excerpt_too_long"
 msgstr "excerpt is too long. for longer text please use the field «Current Topics»"
 
+msgid "no_action_needed"
+msgstr "No need for rebuilding episode numbers"

@@ -1,3 +1,6 @@
+msgid "locale"
+msgstr "de-DE"
+
 msgid "button_back"
 msgstr "zurück"
 
@@ -27,3 +30,15 @@ msgstr "So"
 
 msgid "label_search"
 msgstr "Suche"
+
+msgid "label_saved"
+msgstr "Änderungen gespeichert"
+
+msgid "label_error"
+msgstr "Aktion fehlgeschlagen"
+
+msgid "label_login_required"
+msgstr "Bitte neu anmelden"
+
+msgid "label_ask_for_commit"
+msgstr "Sind sie sicher?"
