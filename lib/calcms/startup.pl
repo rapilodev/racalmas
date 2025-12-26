@@ -1,4 +1,6 @@
 BEGIN {
+    #$ENV{NYTPROF}="trace=1:start=begin:file=/var/tmp/nytprof.out";
+    #use Devel::NYTProf;
     use File::Basename qw(dirname);
     use lib dirname(__FILE__);
 }
