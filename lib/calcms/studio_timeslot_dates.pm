@@ -223,7 +223,7 @@ sub get_dates {
                 start => $start_date . ' 00:00:00',
                 end   => $next_date . ' 00:00:00',
             };
-            last if $c > 1000;
+            last if $c > 10000;
             $c++;
         }
 
@@ -249,7 +249,7 @@ sub get_dates {
             start => $start_date . ' ' . $start_time,
             end   => $end_date . ' ' . $end_time,
         };
-        last if $c > 1000;
+        last if $c > 10000;
         $c++;
     }
     return $dates;
