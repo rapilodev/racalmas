@@ -160,20 +160,14 @@ sub modify_results($$$) {
             $result->{short_content} = $result->{content};
         }
         $result->{base_url}       = $config->{locations}->{base_url};
-        $result->{widget_render_url} = $config->{locations}->{widget_render_url};
 
         if ($params->{template} =~ /\.xml/) {
 			for my $w (qw{content short_content excerpt title series_name program}) {
 	            $result->{$w} =~ s/<[^>]+>//g;
 			}
             $result->{excerpt} = "lass dich ueberraschen" if ($result->{excerpt}//'') eq '';
-            if (defined $result->{created_at}) {
-                $result->{created_at} = time::datetime_to_rfc3339($result->{created_at}, $time_zone);
-            }
-
-            if (defined $result->{modified_at}) {
-                $result->{modified_at} = time::datetime_to_rfc3339($result->{modified_at}, $time_zone);
-            }
+            $result->{created_at} = time::datetime_to_rfc3339($result->{created_at}, $time_zone);
+            $result->{modified_at} = time::datetime_to_rfc3339($result->{modified_at} // $result->{created_at}, $time_zone);
         }
     }
     return $results;
@@ -181,6 +175,10 @@ sub modify_results($$$) {
 
 sub render($$$) {
     my ($config, $request, $results) = @_;
+
+    my $time_zone = $config->{date}->{time_zone};
+    my $language = $config->{date}->{language} || 'en';
+    my $locale = $language eq 'de' ? 'de_DE' : 'en_US';
 
     my $params = $request->{params}->{checked};
     my %template_parameters = %$params;
@@ -193,7 +191,7 @@ sub render($$$) {
 
     $template_parameters->{event_id}    = $params->{event_id};
     $template_parameters->{event_start} = $params->{event_start};
-    $template_parameters->{controllers} = $config->{controllers};
+    $template_parameters->{modified_at} = time::datetime_to_rfc3339(time::time_to_datetime(), $time_zone);
     return template::process($config, $params->{template}, $template_parameters);
 }
 
