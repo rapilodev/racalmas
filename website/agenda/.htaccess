@@ -100,7 +100,7 @@ RewriteRule ^ical/(.*)$                                                 events.c
 RewriteRule ^comments/latest/(.*)$                 comments.cgi?template=comments_newest.html&limit=20&show_max=3&type=list&$1 [L]
 RewriteRule ^comments/feed/(.*)$                   comments.cgi?template=comments.xml&limit=20&$1 [L]
 RewriteRule ^comments/add/(.*)$                    add_comment.cgi?$1 [L]
-RewriteRule ^comments/(\d+)/(\d{4}-\d{2}-\d{2}[T\+]\d{2}\:\d{2})(\:\d{2})?/(.*)$ comments.cgi?template=comments.html&event_id=$1&event_start=$2&sort_order=asc&$4 [L]
+RewriteRule ^comments/(\d+)/(\d{4}-\d{2}-\d{2}[T\ ]\d{2}\:\d{2})(\:\d{2})?/(.*)$ comments.cgi?template=comments.html&event_id=$1&event_start=$2&sort_order=asc&$4 [L]
 
 # special
 RewriteRule ^dashboard/event/(\d+)/[^&]*(&.*)?$    events.cgi?template=event_dashboard_details.html&event_id=$1&$2 [L]
