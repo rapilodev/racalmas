@@ -68,8 +68,8 @@ function updateEventSelection(resultElemId){
     if ($('#selectEvent #selectProjectStudio').length) params.set("selectProjectStudio", 1);
     if ($('#selectEvent #selectSeries').length) params.set("selectSeries", 1);
     if ($('#selectEvent #year').length) params.set("selectRange", 1);
-    const url = `select-event.cgi?${params.toString()}`;
-    var elem=$("#selectEvent").parent();
+    let url = `select-event.cgi?${params.toString()}`;
+    let elem=$("#selectEvent").parent();
     url = parseUrl(url);
     console.log(url);
     $(elem).load(url);
