@@ -29,7 +29,6 @@ use studios();
 use series();
 use localization();
 
-binmode STDOUT, ":utf8";
 binmode STDOUT, ":encoding(utf8)";
 
 my $r = shift;

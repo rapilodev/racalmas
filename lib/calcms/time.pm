@@ -229,7 +229,6 @@ sub datetime_to_rfc3339($$) {
 # get full utc datetime including timezone offset
 sub datetime_to_utc_datetime($$) {
     my ($datetime, $timezone) = @_;
-    warn Dumper($datetime);
     my $dt = datetime_to_epoch($datetime, $timezone);
     return epoch_to_utc_datetime($dt);
 }
