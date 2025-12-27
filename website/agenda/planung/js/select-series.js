@@ -1,6 +1,10 @@
 if (window.namespace_select_series_js) throw "stop"; window.namespace_select_series_js = true;
 "use strict";
 
+function parseUrl(url) {
+    return url.toString();
+}
+
 function updateProjectStudioId(){
     var elem=$('#selectSeries #selectProjectStudio');
     if (elem.length==0)return;
