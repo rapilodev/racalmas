@@ -87,7 +87,7 @@ body { font-family: sans-serif; }
     <script>
         jQuery(document).ready(
             function() {
-                calcms.showCommentsByEventIdOrEventStart('<TMPL_VAR event_id escape=js>','<TMPL_VAR start_datetime escape=js>');
+                calcms.showCommentsByEventIdOrEventStart('<TMPL_VAR event_id escape=js>','<TMPL_VAR start_date escape=js>T<TMPL_VAR start_time escape=js>');
             }
         );
     </script>

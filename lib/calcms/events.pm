@@ -378,14 +378,17 @@ sub add_recurrence_dates {
         next unless defined $result->{recurrence};
         next if $result->{recurrence} == 0;
         my $rdate = $recurrence_dates->{ $result->{recurrence} };
-        if ($rdate){
-            $result->{recurrence_date} = $rdate;
-            $result->{recurrence_date_name} = time::date_format($config, $rdate, $language);
-            ($result->{recurrence_time}) = $rdate =~ m/(\d\d\:\d\d)\:\d\d/ ;
-            my $ymd = time::date_to_array($rdate);
-            my $weekdayIndex = time::weekday($ymd->[0], $ymd->[1], $ymd->[2]);
-            $result->{recurrence_weekday_name}       = time::getWeekdayNames($language)->[$weekdayIndex];
-            $result->{recurrence_weekday_short_name} = time::getWeekdayNamesShort($language)->[$weekdayIndex];
+        my $time_zone = $config->{date}->{time_zone};
+        my $locale = ($config->{date}->{language} || 'en') eq 'de' ? 'de_DE' : 'en_US';
+        $result->{time_zone} = $time_zone;
+        if ($rdate) {
+            my $dt = Datetime::Hash::format_datetime_cached($rdate, $time_zone, $locale);
+            $result->{recurrence_date} = $dt->{datetime};
+            $result->{recurrence_date_name} = $dt->{date_name};
+            $result->{recurrence_time_name} = $dt->{time_hm};
+            $result->{recurrence_weekday_name} = $dt->{weekday_long};
+            $result->{recurrence_weekday_short_name} = $dt->{weekday_short};
+            use Data::Dumper;warn Dumper($dt);
         }
     }
 }
@@ -395,17 +398,16 @@ sub calc_dates {
 
     $params ||= {};
     my $time_zone = $config->{date}->{time_zone};
-    my $language = $config->{date}->{language} || 'en';
-    my $locale = $language eq 'de' ? 'de_DE' : 'en_US';
+    my $locale = ($config->{date}->{language} || 'en') eq 'de' ? 'de_DE' : 'en_US';
     $result->{time_zone} = $time_zone;
     
-    my $start = Datetime::Hash::format_datetime_cached($result->{start}, $time_zone, $language);
+    my $start = Datetime::Hash::format_datetime_cached($result->{start}, $time_zone, $locale);
     $result->{start_datetime} = $start->{datetime};
     $result->{start_epoch} = $start->{epoch};
     $result->{start_datetime_utc} = $start->{rfc3339};
     $result->{dtstart} = $start->{iso8601_basic};
 
-    my $end = Datetime::Hash::format_datetime_cached($result->{end}, $time_zone, $language);
+    my $end = Datetime::Hash::format_datetime_cached($result->{end}, $time_zone, $locale);
     $result->{end_datetime} = $end->{datetime};
     $result->{end_epoch} = $end->{epoch};
     $result->{end_datetime_utc} = $end->{rfc3339};
