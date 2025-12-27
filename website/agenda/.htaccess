@@ -3,6 +3,9 @@ Options -Multiviews
 #^ Multiviews destroys URL rewriting!
 RewriteEngine on
 
+# stop rewrite on CGI
+RewriteRule \.cgi$ - [END]
+
 RewriteBase /agenda
 RewriteCond  %{REQUEST_FILENAME} -f
 RewriteRule (.*) $1 [L]
@@ -24,9 +27,8 @@ RewriteRule ^suche/(.*?)/(.*?)/kommende/    search/$1/$2/upcoming/
 RewriteRule ^suche/(.*?)/(.*?)/vergangene/  search/$1/$2/gone/
 RewriteRule ^suche/                         search/
 RewriteRule ^neueste_kommentare             comments/latest/
-RewriteRule ^feed_kommentare                comments/feed/
 RewriteRule ^kommentar_neu                  comments/add/
-RewriteRule  kommentare                     comments
+RewriteRule ^kommentare                     comments/
 RewriteRule ^dashboard/sendung              dashboard/event/
 RewriteRule ^running_event_id               event/running/id/
 RewriteRule ^running_event                  event/running/
