@@ -30,10 +30,9 @@ sub main {
     $params = $request->{params}->{checked};
     $params = uac::set_template_permissions($request->{permissions}, $params);
     $params->{loc} = localization::get($config, { user => $session->{user}, file => 'select-event' });
-
     uac::check($config, $params, $user_presets);
     return show_events($config, $request);
-    }
+}
 
 #TODO: filter by published, draft
 sub show_events {
@@ -41,19 +40,16 @@ sub show_events {
 
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
-    unless ($permissions->{read_event} == 1) {
-        PermissionError->throw(error=>'Missing permission to read_event');
-    }
+    PermissionError->throw(error=>'Missing permission to read_event') unless $permissions->{read_event} == 1;
 
-    my $entry = {
+    my $preset = user_selected_events::get($config, {
         user                    => $request->{user},
         project_id              => $params->{p_id},
         studio_id               => $params->{s_id},
         series_id               => $params->{series_id},
         filter_project_studio   => $params->{selectProjectStudio},
         filter_series           => $params->{selectSeries},
-    };
-    my $preset = user_selected_events::get($config, $entry);
+    });
 
     # get user projects
     my $user_projects = uac::get_projects_by_user($config, { user => $request->{user} });
@@ -118,7 +114,7 @@ sub show_events {
 
     # filter by year
     my $years = [];
-    for my $year (2005 .. 2025) {
+    for my $year (2000 .. (localtime)[5] + 1900) {
         my $date = { year => $year };
         if ($preset){
             $date->{selected} = 1 if $preset_year eq $year;
@@ -164,8 +160,8 @@ sub check_params {
     }
 
     # set defaults for project and studio id if not given
-    $checked->{s_id} = $params->{studio_id}  || '-1' unless defined $params->{s_id};
-    $checked->{p_id} = $params->{project_id} || '-1' unless defined $params->{p_id};
+    $checked->{s_id} = $params->{studio_id}  // '-1' unless defined $params->{s_id};
+    $checked->{p_id} = $params->{project_id} // '-1' unless defined $params->{p_id};
 
     if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
