@@ -159,7 +159,7 @@ sub modify_results ($$$$) {
         $result->{series_name} = '' if $result->{series_name} eq '_single_';
         $result->{rerun} //= '';
         $result->{title} ||= '';
-        if ($result->{title} =~ /\#(\d+)([a-z])?\s*$/) {
+        if ($result->{title} =~ /\#([1-9]\d*)([a-z])?\s*$/) {
             $result->{episode} //= $1;
             $result->{rerun} = $2 || '' unless $result->{rerun} =~ /\d/;
             $result->{title} =~ s/\#\d+[a-z]?\s*$//;
@@ -396,10 +396,8 @@ sub calc_dates {
     my $language = $config->{date}->{language} || 'en';
     my $locale = $language eq 'de' ? 'de_DE' : 'en_US';
     $result->{time_zone} = $time_zone;
-    #warn $locale;
 
     my $start = Datetime::Hash::format_datetime_cached($result->{start}, $time_zone, $language);
-    #warn Dumper($start);
     $result->{start_datetime} = $start->{datetime};
     $result->{start_epoch} = $start->{epoch};
     $result->{start_datetime_utc} = $start->{rfc3339};
@@ -441,53 +439,6 @@ sub calc_dates {
     return $result;
 }
 
-sub calc_dates_old {
-    my ($config, $result, $params) = @_;
-
-    $params ||= {};
-    my $language = $config->{date}->{language} || 'en';
-    my $locale = $language eq 'de' ? 'de_DE' : 'en_US';
-    my $time_zone = $config->{date}->{time_zone};
-    $result->{time_zone} = $time_zone;
-    
-    $result->{start_datetime} = $result->{start} =~ tr/ /T/r;
-    $result->{start_epoch} = time::datetime_to_epoch($result->{start_datetime}, $time_zone);
-    $result->{start_datetime_utc} = time::epoch_to_utc_datetime($result->{start_epoch});
-
-    $result->{end_datetime} = $result->{end} =~ tr/ /T/r;
-    $result->{end_epoch} = time::datetime_to_epoch($result->{end_datetime}, $time_zone);
-    $result->{end_datetime_utc} = time::epoch_to_utc_datetime($result->{end_epoch});
-    #warn Dumper($result);
-
-    $result->{dtstart} = $result->{start_datetime} =~ tr/:-//rd;
-    $result->{dtend} = $result->{end_datetime} =~ tr/:-//rd;
-
-    if ($result->{start_datetime} =~ /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/) {
-        @{$result}{qw(start_year start_month start_day start_hour start_minute)} = ($1, $2, $3, $4, $5);
-    }
-    $result->{day} = time::datetime_to_array($result->{start})->[3] < 6
-        ? time::add_days_to_date($result->{start}, -1)
-        : time::datetime_to_date($result->{start})
-        unless defined $result->{day};
-
-    $result->{start_date} ||= time::datetime_to_date($result->{start});
-    $result->{start_time} = $1 if $result->{start} =~ /(\d{2}:\d{2}):\d{2}/;
-
-    $result->{end_date} ||= time::datetime_to_date($result->{end});
-    $result->{end_time} = $result->{end_time} = $1 if $result->{end} =~ /(\d{2}:\d{2}):\d{2}/;
-
-    #my $language = $config->{date}->{language} || 'en';
-    $result->{start_date_name} = time::date_format($config, $result->{start_date}, $language);
-    $result->{end_date_name} = time::date_format($config, $result->{end_date}, $language);
-    if (defined $result->{weekday}) {
-        my $weekdayIndex = time::getWeekdayIndex($result->{weekday}) || 0;
-        $result->{weekday_name} = time::getWeekdayNames($language)->[$weekdayIndex];
-        $result->{weekday_short_name} = time::getWeekdayNamesShort($language)->[$weekdayIndex];
-    }
-    #print STDERR Dumper($result);
-    return $result;
-}
-
 sub add_first_last_of_day($$){
     my ($entry, $prev) = @_;
     if ($entry->{start_date} && ($entry->{start_date} ne ($prev->{start_date}//''))) {
@@ -500,7 +451,6 @@ sub get_listen_key($$){
     my ($config, $event) =@_;
 
     my $time_zone = $config->{date}->{time_zone};
-    #warn Dumper($event);
     my $over_since = time() - time::datetime_to_epoch($event->{start_datetime}, $time_zone);
 
     return if $over_since < 0;
@@ -760,7 +710,7 @@ sub get_query($$$) {
 
     # location
     my $location_cond = '';
-    if (my @locations = grep {$_ ne ''} split /,/, $params->{location} =~ s/$invalid/%/gr) {
+    if (my @locations = grep {$_ ne ''} split /,/, $params->{location}) {
         $location_cond = ' location in (' . join(',', ('?') x @locations) . ')';
         push @$bind_values, @locations;
     }
@@ -1012,7 +962,6 @@ sub render($$$;$) {
 
     my $timezone = $config->{date}->{time_zone};
     $tparams->{time_zone}  = $timezone;
-    #warn Dumper($tparams->{modified_at});
     if ($params->{template} =~ /\.atom\.xml/) {
         $tparams->{modified_at} = time::datetime_to_rfc3339($tparams->{modified_at}, $timezone);
     } elsif ($params->{template} =~ /\.rss\.xml/) {
