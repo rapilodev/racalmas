@@ -88,6 +88,7 @@ apt-get install <deb-package>
     libdate-manip-perl
     libdbi-perl
     libdbd-mysql-perl
+    libemail-mime-perl
     libemail-sender-perl
     libencode-perl
     libjson-perl
