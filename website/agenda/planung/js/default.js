@@ -33,7 +33,51 @@ if (!customElements.get('sprite-icon')) {
         }
     }
     customElements.define('sprite-icon', SpriteIcon);
+    // use it as <sprite-icon name="save">…</sprite-icon>
 }
+
+if (!customElements.get('link-button')) {
+    class LinkButton extends HTMLButtonElement {
+      connectedCallback() {
+        this.style.cursor = 'pointer';
+        if (!this.getAttribute('role')) this.setAttribute('role', 'link');
+        const handleNavigation = (event) => {
+          const url = this.getAttribute('data-href');
+          if (!url) return;
+          const isMiddleClick = event.button === 1;
+          const isPrimaryWithModifiers = event.button === 0 && (event.ctrlKey || event.metaKey || event.shiftKey);
+    
+          if (isMiddleClick || isPrimaryWithModifiers) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+            return;
+          }
+          if (event.button === 0) {
+            event.preventDefault();
+            window.location.href = url;
+          }
+        };
+        this.addEventListener('click', handleNavigation);
+        this.addEventListener('auxclick', handleNavigation);
+        this.addEventListener('mousedown', (e) => {
+          if (e.button === 1) e.preventDefault();
+        });
+      }
+    }
+    customElements.define('link-button', LinkButton, { extends: 'button' });
+    // use it as <button is="button-link" data-href="https://google.com">…</button>
+}
+
+function formatDates() {
+    document.querySelectorAll('.fmt-datetime').forEach(el => {
+        el.innerHTML = DTF.datetime(el.innerHTML);
+    });
+    document.querySelectorAll('.fmt-date').forEach(el => {
+        el.innerHTML = DTF.date(el.innerHTML);
+    });
+    document.querySelectorAll('.fmt-time').forEach(el => {
+        el.innerHTML = DTF.time(el.innerHTML);
+    });
+};
 
 function getController() {
     var url = window.location.href;
@@ -191,6 +235,7 @@ function loadCss(url) {
     document.head.appendChild(link);
 }
 
+/*
 async function updateContainer(id, url, callback) {
     console.log(url);
     if (!id) throw Error(`id is null`);
@@ -216,6 +261,40 @@ async function updateContainer(id, url, callback) {
     }
     return target;
 }
+*/
+
+// should replace updateContainer
+async function loadHtmlFragment ({url, selector = null, target = null } = {}) { 
+    try { 
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+        }
+        const rawHtml = await response.text();
+        let content = rawHtml;
+        if (selector) {
+            const temp = document.createElement('template');
+            temp.innerHTML = rawHtml.trim();
+            const element = temp.content.querySelector(selector);
+            if (element) {
+                content = element.outerHTML; 
+            } else {
+                console.warn(`Selector "${selector}" not found in response. Returning full response.`);
+                content = rawHtml;
+            }
+        }
+        if (target) {
+            const targetElem = document.querySelector(target);
+            if (targetElem) {
+                targetElem.innerHTML = content;
+            }
+        }
+        return content;
+    } catch (error) {
+        console.error('Failed to load HTML fragment:', error);
+        throw error;
+    }
+};
 
 function loadUrl(uri) {
     if (uri.startsWith("/")) {
@@ -566,6 +645,7 @@ function setupMenu(update) {
             $('#calcms_nav #bars').hide();
             menu.removeClass('mobile');
         }
+        menu.css("opacity","1.0");
     }
     oldWidth = width;
 }
@@ -660,7 +740,7 @@ function copyToClipboard(text) {
     document.execCommand("copy");
 }
 
-function setTabs(id, callback) {
+function setTabs(id) {
     var key = id + ' ul li';
     var i = 0;
 
@@ -699,7 +779,6 @@ function setTabs(id, callback) {
                 elem.removeClass("active");
             }
         });
-        if (callback) callback();
         return false;
     });
     $(id + ' ul').addClass("tabContainer");
@@ -804,20 +883,40 @@ function isChecked(selector) {
     return $(selector).prop('checked');
 }
 
-function getGlobalTitle() {
-    return $('#breadcrumb').text() || $('.panel-header').first().text() || $('h2').first().text()
-    // breadcrumb is set externally
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+function adjustGrowYElements() {
+    document.querySelectorAll('.grow-y').forEach(el => {
+        const s = window.getComputedStyle(el);
+        const b = parseFloat(s.marginBottom) || 0;
+        const h = window.innerHeight - el.getBoundingClientRect().top - b;
+        Object.assign(el.style, {
+            maxHeight: Math.floor(h) + 'px',
+            overflowY: 'auto',
+            boxSizing: 'border-box'
+        });
+        
+        if (el.tagName === 'TBODY') {
+            el.style.display = 'block';
+            el.querySelectorAll('tr').forEach(r => {
+                Object.assign(r.style, { display: 'table', width: '100%', tableLayout: 'fixed' });
+            });
+        }
+    });
 }
 
 async function initializeComponents(container) {
+    $('body').css("visibility", "hidden");
     setupMenu();
+    $(window).resize(() => debounce(setupMenu, 500));
     checkSession();
     setMissingUrlParameters();
-
-    $(window).resize(function() {
-        //if(setupMenuHeight) setupMenuHeight();
-        if (setupMenu) setupMenu();
-    });
 
     /*
 //    if (getController() == 'calendar') {
@@ -834,11 +933,13 @@ async function initializeComponents(container) {
     setInputAutoWidth();
     setTextareaAutoHeight();
     $('.scrollable').focus();
+    formatDates();
 
     // rotate on click (for up/down lists)
     $(document).on('click', '.toggle-rotate', function() {
         $(this).toggleClass('rotated');
     });
+    
     
     // Wir suchen alle Elemente mit data-js-init, die NOCH NICHT initialisiert wurden
     const scope = container ? $(container) : $(document);
@@ -851,8 +952,11 @@ async function initializeComponents(container) {
         console.log("find "+funcName)
 
         if (el.getAttribute("data-get-back")) getBack();
-        set_breadcrumb(el.getAttribute("data-title"));
-        document.title = getGlobalTitle();
+        let title = el.getAttribute("data-title");
+        if (title) {
+            set_breadcrumb(title);
+            document.title = title;
+        }
         
         if (typeof initFunc === 'function') {
             try {
@@ -865,9 +969,20 @@ async function initializeComponents(container) {
                 console.error(`Fehler bei der Initialisierung von "${funcName}" auf Element:`, el, error);
             }
         } else {
-            console.warn(`Warnung: Initialisierungs-Funktion "${funcName}" wurde nicht gefunden.`);
+            console.log(`Warnung: Initialisierungs-Funktion "${funcName}" wurde nicht gefunden.`);
         }
     }
+
+    const observer = new ResizeObserver(() => adjustGrowYElements());
+    document.querySelectorAll('.grow-y').forEach(el => {
+        if (el.parentElement) observer.observe(el.parentElement);
+        observer.observe(el);
+    });    
+    adjustGrowYElements();
+    $(window).resize(() => debounce(adjustGrowYElements, 500));
+    setTabs('#tabs');
+    $('body').css("visibility", "visible");
+
 }
 
 document.addEventListener("DOMContentLoaded",async function() {

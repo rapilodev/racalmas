@@ -36,7 +36,8 @@ div#search input {
 #content div.series a {
     height: 150px;
     width: 150px;
-    color: var(--button-bg);
+    color:#fff;
+    background: var(--button-bg);
     cursor: pointer;
     text-decoration: none;
     padding: 0.5rem;

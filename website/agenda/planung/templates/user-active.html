@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="css/user-stats.css" type="text/css" />
 <script src="js/user-stats.js" type="text/javascript" defer></script>
 <main id="content"
-    data-js-init="calcms.user_active"
+    data-js-init="calcms.init_user_active"
     title="<TMPL_VAR .loc.title>"
     data-region="<TMPL_VAR loc.region escape=js>"
 >
@@ -15,7 +15,7 @@
     </button>
 </div>
 
-<div class="panel">
+<div class="panel scrollable">
     <table id="user_stats_table">
         <thead>
             <tr>

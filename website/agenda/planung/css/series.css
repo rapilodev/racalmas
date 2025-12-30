@@ -38,7 +38,6 @@ body #content {
 /* Schedule display container */
 #content div.show_schedule {
     overflow: auto;
-    height: 20rem;
     clear: both;
 }
 

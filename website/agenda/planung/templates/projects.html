@@ -1,3 +1,4 @@
+<link type="text/css" href="css/image.css" rel="stylesheet" defer/>
 <script src="js/image.js" type="text/javascript " defer></script>
 
 <!-- projects -->
@@ -80,10 +81,34 @@
     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
     <input type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
     <input type="hidden" name="pid" value="<TMPL_VAR pid>">
-    <div>
-        <label><TMPL_VAR .loc.label_title></label>     
-        <input name="title" value="<TMPL_VAR title>">
+
+    <TMPL_IF .allow.read_image>
+    <div class="col" style="float:right">
+        <TMPL_IF .allow.update_event_field_image>
+        <div>
+            <label><TMPL_VAR .loc.label_image></label>
+            <button type="button" class="select-image"
+                data-search="<TMPL_VAR series_name>"
+                data-filename="<TMPL_VAR image>"
+                data-target="broadcast"
+                data-project_id="<TMPL_VAR .project_id>"
+                data-studio_id="<TMPL_VAR .studio_id>"
+                data-series_id="<TMPL_VAR series_id>"
+                data-event_id="<TMPL_VAR event_id>"
+                onclick="return false"
+            >
+            <img id="imagePreview" class="cover-art" title="<TMPL_VAR image>" 
+                src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&filename=<TMPL_VAR image>&type=icon"
+            >
+            </button>
+            <input type="hidden" id="image_<TMPL_VAR event_id>" name="image" value="<TMPL_VAR image>" class="image" placeholder=" " />
+        </div>
+        <input type="hidden" name="series_image" value="<TMPL_VAR series_image>" />
+        </TMPL_IF>
     </div>
+    </TMPL_IF>
+
+<!-- 
     <div>
         <label><TMPL_VAR .loc.label_image></label>
         <button class="selectImage"
@@ -95,6 +120,12 @@
         </button>
         <input id="image_<TMPL_VAR pid>" name="image" value="<TMPL_VAR image>" class="image" placeholder="<TMPL_VAR .loc.template_image>">
     </div>
+-->
+    <div>
+        <label><TMPL_VAR .loc.label_title></label>     
+        <input name="title" value="<TMPL_VAR title>">
+    </div>
+
     <div>
         <label><TMPL_VAR .loc.label_name></label>
         <input name="name" value="<TMPL_VAR name>">
@@ -105,11 +136,11 @@
     </div>
     <div>
         <label><TMPL_VAR .loc.label_start_date></label>
-        <input class="date" name="start_date" value="<TMPL_VAR start_date>">
+        <input class="date fmt-date" name="start_date" value="<TMPL_VAR start_date>">
     </div>
     <div>
         <label><TMPL_VAR .loc.label_end_date></label>
-        <input class="date" name="end_date" value="<TMPL_VAR end_date>">
+        <input class="date fmt-date" name="end_date" value="<TMPL_VAR end_date>">
     </div>
     <div>
         <label><TMPL_VAR .loc.label_email></label>
@@ -222,11 +253,11 @@
         </div>
         <div>
             <label><TMPL_VAR .loc.label_start_date></label>
-            <input name="start_date" class="date">
+            <input name="start_date" class="date fmt-date">
         </div>
         <div>
             <label><TMPL_VAR .loc.label_end_date></label>
-            <input name="end_date" class="date">
+            <input name="end_date" class="date fmt-date">
         </div>
         <div>
             <label><TMPL_VAR .loc.label_email></label>
@@ -240,8 +271,7 @@
                 <TMPL_VAR .loc.button_cancel>
             </button>
 
-            <button class="primary" type=submit name="action" value="save"
-            >
+            <button class="primary" type=submit name="action" value="save">
                 <sprite-icon name="save"></sprite-icon>
                 <TMPL_VAR .loc.button_create>
             </button>

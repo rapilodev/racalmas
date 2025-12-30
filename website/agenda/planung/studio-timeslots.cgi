@@ -228,34 +228,14 @@ sub showDates {
 
     $params->{loc} =
       localization::get($config, {user => $params->{presets}->{user}, file => 'all,studio-timeslots.po'});
-    my $language = $params->{loc}->{region};
-
-    # translate weekday names to selected language
-    my $weekday = {
-        'Mo' => $params->{loc}->{weekday_Mo},
-        'Tu' => $params->{loc}->{weekday_Tu},
-        'We' => $params->{loc}->{weekday_We},
-        'Th' => $params->{loc}->{weekday_Th},
-        'Fr' => $params->{loc}->{weekday_Fr},
-        'Sa' => $params->{loc}->{weekday_Sa},
-        'Su' => $params->{loc}->{weekday_Su},
-    };
-
     my $studios = studios::get($config, {project_id => $project_id});
     my $studio_by_id = {map {$_->{id} => $_} @$studios};
 
     #remove seconds from dates
     for my $date (@$timeslot_dates) {
-
         #remove seconds from datetimes
         $date->{start} =~ s/(\d\d\:\d\d)\:\d\d/$1/;
         $date->{end} =~ s/(\d\d\:\d\d)\:\d\d/$1/;
-
-        # translate weekday
-        if ($language ne 'en') {
-            $date->{start_weekday} = $weekday->{$date->{start_weekday}};
-            $date->{end_weekday}   = $weekday->{$date->{end_weekday}};
-       }
         $date->{studio_name} = $studio_by_id->{$date->{studio_id}}->{name};
     }
     my $result = {

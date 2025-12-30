@@ -1,46 +1,44 @@
 <link href="css/theme.default.css" rel="stylesheet">
 <script src="js/image.js" type="text/javascript " defer></script>
-<main id="content"
+<main id="content" class="grow-y"
     data-js-init="calcms.init_show_playout"
     title="<TMPL_VAR .loc.title>"
     data-region="<TMPL_VAR loc.region escape=js>"
 >
-<div class="panel scrollable"
-    style="clear:both" class="flex scrollable"
->
 
 <table id="playout-table" class="table">
     <thead>
-        <tr>
-            <th>start</th>
-            <th>path</th>
-            <th>properties</th>
-            <th>image</th>
-        </tr>
+    <tr>
+        <th><TMPL_VAR loc.label_start ></th>
+        <th><TMPL_VAR loc.label_path ></th>
+        <th><TMPL_VAR loc.label_properties ></th>
+        <th><TMPL_VAR loc.label_image ></th>
+    </tr>
     </thead>
+
     <tbody>
-        <TMPL_LOOP events>
-        <tr class="<TMPL_VAR class>">
-            <td class="start"><TMPL_VAR start></td>
-            <td class="path"><div>
-                    <TMPL_VAR file>
-                </div></td>
-            <td class="properties"><TMPL_VAR duration
-                    escape="text"> <TMPL_VAR rms_left
-                    escape="text"> <TMPL_VAR rms_right
-                    escape="text"> <TMPL_VAR bitrate
-                    escape="text"> <TMPL_VAR bitrate_mode
-                    escape="text"> <TMPL_VAR
-                    sampling_rate escape="text"> <TMPL_VAR
-                    channels escape="text"> <TMPL_VAR
-                    stream_size> bytes </td>
-            <td class="image"><TMPL_IF rms_image>
-                <a href="/media/playout/<TMPL_VAR rms_image>"><img
-                    src="/media/playout/<TMPL_VAR rms_image>"></a></TMPL_IF></td>
-        </tr>
-        </TMPL_LOOP>
+    <TMPL_LOOP events>
+    <tr class="<TMPL_VAR class>">
+        <td class="start fmt-datetime"><TMPL_VAR start></td>
+        <td class="path"><div><TMPL_VAR file></div></td>
+        <td class="properties"><TMPL_VAR duration
+            escape="text"> <TMPL_VAR rms_left
+            escape="text"> <TMPL_VAR rms_right
+            escape="text"> <TMPL_VAR bitrate
+            escape="text"> <TMPL_VAR bitrate_mode
+            escape="text"> <TMPL_VAR sampling_rate escape="text"> 
+            <TMPL_VAR channels escape="text">
+            <TMPL_VAR stream_size> bytes </td>
+        <td class="image">
+            <TMPL_IF rms_image>
+            <a href="/media/playout/<TMPL_VAR rms_image>">
+                <img src="/media/playout/<TMPL_VAR rms_image>">
+            </a>
+            </TMPL_IF>
+        </td>
+    </tr>
+    </TMPL_LOOP>
     </tbody>
 </table>
 
-</div>
 </main>

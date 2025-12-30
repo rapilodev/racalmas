@@ -184,9 +184,7 @@
 
             <div class="sidebar">
                 <TMPL_IF .allow.update_series_template>
-                    <button type=submit name="action" value="save"
-                        class="primary"
-                    >
+                    <button type=submit name="action" value="save" class="primary">
                         <sprite-icon name="save"></sprite-icon>
                         <TMPL_VAR .loc.button_save_template>
                     </button>
@@ -311,7 +309,10 @@
 
                     <div class="cell save"><br>
                         <button type="submit" name="action" value="save_schedule"
-                        ><TMPL_VAR .loc.button_save_schedule></button>
+                        >
+                        <sprite-icon name="save"></sprite-icon>
+                        <TMPL_VAR .loc.button_save_schedule>
+                        </button>
                     </div>
                     <TMPL_IF .allow.delete_schedule>
                     <div class="cell delete"><br>
@@ -427,8 +428,10 @@
                     <TMPL_IF .allow.update_schedule>
                         <div class="cell save">
                             <br/>
-                            <button id="addScheduleButton" type="submit" name="action" value="save_schedule"
-                                ><TMPL_VAR .loc.button_add_schedule></button>
+                            <button id="addScheduleButton" type="submit" name="action" value="save_schedule">
+                                <sprite-icon name="save"></sprite-icon>
+                                <TMPL_VAR .loc.button_add_schedule>
+                            </button>
                             <TMPL_IF show_hint_to_add_schedule><TMPL_VAR .loc.label_hint_to_add_schedule></TMPL_IF>
                         </div>
                     </TMPL_IF>
@@ -451,7 +454,6 @@
                 <tbody>
             <TMPL_LOOP series_dates>
                     <tr <TMPL_IF exclude>class="exclude"</TMPL_IF> >
-                        <td><TMPL_VAR weekday></td>
                         <td><TMPL_VAR start></td>
                         <td><TMPL_VAR end></td>
                     </tr>
@@ -475,8 +477,7 @@
                 <td class="logo"><img width="33" height="33" class="cover-art"
                     src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR image>"></td>
                 </TMPL_IF>
-                <td class="weekday"><TMPL_VAR weekday_short_name></td>
-                <td class="date"><TMPL_VAR start_date></td>
+                <td class="date fmt-date"><TMPL_VAR start_date></td>
                 <td class="time"><TMPL_VAR start_time></td>
                 <td class="spacer">-</td>
                 <td class="time"><TMPL_VAR end_time></td>

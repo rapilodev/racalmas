@@ -4,8 +4,8 @@ Access-Control-Allow-Origin: *
 {
 "events" : [
 <TMPL_LOOP NAME=events>{
-    "start" : "<TMPL_VAR start_utc_epoch>"
-    ,"end"   : "<TMPL_VAR end_utc_epoch>"
+    "start" : "<TMPL_VAR start_epoch>"
+    ,"end"   : "<TMPL_VAR end_epoch>"
     <TMPL_IF series_name> ,"series_name" : "<TMPL_VAR series_name>"</TMPL_IF>
     <TMPL_IF title> ,"title" : "<TMPL_VAR title>"</TMPL_IF>
 }<TMPL_UNLESS __last__>,</TMPL_UNLESS></TMPL_LOOP>

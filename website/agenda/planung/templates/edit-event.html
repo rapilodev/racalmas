@@ -7,7 +7,7 @@
 <link type="text/css" href="css/comment.css" rel="stylesheet"/>
 
 <!-- for edit series-->
-<script src="js/series.js" type="text/javascript " defer></script>
+<script src="js/list-series.js" type="text/javascript " defer></script>
 <script src="js/select-series.js" type="text/javascript " defer></script>
 <script src="js/edit-event.js" type="text/javascript " defer></script>
 <script src="js/select-event.js" type="text/javascript " defer></script>
@@ -18,11 +18,6 @@
 
 <!-- TODO: move to edit-event.js -->
 <script defer>
-var allow = {
-        <TMPL_IF .allow.read_image>read_image : true,</TMPL_IF>
-        <TMPL_IF .allow.create_image>create_image : true,</TMPL_IF>
-        <TMPL_IF .allow.delete_image>delete_image : true,</TMPL_IF>
-};
 var region='<TMPL_VAR loc.region escape=js>';
 var event_id='<TMPL_VAR event_id escape=js>';
 <TMPL_IF .forced_change>pageHasChangedCounter=1;</TMPL_IF>
@@ -262,7 +257,7 @@ document.addEventListener("DOMContentLoaded",
         <!-- event time edit -->
             <div>
                 <label><TMPL_VAR .loc.label_when></label>
-                <input id="start_date" class="date" name="start_date" value="<TMPL_VAR start>" onchange="onDateModified()" placeholder=" " />
+                <input id="start_date" class="date fmt-datetime" name="start_date" value="<TMPL_VAR start>" onchange="onDateModified()" placeholder=" " />
             </div>
 
             <div>
@@ -276,7 +271,7 @@ document.addEventListener("DOMContentLoaded",
 
             <div>
                 <label><TMPL_VAR .loc.label_end></label>
-                <span id="end_date" class="date" name="end_date" ><TMPL_VAR end></span>
+                <span id="end_date" class="date fmtdatetime" name="end_date" ><TMPL_VAR end></span>
             </div>
         </div>
         <TMPL_ELSE>

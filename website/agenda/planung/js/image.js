@@ -36,30 +36,34 @@ async function selectImage(image, callback) {
     });
 
     let [manager, file_images, series_images, search_images] = await Promise.all([
-        updateContainer('image-manager', 'image.cgi?' + new URLSearchParams({
-            "action": 'show',
-            "project_id": project_id,
-            "studio_id": studio_id
-        }).toString()),
+        loadHtmlFragment({
+            url: 'image.cgi?' + new URLSearchParams({
+                "action": 'show',
+                "project_id": project_id,
+                "studio_id": studio_id
+            }).toString(),
+            target: '#image-manager'
+    
+        }),
         image.filename ? getJson('image.cgi', {
             "action": 'get',
             "project_id": project_id,
             "studio_id": studio_id,
             "filename": image.filename
-        }) : Promise.resolve([]),
+        }) : Promise.resolve({images:[]}),
         image.series_id ? getJson('image.cgi', {
             "action": 'get',
             "project_id": project_id,
             "studio_id": studio_id,
             "series_id": image.series_id
-        }) : Promise.resolve([]),
+        }) : Promise.resolve({images:[]}),
 
         image.search ? getJson('image.cgi', {
             "action": 'get',
             "project_id": project_id,
             "studio_id": studio_id,
             "search": image.search
-        }) : Promise.resolve([])
+        }) : Promise.resolve({images:[]})
     ]);
 
     let images = Array.from(new Map([
@@ -148,6 +152,7 @@ function setImageForm(image){
 
 // show or edit image properties
 async function loadImageEditor(project_id, studio_id, filename) {
+    await loadLocalization('image');
     var loc = getLocalization();
     let editor = document.querySelector("#image-editor");
     let json = await getJson('image.cgi', {
@@ -182,7 +187,7 @@ async function loadImageEditor(project_id, studio_id, filename) {
         tools.appendChild(button({
             id: "depublishButton",
             text: loc.button_depublish,
-            onClick: () => depublishImage()
+            onClick: async () => await depublishImage()
         }));
     } else {
         tools.appendChild(element("div", {
@@ -194,7 +199,7 @@ async function loadImageEditor(project_id, studio_id, filename) {
             tools.appendChild(button({
                 id: "publishButton",
                 text: loc.button_publish,
-                onClick: () => publishImage()
+                onClick: async () => await publishImage()
             }));
         } else {
             tools.appendChild(element("div", {
@@ -204,15 +209,19 @@ async function loadImageEditor(project_id, studio_id, filename) {
         }
     }
     
-    if (!editor.querySelector("#save-image.has-handlers")) {
-        editor.querySelector("#save-image").classList.add("has-handlers");
-        editor.querySelector("#save-image").addEventListener(
-            "click", () => saveImage(parseImageForm()));
+    let saveImageBtn = editor.querySelector("#save-image");
+    if (saveImageBtn && !editor.querySelector("#save-image.has-handlers")) {
+        saveImageBtn.classList.add("has-handlers");
+        saveImageBtn.addEventListener(
+            "click", () => saveImage(parseImageForm())
+        );
     }
-    if (!editor.querySelector("#delete-image.has-handlers")) {
-        editor.querySelector("#delete-image").classList.add("has-handlers");
-        editor.querySelector("#delete-image").addEventListener(
-            "click", () => askDeleteImage(parseImageForm().filename));
+    let deleteImageBtn = editor.querySelector("#delete-image");
+    if (deleteImageBtn && !editor.querySelector("#delete-image.has-handlers")) {
+        deleteImageBtn.classList.add("has-handlers");
+        deleteImageBtn.addEventListener(
+            "click", () => askDeleteImage(parseImageForm().filename)
+        );
     }
 
     if (permissions.create_image) {
@@ -246,14 +255,12 @@ async function loadImageEditor(project_id, studio_id, filename) {
 }
 
 async function searchImage(project_id, studio_id, search) {
-    let params = new URLSearchParams({
+    let json = await getJson('image.cgi',     {
         action: "get",
         project_id,
         studio_id,
         search
     });
-    console.log(search, params);
-    let json = await getJson('image.cgi', params);
     listImages(project_id, studio_id, json.images);
     return false;
 }
@@ -268,16 +275,16 @@ async function saveImage(image) {
     loadImageEditor(image.project_id, image.studio_id, image.filename)
 }
 
-function depublishImage() {
+async function depublishImage() {
     let image = parseImageForm();
     image.public = 0;
-    saveImage(image);
+    await saveImage(image);
 }
 
-function publishImage() {
+async function publishImage() {
     let image = parseImageForm();
     image.public = 1;
-    saveImage(image);
+    await saveImage(image);
 }
 
 function askDeleteImage(filename) {

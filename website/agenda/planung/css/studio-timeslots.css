@@ -10,7 +10,6 @@ main#content {
     text-align: left;
 }
 
-
 #content div.show_schedule tr.exclude td {
     text-decoration: line-through;
 }

@@ -323,6 +323,7 @@ sub show_new_event {
     for my $key (keys %$event) {
         $params->{$key} = $event->{$key};
     }
+    warn Dumper($event);
 
     #add duration selectbox
     #TODO: move to javascript

@@ -181,7 +181,7 @@ function update_urlParameters(url) {
     return url;
 }
 
-function loadCalendarTable(url, mouseButton) {
+async function loadCalendarTable(url, mouseButton) {
     if (isListView()) {
         throw Error("wrong mode");
     }
@@ -204,26 +204,30 @@ function loadCalendarTable(url, mouseButton) {
     url = url.replace("calendar.cgi", "calendar-content.cgi");
     $('#calendarTable').addClass("loading");
 
-    updateContainer('calendarTable', url, function() {
-        $('#calendarTable').removeClass("loading");
-        setupCalendar();
-        update_url(url);
-        initRmsPlot();
-        setColors();
-        resizeCalendarTable();
+    await loadHtmlFragment({
+        url: url,
+        target: '#calendarTable'
     });
+    $('#calendarTable').removeClass("loading");
+    setupCalendar();
+    update_url(url);
+    initRmsPlot();
+    setColors();
+    resizeCalendarTable();
 }
 
-function loadCalendarList(url) {
+async function loadCalendarList(url) {
     document.title = "Sendungen ";
     url = setUrlParameter(url, 'part', '1');
     url = url.replace("calendar.cgi", "calendar-content.cgi");
-    updateContainer('calendarTable', url, function() {
-        $('#calendarTable').removeClass("loading");
-        setupCalendar();
-        update_url(url);
-        setColors();
+    await loadHtmlFragment({
+        url: url,
+        target: '#calendarTable'
     });
+    $('#calendarTable').removeClass("loading");
+    setupCalendar();
+    update_url(url);
+    setColors();
 }
 
 // --- Filter Visibility Controls ---
@@ -724,6 +728,17 @@ window.calcms.init_calendar = function(el) {
     let url = update_urlParameters();
     if (isListView()) {
         loadCalendarList(url);
+        document.querySelectorAll('table td.start_date').forEach(el => {
+            el.innerHTML = DTF.datetime(el.innerHTML);
+        });
+        $('#editSeries').attr('data-href', 
+            "series.cgi?" + new URLSearchParams({
+                action: "show_series",
+                project_id: getUrlParameter('project_id'),
+                studio_id: getUrlParameter('studio_id'),
+                series_id: getUrlParameter('series_id'),
+            }).toString()
+        );
         return;
     }
     if (isTableView()) {

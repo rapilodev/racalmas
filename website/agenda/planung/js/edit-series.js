@@ -373,10 +373,10 @@ async function previewRebuildEpisodes(project_id, studio_id, series_id) {
     const tbody = document.createElement("tbody");
     table.appendChild(tbody)
     for (let row of json.rows) {
-        row.start = fmtDatetime(row.start)
+        row.start = DTF.datetime(row.start)
         if (row.recurrence=="0") row.recurrence = "-";
         console.log(row.recurrence_start)
-        row.recurrence_start = row.recurrence_start ? fmtDatetime(row.recurrence_start) : '-';
+        row.recurrence_start = row.recurrence_start ? DTF.datetime(row.recurrence_start) : '-';
         const tr = document.createElement("tr");
         tr.classList.add(row.class)
         for (let col of json.cols) {
@@ -400,15 +400,12 @@ async function previewRebuildEpisodes(project_id, studio_id, series_id) {
 window.calcms??={};
 window.calcms.init_edit_series = async function(el) {
     await loadLocalization();
-    addBackButton();
     
     showDateTimePicker('input.datetimepicker.start');
     showDatePicker('input.datetimepicker.end');
     
     initCheckBoxes();
     addCheckBoxHandler();
-    
-    setTabs('#tabs');
     
     updateScheduleButtonName();
     updateScheduleFields();
@@ -427,4 +424,11 @@ window.calcms.init_edit_series = async function(el) {
         widgets: ["filter"],
         usNumberFormat: false
     });
+
+    // image manager
+    let imageBtn = document.querySelector("button.select-image");
+    imageBtn.addEventListener("click", 
+        () => selectImage(imageBtn.dataset, (image) => updateImage(image.filename))
+    );
+
 }

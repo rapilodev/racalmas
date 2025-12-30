@@ -18,22 +18,19 @@ function setSelectedOptions(){
     );
 }
 
-function showDates(){
+async function showDates() {
     var date=$('#show_date select').val();
-
-    var url='studio-timeslots.cgi?';
-    url+='project_id='+getProjectId();
-    url+='&studio_id='+getStudioId();
-    url+='&action=show_dates';
-    url+='&show_date='+date;
-
-    updateContainer(
-        'show_schedule',
-        url,
-        function(){
-            initTable();
-        }
-    );
+    await loadHtmlFragment({
+        url: 'studio-timeslots.cgi?' + new URLSearchParams({
+                project_id: getProjectId(),
+                studio_id: getStudioId(),
+                action: 'show_dates',
+                show_date: date
+            }).toString(),
+        selector: '#schedule_table',
+        target : '#show_schedule'
+    });
+    initTable();
 }
 
 function initTable(){
@@ -47,12 +44,15 @@ function initTable(){
                 scroller_jumpToHeader: true,
                 scroller_idPrefix : 's_'
             },
-              usNumberFormat : false
+            usNumberFormat : false
     });
-    $('.tablesorter-scroller-header').css('width','95%');
-    $('.tablesorter-scroller-table').css('width','95%');
-    $('.tablesorter-scroller-header table').css('width','95%');
-    $('.tablesorter-scroller-table table').css('width','95%');
+   // $('.tablesorter-scroller-header').css('width','95%');
+    //$('.tablesorter-scroller-table').css('width','95%');
+    //$('.tablesorter-scroller-header table').css('width','95%');
+    //$('.tablesorter-scroller-table table').css('width','95%');
+    document.querySelectorAll('#schedule_table td.date').forEach(el => {
+        el.innerHTML = DTF.datetime(el.innerHTML);
+    });
 }
 
 // show/hide schedule fields depending on period type for a given schedule element
@@ -88,11 +88,10 @@ function initScheduleFields(){
 
 // init function
 window.calcms ??= {};
-window.calcms.studio_timeslot = async function(el) {
+window.calcms.init_studio_timeslots = async function(el) {
     await loadLocalization();
     addBackButton();
     
-    setTabs('#tabs');
     initTextWidth();
     
     setTextWidth('.datetimepicker.start',     130);

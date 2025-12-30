@@ -2,13 +2,17 @@ if (window.namespace_datetime_js) throw "stop"; window.namespace_datetime_js = t
 "use strict";
 
 function showDateTimePicker(selector, options){
-    var defaults = {
-        locale: { firstDayOfWeek: 1, locale: "de"},
+    const userLang = navigator.language.split('-')[0] || "default";
+    const activeLocale = (flatpickr.l10ns && flatpickr.l10ns[userLang]) 
+        ? flatpickr.l10ns[userLang] 
+        : "default";
+    const defaults = {
+        locale: activeLocale,
         enableTime: true,
         time_24hr: true,
         dateFormat: "Y-m-d H:i:S",
         altInput: true,
-        altFormat: "D, j.n.Y H:i"
+        altFormat: "D, d.m.Y H:i"
     }
     if (options){
         if (options["onSelect"]) defaults["onChange"] = options["onSelect"];
@@ -19,10 +23,15 @@ function showDateTimePicker(selector, options){
 }
 
 function showDatePicker(selector, options){
-    var defaults = {
-        locale: { firstDayOfWeek: 1, locale: "de" },
+    const userLang = navigator.language.split('-')[0] || "default";
+    const activeLocale = (flatpickr.l10ns && flatpickr.l10ns[userLang]) 
+        ? flatpickr.l10ns[userLang] 
+        : "default";
+    const defaults = {
+        locale: activeLocale,
+        dateFormat: "Y-m-d",
         altInput: true,
-        altFormat: "D, j.n.Y",
+        altFormat: "D, d.m.Y"
     }
     if (options){
         if (options["onSelect"]) defaults["onChange"] = options["onSelect"];
@@ -90,45 +99,45 @@ function formatLocalDate(date){
     });
 }
 
-// todo: 
-function fmtDatetime(dateString, options = {}) {
-    try {
-        const date = new Date(dateString);
-        const defaultOptions = {
-            weekday: 'short',
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            "hour12": false
-        };
-        const language = Intl.NumberFormat().resolvedOptions().locale;
-        return new Intl.DateTimeFormat(language, { ...defaultOptions, ...options }).format(date);
-    } catch (e) {
-        console.log(e)
-        showError(e)
-    }
+function formatLocalDateTime(date){
+    const locale = navigator.language;
+    return new Date(date).toLocaleString(locale, {
+        dateStyle: "medium",
+        timeStyle: "medium"
+    });
 }
 
-function fmtDate(dateString, options = {}) {
-    try {
-        const date = new Date(dateString);
-        const defaultOptions = {
-            weekday: 'short',
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric'
-        };
-        const mergedOptions = { ...defaultOptions, ...options };
-        const language = Intl.NumberFormat().resolvedOptions().locale;
-        return new Intl.DateTimeFormat(language, mergedOptions).format(date);
-    } catch (e) {
-        console.log(e)
-        showError(e)
-    }
+if (!window.DTF) {
+    window.DTF = new (class {
+        constructor() {
+            const b = { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' };
+            const t = { hour: '2-digit', minute: '2-digit', hour12: false };
+            
+            // Pre-initialize the three formatters
+            this.f = {
+                dt: new Intl.DateTimeFormat(undefined, { ...b, ...t }),
+                d:  new Intl.DateTimeFormat(undefined, b),
+                t:  new Intl.DateTimeFormat(undefined, t)
+            };
+        }
+    
+        _fmt(s, k) {
+            const d = new Date(s);
+            if (isNaN(d)) return s;
+    
+            // Use formatToParts to precisely replace commas with spaces
+            return this.f[k].formatToParts(d)
+                .map(p => p.type === 'literal' ? p.value.replace(/,/g, ' ') : p.value)
+                .join('')
+                .replace(/\s+/g, ' ') // Clean up any resulting double spaces
+                .trim();
+        }
+    
+        datetime(s) { return this._fmt(s, 'dt'); } // DateTime
+        date(s)  { return this._fmt(s, 'd');  } // Date
+        time(s)  { return this._fmt(s, 't');  } // Time
+    })();
 }
-
 
 //todo: separate weekday and formating
 function addMinutes(datetime, minutes){

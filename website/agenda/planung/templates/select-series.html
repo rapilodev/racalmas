@@ -1,14 +1,8 @@
 Access-Control-Allow-Origin: <TMPL_VAR base_domain>
 Content-Type: text/html; charset=UTF-8;
 
-<!doctype html>
-<html>
+<!-- select series start -->
 <TMPL_IF .allow.read_series>
-<head>
-    <script src="js/jquery.min.js" type="text/javascript " defer></script>
-    <script src="js/select-series.js" type="text/javascript " defer></script>
-</head>
-<body>
 <main id="selectSeries" class="panel editor"
     data-js-init="calcms.init_select_series"
     title="<TMPL_VAR .loc.title>"
@@ -20,7 +14,8 @@ Content-Type: text/html; charset=UTF-8;
     <label><TMPL_VAR .loc.label_project> & <TMPL_VAR .loc.label_Studio></label>
     <select id="selectProjectStudio" onchange="updateSeriesSelection('<TMPL_VAR resultElemId escape=js>');return false;">
         <option value="-1_-1"><TMPL_VAR .loc.label_all></option>
-<TMPL_LOOP studios><option value="<TMPL_VAR project_id>_<TMPL_VAR id>" <TMPL_IF selected>selected="selected"</TMPL_IF> ><TMPL_VAR project_name> - <TMPL_VAR name></option>
+<TMPL_LOOP studios>
+<option value="<TMPL_VAR project_id>_<TMPL_VAR id>" <TMPL_IF selected>selected="selected"</TMPL_IF> ><TMPL_VAR project_name> - <TMPL_VAR name></option>
 </TMPL_LOOP>
     </select>
 </div>
@@ -39,9 +34,8 @@ Content-Type: text/html; charset=UTF-8;
 </div>
 </TMPL_IF>
 
-</div> <!-- select series -->
-</body>
+</div>
+<!-- select series end -->
 <TMPL_ELSE>
 missing permission to read series
 </TMPL_IF>
-</html>

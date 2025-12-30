@@ -1,3 +1,4 @@
+<link type="text/css" href="css/image.css" rel="stylesheet" defer/>
 <script src="js/image.js" type="text/javascript " defer></script>
 
 <main id="content"
@@ -63,6 +64,32 @@
                         name="stream" value="<TMPL_VAR stream>">
                     </TMPL_IF>
                 </div>
+                <TMPL_IF .allow.read_image>
+                <div class="col" style="float:right">
+                    <TMPL_IF .allow.update_event_field_image>
+                    <div>
+                        <label><TMPL_VAR .loc.label_image></label>
+                        <button type="button" class="select-image"
+                            data-search="<TMPL_VAR series_name>"
+                            data-filename="<TMPL_VAR image>"
+                            data-target="broadcast"
+                            data-project_id="<TMPL_VAR .project_id>"
+                            data-studio_id="<TMPL_VAR .studio_id>"
+                            data-series_id="<TMPL_VAR series_id>"
+                            data-event_id="<TMPL_VAR event_id>"
+                            onclick="return false"
+                        >
+                        <img id="imagePreview" class="cover-art" title="<TMPL_VAR image>" 
+                            src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&filename=<TMPL_VAR image>&type=icon"
+                        >
+                        </button>
+                        <input type="hidden" id="image_<TMPL_VAR event_id>" name="image" value="<TMPL_VAR image>" class="image" placeholder=" " />
+                    </div>
+                    <input type="hidden" name="series_image" value="<TMPL_VAR series_image>" />
+                    </TMPL_IF>
+                </div>
+                </TMPL_IF>
+                <!-- 
                 <div>
                     <label><TMPL_VAR .loc.label_image></label>
                     <button class="selectImage"
@@ -75,6 +102,7 @@
                         class="image"
                         placeholder="<TMPL_VAR .loc.template_image escape=js>">
                 </div>
+                 -->
                 <div>
                     <button type=submit name="action" value="save">
                         <sprite-icon name="save"></sprite-icon>

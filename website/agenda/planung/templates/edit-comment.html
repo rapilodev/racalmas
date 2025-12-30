@@ -21,8 +21,8 @@
         <TMPL_LOOP comments>
             <tr id="<TMPL_VAR id>" class="<TMPL_VAR lock_status>" style="display:table-row;">
                 <td class="level<TMPL_VAR level>"><sprite-icon name="comment.svg" class="level<TMPL_VAR level>"></sprite-icon>><a name="event_comments_<TMPL_VAR id>" /></td>
-                <td class="date"><TMPL_VAR start_date_name></td>
-                <td class="time"><TMPL_VAR start_time></td>
+                <td class="date fmt-datetime"><TMPL_VAR start_date_name></td>
+                <td class="time fmt-time"><TMPL_VAR start_time></td>
                 <td class="author"><TMPL_VAR author escape=none></td>
                 <td class="content <TMPL_VAR news_status>"><textarea><TMPL_VAR content escape=none></textarea></td>
             </tr>

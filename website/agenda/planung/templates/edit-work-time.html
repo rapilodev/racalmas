@@ -139,8 +139,10 @@
             </div>
 
             <div class="cell save"><br>
-                <button type="submit" name="action" value="save_schedule"
-                ><TMPL_VAR .loc.button_save_schedule></button>
+                <button type="submit" name="action" value="save_schedule">
+                <sprite-icon name="save"></sprite-icon>
+                <TMPL_VAR .loc.button_save_schedule>
+                </button>
             </div>
             <TMPL_IF .allow.delete_schedule>
             <div class="cell delete"><br>
@@ -261,8 +263,10 @@
             <TMPL_IF .allow.update_schedule>
                 <div class="cell save">
                     <br/>
-                    <button id="addScheduleButton" type="submit" name="action" value="save_schedule"
-                        ><TMPL_VAR .loc.button_add_schedule></button>
+                    <button id="addScheduleButton" type="submit" name="action" value="save_schedule">
+                        <sprite-icon name="save"></sprite-icon>
+                        <TMPL_VAR .loc.button_add_schedule>
+                    </button>
                     <TMPL_IF show_hint_to_add_schedule><TMPL_VAR .loc.label_hint_to_add_schedule></TMPL_IF>
                 </div>
             </TMPL_IF>

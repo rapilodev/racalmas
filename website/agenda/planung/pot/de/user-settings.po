@@ -84,3 +84,6 @@ msgstr "mindestens 8 Zeichen und (kleine und große Buchstaben, Zahlen und Sonde
 
 msgid "setDefaultProjectStudio"
 msgstr "Projekt und Studio als Default setzen"
+
+msgid "label_project_studio"
+msgstr "Projekt und Studio"

@@ -111,7 +111,7 @@ async function selectEventAction(resultElemId){
 
 // init function
 window.calcms ??= {};
-window.calcms.select_event = function(el) {
+window.calcms.init_select_event = function(el) {
     console.log("init select_event")
     updateProjectStudioId();
     updateSeriesId();

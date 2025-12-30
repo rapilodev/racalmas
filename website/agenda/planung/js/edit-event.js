@@ -15,7 +15,7 @@ function updateCalendarLink() {
 
 function onDateModified() {
     var end = addMinutes($('#start_date').val(), $('#duration').val());
-    $('#end_date').html(fmtDatetime(end));
+    $('#end_date').html(DTF.datetime(end));
 
     var startDate = parseDateTime($('#start_date').val());
     var weekday = getWeekday(startDate);
@@ -42,7 +42,7 @@ function hideSelectRerun(resultSelector, tillDate) {
     $('#edit_event').show();
 }
 
-function selectOldEventFromSeries(resultSelector, tillDate) {
+async function selectOldEventFromSeries(resultSelector, tillDate) {
     $('#edit_event').hide();
     $('#import_rerun').show();
     $('#import_rerun_header').show('slideUp');
@@ -58,11 +58,13 @@ function selectOldEventFromSeries(resultSelector, tillDate) {
         till_date: tillDate,
         selectRange: 1
     }).toString();
-
-    updateContainer('import_rerun', url);
+    await loadHtmlFragment({
+        url: url, 
+        target: '#import_rerun'
+    });
 }
 
-function selectOtherEvent(resultSelector) {
+async function selectOtherEvent(resultSelector) {
     $('#edit_event').hide();
     $('#import_rerun').show();
     $('#import_rerun_header').show('slideUp');
@@ -78,7 +80,10 @@ function selectOtherEvent(resultSelector) {
         selectProjectStudio: 1,
         selectSeries: 1,
     }).toString();
-    updateContainer('import_rerun', url);
+    await loadHtmlFragment({
+        url: url, 
+        target: '#import_rerun'
+    });
 }
 
 function copyFromEvent(resultSelector) {
@@ -103,7 +108,7 @@ function copyFromEvent(resultSelector) {
 
 
 // load series selection
-function selectChangeSeries(resultSelector) {
+async function selectChangeSeries(resultSelector) {
     var url='select-series.cgi?' + new URLSearchParams({
         project_id : getProjectId(),
         studio_id : getStudioId(),
@@ -111,12 +116,14 @@ function selectChangeSeries(resultSelector) {
         resultElemId: resultSelector,
         selectSeries: 1,
     }).toString();
-    updateContainer('changeSeriesContainer', url, function() {
-        $('#selectSeries').removeClass('panel');
-        $('#selectChangeSeries').addClass('panel');
-        $('div.buttons').hide();
-        $('#selectChangeSeries').show('slideUp');
+    await loadHtmlFragment({
+        url: url, 
+        target: '#changeSeriesContainer'
     });
+    $('#selectSeries').removeClass('panel');
+    $('#selectChangeSeries').addClass('panel');
+    $('div.buttons').hide();
+    $('#selectChangeSeries').show('slideUp');
 }
 
 // will be fired on updatine resultSelector of series selection
@@ -464,7 +471,6 @@ async function loadHelpTexts () {
 // init function
 window.calcms??={};
 window.calcms.init_edit_event = async function(el) {
-    await loadLocalization('image');
     showDateTimePicker('#start_date');
     onDateModified();
     $('input[type="checkbox"]').click( function() {
@@ -484,13 +490,13 @@ window.calcms.init_edit_event = async function(el) {
     });
     loadHelpTexts();
     //showInfo("event loaded");
-    
+
     // image manager
-    let button = document.querySelector("button.select-image");
-    button.addEventListener("click", () => selectImage(
-        button.dataset,
-        (image) => updateImageimage.filename
-    ));
+    let imageBtn = document.querySelector("button.select-image");
+    imageBtn.addEventListener("click", 
+        () => selectImage(imageBtn.dataset, (image) => updateImage(image.filename))
+    );
+
     $('form').on('input', function() {
         set_breadcrumb(getEventTitle());
     });

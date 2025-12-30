@@ -10,6 +10,6 @@ function showTable(){
 
 // init function
 window.calcms ??= {};
-window.calcms.show_playout = function(el) {
+window.calcms.init_show_playout = function(el) {
     showTable();
 };

@@ -12,5 +12,5 @@ document.addEventListener("DOMContentLoaded",
 
 // init function
 window.calcms ??= {};
-window.calcms.user_stats = function(el) {
+window.calcms.init_user_stats = function(el) {
 }

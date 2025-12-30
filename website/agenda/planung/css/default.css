@@ -142,11 +142,13 @@ summary, time, mark, audio, video {
 tr, td {
     border-radius: 0;
 }
+
 /*
 * {
-      transition: all 0.5s linear;
+  transition: opacity 0.3s linear;
 }
 */
+
 
 /* Global */
 html,body {
@@ -343,6 +345,14 @@ a {
   border-right: 0;
   border-left: 0;
 }
+
+.format-date,
+.format-datetime,
+.format-time {
+  font-family: monospace;
+  width:fit-content;
+}
+
 
 /* Info Block */
 #content #info {
@@ -922,10 +932,8 @@ sprite-icon svg {
   height: 1.3em;
   fill: currentColor;
   vertical-align: text-top;
-  padding-right:0.5em;
   font-size:inherit;
 }
-
 .sidebar > button > sprite-icon svg {
   width: 1.3em;
   height: 1.3em;
@@ -941,7 +949,7 @@ sprite-icon svg {
   min-width: 0;
   min-height: 0;
   padding: 1rem;
-  height: 100%;
+  /*-noheight: 100%;*/
 }
 
 @media (max-width: 960px) {
@@ -1015,7 +1023,6 @@ div.sidebar .formField input{
     color: #000;
     cursor: pointer;
     text-align: left;
-    gap:0;
     border-radius:0;
     line-height:1rem;
     min-height: 2rem;
@@ -1041,6 +1048,7 @@ div.sidebar .formField input{
 .sidebar > button {
   display: flex;
   align-items: center;
+  gap: 1ch;
 }
 .asidebar > button.primary {
     background:var(--button-bg);

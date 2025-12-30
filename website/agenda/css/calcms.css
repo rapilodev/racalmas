@@ -3,7 +3,7 @@
 }
 
 div, a, audio, img {
-    border-radius: 1rem; !important;
+    border-radius: 1rem !important;
 }
 
 @font-face {

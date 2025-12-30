@@ -27,7 +27,7 @@ async function show_events(form_id){
         series_id: form.find("input[name='series_id']").val(),
         duration: form.find("select[name='duration'] option").filter(':selected').val(),
     });
-    $('#stats').html(doc.events.length + " events found from " +  fmtDate(doc.from) + " till " + fmtDate(doc.till));
+    $('#stats').html(doc.events.length + " events found from " +  DTF.date(doc.from) + " till " + DTF.date(doc.till));
     console.log(form.find("button[name='action']"));
     if (doc.events.length ==0){
         $('#events').hide();
@@ -40,15 +40,15 @@ async function show_events(form_id){
     var out = '';
     for (const entry of doc.events) {
         out += `<tr>
-        <td>${fmtDatetime(entry.start)}</td>
-        <td>${fmtDatetime(entry.end)}</td>
+        <td>${DTF.datetime(entry.start)}</td>
+        <td>${DTF.datetime(entry.end)}</td>
         <td>${entry.series_name} - ${entry.series_title || ''}</td>
         </tr>`;
     }
     target.html(out);
 }
 
-function selectChangeSeries(resultSelector){
+async function selectChangeSeries(resultSelector){
     var url='select-series.cgi?' + new URLSearchParams({
         project_id : getProjectId(),
         studio_id : getStudioId(),
@@ -56,12 +56,14 @@ function selectChangeSeries(resultSelector){
         resultElemId: resultSelector,
         selectSeries: 1,
     }).toString();
-    updateContainer('seriesContainer', url, function() {
-        $('#selectSeries').removeClass('panel');
-        var series_id = $('input[name=series_id]').val();
-        if (series_id.length) $("option[value='"+series_id+"']").attr('selected','selected');
-        $('#create_event_form select').on('change', () => show_events('create_event_form'));
+    await loadHtmlFragment({
+        url: url,
+        target: '#seriesContainer'
     });
+    $('#selectSeries').removeClass('panel');
+    var series_id = $('input[name=series_id]').val();
+    if (series_id.length) $("option[value='"+series_id+"']").attr('selected','selected');
+    $('#create_event_form select').on('change', () => show_events('create_event_form'));
 }
 
 // init function

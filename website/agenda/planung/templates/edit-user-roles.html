@@ -134,7 +134,10 @@
 </TMPL_LOOP>
 
 <div style="clear:both" class="newuser">
-    <button onclick="add_user('<TMPL_VAR name escape=js>')">add user</button>
+    <button onclick="add_user('<TMPL_VAR name escape=js>')">
+        <sprite-icon name="add"></sprite-icon>
+        <TMPL_VAR button_add_user/>
+    </button>
     <form method="post">
     <div id="edit_new" class="user editor" style="display:none">
         <div>

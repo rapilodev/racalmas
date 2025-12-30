@@ -1,2 +1,14 @@
 msgid "button_back"
 msgstr "zurück"
+
+msgid "label_start"
+msgstr "Start"
+
+msgid "label_path"
+msgstr "Pfad"
+
+msgid "label_properties"
+msgstr "Eigenschaften"
+
+msgid "label_image"
+msgstr "Bild"

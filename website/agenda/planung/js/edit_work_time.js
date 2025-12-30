@@ -187,8 +187,6 @@ document.addEventListener("DOMContentLoaded",
         initCheckBoxes();
         addCheckBoxHandler();
 
-        setTabs('#tabs');
-
         updateScheduleButtonName();
         initScheduleFields();
         setSelectedOptions();

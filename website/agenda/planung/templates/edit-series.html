@@ -1,11 +1,8 @@
 <TMPL_IF .allow.read_series>
 <link href="css/theme.default.css" rel="stylesheet">
+
+<link type="text/css" href="css/image.css" rel="stylesheet" defer/>
 <script src="js/image.js" type="text/javascript " defer></script>
-<script defer>
-    var event_id='<TMPL_VAR event_id escape=js>';
-    var selectImageId='';
-    <TMPL_IF .forced_change>pageHasChangedCounter=1;</TMPL_IF>
-</script>
 
 <main id="content"
     data-js-init="calcms.init_edit_series"
@@ -17,12 +14,15 @@
     <TMPL_IF .allow.read_event>
         <button onclick="listEvents('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
             style="float:left"
-        ><sprite-icon name="documents"></sprite-icon><TMPL_VAR .loc.button_event_list></button>
+        >
+            <sprite-icon name="documents"></sprite-icon>
+            <TMPL_VAR .loc.button_event_list>
+        </button>
     </TMPL_IF>
 </div>
 
 <div id="tabs"
-    class="panel container scrollable" 
+    class="panel container" 
     style="display:none;"
 >
 <ul>
@@ -38,7 +38,7 @@
 
 <!-- edit template-->
 <TMPL_IF .allow.update_series_template>
-<div id="tabs-template">
+<div id="tabs-template" class="scrollable">
 <form id="edit_series"#tabs-template">
 <div id="edit_<TMPL_VAR .series_id>" class="editor">
     <input type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
@@ -47,7 +47,33 @@
 
     <div class="row">
         <div class="col">
-            <label><TMPL_VAR .loc.template_image></label>
+        <TMPL_IF .allow.read_image>
+        <div class="col" style="float:right">
+            <TMPL_IF .allow.update_event_field_image>
+            <div>
+                <label><TMPL_VAR .loc.label_image></label>
+                <button type="button" class="select-image"
+                    data-search="<TMPL_VAR series_name>"
+                    data-filename="<TMPL_VAR image>"
+                    data-target="broadcast"
+                    data-project_id="<TMPL_VAR .project_id>"
+                    data-studio_id="<TMPL_VAR .studio_id>"
+                    data-series_id="<TMPL_VAR series_id>"
+                    data-event_id="<TMPL_VAR event_id>"
+                    onclick="return false"
+                >
+                <img id="imagePreview" class="cover-art" title="<TMPL_VAR image>" 
+                    src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>&filename=<TMPL_VAR image>&type=icon"
+                >
+                </button>
+                <input type="hidden" id="image_<TMPL_VAR event_id>" name="image" value="<TMPL_VAR image>" class="image" placeholder=" " />
+            </div>
+            <input type="hidden" name="series_image" value="<TMPL_VAR series_image>" />
+            </TMPL_IF>
+        </div>
+        </TMPL_IF>
+
+            <!--             
             <TMPL_IF .allow.read_image>
                 <button class="selectImage"
                     onclick="selectImage('<TMPL_VAR series_name escape=js>', '<TMPL_VAR image escape=js>', 'series', '<TMPL_VAR .project_id escape=js>','<TMPL_VAR .studio_id escape=js>','<TMPL_VAR series_id escape=js>'); return false;"
@@ -59,6 +85,7 @@
                 <input type="hidden" name="series_image" value="<TMPL_VAR series_image>" >
                 <input type="hidden" id="image_<TMPL_VAR .series_id>" name="image" value="<TMPL_VAR image>" class="image" placeholder=" " readonly="readonly">
             </TMPL_IF>
+             -->
         </div>
         <div>
              <label><TMPL_VAR .loc.template_series></label>
@@ -79,8 +106,11 @@
         <div style="float:right">
             <TMPL_IF .allow.update_series_template>
                 <button name="action" value="save_series" class="primary"
-                onclick="saveSeries('form#edit_series', 'save_series');return false;"
-                ><TMPL_VAR .loc.button_save_template></button>
+                    onclick="saveSeries('form#edit_series', 'save_series');return false;"
+                >
+                    <sprite-icon name="save"></sprite-icon>
+                    <TMPL_VAR .loc.button_save>
+                <TMPL_VAR .loc.button_save_template></button>
             </TMPL_IF>
         </div>
     </div>
@@ -145,7 +175,7 @@
 </TMPL_IF>
 
 <!-- schedule -->
-<div id="tabs-schedule">
+<div id="tabs-schedule"  class="scrollable">
     <!-- edit schedule -->
     <TMPL_IF .allow.update_schedule>
     <div id="edit_schedule_<TMPL_VAR .series_id>" class="editor">
@@ -252,14 +282,21 @@
                 </div>
 
                 <div class="cell save"><br>
-                    <button class="primary" onclick="saveSchedule($(this).closest('form'));return false;"
-                    ><TMPL_VAR .loc.button_save_schedule></button>
+                    <button class="primary" 
+                        onclick="saveSchedule($(this).closest('form'));return false;"
+                    >
+                    <sprite-icon name="save"></sprite-icon>
+                    <TMPL_VAR .loc.button_save_schedule>
+                    </button>
                 </div>
                 <TMPL_IF .allow.delete_schedule>
                 <div class="cell delete"><br>
                     <button
                         onclick="deleteSchedule($(this.closest('form'));return false;"
-                    ><TMPL_VAR .loc.button_delete_schedule></button>
+                    >
+                    <sprite-icon name="delete"></sprite-icon>
+                    <TMPL_VAR .loc.button_delete_schedule>
+                    </button>
                 </div>
                 </TMPL_IF>
             </form>
@@ -370,7 +407,10 @@
                         <br/>
                         <button class="primary" id="addScheduleButton"
                             onclick="saveSchedule($(this).closest('form'));return false"
-                            ><TMPL_VAR .loc.button_add_schedule></button>
+                        >
+                            <sprite-icon name="save"></sprite-icon>
+                            <TMPL_VAR .loc.button_add_schedule>
+                        </button>
                         <TMPL_IF show_hint_to_add_schedule><TMPL_VAR .loc.label_hint_to_add_schedule></TMPL_IF>
                     </div>
                 </TMPL_IF>
@@ -381,29 +421,27 @@
 
     <!-- show schedule -->
     <div id="show_schedule_<TMPL_VAR series_id>" class="show_schedule">
-        <table id="schedule_table" class="table" width="100%">
+        <table id="schedule_table" class="table">
             <thead>
-                <tr>
-                    <th></th>
-                    <th><TMPL_VAR .loc.from></th>
-                    <th><TMPL_VAR .loc.till></th>
-                </tr>
+            <tr>
+                <th><TMPL_VAR .loc.from></th>
+                <th><TMPL_VAR .loc.till></th>
+            </tr>
             </thead>
             <tbody>
-        <TMPL_LOOP series_dates>
-                <tr <TMPL_IF exclude>class="exclude"</TMPL_IF> >
-                    <td><TMPL_VAR weekday></td>
-                    <td><TMPL_VAR start></td>
-                    <td><TMPL_VAR end></td>
-                </tr>
-        </TMPL_LOOP>
+            <TMPL_LOOP series_dates>
+            <tr <TMPL_IF exclude>class="exclude"</TMPL_IF> >
+                <td class="date fmt-datetime"><TMPL_VAR start></td>
+                <td class="date fmt-datetime"><TMPL_VAR end></td>
+            </tr>
+            </TMPL_LOOP>
             </tbody>
         </table>
     </div>
 </div>
 
 <!-- series events -->
-<div id="tabs-events">
+<div id="tabs-events"  class="scrollable">
     <table class="table">
     <TMPL_LOOP events>
         <tr id="event_<TMPL_VAR event_id>" style="cursor:pointer"
@@ -416,12 +454,10 @@
                 src="show-image.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR .studio_id>&type=icon&filename=<TMPL_VAR image>"
             ></td>
             </TMPL_IF>
-        
-            <td class="weekday"><TMPL_VAR weekday_short_name></td>
-            <td class="date"><TMPL_VAR start_date></td>
-            <td class="time"><TMPL_VAR start_time></td>
+            <td class="date fmt-date"><TMPL_VAR start_date></td>
+            <td class="time fmt-time"><TMPL_VAR start_time></td>
             <td class="spacer">-</td>
-            <td class="time"><TMPL_VAR end_time></td>
+            <td class="time fmt-time"><TMPL_VAR end_time></td>
             <td class="title"><TMPL_VAR full_title></td>
         </tr>
         <tr id="event_container_<TMPL_VAR event_id>" style="display:none">
@@ -437,15 +473,17 @@
 
 <TMPL_UNLESS has_single_events>
 <!-- series members -->
-<div id="tabs-members">
+<div id="tabs-members" class="scrollable">
     <table>
 
     <!-- add members -->
     <TMPL_IF .allow.update_series>
     <tr>
         <td>
-            <button onclick="edit_series_members('<TMPL_VAR .series_id escape=js>')" style="float:left"
-            ><TMPL_VAR .loc.button_edit_member></button>
+            <button onclick="edit_series_members('<TMPL_VAR .series_id escape=js>')" style="float:left">
+                <sprite-icon name="person-edit"></sprite-icon>
+                <TMPL_VAR .loc.button_edit_member>
+            </button>
         </td>
         <td colspan="2">
             <TMPL_IF .allow.assign_series_member>
@@ -458,11 +496,16 @@
                     <select name="user_id">
                         <option value=""><TMPL_VAR .loc.label_choose_member></option>
                     <TMPL_LOOP studio_users>
-                        <option value="<TMPL_VAR user_id>"><TMPL_VAR full_name></option>
+                        <option value="<TMPL_VAR user_id>">
+                            <sprite-icon name="person"></sprite-icon>
+                            <TMPL_VAR full_name>
+                        </option>
                     </TMPL_LOOP>
                     </select>
-                    <button onclick="addUser($(this).closest('form'));return false"
-                        ><TMPL_VAR .loc.button_add_member></button>
+                    <button onclick="addUser($(this).closest('form'));return false">
+                        <sprite-icon name="person-add"></sprite-icon>
+                        <TMPL_VAR .loc.button_add_member>
+                    </button>
                 </form>
             </div>
             </TMPL_IF>
@@ -476,6 +519,7 @@
     <TMPL_LOOP series_users>
     <tr id="edit_series_members_<TMPL_VAR user_id>">
         <td>
+            <sprite-icon name="person"></sprite-icon>
             <TMPL_VAR full_name>
         </td>
 
@@ -484,7 +528,10 @@
         <div style="display:none" class="edit_series_members_<TMPL_VAR .series_id>">
             <button value="remove user"
                 onclick="commitRemoveUser('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>','<TMPL_VAR user_id>');return false;"
-            ><TMPL_VAR .loc.button_remove_member></button>
+            >
+            <sprite-icon name="person-remove"></sprite-icon>
+            <TMPL_VAR .loc.button_remove_member>
+            </button>
         </div>
         </td>
 
@@ -501,13 +548,20 @@
 <div class="sidebar">
     <TMPL_IF .allow.create_event>
         <button onclick="showNewEvent('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
-        ><sprite-icon name="add"></sprite-icon><TMPL_VAR .loc.button_create_event></button>
+        >
+            <sprite-icon name="add"></sprite-icon>
+            <TMPL_VAR .loc.button_create_event>
+        </button>
     </TMPL_IF>
 
     <TMPL_IF .allow.update_event>
-        <button onclick="previewRebuildEpisodes('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
+        <button 
+            onclick="previewRebuildEpisodes('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
             class="text"
-        ><sprite-icon name="build"></sprite-icon><TMPL_VAR .loc.button_rebuild_episodes></button>
+        >
+            <sprite-icon name="build"></sprite-icon>
+            <TMPL_VAR .loc.button_rebuild_episodes>
+        </button>
     </TMPL_IF>
 
     <!-- delete series -->
@@ -515,7 +569,10 @@
         <button
             onclick="commitDeleteSeries('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
             title="<TMPL_VAR .loc.label_delete_series>"
-            ><sprite-icon name="delete"></sprite-icon><TMPL_VAR .loc.button_delete_series></button>
+        >
+            <sprite-icon name="delete"></sprite-icon>
+            <TMPL_VAR .loc.button_delete_series>
+        </button>
     </TMPL_IF>
     
     <div class="label right"><TMPL_VAR .loc.modified> <TMPL_VAR .loc.at> <TMPL_VAR modified_at> <TMPL_VAR .loc.by> <TMPL_VAR modified_by>.</div>

@@ -1,25 +1,3 @@
-#content table,
-#content tr,
-#content td,
-#content div.ok,
-#content div.warn,
-#content div.error {
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
-
-table {
-    margin: var(--space-md);
-    border-collapse: collapse;
-    empty-cells: show;
-}
-
-#content tr,
-#content td {
-    vertical-align: top;
-}
-
 #content tr {
     border-top: 1px solid var(--border-color);
 }
@@ -56,7 +34,6 @@ table {
 
 #content td {
     padding: var(--space-xs);
-    font-size: inherit;
     text-align: center;
 }
 
@@ -68,4 +45,8 @@ table {
 img:hover {
     transform: scale(1.5);
     transition: var(--transition-hover);
+}
+
+td div {
+    border-radius:0;
 }

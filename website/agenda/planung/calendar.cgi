@@ -143,15 +143,17 @@ sub getSidebar {
     $sidebar .= qq!
         <div class="row">
             <div id="previous_month">
-                <button class="primary" id="previous">&laquo;</button></div>
+                <button class="primary" id="previous"><sprite-icon name="navigate-before"></sprite-icon></button></div>
             <div id="selectDate" data-toggle>
                 <input id="start_date" data-input/>
                 <div id="current_date">$calendar->{month} $calendar->{year}</div>
             </div>
             <div id="next_month">
-                <button id="next" class="primary">&raquo;</button>
+                <button id="next" class="primary"><sprite-icon name="navigate-next"></sprite-icon></button>
             </div>
-            <button id="setToday" class="primary">!
+            <button id="setToday" class="primary">
+                <sprite-icon name="calendar"></sprite-icon>
+            !
             . $params->{loc}->{button_today}
          . q!</button>
         </div>
@@ -219,7 +221,7 @@ sub getSidebar {
         </form>
     };
 
-    $sidebar .= qq{<button id="editSeries">}
+    $sidebar .= qq{<button is="link-button" id="editSeries">}
       . '<sprite-icon name="edit"></sprite-icon>'
       . $params->{loc}->{button_edit_series}
       . qq{</button>
