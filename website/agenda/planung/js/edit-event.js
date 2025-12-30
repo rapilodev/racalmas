@@ -492,11 +492,14 @@ window.calcms.init_edit_event = async function(el) {
     //showInfo("event loaded");
 
     // image manager
+    /*
     let imageBtn = document.querySelector("button.select-image");
     imageBtn.addEventListener("click", 
         () => selectImage(imageBtn.dataset, (image) => updateImage(image.filename))
     );
-
+    */
+    registerImageHandler();
+    
     $('form').on('input', function() {
         set_breadcrumb(getEventTitle());
     });

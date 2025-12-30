@@ -1,359 +1,326 @@
 if (window.namespace_image_js) throw "stop"; window.namespace_image_js = true;
 "use strict";
 
-function getParent() {
-    return document.querySelector("body > #content");
-}
+class ImageManager {
+    constructor() {
+        this.commitHandler = null;
+        this.target = null;
+        this.permissions = {};
+        this.container = null;
+        this.projectId = null;
+        this.studioId = null;
+        this.isLoading = false;
+        this.initialFilename = null;
+    }
 
-function closeImageManager() {
-    getParent().style.display = 'flex';
-    $('#image-manager').hide(1000).remove();
-}
+    async open(options, callback) {
+        if (this.isLoading) return;
+        this.isLoading = true;
 
-var commitImageHandler;
-var target;
-var permissions;
-
-// open image editor, pid used for projects
-async function selectImage(image, callback) {
-    commitImageHandler = callback;
-    target = image.target;
-    
-    let project_id = image.project_id;
-    let studio_id = image.studio_id;
-
-    getParent().style.display = "none";
-    $('body').append($('<div id="image-manager">'));
-    $("#image-manager").on("click", "#abort-image-editor", closeImageManager);
-
-    $("#image-manager").on("click", "#search-button",
-        () => searchImage(project_id, studio_id, $("input#search-field").val())
-    );
-    
-    permissions = await getJson('permissions.cgi', {
-        "project_id" : project_id,
-        "studio_id" : studio_id
-    });
-
-    let [manager, file_images, series_images, search_images] = await Promise.all([
-        loadHtmlFragment({
-            url: 'image.cgi?' + new URLSearchParams({
-                "action": 'show',
-                "project_id": project_id,
-                "studio_id": studio_id
-            }).toString(),
-            target: '#image-manager'
-    
-        }),
-        image.filename ? getJson('image.cgi', {
-            "action": 'get',
-            "project_id": project_id,
-            "studio_id": studio_id,
-            "filename": image.filename
-        }) : Promise.resolve({images:[]}),
-        image.series_id ? getJson('image.cgi', {
-            "action": 'get',
-            "project_id": project_id,
-            "studio_id": studio_id,
-            "series_id": image.series_id
-        }) : Promise.resolve({images:[]}),
-
-        image.search ? getJson('image.cgi', {
-            "action": 'get',
-            "project_id": project_id,
-            "studio_id": studio_id,
-            "search": image.search
-        }) : Promise.resolve({images:[]})
-    ]);
-
-    let images = Array.from(new Map([
-        ...file_images.images.map(img => [img.filename, img]),
-        ...series_images.images.map(img => [img.filename, img]),
-        ...search_images.images.map(img => [img.filename, img]),
-    ]).values());
-    listImages(project_id, studio_id, images);
-    return false;
-}
-
-function listImages(project_id, studio_id, images) {
-
-    let container = document.querySelector("#image-manager div.images");
-    container.innerHTML = '';;
-    console.log("container", container)
-    if (!container) throw new Error("nos container");
-
-    for (let image of images) {
-        let div = document.createElement("div");
-        for (let [key, value] of Object.entries(image)) {
-            div.dataset[key] = value;
-        }
-        div.className = "image";
-        div.id = `img_${image.id}`;
-        div.title = image.description || "";
-        let url = `show-image.cgi?` + new URLSearchParams({
-            project_id: image.project_id,
-            studio_id: image.studio_id,
-            type: "icon",
-            filename: image.filename
-        }).toString();
-        div.style.backgroundImage = `url('${url}')`;
+        this.commitHandler = callback;
+        this.target = options.target;
+        this.projectId = options.project_id;
+        this.studioId = options.studio_id;
         
-        div.addEventListener('click', function() {
-            loadImageEditor(project_id, studio_id, div.dataset.filename);
-        });
-        container.append(div);
-    }
-    loadImageEditor(images[0].project_id, images[0].studio_id, images[0].filename);
-    setActiveImage(document.querySelector("div.images div.image"));
-    console.log("images initialized")
+        // This is the "Truth": what the calling app says is the current image
+        this.initialFilename = options.filename || null;
 
-    return;
-}
+        const mainContent = document.querySelector("body > #content");
+        if (mainContent) mainContent.style.display = "none";
 
-function setActiveImage(elem) {
-    document.querySelectorAll("div.image").forEach(image => {
-        image.classList.remove("active");
-        image.classList.add("inactive");
-    });
-    if (!elem) return;
-    elem.classList.add("active");
-    elem.classList.remove("inactive");
-    updateActiveImage();
-}
+        this.container = document.createElement('div');
+        this.container.id = 'image-manager';
+        document.body.appendChild(this.container);
 
-function updateActiveImage() {
-    $('div.images div.image.active').click();
-}
-
-function parseImageForm() {
-    let image = {};
-    let editor = document.querySelector("#image-editor");
-    image.project_id = editor.querySelector("#project_id").value;
-    image.studio_id = editor.querySelector("#studio_id").value;
-    image.name = editor.querySelector("#name").value;
-    image.description = editor.querySelector("#description").value;
-    image.licence = editor.querySelector("#licence").value;
-    image.public = editor.querySelector("#public").value;
-    image.filename = editor.querySelector("#filename").value;
-    return image;
-}
-
-function setImageForm(image){
-    let editor = document.querySelector("#image-editor");
-    editor.querySelector("#project_id").value = image.project_id || 0;
-    editor.querySelector("#studio_id").value = image.studio_id || 0;
-    editor.querySelector("#name").value = image.name || '';
-    editor.querySelector("#description").value = image.description || '';
-    editor.querySelector("#licence").value = image.licence || '';
-    console.log(image.licence)
-    editor.querySelector("#public").checked = !!image.public;
-    editor.querySelector("#filename").value = image.filename || '';
-}
-
-// show or edit image properties
-async function loadImageEditor(project_id, studio_id, filename) {
-    await loadLocalization('image');
-    var loc = getLocalization();
-    let editor = document.querySelector("#image-editor");
-    let json = await getJson('image.cgi', {
-        "action": 'get',
-        "project_id": project_id,
-        "studio_id": studio_id,
-        "filename": filename
-    });
-    console.log("load",json)
-    let image = json.images[0];
-
-    setImageForm(image);
-
-    document.querySelector('#image-properties').innerHTML = `
-    ${loc.label_created_at} ${image.created_at} ${loc.label_created_by} ${image.created_by}<br>
-    ${loc.label_modified_at} ${image.modified_at} ${loc.label_modified_by} ${image.modified_by}<br>
-    ${loc.label_link} {{${image.filename}|${image.name}}}<br>
-    `;
-
-    let tools = document.querySelector("#image-tools");
-    tools.innerHTML = '';
-
-    if (image.public) {
-        tools.appendChild(button({
-            id: "assignButton",
-            text: loc["label_assign_to_" + target],
-            onClick: () => {
-                closeImageManager();
-                commitImageHandler(image)
-            }
-        }));
-        tools.appendChild(button({
-            id: "depublishButton",
-            text: loc.button_depublish,
-            onClick: async () => await depublishImage()
-        }));
-    } else {
-        tools.appendChild(element("div", {
-            className: "warn",
-            textContent: loc['label_warn_not_public_' + target]
-        }));
-
-        if (image.licence) {
-            tools.appendChild(button({
-                id: "publishButton",
-                text: loc.button_publish,
-                onClick: async () => await publishImage()
-            }));
-        } else {
-            tools.appendChild(element("div", {
-                className: "warn",
-                textContent: loc.label_warn_unknown_licence
-            }));
+        try {
+            await this.init(options);
+        } catch (err) {
+            console.error("Image Manager failed:", err);
+            this.close();
+        } finally {
+            this.isLoading = false;
         }
     }
-    
-    let saveImageBtn = editor.querySelector("#save-image");
-    if (saveImageBtn && !editor.querySelector("#save-image.has-handlers")) {
-        saveImageBtn.classList.add("has-handlers");
-        saveImageBtn.addEventListener(
-            "click", () => saveImage(parseImageForm())
-        );
-    }
-    let deleteImageBtn = editor.querySelector("#delete-image");
-    if (deleteImageBtn && !editor.querySelector("#delete-image.has-handlers")) {
-        deleteImageBtn.classList.add("has-handlers");
-        deleteImageBtn.addEventListener(
-            "click", () => askDeleteImage(parseImageForm().filename)
-        );
+
+    close() {
+        const mainContent = document.querySelector("body > #content");
+        if (mainContent) mainContent.style.display = 'flex';
+        if (this.container) this.container.remove();
+        this.container = null;
     }
 
-    if (permissions.create_image) {
-        tools.append(
-            element("label", {
-                textContent: loc.label_file, 
-                for: "upload"
-            }),
-            element("input", {
-                type: "file",
-                name: "upload",
-                accept: "image/*",
-                maxlength: "2000000",
-                size: "10",
-                required: true
-            }),
-            element("button", {
-                textContent: loc.button_upload,
-                onClick: () => {uploadImage(); return false;},
+    async init(options) {
+        await loadLocalization('image');
+
+        this.container.addEventListener("click", (e) => {
+            if (e.target.id === 'abort-image-editor') this.close();
+            if (e.target.id === 'search-button') this.handleSearch();
+        });
+
+        // 1. Load HTML and Permissions
+        const [perms] = await Promise.all([
+            getJson('permissions.cgi', { project_id: this.projectId, studio_id: this.studioId }),
+            loadHtmlFragment({
+                url: 'image.cgi?' + new URLSearchParams({
+                    action: 'show',
+                    project_id: this.projectId,
+                    studio_id: this.studioId
+                }).toString(),
+                target: '#image-manager'
             })
-        );
+        ]);
+
+        this.permissions = perms;
+
+        // 2. Fetch Images
+        const baseParams = { project_id: this.projectId, studio_id: this.studioId, action: 'get' };
+        
+        const [fileRes, seriesRes, searchRes] = await Promise.all([
+            this.initialFilename ? getJson('image.cgi', { ...baseParams, filename: this.initialFilename }) : Promise.resolve({images:[]}),
+            options.series_id ? getJson('image.cgi', { ...baseParams, series_id: options.series_id }) : Promise.resolve({images:[]}),
+            options.search ? getJson('image.cgi', { ...baseParams, search: options.search }) : Promise.resolve({images:[]})
+        ]);
+
+        // 3. Merge Logic: Priority goes to the actual selected file
+        const imageMap = new Map();
+        
+        // Put general results first
+        if (searchRes.images) searchRes.images.forEach(img => imageMap.set(img.filename, img));
+        if (seriesRes.images) seriesRes.images.forEach(img => imageMap.set(img.filename, img));
+        
+        // Put the specific requested file LAST so it overwrites any partial data from searches
+        if (fileRes.images) {
+            fileRes.images.forEach(img => {
+                imageMap.set(img.filename, img);
+            });
+        }
+
+        this.renderImageList(Array.from(imageMap.values()));
     }
-    if (permissions.delete_image) {
-        tools.appendChild(
-            element("button", {
-                textContent: loc.delete_upload,
-                onClick: () => {deleteImage();return false;},
-            })
-        )
+
+    renderImageList(images) {
+        const listContainer = this.container.querySelector("div.images");
+        if (!listContainer) return;
+
+        listContainer.innerHTML = '';
+        let targetThumbnail = null;
+
+        images.forEach(image => {
+            const div = document.createElement("div");
+            div.className = "image inactive";
+            div.id = `img_${image.id}`;
+            div.dataset.filename = image.filename;
+            
+            const url = `show-image.cgi?project_id=${this.projectId}&studio_id=${this.studioId}&type=icon&filename=${encodeURIComponent(image.filename)}`;
+            div.style.backgroundImage = `url('${url}')`;
+
+            div.onclick = () => {
+                this.setActiveThumbnail(div);
+                this.loadImageEditor(image.filename);
+            };
+
+            // STRICT MATCH: Does this thumbnail match the current selected image?
+            if (this.initialFilename && image.filename === this.initialFilename) {
+                targetThumbnail = div;
+            }
+
+            listContainer.append(div);
+        });
+
+        // Trigger selection of the specific image passed in open()
+        if (targetThumbnail) {
+            targetThumbnail.click();
+            setTimeout(() => targetThumbnail.scrollIntoView({ block: 'center', behavior: 'smooth' }), 100);
+        } else if (images.length > 0) {
+            listContainer.firstChild.click();
+        }
+    }
+
+    setActiveThumbnail(elem) {
+        this.container.querySelectorAll("div.image").forEach(img => {
+            img.classList.remove("active");
+            img.classList.add("inactive");
+        });
+        elem.classList.add("active");
+        elem.classList.remove("inactive");
+    }
+
+    async loadImageEditor(filename) {
+        const data = await getJson('image.cgi', {
+            action: 'get',
+            project_id: this.projectId,
+            studio_id: this.studioId,
+            filename: filename
+        });
+
+        if (!data.images || !data.images[0]) return;
+        const image = data.images[0];
+        const loc = getLocalization();
+        
+        this.setFormData(image);
+
+        // Update properties
+        const props = this.container.querySelector('#image-properties');
+        if (props) {
+            props.innerHTML = `
+                ${loc.label_created_at} ${image.created_at} ${loc.label_created_by} ${image.created_by}<br>
+                ${loc.label_modified_at} ${image.modified_at} ${loc.label_modified_by} ${image.modified_by}<br>
+                ${loc.label_link} {{${image.filename}|${image.name}}}<br>
+            `;
+        }
+
+        this.renderTools(image);
+        
+        const saveBtn = this.container.querySelector("#save-image");
+        if (saveBtn) {
+            saveBtn.onclick = (e) => {
+                e.preventDefault();
+                this.saveImage(this.getFormData());
+            };
+        }
+    }
+
+    renderTools(image) {
+        const tools = this.container.querySelector("#image-tools");
+        if (!tools) return;
+        tools.innerHTML = '';
+
+        const loc = getLocalization();
+        const isPublic = (image.public == 1 || image.public === "1");
+        const hasLicense = !!(image.licence && String(image.licence).trim() !== "");
+
+        if (isPublic) {
+            tools.appendChild(this.createBtn(loc["label_assign_to_" + this.target] || `Assign to ${this.target}`, () => {
+                this.close();
+                this.commitHandler(image);
+            }));
+            tools.appendChild(this.createBtn(loc.button_depublish, () => this.togglePublish(image, 0)));
+
+            if (!hasLicense) {
+                const warn = document.createElement('div');
+                warn.className = 'warn';
+                warn.textContent = loc.label_warn_unknown_licence || 'Missing license';
+                tools.appendChild(warn);
+            }
+        } else {
+            const warnPublic = document.createElement('div');
+            warnPublic.className = 'warn';
+            warnPublic.textContent = loc['label_warn_not_public_' + this.target] || 'Not public';
+            tools.appendChild(warnPublic);
+
+            if (hasLicense) {
+                tools.appendChild(this.createBtn(loc.button_publish, () => this.togglePublish(image, 1)));
+            } else {
+                const warnLicense = document.createElement('div');
+                warnLicense.className = 'warn';
+                warnLicense.textContent = loc.label_warn_unknown_licence || 'Missing license';
+                tools.appendChild(warnLicense);
+            }
+        }
+    }
+
+    getField(id) {
+        return this.container.querySelector(`#${id}`) || this.container.querySelector(`[name="${id}"]`);
+    }
+
+    setFormData(image) {
+        const f = (id) => this.getField(id);
+        if (f('name')) f('name').value = image.name || '';
+        if (f('description')) f('description').value = image.description || '';
+        if (f('licence')) f('licence').value = image.licence || '';
+        
+        const pubCheckbox = f('public');
+        if (pubCheckbox) pubCheckbox.checked = (image.public == 1 || image.public === "1");
+
+        if (f('filename')) f('filename').value = image.filename || '';
+        if (f('project_id')) f('project_id').value = image.project_id || 0;
+        if (f('studio_id')) f('studio_id').value = image.studio_id || 0;
+    }
+
+    getFormData() {
+        const f = (id) => this.getField(id);
+        const pubCheckbox = f('public');
+        return {
+            project_id: f('project_id')?.value || 0,
+            studio_id: f('studio_id')?.value || 0,
+            name: f('name')?.value || '',
+            description: f('description')?.value || '',
+            licence: f('licence')?.value || '',
+            public: (pubCheckbox && pubCheckbox.checked) ? 1 : 0,
+            filename: f('filename')?.value || ''
+        };
+    }
+
+    async togglePublish(image, status) {
+        const data = this.getFormData();
+        data.public = status;
+        await this.saveImage(data);
+    }
+
+    async saveImage(image) {
+        image.action = "save";
+        const res = await postJson('image.cgi', image);
+        if (res) {
+            this.loadImageEditor(image.filename);
+        }
+    }
+
+    async handleSearch() {
+        const query = this.container.querySelector("input#search-field")?.value || "";
+        const json = await getJson('image.cgi', {
+            action: "get",
+            project_id: this.projectId,
+            studio_id: this.studioId,
+            search: query
+        });
+        this.renderImageList(json.images);
+    }
+
+    createBtn(text, cb) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = text;
+        b.onclick = (e) => { e.preventDefault(); cb(); };
+        return b;
     }
 }
 
-async function searchImage(project_id, studio_id, search) {
-    let json = await getJson('image.cgi',     {
-        action: "get",
-        project_id,
-        studio_id,
-        search
+window.ImageEditor = new ImageManager();
+function registerImageHandler(){
+    document.querySelectorAll("button.select-image").forEach((btn) => {
+        console.log("register button")
+        btn.addEventListener("click", () => {
+            const parent = btn.closest('div');
+            const hiddenInput = parent.querySelector("input.image");
+            const previewImg = parent.querySelector("#imagePreview");
+            
+            console.log("open editor with filename:", btn.dataset.filename);
+            
+            window.ImageEditor.open(btn.dataset, (image) => {
+                // 1. Update the hidden input for form submission
+                hiddenInput.value = image.filename;
+                
+                // 2. Update the preview UI
+                previewImg.src = `show-image.cgi?project_id=${image.project_id}&studio_id=${image.studio_id}&filename=${image.filename}&type=icon`;
+                
+                // 3. FIX: Update the dataset so the NEXT time you open the manager, 
+                // it knows this new image is the current one.
+                btn.dataset.filename = image.filename;
+                
+                console.log(`Updated field for event: ${btn.dataset.event_id}`);
+            });
+        });
     });
-    listImages(project_id, studio_id, json.images);
-    return false;
 }
 
-async function saveImage(image) {
-    image.action = "save";
-    console.log("save",image)
-    var doc = await postJson('image.cgi?', image);
-    if (!doc) return;
-    showInfo(loc.label_saved);
-    console.log(doc)
-    loadImageEditor(image.project_id, image.studio_id, image.filename)
-}
-
-async function depublishImage() {
-    let image = parseImageForm();
-    image.public = 0;
-    await saveImage(image);
-}
-
-async function publishImage() {
-    let image = parseImageForm();
-    image.public = 1;
-    await saveImage(image);
-}
-
-function askDeleteImage(filename) {
-    commitAction("delete image", () => deleteImage(filename));
-}
-
-async function deleteImage(filename) {
-    var json = await getJson('image.cgi', {
-        "action": "delete",
-        "project_id": getProjectId(),
-        "studio_id": getStudioId(),
-        "filename": filename,
-    });
-    return false;
-}
-
-function uploadImage() {
-    var form = $("#img_upload");
-    var fd = new FormData(form[0]);
-    var rq = $.ajax({
-        url: 'image-upload.cgi',
-        type: 'POST',
-        data: fd,
-        cache: false,
-        contentType: false,
-        processData: false
-    });
-
-    rq.done(function(data) {
-        var image_id = $("#upload_image_id").html();
-        var filename = $("#upload_image_filename").html();
-        var title = $("#upload_image_title").html();
-        //remove existing image from list
-        $('#image-list div.images #img_' + image_id).remove();
-        var url = icon(getProjectId(), getStudioId(), filename).src;
-
-        var html = '<div';
-        html += ' id="img_' + image_id + '"';
-        html += ' class="image" ';
-        html += ' title="' + title + '" ';
-        html += ' style="background-image:url(' + url + ')"';
-        html += ' filename="' + filename + '"';
-        html += '>';
-        html += '    <div class="label">' + title + '</div>';
-        html += '</div>';
-
-        //add image to list
-        $('#image-list div.images').prepend(html);
-        return false;
-    });
-
-    rq.fail(function() {
-        console.log("Fail")
-    });
-
-    return false;
-};
-
-function updateCheckBox(selector, value) {
-    $(selector).attr('value', value)
-    $(selector).prop("checked", value == 1);
-}
-
+// Global instance window.ImageEditor = new ImageManager();
 // init function
 window.calcms??={};
 window.calcms.init_image = async function(el) {
+    console.log("init images")
     await loadLocalization('image');
-    var checkbox = $("#img_editor input[name='public']");
-    updateCheckBox(checkbox);
-    checkbox.change(() => updateCheckBox(checkbox));
+    //var checkbox = $("#img_editor input[name='public']");
+    //updateCheckBox(checkbox);
+    //checkbox.change(() => updateCheckBox(checkbox));
     //console.log("image handler initialized");
 }
