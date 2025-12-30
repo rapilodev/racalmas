@@ -1,6 +1,6 @@
-if (window.namespace_image_js) throw "stop"; window.namespace_image_js = true;
+if (window.namespace_image_js) throw "stop"; 
+window.namespace_image_js = true;
 "use strict";
-
 
 class ImageManager {
     constructor() {
@@ -51,10 +51,23 @@ class ImageManager {
     async init(options) {
         await loadLocalization('image');
 
-        // Search Button Listener
+        // Robust Event Delegation for Toolbar Actions
         this.container.addEventListener("click", (e) => {
-            if (e.target.id === 'abort-image-editor') this.close();
-            if (e.target.id === 'search-button' || e.target.closest('#search-button')) this.handleSearch();
+            // Close Action
+            if (e.target.id === 'abort-image-editor' || e.target.closest('#abort-image-editor')) {
+                this.close();
+            }
+            // Search Action
+            if (e.target.id === 'search-button' || e.target.closest('#search-button')) {
+                this.handleSearch();
+            }
+            // Upload Trigger (if your CGI provides a static upload button)
+            if (e.target.id === 'upload-button' || e.target.closest('#upload-button')) {
+                const input = document.createElement('input');
+                input.type = 'file'; input.accept = 'image/*';
+                input.onchange = (ev) => this.handleUpload(ev);
+                input.click();
+            }
         });
 
         const [perms] = await Promise.all([
@@ -66,14 +79,13 @@ class ImageManager {
                 target: '#image-manager'
             })
         ]);
-
         this.permissions = perms;
+
         const baseParams = { project_id: this.projectId, studio_id: this.studioId, action: 'get' };
-        
         const [fileRes, seriesRes, searchRes] = await Promise.all([
-            this.initialFilename ? getJson('image.cgi', { ...baseParams, filename: this.initialFilename }) : Promise.resolve({images:[]}),
-            options.series_id ? getJson('image.cgi', { ...baseParams, series_id: options.series_id }) : Promise.resolve({images:[]}),
-            options.search ? getJson('image.cgi', { ...baseParams, search: options.search }) : Promise.resolve({images:[]})
+            this.initialFilename ? getJson('image.cgi', { ...baseParams, filename: this.initialFilename }) : Promise.resolve({ images: [] }),
+            options.series_id ? getJson('image.cgi', { ...baseParams, series_id: options.series_id }) : Promise.resolve({ images: [] }),
+            options.search ? getJson('image.cgi', { ...baseParams, search: options.search }) : Promise.resolve({ images: [] })
         ]);
 
         const imageMap = new Map();
@@ -138,7 +150,7 @@ class ImageManager {
 
         if (!data.images || !data.images[0]) return;
         const image = data.images[0];
-        
+
         this.setFormData(image);
         this.renderTools(image);
         this.attachLiveValidation(image);
@@ -155,7 +167,6 @@ class ImageManager {
 
         const saveBtn = this.container.querySelector("#save-image");
         if (saveBtn) {
-            // Re-wrapping save button logic for sprite support
             saveBtn.innerHTML = `<sprite-icon name="save"></sprite-icon> ${loc.button_save || 'Save'}`;
             saveBtn.onclick = (e) => {
                 e.preventDefault();
@@ -197,12 +208,9 @@ class ImageManager {
             group.style.flexDirection = 'column';
             group.style.alignItems = 'center';
             group.style.marginRight = '10px';
-            
             if (warnText) {
                 const label = document.createElement('span');
-                label.style.fontSize = '10px';
-                label.style.color = 'red';
-                label.style.fontWeight = 'bold';
+                label.style.fontSize = '10px'; label.style.color = 'red'; label.style.fontWeight = 'bold';
                 label.textContent = warnText;
                 group.appendChild(label);
             }
@@ -217,22 +225,57 @@ class ImageManager {
             });
             const assignWarn = !hasLicense ? (loc.label_warn_unknown_licence || 'No License') : '';
             tools.appendChild(createToolGroup(assignWarn, assignBtn));
-
-            const depubBtn = this.createBtn('private', loc.button_depublish, () => this.togglePublish(image, 0));
-            tools.appendChild(createToolGroup('', depubBtn));
+            tools.appendChild(createToolGroup('', this.createBtn('private', loc.button_depublish, () => this.togglePublish(image, 0))));
         } else {
             const pubWarn = loc['label_warn_not_public_' + this.target] || 'Not public';
             if (hasLicense) {
-                const pubBtn = this.createBtn('public', loc.button_publish, () => this.togglePublish(image, 1));
-                tools.appendChild(createToolGroup(pubWarn, pubBtn));
+                tools.appendChild(createToolGroup(pubWarn, this.createBtn('public', loc.button_publish, () => this.togglePublish(image, 1))));
             } else {
-                const licWarn = loc.label_warn_unknown_licence || 'Missing License';
                 const dummyBtn = this.createBtn('public', loc.button_publish, () => {});
-                dummyBtn.disabled = true;
-                dummyBtn.style.opacity = '0.5';
-                tools.appendChild(createToolGroup(licWarn, dummyBtn));
+                dummyBtn.disabled = true; dummyBtn.style.opacity = '0.5';
+                tools.appendChild(createToolGroup(loc.label_warn_unknown_licence || 'Missing License', dummyBtn));
             }
         }
+
+        if (this.permissions.create_image) {
+            tools.appendChild(createToolGroup('', this.createBtn('upload', loc.button_upload || 'Upload', () => {
+                const input = document.createElement('input');
+                input.type = 'file'; input.accept = 'image/*';
+                input.onchange = (e) => this.handleUpload(e);
+                input.click();
+            })));
+        }
+
+        if (this.permissions.delete_image) {
+            tools.appendChild(createToolGroup('', this.createBtn('delete', loc.button_delete || 'Delete', () => {
+                if (typeof commitAction === "function") {
+                    commitAction("delete image", () => this.deleteImage(image.filename));
+                } else if (confirm("Delete this image?")) {
+                    this.deleteImage(image.filename);
+                }
+            })));
+        }
+    }
+
+    async handleUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const fd = new FormData();
+        fd.append('project_id', this.projectId);
+        fd.append('studio_id', this.studioId);
+        fd.append('image', file);
+
+        const res = await fetch('image-upload.cgi', { method: 'POST', body: fd });
+        if (res.ok) {
+            await this.handleSearch();
+        }
+    }
+
+    async deleteImage(filename) {
+        await getJson('image.cgi', {
+            action: "delete", project_id: this.projectId, studio_id: this.studioId, filename: filename,
+        });
+        this.handleSearch();
     }
 
     getField(id) {
@@ -274,7 +317,10 @@ class ImageManager {
     async saveImage(image) {
         image.action = "save";
         const res = await postJson('image.cgi', image);
-        if (res) await this.loadImageEditor(image.filename);
+        if (res) {
+            if (typeof showInfo === "function") showInfo(getLocalization().label_saved);
+            await this.loadImageEditor(image.filename);
+        }
     }
 
     async handleSearch() {
@@ -288,34 +334,37 @@ class ImageManager {
     createBtn(spriteName, text, cb) {
         const b = document.createElement('button');
         b.type = 'button';
-        // Inserting the custom sprite element
         b.innerHTML = `<sprite-icon name="${spriteName}"></sprite-icon> ${text}`;
         b.onclick = (e) => { e.preventDefault(); cb(); };
         return b;
     }
 }
 
-window.ImageEditor = new ImageManager();
+// Ensure global existence immediately
+window.ImageManager = new ImageManager();
 
-function registerImageHandler(){
+function registerImageHandler() {
     document.querySelectorAll("button.select-image").forEach((btn) => {
+        if (btn.dataset.hasImageHandler) return;
+        btn.dataset.hasImageHandler = "true";
+
         btn.addEventListener("click", () => {
-            const parent = btn.closest('div');
-            const hiddenInput = parent.querySelector("input.image");
-            const previewImg = parent.querySelector("#imagePreview");
-            
-            window.ImageEditor.open(btn.dataset, (image) => {
-                hiddenInput.value = image.filename;
-                previewImg.src = `show-image.cgi?project_id=${image.project_id}&studio_id=${image.studio_id}&filename=${image.filename}&type=icon`;
+            window.ImageManager.open(btn.dataset, (image) => {
+                const parent = btn.closest('div');
+                const hiddenInput = parent.querySelector("input.image");
+                const previewImg = parent.querySelector("#imagePreview");
+                if (hiddenInput) hiddenInput.value = image.filename;
+                if (previewImg) {
+                    previewImg.src = `show-image.cgi?project_id=${image.project_id}&studio_id=${image.studio_id}&filename=${image.filename}&type=icon`;
+                }
                 btn.dataset.filename = image.filename;
             });
         });
     });
 }
-// Global instance window.ImageEditor = new ImageManager();
-// init function
-window.calcms??={};
+
+window.calcms ??= {};
 window.calcms.init_image = async function(el) {
-    console.log("init images")
     await loadLocalization('image');
-}
+    registerImageHandler();
+};

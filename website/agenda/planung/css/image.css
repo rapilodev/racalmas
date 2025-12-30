@@ -96,3 +96,17 @@
 .image-form {
     width:100%;
 }
+
+
+#image-tools{
+    background:2b2b2b !important;
+    color:white;
+}
+
+#image-tools button{
+  background: none;
+  color: black;
+  text-align: left;
+  gap: 10px;
+  display: flex;
+}

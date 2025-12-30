@@ -21,11 +21,11 @@ use images();
 use localization();
 
 local $SIG{__DIE__} = sub  {
-#    my $error_message = shift;
+    my $error_message = shift;
     print "200 OK\n";
     #Content-type:text/html\n\n";
 #    uac::print_error($error_message);
-#    warn "Caught fatal error: $error_message\n";
+    warn "Caught fatal error: $error_message\n";
 #    exit 0;
 };
 
@@ -43,7 +43,7 @@ my ($cgi, $params, $error, $fh) = params::get($r,
     {upload => { limit => $upload_limit } }
 );
 die $error if $error;
-my ($user, $expires) = auth::get_user($config, $params, $cgi);
+my ($user) = uac::get_user($config, $params);
 exit if (!defined $user) || ($user eq '');
 
 my $user_presets = uac::get_user_presets(
