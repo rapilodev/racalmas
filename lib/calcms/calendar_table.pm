@@ -372,7 +372,7 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
             <thead>
                 <tr>
                     <th class="day_of_year">$params->{loc}->{label_day_of_year}</th>
-                    <th class="weekday">$params->{loc}->{label_weekday}</th>
+                    <!--<th class="weekday">$params->{loc}->{label_weekday}</th>-->
                     <th class="start_date">$params->{loc}->{label_start}</th>
                     <th class="start_time">$params->{loc}->{label_end}</th>
                     <th class="series_name">$params->{loc}->{label_series}</th>
@@ -515,8 +515,8 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
                 . qq!<td class="day_of_year">!
                 .(defined $event->{start} ? time::dayOfYear($event->{start}) : '')
                 . q!</td>!
-                . qq!<td class="weekday">$event->{weekday_short_name},</td>!
-                . qq!<td class="start_date" data-text="$event->{start_datetime}">$event->{start_date_name}</td>!
+                . qq{<!--<td class="weekday">$event->{weekday_short_name},</td>-->}
+                . qq!<td class="start_date" data-text="$event->{start_datetime}">$event->{start_date}</td>!
                 . qq!<td class="start_time">$event->{start_time} - $event->{end_time}</td>!
                 . qq!<td class="series_name">$event->{series_name}</td>!
                 . qq!<td class="title">$title</td>!
