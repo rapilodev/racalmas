@@ -31,11 +31,5 @@ function cancel_edit_studio(elem, name){
 window.calcms ??= {};
 window.calcms.init_studios = function(el) {
     var loc = getLocalization();
-    // image manager
-    let imageButtons = document.querySelectorAll("button.select-image");
-    imageButtons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            selectImage(btn.dataset, (image) => updateImage(image.filename));
-        });
-    });
+    registerImageHandler();
 };

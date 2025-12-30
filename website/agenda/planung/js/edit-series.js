@@ -425,10 +425,5 @@ window.calcms.init_edit_series = async function(el) {
         usNumberFormat: false
     });
 
-    // image manager
-    let imageBtn = document.querySelector("button.select-image");
-    imageBtn.addEventListener("click", 
-        () => selectImage(imageBtn.dataset, (image) => updateImage(image.filename))
-    );
-
+    registerImageHandler();
 }

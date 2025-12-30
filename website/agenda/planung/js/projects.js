@@ -52,11 +52,5 @@ function add_project(){
 window.calcms ??= {};
 window.calcms.init_projects = function(el) {
     showDatePicker('input.date');
-
-    let imageButtons = document.querySelectorAll("button.select-image");
-    imageButtons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            selectImage(btn.dataset, (image) => updateImage(image.filename));
-        });
-    });
+    registerImageHandler();
 };

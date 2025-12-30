@@ -1,6 +1,7 @@
 if (window.namespace_image_js) throw "stop"; window.namespace_image_js = true;
 "use strict";
 
+
 class ImageManager {
     constructor() {
         this.commitHandler = null;
@@ -21,8 +22,6 @@ class ImageManager {
         this.target = options.target;
         this.projectId = options.project_id;
         this.studioId = options.studio_id;
-        
-        // This is the "Truth": what the calling app says is the current image
         this.initialFilename = options.filename || null;
 
         const mainContent = document.querySelector("body > #content");
@@ -52,27 +51,23 @@ class ImageManager {
     async init(options) {
         await loadLocalization('image');
 
+        // Search Button Listener
         this.container.addEventListener("click", (e) => {
             if (e.target.id === 'abort-image-editor') this.close();
-            if (e.target.id === 'search-button') this.handleSearch();
+            if (e.target.id === 'search-button' || e.target.closest('#search-button')) this.handleSearch();
         });
 
-        // 1. Load HTML and Permissions
         const [perms] = await Promise.all([
             getJson('permissions.cgi', { project_id: this.projectId, studio_id: this.studioId }),
             loadHtmlFragment({
                 url: 'image.cgi?' + new URLSearchParams({
-                    action: 'show',
-                    project_id: this.projectId,
-                    studio_id: this.studioId
+                    action: 'show', project_id: this.projectId, studio_id: this.studioId
                 }).toString(),
                 target: '#image-manager'
             })
         ]);
 
         this.permissions = perms;
-
-        // 2. Fetch Images
         const baseParams = { project_id: this.projectId, studio_id: this.studioId, action: 'get' };
         
         const [fileRes, seriesRes, searchRes] = await Promise.all([
@@ -81,21 +76,17 @@ class ImageManager {
             options.search ? getJson('image.cgi', { ...baseParams, search: options.search }) : Promise.resolve({images:[]})
         ]);
 
-        // 3. Merge Logic: Priority goes to the actual selected file
         const imageMap = new Map();
-        
-        // Put general results first
-        if (searchRes.images) searchRes.images.forEach(img => imageMap.set(img.filename, img));
-        if (seriesRes.images) seriesRes.images.forEach(img => imageMap.set(img.filename, img));
-        
-        // Put the specific requested file LAST so it overwrites any partial data from searches
-        if (fileRes.images) {
-            fileRes.images.forEach(img => {
-                imageMap.set(img.filename, img);
-            });
+        [...searchRes.images, ...seriesRes.images, ...fileRes.images].forEach(img => {
+            if (img && img.filename) imageMap.set(img.filename, img);
+        });
+
+        const finalImages = Array.from(imageMap.values());
+        if (this.initialFilename) {
+            finalImages.sort((a, b) => (a.filename === this.initialFilename ? -1 : b.filename === this.initialFilename ? 1 : 0));
         }
 
-        this.renderImageList(Array.from(imageMap.values()));
+        this.renderImageList(finalImages);
     }
 
     renderImageList(images) {
@@ -119,15 +110,10 @@ class ImageManager {
                 this.loadImageEditor(image.filename);
             };
 
-            // STRICT MATCH: Does this thumbnail match the current selected image?
-            if (this.initialFilename && image.filename === this.initialFilename) {
-                targetThumbnail = div;
-            }
-
+            if (this.initialFilename && image.filename === this.initialFilename) targetThumbnail = div;
             listContainer.append(div);
         });
 
-        // Trigger selection of the specific image passed in open()
         if (targetThumbnail) {
             targetThumbnail.click();
             setTimeout(() => targetThumbnail.scrollIntoView({ block: 'center', behavior: 'smooth' }), 100);
@@ -147,19 +133,17 @@ class ImageManager {
 
     async loadImageEditor(filename) {
         const data = await getJson('image.cgi', {
-            action: 'get',
-            project_id: this.projectId,
-            studio_id: this.studioId,
-            filename: filename
+            action: 'get', project_id: this.projectId, studio_id: this.studioId, filename: filename
         });
 
         if (!data.images || !data.images[0]) return;
         const image = data.images[0];
-        const loc = getLocalization();
         
         this.setFormData(image);
+        this.renderTools(image);
+        this.attachLiveValidation(image);
 
-        // Update properties
+        const loc = getLocalization();
         const props = this.container.querySelector('#image-properties');
         if (props) {
             props.innerHTML = `
@@ -169,13 +153,31 @@ class ImageManager {
             `;
         }
 
-        this.renderTools(image);
-        
         const saveBtn = this.container.querySelector("#save-image");
         if (saveBtn) {
+            // Re-wrapping save button logic for sprite support
+            saveBtn.innerHTML = `<sprite-icon name="save"></sprite-icon> ${loc.button_save || 'Save'}`;
             saveBtn.onclick = (e) => {
                 e.preventDefault();
                 this.saveImage(this.getFormData());
+            };
+        }
+    }
+
+    attachLiveValidation(image) {
+        const licInput = this.getField('licence');
+        const pubCheck = this.getField('public');
+
+        if (licInput) {
+            licInput.oninput = () => {
+                image.licence = licInput.value;
+                this.renderTools(image);
+            };
+        }
+        if (pubCheck) {
+            pubCheck.onchange = () => {
+                image.public = pubCheck.checked ? 1 : 0;
+                this.renderTools(image);
             };
         }
     }
@@ -187,34 +189,48 @@ class ImageManager {
 
         const loc = getLocalization();
         const isPublic = (image.public == 1 || image.public === "1");
-        const hasLicense = !!(image.licence && String(image.licence).trim() !== "");
+        const hasLicense = !!(image.licence && String(image.licence).trim().length > 0);
+
+        const createToolGroup = (warnText, button) => {
+            const group = document.createElement('div');
+            group.style.display = 'inline-flex';
+            group.style.flexDirection = 'column';
+            group.style.alignItems = 'center';
+            group.style.marginRight = '10px';
+            
+            if (warnText) {
+                const label = document.createElement('span');
+                label.style.fontSize = '10px';
+                label.style.color = 'red';
+                label.style.fontWeight = 'bold';
+                label.textContent = warnText;
+                group.appendChild(label);
+            }
+            group.appendChild(button);
+            return group;
+        };
 
         if (isPublic) {
-            tools.appendChild(this.createBtn(loc["label_assign_to_" + this.target] || `Assign to ${this.target}`, () => {
+            const assignBtn = this.createBtn('assign', loc["label_assign_to_" + this.target] || `Assign`, () => {
                 this.close();
                 this.commitHandler(image);
-            }));
-            tools.appendChild(this.createBtn(loc.button_depublish, () => this.togglePublish(image, 0)));
+            });
+            const assignWarn = !hasLicense ? (loc.label_warn_unknown_licence || 'No License') : '';
+            tools.appendChild(createToolGroup(assignWarn, assignBtn));
 
-            if (!hasLicense) {
-                const warn = document.createElement('div');
-                warn.className = 'warn';
-                warn.textContent = loc.label_warn_unknown_licence || 'Missing license';
-                tools.appendChild(warn);
-            }
+            const depubBtn = this.createBtn('private', loc.button_depublish, () => this.togglePublish(image, 0));
+            tools.appendChild(createToolGroup('', depubBtn));
         } else {
-            const warnPublic = document.createElement('div');
-            warnPublic.className = 'warn';
-            warnPublic.textContent = loc['label_warn_not_public_' + this.target] || 'Not public';
-            tools.appendChild(warnPublic);
-
+            const pubWarn = loc['label_warn_not_public_' + this.target] || 'Not public';
             if (hasLicense) {
-                tools.appendChild(this.createBtn(loc.button_publish, () => this.togglePublish(image, 1)));
+                const pubBtn = this.createBtn('public', loc.button_publish, () => this.togglePublish(image, 1));
+                tools.appendChild(createToolGroup(pubWarn, pubBtn));
             } else {
-                const warnLicense = document.createElement('div');
-                warnLicense.className = 'warn';
-                warnLicense.textContent = loc.label_warn_unknown_licence || 'Missing license';
-                tools.appendChild(warnLicense);
+                const licWarn = loc.label_warn_unknown_licence || 'Missing License';
+                const dummyBtn = this.createBtn('public', loc.button_publish, () => {});
+                dummyBtn.disabled = true;
+                dummyBtn.style.opacity = '0.5';
+                tools.appendChild(createToolGroup(licWarn, dummyBtn));
             }
         }
     }
@@ -228,10 +244,8 @@ class ImageManager {
         if (f('name')) f('name').value = image.name || '';
         if (f('description')) f('description').value = image.description || '';
         if (f('licence')) f('licence').value = image.licence || '';
-        
         const pubCheckbox = f('public');
         if (pubCheckbox) pubCheckbox.checked = (image.public == 1 || image.public === "1");
-
         if (f('filename')) f('filename').value = image.filename || '';
         if (f('project_id')) f('project_id').value = image.project_id || 0;
         if (f('studio_id')) f('studio_id').value = image.studio_id || 0;
@@ -260,67 +274,48 @@ class ImageManager {
     async saveImage(image) {
         image.action = "save";
         const res = await postJson('image.cgi', image);
-        if (res) {
-            this.loadImageEditor(image.filename);
-        }
+        if (res) await this.loadImageEditor(image.filename);
     }
 
     async handleSearch() {
         const query = this.container.querySelector("input#search-field")?.value || "";
         const json = await getJson('image.cgi', {
-            action: "get",
-            project_id: this.projectId,
-            studio_id: this.studioId,
-            search: query
+            action: "get", project_id: this.projectId, studio_id: this.studioId, search: query
         });
         this.renderImageList(json.images);
     }
 
-    createBtn(text, cb) {
+    createBtn(spriteName, text, cb) {
         const b = document.createElement('button');
         b.type = 'button';
-        b.textContent = text;
+        // Inserting the custom sprite element
+        b.innerHTML = `<sprite-icon name="${spriteName}"></sprite-icon> ${text}`;
         b.onclick = (e) => { e.preventDefault(); cb(); };
         return b;
     }
 }
 
 window.ImageEditor = new ImageManager();
+
 function registerImageHandler(){
     document.querySelectorAll("button.select-image").forEach((btn) => {
-        console.log("register button")
         btn.addEventListener("click", () => {
             const parent = btn.closest('div');
             const hiddenInput = parent.querySelector("input.image");
             const previewImg = parent.querySelector("#imagePreview");
             
-            console.log("open editor with filename:", btn.dataset.filename);
-            
             window.ImageEditor.open(btn.dataset, (image) => {
-                // 1. Update the hidden input for form submission
                 hiddenInput.value = image.filename;
-                
-                // 2. Update the preview UI
                 previewImg.src = `show-image.cgi?project_id=${image.project_id}&studio_id=${image.studio_id}&filename=${image.filename}&type=icon`;
-                
-                // 3. FIX: Update the dataset so the NEXT time you open the manager, 
-                // it knows this new image is the current one.
                 btn.dataset.filename = image.filename;
-                
-                console.log(`Updated field for event: ${btn.dataset.event_id}`);
             });
         });
     });
 }
-
 // Global instance window.ImageEditor = new ImageManager();
 // init function
 window.calcms??={};
 window.calcms.init_image = async function(el) {
     console.log("init images")
     await loadLocalization('image');
-    //var checkbox = $("#img_editor input[name='public']");
-    //updateCheckBox(checkbox);
-    //checkbox.change(() => updateCheckBox(checkbox));
-    //console.log("image handler initialized");
 }

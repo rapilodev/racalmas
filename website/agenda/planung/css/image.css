@@ -46,20 +46,11 @@
     background-repeat: no-repeat;
     width: 150px;
     height: 150px;
-    vertical-align: bottom;
 }
 
 #image-manager .split {
     width: 100%;
     height: 100%;
-}
-
-#image-manager .close {
-    text-align: right;
-    padding: 0;
-    margin: 0;
-    color: var(--close-btn-color);
-    float: right;
 }
 
 #image-manager div.image:hover {
@@ -69,24 +60,6 @@
     opacity: 0.9;
     filter: contrast(120%);
     box-shadow: 0 5px 11px 0 rgba(0, 0, 0, .18), 0 4px 15px 0 rgba(0, 0, 0, .15);
-}
-
-#image-manager div.image .label {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    text-align: center;
-    background-color: var(--label-bg);
-    color: var(--label-color);
-    vertical-align: bottom;
-    opacity: 0.9;
-    padding: 6px;
-    width: 138px;
-    margin: 0;
-}
-
-#image-manager div.image.active .label {
-    background-color: var(--active-label-bg);
-    font-weight: bold;
 }
 
 #image-manager div.image.active {
@@ -104,21 +77,6 @@
     min-width: 20rem;
 }
 
-#image-manager #image-editor input,
-#image-manager #image-editor select,
-#image-manager #image-editor textarea {
-    margin-left: 0;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    width: 100%;
-}
-
-#image-manager label {
-    margin-top: 1rem;
-    text-transform: uppercase;
-    color: var(--label-color);
-}
-
 #image-editor-container {
     position: fixed;
     top: 0;
@@ -126,4 +84,15 @@
     width: 100%;
     height: 100%;
     background-color: var(--editor-bg);
+}
+
+.image-form{
+  display: flex;
+  gap: 1em;
+  flex-direction: column;
+}
+
+#content .field,
+.image-form {
+    width:100%;
 }

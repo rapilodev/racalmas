@@ -15,38 +15,46 @@ Content-type:text/html; charset=utf8;
     <div id="image-list">
         <div>
             <input id="search-field" placeholder="Suche">
-            <button id="search-button"><TMPL_VAR .loc.button_search></button>
+            <button id="search-button">
+                <sprite-icon name="search"></sprite-icon>
+                <TMPL_VAR .loc.button_search>
+            </button>
         </div>
         <div class="images"></div>
     </div>
     <div id="image-editor" class="editor">
-        <div class="panel-body">
-            <form id="image-form" method="post" action="image.cgi" onsubmit="return false;"
-            >
-                <input id="project_id" type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
-                <input id="studio_id" type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
-                <input id="public" type="hidden" class="public" name="public" <TMPL_IF public>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF> /><br>
-                <input id="filename" type="hidden" class="filename" name="filename" value="<TMPL_VAR filename>"/><br>
-        
-                <label><TMPL_VAR .loc.label_name></label><br>
+        <form id="image-form" method="post" action="image.cgi" onsubmit="return false;"
+        >
+            <input id="project_id" type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
+            <input id="studio_id" type="hidden" name="studio_id" value="<TMPL_VAR .studio_id>">
+            <input id="public" type="hidden" class="public" name="public" <TMPL_IF public>checked="checked" value="1"<TMPL_ELSE>value="0"</TMPL_IF> /><br>
+            <input id="filename" type="hidden" class="filename" name="filename" value="<TMPL_VAR filename>"/><br>
+            <div class="image-form">
+                <div>
+                <label for="name"><TMPL_VAR .loc.label_name></label>
                 <input id="name" name="name" value="<TMPL_VAR name escape=none>" class="field" size="40" maxlength="100" placeholder="<TMPL_VAR .loc.label_mandatory_field>"><br>
-        
-                <label><TMPL_VAR .loc.label_author>/<TMPL_VAR .loc.label_licence></label><br>
+                </div>
+
+                <div>
+                <label for="license"><TMPL_VAR .loc.label_author>/<TMPL_VAR .loc.label_licence></label>
                 <input id="licence" name="licence" value="<TMPL_VAR licence>" class="field<TMPL_IF missing_licence> error</TMPL_IF>" size="40" placeholder="<TMPL_VAR .loc.label_mandatory_field_licence>" required/><br>
-        
-                <label><TMPL_VAR .loc.label_description></label><br>
+                </div>
+
+                <div>
+                <label for="description"><TMPL_VAR .loc.label_description></label>
                 <textarea id="description" name="description" cols="50" rows="5"><TMPL_VAR description escape=none></textarea><br>
-            </form>
+                </div>
+            </div>
+        </form>
+
+        <TMPL_IF name="allow.update_image">
+            <button id="save-image" class="primary">
+            <sprite-icon name="save"></sprite-icon>
+            <TMPL_VAR .loc.button_save>
+        </button/>
+        </TMPL_IF>
     
-            <TMPL_IF name="allow.update_image">
-                <button id="save-image" class="primary">
-                <sprite-icon name="save"></sprite-icon>
-                <TMPL_VAR .loc.button_save>
-            </button/>
-            </TMPL_IF>
-        
-            <div id="image-properties"></div>
-        </div>
+        <div id="image-properties"></div>
     </div>
 </div>
 </main>
