@@ -1,4 +1,4 @@
-if (window.namespace_image_js) throw "stop"; 
+if (window.namespace_image_js) throw "stop";
 window.namespace_image_js = true;
 "use strict";
 
@@ -64,7 +64,8 @@ class ImageManager {
             // Upload Trigger (if your CGI provides a static upload button)
             if (e.target.id === 'upload-button' || e.target.closest('#upload-button')) {
                 const input = document.createElement('input');
-                input.type = 'file'; input.accept = 'image/*';
+                input.type = 'file';
+                input.accept = 'image/*';
                 input.onchange = (ev) => this.handleUpload(ev);
                 input.click();
             }
@@ -113,7 +114,6 @@ class ImageManager {
             div.className = "image inactive";
             div.id = `img_${image.id}`;
             div.dataset.filename = image.filename;
-            
             const url = `show-image.cgi?project_id=${this.projectId}&studio_id=${this.studioId}&type=icon&filename=${encodeURIComponent(image.filename)}`;
             div.style.backgroundImage = `url('${url}')`;
 
@@ -240,7 +240,8 @@ class ImageManager {
         if (this.permissions.create_image) {
             tools.appendChild(createToolGroup('', this.createBtn('upload', loc.button_upload || 'Upload', () => {
                 const input = document.createElement('input');
-                input.type = 'file'; input.accept = 'image/*';
+                input.type = 'file';
+                input.accept = 'image/*';
                 input.onchange = (e) => this.handleUpload(e);
                 input.click();
             })));
@@ -261,8 +262,12 @@ class ImageManager {
         const file = event.target.files[0];
         if (!file) return;
         const fd = new FormData();
+        fd.append('action', "upload");
         fd.append('project_id', this.projectId);
         fd.append('studio_id', this.studioId);
+        fd.append('upload', file.name);
+        fd.append('licence', "");
+        fd.append('description', "");
         fd.append('image', file);
 
         const res = await fetch('image-upload.cgi', { method: 'POST', body: fd });
