@@ -36,6 +36,7 @@ sub main {
         PermissionError->throw(error => "create_image") unless $permissions->{create_image};
         my $file_info= upload_file($config, $request, $session->{user}, $fh);
         my $result = update_database($config, $params, $file_info, $session->{user});
+        warn Dumper($result);
         return uac::json $result;
     }
     ActionError->throw(error => "invalid action");
@@ -45,7 +46,7 @@ sub upload_file {
     my ($config, $request, $user, $fh) = @_;
 
     my $params = $request->{params}->{checked};
-    my $filename = $params->{upload} // die "missing file\n";
+    my $filename = $params->{upload} // die "missing filename in param 'upload'\n";
     
     my $extension = get_extension($filename);
     binmode $fh;
@@ -176,7 +177,7 @@ sub check_params {
     } else {
         $checked->{studio_id} = -1;
     }
-    entry::set_strings($checked, $params, [ 'action', 'name', 'description', 'licence' ]);
+    entry::set_strings($checked, $params, [ 'action', 'name', 'description', 'licence', 'upload' ]);
     entry::set_bools($checked, $params, [ 'public' ]);
     $checked->{action} = entry::element_of($params->{action}, ['upload', 'delete', 'show'])
         or ActionError->throw(error => "invalid or missing action");
