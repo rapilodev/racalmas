@@ -19,84 +19,34 @@ use uac();
 use template();
 use images();
 use localization();
-
-local $SIG{__DIE__} = sub  {
-    my $error_message = shift;
-    print "200 OK\n";
-    #Content-type:text/html\n\n";
-#    uac::print_error($error_message);
-    warn "Caught fatal error: $error_message\n";
-#    exit 0;
-};
-
 binmode STDOUT, ":utf8";
 
-my $r   = shift;
+my $r = shift;
 my $config = config::get('../config/config.cgi');
-my $upload_limit = try {
-    config::parse_size($config->{permissions}->{audio_upload_limit});
-} catch {
-    exit;
-};
+my $upload_limit = config::parse_size($config->{permissions}->{audio_upload_limit});
+print uac::init($r, \&check_params, \&main, {upload => {limit => $upload_limit}});
 
-my ($cgi, $params, $error, $fh) = params::get($r,
-    {upload => { limit => $upload_limit } }
-);
-die $error if $error;
-my ($user) = uac::get_user($config, $params);
-exit if (!defined $user) || ($user eq '');
+sub main {
+    my ($config, $session, $params, $user_presets, $request, $fh) = @_;
+    $params = $request->{params}->{checked};
+    uac::check($config, $params, $user_presets);
+    my $permissions = $request->{permissions};
 
-my $user_presets = uac::get_user_presets(
-    $config, {
-        user       => $user,
-        project_id => $params->{project_id},
-        studio_id  => $params->{studio_id}
+    if ($params->{action} eq 'upload') {
+        PermissionError->throw(error => "create_image") unless $permissions->{create_image};
+        my $file_info= upload_file($config, $request, $session->{user}, $fh);
+        my $result = update_database($config, $params, $file_info, $session->{user});
+        return uac::json $result;
     }
-);
-
-$params->{default_studio_id} = $user_presets->{studio_id};
-$params = uac::setDefaultStudio($params, $user_presets);
-$params = uac::setDefaultProject($params, $user_presets);
-
-my $request = {
-    url => $ENV{QUERY_STRING} || '',
-    params => {
-        original => $params,
-        checked  => check_params($config, $params),
-    },
-};
-
-$request = uac::prepare_request($request, $user_presets);
-$params = $request->{params}->{checked};
-my $headerParams = uac::set_template_permissions($request->{permissions}, $params);
-$headerParams->{loc} = localization::get($config, { user => $user, file => 'menu.po' });
-print template::process($config, template::check($config, 'header.html'), $headerParams);
-
-exit unless uac::check($config, $params, $user_presets) == 1;
-
-my $permissions = $request->{permissions};
-$params->{action} //= '';
-if ($permissions->{create_image} ne '1') {
-    uac::permissions_denied("create image");
-    return 0;
+    ActionError->throw(error => "invalid action");
 }
-if ($params->{action} eq 'upload') {
-    try {
-        my $file_info = upload_file($config, $params, $fh, $user);
-        $params = update_database($config, $params, $file_info, $user);
-    } catch {
-        $params->{error} = $_;
-        print STDERR "upload error: $params->{error}\n";
-    };
-}
-
-$params->{loc} = localization::get($config, { user => $params->{presets}->{user}, file => 'image.po' });
-print template::process($config, $params->{template}, $params);
 
 sub upload_file {
-    my ($config, $params, $fh, $user) = @_;
+    my ($config, $request, $user, $fh) = @_;
 
+    my $params = $request->{params}->{checked};
     my $filename = $params->{upload} // die "missing file\n";
+    
     my $extension = get_extension($filename);
     binmode $fh;
     my $content = '';
@@ -119,8 +69,8 @@ sub update_database {
     $params->{icon_path}       = $file_info->{icon_path};
     $params->{local_media_url} = $config->{locations}->{local_media_url};
 
-    my $name = $params->{name} || '';
-    $name = 'neu' unless $params =~ /\S/;
+    my $name = $params->{name} // '';
+    $name = 'neu' unless $name =~ /\S/;
 
     my $image = {
         filename    => $params->{filename},
@@ -194,13 +144,13 @@ sub process_image {
     $image->Write('jpg:' . $image_path);
     die "Could not create image file!\n" unless -e $image_path;
 
-    my $thumb = $image;
+    my $thumb = $image->Clone();
     $thumb->Trim2Square;
     $thumb->Resize(width => 150, height => 150);
     $thumb->Write('jpg:' . $thumb_path);
     die "Could not create thumb file!\n" unless -e $thumb_path;
 
-    my $icon = $image;
+    my $icon = $image->Clone();
     $icon->Trim2Square;
     $icon->Resize(width => 25, height => 25);
     $icon->Write('jpg:' . $icon_path);
@@ -217,16 +167,18 @@ sub process_image {
 
 sub check_params {
     my ($config, $params) = @_;
-
+    warn "check:params";
     my $checked = {};
-    $checked->{template} = template::check($config, $params->{template}, 'image-upload');
+    
     entry::set_numbers($checked, $params, ['project_id', 'studio_id', 'default_studio_id']);
     if (defined $checked->{studio_id}) {
         $checked->{default_studio_id} = $checked->{studio_id};
     } else {
         $checked->{studio_id} = -1;
     }
-    entry::set_strings($checked, $params, [ 'action', 'name', 'description', 'licence', 'upload' ]);
+    entry::set_strings($checked, $params, [ 'action', 'name', 'description', 'licence' ]);
     entry::set_bools($checked, $params, [ 'public' ]);
+    $checked->{action} = entry::element_of($params->{action}, ['upload', 'delete', 'show'])
+        or ActionError->throw(error => "invalid or missing action");
     return $checked;
 }
