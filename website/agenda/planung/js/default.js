@@ -358,7 +358,7 @@ async function fetchJson(url, options = {}) {
                 }
             }
         }
-        console.log(["fetch",url, fetchOptions])
+        //console.log(["fetch",url, fetchOptions])
         const response = await fetch(url, fetchOptions);
         
         // Check content type

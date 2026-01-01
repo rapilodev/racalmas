@@ -13,6 +13,7 @@ class ImageManager {
         this.isLoading = false;
         this.initialFilename = null;
         this.isUploadMode = false;
+        this.currentSearchQuery = "";
     }
 
     async open(options, callback) {
@@ -25,6 +26,7 @@ class ImageManager {
         this.studioId = options.studio_id;
         this.initialFilename = options.filename || null;
         this.isUploadMode = false;
+        this.currentSearchQuery = "";
 
         const mainContent = document.querySelector("body > #content");
         if (mainContent) mainContent.style.display = "none";
@@ -58,7 +60,6 @@ class ImageManager {
                 this.close();
             }
             if (e.target.id === "search-button" || e.target.closest("#search-button")) {
-                this.isUploadMode = false;
                 this.handleSearch();
             }
         });
@@ -78,7 +79,6 @@ class ImageManager {
         ]);
         this.permissions = perms;
 
-        // Initialer Load OHNE search-Parameter
         await this.loadInitialData();
     }
 
@@ -87,15 +87,16 @@ class ImageManager {
         if (this.initialFilename) params.filename = this.initialFilename;
         
         const json = await getJson("image.cgi", params);
+        this.currentSearchQuery = "";
         this.processAndRender(json);
     }
 
     async handleSearch() {
         const searchInput = this.container.querySelector("input#search-field");
-        const query = searchInput ? searchInput.value : "";
+        const query = searchInput ? searchInput.value.trim() : "";
+        this.currentSearchQuery = query;
         
-        // Suche nur ausführen, wenn Text vorhanden ist
-        if (!query.trim()) {
+        if (!query) {
             return await this.loadInitialData();
         }
 
@@ -112,7 +113,7 @@ class ImageManager {
     processAndRender(json) {
         const images = (json && json.images) ? json.images : [];
         
-        if (this.initialFilename) {
+        if (this.initialFilename && !this.isUploadMode) {
             images.sort((a, b) => (a.filename === this.initialFilename ? -1 : b.filename === this.initialFilename ? 1 : 0));
         }
         
@@ -125,7 +126,7 @@ class ImageManager {
 
         listContainer.innerHTML = "";
         
-        if (this.isUploadMode) {
+        if (this.permissions.create_image && !this.currentSearchQuery) {
             const uploadDummy = { filename: "__NEW__", id: "new", name: "New Upload" };
             images.unshift(uploadDummy);
         }
@@ -145,30 +146,32 @@ class ImageManager {
                 div.style.backgroundImage = "url('" + url + "')";
             } else {
                 div.innerHTML = "<sprite-icon name='upload' style='margin:auto;'></sprite-icon>";
-                div.style.backgroundColor = "#f0f0f0";
+                div.style.backgroundColor = "#e0e0e0";
                 div.style.display = "flex";
             }
 
             div.onclick = () => {
+                this.setActiveThumbnail(div);
                 if (image.filename === "__NEW__") {
                     this.prepareUpload();
                 } else {
                     this.isUploadMode = false;
-                    this.setActiveThumbnail(div);
                     this.loadImageEditor(image.filename);
                 }
             };
 
-            if (this.initialFilename && image.filename === this.initialFilename) targetThumbnail = div;
-            if (this.isUploadMode && image.filename === "__NEW__") targetThumbnail = div;
+            if (this.isUploadMode && image.filename === "__NEW__") {
+                targetThumbnail = div;
+            } else if (this.initialFilename && image.filename === this.initialFilename) {
+                targetThumbnail = div;
+            }
             
             listContainer.append(div);
         });
 
         if (targetThumbnail) {
             targetThumbnail.click();
-            setTimeout(() => targetThumbnail.scrollIntoView({ block: "center", behavior: "smooth" }), 100);
-        } else if (images.length > 0) {
+        } else if (images.length > 0 && !this.isUploadMode) {
             listContainer.firstChild.click();
         }
     }
@@ -190,18 +193,19 @@ class ImageManager {
         
         const props = this.container.querySelector("#image-properties");
         if (props) {
-            props.innerHTML = "<b style='color:green;'>" + (loc.label_new_upload || "New Image Upload") + "</b><br>" +
-                               "<input type='file' id='upload-file-input' accept='image/*' style='margin-top:10px;'>";
+            props.innerHTML = "<b style='color:var(--brand-color);'>" + (loc.label_new_upload || "New Image Upload") + "</b><br>" +
+                               "<span>" + (loc.label_select_file_hint || "Select a file using the button below") + "</span>";
         }
 
-        this.renderTools({ filename: "__NEW__", public: 0 });
+        const tools = this.container.querySelector("#image-tools");
+        if (tools) tools.innerHTML = "";
 
         const saveBtn = this.container.querySelector("#save-image");
         if (saveBtn) {
-            saveBtn.innerHTML = "<sprite-icon name='upload'></sprite-icon> " + (loc.button_upload || "Start Upload");
+            saveBtn.innerHTML = "<sprite-icon name='upload'></sprite-icon> " + (loc.button_upload || "Choose File & Upload");
             saveBtn.onclick = (e) => {
                 e.preventDefault();
-                this.processUpload();
+                this.triggerFilePicker();
             };
         }
 
@@ -209,14 +213,26 @@ class ImageManager {
         if (nameField) nameField.focus();
     }
 
-    async processUpload() {
-        const fileInput = this.container.querySelector("#upload-file-input");
-        const file = fileInput ? fileInput.files[0] : null;
-        if (!file) {
-            alert("Please select a file.");
-            return;
+    triggerFilePicker() {
+        let input = document.getElementById("hidden-upload-input");
+        if (!input) {
+            input = document.createElement("input");
+            input.type = "file";
+            input.id = "hidden-upload-input";
+            input.accept = "image/*";
+            input.style.display = "none";
+            document.body.appendChild(input);
         }
+        
+        input.onchange = (e) => {
+            if (e.target.files && e.target.files[0]) {
+                this.processUpload(e.target.files[0]);
+            }
+        };
+        input.click();
+    }
 
+    async processUpload(file) {
         const data = this.getFormData();
         const fd = new FormData();
         fd.append("action", "upload");
@@ -281,16 +297,7 @@ class ImageManager {
         const tools = this.container.querySelector("#image-tools");
         if (!tools) return;
         tools.innerHTML = "";
-
         const loc = getLocalization();
-
-        if (image.filename === "__NEW__") {
-            tools.appendChild(this.createBtn("abort", loc.button_cancel || "Cancel", () => {
-                this.isUploadMode = false;
-                this.loadInitialData();
-            }));
-            return;
-        }
 
         const isPublic = (image.public == 1 || image.public === "1");
         const hasLicense = !!(image.licence && String(image.licence).trim().length > 0);
@@ -323,13 +330,6 @@ class ImageManager {
                 dummyBtn.disabled = true; dummyBtn.style.opacity = "0.5";
                 tools.appendChild(createToolGroup(loc.label_warn_unknown_licence || "Missing License", dummyBtn));
             }
-        }
-
-        if (this.permissions.create_image) {
-            tools.appendChild(this.createBtn("upload", loc.button_upload || "New Upload", () => {
-                this.isUploadMode = true;
-                this.loadInitialData();
-            }));
         }
 
         if (this.permissions.delete_image) {
