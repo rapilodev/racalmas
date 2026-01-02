@@ -5,19 +5,15 @@ use warnings;
 no warnings 'redefine';
 use utf8;
 
-use Data::Dumper;
 use Scalar::Util qw(blessed);
 use Try::Tiny;
 
 use params();
 use config();
 use entry();
-use log();
-use template();
 use auth();
 use uac();
 use images();
-use localization();
 
 binmode STDOUT, ":utf8";
 
@@ -27,9 +23,8 @@ print uac::init($r, \&check_params, \&main);
 sub main {
     my ($config, $session, $params, $user_presets, $request) = @_;
     $params = $request->{params}->{checked};
-
     uac::check($config, $params, $user_presets);
-    showImage($config, $request);
+    return showImage($config, $request);
 }
 
 #TODO: filter by published, draft
@@ -39,37 +34,18 @@ sub showImage {
     my $params      = $request->{params}->{checked};
     my $permissions = $request->{permissions};
 
-    unless ($permissions->{read_event} == 1) {
-        PermissionError->throw(error=>'Missing permission to read_image');
-        return;
-    }
+    PermissionError->throw(error=>'Missing permission to read_image') unless $permissions->{read_event};
+    PermissionError->throw(error=>'Missing permission to missing filename') unless defined $params->{filename};
 
-    unless (defined $params->{filename}) {
-        PermissionError->throw(error=>'Missing permission to missing filename');
-        return;
-    }
-
-    my $filename = images::getInternalPath($config, $params);
-    unless (defined $filename) {
-        PermissionError->throw(error=>"Missing permission to could not find path");
-        return;
-    }
-
-    unless (-e $filename) {
-        PermissionError->throw(error=>"Missing permission to read $filename");
-        return;
-    }
-
-    my $image = images::readFile($filename);
-    if (defined $image->{error}) {
-        PermissionError->throw(error=>"Missing permission to read $filename, $image->{error}");
-        return;
-    }
+    my $path = images::getInternalPath($config, $params);
+    PermissionError->throw(error=>"Missing permission to could not find path") unless defined $path;
+    PermissionError->throw(error=>"Missing permission to read $path") unless -e $path;
+    
+    my $image = images::readFile($path);
+    PermissionError->throw(error=>"Missing permission to read $path, $image->{error}") if defined $image->{error};
 
     binmode STDOUT;
-    print "Content-type:image/jpeg; charset=UTF-8;\n\n";
-    print $image->{content};
-    return;
+    return "Content-type:image/jpeg; charset=UTF-8;\n\n" . $image->{content};
 }
 
 sub check_params {
@@ -102,4 +78,3 @@ sub check_params {
 
     return $checked;
 }
-

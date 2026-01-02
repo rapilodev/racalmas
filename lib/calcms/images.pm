@@ -330,16 +330,10 @@ sub normalizeName (;$) {
 sub readFile($) {
     my ($path) = @_;
 
-    my $content = '';
-
-    print STDERR "read '$path'\n";
-    return { error => "source '$path' does not exist" } unless -e $path;
-    return { error => "cannot read source '$path'" }    unless -r $path;
-
-    open my $file, '< :raw', $path or return { error => 'could not open image file. ' . $! . " $path" };
-    binmode $file;
-    $content = join("", <$file>);
-    close $file;
+    open my $fh, '<:raw', $path or return { error => "could not open '$path': $!" };
+    binmode $fh;
+    my $content;
+    {local $/; $content = <$fh>}
     return { content => $content };
 }
 
