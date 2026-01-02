@@ -25,8 +25,10 @@ class ImageManager {
         this.projectId = options.project_id;
         this.studioId = options.studio_id;
         this.initialFilename = options.filename || null;
+        
+        // Nutzt options.search (aus data-search am Button)
+        this.currentSearchQuery = options.search || ""; 
         this.isUploadMode = false;
-        this.currentSearchQuery = "";
 
         const mainContent = document.querySelector("body > #content");
         if (mainContent) mainContent.style.display = "none";
@@ -79,42 +81,54 @@ class ImageManager {
         ]);
         this.permissions = perms;
 
-        await this.loadInitialData();
-    }
+        const searchInput = this.container.querySelector("input#search-field");
+        if (searchInput) searchInput.value = this.currentSearchQuery;
 
-    async loadInitialData() {
-        const params = { action: "get", project_id: this.projectId, studio_id: this.studioId };
-        if (this.initialFilename) params.filename = this.initialFilename;
-        
-        const json = await getJson("image.cgi", params);
-        this.currentSearchQuery = "";
-        this.processAndRender(json);
+        await this.loadData(this.currentSearchQuery);
     }
 
     async handleSearch() {
         const searchInput = this.container.querySelector("input#search-field");
-        const query = searchInput ? searchInput.value.trim() : "";
-        this.currentSearchQuery = query;
-        
-        if (!query) {
-            return await this.loadInitialData();
-        }
-
-        const json = await getJson("image.cgi", {
-            action: "get", 
-            project_id: this.projectId, 
-            studio_id: this.studioId, 
-            search: query 
-        });
-        
-        this.processAndRender(json);
+        this.currentSearchQuery = searchInput ? searchInput.value.trim() : "";
+        await this.loadData(this.currentSearchQuery);
     }
 
-    processAndRender(json) {
-        const images = (json && json.images) ? json.images : [];
+    async loadData(query) {
+        const params = { 
+            action: "get", 
+            project_id: this.projectId, 
+            studio_id: this.studioId 
+        };
+        if (query) params.search = query;
         
-        if (this.initialFilename && !this.isUploadMode) {
-            images.sort((a, b) => (a.filename === this.initialFilename ? -1 : b.filename === this.initialFilename ? 1 : 0));
+        const json = await getJson("image.cgi", params);
+        await this.processAndRender(json);
+    }
+
+    async processAndRender(json) {
+        let images = (json && json.images) ? json.images : [];
+        
+        if (this.initialFilename) {
+            const index = images.findIndex(img => img.filename === this.initialFilename);
+            if (index > -1) {
+                const currentImg = images.splice(index, 1)[0];
+                images.unshift(currentImg);
+            } else {
+                const singleJson = await getJson("image.cgi", {
+                    action: "get",
+                    project_id: this.projectId,
+                    studio_id: this.studioId,
+                    filename: this.initialFilename
+                });
+                if (singleJson && singleJson.images && singleJson.images[0]) {
+                    images.unshift(singleJson.images[0]);
+                }
+            }
+        }
+        
+        if (this.permissions.create_image) {
+            const uploadDummy = { filename: "__NEW__", id: "new", name: "New Upload" };
+            images.unshift(uploadDummy);
         }
         
         this.renderImageList(images);
@@ -125,12 +139,6 @@ class ImageManager {
         if (!listContainer) return;
 
         listContainer.innerHTML = "";
-        
-        if (this.permissions.create_image && !this.currentSearchQuery) {
-            const uploadDummy = { filename: "__NEW__", id: "new", name: "New Upload" };
-            images.unshift(uploadDummy);
-        }
-
         let targetThumbnail = null;
 
         images.forEach(image => {
@@ -162,7 +170,7 @@ class ImageManager {
 
             if (this.isUploadMode && image.filename === "__NEW__") {
                 targetThumbnail = div;
-            } else if (this.initialFilename && image.filename === this.initialFilename) {
+            } else if (!this.isUploadMode && this.initialFilename && image.filename === this.initialFilename) {
                 targetThumbnail = div;
             }
             
@@ -171,7 +179,7 @@ class ImageManager {
 
         if (targetThumbnail) {
             targetThumbnail.click();
-        } else if (images.length > 0 && !this.isUploadMode) {
+        } else if (images.length > 0) {
             listContainer.firstChild.click();
         }
     }
@@ -188,7 +196,6 @@ class ImageManager {
     prepareUpload() {
         this.isUploadMode = true;
         const loc = getLocalization();
-        
         this.setFormData({ name: "", description: "", licence: "", public: 0 });
         
         const props = this.container.querySelector("#image-properties");
@@ -208,9 +215,6 @@ class ImageManager {
                 this.triggerFilePicker();
             };
         }
-
-        const nameField = this.getField("name");
-        if (nameField) nameField.focus();
     }
 
     triggerFilePicker() {
@@ -223,7 +227,6 @@ class ImageManager {
             input.style.display = "none";
             document.body.appendChild(input);
         }
-        
         input.onchange = (e) => {
             if (e.target.files && e.target.files[0]) {
                 this.processUpload(e.target.files[0]);
@@ -248,7 +251,7 @@ class ImageManager {
             const result = await res.json();
             this.isUploadMode = false;
             this.initialFilename = result.filename || file.name;
-            await this.loadInitialData();
+            await this.loadData(this.currentSearchQuery);
         }
     }
 
@@ -299,37 +302,14 @@ class ImageManager {
         tools.innerHTML = "";
         const loc = getLocalization();
 
-        const isPublic = (image.public == 1 || image.public === "1");
-        const hasLicense = !!(image.licence && String(image.licence).trim().length > 0);
-
-        const createToolGroup = (warnText, button) => {
-            const group = document.createElement("div");
-            group.className = "tool-group";
-            if (warnText) {
-                const label = document.createElement("span");
-                label.className = "tool-warning";
-                label.textContent = warnText;
-                group.appendChild(label);
-            }
-            group.appendChild(button);
-            return group;
-        };
-
-        if (isPublic) {
-            const assignBtn = this.createBtn("assign", (loc["label_assign_to_" + this.target] || "Assign"), () => {
+        if (image.public == 1 || image.public === "1") {
+            tools.appendChild(this.createBtn("assign", (loc["label_assign_to_" + this.target] || "Assign"), () => {
                 this.close();
                 this.commitHandler(image);
-            });
-            tools.appendChild(createToolGroup(!hasLicense ? (loc.label_warn_unknown_licence || "No License") : "", assignBtn));
-            tools.appendChild(createToolGroup("", this.createBtn("private", loc.button_depublish, () => this.togglePublish(image, 0))));
-        } else {
-            if (hasLicense) {
-                tools.appendChild(createToolGroup((loc["label_warn_not_public_" + this.target] || "Not public"), this.createBtn("public", loc.button_publish, () => this.togglePublish(image, 1))));
-            } else {
-                const dummyBtn = this.createBtn("public", loc.button_publish, () => {});
-                dummyBtn.disabled = true; dummyBtn.style.opacity = "0.5";
-                tools.appendChild(createToolGroup(loc.label_warn_unknown_licence || "Missing License", dummyBtn));
-            }
+            }));
+            tools.appendChild(this.createBtn("private", loc.button_depublish, () => this.togglePublish(image, 0)));
+        } else if (image.licence && String(image.licence).trim().length > 0) {
+            tools.appendChild(this.createBtn("public", loc.button_publish, () => this.togglePublish(image, 1)));
         }
 
         if (this.permissions.delete_image) {
@@ -380,7 +360,7 @@ class ImageManager {
 
     async deleteImage(filename) {
         await getJson("image.cgi", { action: "delete", project_id: this.projectId, studio_id: this.studioId, filename: filename });
-        this.loadInitialData();
+        await this.loadData(this.currentSearchQuery);
     }
 
     createBtn(spriteName, text, cb) {
@@ -399,6 +379,7 @@ function registerImageHandler() {
         if (btn.dataset.hasImageHandler) return;
         btn.dataset.hasImageHandler = "true";
         btn.addEventListener("click", () => {
+            // Verwendet btn.dataset direkt (enthält filename, target, project_id, studio_id UND search)
             window.ImageManager.open(btn.dataset, (image) => {
                 const parent = btn.closest("div");
                 const hiddenInput = parent.querySelector("input.image");
