@@ -291,7 +291,7 @@
                 </div>
                 <TMPL_IF .allow.delete_schedule>
                 <div class="cell delete"><br>
-                    <button
+                    <button class="delete"
                         onclick="deleteSchedule($(this.closest('form'));return false;"
                     >
                     <sprite-icon name="delete"></sprite-icon>
@@ -566,7 +566,7 @@
 
     <!-- delete series -->
     <TMPL_IF .allow.delete_series>
-        <button
+        <button class="delete"
             onclick="commitDeleteSeries('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>');return false;"
             title="<TMPL_VAR .loc.label_delete_series>"
         >

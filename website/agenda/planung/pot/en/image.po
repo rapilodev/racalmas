@@ -8,28 +8,28 @@ msgstr "select"
 msgid "tab_edit"
 msgstr "edit"
 
-msgid "tab_upload"
+msgid "tab_upload_image"
 msgstr "upload"
 
-msgid "button_upload"
+msgid "button_upload_image"
 msgstr "upload"
 
-msgid "button_search"
+msgid "button_search_image"
 msgstr "search"
 
-msgid "button_save"
+msgid "button_save_image"
 msgstr "save"
 
-msgid "button_delete"
+msgid "button_delete_image"
 msgstr "delete"
 
 msgid "button_properties"
 msgstr "properties"
 
-msgid "button_publish"
+msgid "button_publish_image"
 msgstr "publish"
 
-msgid "button_depublish"
+msgid "button_depublish_image"
 msgstr "hold back"
 
 msgid "label_warn_unknown_licence"

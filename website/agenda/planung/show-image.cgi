@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 no warnings 'redefine';
+no warnings 'prototype';
 use utf8;
 
 use Scalar::Util qw(blessed);

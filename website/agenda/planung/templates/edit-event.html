@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded",
 
 <!-- edit1 -->
 <div 
-    class="container dialog scrollable"
+    class="container panel scrollable"
 >
 
     <!-- import rerun from old event of series or any event of any project -->
@@ -495,7 +495,7 @@ document.addEventListener("DOMContentLoaded",
 
     <TMPL_IF new_event>
         <TMPL_IF .allow.delete_schedule>
-            <button class="text"
+            <button class="text delete"
                 onclick="deleteFromSchedule('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>','<TMPL_VAR start escape=url>');return false;"
             ><sprite-icon name="delete"></sprite-icon><TMPL_VAR .loc.button_delete_from_schedule></button>
     </TMPL_IF>
@@ -519,7 +519,7 @@ document.addEventListener("DOMContentLoaded",
     <TMPL_UNLESS edit_lock>
         <TMPL_IF .allow.delete_event>
             <TMPL_UNLESS new_event>
-                <button class="text"
+                <button class="text delete"
                     onclick="deleteEvent('form#edit_event_<TMPL_VAR event_id>', 'delete'); return false;"
                 ><sprite-icon name="delete"></sprite-icon><TMPL_VAR .loc.button_delete></button>
             </TMPL_UNLESS>
