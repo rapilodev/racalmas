@@ -11,25 +11,25 @@ msgid "tab_upload"
 msgstr "Neues Bild"
 
 msgid "button_upload"
-msgstr "Hochladen"
+msgstr "Bild hochladen"
 
 msgid "button_search"
-msgstr "Suchen"
+msgstr "Bild suchen"
 
 msgid "button_save"
-msgstr "Speichern"
+msgstr "Bild speichern"
 
 msgid "button_delete"
-msgstr "Löschen"
+msgstr "Bild löschen"
 
 msgid "button_properties"
 msgstr "Eigenschaften"
 
 msgid "button_publish"
-msgstr "Veröffentlichen"
+msgstr "Bild veröffentlichen"
 
 msgid "button_depublish"
-msgstr "Depublizieren"
+msgstr "Bild depublizieren"
 
 msgid "label_warn_unknown_licence"
 msgstr "Angabe der Lizenz ermöglicht Veröffentlichung des Bildes."

@@ -2,27 +2,23 @@ Content-type:text/html; charset=utf8;
 
 <TMPL_IF .allow.read_image>
 <div id="status"></div>
-<div id="content">
-
 <main id="content"
     data-js-init="calcms.init_image"
     title="<TMPL_VAR .loc.title>"
     data-region="<TMPL_VAR loc.region escape=js>"
-    class="split panel scrollable"
 >
-    <div id="abort-image-editor" class="close-button"><sprite-icon name="close"></sprite-icon></div>
-    <div id="image-tools"></div>
-    <div id="image-list">
+    <div id="image-list" class="sidebar">
         <div>
             <input id="search-field" placeholder="Suche">
-            <button id="search-button">
+            <button id="search-button" class="primary">
                 <sprite-icon name="search"></sprite-icon>
                 <TMPL_VAR .loc.button_search>
             </button>
         </div>
-        <div class="images"></div>
-    </div>
-    <div id="image-editor" class="editor">
+        <div class="images panel"></div>
+    </div> <!--  image list -->
+    
+    <div id="image-editor" class="editor panel">
         <form id="image-form" method="post" action="image.cgi" onsubmit="return false;"
         >
             <input id="project_id" type="hidden" name="project_id" value="<TMPL_VAR .project_id>">
@@ -53,9 +49,9 @@ Content-type:text/html; charset=utf8;
             <TMPL_VAR .loc.button_save>
             </div>
         </TMPL_IF>
-    
+
         <div id="image-properties"></div>
-    </div>
-</div>
+    </div><!--  editor -->
+    <div id="image-tools" class="sidebar"></div>
 </main>
 </TMPL_IF>

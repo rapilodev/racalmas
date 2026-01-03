@@ -67,17 +67,81 @@ if (!customElements.get('link-button')) {
     // use it as <button is="button-link" data-href="https://google.com">…</button>
 }
 
-function formatDates() {
-    document.querySelectorAll('.fmt-datetime').forEach(el => {
+if (!customElements.get('copyable-id')) {
+    class CopyableID extends HTMLElement {
+      constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+      }
+      connectedCallback() {
+        this.render();
+      }
+      render() {
+        this.shadowRoot.innerHTML = `
+          <style>
+            :host{
+                display:inline-block;
+                vertical-align:middle;
+                --bg:#eee;
+                --txt:#222;
+                --brd:#ddd;
+            }
+            @media(prefers-color-scheme:dark){
+              :host{
+                --bg:#333;
+                --txt:#f5f5f5;
+                --brd:#444;
+              }
+            }
+            b{
+                display:inline-flex;align-items:center;
+                background:var(--bg);
+                color:var(--txt);
+                border:1px solid var(--brd);
+                padding:2px 6px;
+                border-radius:4px;
+                cursor:pointer;
+                transition:opacity .1s
+            }
+            .b:active{
+                opacity:0.7;
+            }
+            .c{
+                font-size:1em;
+                line-height:1.2;
+                user-select:all;
+                white-space:nowrap
+            }
+          </style>
+          <div class="b" id="b">
+            <span class="c" id="t"><slot></slot></span>
+          </div>
+        `;
+    
+        this.shadowRoot.getElementById('b').addEventListener('click', () => {
+          const s = window.getSelection();
+          const r = document.createRange();
+          // Targets the span containing the slot
+          r.selectNodeContents(this.shadowRoot.getElementById('t'));
+          s.removeAllRanges();
+          s.addRange(r);
+        });
+      }
+    }
+    customElements.define('copyable-id', CopyableID);
+}
+
+function formatDates(root = document) {
+    root.querySelectorAll('.fmt-datetime').forEach(el => {
         el.innerHTML = DTF.datetime(el.innerHTML);
     });
-    document.querySelectorAll('.fmt-date').forEach(el => {
+    root.querySelectorAll('.fmt-date').forEach(el => {
         el.innerHTML = DTF.date(el.innerHTML);
     });
-    document.querySelectorAll('.fmt-time').forEach(el => {
+    root.querySelectorAll('.fmt-time').forEach(el => {
         el.innerHTML = DTF.time(el.innerHTML);
     });
-};
+}
 
 function getController() {
     var url = window.location.href;
@@ -360,19 +424,19 @@ async function fetchJson(url, options = {}) {
         }
         //console.log(["fetch",url, fetchOptions])
         const response = await fetch(url, fetchOptions);
-        
+
+        // Check authentication
+        if (response.status === 401) {
+            const error = new Error(loc.login_required);
+            error.type = 'UNAUTHORIZED';
+            throw error;
+        }
+
         // Check content type
         const contentType = response.headers.get("content-type") || '';
         if (!contentType.startsWith("application/json")) {
             const error = new Error(`Invalid response type for ${url}`);
             error.type = 'INVALID_CONTENT_TYPE';
-            throw error;
-        }
-        
-        // Check authentication
-        if (response.status === 401) {
-            const error = new Error(loc.login_required);
-            error.type = 'UNAUTHORIZED';
             throw error;
         }
         

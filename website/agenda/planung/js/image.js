@@ -16,6 +16,30 @@ class ImageManager {
         this.currentSearchQuery = "";
     }
 
+    // --- Factory Helpers ---
+    _el(tag, props = {}, children = []) {
+        const el = document.createElement(tag);
+        const { dataset, style, ...rest } = props;
+        Object.assign(el, rest);
+        if (dataset) Object.assign(el.dataset, dataset);
+        if (style) Object.assign(el.style, style);
+        children.forEach(child => {
+            if (!child) return;
+            if (typeof child === "string") el.insertAdjacentHTML("beforeend", child);
+            else el.appendChild(child);
+        });
+        return el;
+    }
+
+    _btn(icon, text, cb, cls = "") {
+        return this._el("button", {
+            type: "button",
+            className: cls,
+            onclick: (e) => { e.preventDefault(); cb(e); }
+        }, [`<sprite-icon name='${icon}'></sprite-icon> ${text}`]);
+    }
+
+    // --- Core Logic ---
     async open(options, callback) {
         if (this.isLoading) return;
         this.isLoading = true;
@@ -31,8 +55,7 @@ class ImageManager {
         const mainContent = document.querySelector("body > #content");
         if (mainContent) mainContent.style.display = "none";
 
-        this.container = document.createElement("div");
-        this.container.id = "image-manager";
+        this.container = this._el("div", { id: "image-manager" });
         document.body.appendChild(this.container);
 
         try {
@@ -56,34 +79,31 @@ class ImageManager {
         await loadLocalization("image");
 
         this.container.addEventListener("click", (e) => {
-            if (e.target.id === "abort-image-editor" || e.target.closest("#abort-image-editor")) {
-                this.close();
-            }
-            if (e.target.id === "search-button" || e.target.closest("#search-button")) {
-                this.handleSearch();
-            }
-            if (e.target.id === "sidebar-upload-btn" || e.target.closest("#sidebar-upload-btn")) {
-                this.prepareUpload();
-            }
+            if (e.target.closest("#abort-image-editor")) this.close();
+            if (e.target.closest("#search-button")) this.handleSearch();
+            if (e.target.closest("#sidebar-upload-btn")) this.prepareUpload();
         });
 
         const urlParams = new URLSearchParams({
-            action: "show",
-            project_id: this.projectId,
-            studio_id: this.studioId
+            action: "show", project_id: this.projectId, studio_id: this.studioId
         }).toString();
 
         const [perms] = await Promise.all([
             getJson("permissions.cgi", { project_id: this.projectId, studio_id: this.studioId }),
-            loadHtmlFragment({
-                url: "image.cgi?" + urlParams,
-                target: "#image-manager"
-            })
+            loadHtmlFragment({ url: "image.cgi?" + urlParams, target: "#image-manager" })
         ]);
         this.permissions = perms;
 
-        const searchInput = this.container.querySelector("input#search-field");
-        if (searchInput) searchInput.value = this.currentSearchQuery;
+        const searchInput = this.container.querySelector("input#search-field"); 
+        if (searchInput) { 
+            searchInput.value = this.currentSearchQuery; 
+            searchInput.addEventListener('keypress', (event) => { 
+                if (event.key === 'Enter') {
+                    event.preventDefault(); 
+                    this.handleSearch(); 
+                }
+            });
+        }
 
         await this.loadData(this.currentSearchQuery);
     }
@@ -95,41 +115,30 @@ class ImageManager {
     }
 
     async loadData(query) {
-        const params = {
-            action: "get",
-            project_id: this.projectId,
-            studio_id: this.studioId
-        };
+        const params = { action: "get", project_id: this.projectId, studio_id: this.studioId };
         if (query) params.search = query;
-
         const json = await getJson("image.cgi", params);
         await this.processAndRender(json);
     }
 
     async processAndRender(json) {
         let images = (json && json.images) ? json.images : [];
+        images = [...new Map(json.images.map(item => [item.filename, item])).values()];
 
         if (this.initialFilename) {
             const index = images.findIndex(img => img.filename === this.initialFilename);
             if (index > -1) {
-                const currentImg = images.splice(index, 1)[0];
-                images.unshift(currentImg);
+                images.unshift(images.splice(index, 1)[0]);
             } else {
                 const singleJson = await getJson("image.cgi", {
-                    action: "get",
-                    project_id: this.projectId,
-                    studio_id: this.studioId,
-                    filename: this.initialFilename
+                    action: "get", project_id: this.projectId, studio_id: this.studioId, filename: this.initialFilename
                 });
-                if (singleJson && singleJson.images && singleJson.images[0]) {
-                    images.unshift(singleJson.images[0]);
-                }
+                if (singleJson?.images?.[0]) images.unshift(singleJson.images[0]);
             }
         }
 
         if (this.permissions.create_image) {
-            const uploadDummy = { filename: "__NEW__", id: "new", name: "New Upload" };
-            images.unshift(uploadDummy);
+            images.unshift({ filename: "__NEW__", id: "new", name: "New Upload" });
         }
 
         this.renderImageList(images);
@@ -138,79 +147,60 @@ class ImageManager {
     renderImageList(images) {
         const listContainer = this.container.querySelector("div.images");
         if (!listContainer) return;
-
         listContainer.innerHTML = "";
+
         let targetThumbnail = null;
 
         images.forEach(image => {
-            const div = document.createElement("div");
-            div.className = "image inactive";
-            if (image.filename === "__NEW__") div.classList.add("upload-placeholder");
+            const isNew = image.filename === "__NEW__";
+            const url = `show-image.cgi?project_id=${this.projectId}&studio_id=${this.studioId}&type=icon&filename=${encodeURIComponent(image.filename)}`;
 
-            div.id = "img_" + image.id;
-            div.dataset.filename = image.filename;
-
-            if (image.filename !== "__NEW__") {
-                const url = "show-image.cgi?project_id=" + this.projectId + "&studio_id=" + this.studioId + "&type=icon&filename=" + encodeURIComponent(image.filename);
-                div.style.backgroundImage = "url('" + url + "')";
-            } else {
-                div.innerHTML = "<sprite-icon name='upload' style='margin:auto;'></sprite-icon>";
-                div.style.backgroundColor = "#e0e0e0";
-                div.style.display = "flex";
-            }
-
-            div.onclick = () => {
-                this.setActiveThumbnail(div);
-                if (image.filename === "__NEW__") {
-                    this.prepareUpload();
-                } else {
-                    this.isUploadMode = false;
-                    this.loadImageEditor(image.filename);
+            const div = this._el("div", {
+                id: "img_" + image.id,
+                className: `image inactive ${isNew ? "upload-placeholder" : ""}`,
+                dataset: { filename: image.filename },
+                style: isNew 
+                    ? { backgroundColor: "#e0e0e0", display: "flex" } 
+                    : { backgroundImage: `url('${url}')` },
+                onclick: () => {
+                    this.setActiveThumbnail(div);
+                    isNew ? this.prepareUpload() : this.loadImageEditor(image.filename);
                 }
-            };
+            }, isNew ? ["<sprite-icon name='upload' style='margin:auto;'></sprite-icon>"] : []);
 
-            if (this.isUploadMode && image.filename === "__NEW__") {
-                targetThumbnail = div;
-            } else if (!this.isUploadMode && this.initialFilename && image.filename === this.initialFilename) {
+            if ((this.isUploadMode && isNew) || (!this.isUploadMode && image.filename === this.initialFilename)) {
                 targetThumbnail = div;
             }
-
             listContainer.append(div);
         });
 
-        if (this.isUploadMode) {
-            this.toggleImageIconsVisibility(false);
-        }
-
-        if (targetThumbnail) {
-            targetThumbnail.click();
-        } else if (images.length > 0) {
-            listContainer.firstChild.click();
-        }
+        if (this.isUploadMode) this.toggleImageIconsVisibility(false);
+        if (targetThumbnail) targetThumbnail.click();
+        else if (listContainer.firstChild) listContainer.firstChild.click();
     }
 
     setActiveThumbnail(elem) {
         this.container.querySelectorAll("div.image").forEach(img => {
-            img.classList.remove("active");
-            img.classList.add("inactive");
+            img.classList.replace("active", "inactive");
         });
-        elem.classList.add("active");
-        elem.classList.remove("inactive");
+        elem.classList.replace("inactive", "active");
     }
 
     prepareUpload() {
         this.isUploadMode = true;
         const loc = getLocalization();
-
         this.toggleSearchVisibility(false);
         this.toggleImageIconsVisibility(false);
-
         this.setFormData({ name: "", description: "", licence: "", public: 0 });
 
         const props = this.container.querySelector("#image-properties");
         if (props) {
-            props.innerHTML = "<b style='color:var(--brand-color);'>" + (loc.label_new_upload || "New Image Upload") + "</b><br>" +
-                "<span>" + (loc.label_select_file_hint || "Select a file using the button below") + "</span>";
+            props.innerHTML = "";
+            props.append(
+                this._el("b", { style: { color: "var(--brand-color)" }, innerText: loc.label_new_upload || "New Image Upload" }),
+                this._el("br"),
+                this._el("span", { innerText: loc.label_select_file_hint || "Select a file using the button below" })
+            );
         }
 
         const tools = this.container.querySelector("#image-tools");
@@ -219,42 +209,28 @@ class ImageManager {
         const saveBtn = this.container.querySelector("#save-image");
         if (saveBtn) {
             saveBtn.innerHTML = "";
-
-            const upBtn = document.createElement("button");
-            upBtn.innerHTML = "<sprite-icon name='upload'></sprite-icon> " + (loc.button_upload || "Upload");
-            upBtn.className = "primary";
-            upBtn.onclick = (e) => { e.preventDefault(); this.triggerFilePicker(); };
-
-            const cancelBtn = document.createElement("button");
-            cancelBtn.innerHTML = "<sprite-icon name='close'></sprite-icon> " + (loc.button_cancel || "Cancel");
-            cancelBtn.style.marginLeft = "10px";
-            cancelBtn.onclick = (e) => {
-                e.preventDefault();
-                this.isUploadMode = false;
-                this.toggleImageIconsVisibility(true);
-                if (this.initialFilename) {
-                    this.loadImageEditor(this.initialFilename);
-                } else {
+            saveBtn.append(
+                this._btn("upload", loc.button_upload || "Upload", () => this.triggerFilePicker(), "primary"),
+                this._el("span", { style: { marginLeft: "10px" } }),
+                this._btn("close", loc.button_cancel || "Cancel", () => {
+                    this.isUploadMode = false;
+                    this.toggleImageIconsVisibility(true);
                     const firstImg = this.container.querySelector(".image:not(.upload-placeholder)");
-                    if (firstImg) firstImg.click();
-                }
-            };
-
-            saveBtn.appendChild(upBtn);
-            saveBtn.appendChild(cancelBtn);
+                    this.initialFilename ? this.loadImageEditor(this.initialFilename) : firstImg?.click();
+                })
+            );
         }
     }
 
     toggleSearchVisibility(visible) {
-        const searchField = this.container.querySelector("#search-field");
-        const searchBtn = this.container.querySelector("#search-button");
-        if (searchField && searchField.parentElement) searchField.parentElement.style.display = visible ? "" : "none";
-        if (searchBtn) searchBtn.style.display = visible ? "" : "none";
+        const field = this.container.querySelector("#search-field")?.parentElement;
+        const btn = this.container.querySelector("#search-button");
+        if (field) field.style.display = visible ? "" : "none";
+        if (btn) btn.style.display = visible ? "" : "none";
     }
 
     toggleImageIconsVisibility(visible) {
-        const icons = this.container.querySelectorAll(".image:not(.upload-placeholder)");
-        icons.forEach(icon => {
+        this.container.querySelectorAll(".image:not(.upload-placeholder)").forEach(icon => {
             icon.style.display = visible ? "" : "none";
         });
     }
@@ -262,26 +238,21 @@ class ImageManager {
     triggerFilePicker() {
         let input = document.getElementById("hidden-upload-input");
         if (!input) {
-            input = document.createElement("input");
-            input.type = "file";
-            input.id = "hidden-upload-input";
-            input.accept = "image/*";
-            input.style.display = "none";
+            input = this._el("input", { type: "file", id: "hidden-upload-input", accept: "image/*", style: { display: "none" } });
             document.body.appendChild(input);
         }
         input.onchange = (e) => {
-            if (e.target.files && e.target.files[0]) {
-                this.processUpload(e.target.files[0]);
-            }
+            if (e.target.files?.[0]) this.processUpload(e.target.files[0]);
+            input.value = "";
         };
         input.click();
     }
 
     async processUpload(file) {
         const fd = new FormData();
-        fd.append("action", "upload");
         fd.append("project_id", this.projectId);
         fd.append("studio_id", this.studioId);
+        fd.append("action", "upload");
         fd.append("upload", file.name);
         fd.append("licence", this.getField("licence").value);
         fd.append("description", this.getField("description").value);
@@ -304,7 +275,7 @@ class ImageManager {
             action: "get", project_id: this.projectId, studio_id: this.studioId, filename: filename
         });
 
-        if (!data || !data.images || !data.images[0]) return;
+        if (!data?.images?.[0]) return;
         const image = data.images[0];
 
         this.setFormData(image);
@@ -314,30 +285,24 @@ class ImageManager {
         const loc = getLocalization();
         const props = this.container.querySelector("#image-properties");
         if (props) {
-            props.innerHTML = loc.label_created_at + " " + image.created_at + " " + loc.label_created_by + " " + image.created_by + "<br>" +
-                loc.label_modified_at + " " + image.modified_at + " " + loc.label_modified_by + " " + image.modified_by + "<br>" +
-                loc.label_link + " {{" + image.filename + "|" + image.name + "}}<br>";
+            props.innerHTML = `${loc.label_created_at} <span class="fmt-datetime">${image.created_at}</span> ${loc.label_created_by} ${image.created_by}<br>` +
+                `${loc.label_modified_at} <span class="fmt-datetime">${image.modified_at}</span> ${loc.label_modified_by} ${image.modified_by}<br>` +
+                `${loc.label_link} <copyable-id>{{${image.filename}|${image.name}}}</copyable-id><br>`;
+            formatDates(props);
         }
 
         const saveBtn = this.container.querySelector("#save-image");
         if (saveBtn) {
-            saveBtn.innerHTML = "<button type='button'><sprite-icon name='save'></sprite-icon> " + (loc.button_save || "Save") + "</button>";
-            saveBtn.firstChild.onclick = (e) => {
-                e.preventDefault();
-                this.saveImage(this.getFormData());
-            };
+            saveBtn.innerHTML = "";
+            saveBtn.append(this._btn("save", loc.button_save || "Save", () => this.saveImage(this.getFormData())));
         }
     }
 
     attachLiveValidation(image) {
         const licInput = this.getField("licence");
         const pubCheck = this.getField("public");
-        if (licInput) {
-            licInput.oninput = () => { image.licence = licInput.value; this.renderTools(image); };
-        }
-        if (pubCheck) {
-            pubCheck.onchange = () => { image.public = pubCheck.checked ? 1 : 0; this.renderTools(image); };
-        }
+        if (licInput) licInput.oninput = () => { image.licence = licInput.value; this.renderTools(image); };
+        if (pubCheck) pubCheck.onchange = () => { image.public = pubCheck.checked ? 1 : 0; this.renderTools(image); };
     }
 
     renderTools(image) {
@@ -346,54 +311,50 @@ class ImageManager {
         tools.innerHTML = "";
         const loc = getLocalization();
 
+        let cancel_button = this._btn("cancel", loc["button_cancel"] || "Back", () => { this.close(); this.commitHandler(image); });
+        cancel_button.classList.add("primary");
+        tools.append(cancel_button);
+        
         if (image.public == 1 || image.public === "1") {
-            tools.appendChild(this.createBtn("assign", (loc["label_assign_to_" + this.target] || "Assign"), () => {
-                this.close();
-                this.commitHandler(image);
-            }));
-            tools.appendChild(this.createBtn("private", loc.button_depublish, () => this.togglePublish(image, 0)));
-        } else if (image.licence && String(image.licence).trim().length > 0) {
-            tools.appendChild(this.createBtn("public", loc.button_publish, () => this.togglePublish(image, 1)));
-        }
-
-        if (this.permissions.delete_image) {
-            tools.appendChild(this.createBtn("delete", loc.button_delete || "Delete", () => {
-                if (confirm("Delete this image?")) this.deleteImage(image.filename);
-            }));
+            let assign_btn =             this._btn("assign", loc["label_assign_to_" + this.target] || "Assign", () => { this.close(); this.commitHandler(image); });
+            assign_btn.classList.add("primary");
+            tools.append(assign_btn,
+                this._btn("private", loc.button_depublish, () => this.togglePublish(image, 0))
+            );
+        } else if (image.licence?.trim().length > 0) {
+            let publish_button = this._btn("public", loc.button_publish, () => this.togglePublish(image, 1));
+            publish_button.classList.add("primary");
+            tools.append(publish_button);
         }
 
         if (this.permissions.create_image && !this.isUploadMode) {
-            const uploadBtn = document.createElement("button");
-            uploadBtn.id = "sidebar-upload-btn";
-            uploadBtn.type = "button";
-            uploadBtn.style.width = "100%";
-            uploadBtn.style.marginBottom = "15px";
-            uploadBtn.innerHTML = "<sprite-icon name='upload'></sprite-icon> " + (loc.button_upload || "Upload New Image");
-            tools.appendChild(uploadBtn);
+            tools.append(this._btn("upload", loc.button_upload || "Upload New Image", () => this.prepareUpload(), "width-full"));
+        }
+
+        if (this.permissions.delete_image_others) {
+            let btn = this._btn("delete", loc.button_delete || "Delete", () => {
+                if (confirm("Delete this image?")) this.deleteImage(image.filename);
+            });
+            btn.classList.add('delete');
+            tools.append(btn);
         }
     }
 
     getField(id) { return this.container.querySelector("#" + id) || this.container.querySelector("[name='" + id + "']"); }
 
     setFormData(image) {
-        const f = (id) => this.getField(id);
-        if (f("name")) f("name").value = image.name || "";
-        if (f("description")) f("description").value = image.description || "";
-        if (f("licence")) f("licence").value = image.licence || "";
-        if (f("public")) f("public").checked = (image.public == 1 || image.public === "1");
-        if (f("filename")) f("filename").value = image.filename || "";
+        const fields = ["name", "description", "licence", "filename"];
+        fields.forEach(id => { if (this.getField(id)) this.getField(id).value = image[id] || ""; });
+        if (this.getField("public")) this.getField("public").checked = (image.public == 1 || image.public === "1");
     }
 
     getFormData() {
         const f = (id) => this.getField(id);
         return {
-            project_id: this.projectId,
-            studio_id: this.studioId,
-            name: f("name") ? f("name").value : "",
-            description: f("description") ? f("description").value : "",
-            licence: f("licence") ? f("licence").value : "",
-            public: (f("public") && f("public").checked) ? 1 : 0,
-            filename: f("filename") ? f("filename").value : ""
+            project_id: this.projectId, studio_id: this.studioId,
+            name: f("name")?.value || "", description: f("description")?.value || "",
+            licence: f("licence")?.value || "", public: f("public")?.checked ? 1 : 0,
+            filename: f("filename")?.value || ""
         };
     }
 
@@ -416,14 +377,6 @@ class ImageManager {
         await getJson("image.cgi", { action: "delete", project_id: this.projectId, studio_id: this.studioId, filename: filename });
         await this.loadData(this.currentSearchQuery);
     }
-
-    createBtn(spriteName, text, cb) {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.innerHTML = "<sprite-icon name='" + spriteName + "'></sprite-icon> " + text;
-        b.onclick = (e) => { e.preventDefault(); cb(); };
-        return b;
-    }
 }
 
 window.ImageManager = new ImageManager();
@@ -438,7 +391,7 @@ function registerImageHandler() {
                 const hiddenInput = parent.querySelector("input.image");
                 const previewImg = parent.querySelector("#imagePreview");
                 if (hiddenInput) hiddenInput.value = image.filename;
-                if (previewImg) previewImg.src = "show-image.cgi?project_id=" + image.project_id + "&studio_id=" + image.studio_id + "&filename=" + image.filename + "&type=icon";
+                if (previewImg) previewImg.src = `show-image.cgi?project_id=${image.project_id}&studio_id=${image.studio_id}&filename=${image.filename}&type=icon`;
                 btn.dataset.filename = image.filename;
             });
         });

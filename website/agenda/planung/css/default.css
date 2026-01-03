@@ -544,12 +544,6 @@ input:not([type="checkbox"]) {
   line-height: 2rem;
 }
 
-/* Image List */
-#content #image-list div.images {
-  max-height: 650px;
-  overflow-y: scroll;
-}
-
 /* Tabs */
 div#tabs > div {
     clear: both;
@@ -651,19 +645,14 @@ button.primary {
   box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18), 0 4px 15px 0 rgba(0,0,0,0.15);
 }
 
+#content button.delete {
+    margin-top: 2rem;
+    color: red;
+}
 
 .sidebar button:not(.primary) {
   min-width:10rem;
 }
-
-/*
-button:not(.primary) {
-  color: #000;
-  border: 1px solid #bbb;  
-  background: #ccc;
-  box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18);
-}
-*/
 
 button[disabled] {
   opacity: 0.5;
@@ -1062,4 +1051,14 @@ div.sidebar .formField input{
 
 .toggle-rotate.rotated svg {
     transform: rotate(180deg);
+}
+
+.code {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: gray;
+  color: var(--color-body);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+  border: 1px solid color-mix(in srgb, var(--primary), transparent 70%);
 }
