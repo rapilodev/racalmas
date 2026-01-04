@@ -107,7 +107,7 @@ sub get_image {
         $images = images::get($config, \%conds);
     }
     my $results = modify_results($images, $permissions, $user, $local_media_url);
-    return template::process($config, 'json-p', {images => $results});
+    return uac::json({images => $results});
 }
 
 sub save_image {
@@ -158,7 +158,7 @@ sub save_image {
         $image->{created_by} = $user;
         images::insert($config, $image);
     }
-    return template::process($config, 'json-p', {result => "saved"});
+    return uac::json({result => "saved"});
 
 }
 
@@ -174,7 +174,7 @@ sub delete_image {
         studio_id  => $params->{studio_id},
         filename   => $params->{filename},
     });
-    return template::process($config, 'json-p', {result => "deleted"});
+    return return uac::json({result => "deleted"});
 }
 
 sub check_permission {

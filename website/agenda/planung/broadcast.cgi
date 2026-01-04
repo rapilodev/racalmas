@@ -291,7 +291,7 @@ sub get_json {
         }
         $event->{rerun} = 1;
     }
-    return template::process($config, 'json-p', $event);
+    return uac::json($event);
 }
 
 #show new event from schedule
