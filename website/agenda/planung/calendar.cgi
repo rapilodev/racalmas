@@ -123,7 +123,7 @@ sub showCalendar {
     my $events   = [];
 
     $out .= getSidebar($config, $params, $calendar);
-    $out .= qq{<div id="calendarTable"> </div>};
+    $out .= qq{<div id="calendarTable" class="scrollable"> </div>};
     $out .= qq{
             </main>
     };
