@@ -730,6 +730,7 @@ sub getTable {
         $d = 1;
 
         for my $event(@$events) {
+            warn Dumper($event) if (($event->{class}//'') ne 'time') && ($event->{end} lt $event->{start});
             my $content = '';
             if (length($event->{series_name})) {
                 $event->{series_name} = $params->{loc}->{single_event}
@@ -763,7 +764,7 @@ sub getTable {
                 : '';
                     
             $event->{content} .= join '', (
-                q{<br><span class="weak">}, $d,
+                q{<br><span class="weak">}, $sec,
                 ($event->{rms_left}
                     ? audio::formatLoudness($event->{rms_left}, 'L: ', 'round') 
                     : ''

@@ -411,7 +411,7 @@ sub get_event_duration {
             "events::get: no event found with event_id=$eventId\n")
         if scalar @$events == 0;
     my $event = $events->[0];
-    my $duration = time::get_duration_seconds($event->{start}, $event->{end},
+    my $duration = time::get_duration($event->{start}, $event->{end},
         $config->{date}->{time_zone});
     return $duration;
 }

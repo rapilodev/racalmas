@@ -76,7 +76,7 @@ sub setAttributesFromSchedule ($$$){
     }
 
     my $timezone = $config->{date}->{time_zone};
-    $event->{duration} = time::get_duration($event->{start}, $event->{end}, $timezone);
+    $event->{duration} = time::get_duration_min($event->{start}, $event->{end}, $timezone);
     return $event;
 }
 

@@ -773,7 +773,10 @@ sub error_handler {
     my $last = $_[-1];
     if (my $e = Exception::Class->caught) {
         warn $e->trace->as_string;
-    }    
+    } else {
+        use Data::Dumper;
+        warn Dumper(caller);
+    }
     my $msg = '';
     if (blessed($last) and $last->isa("APR::Request::Error")){
         $msg = $last->{func};

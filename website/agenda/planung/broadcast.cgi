@@ -158,7 +158,7 @@ sub show_event {
     $event->{rerun} = 1 if ($event->{rerun} =~ /a-z/);
     $event->{series_id} = $params->{series_id};
 
-    $event->{duration} = events::get_duration($config, $event);
+    $event->{duration} = events::get_duration_min($config, $event);
     $event->{durations} = \@durations;
     if (defined $event->{duration}) {
         for my $duration (@{ $event->{durations} }) {
@@ -281,7 +281,7 @@ sub get_json {
         }
     }
 
-    $event->{duration} = events::get_duration($config, $event);
+    $event->{duration} = events::get_duration_min($config, $event);
 
     # for rerun
     if ($params->{get_rerun} == 1) {

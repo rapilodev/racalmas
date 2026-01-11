@@ -430,24 +430,24 @@ subtest 'time_format' => sub {
 
 # Test get_duration_seconds
 subtest 'get_duration_seconds' => sub {
-    my $duration = time::get_duration_seconds(
+    my $duration = time::get_duration(
         '2024-12-18 14:00:00',
         '2024-12-18 15:30:00',
         'UTC'
     );
     is($duration, 5400, 'Duration is 5400 seconds (1.5 hours)');
     
-    $duration = time::get_duration_seconds(
+    $duration = time::get_duration(
         '2024-12-18 15:30:00',
         '2024-12-18 14:00:00',
         'UTC'
     );
     is($duration, -5400, 'Negative duration when end is before start');
     
-    eval { time::get_duration_seconds(undef, '2024-12-18 15:00:00') };
+    eval { time::get_duration(undef, '2024-12-18 15:00:00') };
     ok($@, 'Missing start throws error');
     
-    eval { time::get_duration_seconds('2024-12-18 14:00:00', undef) };
+    eval { time::get_duration('2024-12-18 14:00:00', undef) };
     ok($@, 'Missing end throws error');
     
     done_testing();

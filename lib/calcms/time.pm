@@ -29,7 +29,7 @@ our @EXPORT_OK = qw(
   datetime_to_array date_to_array array_to_date array_to_datetime array_to_time array_to_time_hm
   date_cond time_cond check_date check_time check_datetime check_year_month
   datetime_to_rfc822 get_datetime datetime_to_epoch epoch_to_utc_datetime datetime_to_utc_datetime datetime_to_ics
-  get_duration get_duration_seconds
+  get_duration get_duration_min
   getDurations getWeekdayIndex getWeekdayNames getWeekdayNamesShort getMonthNames getMonthNamesShort
 );
 
@@ -370,7 +370,7 @@ sub parse_duration {
     my ($s) = @_;
     return unless defined $s;
     return $s if $s =~ /^\d+(\.\d+)?$/;
-    if ($s =~ /^(\d{1,2}):(\d{2}):(\d{2})(?:[.,](\d+))?$/o) {
+    if ($s =~ /^\-?(\d{1,2}):(\d{2}):(\d{2})(?:[.,](\d+))?$/o) {
         my $ms = (defined $4 ? "0.$4" : 0);
         return ($1 * 3600) + ($2 * 60) + $3 + $ms;
     }
@@ -378,36 +378,24 @@ sub parse_duration {
 }
 
 
-# get duration in minutes
-sub get_duration($$$) {
+# get duration in seconds
+sub get_duration($$;$) {
     my ($start, $end, $timezone) = @_;
-    my $duration = abs(datetime_to_epoch($end, $timezone) - datetime_to_epoch($start, $timezone));
+    $timezone //= 'UTC';
+
+    $start = time::get_datetime($start, $timezone) or TimeCalcError->throw(error=>"time::get_duration(): invalid start\n");
+    $end   = time::get_datetime($end,   $timezone) or TimeCalcError->throw(error=>"time::get_duration(): invalid end\n");
+    my $duration = abs($end->epoch() - $start->epoch());
+    return $duration;
+}
+
+# get duration in minutes
+sub get_duration_min($$$) {
+    my ($start, $end, $timezone) = @_;
+    my $duration = get_duration($start, $end, $timezone);
     return $duration / 60;
 }
 
-# get duration in seconds
-sub get_duration_seconds($$;$) {
-    my ($start, $end, $timezone) = @_;
-    $timezone ||= 'UTC';
-
-    unless (defined $start) {
-        TimeCalcError->throw(error=>"time::get_duration_seconds(): start is missing\n");
-    }
-    unless (defined $end) {
-        TimeCalcError->throw(error=>"time::get_duration_seconds(): end is missing\n");
-    }
-
-    $start = time::get_datetime($start, $timezone);
-    $end   = time::get_datetime($end,   $timezone);
-    unless (defined $start) {
-        TimeCalcError->throw(error=>"time::get_duration_seconds(): invalid start\n");
-    }
-    unless (defined $end) {
-        TimeCalcError->throw(error=>"time::get_duration_seconds(): invalid end\n");
-    }
-    my $duration = $end->epoch() - $start->epoch();
-    return $duration;
-}
 
 # convert date string to a array of date values
 sub date_to_array($) {

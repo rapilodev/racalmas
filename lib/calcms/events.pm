@@ -1225,15 +1225,17 @@ sub delete ($$$) {
 
 sub get_duration ($$) {
     my ($config, $event) = @_;
-
     my $timezone = $config->{date}->{time_zone};
-    my $start    = time::get_datetime($event->{start}, $timezone);
-    return undef unless defined $start;
-    my $end      = time::get_datetime($event->{end}, $timezone);
-    return undef unless defined $end;
-    my $duration = $end->epoch() - $start->epoch();
-    return $duration / 60;
+    my $d = time::get_duration($event->{start}, $event->{end}, $timezone);
+    return $d;
 }
+
+sub get_duration_min ($$) {
+    my ($config, $event) = @_;
+    my $d = get_duration($config, $event);
+    return defined $d ? $d/60 : undef;
+}
+
 
 sub check_params ($$) {
     my ($config, $params) = @_;

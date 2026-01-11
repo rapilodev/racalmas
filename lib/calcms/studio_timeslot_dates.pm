@@ -288,7 +288,7 @@ sub get_week_of_month_dates ($$$$$$$$) {
         my @end_datetime = Date::Calc::Add_Delta_DHMS(
             $start[0], $start[1], $start[2],    # start date
             $start[3], $start[4], $start[5],    # start time
-            0, 0, $duration, 0                  # delta days, hours, minutes, seconds
+            0, 0, 0, $duration                  # delta days, hours, minutes, seconds
         );
         my $end_datetime = time::array_to_datetime(\@end_datetime);
         push @$results, {
