@@ -209,12 +209,12 @@ sub show_audio_recording {
         $recording->{processed} = $recording->{processed} ? 'yes' : 'no';
         $recording->{mastered}  = $recording->{mastered}  ? 'yes' : 'no';
 
-        $recording->{eventDuration} = get_duration($recording->{eventDuration});
         $recording->{audioDuration} = audio::formatDuration(
             $recording->{audioDuration},
             $recording->{eventDuration},
-            get_duration($recording->{audioDuration})
+            format_duration($recording->{audioDuration})
         );
+        $recording->{eventDuration} = format_duration($recording->{eventDuration});
 
         $recording->{rmsLeft}  = audio::formatLoudness($recording->{rmsLeft}, 'L:');
         $recording->{rmsRight} = audio::formatLoudness($recording->{rmsRight}, 'R:');
@@ -235,6 +235,7 @@ sub show_audio_recording {
     $params->{audio_recordings} = $audioRecordings;
     return $params;
 }
+
 
 sub get_duration {
     my $duration = shift;

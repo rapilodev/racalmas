@@ -1,14 +1,7 @@
 package audio;
 use warnings;
 use strict;
-
-sub durationToSeconds($) {
-    my ($duration) = @_;
-    if ($duration =~ /(\d+):(\d\d):(\d\d).(\d\d)/) {
-        return $1 * 3600 + $2 * 60 + $3 + $4 / 100;
-    }
-    return $duration;
-}
+use Data::Dumper;
 
 sub badge {
     my ($class, $content, $title) = @_;
@@ -35,8 +28,8 @@ sub class{
 sub formatDuration($$$;$) {
     my ($audioDuration, $eventDuration, $value, $mouseOver) = @_;
     return '' unless $audioDuration && $eventDuration && $value;
-    $audioDuration = durationToSeconds($audioDuration);
-    $eventDuration = durationToSeconds($eventDuration);
+    $audioDuration = time::parse_duration($audioDuration);
+    $eventDuration = time::parse_duration($eventDuration);
     my $class = "ok";
     my $title = $mouseOver;
     my $delta = 100 * $audioDuration / ($eventDuration+.00000000000001);

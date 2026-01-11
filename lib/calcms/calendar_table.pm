@@ -7,27 +7,23 @@ no warnings 'redefine';
 use Data::Dumper;
 use Date::Calc();
 use events();
+use series();
 
+# Iteratively splits date ranges that cross the designated start-of-day boundary.
 sub break_dates {
     my ($dates, $start_of_day) = @_;
 
     for my $date(@$dates) {
         next unless defined $date;
 
-        $date->{splitCount} = 0 unless defined $date->{splitCount};
-
-        #debugDate($date);
-
+        $date->{splitCount} //= 0;
         next if $date->{splitCount} > 6;
         my $nextDayStart =
             breaks_day($date->{start}, $date->{end}, $start_of_day);
         next if $nextDayStart eq '0';
 
         # add new entry
-        my $entry = {};
-        for my $key(keys %$date) {
-            $entry->{$key} = $date->{$key};
-        }
+        my $entry = { %$date };
         $entry->{start} = $nextDayStart;
         $entry->{splitCount}++;
         push @$dates, $entry;
@@ -76,11 +72,10 @@ sub join_dates {
     my ($dates, $start_of_day) = @_;
 
     return $dates if $start_of_day == 0;
-    @$dates = sort {$a->{start} cmp $b->{start}} @$dates;
+    @$dates = grep {defined $_} sort {$a->{start} cmp $b->{start}} @$dates;
 
     my $prev_date = undef;
     for my $date(@$dates) {
-        next unless defined $date;
         unless (defined $prev_date) {
             $prev_date = $date;
             next;
@@ -96,14 +91,7 @@ sub join_dates {
         }
         $prev_date = $date;
     }
-
-    my $results = [];
-    for my $date(@$dates) {
-        next unless defined $date;
-        push @$results, $date;
-    }
-
-    return $results;
+    return $dates;
 }
 
 sub filterEvents {
@@ -349,7 +337,7 @@ sub getTime {
 }
 
 sub showEventList {
-    my ($config, $permissions, $params, $events_by_day) = @_;
+    my ($config, $permissions, $params, $events) = @_;
     my $language      = $params->{language};
 
     my $rerunIcon =
@@ -392,156 +380,120 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
                  </tr>
             </thead>
             <tbody>
-    };# if $params->{part} == 0;
-    #my $i = 1;
+    };
 
     my $scheduled_events = {};
-    for my $date(reverse sort(keys %$events_by_day)) {
-        for my $event(reverse @{ $events_by_day->{$date} }) {
-            next unless defined $event;
-            next if defined $event->{grid};
-            next if defined $event->{work};
-            next if defined $event->{play};
+    for my $event(reverse sort {$a->{start} cmp $b->{start}} @$events) {
+        #schedules with matching date are marked to be hidden in find_errors
+        $event->{project_id} //= $params->{project_id};
+        $event->{studio_id}  //= $params->{studio_id};
+        $event->{series_id} = '-1' unless defined $event->{series_id};
+        $event->{event_id}  = '-1' unless defined $event->{event_id};
+        my $id = join('_', 'event',
+            $event->{project_id},
+            $event->{studio_id},
+            $event->{series_id},
+            $event->{event_id}
+        );
 
-            #schedules with matching date are marked to be hidden in find_errors
-            next if defined $event->{hide};
-            $event->{project_id} //= $params->{project_id};
-            $event->{studio_id}  //= $params->{studio_id};
-            $event->{series_id} = '-1' unless defined $event->{series_id};
-            $event->{event_id}  = '-1' unless defined $event->{event_id};
-            my $id =
-                  'event_'
-                . $event->{project_id} . '_'
-                . $event->{studio_id} . '_'
-                . $event->{series_id} . '_'
-                . $event->{event_id};
-
-            my $class = 'event';
-            $class = $event->{class} if defined $event->{class};
-            $class = 'schedule'      if defined $event->{schedule};
-            if ($class =~ /(event|schedule)/) {
-                $class .= ' scheduled' if defined $event->{scheduled};
-                $class .= ' error'     if defined $event->{error};
-                $class .= ' no_series'
-                    if (($class eq 'event') && ($event->{series_id} eq '-1'));
-
-                for my $filter(
-                    'rerun',   'archived',
-                    'playout', 'published',
-                    'live',    'disable_event_sync',
-                    'draft'
-                   )
-                {
-                    $class .= ' ' . $filter
-                        if ((defined $event->{$filter})
-                        && ($event->{$filter} eq '1'));
-                }
-                $class .= ' preproduced'
-                    unless ((defined $event->{'live'})
-                    && ($event->{'live'} eq '1'));
-                $class .= ' no_playout'
-                    unless (
-                 (defined $event->{'playout'})
-                    && (defined $event->{'playout'}
-                        and $event->{'playout'} eq '1')
-                   );
-                $class .= ' no_rerun'
-                    unless ((defined $event->{'rerun'})
-                    && ($event->{'rerun'} eq '1'));
+        my $class = 'event';
+        $class = $event->{class} if defined $event->{class};
+        $class = 'schedule'      if defined $event->{schedule};
+        if ($class =~ /(event|schedule)/) {
+            $class .= ' scheduled' if defined $event->{scheduled};
+            $class .= ' error'     if defined $event->{error};
+            $class .= ' no_series'
+                if (($class eq 'event') && ($event->{series_id} eq '-1'));
+    
+            for my $filter(qw(
+                rerun archived playout published
+                live disable_event_sync draft
+            )) {
+                $class .= ' ' . $filter if ($event->{$filter} // '') eq '1';
             }
-
-            $event->{start}              ||= '';
-            $event->{weekday_short_name} ||= '';
-            $event->{start_date_name}    ||= '';
-            $event->{start_time}         ||= '';
-            $event->{end_time}           ||= '';
-            $event->{series_name}        ||= '';
-            $event->{title}              ||= '';
-            $event->{user_title}         ||= '';
-            $event->{episode}            ||= '';
-            $event->{rerun}              ||= '';
-            $event->{draft}              ||= '';
-            $event->{playout}            ||= '';
-            $id                          ||= '';
-            $class                       ||= '';
-
-            my $archived = $event->{archived} || '-';
-            $archived = '-'          if $archived eq '0';
-            $archived = $archiveIcon if $archived eq '1';
-
-            my $live = $event->{live} || '-';
-            $live = '-'       if $live eq '0';
-            $live = $liveIcon if $live eq '1';
-
-            my $rerun = $event->{rerun} || '-';
-
-            $rerun =
-                " [" . markup::base26($event->{recurrence_count} + 1) . "]"
-                if (defined $event->{recurrence_count})
-                && ($event->{recurrence_count} ne '')
-                && ($event->{recurrence_count} > 0);
-
-            my $draft = $event->{draft} || '0';
-            $draft = '-'        if $draft eq '0';
-            $draft = $draftIcon if $draft eq '1';
-
-            my $playout = '-';
-            if (defined $event->{upload_status}) {
-                $playout = $processingIcon if $event->{upload_status} ne '';
-                $playout = $preparedIcon   if $event->{upload_status} eq 'done';
-            }
-            $playout = $playoutIcon if $event->{playout} eq '1';
-
-            my $title = join ': ', ($event->{title}, $event->{user_title});
-
-            my $other_studio  = $params->{studio_id} ne $event->{studio_id};
-            my $other_project = $params->{project_id} ne $event->{project_id};
-            $class .= ' predecessor' if $other_project or $other_studio;
-            $other_studio  = '<sprite-icon name="globe"></sprite-icon>' if $other_studio;
-            $other_project = '<sprite-icon name="globe></sprite-icon>' if $other_project;
-
-            my $file =
-                $event->{file}
-                ? 'playout: ' . $event->{file} =~ s/\'/\&apos;/gr
-                : 'playout';
-            my $playout_info = $file // $event->{upload_status} // '';
-
-            my $studio_name = $event->{studio_name} // '-';
-
-            my $format = { "markdown" => "-", "creole" => "Creole" }
-                ->{ $event->{content_format} // '' } // 'Creole';
-                #use Data::Dumper;warn Dumper($event);
-            $out .= qq!<tr id="$id" class="$class" start="$event->{start}" >!
-                . qq!<td class="day_of_year">!
-                .(defined $event->{start} ? time::dayOfYear($event->{start}) : '')
-                . q!</td>!
-                . qq{<!--<td class="weekday">$event->{weekday_short_name},</td>-->}
-                . qq!<td class="start_date" data-text="$event->{start_datetime}">$event->{start_date}</td>!
-                . qq!<td class="start_time">$event->{start_time} - $event->{end_time}</td>!
-                . qq!<td class="series_name">$event->{series_name}</td>!
-                . qq!<td class="title">$title</td>!
-                . qq!<td class="episode">$event->{episode}</td>!
-                . qq!<td class="rerun">$rerun</td>!
-                . qq!<td class="ddraft">$draft</td>!
-                . qq!<td class="live">$live</td>!
-                . qq!<td class="playout" title="$playout_info">$playout</td>!
-                . qq!<td class="archived">$archived</td>!
-                . qq{<!--}
-                . qq!<td>$event->{project_name} $other_studio</td>!
-                . qq!<td>$studio_name $other_studio</td>!
-                . qq!<td class="series_id">$event->{series_id}</td>!
-                . qq!<td class="id">$event->{id}</td>!
-                . qq!<tr id="$id" class="$class" start="$event->{start}" >!
-                . qq{-->}
-                . qq!</tr>! 
-                . "\n";
+            $class .= ' preproduced' unless ($event->{'live'} // '') eq '1';
+            $class .= ' no_playout'  unless ($event->{'playout'} // '') eq '1';
+            $class .= ' no_rerun'    unless ($event->{'rerun'} // '') eq '1';
         }
+    
+        $event->{start}              ||= '';
+        $event->{weekday_short_name} ||= '';
+        $event->{start_date_name}    ||= '';
+        $event->{start_time}         ||= '';
+        $event->{end_time}           ||= '';
+        $event->{series_name}        ||= '';
+        $event->{title}              ||= '';
+        $event->{user_title}         ||= '';
+        $event->{episode}            ||= '';
+        $event->{rerun}              ||= '';
+        $event->{draft}              ||= '';
+        $event->{playout}            ||= '';
+        $id                          ||= '';
+        $class                       ||= '';
+    
+        my $archived = $event->{archived} eq '1' ? $archiveIcon : '-';
+        my $live = $event->{live} eq '1' ? $liveIcon : '-';
+    
+        my $rerun = $event->{rerun} || '-';
+        $rerun =
+            " [" . markup::base26($event->{recurrence_count} + 1) . "]"
+            if (defined $event->{recurrence_count})
+            && ($event->{recurrence_count} ne '')
+            && ($event->{recurrence_count} > 0);
+    
+        my $draft = $event->{draft} eq '1' ? $draftIcon : '-';
+    
+        my $playout = '-';
+        if (defined $event->{upload_status}) {
+            $playout = $processingIcon if $event->{upload_status} ne '';
+            $playout = $preparedIcon   if $event->{upload_status} eq 'done';
+        }
+        $playout = $playoutIcon if $event->{playout} eq '1';
+    
+        my $title = join ': ', ($event->{title}, $event->{user_title});
+        my $other_studio  = $params->{studio_id} ne $event->{studio_id};
+        my $other_project = $params->{project_id} ne $event->{project_id};
+        $class .= ' predecessor' if $other_project or $other_studio;
+        $other_studio  = '<sprite-icon name="globe"></sprite-icon>' if $other_studio;
+        $other_project = '<sprite-icon name="globe></sprite-icon>' if $other_project;
+        my $file = $event->{file}
+            ? 'playout: ' . $event->{file} =~ s/\'/\&apos;/gr
+            : 'playout';
+        my $playout_info = $file // $event->{upload_status} // '';
+        my $studio_name = $event->{studio_name} // '-';
+        my $format = { "markdown" => "-", "creole" => "Creole" }
+            ->{ $event->{content_format} // '' } // 'Creole';
+        $out .= qq!<tr id="$id" class="$class" start="$event->{start}" >!
+            . qq!<td class="day_of_year">!
+            .($event->{day_of_year})
+            . q!</td>!
+            . qq{<!--<td class="weekday">$event->{weekday_short_name},</td>-->}
+            . qq!<td class="start_date" data-text="$event->{start_datetime}">$event->{start_date}</td>!
+            . qq!<td class="start_time">$event->{start_time} - $event->{end_time}</td>!
+            . qq!<td class="series_name">$event->{series_name}</td>!
+            . qq!<td class="title">$title</td>!
+            . qq!<td class="episode">$event->{episode}</td>!
+            . qq!<td class="rerun">$rerun</td>!
+            . qq!<td class="ddraft">$draft</td>!
+            . qq!<td class="live">$live</td>!
+            . qq!<td class="playout" title="$playout_info">$playout</td>!
+            . qq!<td class="archived">$archived</td>!
+            . qq{<!--}
+            . qq!<td>$event->{project_name} $other_studio</td>!
+            . qq!<td>$studio_name $other_studio</td>!
+            . qq!<td class="series_id">$event->{series_id}</td>!
+            . qq!<td class="id">$event->{id}</td>!
+            . qq!<tr id="$id" class="$class" start="$event->{start}" >!
+            . qq{-->}
+            . qq!</tr>! 
+            . "\n"
+        ;
     }
     $out .= qq{
                 </tbody>
             </table>
         </div>
-    };# if $params->{part} == 0;
+    };
 
     my $project_id = $params->{project_id};
     my $studio_id  = $params->{studio_id};
@@ -800,17 +752,18 @@ sub getTable {
             $event->{class} = 'schedule' if $event->{schedule};
             $event->{class} = 'work' if $event->{work};
             $event->{class} = 'play' if $event->{play};
-
+            my $sec = time::parse_duration($event->{duration});
+            $sec = defined $event->{duration}
+                ? audio::formatDuration(
+                    $sec,
+                    $event->{event_duration},
+                    sprintf("%d min",($sec + 30) / 60),
+                    sprintf("%d s", $sec)
+                  )
+                : '';
+                    
             $event->{content} .= join '', (
-                q{<br><span class="weak">},
-                (defined $event->{duration}
-                    ? audio::formatDuration(
-                        $event->{duration},
-                        $event->{event_duration},
-                        sprintf("%d min",($event->{duration} + 30) / 60),
-                        sprintf("%d s", $event->{duration}))
-                    : ''
-                ),
+                q{<br><span class="weak">}, $d,
                 ($event->{rms_left}
                     ? audio::formatLoudness($event->{rms_left}, 'L: ', 'round') 
                     : ''
@@ -1107,7 +1060,6 @@ sub get_event {
 
 sub getSeriesEvents {
     my ($config, $request, $options, $params) = @_;
-
     #get events by series id
     if (defined $request->{params}->{checked}->{series_id}) {
         my $events = series::get_events($request->{config}, $options);
@@ -1131,7 +1083,6 @@ sub getSeriesEvents {
     $request2->{params}->{checked}->{draft}     = '1' if $params->{list} == 1;
 
     my $events = events::get($config, $request2);
-
     series::add_series_ids_to_events($request->{config}, $events);
 
     my $studios = studios::get(
@@ -1139,7 +1090,7 @@ sub getSeriesEvents {
         {
             project_id => $options->{project_id}
         }
-   );
+    );
     my $studio_id_by_location = {};
     for my $studio(@$studios) {
         $studio_id_by_location->{ $studio->{location} } = $studio->{id};
@@ -1151,7 +1102,6 @@ sub getSeriesEvents {
         $event->{studio_id} = $studio_id_by_location->{ $event->{location} }
             unless defined $event->{studio_id};
     }
-
     return $events;
 }
 

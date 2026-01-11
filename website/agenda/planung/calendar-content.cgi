@@ -154,23 +154,22 @@ sub showCalendar {
         $options->{project} = $project if $project =~ /\S/;
     }
 
-    if (defined $params->{series_id}) {
-        $options->{series_id} = $params->{series_id};
-        delete $options->{from_date};
-        delete $options->{till_date};
-        delete $options->{date_range_include};
-    }
-
-    if ($params->{search} =~ /\S/) {
-        if ($params->{list} == 1) {
-            $options->{search} = $params->{search};
+    if ($params->{list} == 1) {
+        if (defined $params->{series_id}) {
+            $options->{series_id} = $params->{series_id};
             delete $options->{from_date};
             delete $options->{till_date};
             delete $options->{date_range_include};
         }
+    
+        if ($params->{search} =~ /\S/) {
+                $options->{search} = $params->{search};
+                delete $options->{from_date};
+                delete $options->{till_date};
+                delete $options->{date_range_include};
+        }
     }
     $options->{from_time} = '00:00' if defined $options->{from_date};
-
     $options->{draft} = 0 unless $params->{list} == 1;
 
     #get events sorted by date
@@ -183,13 +182,6 @@ sub showCalendar {
         $events = calendar_table::break_dates($events, $start_of_day);
     }
 
-    # recalc after break (for list only?)
-    for my $event (@$events) {
-        delete $event->{day};
-        delete $event->{start_date};
-        delete $event->{end_date};
-        $event = events::calc_dates($config, $event);
-    }
 
     my $events_by_start = {};
     for my $event (@$events) {
@@ -206,167 +198,143 @@ sub showCalendar {
         exclude            => 0
     };
 
-    if (defined $params->{series_id}) {
-        $options->{series_id} = $params->{series_id};
-        delete $options->{from};
-        delete $options->{till};
-        delete $options->{date_range_include};
-    }
-
-    if ($params->{search} =~ /\S/) {
-        $options->{search} = $params->{search};
-        if ($params->{list} == 1) {
+    if ($params->{list} == 1) {
+        if (defined $params->{series_id}) {
+            $options->{series_id} = $params->{series_id};
             delete $options->{from};
             delete $options->{till};
             delete $options->{date_range_include};
         }
+    
+        if ($params->{search} =~ /\S/) {
+            $options->{search} = $params->{search};
+            if ($params->{list} == 1) {
+                delete $options->{from};
+                delete $options->{till};
+                delete $options->{date_range_include};
+            }
+        }
     }
-
-    #get all series dates
+    
+    #get all series dates with no event
     my $series_dates = series_dates::get_series($config, $options);
-    my $id           = 0;
+    my @series_dates = @$series_dates;
+    if ($params->{list} == 1) {
+        my %event_dates = map {$_->{start} => 1 } @$events;
+        @series_dates = 
+            grep { !exists $event_dates{$_->{start}} }
+            @series_dates;
+        ;
+    }
+    
+    my $id = 0;
     for my $date (@$series_dates) {
         $date->{schedule} = 1;
-
-        #$date->{event_id}=-1;
         $date->{event_id}  = $id;
         $date->{origStart} = $date->{start};
-        delete $date->{day};
-        delete $date->{start_date};
-        delete $date->{end_date};
         $id++;
     }
     unless ($params->{list} == 1) {
         $series_dates = calendar_table::break_dates($series_dates, $start_of_day);
     }
-
     #merge series and events
-    for my $date (@$series_dates) {
-        $date = events::calc_dates($config, $date);
-        push @$events, $date;
-    }
+    push @$events, @$series_dates;
 
     #get timeslot_dates
-    my $studio_dates = studio_timeslot_dates::get($config, $options);
-
-    $id = 0;
-    for my $date (@$studio_dates) {
-        $date->{grid}      = 1;
-        $date->{series_id} = -1;
-
-        #$date->{event_id}=-1;
-        $date->{event_id}  = $id;
-        $date->{origStart} = $date->{start};
-        delete $date->{day};
-        delete $date->{start_date};
-        delete $date->{end_date};
-        $id++;
-    }
-    unless ($params->{list} == 1) {
+    if ($params->{list} != 1) {
+        my $studio_dates = studio_timeslot_dates::get($config, $options);
+        $id = 0;
+        for my $date (@$studio_dates) {
+            $date->{grid}      = 1;
+            $date->{series_id} = -1;
+            $date->{event_id}  = $id;
+            $date->{origStart} = $date->{start};
+            $id++;
+        }
         $studio_dates = calendar_table::break_dates($studio_dates, $start_of_day);
-    }
-
-    for my $date (@$studio_dates) {
-        $date = events::calc_dates($config, $date);
-        push @$events, $date;
-    }
-
-    #get work_dates
-    my $work_dates = work_dates::get($config, $options);
-    for my $date (@$work_dates) {
-        $date->{work}      = 1;
-        $date->{series_id} = -1;
-        $date->{event_id}  = -1;
-        $date->{origStart} = $date->{start};
-        delete $date->{day};
-        delete $date->{start_date};
-        delete $date->{end_date};
-    }
-    unless ($params->{list} == 1) {
+        push @$events, @$studio_dates;
+    
+        #get work_dates
+        my $work_dates = work_dates::get($config, $options);
+        for my $date (@$work_dates) {
+            $date->{work}      = 1;
+            $date->{series_id} = -1;
+            $date->{event_id}  = -1;
+            $date->{origStart} = $date->{start};
+        }
         $work_dates = calendar_table::break_dates($work_dates, $start_of_day);
-    }
-
-    for my $date (@$work_dates) {
-        $date = events::calc_dates($config, $date);
-        push @$events, $date;
-    }
-
-    #get playout
-    delete $options->{exclude};
-    my $playout_dates = playout::get_scheduled($config, $options);
-    $id = 0;
-    for my $date (@$playout_dates) {
-        my $format = undef;
-        if (defined $date->{'format'}) {
-            $format =
-                  ($date->{'format'}         || '') . " "
-                . ($date->{'format_version'} || '') . " "
-                . ($date->{'format_profile'} || '');
-            $format =~ s/MPEG Audio Version 1 Layer 3/MP3/g;
-            $format .= ' ' . ($date->{'format_settings'} || '')
-                if defined $date->{'format_settings'};
-            $format .= '<br>';
+        push @$events, @$work_dates;
+    
+        #get playout
+        delete $options->{exclude};
+        my $playout_dates = playout::get_scheduled($config, $options);
+        $id = 0;
+        for my $date (@$playout_dates) {
+            my $format = undef;
+            if (defined $date->{'format'}) {
+                $format =
+                      ($date->{'format'}         || '') . " "
+                    . ($date->{'format_version'} || '') . " "
+                    . ($date->{'format_profile'} || '');
+                $format =~ s/MPEG Audio Version 1 Layer 3/MP3/g;
+                $format .= ' ' . ($date->{'format_settings'} || '')
+                    if defined $date->{'format_settings'};
+                $format .= '<br>';
+            }
+    
+            $date->{play}      = 1;
+            $date->{series_id} = -1;
+            $date->{event_id}  = $id;
+            $date->{title} = join '', (
+                $date->{errors} ? '<b>errors</b>: ' . $date->{errors} : '',
+                $date->{duration} ? audio::formatDuration(
+                    $date->{duration},
+                    $date->{event_duration},
+                    sprintf("%.1g h", $date->{duration} / 3600),
+                    sprintf("%d s",             $date->{duration})
+                ) : '',
+                $date->{bitrate} ? audio::formatBitrate($date->{bitrate}) : ' ',
+                $date->{bitrate_mode} ? audio::formatBitrateMode($date->{bitrate_mode}) : '',
+                $date->{replay_gain} ? sprintf("<b>replay gain</b> %.1f", $date->{replay_gain}) : '',
+                $date->{sampling_rate} ? audio::formatSamplingRate($date->{sampling_rate}) : '',
+                $date->{channels} ? audio::formatChannels($date->{channels}) : '',
+                $date->{'stream_size'} ?  audio::named_badge("size", int(($date->{'stream_size'}//'0') / (1024 * 1024)) . 'MB') : '',
+                $format ? $format : '',
+                $date->{'writing_library'} ? audio::named_badge("lib", $date->{writing_library}) : '',
+                $date->{rms_left} ? audio::formatLoudness($date->{rms_left}, 'L: ') : '', 
+                $date->{rms_right} ? audio::formatLoudness($date->{rms_right}, 'R: ') : '',
+                $date->{file} ? audio::named_badge('path', $date->{file}) : '',,
+                $date->{updated_at} ?  audio::named_badge('updated_at', $date->{updated_at}) : '',
+                $date->{modified_at} ? audio::named_badge('modified_at', $date->{modified_at}) : ''
+            );
+            $date->{rms_image} = URI::Escape::uri_unescape($date->{rms_image})
+                if defined $date->{rms_image};
+            $date->{origStart} = $date->{start};
+    
+          # set end date seconds to 00 to handle error at break_dates/join_dates
+            $date->{end} =~ s/(\d\d\:\d\d)\:\d\d/$1\:00/;
+            $id++;
         }
-
-        $date->{play}      = 1;
-        $date->{series_id} = -1;
-        $date->{event_id}  = $id;
-        $date->{title} = join '', (
-            $date->{errors} ? '<b>errors</b>: ' . $date->{errors} : '',
-            $date->{duration} ? audio::formatDuration(
-                $date->{duration},
-                $date->{event_duration},
-                sprintf("%.1g h", $date->{duration} / 3600),
-                sprintf("%d s",             $date->{duration})
-            ) : '',
-            $date->{bitrate} ? audio::formatBitrate($date->{bitrate}) : ' ',
-            $date->{bitrate_mode} ? audio::formatBitrateMode($date->{bitrate_mode}) : '',
-            $date->{replay_gain} ? sprintf("<b>replay gain</b> %.1f", $date->{replay_gain}) : '',
-            $date->{sampling_rate} ? audio::formatSamplingRate($date->{sampling_rate}) : '',
-            $date->{channels} ? audio::formatChannels($date->{channels}) : '',
-            $date->{'stream_size'} ?  audio::named_badge("size", int(($date->{'stream_size'}//'0') / (1024 * 1024)) . 'MB') : '',
-            $format ? $format : '',
-            $date->{'writing_library'} ? audio::named_badge("lib", $date->{writing_library}) : '',
-            $date->{rms_left} ? audio::formatLoudness($date->{rms_left}, 'L: ') : '', 
-            $date->{rms_right} ? audio::formatLoudness($date->{rms_right}, 'R: ') : '',
-            $date->{file} ? audio::named_badge('path', $date->{file}) : '',,
-            $date->{updated_at} ?  audio::named_badge('updated_at', $date->{updated_at}) : '',
-            $date->{modified_at} ? audio::named_badge('modified_at', $date->{modified_at}) : ''
-        );
-        $date->{rms_image} = URI::Escape::uri_unescape($date->{rms_image})
-            if defined $date->{rms_image};
-        $date->{origStart} = $date->{start};
-
-      # set end date seconds to 00 to handle error at break_dates/join_dates
-        $date->{end} =~ s/(\d\d\:\d\d)\:\d\d/$1\:00/;
-        delete $date->{day};
-        delete $date->{start_date};
-        delete $date->{end_date};
-        $id++;
-    }
-
-    unless ($params->{list} == 1) {
+        for my $date (grep  {defined $_} @$playout_dates) {
+            $date = events::calc_dates($config, $date);
+            if (defined $events_by_start->{ $date->{start} }) {
+                $events_by_start->{ $date->{start} }->{duration} =
+                    $date->{duration} || 0;
+                $events_by_start->{ $date->{start} }->{event_duration} =
+                    $date->{event_duration} || 0;
+                $events_by_start->{ $date->{start} }->{rms_left} =
+                    $date->{rms_left} || 0;
+                $events_by_start->{ $date->{start} }->{rms_right} =
+                    $date->{rms_right} || 0;
+                $events_by_start->{ $date->{start} }->{playout_modified_at} =
+                    $date->{modified_at};
+                $events_by_start->{ $date->{start} }->{playout_updated_at} =
+                    $date->{updated_at};
+                $events_by_start->{ $date->{start} }->{file} = $date->{file};
+            }
+            push @$events, $date;
+        }
         $playout_dates = calendar_table::break_dates($playout_dates, $start_of_day);
-    }
-
-    for my $date (@$playout_dates) {
-        $date = events::calc_dates($config, $date);
-        if (defined $events_by_start->{ $date->{start} }) {
-            $events_by_start->{ $date->{start} }->{duration} =
-                $date->{duration} || 0;
-            $events_by_start->{ $date->{start} }->{event_duration} =
-                $date->{event_duration} || 0;
-            $events_by_start->{ $date->{start} }->{rms_left} =
-                $date->{rms_left} || 0;
-            $events_by_start->{ $date->{start} }->{rms_right} =
-                $date->{rms_right} || 0;
-            $events_by_start->{ $date->{start} }->{playout_modified_at} =
-                $date->{modified_at};
-            $events_by_start->{ $date->{start} }->{playout_updated_at} =
-                $date->{updated_at};
-            $events_by_start->{ $date->{start} }->{file} = $date->{file};
-        }
-        push @$events, $date;
     }
 
     # series dates
@@ -374,8 +342,6 @@ sub showCalendar {
         my $series = series::get(
             $config,
             {
-                #project_id => $project_id,
-                #studio_id  => $studio_id,
                 series_id => $options->{series_id}
             }
         );
@@ -390,19 +356,18 @@ sub showCalendar {
                 },
                 $params
             );
-
-            for my $event (@$events2) {
-                delete $event->{day};
-                delete $event->{start_date};
-                delete $event->{end_date};
-                push @$events, events::calc_dates($config, $event);
-            }
         }
     }
 
-    my $out = "Content-type:text/html; charset=utf-8;\n\n";
+    @$events = grep {defined $_} @$events;
+    events::calc_dates($config, $_) for @$events;
 
-    #filter events by time
+    my $out = "Content-type:text/html; charset=utf-8;\n\n";
+    if ($params->{list} ==1 ) {
+        return $out . calendar_table::showEventList($config, $permissions, $params, $events);
+    }
+
+    #filter events by time (for new events splitted before)
     unless ($params->{list} == 1) {
         $events = calendar_table::filterEvents($events, $options, $start_of_day);
     }
@@ -449,33 +414,21 @@ sub showCalendar {
         calendar_table::find_errors($events);
     }
 
-    for my $event (@$events) {
-        next unless defined $event->{uploaded_at};
-        next
-            if (defined $event->{playout_updated_at})
-            && ($event->{uploaded_at} lt $event->{playout_updated_at});
-
+    calendar_table::calcCalendarTable($config, $permissions, $params, $calendar,
+        $events_by_day, $cal_options);
+    
+    $out .= calendar_table::getTable($config, $permissions, $params, $cal_options);
+    if ($params->{part} == 0) {
+        #TODO: load dynamically
+        $out .= calendar_table::getSeries($config, $permissions, $params, $cal_options);
+        $out.= qq{
+                </main>
+        };
     }
 
-    if ($params->{list} == 1) {
-        return $out . calendar_table::showEventList($config, $permissions, $params, $events_by_day);
-    } else {
-        calendar_table::calcCalendarTable($config, $permissions, $params, $calendar,
-            $events_by_day, $cal_options);
-        
-        $out .= calendar_table::getTable($config, $permissions, $params, $cal_options);
-        if ($params->{part} == 0) {
-            #TODO: load dynamically
-            $out .= calendar_table::getSeries($config, $permissions, $params, $cal_options);
-            $out.= qq{
-                    </main>
-            };
-        }
-
-        # time has to be set when events come in
-        $out .= calendar_table::getJavascript($config, $permissions, $params, $cal_options);
-        return $out;
-    }
+    # time has to be set when events come in
+    $out .= calendar_table::getJavascript($config, $permissions, $params, $cal_options);
+    return $out;
 }
 
 

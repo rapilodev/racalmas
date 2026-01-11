@@ -365,6 +365,19 @@ sub dayOfYear($) {
     return undef;
 }
 
+# get duration in seconds
+sub parse_duration {
+    my ($s) = @_;
+    return unless defined $s;
+    return $s if $s =~ /^\d+(\.\d+)?$/;
+    if ($s =~ /^(\d{1,2}):(\d{2}):(\d{2})(?:[.,](\d+))?$/o) {
+        my $ms = (defined $4 ? "0.$4" : 0);
+        return ($1 * 3600) + ($2 * 60) + $3 + $ms;
+    }
+    die "Invalid duration format: $s";
+}
+
+
 # get duration in minutes
 sub get_duration($$$) {
     my ($start, $end, $timezone) = @_;

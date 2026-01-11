@@ -386,7 +386,7 @@ sub add_recurrence_dates {
             $result->{recurrence_time_name} = $dt->{time_hm};
             $result->{recurrence_weekday_name} = $dt->{weekday_long};
             $result->{recurrence_weekday_short_name} = $dt->{weekday_short};
-            use Data::Dumper;warn Dumper($dt);
+            #use Data::Dumper;warn Dumper($dt);
         }
     }
 }
@@ -417,10 +417,10 @@ sub calc_dates {
     $result->{start_minute} = $start->{minute};
     $result->{start_second} = $start->{second};
     
+    #warn Dumper($result);
     $result->{day} = time::datetime_to_array($result->{start})->[3] < 6
         ? time::add_days_to_date($result->{start}, -1)
-        : time::datetime_to_date($result->{start})
-        unless defined $result->{day};
+        : time::datetime_to_date($result->{start});
 
     $result->{start_date} = $start->{date};
     $result->{start_date_name} = $start->{date_name};
