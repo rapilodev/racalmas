@@ -1,6 +1,76 @@
 if (window.namespace_default_js) throw "stop"; window.namespace_default_js = true;
 "use strict";
 
+if (!customElements.get('enhanced-select')) {
+    class SearchSelect extends HTMLElement {
+      constructor() {
+        super();
+        this._realSelect = null;
+        this._btnText = null;
+      }
+      get value() { return this._realSelect?.value; }
+      set value(val) { 
+        if (this._realSelect) {
+          this._realSelect.value = val;
+          this._realSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+      connectedCallback() {
+        const originalOptions = Array.from(this.querySelectorAll('option'));
+        this._realSelect = document.createElement('select');
+        for (let attr of this.attributes) this._realSelect.setAttribute(attr.name, attr.value);
+        this._realSelect.style.display = "none";
+        this._realSelect.innerHTML = originalOptions.map(o => o.outerHTML).join('');
+        this.innerHTML = `
+          <style>search-select{z-index:999;}</style>
+          <div style="position:relative; width:100%;z-index:999">
+            <div id="btn" style="border:1px solid #ccc; padding:8px; cursor:pointer; background:#fff; border-radius:4px; display:flex; justify-content:space-between;">
+              <span></span><small style="opacity:0.3">▼</small>
+            </div>
+            <div id="drop" style="display:none; top:100%; left:0; right:0; border:1px solid #ccc; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+              <input type="text" id="sch" placeholder="Search..." style="width:100%; box-sizing:border-box; padding:8px; border:0; border-bottom:1px solid #eee; outline:none;">
+              <div id="list" style="max-height:20rem; overflow-y:auto;">
+                ${originalOptions.map(o => `<div data-val="${o.value}" style="padding:8px; cursor:pointer;" class="opt">${o.text}</div>`).join('')}
+              </div>
+            </div>
+          </div>`;
+
+        this.prepend(this._realSelect);
+        const btn = this.querySelector('#btn'), drop = this.querySelector('#drop');
+        const sch = this.querySelector('#sch'), items = [...this.querySelectorAll('.opt')];
+        this._btnText = btn.querySelector('span');
+
+        const updateUI = () => {
+          const opt = this._realSelect.options[this._realSelect.selectedIndex];
+          this._btnText.innerText = opt ? opt.text : 'Select...';
+        };
+        updateUI();
+        this._realSelect.onchange = updateUI;
+        btn.onclick = () => {
+          drop.style.display = drop.style.display === 'none' ? 'block' : 'none';
+          if(drop.style.display === 'block') sch.focus();
+        };
+        sch.oninput = () => {
+          const v = sch.value.toLowerCase();
+          items.forEach(i => i.style.display = i.innerText.toLowerCase().includes(v) ? 'block' : 'none');
+        };
+        items.forEach(i => i.onclick = () => {
+          this.value = i.dataset.val; // Uses the setter above
+          drop.style.display = 'none';
+          sch.value = '';
+          items.forEach(el => el.style.display = 'block');
+        });
+        document.addEventListener('click', e => { if(!this.contains(e.target)) drop.style.display = 'none'; });
+      }
+      val(v) {
+        if (v === undefined) return this.value;
+        this.value = v;
+        return this;
+      }
+    }
+    customElements.define('search-select', SearchSelect);
+} // search-select end
+
 // <sprite-icon name="help"> support
 if (!customElements.get('sprite-icon')) {
     class SpriteIcon extends HTMLElement {
@@ -1049,7 +1119,18 @@ async function initializeComponents(container) {
 
 }
 
+function assert(input) {
+    if (typeof input === "number") {
+      if (input < 0) throw new Error(`Invalid ${name}: ${input}`);
+      return;
+    }
+    for (const [key, value] of Object.entries(input)) {
+      if (value < 0) throw new Error(`Invalid ${key}: ${value}`);
+    }
+}
+
 document.addEventListener("DOMContentLoaded",async function() {
     console.log("inita")
     await initializeComponents();
 });
+
