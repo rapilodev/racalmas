@@ -1,8 +1,9 @@
+```
 <IfModule mod_rewrite.c>
 Options -Multiviews
 #^ Multiviews destroys URL rewriting!
 RewriteEngine on
-
+LogLevel alert rewrite:trace3
 # stop rewrite on CGI
 RewriteRule \.cgi$ - [END]
 
@@ -16,26 +17,28 @@ AddType image/svg+xml .svg
 RewriteRule favicon.ico favicon.svg [L]
 
 # compatibility layer
-RewriteRule ^sendungen/heute/               events/today/
-RewriteRule ^sendungen/                     events/
-RewriteRule ^sendung/                       event/
-RewriteRule ^sendereihen/                   series/
-RewriteRule ^sendereihe/                    series/events/
-RewriteRule ^kalender/                      calendar/
-RewriteRule ^menu/heute/                    menu/today/
-RewriteRule ^suche/(.*?)/(.*?)/kommende/    search/$1/$2/upcoming/
-RewriteRule ^suche/(.*?)/(.*?)/vergangene/  search/$1/$2/gone/
-RewriteRule ^suche/                         search/
-RewriteRule ^neueste_kommentare             comments/latest/
-RewriteRule ^kommentar_neu                  comments/add/
-RewriteRule ^kommentare                     comments/
-RewriteRule ^dashboard/sendung              dashboard/event/
-RewriteRule ^running_event_id               event/running/id/
-RewriteRule ^running_event                  event/running/
-RewriteRule ^playlistLong                   playlist/long/
-RewriteRule ^playlistUtc                    playlist/utc/
-RewriteRule ^playlist_show                  playlist/show/
+RewriteRule ^sendungen/heute/?               events/today/ [L]
+RewriteRule ^sendungen/?                     events/ [L]
+RewriteRule ^sendung/?                       event/ [L]
+RewriteRule ^sendereihen/?                   series/ [L]
+RewriteRule ^sendereihe/?                    series/events/ [L]
+RewriteRule ^kalender/?                      calendar/ [L]
+RewriteRule ^menu/heute/?                    menu/today/ [L]
+RewriteRule ^suche/(.*?)/(.*?)/kommende/?    search/$1/$2/upcoming/ [L]
+RewriteRule ^suche/(.*?)/(.*?)/vergangene/?  search/$1/$2/gone/ [L]
+RewriteRule ^suche/?                         search/ [L]
+RewriteRule ^dashboard/sendung/?             dashboard/event/ [L]
+RewriteRule ^running_event_id/?              event/running/id/ [L]
+RewriteRule ^running_event/?                 event/running/ [L]
+RewriteRule ^playlistLong/?                  playlist/long/ [L]
+RewriteRule ^playlistUtc/?                   playlist/utc/ [L]
+RewriteRule ^playlist_show/?                 playlist/show/ [L]
+RewriteRule ^neueste_kommentare/?(.*)$       comments/latest/$1 [L]
+RewriteRule ^kommentar_neu/?(.*)$            comments/add/$1 [L]
+RewriteRule ^kommentare/?(.*)$               comments/$1 [L]
+RewriteRule ^feed_kommentare/?               comments/feed/ [L]
 
+# Events
 RewriteRule ^events/today/(.*)$                                         events.cgi?template=event_list.html&description=none&excerpt=none&date=today&$1 [L]
 RewriteRule ^events/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(\d)/(.*)$  events.cgi?template=event_list.html&description=none&excerpt=none&from_date=$1&till_date=$2&weekday=$3&$4 [L]
 RewriteRule ^events/(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})/(.*)$       events.cgi?template=event_list.html&description=none&excerpt=none&from_date=$1&till_date=$2&$3 [L]
@@ -50,7 +53,7 @@ RewriteRule ^event/running/(.*)$             events.cgi?template=event_running.h
 RewriteRule ^event/(.*)$                     events.cgi?$1 [L]
 
 RewriteRule ^playlist/long/(.*)$         events.cgi?template=event_playlist_long.html&description=none&excerpt=none&phase=upcoming&limit=20&$1 [L]
-RewriteRule ^playlist/utc/(.*)$          events.cgi?template=event_utc_time.json&limit=1
+RewriteRule ^playlist/utc/(.*)$          events.cgi?template=event_utc_time.json&limit=1 [L]
 RewriteRule ^playlist/show/(.*)$         events.cgi?template=event_playlist_show.html&description=none&excerpt=none&phase=upcoming&limit=3&$1 [L]
 RewriteRule ^playlist/(.*)$              events.cgi?template=event_playlist.html&description=none&excerpt=none&phase=upcoming&limit=5&$1 [L]
 
@@ -62,19 +65,15 @@ RewriteRule ^menu/(.*)$                                                 events.c
 
 RewriteRule ^search/(.*?)/project/(.*?)/series/(.*?)/phase/(upcoming|completed)/(.*)$  events.cgi?template=event_list.html&search=$1&project=$2&series=$3&phase=$4&$5 [L]
 RewriteRule ^search/(.*?)/project/(.*?)/series/(.*?)(.*?)/(.*)$                        events.cgi?template=event_list.html&search=$1&project=$2&series=$3&$4 [L]
-
 RewriteRule ^search/(.*?)/project/(.*?)/phase/(upcoming|completed)/(.*)$           events.cgi?template=event_list.html&search=$1&project=$2&phase=$3&$4 [L]
 RewriteRule ^search/(.*?)/project/(.*?)/(.*?)/(.*)$                                events.cgi?template=event_list.html&search=$1&project=$2&$3 [L]
-
 RewriteRule ^search/(.*?)/series/(.*?)/phase/(upcoming|completed)/(.*)$            events.cgi?template=event_list.html&search=$1&series=$2&phase=$3&$4 [L]
 RewriteRule ^search/(.*?)/series/(.*?)/(.*?)/(.*)$                                 events.cgi?template=event_list.html&search=$1&series=$2&$3 [L]
-
 RewriteRule ^search/(.*?)/phase/(upcoming|completed)/(.*)$                         events.cgi?template=event_list.html&search=$1&phase=$2&$3 [L]
 RewriteRule ^search/(.*?)/(.*)$                                                    events.cgi?template=event_list.html&search=$1&$2 [L]
 
 RewriteRule ^project/(.*?)/series/(.*?)/phase/(upcoming|completed)/(.*)$           events.cgi?template=event_list.html&project=$1&series_name=$2&phase=$3&$4 [L]
 RewriteRule ^project/(.*?)/series/(.*?)/(.*)$                                      events.cgi?template=event_list.html&project=$1&series_name=$2&$3 [L]
-
 RewriteRule ^project/(.*?)/phase/(upcoming|completed)/(.*)$                        events.cgi?template=event_list.html&project=$1&phase=$2&$3 [L]
 RewriteRule ^project/(.*?)/(.*)$                                                   events.cgi?template=event_list.html&project=$1&$2 [L]
 
@@ -99,25 +98,25 @@ RewriteRule ^ical/(\d{4}-\d{2}-\d{2})/(.*)$                             events.c
 RewriteRule ^ical/(\d+)/(.*)?$                                          events.cgi?template=event.ics&event_id=$1&$2 [L]
 RewriteRule ^ical/(.*)$                                                 events.cgi?template=event.ics&$1 [L]
 
-RewriteRule ^comments/latest/(.*)$                 comments.cgi?template=comments_newest.html&limit=20&show_max=3&type=list&$1 [L]
-RewriteRule ^comments/feed/(.*)$                   comments.cgi?template=comments.xml&limit=20&$1 [L]
-RewriteRule ^comments/add/(.*)$                    add_comment.cgi?$1 [L]
-RewriteRule ^comments/(\d+)/(\d{4}-\d{2}-\d{2}[T\ ]\d{2}\:\d{2})(\:\d{2})?/(.*)$ comments.cgi?template=comments.html&event_id=$1&event_start=$2&sort_order=asc&$4 [L]
+# Comments
+RewriteRule ^comments/latest/?(.*)$                 comments.cgi?template=comments_newest.html&limit=20&show_max=3&type=list&$1 [PT,L]
+RewriteRule ^comments/feed/?(.*)$                   comments.cgi?template=comments.xml&limit=20&$1 [PT,L]
+RewriteRule ^comments/add/?(.*)$                    add_comment.cgi?$1 [PT,L]
+RewriteRule ^comments/(\d+)/(\d{4}-\d{2}-\d{2}[T\ ]\d{2}:\d{2})(?::\d{2})?/?(.*)$ comments.cgi?template=comments.html&event_id=$1&event_start=$2&sort_order=asc&$3 [PT,L]
 
-# special
+# Special
 RewriteRule ^dashboard/event/(\d+)/[^&]*(&.*)?$    events.cgi?template=event_dashboard_details.html&event_id=$1&$2 [L]
 RewriteRule ^dashboard/date/(\d{4}-\d{2}-\d{2})/$  events.cgi?template=event_dashboard.html.js&date=$1&$2 [L]
 RewriteRule ^dashboard/date/now/$                  events.cgi?template=event_dashboard.html.js&phase=running&limit=1&$1 [L]
 
-RewriteRule ^freefm.xml$                           events.cgi?template=event_freefm.xml&location=piradio&limit=40
-RewriteRule ^frrapo-programm.html$                 events.cgi?location=potsdam&template=event_frrapo
-RewriteRule ^upload_playout_piradio$               upload_playout.cgi?project_id=1&studio_id=1
-RewriteRule ^redaktionen/piradio$                  series.cgi?project_id=1&location=piradio
-RewriteRule ^redaktionen/studio-ansage$            series.cgi?project_id=1&location=ansage
-RewriteRule ^redaktionen/frrapo$                   series.cgi?project_id=1&location=potsdam
-RewriteRule ^redaktionen/colabo-radio$             series.cgi?project_id=1&location=colabo
-RewriteRule ^redaktionen/frb$                      series.cgi?project_id=1&location=frb
-
+RewriteRule ^freefm.xml$                           events.cgi?template=event_freefm.xml&location=piradio&limit=40 [L]
+RewriteRule ^frrapo-programm.html$                 events.cgi?location=potsdam&template=event_frrapo [L]
+RewriteRule ^upload_playout_piradio$               upload_playout.cgi?project_id=1&studio_id=1 [L]
+RewriteRule ^redaktionen/piradio$                  series.cgi?project_id=1&location=piradio [L]
+RewriteRule ^redaktionen/studio-ansage$            series.cgi?project_id=1&location=ansage [L]
+RewriteRule ^redaktionen/frrapo$                   series.cgi?project_id=1&location=potsdam [L]
+RewriteRule ^redaktionen/colabo-radio$             series.cgi?project_id=1&location=colabo [L]
+RewriteRule ^redaktionen/frb$                      series.cgi?project_id=1&location=frb [L]
 </IfModule>
 
 Options -Indexes -MultiViews +FollowSymLinks +ExecCGI
@@ -135,3 +134,6 @@ Options -Indexes -MultiViews +FollowSymLinks +ExecCGI
 </IfModule>
 
 Require all granted
+#EOF
+
+```
