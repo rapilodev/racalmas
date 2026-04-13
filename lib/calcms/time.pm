@@ -364,7 +364,7 @@ sub dayOfYear($) {
 # get duration in minutes
 sub get_duration($$$) {
     my ($start, $end, $timezone) = @_;
-    my $duration = datetime_to_epoch($start, $timezone) - datetime_to_epoch($end, $timezone);
+    my $duration = datetime_to_epoch($end, $timezone) - datetime_to_epoch($start, $timezone);
     return $duration / 60;
 }
 
