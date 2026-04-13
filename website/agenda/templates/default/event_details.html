@@ -73,12 +73,14 @@ body { font-family: sans-serif; }
     </TMPL_IF>
     <TMPL_IF topic><TMPL_VAR topic escape=none></TMPL_IF>
     <TMPL_IF content><TMPL_VAR content escape=none></TMPL_IF>
+    <!--
     <TMPL_IF listen_url><audio class="listen"
         controls
         src="<TMPL_VAR listen_url>"
         title="Sendung nachh&ouml;ren"
         ></audio>
     </TMPL_IF>
+    -->
     <TMPL_IF recurrence_date><a class="recurrence" href="<TMPL_VAR recurrence>.html">
         Wiederholung vom <TMPL_VAR recurrence_weekday_name>, <TMPL_VAR recurrence_date_name>, <TMPL_VAR recurrence_time_name> Uhr</a>
     </TMPL_IF>
