@@ -515,6 +515,135 @@ var calcms = (function($) {
         return false;
     }
 
+my.loadPlayer = async function loadPlayer(sender) {
+    const meta = document.querySelector('.meta');
+    const target = document.querySelector('#calcms_details');
+	console.log(target)
+    if (!meta || !target) return;
+    const startStr = meta.querySelector('.dtstart').innerText.trim();
+    const [datePart, timePart] = startStr.split(' ');
+    const filename = `${datePart}_${timePart.substring(0, 5).replace(':', '-')}.mp3`;
+    const url = `/mediathek/${sender}/${filename}`;
+    try {
+        const res = await fetch(url, { method: 'HEAD' });
+        if (res.ok) {
+            const player = document.createElement('audio');
+            player.controls = true;
+            player.preload = "metadata";
+            player.src = url;
+            player.style.cssText = "width: 100%; margin-top: 20px;";
+            target.appendChild(player);
+        }
+    } catch (e) {
+        console.log("Archive not available.");
+    }
+}
+
     // return instance
     return my;
 }(jQuery));
+
+class CalcmsAudioPlayer extends HTMLElement {
+  static get observedAttributes() { return ['src', 'label']; }
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.playing = false;
+    this.TITLE_URL = "/agenda/event/running/rds/";
+    this.streamUrl = "";
+    this.label = "88vier";
+  }
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'src') this.streamUrl = newValue;
+    if (name === 'label') {
+      this.label = newValue;
+      if (!this.playing) this.setTitle(newValue);
+    }
+  }
+  connectedCallback() {
+    this.render();
+    this.audio = this.shadowRoot.getElementById('player');
+    this.titleElem = this.shadowRoot.getElementById('streamTitle');
+    const attrLabel = this.getAttribute('label');
+    if (attrLabel) this.label = attrLabel;
+    this.setTitle(this.label);
+    this.updateTitle();
+    setInterval(() => this.updateTitle(), 60000);
+  }
+  render() {
+    this.shadowRoot.innerHTML = `<style>
+      :host { display: block; }
+      #container { padding: 0.5rem; display: flex; align-items: center; cursor: pointer; background: #007acc; color: white; border-radius: 2rem; font-family: Roboto, sans-serif; }
+      @media screen and (max-width: 800px) { #container { border-radius: 0; } }
+      #streamTitle { max-width: 75%; padding: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      #streamIcon { width: 3rem; height: 3rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+      svg { width: 100%; height: 100%; fill: currentColor; }
+      .is-playing #streamIcon { animation: rotating 3s linear infinite; }
+      @keyframes rotating { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      .hidden { display: none; }
+    </style>
+    <audio id="player" preload="none"></audio>
+    <div id="container">
+      <div id="streamIcon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2c5.5 0 10 4.5 10 10s-4.5 10-10 10S2 17.5 2 12 6.5 2 12 2zm0 2c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8z"/>
+          <path id="icon-play" d="M10 8l6 4-6 4V8z" />
+          <path id="icon-pause" class="hidden" d="M9 8h2v8H9V8zm4 0h2v8h-2V8z" />
+        </svg>
+      </div>
+      <div id="streamTitle"></div>
+    </div>`;
+    this.shadowRoot.getElementById('container').onclick = () => this.togglePlay();
+  }
+  async togglePlay() { this.playing ? this.stopStream() : this.startStream(); }
+  async startStream() {
+    if (!this.streamUrl) return this.setTitle("Missing src");
+    this.setTitle("Connecting…");
+    try {
+      this.audio.src = `${this.streamUrl}?t=${Date.now()}`;
+      await this.audio.play();
+      this.playing = true;
+      this.updateUI(true);
+      this.updateTitle();
+    } catch (err) {
+      this.setTitle("Error: " + err.message);
+      this.stopStream();
+    }
+  }
+  stopStream() {
+    this.audio.pause();
+    this.audio.src = "";
+    this.audio.load();
+    this.playing = false;
+    this.updateUI(false);
+    this.setTitle("Stopped");
+    setTimeout(() => { if(!this.playing) this.setTitle(this.label); }, 2000);
+  }
+  updateUI(isPlaying) {
+    const container = this.shadowRoot.getElementById('container');
+    const playIcon = this.shadowRoot.getElementById('icon-play');
+    const pauseIcon = this.shadowRoot.getElementById('icon-pause');
+    if (isPlaying) {
+      container.classList.add('is-playing');
+      playIcon.classList.add('hidden');
+      pauseIcon.classList.remove('hidden');
+    } else {
+      container.classList.remove('is-playing');
+      playIcon.classList.remove('hidden');
+      pauseIcon.classList.add('hidden');
+    }
+  }
+  setTitle(text) { if (this.titleElem) this.titleElem.textContent = text; }
+  updateTitle() {
+    fetch(this.TITLE_URL)
+      .then(resp => resp.text())
+      .then(html => {
+        let text = html.trim();
+        text = (text === "Andere Veranstalter" || text === "") ? this.label : `${this.label} - ${text}`;
+        if (this.playing) this.setTitle(text);
+      })
+      .catch(() => setTimeout(() => this.updateTitle(), 5000));
+  }
+}
+customElements.define('calcms-audio-player', CalcmsAudioPlayer);
+
