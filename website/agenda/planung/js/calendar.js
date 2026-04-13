@@ -779,7 +779,7 @@ function handleEvent(id, event){
     if(event.which==1){
         load(url);
     }
-    if(event.which==2){
+    if(event=="newTab" || event.which==2){
         openNewTab(url);
     }
 }

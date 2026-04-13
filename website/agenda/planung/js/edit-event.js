@@ -52,7 +52,9 @@ function selectOldEventFromSeries(resultSelector, tillDate){
     url+="&till_date="+tillDate;
     url+="&selectRange=1";
 
-    updateContainer('import_rerun', url);
+    updateContainer('import_rerun', url, function() {
+	    selectEventAction('rerunEventId')
+    });
 }
 
 function selectOtherEvent(resultSelector){
@@ -300,6 +302,12 @@ function copyEventToClipboard(){
     document.execCommand("copy");
 }
 
+function fixFormat(){
+    if ($('select[name=content_format]').val() == 'markdown') return;
+    console.log("fix format")
+    $('button[name="action"][value="save"]').click();
+}
+
 $(document).ready(
     function(){
         showDateTimePicker('#start_date');
@@ -321,7 +329,7 @@ $(document).ready(
 
         checkFields();
 
-        $('textarea').autosize();
+        try { $('textarea').autosize();} catch (e) {}
 
         // unset published on setting draft
         $("#edit_event input[name='draft']").change(
@@ -350,6 +358,8 @@ $(document).ready(
             pageLeaveHandler();
         });
 
+        //fixFormat();
+        
         console.log("done")
     }
 );

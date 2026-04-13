@@ -107,6 +107,37 @@ if (defined $params->{action}) {
 }
 show_event($config, $request);
 
+sub creole_to_markdown {
+    my ($input) = @_;
+
+    return $input unless (
+        $input =~ /\[\[.*?\]\]/ || 
+        $input =~ /^=/m || 
+        $input =~ /^#[^#].*\n#/m || 
+        $input =~ /^\*/m ||
+        $input =~ /\/\/.*?\/\//
+    );
+
+    my $output = $input;
+    $output =~ s/\xA0/ /g;
+
+    $output =~ s/^===[ \t]*(.*?)[ \t]*=*$/### $1/mg;
+    $output =~ s/^==[ \t]*(.*?)[ \t]*=*$/## $1/mg;
+    $output =~ s/^[ \t]*=[ \t]*(.*?)[ \t]*=*$/# $1/mg;
+    $output =~ s/^((?:#[ \t]+.*\n){1,}#[ \t]+.*)/
+        my $block = $1;
+        $block =~ s|^#[ \t]+|1. |mg;
+        $block;
+    /mge;
+
+    $output =~ s/^\*[ \t]+/* /mg;
+    $output =~ s/\[\[([^|\]]+)\|([^\]]+)\]\]/[$2]($1)/g;
+    $output =~ s/\[\[([^\]]+)\]\]/[$1]($1)/g;
+    $output =~ s/(?<!:)\/\/(.*?)\/\//_$1_/g;
+
+    return $output;
+}
+
 #show existing event for edit
 sub show_event {
     my ($config, $request) = @_;
@@ -568,6 +599,12 @@ sub save_event {
 
     local $config->{access}->{write} = 1;
 
+    if ($entry->{content_format} ne 'markdown'){
+        $entry->{content_format} = 'markdown';
+        $entry->{content} = creole_to_markdown($entry->{content});
+        $entry->{topic} = creole_to_markdown($entry->{topic});
+    }
+
     #update content
     if ($found > 0) {
         $entry = series_events::save_content($config, $entry);
@@ -698,7 +735,7 @@ sub download {
           . qq{<a href="$url" style="color:#39a1f4;" download="$event->{series_name}#$event->{episode}.mp3">}
           . q{Download: }
           . $event->{start_date_name} . ", "
-          . $event->{start_time_name} . " - "
+          . $event->{start_time} . " - "
           . $event->{full_title}
           . qq{</a>\n}
           . qq{<pre>$url</pre>\n}

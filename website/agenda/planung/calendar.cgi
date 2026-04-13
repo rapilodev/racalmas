@@ -775,6 +775,7 @@ sub showEventList {
             $class = $event->{class} if defined $event->{class};
             $class = 'schedule'      if defined $event->{schedule};
             if ($class =~ /(event|schedule)/) {
+                $class .= ' creole' if $class =~ /event/ && $event->{content_format} ne 'markdown';
                 $class .= ' scheduled' if defined $event->{scheduled};
                 $class .= ' error'     if defined $event->{error};
                 $class .= ' no_series'
@@ -798,7 +799,7 @@ sub showEventList {
             $event->{start}              ||= '';
             $event->{weekday_short_name} ||= '';
             $event->{start_date_name}    ||= '';
-            $event->{start_time_name}    ||= '';
+            $event->{start_time}    ||= '';
             $event->{end_time}           ||= '';
             $event->{series_name}        ||= '';
             $event->{title}              ||= '';
@@ -852,7 +853,7 @@ sub showEventList {
 
             my $studio_name = $event->{studio_name} // '-';
 
-            my $format = {"markdown" => "-", "creole" => "Lang Belta" }->{$event->{content_format}//''} // 'Lang Belta';
+            my $format = {"markdown" => "markdown", "creole" => "creole" }->{$event->{content_format}//''} // '-';
             $out .=
                 qq!<tr id="$id" class="$class" start="$event->{start}" >!
               . qq!<td class="day_of_year">!
@@ -860,7 +861,7 @@ sub showEventList {
               . q!</td>!
               . qq!<td class="weekday">$event->{weekday_short_name},</td>!
               . qq!<td class="start_date" data-text="$event->{start_datetime}">$event->{start_date_name}</td>!
-              . qq!<td class="start_time">$event->{start_time_name} - $event->{end_time}</td>!
+              . qq!<td class="start_time">$event->{start_time} - $event->{end_time}</td>!
               . qq!<td class="series_name">$event->{series_name}</td>!
               . qq!<td class="series_id">$event->{series_id}</td>!
               . qq!<td class="title">$title</td>!
@@ -1479,6 +1480,7 @@ sub print_event {
     my $class = $event->{class} || '';
     my $showIcons = 0;
     if ($class =~ /(event|schedule)/) {
+        $class .= ' creole' if $class =~ /event/ && $event->{content_format} ne 'markdown';
         $class .= ' scheduled' if defined $event->{scheduled};
         $class .= ' no_series' if (($class eq 'event') && ($event->{series_id} eq '-1'));
         $class .= " error x$event->{error}" if defined $event->{error};
