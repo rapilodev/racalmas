@@ -388,7 +388,6 @@ sub add_recurrence_dates {
             $result->{recurrence_time_name} = $dt->{time_hm};
             $result->{recurrence_weekday_name} = $dt->{weekday_long};
             $result->{recurrence_weekday_short_name} = $dt->{weekday_short};
-            use Data::Dumper;warn Dumper($dt);
         }
     }
 }
