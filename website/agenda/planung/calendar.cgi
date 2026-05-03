@@ -469,6 +469,7 @@ sub showCalendar {
         }
     }
 
+    #print STDERR Dumper($events);
     #output
     printToolbar($config, $params, $calendar) if $params->{part} == 0;
 
@@ -1191,6 +1192,7 @@ sub printTableBody {
             $event->{class} = 'play' if ((defined $event->{play}) && ($event->{play} == 1));
 
             if ($event->{class} eq 'event') {
+                $event->{duration} = audio::durationToSeconds($event->{duration});
                 $event->{content} .= '<br><span class="weak">';
                 $event->{content} .= audio::formatFile($event->{file}, $event->{event_id});
                 $event->{content} .= audio::formatDuration(
@@ -1392,7 +1394,7 @@ sub addEventsToSeries {
 
     for my $serie (@$series) {
         my $id       = $serie->{series_id}   || -1;
-        my $duration = $serie->{duration}    || '';
+        my $duration = $serie->{duration}    || 0;
         my $name     = $serie->{series_name} || '';
         my $title    = $serie->{title}       || '';
         $name = $params->{loc}->{single_events} if $serie->{has_single_events} == 1;
@@ -1534,7 +1536,7 @@ sub print_event {
 
     $content .= q{<div class="scrollable">};
     $content .= q{<div class="excerpt">}.$event->{excerpt}.q{</div>} if defined $event->{excerpt};
-    $content .= q{<div class="excerpt">}.$event->{html_topic}.q{</div>}   if defined $event->{topic};
+    $content .= q{<div class="excerpt">}.$event->{html_topic}.q{</div>}  if defined $event->{html_topic};
     $content .= q{</div>};
 
     if ($showIcons) {
