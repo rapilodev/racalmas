@@ -1,9 +1,8 @@
-```
 <IfModule mod_rewrite.c>
 Options -Multiviews
 #^ Multiviews destroys URL rewriting!
 RewriteEngine on
-LogLevel alert rewrite:trace3
+#LogLevel alert rewrite:trace3
 # stop rewrite on CGI
 RewriteRule \.cgi$ - [END]
 
@@ -136,4 +135,3 @@ Options -Indexes -MultiViews +FollowSymLinks +ExecCGI
 Require all granted
 #EOF
 
-```
