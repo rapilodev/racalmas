@@ -4,11 +4,15 @@ use strict;
 
 sub durationToSeconds($) {
     my ($duration) = @_;
-
-    if ($duration =~ /(\d+):(\d\d):(\d\d).(\d\d)/) {
-        return $1 * 3600 + $2 * 60 + $3 + $4 / 100;
+    return 0 unless defined $duration;
+    return $duration if $duration =~ /^\d+(\.\d+)?$/;
+    if ($duration =~ /^(\d+):(\d\d):(\d\d)(?:\.(\d+))?$/) {
+        my ($h, $m, $s, $ms) = ($1, $2, $3, $4 || 0);
+        return $h * 3600 + $m * 60 + $s + ($ms / 100);
     }
-    return $duration;
+    return $duration if $duration =~ /^\d+(\.\d+)?$/;
+    warn "Invalid duration format: $duration";
+    return 0;
 }
 
 sub formatDuration($$$;$) {
