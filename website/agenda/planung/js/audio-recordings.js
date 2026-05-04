@@ -37,8 +37,9 @@ function hideError(){
 }
 
 function showFinished(){
-    $('#info').html("upload finished");
-    $('#info').show();
+    localStorage.setItem("uploadMessage", "Upload complete!");
+    window.location.href = window.location.href;
+    // ^ reload page as GET!
 }
 
 function hideFinished(){
@@ -138,6 +139,12 @@ function uploadFile(uploadButton){
 
 $( document ).ready(
     function() {
+        const msg = localStorage.getItem("uploadMessage");
+        localStorage.removeItem("uploadMessage");
+        if (msg){
+            $('#info').html(msg);
+            $('#info').show();
+        }
         $('#file').on( 'change',
             function(){
                 changeFile( this );
@@ -151,7 +158,6 @@ $( document ).ready(
                 return false;
             }
         );
-
         var number = 1+Math.floor(11 * Math.random());
         $('#progress img').attr("src", "/agenda/planung/image/upload/bird"+number+".gif");
     }
