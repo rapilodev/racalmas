@@ -7,7 +7,7 @@ sub badge {
     my ($class, $content, $title) = @_;
     return qq{<div class="badge-$class"} .
            ($title ? qq{ title="$title"} : '') .
-           qq{>$content</div>};
+           q{>}.($content//'').q{</div>};
 }
 
 sub named_badge {
