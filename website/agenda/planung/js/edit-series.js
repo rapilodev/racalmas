@@ -280,11 +280,10 @@ async function deleteSchedule(form) {
 }
 
 function listEvents(project_id, studio_id, series_id) {
-    loadUrl('calendar.cgi?' + new URLSearchParams({
+    loadUrl('list-events.cgi?' + new URLSearchParams({
         project_id: project_id,
         studio_id: studio_id,
         series_id: series_id,
-        list: 1,
     }).toString());
 }
 

@@ -97,7 +97,7 @@ if (!customElements.get('sprite-icon')) {
             svg.setAttribute('aria-hidden', 'true');
             if (this.className) svg.setAttribute('class', this.className);
             const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-            use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `icons/sprite.svg#icon-bright-${iconName}`);
+            use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `icons/sprite.svg#icon-${iconName}`);
             svg.appendChild(use);
             this.appendChild(svg);
         }
@@ -678,7 +678,7 @@ function commitAction(title, action) {
     if (title == null) { alert("missing title"); return; }
     if (action == null) { alert("missing action"); return; }
     return showDialog({
-        title: '<img src="image/dark/alert.svg">' + loc.ask_for_commit + '</p>',
+        title: '<img src="image/alert.svg">' + loc.ask_for_commit + '</p>',
         buttons: {
             OK: function() { action(); },
             Cancel: function() { $(this).closest('div#dialog').hide().remove(); }

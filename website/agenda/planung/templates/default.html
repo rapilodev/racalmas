@@ -2,7 +2,7 @@
 
 <nav id="calcms_nav" style="opacity:0">
 
-<div id="bars" class="mobile" onclick="handleBars();return false;"> <a><sprite-icon name="image/bright/more"></sprite-icon>Menu</a></div>
+<div id="bars" class="mobile" onclick="handleBars();return false;"> <a><sprite-icon name="more"></sprite-icon>Menu</a></div>
 
 <TMPL_IF .allow.read_event>
 <div><a id="menu_calendar" href="calendar.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>">
@@ -116,11 +116,8 @@
 </select>
 </div>
 
-<div><a href="/" >
-<sprite-icon name="preview"></sprite-icon><TMPL_VAR .loc.preview></a></div>
-
-<div class="mobile"><a id="logout" href="<TMPL_VAR .presets.logout_url>?authAction=logout" expires="<TMPL_VAR .expires>">
-<sprite-icon name="logout"></sprite-icon><TMPL_VAR .presets.user> <TMPL_VAR .loc.logout></a></div>
+<div class="mobile" title="<TMPL_VAR .presets.user>"><a id="logout" href="<TMPL_VAR .presets.logout_url>?authAction=logout" expires="<TMPL_VAR .expires>">
+<sprite-icon name="logout"></sprite-icon><TMPL_VAR .loc.logout></a></div>
 <br/><div id="breadcrumb"></div>
 
 </nav>
