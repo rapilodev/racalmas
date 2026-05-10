@@ -67,8 +67,8 @@ sub main {
     my $start_of_day = $params->{day_start};
     my $end_of_day   = $start_of_day;
     $end_of_day += 24 if ($end_of_day <= $start_of_day);
-    our $hour_height = 60;
-    our $yzoom       = 1.5;
+    my $hour_height = 60;
+    my $yzoom       = 1.5;
 
     my $out = $session->{header} if $session->{header};
     $out .=
@@ -119,8 +119,6 @@ sub showCalendar {
     $out .= localization::getJavascript($params->{loc});
 
     my $calendar = calendar_table::getCalendar($config, $params, $language);
-    my $options  = {};
-    my $events   = [];
 
     $out .= getSidebar($config, $params, $calendar);
     $out .= qq{<div id="calendarTable" class="scrollable"> </div>};
@@ -137,7 +135,7 @@ sub showCalendar {
 sub getSidebar {
     my ($config, $params, $calendar) = @_;
     my $today   = time::time_to_date();
-    my $class   = $params->{list} ? 'sidebar' : 'sidebar';
+    my $class   = 'sidebar';
     my $sidebar = qq{<div class="$class">};
 
     $sidebar .= qq!
@@ -212,8 +210,7 @@ sub getSidebar {
             <input type="hidden" name="studio_id" value="$params->{studio_id}">
             <input type="hidden" name="date"      value="$params->{date}">
             <input type="hidden" name="list"      value="1">
-            <input class="search" name="search" value="$params->{search}" placeholder="}
-      .$params->{loc}->{button_search} . qq{">
+            <input class="search" name="search" value="$params->{search}" placeholder="$params->{loc}->{button_search}">
             <button type="submit" name="action" value="search" class="primary">
                 <sprite-icon name="search"></sprite-icon>
                 $params->{loc}->{button_search} 

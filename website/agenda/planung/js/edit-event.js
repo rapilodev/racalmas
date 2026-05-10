@@ -133,11 +133,7 @@ async function changeSeries(seriesId) {
     var seriesId= getUrlParameter('series_id');
     var eventId= getUrlParameter('event_id');
     var newSeriesId= $('#changeSeriesId').val();
-    if (projectId <=0 ) return;
-    if (studioId <=0 ) return;
-    if (seriesId <=0 ) return;
-    if (eventId <=0 ) return;
-    if (newSeriesId <=0 ) return;
+    assert ({projectId, studioId, seriesId, eventId, newSeriesId});
 
     $('div.buttons').show();
     $('#selectChangeSeries').hide('slideUp');
@@ -149,7 +145,8 @@ async function changeSeries(seriesId) {
         event_id : eventId,
         new_series_id: newSeriesId,
     });
-    if (!json) return;
+    console.log(json)
+    assert(json, "error on post")
     loadUrl("broadcast.cgi?" + new URLSearchParams({
         action: "edit",
         project_id : projectId,
@@ -270,16 +267,18 @@ function copyEventToClipboard() {
 }
 
 function listEvents(project_id, studio_id, series_id) {
-    loadUrl( 'calendar.cgi?' + new URLSearchParams({
+    loadUrl( 'list-events.cgi?' + new URLSearchParams({
         project_id: project_id,
         studio_id: studio_id,
         series_id: series_id,
-        list: 1,
     }).toString());
 }
 
 function deleteFromSchedule(project_id, studio_id, series_id, start) {
+    console.log(start)
+    alert(start);
     loadUrl( 'series.cgi?' + new URLSearchParams({
+        action: 'show_series',
         project_id: project_id,
         studio_id: studio_id,
         series_id: series_id,

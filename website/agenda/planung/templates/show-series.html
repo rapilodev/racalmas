@@ -25,7 +25,7 @@
     <div class="sidebar">
         <TMPL_IF .allow.read_event>
             <button
-                onclick="window.location='calendar.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>&list=1'"
+                onclick="window.location='list-events.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&series_id=<TMPL_VAR .series_id>'"
                 style="float:left"
             >
                 <sprite-icon name="list"></sprite-icon>
