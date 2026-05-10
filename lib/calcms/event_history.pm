@@ -91,7 +91,6 @@ sub get_by_id($$) {
 
 sub insert($$) {
     my ($config, $entry) = @_;
-
     $entry->{modified_at} = time::time_to_datetime(time());
     $entry->{event_id} = $entry->{id} if (defined $entry->{id}) && (!(defined $entry->{event_id}));
     delete $entry->{id};
@@ -102,7 +101,9 @@ sub insert($$) {
     for my $column (keys %$columns) {
         $event->{$column} = $entry->{$column} if defined $entry->{$column};
     }
+    $event->{rerun}||=0;
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     my $id = db::insert($dbh, 'calcms_event_history', $event);
     return $id;
@@ -121,6 +122,7 @@ sub insert_by_event_id ($$){
         where id=?
     };
     my $bind_values = [ $options->{event_id} ];
+    local $config->{access}->{write} = 1;
     my $dbh         = db::connect($config);
     my $results     = db::get($dbh, $sql, $bind_values);
     if (@$results != 1) {
@@ -141,6 +143,7 @@ sub insert_by_event_id ($$){
 sub delete ($$){
     my ($config, $entry) = @_;
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     db::put($dbh, 'delete from calcms_event_history where event_id=?', [ $entry->{id} ]);
 }

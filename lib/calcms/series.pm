@@ -140,6 +140,7 @@ sub insert ($$) {
     $entry->{created_at}  = time::time_to_datetime(time());
     $entry->{modified_at} = time::time_to_datetime(time());
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     my $series_id = db::insert($dbh, 'calcms_series', $entry);
 
@@ -188,6 +189,7 @@ sub update ($$) {
         set    $values
         where  id=?
     };
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     return db::put($dbh, $query, \@bind_values);
 }
@@ -211,8 +213,10 @@ sub delete($$) {
 
     my $query       = undef;
     my $bind_values = undef;
+    local $config->{access}->{write} = 1;
+    
+    local $config->{access}->{write} = 1;
     my $dbh         = db::connect($config);
-
     $bind_values = [ $project_id, $studio_id, $series_id ];
 
     #delete schedules
@@ -336,7 +340,7 @@ sub add_user ($$) {
         where     project_id=? and studio_id=? and series_id=? and user_id=?
     };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{user_id} ];
-
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     my $results = db::get($dbh, $query, $bind_values);
     return unless scalar @$results == 0;
@@ -388,6 +392,7 @@ sub remove_user ($$) {
         delete from calcms_user_series
         where  $conditions
     };
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     db::put($dbh, $query, \@bind_values);
 }
@@ -638,7 +643,8 @@ sub get_event_age($$) {
         s.id series_id, 
         s.series_name, 
         s.title, 
-        s.has_single_events has_single_events, (to_days(now())-to_days(max(e.start))) days_over,
+        s.has_single_events has_single_events, 
+        (to_days(now())-to_days(max(e.start))) days_over,
         s.image
         from      calcms_project_series ps
         left join calcms_series s         on ps.series_id=s.id
@@ -803,6 +809,7 @@ sub assign_event($$) {
         where project_id=? and studio_id=? and series_id=? and event_id=? $conditions
     };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id} ];
+    local $config->{access}->{write} = 1;
     my $dbh         = db::connect($config);
     my $results     = db::get($dbh, $query, $bind_values);
 
@@ -823,7 +830,6 @@ sub assign_event($$) {
     };
     $bind_values =
       [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id}, $entry->{manual} ];
-
     db::put($dbh, $query, $bind_values) || AssignError->throw(error => "could not assign event");
 }
 
@@ -844,7 +850,7 @@ sub unassign_event($$) {
         $conditions
     };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id} ];
-
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     return db::put($dbh, $query, $bind_values) || AssignError->throw(error => "could not assign event");
 }
@@ -867,6 +873,7 @@ sub add_series_ids_to_events ($$) {
     my $event_ids = join(',', map { '?' } @event_ids);
 
     #query series ids
+    local $config->{access}->{write} = 1;
     my $dbh   = db::connect($config);
     my $query = qq{
         select project_id, studio_id, series_id, event_id
@@ -918,6 +925,7 @@ sub set_event_ids ($$$$$) {
     };
     my $bind_values = [ $project_id, $studio_id, $serie_id ];
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     my $results = db::get($dbh, $query, $bind_values);
 
@@ -1230,6 +1238,7 @@ sub update_recurring_event($$) {
         where    id=?
     };
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     db::put($dbh, $update_sql, $bind_values);
 }

@@ -74,7 +74,6 @@ sub save_content($$) {
     $entry->{rerun}     = 0 unless $entry->{rerun};
     $entry->{episode}   = undef if (defined $entry->{episode}) && ($entry->{episode} eq '0');
     $entry->{published} = 0     if (defined $entry->{draft})   && ($entry->{draft} eq '1');
-
     my $values = join(",", map { $_ . '=?' } (@keys));
     my @bind_values = map { $entry->{$_} } (@keys);
 
@@ -84,7 +83,7 @@ sub save_content($$) {
         set    $values
         where  id=?
     };
-
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     my $result = db::put($dbh, $query, \@bind_values);
     return $entry;
@@ -103,6 +102,7 @@ sub set_episode {
         where  id=?
     };
     my $bind_values= [ $entry->{episode}, $entry->{id} ];
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     my $result = db::put($dbh, $query, $bind_values);
     return $entry;
@@ -118,6 +118,7 @@ sub save_event_time($$) {
        ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
+    local $config->{access}->{write} = 1;
     my $dbh   = db::connect($config);
     my $event = {
         id    => $entry->{id},
@@ -166,6 +167,7 @@ sub set_playout_status ($$) {
         ParamError->throw(error => "missing $_") unless defined $entry->{$_}
     };
 
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     # check if event is assigned to project and studio
     my $sql = qq{
@@ -233,6 +235,7 @@ sub delete_event ($$) {
     series::unassign_event($config, $entry);
 
     # delete the event
+    local $config->{access}->{write} = 1;
     my $dbh = db::connect($config);
     my $sql = q{
         delete from calcms_events
