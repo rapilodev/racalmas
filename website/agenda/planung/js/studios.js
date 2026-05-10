@@ -30,6 +30,6 @@ function cancel_edit_studio(elem, name){
 // init function
 window.calcms ??= {};
 window.calcms.init_studios = function(el) {
-    var loc = getLocalization();
+    await getLocalization();
     registerImageHandler();
 };

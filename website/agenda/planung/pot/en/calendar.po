@@ -76,6 +76,9 @@ msgstr "duration"
 msgid "label_series"
 msgstr "series"
 
+msgid "label_show_series"
+msgstr "show series"
+
 msgid "label_assign_event_series"
 msgstr "assign event to series"
 
@@ -135,3 +138,13 @@ msgstr "doy"
 
 msgid "label_id"
 msgstr "Id"
+
+
+msgid "label_edit_show"
+msgstr "Edit Show"
+
+msgid "label_create_show"
+msgstr "Create Show"
+
+msgid "label_create_schedule"
+msgstr "Create Schedule"

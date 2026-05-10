@@ -76,6 +76,9 @@ msgstr "Dauer"
 msgid "label_series"
 msgstr "Sendereihe"
 
+msgid "label_show_series"
+msgstr "Sendereihe zeigen"
+
 msgid "label_assign_event_series"
 msgstr "Sendung zu Sendereihe zuordnen"
 
@@ -141,3 +144,12 @@ msgstr "TiJ"
 
 msgid "id"
 msgstr "Nr."
+
+msgid "label_edit_show"
+msgstr "Sendung bearbeiten"
+
+msgid "label_create_show"
+msgstr "Sendung anlegen"
+
+msgid "label_create_schedule"
+msgstr "Sendung planen"
