@@ -400,6 +400,7 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
         $class = $event->{class} if defined $event->{class};
         $class = 'schedule'      if defined $event->{schedule};
         if ($class =~ /(event|schedule)/) {
+            $class .= ' creole' if $class =~ /event/ && $event->{content_format} ne 'markdown';
             $class .= ' scheduled' if defined $event->{scheduled};
             $class .= ' error'     if defined $event->{error};
             $class .= ' no_series'
@@ -461,7 +462,7 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
             : 'playout';
         my $playout_info = $file // $event->{upload_status} // '';
         my $studio_name = $event->{studio_name} // '-';
-        my $format = { "markdown" => "-", "creole" => "Creole" }
+        my $format = { "markdown" => "markdown", "creole" => "creole" }
             ->{ $event->{content_format} // '' } // 'Creole';
         $out .= qq!<tr id="$id" class="$class" start="$event->{start}" >!
             . qq!<td class="day_of_year">!
@@ -964,6 +965,7 @@ sub get_event {
     my @class     = ($event->{class} || ());
     my $showIcons = 0;
     if (grep m/(event|schedule)/, @class) {
+        $class .= ' creole' if $class =~ /event/ && $event->{content_format} ne 'markdown';
         push @class, 'scheduled' if defined $event->{scheduled};
         push @class,  'no_series' if (grep 'event', @class) && $event->{series_id} eq '-1';
         push @class,  "error x$event->{error}" if defined $event->{error};

@@ -66,6 +66,37 @@ sub main {
     ActionError->throw(error => "invalid action");
 }
 
+sub creole_to_markdown {
+    my ($input) = @_;
+
+    return $input unless (
+        $input =~ /\[\[.*?\]\]/ || 
+        $input =~ /^=/m || 
+        $input =~ /^#[^#].*\n#/m || 
+        $input =~ /^\*/m ||
+        $input =~ /\/\/.*?\/\//
+    );
+
+    my $output = $input;
+    $output =~ s/\xA0/ /g;
+
+    $output =~ s/^===[ \t]*(.*?)[ \t]*=*$/### $1/mg;
+    $output =~ s/^==[ \t]*(.*?)[ \t]*=*$/## $1/mg;
+    $output =~ s/^[ \t]*=[ \t]*(.*?)[ \t]*=*$/# $1/mg;
+    $output =~ s/^((?:#[ \t]+.*\n){1,}#[ \t]+.*)/
+        my $block = $1;
+        $block =~ s|^#[ \t]+|1. |mg;
+        $block;
+    /mge;
+
+    $output =~ s/^\*[ \t]+/* /mg;
+    $output =~ s/\[\[([^|\]]+)\|([^\]]+)\]\]/[$2]($1)/g;
+    $output =~ s/\[\[([^\]]+)\]\]/[$1]($1)/g;
+    $output =~ s/(?<!:)\/\/(.*?)\/\//_$1_/g;
+
+    return $output;
+}
+
 #show existing event for edit
 sub show_event {
     my ($config, $request) = @_;
@@ -323,7 +354,6 @@ sub show_new_event {
     for my $key (keys %$event) {
         $params->{$key} = $event->{$key};
     }
-    warn Dumper($event);
 
     #add duration selectbox
     #TODO: move to javascript
@@ -501,6 +531,12 @@ sub save_event {
     $entry->{series_image} = images::normalizeName($serie->{series_image});
 
     local $config->{access}->{write} = 1;
+
+    if ($entry->{content_format} ne 'markdown'){
+        $entry->{content_format} = 'markdown';
+        $entry->{content} = creole_to_markdown($entry->{content});
+        $entry->{topic} = creole_to_markdown($entry->{topic});
+    }
 
     #update content
     if ($found > 0) {
