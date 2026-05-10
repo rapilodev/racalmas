@@ -1026,6 +1026,14 @@ audio{
 	width:100%;
 	z-index:100;
     }
+    calcms-audio-player.first{
+        top:0;
+    }
+    calcms-audio-player.second{
+        top: 4rem;
+        border-top: 1px solid white;
+    }
+
 }
 
 .glass{
