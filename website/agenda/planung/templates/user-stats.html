@@ -7,10 +7,18 @@
     data-region="<TMPL_VAR loc.region escape=js>"
 >
 <div class="sidebar">
-    <TMPL_INCLUDE status.html>
+
+    <button
+        onclick="loadUrl('user-stats.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&action=show-user-stats')"
+     >
+        <sprite-icon name="accounts"></sprite-icon>
+        <TMPL_VAR .loc.button_show_user_stats>
+    </button>
     <button
         onclick="loadUrl('user-stats.cgi?project_id=<TMPL_VAR .project_id>&studio_id=<TMPL_VAR .studio_id>&action=show-active-users');"
-        ><TMPL_VAR .loc.button_show_active_users>
+     >
+        <sprite-icon name="activity"></sprite-icon>
+        <TMPL_VAR .loc.button_show_active_users>
     </button>
 </div>
 
