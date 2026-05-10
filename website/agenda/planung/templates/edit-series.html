@@ -493,7 +493,7 @@
                     <input type="hidden" name="studio_id"  value="<TMPL_VAR .studio_id>">
                     <input type="hidden" name="series_id"  value="<TMPL_VAR .series_id>">
                     <input type="hidden" name="action"     value="add_user">
-                    <select name="user_id">
+                    <search-select name="user_id">
                         <option value=""><TMPL_VAR .loc.label_choose_member></option>
                     <TMPL_LOOP studio_users>
                         <option value="<TMPL_VAR user_id>">
@@ -501,7 +501,7 @@
                             <TMPL_VAR full_name>
                         </option>
                     </TMPL_LOOP>
-                    </select>
+                    </search-select>
                     <button onclick="addUser($(this).closest('form'));return false">
                         <sprite-icon name="person-add"></sprite-icon>
                         <TMPL_VAR .loc.button_add_member>
