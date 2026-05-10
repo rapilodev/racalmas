@@ -29,7 +29,7 @@ our @EXPORT_OK = qw(
   datetime_to_array date_to_array array_to_date array_to_datetime array_to_time array_to_time_hm
   date_cond time_cond check_date check_time check_datetime check_year_month
   datetime_to_rfc822 get_datetime datetime_to_epoch epoch_to_utc_datetime datetime_to_utc_datetime datetime_to_ics
-  get_duration get_duration_min
+  parse_duration get_duration get_duration_min
   getDurations getWeekdayIndex getWeekdayNames getWeekdayNamesShort getMonthNames getMonthNamesShort
 );
 
@@ -43,7 +43,7 @@ my $NAMES = {
     },
     'en' => {
         months =>
-          [ 'January', 'February', 'March', 'April', 'May', 'June', 'Jule', 'August', 'September', 'October', 'November', 'December' ],
+          [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ],
         months_abbr   => [ 'Jan',    'Feb',     'Mar',       'Apr',      'May',    'Jun',      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ],
         weekdays      => [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ],
         weekdays_abbr => [ 'Mo',     'Tu',      'We',        'Th',       'Fr',     'Sa',       'Su' ],
@@ -366,7 +366,7 @@ sub dayOfYear($) {
 }
 
 # get duration in seconds
-sub parse_duration {
+sub parse_duration($) {
     my ($s) = @_;
     return unless defined $s;
     return $s if $s =~ /^\d+(\.\d+)?$/;
@@ -377,6 +377,12 @@ sub parse_duration {
     die "Invalid duration format: $s";
 }
 
+# get duration in minutes
+sub get_duration_min($$$) {
+    my ($start, $end, $timezone) = @_;
+    my $duration = get_duration($start, $end, $timezone);
+    return $duration / 60;
+}
 
 # get duration in seconds
 sub get_duration($$;$) {
@@ -388,14 +394,6 @@ sub get_duration($$;$) {
     my $duration = abs($end->epoch() - $start->epoch());
     return $duration;
 }
-
-# get duration in minutes
-sub get_duration_min($$$) {
-    my ($start, $end, $timezone) = @_;
-    my $duration = get_duration($start, $end, $timezone);
-    return $duration / 60;
-}
-
 
 # convert date string to a array of date values
 sub date_to_array($) {
@@ -494,16 +492,6 @@ sub check_datetime($) {
         return sprintf("%04d-%02d-%02dT%02d:%02d", $1, $2, $3, $4, $5);
     }
     TimeCalcError->throw(error=>"invalid datetime\n");
-}
-
-sub check_year_month($) {
-    my ($date) = @_;
-    return -1 unless defined $date;
-    return $date if ($date eq '');
-    if ($date =~ /(\d\d\d\d)\-(\d\d?)/) {
-        return $1 . '-' . $2 . '-' . $3;
-    }
-    TimeCalcError->throw(error=>"invalid year or month\n");
 }
 
 #TODO: remove config dependency

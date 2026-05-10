@@ -1,7 +1,7 @@
 package audio;
 use warnings;
 use strict;
-use Data::Dumper;
+use time qw();
 
 sub badge {
     my ($class, $content, $title) = @_;
@@ -25,11 +25,23 @@ sub class{
     return $condition ? 'ok' : 'error'
 }
 
+# get duration in seconds
+sub parse_duration($) {
+    my ($s) = @_;
+    return unless defined $s;
+    return $s if $s =~ /^\d+(\.\d+)?$/;
+    if ($s =~ /^\-?(\d{1,2}):(\d{2}):(\d{2})(?:[.,](\d+))?$/o) {
+        my $ms = (defined $4 ? "0.$4" : 0);
+        return ($1 * 3600) + ($2 * 60) + $3 + $ms;
+    }
+    die "Invalid duration format: $s";
+}
+
 sub formatDuration($$$;$) {
     my ($audioDuration, $eventDuration, $value, $mouseOver) = @_;
     return '' unless $audioDuration && $eventDuration && $value;
-    $audioDuration = time::parse_duration($audioDuration);
-    $eventDuration = time::parse_duration($eventDuration);
+    $audioDuration = parse_duration($audioDuration);
+    $eventDuration = parse_duration($eventDuration);
     my $class = "ok";
     my $title = $mouseOver;
     my $delta = 100 * $audioDuration / ($eventDuration+.00000000000001);
