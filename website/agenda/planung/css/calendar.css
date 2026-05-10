@@ -108,6 +108,7 @@ div.sidebar form {
     display: contents;
 }
 
+div.sidebar search-select, 
 div.sidebar select, 
 div.sidebar input {
     padding: 8px;

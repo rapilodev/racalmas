@@ -193,6 +193,7 @@ body,
 #content td,
 #content div,
 #content select,
+#content search-select,
 #content option,
 #content li,
 #content input[type="submit"],
@@ -225,16 +226,19 @@ body,
 #calcms_nav a,
 #calcms_nav div,
 #calcms_nav input,
+#calcms_nav select-select,
 #calcms_nav select,
 #calcms_nav option {
   color: var(--nav-text);
 }
 
-#calcms_nav select {
+#calcms_nav select,
+#calcms_nav select-select{
   background-color: var(--nav-bg);
 }
 
 #calcms_nav a:hover,
+#calcms_nav select-select:hover,
 #calcms_nav select:hover {
   background-color: var(--nav-hover-bg);
   transition: all 0.5s linear;
@@ -242,15 +246,18 @@ body,
 }
 
 #calcms_nav div a,
+#calcms_nav select-select,
 #calcms_nav select {
   padding: 0 var(--space-sm);
   line-height: 3em;
   border-radius: 0;
 }
 
+#calcms_nav select-select,
 #calcms_nav select { height: 3em; }
 #calcms_nav div { transition: background 0.2s; }
 
+#calcms_nav select-select,
 #calcms_nav select,
 #calcms_nav option {
   max-width: 8em;
@@ -262,15 +269,19 @@ body,
 #calcms_nav a#logout { color: var(--logout-color); }
 
 #calcms_nav div a,
+#calcms_nav select-select,
 #calcms_nav select,
 #calcms_nav option { font-size: 0.9375rem; }
 
+#calcms_nav select-select,
 #calcms_nav select,
 #calcms_nav option {
   text-align: left;
   border: none;
 }
 
+#calcms_nav select-select#studio_id,
+#calcms_nav select-select#project_id,
 #calcms_nav select#studio_id,
 #calcms_nav select#project_id {
   padding-left: var(--space-xl);
@@ -278,16 +289,20 @@ body,
   background-position: 1em center;
 }
 
+#calcms_nav select-select#studio_id,
 #calcms_nav select#studio_id {
-  background-image: url(../image/bright/antenna.svg);
+  background-image: url(../image/antenna.svg);
 }
+#calcms_nav select-select#project_id,
 #calcms_nav select#project_id {
-  background-image: url(../image/bright/home.svg);
+  background-image: url(../image/home.svg);
 }
 
+#calcms_nav select-select#project_id:after,
+#calcms_nav select-select#studio_id:after,
 #calcms_nav select#studio_id::after,
 #calcms_nav select#project_id::after {
-  background-image: url(../image/bright/arrow-down.svg);
+  background-image: url(../image/arrow-down.svg);
   background-position: right center;
   background-repeat: no-repeat;
   padding-right: var(--space-lg);
@@ -497,6 +512,7 @@ td.label { vertical-align: top; }
 
 /* Form Elements */
 button,
+select-select,
 select,
 input:not([type="checkbox"]) {
     padding: var(--space-sm) 0; 
@@ -655,7 +671,7 @@ button.primary {
 }
 
 button[disabled] {
-  opacity: 0.5;
+  opacity:0.5;
   cursor: not-allowed;
 }
 button.selectImage {
@@ -693,6 +709,7 @@ textarea {
 textarea:hover,
 textarea:focus { border-bottom: 1px solid var(--accent-border); }
 
+select-select,
 select {
   color: var(--color-body);
   background: var(--panel-bg);
@@ -702,6 +719,7 @@ select {
   cursor: pointer;
 }
 
+select-select,
 select,
 input[type="checkbox"] { margin-top: 0; }
 
@@ -807,7 +825,7 @@ div.editor {
     z-index: 0;
   }
 
-  div:has(label ~ *:not(input[type="hidden"])) > label ~ *:not(input[type="hidden"]):is(input, textarea, select) {
+  div:has(label ~ *:not(input[type="hidden"])) > label ~ *:not(input[type="hidden"]):is(input, textarea, select, search-select) {
       line-height: 1.5;
   }
 
@@ -926,6 +944,9 @@ sprite-icon svg {
 .sidebar > button > sprite-icon svg {
   width: 1.3em;
   height: 1.3em;
+}
+.sidebar > button > sprite-icon svg symbol{
+  fill: black!important;
 }
 
 #calcms_nav sprite-icon svg {
@@ -1061,4 +1082,21 @@ div.sidebar .formField input{
   border-radius: 4px;
   font-size: 0.9em;
   border: 1px solid color-mix(in srgb, var(--primary), transparent 70%);
+}
+
+search-select {
+    position: initial;
+    z-index:999;
+}
+search-select .opt:hover {
+    border-radius:0;
+    color:var(--button-text);
+    background:var(--button-bg);
+}
+search-select div,
+search-select div#drop,
+search-select div#btn{
+    position: initial;
+    z-index:999!important;
+    background: var(--panel-bg);
 }
