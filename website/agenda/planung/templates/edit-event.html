@@ -496,7 +496,7 @@ document.addEventListener("DOMContentLoaded",
     <TMPL_IF new_event>
         <TMPL_IF .allow.delete_schedule>
             <button class="text delete"
-                onclick="deleteFromSchedule('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>','<TMPL_VAR start escape=url>');return false;"
+                onclick="deleteFromSchedule('<TMPL_VAR .project_id>','<TMPL_VAR .studio_id>','<TMPL_VAR .series_id>','<TMPL_VAR start>');return false;"
             ><sprite-icon name="delete"></sprite-icon><TMPL_VAR .loc.button_delete_from_schedule></button>
     </TMPL_IF>
     <TMPL_ELSE>
