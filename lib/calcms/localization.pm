@@ -7,6 +7,7 @@ no warnings 'redefine';
 use Data::Dumper;
 use Try::Tiny;
 use Scalar::Util qw(blessed);
+use JSON();
 
 use uac();
 use user_settings();
@@ -89,14 +90,7 @@ sub read_po_file($$) {
 
 sub getJavascript ($){
     my ($loc) = @_;
-
-    my $out = '<script defer>';
-    $out .= "var loc={};\n";
-    for my $key (sort keys %$loc) {
-        $out .= qq{loc['$key']='$loc->{$key}';} . "\n";
-    }
-    $out .= "</script>\n";
-    return $out;
+    return '<script defer>var loc=' . JSON->new->encode($loc) . '</script>';
 }
 
 1;
