@@ -965,7 +965,7 @@ sub get_event {
     my @class     = ($event->{class} || ());
     my $showIcons = 0;
     if (grep m/(event|schedule)/, @class) {
-        $class .= ' creole' if $class =~ /event/ && $event->{content_format} ne 'markdown';
+        push @class, 'creole' if (grep 'event', @class) && $event->{content_format} ne 'markdown';
         push @class, 'scheduled' if defined $event->{scheduled};
         push @class,  'no_series' if (grep 'event', @class) && $event->{series_id} eq '-1';
         push @class,  "error x$event->{error}" if defined $event->{error};
