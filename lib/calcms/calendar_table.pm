@@ -455,7 +455,7 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
         my $other_project = $params->{project_id} ne $event->{project_id};
         $class .= ' predecessor' if $other_project or $other_studio;
         $other_studio  = '<sprite-icon name="globe"></sprite-icon>' if $other_studio;
-        $other_project = '<sprite-icon name="globe></sprite-icon>' if $other_project;
+        $other_project = '<sprite-icon name="globe"></sprite-icon>' if $other_project;
         my $file = $event->{file}
             ? 'playout: ' . $event->{file} =~ s/\'/\&apos;/gr
             : 'playout';
@@ -467,7 +467,7 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
             . qq!<td class="day_of_year">!
             .($event->{day_of_year})
             . q!</td>!
-            . qq{<!--<td class="weekday">$event->{weekday_short_name},</td>-->}
+            . qq{<!-- <td class="weekday">$event->{weekday_short_name},</td> -->}
             . qq!<td class="start_date" data-text="$event->{start_datetime}">$event->{start_date}</td>!
             . qq!<td class="start_time">$event->{start_time} - $event->{end_time}</td>!
             . qq!<td class="series_name">$event->{series_name}</td>!
@@ -483,7 +483,6 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
             . qq!<td>$studio_name $other_studio</td>!
             . qq!<td class="series_id">$event->{series_id}</td>!
             . qq!<td class="id">$event->{id}</td>!
-            . qq!<tr id="$id" class="$class" start="$event->{start}" >!
             . qq{-->}
             . qq!</tr>! 
             . "\n"
@@ -529,7 +528,7 @@ qq{<sprite-icon name="archive" title="$params->{loc}->{label_archived}"></sprite
             </script>
         </body>
     </html>
-    };# if $params->{part} == 0;
+    };
 
     return $out;
 
@@ -965,7 +964,7 @@ sub get_event {
     my @class     = ($event->{class} || ());
     my $showIcons = 0;
     if (grep m/(event|schedule)/, @class) {
-        push @class, ' scheduled' if defined $event->{scheduled};
+        push @class, 'scheduled' if defined $event->{scheduled};
         push @class,  'no_series' if (grep 'event', @class) && $event->{series_id} eq '-1';
         push @class,  "error x$event->{error}" if defined $event->{error};
 
