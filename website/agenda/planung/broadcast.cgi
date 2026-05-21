@@ -261,7 +261,6 @@ sub show_event {
         $event->{has_single_events} = $series->[0]->{has_single_events};
     }
 
-   #$event->{rerun}=1 if ((defined $event->{rerun}) && ($event->{rerun}ne'0') && ($event->{rerun}ne''));
     $event->{episode} = '' unless $event->{episode};
     my $users = series::get_users(
         $config,

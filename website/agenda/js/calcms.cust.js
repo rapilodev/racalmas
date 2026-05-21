@@ -274,7 +274,7 @@ var calcms_settings = new Array();
       $('div.site-branding a').html(logo);
     }
 
-    $(document).ready(function() {
+    document.addEventListener("DOMContentLoaded", function() {
         if (window.location.href.match(/\/programm\//)) scrollTo( $("h1"), -16,0 );
         initCalcms();
         initWordpress();

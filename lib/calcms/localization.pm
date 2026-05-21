@@ -41,7 +41,7 @@ sub get($$) {
     $loc = $options->{loc} if defined $options->{loc};
 
     my $files = $options->{file};
-    $files =~ s/[^a-zA-Z\,\_\-]//g;
+    $files =~ s/[^a-zA-Z\,\_\-\.]//g;
 
     #get all comma separated po files
     for my $file (split /\,/, $files) {
@@ -88,7 +88,7 @@ sub read_po_file($$) {
 sub getJavascript ($){
     my ($loc) = @_;
 
-    my $out = '<script>';
+    my $out = '<script defer>';
     $out .= "var loc={};\n";
     for my $key (sort keys %$loc) {
         $out .= qq{loc['$key']='$loc->{$key}';} . "\n";

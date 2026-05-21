@@ -399,7 +399,6 @@ sub calc_dates {
     my $time_zone = $config->{date}->{time_zone};
     my $locale = ($config->{date}->{language} || 'en') eq 'de' ? 'de_DE' : 'en_US';
     $result->{time_zone} = $time_zone;
-    
     my $start = Datetime::Hash::format_datetime_cached($result->{start}, $time_zone, $locale);
     $result->{start_datetime} = $start->{datetime};
     $result->{start_epoch} = $start->{epoch};
