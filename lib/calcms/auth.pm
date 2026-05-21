@@ -6,8 +6,6 @@ no warnings 'redefine';
 
 use CGI::Simple();
 use CGI::Cookie();
-
-use Data::Dumper;
 use Authen::Passphrase::BlowfishCrypt();
 use time();
 use user_sessions ();
@@ -213,7 +211,11 @@ sub show_login_form ($$) {
         };
     }
 
-    print qq{Content-type:text/html
+    print qq{Status: 401
+Cache-Control: no-store, no-cache, must-revalidate, max-age=01
+Pragma: no-cache
+Expires: 0
+Content-type:text/html
 
 <!DOCTYPE HTML>
 <html>
@@ -266,6 +268,7 @@ sub show_login_form ($$) {
         animation-name:form;
         animation-duration: 1s;
         animation-timing-function:ease;
+        border-radius:1rem;
     }
 
     button:hover{
@@ -280,6 +283,8 @@ sub show_login_form ($$) {
     }
 
     #login_form .message{
+        border-top-left-radius:1rem;
+        border-top-right-radius:1rem;
         color:white;
         background:#004f9b;
         text-align:left;
@@ -287,6 +292,7 @@ sub show_login_form ($$) {
         padding:1rem;
         margin:-1rem;
         margin-bottom:0;
+        box-shadow: 1rem 1rem 1rem #eee;
     }
     input.button,
     button.button{
@@ -298,6 +304,7 @@ sub show_login_form ($$) {
         border:0;
         font-weight:bold;
         cursor:pointer;
+        border-radius:1rem;
     }
     a{
         text-decoration:none;
