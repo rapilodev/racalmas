@@ -26,7 +26,7 @@ our @EXPORT_OK = qw(
   datetime_to_array date_to_array array_to_date array_to_datetime array_to_time array_to_time_hm
   date_cond time_cond check_date check_time check_datetime check_year_month
   datetime_to_rfc822 get_datetime datetime_to_epoch epoch_to_utc_datetime datetime_to_utc_datetime datetime_to_ics
-  get_duration get_duration_seconds
+  parse_duration get_duration get_duration_seconds
   getDurations getWeekdayIndex getWeekdayNames getWeekdayNamesShort getMonthNames getMonthNamesShort
 );
 
@@ -40,7 +40,7 @@ my $NAMES = {
     },
     'en' => {
         months =>
-          [ 'January', 'February', 'March', 'April', 'May', 'June', 'Jule', 'August', 'September', 'October', 'November', 'December' ],
+          [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ],
         months_abbr   => [ 'Jan',    'Feb',     'Mar',       'Apr',      'May',    'Jun',      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ],
         weekdays      => [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ],
         weekdays_abbr => [ 'Mo',     'Tu',      'We',        'Th',       'Fr',     'Sa',       'Su' ],
@@ -359,6 +359,18 @@ sub dayOfYear($) {
         return Date::Calc::Day_of_Year($year, $month, $day);
     }
     return undef;
+}
+
+# get duration in seconds
+sub parse_duration($) {
+    my ($s) = @_;
+    return unless defined $s;
+    return $s if $s =~ /^\d+(\.\d+)?$/;
+    if ($s =~ /^\-?(\d{1,2}):(\d{2}):(\d{2})(?:[.,](\d+))?$/o) {
+        my $ms = (defined $4 ? "0.$4" : 0);
+        return ($1 * 3600) + ($2 * 60) + $3 + $ms;
+    }
+    die "Invalid duration format: $s";
 }
 
 # get duration in minutes

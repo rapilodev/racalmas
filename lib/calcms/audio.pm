@@ -1,35 +1,50 @@
 package audio;
 use warnings;
 use strict;
+use time ();
 
-sub durationToSeconds($) {
-    my ($duration) = @_;
-    return 0 unless defined $duration;
-    return $duration if $duration =~ /^\d+(\.\d+)?$/;
-    if ($duration =~ /^(\d+):(\d\d):(\d\d)(?:\.(\d+))?$/) {
-        my ($h, $m, $s, $ms) = ($1, $2, $3, $4 || 0);
-        return $h * 3600 + $m * 60 + $s + ($ms / 100);
+sub badge {
+    my ($class, $content, $title) = @_;
+    return qq{<div class="badge-$class"} .
+           ($title ? qq{ title="$title"} : '') .
+           q{>}.($content//'').q{</div>};
+}
+
+sub named_badge {
+    my ($label, $value) = @_;
+    return ($value && $label)
+        ? badge("ok", join('&nbsp;|&nbsp;', 
+            $label ? qq{<b>$label</b>} : (), 
+            $value ? $value : ()
+          ))
+        : '';
+}
+
+sub class{
+    my ($condition) = @_;
+    return $condition ? 'ok' : 'error'
+}
+
+# get duration in seconds
+sub parse_duration($) {
+    my ($s) = @_;
+    return unless defined $s;
+    return $s if $s =~ /^\d+(\.\d+)?$/;
+    if ($s =~ /^\-?(\d{1,2}):(\d{2}):(\d{2})(?:[.,](\d+))?$/o) {
+        my $ms = (defined $4 ? "0.$4" : 0);
+        return ($1 * 3600) + ($2 * 60) + $3 + $ms;
     }
-    return $duration if $duration =~ /^\d+(\.\d+)?$/;
-    warn "Invalid duration format: $duration";
-    return 0;
+    die "Invalid duration format: $s";
 }
 
 sub formatDuration($$$;$) {
     my ($audioDuration, $eventDuration, $value, $mouseOver) = @_;
-
-    return '' unless $audioDuration;
-    return '' unless $eventDuration;
-    return '' unless $value;
-
-    $audioDuration = durationToSeconds($audioDuration);
-    $eventDuration = durationToSeconds($eventDuration);
-
+    return '' unless $audioDuration && $eventDuration && $value;
+    $audioDuration = parse_duration($audioDuration);
+    $eventDuration = parse_duration($eventDuration);
     my $class = "ok";
     my $title = $mouseOver;
-
     my $delta = 100 * $audioDuration / ($eventDuration+.00000000000001);
-
     if ($delta > 101) {
         $class = "warn";
         $title = sprintf(
@@ -37,9 +52,7 @@ sub formatDuration($$$;$) {
             ($eventDuration+30) / 60,
             ($audioDuration+30) / 60
         );
-    }
-
-    if ($delta < 99.97) {
+    } elsif ($delta < 99.97) {
         $class = "error";
         $title = sprintf(
             qq{file is too short! should be %d minutes, but is %d},
@@ -48,45 +61,37 @@ sub formatDuration($$$;$) {
         );
 
     }
-
-    return sprintf(qq{<div class="badge-%s" title="%s">%s</div>}, $class, $title, $value);
+    return badge($class, $value, $title);
 }
 
 sub formatChannels($) {
     my ($channels) = @_;
-
-    return '' unless $channels;
-    my $class = "ok";
-    $class = "error" if $channels != 2;
-    return sprintf(qq{<div class="badge-%s">%d ch.</div>}, $class, $channels);
+    return $channels
+        ? badge(class($channels == 2), "$channels ch.")
+        : '';
 }
 
 sub formatSamplingRate($) {
     my ($samplingRate) = @_;
-
-    return '' unless $samplingRate;
-    my $class = "ok";
-    $class = "error" if $samplingRate != 44100;
-    return sprintf(qq{<div class="badge-%s">%s Hz</div>}, $class, $samplingRate);
+    return $samplingRate
+        ? badge(class($samplingRate == 44100), "$samplingRate Hz") 
+        : '';
 }
 
 sub formatBitrate($) {
     my ($bitrate) = @_;
-
     return '' unless $bitrate;
     my $class = 'ok';
     $class = 'warn'  if $bitrate >= 200;
     $class = 'error' if $bitrate < 192;
-    return sprintf(qq{<div class="badge-%s">%s kBit/s</div>}, $class, $bitrate);
+    return badge($class, "$bitrate kBit/s");
 }
 
 sub formatBitrateMode($) {
     my ($mode) = @_;
-
-    return '' unless $mode;
-    my $class = 'ok';
-    $class = 'error' if $mode ne 'CBR';
-    return sprintf(qq{<div class="badge-%s">%s</div>}, $class, $mode);
+    return $mode 
+        ? badge(class($mode eq 'CBR'), $mode)
+        : '';
 }
 
 sub formatLoudness {
@@ -94,37 +99,22 @@ sub formatLoudness {
     $prefix ||= '';
     $round ||= '';
     return '' unless $value;
-
     $value = sprintf("%.1f", $value);
-
     my $class = 'ok';
     $class = 'warn'  if $value > -18.5;
     $class = 'error' if $value > -16.0;
     $class = 'warn'  if $value < -24.0;
     $class = 'error' if $value < -27.0;
     $value = int($value+0.5) if $round;
-
-    return qq{<div class="badge-$class">$prefix$value dB</div>};
-}
-
-sub badge {
-    my ($label, $value) = @_;
-    return '' if !$value && !$label; 
-    return qq{<div class="badge-ok">} . join(': ', 
-        ($label ? qq{<b>$label</b>} : ()), 
-        ($value ? $value : ())
-    ) . qq{</div>};
+    return badge($class, "$prefix$value dB");
 }
 
 sub formatFile{
     my ($file, $event_id) = @_;
-
-    return '' unless $file;
-
-    my ($id) = $file =~ /id(\d+)/;
-    return '' unless $id;
-    return '' if $id eq $event_id;
-    return qq{<div class="badge-error" title="wrong file at playout: $file">Playout</div>};
+    my ($id) = ($file//'') =~ /id(\d+)/;
+    return ($id && $id eq $event_id) 
+        ? badge("error", "Playout", "wrong file at playout: $file")
+        : '';
 }
 
 # do not delete this line

@@ -1192,7 +1192,7 @@ sub printTableBody {
             $event->{class} = 'play' if ((defined $event->{play}) && ($event->{play} == 1));
 
             if ($event->{class} eq 'event') {
-                $event->{duration} = audio::durationToSeconds($event->{duration});
+                $event->{duration} = time::parse_duration($event->{duration});
                 $event->{content} .= '<br><span class="weak">';
                 $event->{content} .= audio::formatFile($event->{file}, $event->{event_id});
                 $event->{content} .= audio::formatDuration(
