@@ -366,3 +366,13 @@ update `calcms_studio_timeslot_schedule` set period_type = 'days' where period_t
 CREATE INDEX idx_covering ON calcms_events (start, end, id);
 
 UPDATE calcms_images  SET modified_at = '2000-01-01 00:00:00' WHERE modified_at <= '2000-01-01 00:00:00';
+
+-- 2025-05-21 remove manual assignment cols and remove duplicates
+
+drop table calcms_series_events_clean;
+CREATE TABLE calcms_series_events_clean AS
+SELECT project_id, studio_id, series_id, event_id
+FROM calcms_series_events
+GROUP BY project_id, studio_id, series_id, event_id;
+RENAME TABLE calcms_series_events TO calcms_series_events_old,
+             calcms_series_events_clean TO calcms_series_events;
