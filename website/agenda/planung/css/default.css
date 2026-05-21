@@ -127,6 +127,7 @@ body,
 }
 
 #calcms_nav img{
+    filter: invert(1);
     opacity: 0.9;
     padding-right: 3px;
 }
