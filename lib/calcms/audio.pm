@@ -13,8 +13,8 @@ sub badge {
 sub named_badge {
     my ($label, $value) = @_;
     return ($value && $label)
-        ? badge("ok", join('&nbsp;|&nbsp;', 
-            $label ? qq{<b>$label</b>} : (), 
+        ? badge("ok", join('&nbsp;|&nbsp;',
+            $label ? qq{<b>$label</b>} : (),
             $value ? $value : ()
           ))
         : '';
@@ -74,7 +74,7 @@ sub formatChannels($) {
 sub formatSamplingRate($) {
     my ($samplingRate) = @_;
     return $samplingRate
-        ? badge(class($samplingRate == 44100), "$samplingRate Hz") 
+        ? badge(class($samplingRate == 44100), "$samplingRate Hz")
         : '';
 }
 
@@ -89,7 +89,7 @@ sub formatBitrate($) {
 
 sub formatBitrateMode($) {
     my ($mode) = @_;
-    return $mode 
+    return $mode
         ? badge(class($mode eq 'CBR'), $mode)
         : '';
 }
@@ -112,9 +112,9 @@ sub formatLoudness {
 sub formatFile{
     my ($file, $event_id) = @_;
     my ($id) = ($file//'') =~ /id(\d+)/;
-    return ($id && $id eq $event_id) 
-        ? badge("error", "Playout", "wrong file at playout: $file")
-        : '';
+    return badge('error', 'Playout', 'Cannot find audio file') unless $id;
+    return badge("error", "Playout", "Wrong Audio File: $file?") unless $id eq $event_id;
+    return '' ;
 }
 
 # do not delete this line
