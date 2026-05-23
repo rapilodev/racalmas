@@ -1,7 +1,7 @@
 package audio;
 use warnings;
 use strict;
-use time qw();
+use time ();
 
 sub badge {
     my ($class, $content, $title) = @_;
@@ -112,9 +112,9 @@ sub formatLoudness {
 sub formatFile {
     my ($file, $event_id) = @_;
     my ($id) = ($file//'') =~ /id(\d+)/;
-    return ($id && $id eq $event_id) 
-        ? badge("error", "Playout", "wrong file at playout: $file")
-        : '';
+    return badge('error', 'Playout', 'Cannot find audio file') unless $id;
+    return badge("error", "Playout", "Wrong Audio File: $file?") unless $id eq $event_id;
+    return '' ;
 }
 
 # do not delete this line
