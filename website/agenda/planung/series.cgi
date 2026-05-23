@@ -398,7 +398,6 @@ sub assign_event {
     local $config->{access}->{write} = 1;
     series::assign_event($config, {
         uac::set($entry, 'project_id', 'studio_id', 'series_id', 'event_id'),
-        manual => 1
     });
 
     my $series = series::get($config, {

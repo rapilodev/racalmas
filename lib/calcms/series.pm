@@ -15,7 +15,7 @@ our @EXPORT_OK = qw(
   get_event_age is_event_older_than_days
   get_images
   assign_event unassign_event
-  add_series_ids_to_events set_event_ids
+  add_series_ids_to_events
   can_user_update_events can_user_create_events
   is_series_assigned_to_user is_event_assigned_to_user
   update_recurring_events update_recurring_event
@@ -792,21 +792,16 @@ sub get_images ($$) {
 }
 
 #assign event to series
-#TODO: manual assign needs to update automatic one
 sub assign_event($$) {
     my ($config, $entry) = @_;
 
     for ('project_id', 'studio_id', 'series_id', 'event_id') {
         ParamError->throw(error => "series:assign_event: missing $_") unless defined $entry->{$_}
     };
-    $entry->{manual} = 0 unless (defined $entry->{manual}) && ($entry->{manual} eq '1');
-
-    my $conditions = '';
-    $conditions = 'and manual=1' if $entry->{manual} eq '1';
 
     my $query = qq{
         select * from calcms_series_events
-        where project_id=? and studio_id=? and series_id=? and event_id=? $conditions
+        where project_id=? and studio_id=? and series_id=? and event_id=?
     };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id} ];
     local $config->{access}->{write} = 1;
@@ -825,11 +820,11 @@ sub assign_event($$) {
     }
 
     $query = qq{
-        insert into calcms_series_events (project_id, studio_id, series_id, event_id, manual)
-        values (?,?,?,?,?)
+        insert into calcms_series_events (project_id, studio_id, series_id, event_id)
+        values (?,?,?,?)
     };
     $bind_values =
-      [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id}, $entry->{manual} ];
+      [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id} ];
     db::put($dbh, $query, $bind_values) || AssignError->throw(error => "could not assign event");
 }
 
@@ -841,13 +836,9 @@ sub unassign_event($$) {
         ParamError->throw(error => "series:unassign_event: missing $_") unless defined $entry->{$_}
     };
 
-    my $conditions = '';
-    $conditions = 'and manual=1' if (defined $entry->{manual}) && ($entry->{manual} eq '1');
-
     my $query = qq{
         delete from calcms_series_events
         where project_id=? and studio_id=? and series_id=? and event_id=?
-        $conditions
     };
     my $bind_values = [ $entry->{project_id}, $entry->{studio_id}, $entry->{series_id}, $entry->{event_id} ];
     local $config->{access}->{write} = 1;
@@ -901,65 +892,6 @@ sub add_series_ids_to_events ($$) {
             $event->{series_id}  = $assignment->{series_id};
         }
     }
-
-}
-
-# add event_ids to series and remove all event ids from series, not given event_ids
-# for scan only, used at series
-sub set_event_ids ($$$$$) {
-    my ($config, $project_id, $studio_id, $serie, $event_ids) = @_;
-
-    my $serie_id = $serie->{series_id};
-    for ('project_id', 'studio_id', 'series_id', 'event_id') {
-        ParamError->throw(error => "series: set_event_ids: missing $_") unless defined $serie->{$_}
-    };
-
-    #make lookup table from events
-    my $event_id_hash = { map { $_ => 1 } @$event_ids };
-
-    #get series_entries from db
-    #my $bind_names=join(',', (map { '?' } @$event_ids));
-    my $query = qq{
-        select event_id from calcms_series_events
-        where project_id=? and studio_id=? and series_id=?
-    };
-    my $bind_values = [ $project_id, $studio_id, $serie_id ];
-
-    local $config->{access}->{write} = 1;
-    my $dbh = db::connect($config);
-    my $results = db::get($dbh, $query, $bind_values);
-
-    #mark events found assigned to series
-    my $found = { map { $_->{event_id} => 1 } @$results };
-
-    #insert events from list, not found in db
-    for my $event_id (@$event_ids) {
-
-        series::assign_event(
-            $config,
-            {
-                project_id => $project_id,
-                studio_id  => $studio_id,
-                series_id  => $serie_id,
-                event_id   => $event_id
-            }
-        ) unless ($found->{$event_id});
-    }
-
-    #delete events found in db, but not in list
-    for my $event_id (keys %$found) {
-        series::unassign_event(
-            $config,
-            {
-                project_id => $project_id,
-                studio_id  => $studio_id,
-                series_id  => $serie_id,
-                event_id   => $event_id,
-                manual     => 0
-            }
-        ) unless defined $event_id_hash->{$event_id};
-    }
-
 }
 
 # check if user allowed to update series events
