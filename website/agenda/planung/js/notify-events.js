@@ -1,16 +1,20 @@
 if (window.namespace_notify_events_js) throw "stop"; window.namespace_notify_events_js = true;
 "use strict";
 function register_buttons() {
-    $("#forms form").on('click', 'button', function( event ) {
+    $("#forms form").on('click', 'button', async function( event ) {
         event.preventDefault();
         var form = $(this).closest('form');
-        $.post("notify-events.cgi", form.serialize())
-        .done( function(data) {
-            var content = $(data).find("#content");
-            $('#result').html(content);
-            var formId = form.attr('id');
-            $('#' + formId+" table").addClass("done");
-        });
+        var formData = new FormData(form.get(0));
+        var formId = form.attr('id');
+        let formTable = $('#' + formId + " table").removeClass("error","done");
+        let json = await postJson("notify-events.cgi", formData);
+        if (!json) {
+            formTable.addClass("error");
+            return;
+        }
+        showInfo("email send");
+        formTable.addClass("done");
+        $('#' + formId + ' table button').prop('disabled', true);
     });
 }
 

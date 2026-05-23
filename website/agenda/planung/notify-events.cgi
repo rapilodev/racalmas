@@ -138,6 +138,7 @@ sub sendMail {
     $mail->{Subject} = $params->{subject} if defined $params->{subject};
     $mail->{Data}    = $params->{content} if defined $params->{content};
     my $result = mail::send($mail);
+    return uac::json(message => "send");
 }
 
 sub getMail {
