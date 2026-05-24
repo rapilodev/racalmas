@@ -728,9 +728,30 @@ function updateDayStart() {
     $.get('set-user-day-start.cgi?' + params.toString());
 }
 
+function initSearch() {
+    const search = document.querySelector('#search');
+    search.onInput = (query) => {
+        const elems = document.querySelectorAll("div.event, div.schedule, div.play");
+        query = query.toLowerCase();
+        elems.forEach(elem => {
+            const text = elem.textContent.toLowerCase();
+            elem.style.display = text.includes(query) ? "" : "none";
+        });
+    };
+    search.onSearch = (query) => loadUrl(
+        "list-events.cgi?" + new URLSearchParams({
+            action: "search",
+            project_id: getUrlParameter('project_id'),
+            studio_id: getUrlParameter('studio_id'),
+            search: query
+        }).toString()
+    );
+}
+
 window.calcms ??= {};
 window.calcms.init_calendar = async function(el) {
     let url = update_urlParameters();
+    initSearch();
     if (isTableView()) {
         _viewDate = null;
         setup_filter();
@@ -750,14 +771,14 @@ window.calcms.init_calendar = async function(el) {
 };
 
 window.calcms.init_event_list = async function(el) {
-    //update_url(url);
+    let url = update_url();
     setColors();
     setup_actions();
     document.querySelectorAll('table td.start_date').forEach(el => {
         el.innerHTML = DTF.datetime(el.innerHTML);
     });
+
     if (isListView()) {
-        loadCalendarList(url);
         document.querySelectorAll('table td.start_date').forEach(el => {
             el.innerHTML = DTF.datetime(el.innerHTML);
         });

@@ -1100,3 +1100,14 @@ search-select div#btn{
     z-index:999!important;
     background: var(--panel-bg);
 }
+
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+sprite-icon[name="progress"] {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}

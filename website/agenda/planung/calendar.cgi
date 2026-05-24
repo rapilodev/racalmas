@@ -205,17 +205,7 @@ sub getSidebar {
 
     #search
     $sidebar .= qq{
-        <form class="search">
-            <input type="hidden" name="project_id" value="$params->{project_id}">
-            <input type="hidden" name="studio_id" value="$params->{studio_id}">
-            <input type="hidden" name="date"      value="$params->{date}">
-            <input type="hidden" name="list"      value="1">
-            <input class="search" name="search" value="$params->{search}" placeholder="$params->{loc}->{button_search}">
-            <button type="submit" name="action" value="search" class="primary">
-                <sprite-icon name="search"></sprite-icon>
-                $params->{loc}->{button_search} 
-              </button>
-        </form>
+        <search-input id="search" placeholder="$params->{loc}->{button_search}"></search-input>
     };
 
     $sidebar .= qq{<button is="link-button" id="editSeries">}
@@ -287,7 +277,6 @@ sub check_params {
     }
 
     #scalars
-    $checked->{search} = '';
     $checked->{filter} = '';
 
     for my $param ('date', 'from_date', 'till_date') {
@@ -297,7 +286,7 @@ sub check_params {
     entry::set_strings(
         $checked, $params,
         [
-            'search', 'filter',  'range',   'series_name',
+            'filter',  'range',   'series_name',
             'title',  'excerpt', 'content', 'program',
             'image',  'user_content'
         ]

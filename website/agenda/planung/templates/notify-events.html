@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded",
 
     <table id="events" id="event_<TMPL_VAR event_id>" class="panel">
     <tr id="header_<TMPL_VAR event_id>" class="mailHeader">
-        <td><b><TMPL_VAR start></b></td>
+        <td class="date fmt-datetime"><TMPL_VAR start></td>
         <td><b><TMPL_VAR full_title></b><td>
         <td>
             <TMPL_IF live><sprite-icon name="mic" title="live"></sprite-icon></TMPL_IF>
@@ -60,6 +60,7 @@ document.addEventListener("DOMContentLoaded",
     </tr>
 <TMPL_ELSE>
         <td class="action"><button type="submit"><TMPL_VAR .loc.button_send></button></td>
+        <td class="status"></td>
     </tr>
 
     <TMPL_IF mail.Subject>
@@ -73,7 +74,9 @@ document.addEventListener("DOMContentLoaded",
     <t>
         <td><TMPL_VAR .loc.to></td>
         <td colspan="2"><input name="to" value="<TMPL_VAR mail.To>" type="email" required></td>
-        <td><sprite-icon name="arrow-down" class="toggle-rotate" title="<TMPL_VAR .loc.show_details>"></sprite-icon></td>
+        <td>
+        <sprite-icon name="arrow-down" class="toggle-rotate" title="<TMPL_VAR .loc.show_details>"></sprite-icon>
+        </td>
     </tr>
     </TMPL_IF>
 

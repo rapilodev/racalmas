@@ -29,34 +29,6 @@ function view_series_details(project_id, studio_id, series_id) {
     }
 }
 
-function searchEventsAt(selector, searchValue) {
-    $(selector).each(function(){
-        if(searchValue==''){
-            $(this).show();
-            return;
-        }
-        var text=$(this).text().toLowerCase();
-        if(text.indexOf(searchValue)!=-1){
-            $(this).show();
-        }else{
-            $(this).hide();
-        }
-    });
-}
-
-function searchEvents() {
-    var searchValue=$('#searchField').val().toLowerCase();
-    searchValue=searchValue.trim().replace(/\s+/g, ' ');
-
-    if (searchValue=='') {
-        $('#clearSearch').hide();
-    }else{
-        $('#clearSearch').show();
-    };
-    searchEventsAt('#newSeries a', searchValue);
-    searchEventsAt('#oldSeries a', searchValue);
-}
-
 function clearSearch() {
     $('#searchField').val('');
     searchEvents();
@@ -82,6 +54,12 @@ async function createSeries(form) {
 // init function
 window.calcms ??= {};
 window.calcms.init_list_series = function(el) {
-    console.log(el);
-    searchEvents();
+    search.onInput = (query) => {
+        const elems = document.querySelectorAll("#newSeries a, #oldSeries a");
+        query = query.toLowerCase();
+        elems.forEach(elem => {
+            const text = elem.textContent.toLowerCase();
+            elem.style.display = text.includes(query) ? "" : "none";
+        });
+    };
 };

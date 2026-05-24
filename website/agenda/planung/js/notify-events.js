@@ -6,15 +6,19 @@ function register_buttons() {
         var form = $(this).closest('form');
         var formData = new FormData(form.get(0));
         var formId = form.attr('id');
-        let formTable = $('#' + formId + " table").removeClass("error","done");
+        let formTable = $('#' + formId + " table");
+        formTable.find(".status").html('<sprite-icon name="progress"></sprite-icon>');
+        $('#' + formId + ' table button').prop('disabled', true);
         let json = await postJson("notify-events.cgi", formData);
         if (!json) {
+            formTable.find(".status").html('<sprite-icon name="error"></sprite-icon>');
             formTable.addClass("error");
+            $('#' + formId + ' table button').prop('disabled', false);
             return;
         }
         showInfo("email send");
+        formTable.find(".status").html('<sprite-icon name="check"></sprite-icon>');
         formTable.addClass("done");
-        $('#' + formId + ' table button').prop('disabled', true);
     });
 }
 

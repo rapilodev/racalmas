@@ -1,6 +1,88 @@
 if (window.namespace_default_js) throw "stop"; window.namespace_default_js = true;
 "use strict";
 
+if (!customElements.get('search-input')) {
+    // <search-input> — Attributes: placeholder, value, label
+    // Callbacks: onSearch(q), onInput(q), onClear() — Events: "search", "input", "clear"
+    class SearchInput extends HTMLElement {
+      static observedAttributes = ['placeholder', 'value', 'label'];
+      #i; #clr; #btn; #onSearch = null;
+      onInput = null; onClear = null;
+
+      get onSearch() { return this.#onSearch }
+      set onSearch(fn) { this.#onSearch = typeof fn === 'function' ? fn : null; this.#syncBtn() }
+
+      constructor() {
+        super();
+        this.attachShadow({ mode: 'open' }).innerHTML = `<style>
+      :host{display:inline-block;width:100%;font-family:system-ui,sans-serif}
+      .w{display:flex;align-items:center;border:1px solid #b0bec5;border-radius:4px;overflow:hidden;background:#fff;height:34px;transition:border-color .15s,box-shadow .15s}
+      .w:focus-within{border-color:#26a69a;box-shadow:0 0 0 2px rgba(38,166,154,.2)}
+      .ic{display:flex;align-items:center;padding:0 8px;color:#90a4ae;pointer-events:none;flex-shrink:0}
+      .ic svg{width:15px;height:15px}
+      input{flex:1;border:none;outline:none;padding:0 2px;font-size:13px;color:#212121;background:transparent;min-width:0}
+      input::placeholder{color:#90a4ae}
+      input::-webkit-search-cancel-button{display:none}
+      .clr{display:flex;align-items:center;justify-content:center;width:24px;height:24px;margin-right:2px;border:none;border-radius:50%;background:transparent;color:#90a4ae;cursor:pointer;flex-shrink:0;transition:background .15s,color .15s,opacity .15s,transform .15s;opacity:0;pointer-events:none}
+      .clr.on{opacity:1;pointer-events:auto}
+      .clr:hover{background:#eceff1;color:#546e7a}
+      .clr:active,.btn:active{transform:scale(.92)}
+      .clr svg{width:13px;height:13px;stroke-width:2.5}
+      .btn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;flex-shrink:0;border:none;border-left:1px solid #b0bec5;background:#e3f2fd;color:#1976d2;cursor:pointer;transition:background .15s,color .15s}
+      .btn:hover{background:#1976d2;color:#fff}
+      .btn.hidden{display:none}
+      .btn svg{width:15px;height:15px;stroke-width:2.5}
+    </style>
+    <div class="w" part="wrapper">
+      <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input part="input" type="search" autocomplete="off" spellcheck="false"/>
+      <button class="clr" part="clear" type="button" aria-label="Eingabe löschen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <button class="btn hidden" part="button" type="button" aria-label="Suche starten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+    </div>`;
+      }
+
+      connectedCallback() {
+        this.#i   = this.shadowRoot.querySelector('input');
+        this.#clr = this.shadowRoot.querySelector('.clr');
+        this.#btn = this.shadowRoot.querySelector('.btn');
+        this.#i.placeholder = this.getAttribute('placeholder') ?? 'Suche';
+        this.#i.value       = this.getAttribute('value') ?? '';
+        this.#i.setAttribute('aria-label', this.getAttribute('label') ?? 'Suche');
+        this.#i.addEventListener('input',   () => { this.#syncClr(); this.#emit('input') });
+        this.#i.addEventListener('keydown', e => e.key === 'Enter' && this.#emit('search'));
+        this.#btn.addEventListener('click', () => this.#emit('search'));
+        this.#clr.addEventListener('click', () => {
+          this.#i.value = ''; this.#syncClr(); this.#i.focus();
+          this.dispatchEvent(new CustomEvent('clear', { bubbles: true, composed: true }));
+          this.onClear?.(); this.#emit('input');
+        });
+        this.#syncClr(); this.#syncBtn();
+      }
+
+      attributeChangedCallback(n, _, v) {
+        if (!this.#i) return;
+        if (n === 'placeholder') this.#i.placeholder = v ?? '';
+        if (n === 'value')     { this.#i.value = v ?? ''; this.#syncClr() }
+        if (n === 'label')       this.#i.setAttribute('aria-label', v ?? 'Suche');
+      }
+
+      get value()  { return this.#i?.value ?? '' }
+      set value(v) { if (this.#i) { this.#i.value = v; this.#syncClr() } }
+
+      #syncClr() { this.#clr?.classList.toggle('on', this.#i.value.length > 0) }
+      #syncBtn()  { this.#btn?.classList.toggle('hidden', !this.#onSearch) }
+
+      #emit(type) {
+        const query = this.value.trim();
+        this.dispatchEvent(new CustomEvent(type, { detail: { query }, bubbles: true, composed: true }));
+        if (type === 'search') this.#onSearch?.(query);
+        if (type === 'input')  this.onInput?.(this.value);
+      }
+    }
+
+    customElements.define('search-input', SearchInput);
+}
+
 if (!customElements.get('enhanced-select')) {
     class SearchSelect extends HTMLElement {
       constructor() {

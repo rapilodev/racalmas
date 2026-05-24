@@ -415,7 +415,6 @@ sub check_params {
     }
 
     #scalars
-    $checked->{search} = '';
     $checked->{filter} = '';
 
     for my $param ('date', 'from_date', 'till_date') {
@@ -425,7 +424,7 @@ sub check_params {
     entry::set_strings(
         $checked, $params,
         [
-            'search', 'filter',  'range',   'series_name',
+            'filter',  'range',   'series_name',
             'title',  'excerpt', 'content', 'program',
             'image',  'user_content'
         ]

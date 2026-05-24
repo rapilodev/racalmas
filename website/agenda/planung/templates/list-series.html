@@ -42,9 +42,7 @@
 <!-- container end-->
 
 <div class="sidebar">
-    <div id="search"><input id="searchField" type="search" name="search" value="" 
-        onkeyup="searchEvents()" placeholder="<TMPL_VAR .loc.label_search>"
-    ><button id="clearSearch" onclick="clearSearch()"><TMPL_VAR .loc.label_clear_search></button></div>
+    <search-input id="search" placeholder="<TMPL_VAR loc.label_search>"></search-input>
 
     <button id="add-series" onclick="addSeries('<TMPL_VAR series_name escape=js>')">
        <sprite-icon name="add"></sprite-icon><TMPL_VAR .loc.button_add_series>

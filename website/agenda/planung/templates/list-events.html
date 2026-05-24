@@ -1,0 +1,19 @@
+<TMPL_INCLUDE default.html>
+<link type="text/css" href="css/calendar-list.css" rel="stylesheet"/>
+<script src="js/calendar.js" type="text/javascript" defer></script>
+<script src="js/list-events.js" type="text/javascript" defer></script>
+
+<main id="content"
+    data-js-init="calcms.init_list_events"
+    title="<TMPL_VAR .loc.title>"
+>
+<div class="sidebar">
+    <button 
+        onclick="showSeries('<TMPL_VAR project_id>', '<TMPL_VAR studio_id>','<TMPL_VAR series_id>');return false;"
+    >
+        <sprite-icon name="documents"></sprite-icon>
+        <TMPL_VAR .loc.label_show_series>
+    </button>
+
+    <search-input id="search" placeholder="<TMPL_VAR loc.button_search>"></search-input>
+</div>
