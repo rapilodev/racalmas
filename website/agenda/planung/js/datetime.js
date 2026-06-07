@@ -94,14 +94,18 @@ function formatTime(datetime){
 
 function formatLocalDate(date){
     const locale = navigator.language;
-    return new Date(date).toLocaleDateString(locale, {
+    let d = new Date(date);
+    if (isNaN(d)) return'';
+    return d.toLocaleDateString(locale, {
         dateStyle: "medium"
     });
 }
 
 function formatLocalDateTime(date){
     const locale = navigator.language;
-    return new Date(date).toLocaleString(locale, {
+    let d = new Date(date);
+    if (isNaN(d)) return'';
+    return d.toLocaleString(locale, {
         dateStyle: "medium",
         timeStyle: "medium"
     });
