@@ -81,17 +81,8 @@ function resizeCalendarTable() {
 }
 
 function setSelectedOptions() {
-    $('#content select').each(function() {
-        var value = $(this).attr('value');
-        if (value == null) {
-            return;
-        }
-        $(this).children().each(function() {
-            if ($(this).attr('value') == value) {
-                $(this).attr('selected', 'selected');
-            }
-        });
-    });
+    const selects = document.querySelectorAll('#content select[value]');
+    selects.forEach(s => s.value = s.getAttribute('value'));
 }
 
 // --- URL & Content Loading ---
@@ -155,7 +146,6 @@ async function loadCalendarTable(url, mouseButton) {
     if (isCalendarLoading) return;
 
     if (isListView()) throw Error("wrong mode");
-
     if (mouseButton === middleMouseButton) {
             openNewTab(url);
             return true;
@@ -173,20 +163,19 @@ async function loadCalendarTable(url, mouseButton) {
     try {
         isCalendarLoading = true;
         $('#calendarTable').addClass("loading");
-
         await loadHtmlFragment({
             url: url,
             target: '#calendarTable'
         });
         setupCalendar();
         update_url(url);
-        initRmsPlot();
-        setColors();
         resizeCalendarTable();
     } finally{
         isCalendarLoading = false;
         $('#calendarTable').removeClass("loading");
     }
+    initRmsPlot();
+    setColors();
 }
 
 async function loadCalendarList(url) {
@@ -303,12 +292,7 @@ function stopMouseTracking() {
 }
 
 function handleEvent(id, event) {
-    var field = id.split('_');
-    field.shift(); // class
-    var project_id = field.shift();
-    var studio_id = field.shift();
-    var series_id = field.shift();
-    var event_id = field.shift();
+    const [, project_id, studio_id, series_id, event_id] = id.split('_');
     if (project_id < 0 || studio_id < 0 || series_id < 0 || event_id < 0) {
         return;
     }
@@ -323,12 +307,7 @@ function handleEvent(id, event) {
 }
 
 function handleUnassignedEvent(id) {
-    var field = id.split('_');
-    field.shift();
-    var project_id = field.shift();
-    var studio_id = field.shift();
-    var series_id = field.shift();
-    var event_id = field.shift();
+    const [, project_id, studio_id, series_id, event_id] = id.split('_');
     if (checkStudio() == 0 || project_id < 0 || event_id < 0) {
         return;
     }
@@ -337,11 +316,7 @@ function handleUnassignedEvent(id) {
 }
 
 function handleSchedule(id, start_date, event) {
-    var field = id.split('_');
-    field.shift();
-    var project_id = field.shift();
-    var studio_id = field.shift();
-    var series_id = field.shift();
+    const [, project_id, studio_id, series_id, event_id] = id.split('_');
     if (checkStudio() == 0 || project_id < 0 || studio_id < 0 || series_id < 0) {
         return;
     }
@@ -358,11 +333,7 @@ function handleSchedule(id, start_date, event) {
 }
 
 function handleGrid(id) {
-    var field = id.split('_');
-    field.shift();
-    var project_id = field.shift();
-    var studio_id = field.shift();
-    var series_id = field.shift();
+    const [, project_id, studio_id, series_id, event_id] = id.split('_');
     if (project_id < 0 || studio_id < 0) {
         return;
     }
@@ -371,16 +342,12 @@ function handleGrid(id) {
 }
 
 function handleWorktime(id, event) {
-    var field = id.split('_');
-    field.shift();
-    var project_id = field.shift();
-    var studio_id = field.shift();
-    var schedule_id = field.shift();
-    if (checkStudio() == 0 || project_id < 0 || schedule_id < 0) {
+    const [, project_id, studio_id, work_id] = id.split('_');
+    if (checkStudio() == 0 || project_id < 0 || work_id < 0) {
         return;
     }
     var startDate = $('#' + id).attr("start");
-    var params = new URLSearchParams({ action: "show_new_event_from_schedule", project_id, studio_id, schedule_id, start_date: startDate });
+    var params = new URLSearchParams({ action: "show_new_event_from_schedule", project_id, studio_id, work_id, start_date: startDate });
     var url = "work-time.cgi?" + params.toString();
     if (event.which == 1) {
         loadUrl(url);
