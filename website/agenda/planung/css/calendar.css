@@ -385,3 +385,19 @@ input.tablesorter-filter {
 
 .col1 { position: relative; }
 .event { position: absolute; }
+
+
+.event {
+    display: var(--event-display, block);
+}
+.schedule {
+    display: var(--schedule-display, block);
+}
+.work {
+    display: var(--work-display, block);
+}
+.play {
+    display: var(--playout-display, block);
+}
+
+    

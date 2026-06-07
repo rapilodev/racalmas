@@ -40,7 +40,6 @@ function nextDate() {
 function cancel_edit_event() {
     $('#calendar').show();
     $('#event_editor').hide();
-    //resizeCalendarTable();
     stopMouseTracking();
     return false;
 }
@@ -51,29 +50,34 @@ function resizeCalendarTable() {
     if (!cal) return;
 
     const calRect = cal.getBoundingClientRect();
-    const width = calRect.width;
-
+    const content = document.getElementById('content');
     const tdCol0 = cal.querySelector('td.col0');
     const timeEl = tdCol0?.querySelector('.time:not(.now)');
-    if (!timeEl) return;
+    
+    // Query collections for counts
+    const weekHeaders = cal.querySelectorAll('th.week');
+    const col1Headers = cal.querySelectorAll('th.col1');
 
+    if (!timeEl) return;
     const timeRect = timeEl.getBoundingClientRect();
+
+    // --- PHASE 2: CALCULATE (No DOM interaction) ---
+    const width = calRect.width;
     const dateWidth = timeRect.width;
     const dateHeight = 0.5 * timeRect.height;
-
-    const weekCount = cal.querySelectorAll('th.week').length;
-    const cols = cal.querySelectorAll('th.col1').length;
+    
+    const weekCount = weekHeaders.length;
+    const cols = col1Headers.length;
     const space = weekCount * 24;
 
     let colWidth = Math.round((width - dateWidth - space) / cols) - 20;
     colWidth = dateHeight * Math.round(colWidth / dateHeight);
 
-    cal.style.setProperty('--calendar-col-width', `${colWidth}px`);
-
-    const content = document.getElementById('content');
-    console.log("asd")
-    if (content) content.style.maxWidth = `${width}px`;
-    show_events();
+    requestAnimationFrame(() => {
+        cal.style.setProperty('--calendar-col-width', `${colWidth}px`);
+        if (content) content.style.maxWidth = `${width}px`;
+        show_events();
+    });
 }
 
 function setSelectedOptions() {
@@ -203,23 +207,27 @@ async function loadCalendarList(url) {
 // --- Filter Visibility Controls ---
 
 function show_events() {
-    let val = isChecked('#show_events') ? '' : 'none';
-    $('#calendar .event, #event_list .event').css("display", val);
+    const val = isChecked('#show_events') ? 'block' : 'none';
+    const root = document.getElementById('calendar');
+    if (root) root.style.setProperty('--event-display', val);
 }
 
 function show_schedule() {
     let val = isChecked('#show_schedule') ? '' : 'none';
-    $('#calendar .schedule, #event_list .schedule').css("display", val);
+    const root = document.getElementById('calendar');
+    if (root) root.style.setProperty('--schedule-display', val);
 }
 
 function show_worktime() {
     let val = isChecked('#show_worktime') ? '' : 'none';
-    $('#calendar .work, #event_list .work').css("display", val);
+    const root = document.getElementById('calendar');
+    if (root) root.style.setProperty('--worktime-display', val);
 }
 
 function show_playout() {
     let val = isChecked('#show_playout') ? '' : 'none';
-    $('#calendar .play, #event_list .play').css("display", val);
+    const root = document.getElementById('calendar');
+    if (root) root.style.setProperty('--playout-display', val);
 }
 
 function getNearestDatetime() {
