@@ -930,6 +930,16 @@ div.buttons button {
     display: none;
 }
 
+#breadcrumb {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+nav#calcms_nav {
+  position: relative;
+}
+
 sprite-icon {
   vertical-align: middle;
 }
@@ -951,6 +961,11 @@ sprite-icon svg {
 
 #calcms_nav sprite-icon svg {
   padding-right:0.2em;
+}
+
+#calcms_nav a {
+  display: flex;
+  align-items: center;
 }
 
 .scrollable {
