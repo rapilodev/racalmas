@@ -121,7 +121,7 @@ sub showCalendar {
     my $calendar = calendar_table::getCalendar($config, $params, $language);
 
     $out .= getSidebar($config, $params, $calendar);
-    $out .= qq{<div id="calendarTable" class="scrollable"> </div>};
+    $out .= qq{<div id="calendarTable"> </div>};
     $out .= qq{
             </main>
     };
@@ -134,91 +134,14 @@ sub showCalendar {
 
 sub getSidebar {
     my ($config, $params, $calendar) = @_;
-    my $today   = time::time_to_date();
-    my $class   = 'sidebar';
-    my $sidebar = qq{<div class="$class">};
-
-    $sidebar .= qq!
-        <div class="row">
-            <div id="previous_month">
-                <button class="primary" id="previous"><sprite-icon name="navigate-before"></sprite-icon></button></div>
-            <div id="selectDate" data-toggle>
-                <input id="start_date" data-input/>
-                <div id="current_date">$calendar->{month} $calendar->{year}</div>
-            </div>
-            <div id="next_month">
-                <button id="next" class="primary"><sprite-icon name="navigate-next"></sprite-icon></button>
-            </div>
-            <button id="setToday" class="primary">
-                <sprite-icon name="calendar"></sprite-icon>
-            !
-            . $params->{loc}->{button_today}
-         . q!</button>
-        </div>
-    !;
-
-    unless ($params->{list}) {
-        #ranges
-        my $ranges = {
-            $params->{loc}->{label_month}   => 'month',
-            $params->{loc}->{label_4_weeks} => '28',
-            $params->{loc}->{label_2_weeks} => '14',
-            $params->{loc}->{label_1_week}  => '7',
-            $params->{loc}->{label_day}     => '1',
-        };
-        $sidebar .= qq{
-            <select id="range" name="range" value="$params->{range}">
-        };
-
-        #    my $options=[];
-        for my $range (
-            $params->{loc}->{label_month},   $params->{loc}->{label_4_weeks},
-            $params->{loc}->{label_2_weeks}, $params->{loc}->{label_1_week},
-            $params->{loc}->{label_day}
-          )
-        {
-            my $value = $ranges->{$range} || '';
-            $sidebar .=
-              qq{<option name="$range" value="$value">} . $range . '</option>';
-        }
-        $sidebar .= q{
-            </select>
-        };
-
-        # start of day
-        my $day_start = $params->{day_start} || '';
-        $sidebar .= qq{
-            <select id="day_start" name="day_start" value="$day_start">
-        };
-        for my $hour (0 .. 24) {
-            my $selected = '';
-            $selected = 'selected="selected"' if $hour eq $day_start;
-            $sidebar .=
-                qq{<option value="$hour">}
-              . sprintf("%02d:00", $hour)
-              . '</option>';
-        }
-        $sidebar .= q{
-            </select>
-        };
-    }
-
-    #search
-    $sidebar .= qq{
-        <search-input id="search" placeholder="$params->{loc}->{button_search}"></search-input>
-    };
-
-    $sidebar .= qq{<button is="link-button" id="editSeries">}
-      . '<sprite-icon name="edit"></sprite-icon>'
-      . $params->{loc}->{button_edit_series}
-      . qq{</button>
-    } if $params->{list} == 1;
-
-    $sidebar .= qq{
-        </div>
-    };
-
-    return $sidebar;
+    my $day_start = $params->{day_start} || '';
+    my $range = $params->{range} || '';
+    my $year_month = "calendar->{month} $calendar->{year}";
+    return "<script>
+        var day_start='$day_start';
+        var range='$range';
+        var year_month='$year_month';
+    </script>\n";
 }
 
 sub check_params {

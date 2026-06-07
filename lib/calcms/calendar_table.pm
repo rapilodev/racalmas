@@ -669,7 +669,7 @@ sub getTable {
         my $content = '';
         my $class   = 'date';
         if ($day eq '0') {
-            $out .= qq{<div id="position"></div></td>};
+            $out .= qq{<div id="position" class="date fmtdatetime"></div></td>};
             next;
         } else {
             #print weekday

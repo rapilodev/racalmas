@@ -153,3 +153,9 @@ msgstr "Sendung anlegen"
 
 msgid "label_create_schedule"
 msgstr "Sendung planen"
+
+msgid "label_cal_nav_next"
+msgstr "weiter"
+
+msgid "label_cal_nav_prev"
+msgstr "zurück"

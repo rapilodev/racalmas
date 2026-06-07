@@ -148,3 +148,10 @@ msgstr "Create Show"
 
 msgid "label_create_schedule"
 msgstr "Create Schedule"
+
+msgid "label_cal_nav_next"
+msgstr "next"
+
+msgid "label_cal_nav_prev"
+msgstr "previous"
+

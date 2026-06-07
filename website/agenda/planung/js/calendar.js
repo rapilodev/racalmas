@@ -179,42 +179,42 @@ function update_urlParameters(url) {
     return url;
 }
 
+let isCalendarLoading = false;
+
 async function loadCalendarTable(url, mouseButton) {
+    if (isCalendarLoading) return; // Ignore clicks while loading
+    
     if (isListView()) throw Error("wrong mode");
 
     if (mouseButton === middleMouseButton) {
             openNewTab(url);
             return true;
         }
-
     const urlObj = new URL(url, window.location.origin);
     const targetDate = urlObj.searchParams.get("date");
 
     if (targetDate) {
         _viewDate = targetDate;
-        const formatted = formatLocalDate(targetDate);
-        $('#current_date').html(formatted);
+        $('#current_date').html(formatLocalDate(targetDate));
     }
 
     url = setUrlParameter(url, 'part', '1');
     url = url.replace("calendar.cgi", "calendar-content.cgi");
     try {
+        isCalendarLoading = true;
         $('#calendarTable').addClass("loading");
-    
+
         await loadHtmlFragment({
             url: url,
             target: '#calendarTable'
         });
-        if (targetDate) {
-            _viewDate = targetDate;
-            $('#current_date').html(formatLocalDate(targetDate));
-        }    
         setupCalendar();
         update_url(url);
         initRmsPlot();
         setColors();
         resizeCalendarTable();
     } finally{
+        isCalendarLoading = false;
         $('#calendarTable').removeClass("loading");
     }
 }
@@ -751,12 +751,91 @@ function initSearch() {
     );
 }
 
+function initSidebar(config, params, date) {
+    const className = 'sidebar';
+    let sidebar = `<div class="${className}">`;
+    sidebar += `
+        <div class="row">
+            <div id="previous_month">
+                <button class="primary" id="previous"
+                    aria-label="${loc.label_cal_nav_prev}"
+                    ><sprite-icon name="navigate-before"></sprite-icon></button>
+            </div>
+            <div id="selectDate" data-toggle>
+                <input id="start_date" data-input/>
+                <div id="current_date">${year_month}</div>
+            </div>
+            <div id="next_month">
+                <button id="next" class="primary"
+                    aria-label="${loc.label_cal_nav_next}"
+                    ><sprite-icon name="navigate-next"></sprite-icon></button>
+            </div>
+            <button id="setToday" class="primary">
+                <sprite-icon name="calendar"></sprite-icon>
+                ${loc.button_today}
+            </button>
+        </div>
+    `;
+
+    if (isTableView()) {
+        const ranges = {
+            [loc.label_month]: 'month',
+            [loc.label_4_weeks]: '28',
+            [loc.label_2_weeks]: '14',
+            [loc.label_1_week]: '7',
+            [loc.label_day]: '1'
+        };
+        sidebar += `<select id="range" name="range" value="${range}">`;
+
+        const rangeKeys = [
+            loc.label_month,
+            loc.label_4_weeks,
+            loc.label_2_weeks,
+            loc.label_1_week,
+            loc.label_day
+        ];
+
+        for (const range of rangeKeys) {
+            const value = ranges[range] || '';
+            sidebar += `<option name="${range}" value="${value}">${range}</option>`;
+        }
+        sidebar += "</select>";
+
+        const dayStart = day_start !== undefined ? day_start : '';
+        sidebar += `<select id="day_start" name="day_start" value="${dayStart}">`;
+        for (let hour = 0; hour <= 24; hour++) {
+            const selected = hour == dayStart ? 'selected="selected"' : '';
+            const formattedHour = String(hour).padStart(2, '0') + ':00';
+            sidebar += `<option value="${hour}" ${selected}>${formattedHour}</option>`;
+        }
+        sidebar += `</select>`;
+    }
+    sidebar += `<search-input id="search" placeholder="${loc.button_search}"></search-input>`;
+    if (isListView()) {
+        sidebar += `
+            <button is="link-button" id="editSeries">
+                <sprite-icon name="edit"></sprite-icon>
+                ${loc.button_edit_series}
+            </button>
+        `;
+    }
+    sidebar += `</div>`;
+    const calendarTable = document.getElementById('calendarTable');
+    calendarTable.insertAdjacentHTML('beforebegin', sidebar);
+}
+
 window.calcms ??= {};
 window.calcms.init_calendar = async function(el) {
+    await loadLocalization('calendar');
     let url = update_urlParameters();
+    initSidebar();
     initSearch();
     if (isTableView()) {
         _viewDate = null;
+        window.onpopstate = function() {
+            _viewDate = null;
+            location.reload();
+        };
         setup_filter();
         setSelectedOptions();
         setDatePicker();
@@ -769,11 +848,11 @@ window.calcms.init_calendar = async function(el) {
             loadCalendarTable(update_urlParameters());
         });
         loadCalendarTable(url);
-        await loadLocalization('calendar');
     }
 };
 
 window.calcms.init_event_list = async function(el) {
+    await loadLocalization('calendar');
     let url = update_url();
     setColors();
     setup_actions();
@@ -795,7 +874,6 @@ window.calcms.init_event_list = async function(el) {
         );
         return;
     }
-    await loadLocalization('calendar');
     return;
 };
 
