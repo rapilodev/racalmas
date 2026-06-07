@@ -344,6 +344,10 @@ input.tablesorter-filter {
     transition: opacity 0.5s ease;
 }
 
+#content #calendarTable tbody{
+    height:100%;
+}
+
 #calendar table {
     border-collapse: collapse;
 }
@@ -371,3 +375,13 @@ input.tablesorter-filter {
 .header{
     word-break: break-all;
 }
+
+.col1, .col1 > div, .event, .schedule {
+    width: var(--calendar-col-width, auto);
+    max-width: var(--calendar-col-width, auto);
+    box-sizing: border-box;
+    position: relative;
+}
+
+.col1 { position: relative; }
+.event { position: absolute; }

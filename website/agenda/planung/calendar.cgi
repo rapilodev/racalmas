@@ -136,7 +136,7 @@ sub getSidebar {
     my ($config, $params, $calendar) = @_;
     my $day_start = $params->{day_start} || '';
     my $range = $params->{range} || '';
-    my $year_month = "calendar->{month} $calendar->{year}";
+    my $year_month = "$calendar->{month} $calendar->{year}";
     return "<script>
         var day_start='$day_start';
         var range='$range';

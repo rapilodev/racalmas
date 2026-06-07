@@ -40,47 +40,40 @@ function nextDate() {
 function cancel_edit_event() {
     $('#calendar').show();
     $('#event_editor').hide();
-    resizeCalendarTable();
+    //resizeCalendarTable();
     stopMouseTracking();
     return false;
 }
 
 function resizeCalendarTable() {
-    if (!isTableView()) {
-        return;
-    }
+    if (!isTableView()) return;
     const cal = document.getElementById('calendar');
-    if (!cal) {
-        return;
-    }
-    const content = document.getElementById('content');
-    cal.querySelector('tbody').style.height = `100%`;
+    if (!cal) return;
 
-    const width = fullwidth(cal);
-    content.style.maxWidth = `${width}px`;
+    const calRect = cal.getBoundingClientRect();
+    const width = calRect.width;
 
-    const columnSpacing = 24;
-    const weekCount = cal.querySelectorAll('th.week').length;
-    const space = weekCount * columnSpacing;
     const tdCol0 = cal.querySelector('td.col0');
-    const timeElements = Array.from(tdCol0.querySelectorAll('.time'));
-    const time = timeElements.find(el => !el.classList.contains('now'));
-    if (!time) {
-        return;
-    }
+    const timeEl = tdCol0?.querySelector('.time:not(.now)');
+    if (!timeEl) return;
 
-    const dateWidth = fullwidth(time);
-    const dateHeight = 0.5 * fullheight(time);
+    const timeRect = timeEl.getBoundingClientRect();
+    const dateWidth = timeRect.width;
+    const dateHeight = 0.5 * timeRect.height;
+
+    const weekCount = cal.querySelectorAll('th.week').length;
     const cols = cal.querySelectorAll('th.col1').length;
+    const space = weekCount * 24;
 
     let colWidth = Math.round((width - dateWidth - space) / cols) - 20;
     colWidth = dateHeight * Math.round(colWidth / dateHeight);
 
-    const targetCols = cal.querySelectorAll('.col1, .col1 > div');
-    targetCols.forEach(el => {
-        el.style.width = `${colWidth}px`;
-        el.style.maxWidth = `${colWidth}px`;
-    });
+    cal.style.setProperty('--calendar-col-width', `${colWidth}px`);
+
+    const content = document.getElementById('content');
+    console.log("asd")
+    if (content) content.style.maxWidth = `${width}px`;
+    show_events();
 }
 
 function setSelectedOptions() {
@@ -155,8 +148,8 @@ function update_urlParameters(url) {
 let isCalendarLoading = false;
 
 async function loadCalendarTable(url, mouseButton) {
-    if (isCalendarLoading) return; // Ignore clicks while loading
-    
+    if (isCalendarLoading) return;
+
     if (isListView()) throw Error("wrong mode");
 
     if (mouseButton === middleMouseButton) {
@@ -253,7 +246,7 @@ function getNearestDatetime() {
         const height = $(this).height() + 14;
         const delta = mouseY - offset.top - (height / 2);
         const absDelta = Math.abs(delta);
-        
+
         if (absDelta < yMin) {
             yMin = absDelta;
             hour = $(this).attr('time').substr(0, 2);
@@ -285,7 +278,7 @@ function showMouse() {
     const updateLoop = () => {
         if (mouseMoved) {
             // Calculate once instead of searching DOM
-            const posText = getNearestDatetime(); 
+            const posText = getNearestDatetime();
             $('#position').text(formatLocalDateTime(posText));
             mouseMoved = false;
         }
@@ -632,13 +625,6 @@ function setup_date_select() {
     });
     const headerDate = formatLocalDate(currentDate());
     $('#current_date').html(headerDate);
-    resizeCalendarTable();
-    $(window).resize(() => {
-        resizeCalendarTable();
-        if (typeof setupMenu === 'function') {
-            setupMenu();
-        }
-    });
 }
 
 function setupCalendar() {
@@ -784,11 +770,15 @@ window.calcms.init_calendar = async function(el) {
             _viewDate = null;
             location.reload();
         };
+
+        const resizeObserver = new ResizeObserver(() => {
+            requestAnimationFrame(resizeCalendarTable);
+        }).observe(document.getElementById('calendarTable'));
+
         setup_filter();
         setSelectedOptions();
         setDatePicker();
         let url = update_urlParameters();
-        resizeCalendarTable();
         $('.sidebar select#range, .sidebar select#day_start').on('change', (e) => {
             if (e.target.id === 'day_start') {
                 updateDayStart();
@@ -812,7 +802,7 @@ window.calcms.init_event_list = async function(el) {
         document.querySelectorAll('table td.start_date').forEach(el => {
             el.innerHTML = DTF.datetime(el.innerHTML);
         });
-        $('#editSeries').attr('data-href', 
+        $('#editSeries').attr('data-href',
             "series.cgi?" + new URLSearchParams({
                 action: "show_series",
                 project_id: getUrlParameter('project_id'),
