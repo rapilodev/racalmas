@@ -12,9 +12,7 @@ var _viewDate = null;
 // --- Date & Navigation Helpers ---
 
 function currentDate() {
-    if (_viewDate) {
-        return _viewDate;
-    }
+    if (_viewDate) return _viewDate;
     const urlParams = new URLSearchParams(location.search);
     const urlDate = urlParams.get("date");
     _viewDate = urlDate || formatDate(new Date());
@@ -182,9 +180,12 @@ function update_urlParameters(url) {
 }
 
 async function loadCalendarTable(url, mouseButton) {
-    if (isListView()) {
-        throw Error("wrong mode");
-    }
+    if (isListView()) throw Error("wrong mode");
+
+    if (mouseButton === middleMouseButton) {
+            openNewTab(url);
+            return true;
+        }
 
     const urlObj = new URL(url, window.location.origin);
     const targetDate = urlObj.searchParams.get("date");
@@ -195,25 +196,27 @@ async function loadCalendarTable(url, mouseButton) {
         $('#current_date').html(formatted);
     }
 
-    if ((mouseButton != null) && (mouseButton == middleMouseButton)) {
-        openNewTab(url);
-        return true;
-    }
-
     url = setUrlParameter(url, 'part', '1');
     url = url.replace("calendar.cgi", "calendar-content.cgi");
-    $('#calendarTable').addClass("loading");
-
-    await loadHtmlFragment({
-        url: url,
-        target: '#calendarTable'
-    });
-    $('#calendarTable').removeClass("loading");
-    setupCalendar();
-    update_url(url);
-    initRmsPlot();
-    setColors();
-    resizeCalendarTable();
+    try {
+        $('#calendarTable').addClass("loading");
+    
+        await loadHtmlFragment({
+            url: url,
+            target: '#calendarTable'
+        });
+        if (targetDate) {
+            _viewDate = targetDate;
+            $('#current_date').html(formatLocalDate(targetDate));
+        }    
+        setupCalendar();
+        update_url(url);
+        initRmsPlot();
+        setColors();
+        resizeCalendarTable();
+    } finally{
+        $('#calendarTable').removeClass("loading");
+    }
 }
 
 async function loadCalendarList(url) {
@@ -335,7 +338,7 @@ function showMouse() {
         mouseMoved = false;
         mouseUpdate = true;
         const posText = getNearestDatetime();
-        $('#position').text(posText);
+        $('#position').text(formatLocalDateTime(posText));
         mouseUpdate = false;
     }, 200);
 }
