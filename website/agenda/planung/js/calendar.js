@@ -6,11 +6,7 @@ var leftMouseButton = 1;
 var middleMouseButton = 2;
 var rightMouseButton = 3;
 
-// Internal state to prevent navigation being "one step behind"
 var _viewDate = null;
-
-// --- Date & Navigation Helpers ---
-
 function currentDate() {
     if (_viewDate) return _viewDate;
     const urlParams = new URLSearchParams(location.search);
@@ -49,28 +45,6 @@ function cancel_edit_event() {
     return false;
 }
 
-function setupMenuHeight() {
-    if (!isTableView()) {
-        return;
-    }
-    var top = $('#calcms_nav').height();
-    if ($('#calendar').length == 0) {
-        return top;
-    }
-    var weekdays = document.querySelector("#weekdays");
-    var weekday_height = 0;
-    var dayDivs = weekdays.querySelectorAll("td div");
-    dayDivs.forEach((div) => {
-        let height = div.offsetHeight + 14;
-        if (height > weekday_height) {
-            weekday_height = height;
-        }
-    });
-    top += weekday_height;
-    top -= 9;
-    return top;
-}
-
 function resizeCalendarTable() {
     if (!isTableView()) {
         return;
@@ -80,8 +54,7 @@ function resizeCalendarTable() {
         return;
     }
     const content = document.getElementById('content');
-    const height = window.innerHeight - setupMenuHeight();
-    cal.querySelector('tbody').style.height = `${height}px`;
+    cal.querySelector('tbody').style.height = `100%`;
 
     const width = fullwidth(cal);
     content.style.maxWidth = `${width}px`;
@@ -256,102 +229,77 @@ function show_playout() {
     $('#calendar .play, #event_list .play').css("display", val);
 }
 
-// --- Mouse Tracking Logic ---
-
 function getNearestDatetime() {
-    var date = "test";
-    var hour = "00";
-    var minute = "00";
-    var xMin = 9999999;
-    var yMin = 9999999;
+    let date = "";
+    let hour = "00";
+    let xMin = Infinity;
+    let yMin = Infinity;
 
-    $('#calendar tr#weekdays div.date').each(function() {
-        var xpos = $(this).offset().left;
-        var offset = $(this).width() / 2;
-        var delta = Math.abs(mouseX - xpos - offset);
+    const dateDivs = $('#calendar tr#weekdays div.date');
+    const timeDivs = $('#calendar div.time');
+
+    dateDivs.each(function() {
+        const offset = $(this).offset();
+        const delta = Math.abs(mouseX - offset.left - ($(this).width() / 2));
         if (delta < xMin) {
             xMin = delta;
             date = $(this).attr('date');
         }
     });
 
-    $('#calendar div.time').each(function() {
-        var ypos = $(this).offset().top;
-        var offset = $(this).height() / 2;
-        var delta = (mouseY - ypos - offset);
-        var absDelta = Math.abs(delta);
+    let minute = 0;
+    timeDivs.each(function() {
+        const offset = $(this).offset();
+        const height = $(this).height() + 14;
+        const delta = mouseY - offset.top - (height / 2);
+        const absDelta = Math.abs(delta);
+        
         if (absDelta < yMin) {
             yMin = absDelta;
             hour = $(this).attr('time').substr(0, 2);
-        }
-    });
-
-    if (parseInt(hour) < startOfDay) {
-        date = formatDate(addDays(date, 1));
-    }
-
-    minute = 0;
-    yMin = 9999999999;
-    $('#calendar div.time').each(function() {
-        var ypos = $(this).offset().top;
-        var offset = $(this).height() / 2;
-        var delta = (mouseY - ypos - offset);
-        var absDelta = Math.abs(delta);
-        if (absDelta < yMin) {
-            yMin = absDelta;
-            hour = $(this).attr('time').substr(0, 2);
-            var height = $(this).height() + 14;
-            var m = ((delta + height * 1.5) - 8) % height;
+            let m = ((delta + height * 1.5) - 8) % height;
             m = m * 60 / height;
             minute = Math.floor(m / 15) * 15;
-            minute = (minute + 60) % 60;
-            if (minute < 10) {
-                minute = '0' + minute;
-            }
+            minute = String((minute + 60) % 60).padStart(2, '0');
         }
     });
-    return date + " " + hour + ":" + minute + ":00";
+
+    if (parseInt(hour) < startOfDay) date = formatDate(addDays(date, 1));
+    return `${date} ${hour}:${minute}:00`;
 }
 
-var mouseX = 0;
-var mouseY = 0;
-var mouseMoved = false;
-var mouseUpdate = false;
-var mouse_update_id = null;
+let rafId = null;
+let mouseX = 0, mouseY = 0;
+let mouseMoved = false;
 
 function showMouse() {
-    if (!isTableView()) {
-        return;
-    }
-    $("#calendar").off('mousemove').on('mousemove', (event) => {
-        mouseX = event.pageX;
-        mouseY = event.pageY;
+    if (!isTableView()) return;
+
+    const calendar = document.getElementById('calendar');
+    $(calendar).off('mousemove').on('mousemove', (e) => {
+        mouseX = e.pageX;
+        mouseY = e.pageY;
         mouseMoved = true;
     });
-    if (mouse_update_id !== null) {
-        clearInterval(mouse_update_id);
-    }
-    mouse_update_id = setInterval(() => {
-        if (!mouseMoved || mouseUpdate) {
-            return;
+
+    const updateLoop = () => {
+        if (mouseMoved) {
+            // Calculate once instead of searching DOM
+            const posText = getNearestDatetime(); 
+            $('#position').text(formatLocalDateTime(posText));
+            mouseMoved = false;
         }
-        mouseMoved = false;
-        mouseUpdate = true;
-        const posText = getNearestDatetime();
-        $('#position').text(formatLocalDateTime(posText));
-        mouseUpdate = false;
-    }, 200);
+        rafId = requestAnimationFrame(updateLoop);
+    };
+
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(updateLoop);
 }
 
 function stopMouseTracking() {
-    if (mouse_update_id !== null) {
-        clearInterval(mouse_update_id);
-        mouse_update_id = null;
-    }
+    if (rafId) cancelAnimationFrame(rafId);
     $("#calendar").off('mousemove');
 }
-
-// --- Action & Event Handlers ---
 
 function handleEvent(id, event) {
     var field = id.split('_');
