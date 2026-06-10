@@ -1,6 +1,129 @@
 if (window.namespace_default_js) throw "stop"; window.namespace_default_js = true;
 "use strict";
 
+if (!customElements.get('tool-tip')) {
+  const tooltipStyle = new CSSStyleSheet();
+  tooltipStyle.replaceSync(`
+    :host {
+      display: inline-block;
+      position: relative;
+    }
+
+    .tooltip-box {
+      position: fixed; /* Prevents overflow cropping */
+      z-index: 999999;
+      pointer-events: none;
+      white-space: nowrap;
+      
+      display: block;
+      padding: 8px 14px; 
+      background: #666;
+      color: #ffffff;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      
+      opacity: 0.0;
+      transform: translateY(4px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .tooltip-box.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  `);
+
+  class ToolTip extends HTMLElement {
+    #tipEl = null;
+    #shouldShowVisual = false;
+
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+      this.shadowRoot.adoptedStyleSheets = [tooltipStyle];
+      this.shadowRoot.innerHTML = `<slot></slot>`;
+    }
+
+    connectedCallback() {
+      const trigger = this.firstElementChild;
+      const tipText = this.getAttribute('text');
+      
+      if (!trigger || !tipText) return;
+
+      const visibleText = trigger.textContent.trim();
+      const hasVisibleText = visibleText.length > 0;
+      const hasAriaLabel = trigger.hasAttribute('aria-label');
+
+      const tipId = `tip-${Math.random().toString(36).slice(2, 10)}`;
+
+      this.#tipEl = document.createElement('div');
+      this.#tipEl.id = tipId;
+      this.#tipEl.className = 'tooltip-box';
+      this.#tipEl.role = 'tooltip';
+      this.#tipEl.textContent = tipText;
+      this.shadowRoot.appendChild(this.#tipEl);
+
+      if (!hasVisibleText && !hasAriaLabel) {
+        this.#shouldShowVisual = true;
+        trigger.setAttribute('aria-labelledby', tipId);
+        trigger.setAttribute('title', tipText); // Native fallback
+      } else {
+        this.#shouldShowVisual = false;
+        trigger.setAttribute('aria-describedby', tipId);
+      }
+
+      if (this.#shouldShowVisual) {
+        this.addEventListener('mouseenter', () => this.#showTooltip());
+        this.addEventListener('mouseleave', () => this.#hideTooltip());
+        this.addEventListener('focusin', () => this.#showTooltip());
+        this.addEventListener('focusout', () => this.#hideTooltip());
+      }
+    }
+
+    #showTooltip() {
+      if (!this.#tipEl || !this.#shouldShowVisual) return;
+
+      const trigger = this.firstElementChild;
+      const triggerRect = trigger.getBoundingClientRect();
+      
+      this.#tipEl.style.display = 'block';
+      const tipRect = this.#tipEl.getBoundingClientRect();
+
+      const gap = 8;
+      const spaceAtTop = triggerRect.top - tipRect.height - gap;
+      
+      let topPosition;
+      let leftPosition = triggerRect.left + (triggerRect.width / 2) - (tipRect.width / 2);
+
+      if (spaceAtTop < 0) {
+        topPosition = triggerRect.bottom + gap;
+      } else {
+        topPosition = triggerRect.top - tipRect.height - gap;
+      }
+
+      this.#tipEl.style.top = `${topPosition}px`;
+      this.#tipEl.style.left = `${leftPosition}px`;
+      
+      requestAnimationFrame(() => {
+        this.#tipEl.classList.add('visible');
+      });
+    }
+
+    #hideTooltip() {
+      if (!this.#tipEl) return;
+      this.#tipEl.classList.remove('visible');
+    }
+
+    disconnectedCallback() {
+      this.#tipEl?.remove();
+    }
+  }
+
+  customElements.define('tool-tip', ToolTip);
+}
+
+
 if (!customElements.get('search-input')) {
     // <search-input> — Attributes: placeholder, value, label
     // Callbacks: onSearch(q), onInput(q), onClear() — Events: "search", "input", "clear"
@@ -451,34 +574,6 @@ function loadCss(url) {
     document.head.appendChild(link);
 }
 
-/*
-async function updateContainer(id, url, callback) {
-    console.log(url);
-    if (!id) throw Error(`id is null`);
-    var target = id == 'body' ? document.body : document.getElementById(id);
-    if (!target) throw Error(`updateContainer: element with id ${id} no found`);
-    console.log($("#id"));
-    let response = await fetch(url, { "cache": "no-store" });
-    if (!response.headers.has("content-type")) {
-        showError("No content type");
-        console.error(response);
-        return;
-    }
-    if (response.status != 200) return showError(response.statusText);
-    let type = response.headers.get("content-type").split(";")[0];
-    if (type == "text/html") {
-        console.log("html")
-        target.innerHTML = await response.text();
-        initializeComponents(target);
-        if (callback != null) callback();
-    } else if (type == "application/json") {
-        let json = await response.json();
-        showError(json.error);
-    }
-    return target;
-}
-*/
-
 // should replace updateContainer
 async function loadHtmlFragment ({url, selector = null, target = null } = {}) { 
     try { 
@@ -649,68 +744,7 @@ async function deleteJson(url, params = null, options = {}) {
 async function patchJson(url, params = null, options = {}) {
     return fetchJson(url, { method: 'PATCH', params, ...options });
 }
-/*
-async function getJson(url, params) {
-    url += url.includes('?') ? '' : '?';
-    if (params instanceof URLSearchParams) {
-        url += params.toString();
-    } else if (params && typeof params === 'object') {
-        params = Object.fromEntries(Object.entries(params).filter(([_, v]) => v));
-        if (Object.keys(params).length) url += new URLSearchParams(params).toString();
-    }
-    console.log("url:", url);
-    let response = await fetch(url, {
-        method: 'GET',
-        cache: "no-store",
-        headers: { "Accept": 'application/json' }
-    });
-    let contentType = response.headers.get("content-type") || '';
-    if (!contentType.startsWith("application/json")) {
-        showError("invalid response type for " + url);
-        return null;
-    }
-    if (response.status == 401) {
-        showError(loc.login_required);
-        return null;
-    }        
-    let json;
-    try{
-        json = await response.json();
-    } catch(e) {
-        showError("Invalid JSON response from " + url);
-        console.error("JSON parse error:", e);
-        return null;        
-    };
-    
-    if (json.error) {
-        showError(json.error);
-        return null;
-    }        
-    if (response.status !== 200) {
-        showError(response.statusText);
-        return null;
-    }        
-    return json;
-}
 
-async function postJson(url, params) {
-    let response = await fetch(url, {
-        method: 'POST',
-        cache: "no-store",
-        headers: { "accept": 'application/json' },
-        body: new URLSearchParams(params)
-    });
-    if (
-        (!response.headers.get("content-type") || '').startsWith("application/json")
-    ) return showError("invalid response type for " + url);
-    if (response.status == 401) return showError(loc.login_required);
-    let json;
-    try{ json = await response.json();} catch(e){}
-    if (json.error) return showError(json.error);
-    if (response.status !== 200) return showError(response.statusText);
-    return json;
-}
-*/
 function getFormValues(form, allowed) {
     return Object.fromEntries(
         new FormData(form).filter(
@@ -830,40 +864,6 @@ function removeUrlParameter(url, name) {
 function getUrlParameter(name) {
     const params = new URLSearchParams(window.location.search);
     return params.get(name);
-}
-
-function handleBars() {
-    var menu = $('#calcms_nav');
-    menu.toggleClass('mobile');
-    if (menu.hasClass('mobile')) {
-        $('#calcms_nav>div').show();
-        $('#content').hide();
-    } else {
-        $('#content').show();
-        setupMenu(1);
-    }
-}
-
-var oldWidth = 0;
-function setupMenu(update) {
-    var xmax = 960;
-    var menu = $('#calcms_nav');
-    var width = menu.width();
-    if ((width < xmax) && (oldWidth >= xmax)) update = 1;
-    if ((width >= xmax) && (oldWidth < xmax)) update = 1;
-    if (oldWidth == 0) update = 1;
-    if (update == 1) {
-        if (menu.width() < 960) {
-            $('#calcms_nav>div').hide();
-            $('#calcms_nav>div.mobile').show();
-        } else {
-            $('#calcms_nav>div').show();
-            $('#calcms_nav #bars').hide();
-            menu.removeClass('mobile');
-        }
-        menu.css("opacity","1.0");
-    }
-    oldWidth = width;
 }
 
 function getProjectId() {
@@ -1054,18 +1054,33 @@ function setInputAutoWidth() {
 }
 
 function getTextareaHeight(textarea) {
-    textarea.style.height = "auto";
-    return textarea.scrollHeight + 32 + "px";
+    textarea.style.height = "auto"; 
+    return textarea.scrollHeight + 32; 
 }
 
 function setTextareaAutoHeight() {
-    document.querySelectorAll("textarea").forEach(textarea => {
-        textarea.style.height = getTextareaHeight(textarea);
-    });
     document.body.addEventListener("input", function(e) {
         if (e.target.tagName.toLowerCase() === "textarea") {
-            e.target.style.height = getTextareaHeight(e.target);
+            e.target.style.style.height = getTextareaHeight(e.target) + "px";
         }
+    });
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.tagName && node.tagName.toLowerCase() === "textarea") {
+                    node.style.height = getTextareaHeight(node) + "px";
+                }
+                if (node.querySelectorAll) {
+                    node.querySelectorAll("textarea").forEach(textarea => {
+                        textarea.style.height = getTextareaHeight(textarea) + "px";
+                    });
+                }
+            });
+        });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    document.querySelectorAll("textarea").forEach(textarea => {
+        textarea.style.height = getTextareaHeight(textarea) + "px";
     });
 }
 
@@ -1127,37 +1142,7 @@ function adjustGrowYElements() {
     });
 }
 
-async function initializeComponents(container) {
-    $('body').css("visibility", "hidden");
-    setupMenu();
-    $(window).resize(() => debounce(setupMenu, 500));
-    checkSession();
-    setMissingUrlParameters();
-
-    /*
-//    if (getController() == 'calendar') {
-        addBackButton();
-        return;
-    } else {
-        await loadLocalization();
-        addBackButton();
-    }
-    */
-   
-    appendHistory();
-    initLabels();
-    setInputAutoWidth();
-    setTextareaAutoHeight();
-    $('.scrollable').focus();
-    formatDates();
-
-    // rotate on click (for up/down lists)
-    $(document).on('click', '.toggle-rotate', function() {
-        $(this).toggleClass('rotated');
-    });
-    
-    
-    // Wir suchen alle Elemente mit data-js-init, die NOCH NICHT initialisiert wurden
+async function initComponents(container){
     const scope = container ? $(container) : $(document);
     const initElements = scope.find('[data-js-init]').addBack('[data-js-init]');
     console.log("initElemnts",initElements)
@@ -1188,6 +1173,35 @@ async function initializeComponents(container) {
             console.log(`Warnung: Initialisierungs-Funktion "${funcName}" wurde nicht gefunden.`);
         }
     }
+}
+
+async function setupComponents(container) {
+  //  $('body').css("visibility", "hidden");
+    checkSession();
+    setMissingUrlParameters();
+
+    /*
+//    if (getController() == 'calendar') {
+        addBackButton();
+        return;
+    } else {
+        await loadLocalization();
+        addBackButton();
+    }
+    */
+   
+    appendHistory();
+    initLabels();
+    setInputAutoWidth();
+    $('.scrollable').focus();
+    formatDates();
+
+    // rotate on click (for up/down lists)
+    $(document).on('click', '.toggle-rotate', function() {
+        $(this).toggleClass('rotated');
+    });
+    
+    initComponents(container);
 
     const observer = new ResizeObserver(() => adjustGrowYElements());
     document.querySelectorAll('.grow-y').forEach(el => {
@@ -1197,8 +1211,8 @@ async function initializeComponents(container) {
     adjustGrowYElements();
     $(window).resize(() => debounce(adjustGrowYElements, 500));
     setTabs('#tabs');
-    $('body').css("visibility", "visible");
-
+    setTextareaAutoHeight();
+//    $('body').css("visibility", "visible");
 }
 
 function assert(input) {
@@ -1212,7 +1226,31 @@ function assert(input) {
 }
 
 document.addEventListener("DOMContentLoaded",async function() {
-    console.log("inita")
-    await initializeComponents();
+    await setupComponents();
+    document.getElementById('bars').addEventListener('click', () => {
+        document.getElementById('calcms_nav').classList.toggle('open');
+    });
+
+
+    document.getElementById('sidebar-left-btn').addEventListener('click', function() {
+        const sidebars = document.querySelectorAll('.sidebar');
+        sidebars[0].classList.add('left');
+        sidebars[0].classList.add('glas');
+        sidebars[0].classList.toggle('active');
+    });
+
+    document.getElementById('sidebar-right-btn').addEventListener('click', function() {
+        const sidebars = document.querySelectorAll('.sidebar');
+        sidebars[1].classList.add('right');
+        sidebars[1].classList.add('glas');
+        sidebars[1].classList.toggle('active');
+    });
+        
+    document.querySelector('#content').addEventListener('click', function() {
+        document.querySelectorAll('.sidebar').forEach(side => {
+            side.classList.remove('active');
+        });
+    });
+    
 });
 
