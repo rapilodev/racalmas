@@ -1,5 +1,6 @@
 <TMPL_IF .allow.read_series>
-<link rel="stylesheet" href="css/work-time.css" type="text/css" />
+<link href="css/work-time.css" rel="preload" as="style" onload="this.rel='stylesheet'">
+
 <script defer>
     <TMPL_IF .getBack>
     document.addEventListener("DOMContentLoaded",

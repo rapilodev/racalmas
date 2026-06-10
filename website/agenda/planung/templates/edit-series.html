@@ -1,7 +1,7 @@
 <TMPL_IF .allow.read_series>
-<link href="css/theme.default.css" rel="stylesheet">
+<link href="css/theme.default.css" rel="preload" as="style" onload="this.rel='stylesheet'">
+<link href="css/image.css" rel="preload" as="style" onload="this.rel='stylesheet'">
 
-<link type="text/css" href="css/image.css" rel="stylesheet" defer/>
 <script src="js/image.js" type="text/javascript " defer></script>
 
 <main id="content"
@@ -116,7 +116,7 @@
     </div>
     <div id="excerpt">
         <label><TMPL_VAR .loc.template_excerpt></label>
-        <textarea name="excerpt" class="animated" style="width:100%;" maxlength="251" placeholder=" "><TMPL_VAR excerpt></textarea>
+        <textarea name="excerpt" class="animated grow-y'" style="width:100%;" maxlength="251" placeholder=" "><TMPL_VAR excerpt></textarea>
         <div id="excerpt_too_long" class="error" style="display:none"><TMPL_VAR .loc.label_excerpt_too_long></div>
     </div>
     <div>

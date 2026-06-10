@@ -1,8 +1,7 @@
 <TMPL_IF .allow.scan_series_events>
 
 <script src="js/assign-series.js" type="text/javascript" defer></script>
-<link href="css/assign-series.css" type="text/css" rel="stylesheet"/>
-
+<link href="css/assign-series.css" rel="preload" as="style" onload="this.rel='stylesheet'">
 <main id="content"
     data-js-init="calcms.init_assign_series"
     title="<TMPL_VAR .loc.title>"

@@ -1,5 +1,6 @@
 <TMPL_IF .allow.read_comment>
-<link type="text/css" href="css/comment.css" rel="stylesheet"/>
+<link href="css/comment.css" rel="preload" as="style" onload="this.rel='stylesheet'">
+
 <script src="js/comment.js" type="text/javascript" defer></script>
 <script defer>
 var event_id='<TMPL_VAR event_id escape=js>';

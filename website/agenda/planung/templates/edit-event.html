@@ -3,9 +3,10 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title><TMPL_VAR .doc.title></title>
-<link type="text/css" href="css/event.css"  rel="stylesheet"/>
-<link type="text/css" href="css/comment.css" rel="stylesheet"/>
-
+<link href="css/event.css" rel="preload" as="style" onload="this.rel='stylesheet'">
+<link href="css/comments.css" rel="preload" as="style" onload="this.rel='stylesheet'">
+<link href="css/image.css" rel="preload" as="style" onload="this.rel='stylesheet'">
+     
 <!-- for edit series-->
 <script src="js/list-series.js" type="text/javascript " defer></script>
 <script src="js/select-series.js" type="text/javascript " defer></script>
@@ -13,7 +14,6 @@
 <script src="js/select-event.js" type="text/javascript " defer></script>
 <script src="js/comment.js" type="text/javascript " defer></script>
 
-<link type="text/css" href="css/image.css" rel="stylesheet" defer/>
 <script src="js/image.js" type="text/javascript " defer></script>
 
 <!-- TODO: move to edit-event.js -->

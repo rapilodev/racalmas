@@ -1,26 +1,34 @@
 <TMPL_INCLUDE header.html>
 
-<nav id="calcms_nav" style="opacity:0">
+<nav id="calcms_nav">
 
-<div id="bars" class="mobile" onclick="handleBars();return false;"> <a><sprite-icon name="more"></sprite-icon>Menu</a></div>
+<div id="sidebar-left-btn"  class="mobile"><sprite-icon name="left-panel-open"></sprite-icon></div>
+<div id="sidebar-right-btn" class="mobile"><sprite-icon name="right-panel-open"></sprite-icon></div>
+
+<div id="bars" class="mobile"> <a><sprite-icon name="more"></sprite-icon>Menu</a></div>
+
 
 <TMPL_IF .allow.read_event>
-<div><a id="menu_calendar" href="calendar.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>">
+<div class="desktop"><a id="menu_calendar" 
+    href="calendar.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR studio_id>">
 <sprite-icon name="calendar"></sprite-icon><TMPL_VAR .loc.calendar>
 </a></div>
 </TMPL_IF>
 
 <TMPL_IF .allow.read_series>
-<div><a href="series.cgi?action=list_series&project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>">
+<div class="desktop"><a href="series.cgi?action=list_series&project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>">
 <sprite-icon name="list"></sprite-icon><TMPL_VAR .loc.series>
 </a></div>
 </TMPL_IF>
 
 <!-- start menu -->
-<div class="dropdown">
+<div class="desktop dropdown">
 <a href="#">
 <sprite-icon name="more"></sprite-icon><TMPL_VAR .loc.more></a>
+</div>
+
 <div class="dropdown-content">
+<div id="close-menu"  onclick="$('#calcms_nav').removeClass('open')"><a><sprite-icon name="close"></sprite-icon><TMPL_VAR .loc.button_close></a></div>
 
 <TMPL_IF allow.create_event_from_schedule>
 <div><a href="create-events.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>&action=show_events">
@@ -86,11 +94,10 @@
 <div title="<TMPL_VAR .loc.help>"><a href="help.cgi?project_id=<TMPL_VAR project_id>&studio_id=<TMPL_VAR default_studio_id>">
 <sprite-icon name="help"></sprite-icon><TMPL_VAR .loc.help></a></div>
 
-<!--end menu -->
-</div>
+<!--end dropdown content -->
 </div>
 
-<div>
+<div class="mobile desktop">
 <select id="studio_id" name="studio_id" onchange="set_studio($(this).val())">
 <TMPL_LOOP .presets.studios>
 <option value="<TMPL_VAR id>" <TMPL_IF selected> selected="selected"</TMPL_IF> >
@@ -100,7 +107,7 @@
 </select>
 </div>
 
-<div>
+<div class="mobile desktop">
 <select id="project_id" name="project_id" onchange="set_project($(this).val())">
 <TMPL_LOOP .presets.projects>
 <option value="<TMPL_VAR project_id>" <TMPL_IF selected> selected="selected"</TMPL_IF> >
@@ -111,7 +118,7 @@
 </select>
 </div>
 
-<div class="mobile" title="<TMPL_VAR .presets.user>"><a id="logout" href="<TMPL_VAR .presets.logout_url>?authAction=logout" expires="<TMPL_VAR .expires>">
+<div class="mobile desktop" title="<TMPL_VAR .presets.user>"><a id="logout" href="<TMPL_VAR .presets.logout_url>?authAction=logout" expires="<TMPL_VAR .expires>">
 <sprite-icon name="logout"></sprite-icon><TMPL_VAR .loc.logout></a></div>
 <br/><div id="breadcrumb"></div>
 

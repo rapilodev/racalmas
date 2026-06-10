@@ -1,10 +1,8 @@
 <TMPL_INCLUDE default.html>
 <title>Calendar</title>
-<link rel="stylesheet" href="css/calendar.css" type="text/css" />
-<link rel="stylesheet" href="css/switch.css" type="text/css" />
-<TMPL_IF list>
-<link rel="stylesheet" href="css/calendar-list.css" type="text/css" />
-</TMPL_IF>
+<link href="css/calendar.css" rel="preload" as="style" onload="this.rel='stylesheet'">
+<link href="css/switch.css" rel="preload" as="style" onload="this.rel='stylesheet'">
+
 <script src="js/calendar-tools.js" type="text/javascript" defer></script>
 <script src="js/calendar.js" type="text/javascript" defer></script>
 
