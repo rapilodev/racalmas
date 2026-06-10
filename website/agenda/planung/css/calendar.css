@@ -5,12 +5,6 @@ body #content {
 }
 
 @media print {
-    #calcms_nav {
-        display: none;
-    }
-    a.sidebar {
-        display: none;
-    }
     tr, td, div.event, div.schedule, div.work, div.play {
         border: 1pt solid black;
     }
@@ -84,20 +78,7 @@ body #content {
 div.sidebar,
 a#calendar {
     border: 0;
-    background: #ddd;
     border-radius: 0;
-}
-
-adiv.sidebar {
-    padding: 1rem;
-    gap: 1rem;
-    display: flex;
-    justify-content: start;
-    min-width: 200px;
-    flex-direction: column;
-    align-items: end;
-    position: static;
-    flex-wrap: wrap;
 }
 
 input.search {
@@ -335,6 +316,13 @@ input.tablesorter-filter {
     width: 4em;
 }
 
+body,
+main#content,
+div#calendar
+{
+    overflow:hidden;
+}
+
 #content #calendarTable,
 #content #calendar, 
 #content #calendar table {
@@ -345,7 +333,7 @@ input.tablesorter-filter {
 }
 
 #content #calendarTable tbody{
-    height:100%;
+    height:100dvh;
 }
 
 #calendar table {
@@ -399,5 +387,3 @@ input.tablesorter-filter {
 .play {
     display: var(--playout-display, block);
 }
-
-    

@@ -45,10 +45,8 @@ function cancel_edit_event() {
 }
 
 function resizeCalendarTable() {
-    if (!isTableView()) return;
     const cal = document.getElementById('calendar');
     if (!cal) return;
-
     const calRect = cal.getBoundingClientRect();
     const content = document.getElementById('content');
     const tdCol0 = cal.querySelector('td.col0');
@@ -88,36 +86,20 @@ function setSelectedOptions() {
 // --- URL & Content Loading ---
 
 function update_url(url) {
-    if (url == null) {
-        url = update_urlParameters();
-    }
+    if (url == null) url = update_urlParameters();
     url = removeUrlParameter(url, 'part');
     url = url.replace("calendar-content.cgi", "calendar.cgi");
 
     const urlObj = new URL(url, window.location.origin);
     const d = urlObj.searchParams.get("date");
-    if (d) {
-        _viewDate = d;
-    }
+    if (d) _viewDate = d;
 
     history.pushState(null, null, url);
     appendHistory(url, 'replace');
 }
 
-function isTableView() {
-    return !isListView();
-}
-
-function isListView() {
-    const isListParam = getUrlParameter('list') == '1';
-    const isEventsRange = $('#range').val() == 'events';
-    return isListParam || isEventsRange || $('#event_list').length;
-}
-
 function update_urlParameters(url) {
-    if (url == null) {
-        url = window.location.href;
-    }
+    if (url == null) url = window.location.href;
     url = url.replace("calendar-content.cgi", "calendar.cgi");
 
     url = setUrlParameter(url, 'project_id', $('#project_id').val());
@@ -126,30 +108,26 @@ function update_urlParameters(url) {
     url = setUrlParameter(url, 's', isChecked('#show_schedule') ? 1 : 0);
     url = setUrlParameter(url, 'e', isChecked('#show_events') ? 1 : 0);
 
-    if (isTableView()) {
-        url = setUrlParameter(url, 'w', isChecked('#show_worktime') ? 1 : 0);
-        url = setUrlParameter(url, 'p', isChecked('#show_playout') ? 1 : 0);
-        url = setUrlParameter(url, 'day_start', $('#day_start').val());
-        var range = $('#range').val();
-        if (range == 'events') {
-            url = setUrlParameter(url, 'list', 1);
-        } else {
-            url = setUrlParameter(url, 'range', $('#range').val());
-        }
+    url = setUrlParameter(url, 'w', isChecked('#show_worktime') ? 1 : 0);
+    url = setUrlParameter(url, 'p', isChecked('#show_playout') ? 1 : 0);
+    url = setUrlParameter(url, 'day_start', $('#day_start').val());
+    var range = $('#range').val();
+    if (range == 'events') {
+        url = setUrlParameter(url, 'list', 1);
+    } else {
+        url = setUrlParameter(url, 'range', $('#range').val());
     }
     return url;
 }
 
 let isCalendarLoading = false;
-
 async function loadCalendarTable(url, mouseButton) {
     if (isCalendarLoading) return;
 
-    if (isListView()) throw Error("wrong mode");
     if (mouseButton === middleMouseButton) {
-            openNewTab(url);
-            return true;
-        }
+        openNewTab(url);
+        return true;
+    }
     const urlObj = new URL(url, window.location.origin);
     const targetDate = urlObj.searchParams.get("date");
 
@@ -167,6 +145,7 @@ async function loadCalendarTable(url, mouseButton) {
             url: url,
             target: '#calendarTable'
         });
+        $('#calendarTable').removeClass("loading");
         setupCalendar();
         update_url(url);
         resizeCalendarTable();
@@ -194,30 +173,6 @@ async function loadCalendarList(url) {
 }
 
 // --- Filter Visibility Controls ---
-
-function show_events() {
-    const val = isChecked('#show_events') ? 'block' : 'none';
-    const root = document.getElementById('calendar');
-    if (root) root.style.setProperty('--event-display', val);
-}
-
-function show_schedule() {
-    let val = isChecked('#show_schedule') ? '' : 'none';
-    const root = document.getElementById('calendar');
-    if (root) root.style.setProperty('--schedule-display', val);
-}
-
-function show_worktime() {
-    let val = isChecked('#show_worktime') ? '' : 'none';
-    const root = document.getElementById('calendar');
-    if (root) root.style.setProperty('--worktime-display', val);
-}
-
-function show_playout() {
-    let val = isChecked('#show_playout') ? '' : 'none';
-    const root = document.getElementById('calendar');
-    if (root) root.style.setProperty('--playout-display', val);
-}
 
 function getNearestDatetime() {
     let date = "";
@@ -263,7 +218,6 @@ let mouseX = 0, mouseY = 0;
 let mouseMoved = false;
 
 function showMouse() {
-    if (!isTableView()) return;
 
     const calendar = document.getElementById('calendar');
     $(calendar).off('mousemove').on('mousemove', (e) => {
@@ -452,35 +406,32 @@ function setup_filter() {
 
     show_schedule();
     show_events();
-
     $('#show_events, #show_schedule').on("click", function() {
         show_events();
         show_schedule();
         update_url();
     });
 
-    if (isTableView()) {
-        var playoutLabel = label_playout || "playout";
-        var workLabel = label_worktime || "work";
-        $('.sidebar').append(getSwitch('show_playout', playoutLabel, true));
-        $('.sidebar').append(getSwitch('show_worktime', workLabel, false));
+    var playoutLabel = label_playout || "playout";
+    var workLabel = label_worktime || "work";
+    $('.sidebar').append(getSwitch('show_playout', playoutLabel, true));
+    $('.sidebar').append(getSwitch('show_worktime', workLabel, false));
 
-        if (getUrlParameter('p') == '0') {
-            unselectCheckbox('#show_playout');
-        }
-        if (getUrlParameter('w') == '0') {
-            unselectCheckbox('#show_worktime');
-        }
+    if (getUrlParameter('p') == '0') {
+        unselectCheckbox('#show_playout');
+    }
+    if (getUrlParameter('w') == '0') {
+        unselectCheckbox('#show_worktime');
+    }
 
+    show_playout();
+    show_worktime();
+
+    $('#show_playout, #show_worktime').on("click", function() {
         show_playout();
         show_worktime();
-
-        $('#show_playout, #show_worktime').on("click", function() {
-            show_playout();
-            show_worktime();
-            update_url();
-        });
-    }
+        update_url();
+    });
 }
 
 function getSwitch(id, text, active, klass) {
@@ -490,9 +441,6 @@ function getSwitch(id, text, active, klass) {
 }
 
 function setup_date_select() {
-    if (!isTableView()) {
-        return;
-    }
     $('#previous_month, #next_month').off().on('mouseup', function(e) {
         if (e.which == rightMouseButton) {
             return;
@@ -507,14 +455,12 @@ function setup_date_select() {
 
 function setupCalendar() {
     setup_actions();
-    if (isTableView()) {
-        setup_date_select();
-        showMouse();
-        $('#calendar .col1 > div').mouseover(function() {
-            const tip = getMouseOverText($(this));
-            $(this).attr("title", tip);
-        });
-    }
+    setup_date_select();
+    showMouse();
+    $('#calendar .col1 > div').mouseover(function() {
+        const tip = getMouseOverText($(this));
+        $(this).attr("title", tip);
+    });
     document.oncontextmenu = () => false;
 }
 
@@ -564,73 +510,68 @@ function initSearch() {
 }
 
 function initSidebar(config, params, date) {
-    const className = 'sidebar';
-    let sidebar = `<div class="${className}">`;
+    let range = getUrlParameter("range");
+    if (window.innerWidth < 960) range = 1;
+    let sidebar = `<div class="sidebar">`;
     sidebar += `
         <div class="row">
             <div id="previous_month">
+                <tool-tip text="${loc.label_cal_nav_prev}">
                 <button class="primary" id="previous"
-                    aria-label="${loc.label_cal_nav_prev}"
                     ><sprite-icon name="navigate-before"></sprite-icon></button>
+                </tool-tip>
             </div>
             <div id="selectDate" data-toggle>
                 <input id="start_date" data-input/>
                 <div id="current_date">${year_month}</div>
             </div>
             <div id="next_month">
+                <tool-tip text="${loc.label_cal_nav_next}">
                 <button id="next" class="primary"
-                    aria-label="${loc.label_cal_nav_next}"
                     ><sprite-icon name="navigate-next"></sprite-icon></button>
+                </tool-tip>
             </div>
+            <tool-tip text="${loc.label_cal_nav_next}">
             <button id="setToday" class="primary">
                 <sprite-icon name="calendar"></sprite-icon>
                 ${loc.button_today}
             </button>
+            </tool-tip>
         </div>
     `;
 
-    if (isTableView()) {
-        const ranges = {
-            [loc.label_month]: 'month',
-            [loc.label_4_weeks]: '28',
-            [loc.label_2_weeks]: '14',
-            [loc.label_1_week]: '7',
-            [loc.label_day]: '1'
-        };
-        sidebar += `<select id="range" name="range" value="${range}">`;
+    const ranges = {
+        [loc.label_month]: 'month',
+        [loc.label_4_weeks]: '28',
+        [loc.label_2_weeks]: '14',
+        [loc.label_1_week]: '7',
+        [loc.label_day]: '1'
+    };
+    sidebar += `<select id="range" name="range" value="${range}">`;
 
-        const rangeKeys = [
-            loc.label_month,
-            loc.label_4_weeks,
-            loc.label_2_weeks,
-            loc.label_1_week,
-            loc.label_day
-        ];
+    const rangeKeys = [
+        loc.label_month,
+        loc.label_4_weeks,
+        loc.label_2_weeks,
+        loc.label_1_week,
+        loc.label_day
+    ];
 
-        for (const range of rangeKeys) {
-            const value = ranges[range] || '';
-            sidebar += `<option name="${range}" value="${value}">${range}</option>`;
-        }
-        sidebar += "</select>";
-
-        const dayStart = day_start !== undefined ? day_start : '';
-        sidebar += `<select id="day_start" name="day_start" value="${dayStart}">`;
-        for (let hour = 0; hour <= 24; hour++) {
-            const selected = hour == dayStart ? 'selected="selected"' : '';
-            const formattedHour = String(hour).padStart(2, '0') + ':00';
-            sidebar += `<option value="${hour}" ${selected}>${formattedHour}</option>`;
-        }
-        sidebar += `</select>`;
+    for (const range of rangeKeys) {
+        const value = ranges[range] || '';
+        sidebar += `<option name="${range}" value="${value}">${range}</option>`;
     }
+    sidebar += "</select>";
+
+    const dayStart = day_start !== undefined ? day_start : '';
+    sidebar += `<select id="day_start" name="day_start" value="${dayStart}">`;
+    for (let hour = 0; hour <= 24; hour++) {
+        const selected = hour == dayStart ? 'selected="selected"' : '';
+        const formattedHour = String(hour).padStart(2, '0') + ':00';
+        sidebar += `<option value="${hour}" ${selected}>${formattedHour}</option>`;
+    }
+    sidebar += `</select>`;
     sidebar += `<search-input id="search" placeholder="${loc.button_search}"></search-input>`;
-    if (isListView()) {
-        sidebar += `
-            <button is="link-button" id="editSeries">
-                <sprite-icon name="edit"></sprite-icon>
-                ${loc.button_edit_series}
-            </button>
-        `;
-    }
     sidebar += `</div>`;
     const calendarTable = document.getElementById('calendarTable');
     calendarTable.insertAdjacentHTML('beforebegin', sidebar);
@@ -642,55 +583,27 @@ window.calcms.init_calendar = async function(el) {
     let url = update_urlParameters();
     initSidebar();
     initSearch();
-    if (isTableView()) {
+    _viewDate = null;
+    window.onpopstate = function() {
         _viewDate = null;
-        window.onpopstate = function() {
-            _viewDate = null;
-            location.reload();
-        };
+        location.reload();
+    };
 
-        const resizeObserver = new ResizeObserver(() => {
-            requestAnimationFrame(resizeCalendarTable);
-        }).observe(document.getElementById('calendarTable'));
+    const resizeObserver = new ResizeObserver(() => {
+        requestAnimationFrame(resizeCalendarTable);
+    }).observe(document.getElementById('calendarTable'));
 
-        setup_filter();
-        setSelectedOptions();
-        setDatePicker();
-        let url = update_urlParameters();
-        $('.sidebar select#range, .sidebar select#day_start').on('change', (e) => {
-            if (e.target.id === 'day_start') {
-                updateDayStart();
-            }
-            loadCalendarTable(update_urlParameters());
-        });
-        loadCalendarTable(url);
-    }
-};
-
-window.calcms.init_event_list = async function(el) {
-    await loadLocalization('calendar');
-    let url = update_url();
-    setColors();
-    setup_actions();
-    document.querySelectorAll('table td.start_date').forEach(el => {
-        el.innerHTML = DTF.datetime(el.innerHTML);
+    setup_filter();
+    setSelectedOptions();
+    setDatePicker();
+    url = update_urlParameters();
+    $('.sidebar select#range, .sidebar select#day_start').on('change', (e) => {
+        if (e.target.id === 'day_start') {
+            updateDayStart();
+        }
+        loadCalendarTable(update_urlParameters());
     });
-
-    if (isListView()) {
-        document.querySelectorAll('table td.start_date').forEach(el => {
-            el.innerHTML = DTF.datetime(el.innerHTML);
-        });
-        $('#editSeries').attr('data-href',
-            "series.cgi?" + new URLSearchParams({
-                action: "show_series",
-                project_id: getUrlParameter('project_id'),
-                studio_id: getUrlParameter('studio_id'),
-                series_id: getUrlParameter('series_id'),
-            }).toString()
-        );
-        return;
-    }
-    return;
+    loadCalendarTable(url);
 };
 
 $(window).on('beforeunload', () => {

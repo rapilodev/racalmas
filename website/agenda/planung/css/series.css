@@ -1,10 +1,5 @@
 /* series.css */
 
-body #content {
-    max-width:none!important;
-    min-width: fit-content;
-    min-height: 100%;
-}
 
 #content.tabs.panel{
     max-width:fit-content;
@@ -25,9 +20,6 @@ body #content {
     max-width:960px;
 }
 
-#content #tabs-schedule {
-    min-width: 960px;
-}
 
 /* Active row styling in editor: use a variable for background (default yellow) */
 #content .editor .row.active {

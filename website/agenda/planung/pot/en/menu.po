@@ -4,6 +4,9 @@ msgstr "en"
 msgid "button_back"
 msgstr "Back"
 
+msgid "button_close"
+msgstr "Close"
+
 msgid "calendar"
 msgstr "Calendar"
 

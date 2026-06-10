@@ -10,6 +10,30 @@ function setColors() {
     $('.schedule').css('background', gradient);
 }
 
+function show_events() {
+    const val = isChecked('#show_events') ? 'block' : 'none';
+    const root = document.getElementById('calendar');
+    if (root) root.style.setProperty('--event-display', val);
+}
+
+function show_schedule() {
+    let val = isChecked('#show_schedule') ? '' : 'none';
+    const root = document.getElementById('calendar');
+    if (root) root.style.setProperty('--schedule-display', val);
+}
+
+function show_worktime() {
+    let val = isChecked('#show_worktime') ? '' : 'none';
+    const root = document.getElementById('calendar');
+    if (root) root.style.setProperty('--worktime-display', val);
+}
+
+function show_playout() {
+    let val = isChecked('#show_playout') ? '' : 'none';
+    const root = document.getElementById('calendar');
+    if (root) root.style.setProperty('--playout-display', val);
+}
+
 function setup_actions() {
     var base = $('#event_list, #calendar').first();
 
