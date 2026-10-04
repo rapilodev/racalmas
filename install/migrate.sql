@@ -376,3 +376,8 @@ FROM calcms_series_events
 GROUP BY project_id, studio_id, series_id, event_id;
 RENAME TABLE calcms_series_events TO calcms_series_events_old,
              calcms_series_events_clean TO calcms_series_events;
+
+-- 2026-10-04 add role update_event_after_day
+
+ALTER TABLE `calcms`.`calcms_roles`
+ADD COLUMN `update_event_after_day` TINYINT(1) UNSIGNED NOT NULL AFTER `update_event_time`;

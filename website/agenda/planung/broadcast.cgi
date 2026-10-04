@@ -188,23 +188,17 @@ sub show_event {
         uac::print_error("event not found");
     }
 
-    my $editLock = 1;
-    if ((defined $permissions->{update_event_after_week})
-        && ($permissions->{update_event_after_week} eq '1'))
-    {
-        $editLock = 0;
-    } else {
-        $editLock = 0
-          if (
-            series::is_event_older_than_days(
-                $config,
-                {
-                    uac::set($params, 'project_id', 'studio_id', 'series_id', 'event_id'),
-                    max_age    => 14
-                }
-            ) == 0
-          );
-    }
+    my $max_age =
+          $permissions->{update_event_after_week} ? 9999999
+        : $permissions->{update_event_after_day} ? 7
+        : 1;
+    my $editLock = (series::is_event_older_than_days(
+        $config,
+        {
+            uac::set($params, 'project_id', 'studio_id', 'series_id', 'event_id'),
+            max_age => $max_age
+        }
+    ));
 
     # for rerun, deprecated
     if (defined $params->{source_event_id}) {

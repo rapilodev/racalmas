@@ -360,7 +360,11 @@ sub check_permission($$) {
 
     # prevent editing events that are over for more than 14 days
     if (($draft == 0) && (defined $check->{event_age})) {
-        if (
+        my $max_age =
+          ($permissions->{update_event_after_week} // 0) ? 9999999
+        : ($permissions->{update_event_after_day}  // 0) ? 7
+        : 1;
+        return "show is over for more than $max_age days" if (
             series::is_event_older_than_days(
                 $config,
                 {
@@ -368,14 +372,9 @@ sub check_permission($$) {
                     studio_id  => $options->{studio_id},
                     series_id  => $options->{series_id},
                     event_id   => $options->{event_id},
-                    max_age    => 14
+                    max_age    => $max_age
                 }
-            ) == 1
-        ) {
-            return "show is over for more than 2 weeks"
-              unless ((defined $permissions->{update_event_after_week})
-                && ($permissions->{update_event_after_week} eq '1'));
-        }
+        ));
     }
 
     #check if schedule event exists for given date

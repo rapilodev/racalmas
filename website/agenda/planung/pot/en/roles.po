@@ -235,8 +235,11 @@ msgstr "undo event changes"
 msgid "label_read_user_stats"
 msgstr "show user statistics"
 
+msgid "label_update_event_after_day"
+msgstr "edit past events more than one day later"
+
 msgid "label_update_event_after_week"
-msgstr "edit past events more than two weeks later"
+msgstr "edit past events more than one week later"
 
 msgid "label_read_comment"
 msgstr "read comments"

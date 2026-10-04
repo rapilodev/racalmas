@@ -232,8 +232,11 @@ msgstr "Änderungen zurücknehmen"
 msgid "label_read_user_stats"
 msgstr "Nutzerstatistik anzeigen"
 
+msgid "label_update_event_after_day"
+msgstr "vergangene Sendung nach mehr als 1 Tag bearbeiten"
+
 msgid "label_update_event_after_week"
-msgstr "vergangene Sendung nach mehr als 2 Wochen bearbeiten"
+msgstr "vergangene Sendung nach mehr als 1 Woche bearbeiten"
 
 msgid "label_read_comment"
 msgstr "Kommentare lesen"
